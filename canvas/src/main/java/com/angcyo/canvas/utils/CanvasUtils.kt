@@ -151,8 +151,8 @@ fun ByteArray.toEngraveBitmap(width: Int, height: Int): Bitmap {
 }
 
 /**从图片中, 获取雕刻需要用到的像素信息*/
-fun Bitmap.engraveColorBytes(): ByteArray {
-    return colorChannel { color, channelValue ->
+fun Bitmap.engraveColorBytes(channelType: Int = Color.RED): ByteArray {
+    return colorChannel(channelType) { color, channelValue ->
         if (color == Color.TRANSPARENT) {
             255 //白色像素, 不雕刻
         } else {

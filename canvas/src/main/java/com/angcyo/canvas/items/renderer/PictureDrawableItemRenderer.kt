@@ -18,7 +18,7 @@ import com.pixplicity.sharp.SharpDrawable
 class PictureDrawableItemRenderer(canvasView: ICanvasView) :
     PictureItemRenderer<PictureItem>(canvasView) {
 
-    override fun setRenderDrawable(drawable: Drawable): PictureItem {
+    override fun setRenderDrawable(drawable: Drawable?): PictureItem {
         val item = PictureItem()
         item.drawable = drawable
         if (drawable is GCodeDrawable) {

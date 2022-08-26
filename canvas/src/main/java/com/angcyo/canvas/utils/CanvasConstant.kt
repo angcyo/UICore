@@ -4,6 +4,20 @@ import com.angcyo.canvas.core.IValueUnit
 import com.angcyo.canvas.core.InchValueUnit
 import com.angcyo.canvas.core.MmValueUnit
 import com.angcyo.canvas.core.PixelValueUnit
+import com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_BLACK_WHITE
+import com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_DITHERING
+import com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_GCODE
+import com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_GREY
+import com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_PRINT
+import com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_SEAL
+import com.angcyo.canvas.utils.CanvasConstant.DATA_TYPE_BARCODE
+import com.angcyo.canvas.utils.CanvasConstant.DATA_TYPE_BITMAP
+import com.angcyo.canvas.utils.CanvasConstant.DATA_TYPE_GCODE
+import com.angcyo.canvas.utils.CanvasConstant.DATA_TYPE_GROUP
+import com.angcyo.canvas.utils.CanvasConstant.DATA_TYPE_PATH
+import com.angcyo.canvas.utils.CanvasConstant.DATA_TYPE_QRCODE
+import com.angcyo.canvas.utils.CanvasConstant.DATA_TYPE_SVG
+import com.angcyo.canvas.utils.CanvasConstant.DATA_TYPE_TEXT
 import com.angcyo.library.component.HawkPropertyValue
 
 /**
@@ -93,4 +107,26 @@ object CanvasConstant {
         }
 
     //endregion ---Canvas设置项---
+}
+
+fun Int.toDataTypeStr() = when (this) {
+    DATA_TYPE_BITMAP -> "Bitmap"
+    DATA_TYPE_QRCODE -> "QrCode"
+    DATA_TYPE_BARCODE -> "BarCode"
+    DATA_TYPE_TEXT -> "Text"
+    DATA_TYPE_SVG -> "Svg"
+    DATA_TYPE_GCODE -> "GCode"
+    DATA_TYPE_PATH -> "Path"
+    DATA_TYPE_GROUP -> "Group"
+    else -> "Unknown-${this}"
+}
+
+fun Int.toDataModeStr() = when (this) {
+    DATA_MODE_PRINT -> "版画"
+    DATA_MODE_BLACK_WHITE -> "黑白"
+    DATA_MODE_DITHERING -> "抖动"
+    DATA_MODE_GREY -> "灰度"
+    DATA_MODE_SEAL -> "印章"
+    DATA_MODE_GCODE -> "GCode"
+    else -> "Unknown-${this}"
 }

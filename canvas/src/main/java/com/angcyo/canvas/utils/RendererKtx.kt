@@ -1,17 +1,13 @@
 package com.angcyo.canvas.utils
 
-import android.content.res.Resources
 import android.graphics.Bitmap
-import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.items.*
 import com.angcyo.canvas.items.renderer.*
-import com.angcyo.library.app
 import com.pixplicity.sharp.SharpDrawable
 
 /**
@@ -29,35 +25,6 @@ fun BaseItemRenderer<*>.isLineShape(): Boolean {
     }
     return false
 }
-
-//<editor-fold desc="DrawableItemRenderer">
-
-/**添加一个[Drawable]渲染器
- * [DrawableItemRenderer]
- * [com.pixplicity.sharp.SharpDrawable]
- * [com.angcyo.gcode.GCodeDrawable]
- * */
-fun CanvasDelegate.addDrawableRenderer(
-    drawable: Drawable,
-    style: Paint.Style = Paint.Style.STROKE
-): DrawableItem {
-    val renderer = DrawableItemRenderer<DrawableItem>(this)
-    renderer.paint.style = style
-    val item = renderer.setRenderDrawable(drawable)
-    addCentreItemRenderer(renderer, Strategy.normal)
-    selectedItem(renderer)
-    return item
-}
-
-/**添加一个[Bitmap]渲染器*/
-fun CanvasDelegate.addDrawableRenderer(
-    bitmap: Bitmap,
-    res: Resources = app().resources
-): DrawableItem {
-    return addDrawableRenderer(BitmapDrawable(res, bitmap))
-}
-
-//</editor-fold desc="DrawableItemRenderer">
 
 //<editor-fold desc="PictureItemRenderer">
 
@@ -88,8 +55,11 @@ fun CanvasDelegate.addPictureBitmapRenderer(bitmap: Bitmap): PictureBitmapItem {
     return item
 }
 
-/**添加一个绘制[drawable]的渲染器*/
-fun CanvasDelegate.addPictureDrawableRenderer(drawable: Drawable): PictureItem {
+/**添加一个绘制[drawable]的渲染器
+ * [DrawableItemRenderer]
+ * [com.angcyo.gcode.GCodeDrawable]
+ * */
+fun CanvasDelegate.addPictureDrawableRenderer(drawable: Drawable?): PictureItem {
     val renderer = PictureDrawableItemRenderer(this)
     val item = renderer.setRenderDrawable(drawable)
     addCentreItemRenderer(renderer, Strategy.normal)
@@ -97,7 +67,9 @@ fun CanvasDelegate.addPictureDrawableRenderer(drawable: Drawable): PictureItem {
     return item
 }
 
-/**添加一个绘制[SharpDrawable]的渲染器*/
+/**添加一个绘制[SharpDrawable]的渲染器
+ * [com.pixplicity.sharp.SharpDrawable]
+ * */
 fun CanvasDelegate.addPictureSharpRenderer(drawable: SharpDrawable?): PictureSharpItem {
     val renderer = PictureSharpItemRenderer(this)
     val item = renderer.setRenderSharp(drawable)

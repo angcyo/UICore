@@ -9,9 +9,7 @@ import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.DrawableItem
-import com.angcyo.canvas.items.PictureBitmapItem
-import com.angcyo.canvas.items.PictureShapeItem
-import com.angcyo.canvas.items.PictureTextItem
+import com.angcyo.canvas.utils.toDataTypeStr
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.adjustFlipRect
 import com.angcyo.library.ex.emptyRectF
@@ -36,12 +34,7 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
     //<editor-fold desc="初始化">
 
     override fun getName(): CharSequence? {
-        return _name ?: when (_rendererItem) {
-            is PictureTextItem -> "Text"
-            is PictureBitmapItem -> "Bitmap"
-            is PictureShapeItem -> "Shape"
-            else -> super.getName()
-        }
+        return _name ?: _rendererItem?.dataType?.toDataTypeStr() ?: super.getName()
     }
 
     override fun onUpdateRendererItem(item: T?, oldItem: T?) {
@@ -110,7 +103,7 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
     }
 
     /**设置渲染的[drawable]*/
-    open fun setRenderDrawable(drawable: Drawable): T {
+    open fun setRenderDrawable(drawable: Drawable?): T {
         val item = DrawableItem()
         item.drawable = drawable
         _rendererItem = item as T
