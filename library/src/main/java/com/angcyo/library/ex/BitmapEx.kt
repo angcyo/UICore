@@ -312,7 +312,7 @@ fun Context.getBitmapFromAssets(name: String) = BitmapFactory.decodeStream(asset
  * [channelType] 通道类型 [Color.RED] [Color.GREEN] [Color.BLUE]*/
 fun Bitmap.colorChannel(
     channelType: Int = Color.RED,
-    convert: (color: Int, channelValue: Int) -> Int = { _, channelValue -> channelValue }
+    convert: (color: Int, channelColor: Int) -> Int = { _, channelColor -> channelColor }
 ): ByteArray {
     val width = width
     val height = height
@@ -321,19 +321,43 @@ fun Bitmap.colorChannel(
     for (y in 0 until height) {
         for (x in 0 until width) {
             val color = getPixel(x, y)
-            var value = when (channelType) {
+            var channelColor = when (channelType) {
                 Color.RED -> Color.red(color)
                 Color.GREEN -> Color.green(color)
                 Color.BLUE -> Color.blue(color)
                 Color.TRANSPARENT -> Color.alpha(color)
-                else -> 255
+                else -> 0xFF
             }
-            value = convert(color, value)
-            value = max(0, min(value, 255)) //限制0~255
-            result[y * width + x] = value.toByte()
+            channelColor = convert(color, channelColor)
+            channelColor = max(0, min(channelColor, 0xFF)) //限制0~255
+            result[y * width + x] = channelColor.toByte()
         }
     }
     return result
+}
+
+/**枚举通道颜色
+ * [channelType] 通道类型 [Color.RED] [Color.GREEN] [Color.BLUE]*/
+fun Bitmap.eachColorChannel(
+    channelType: Int = Color.RED,
+    action: (wIndex: Int, hIndex: Int, color: Int) -> Unit = { _, _, _ -> }
+) {
+    val width = width
+    val height = height
+
+    for (y in 0 until height) {
+        for (x in 0 until width) {
+            val color = getPixel(x, y)
+            val channelColor = when (channelType) {
+                Color.RED -> Color.red(color)
+                Color.GREEN -> Color.green(color)
+                Color.BLUE -> Color.blue(color)
+                Color.TRANSPARENT -> Color.alpha(color)
+                else -> 0xFF
+            }
+            action(x, y, channelColor)
+        }
+    }
 }
 
 /**将图片转灰度

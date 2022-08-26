@@ -858,26 +858,27 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         var smartValue: SmartAssistantValueData? = null
         //差值越小越好
         var diffValue = adsorbThreshold
-        refValueList.forEach {
-            if (it.refRenderer != null && it.refRenderer == itemRenderer) {
+
+        for (refValue in refValueList) {
+            if (refValue.refRenderer != null && refValue.refRenderer == itemRenderer) {
                 //自身
             } else {
-                if (it.refValue == originValue && dValue.absoluteValue <= diffValue) {
+                if (refValue.refValue == originValue && dValue.absoluteValue <= diffValue) {
                     //吸附值
-                    smartValue = it
-                    return@forEach
+                    smartValue = refValue
+                    break
                 } else {
-                    val vAbs = (it.refValue - (originValue + dValue)).absoluteValue
+                    val vAbs = (refValue.refValue - (originValue + dValue)).absoluteValue
                     if (vAbs <= diffValue) {
                         diffValue = vAbs
-                        smartValue = it
+                        smartValue = refValue
                     }
                 }
             }
         }
 
         if (smartValue != null) {
-            return SmartAssistantData(originValue, smartValue!!)
+            return SmartAssistantData(originValue, smartValue)
         }
         return null
     }

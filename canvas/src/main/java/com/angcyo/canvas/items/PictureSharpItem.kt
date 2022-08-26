@@ -22,7 +22,7 @@ class PictureSharpItem : PictureItem() {
 
     override fun updateItem(paint: Paint) {
         val sharpDrawable = sharpDrawable ?: return
-        if (sharpDrawable.pathList.isNotEmpty()) {
+        if (!sharpDrawable.pathList.isNullOrEmpty()) {
             val newDrawable = Svg.loadPathList(
                 sharpDrawable.pathList,
                 sharpDrawable.pathBounds,
@@ -32,10 +32,14 @@ class PictureSharpItem : PictureItem() {
                 0
             )
             setHoldData(CanvasDataHandleOperate.KEY_SVG, newDrawable.pathList)
-
             this.drawable = newDrawable
-            this.itemWidth = sharpDrawable.pathBounds.width()
-            this.itemHeight = sharpDrawable.pathBounds.height()
+            this.itemWidth = newDrawable.pathBounds.width()
+            this.itemHeight = newDrawable.pathBounds.height()
+        } else {
+            dataMode = CanvasConstant.DATA_MODE_GREY
+            this.drawable = sharpDrawable
+            this.itemWidth = sharpDrawable.intrinsicWidth.toFloat()
+            this.itemHeight = sharpDrawable.intrinsicHeight.toFloat()
         }
     }
 }

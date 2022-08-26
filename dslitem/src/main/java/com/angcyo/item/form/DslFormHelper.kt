@@ -6,10 +6,10 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter._dslAdapter
 import com.angcyo.dsladapter.itemIndexPosition
 import com.angcyo.library.L
+import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.elseNull
 import com.angcyo.library.ex.size
 import com.angcyo.library.toastQQ
-import com.angcyo.library.ex.*
 import com.angcyo.widget.recycler.*
 
 /**
@@ -284,7 +284,8 @@ fun DslAdapter.checkItemThrowable(
     }
 ): Boolean {
     var reuslt = false
-    getValidFilterDataList().forEach { item ->
+    val validFilterDataList = getValidFilterDataList()
+    for (item in validFilterDataList) {
         if (predicate(item)) {
             reuslt = true
             //中断
@@ -298,7 +299,7 @@ fun DslAdapter.checkItemThrowable(
                     toastQQ(it)
                 }
             }
-            return@forEach
+            break
         }
     }
     return reuslt

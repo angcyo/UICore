@@ -154,7 +154,7 @@ fun ByteArray.toEngraveBitmap(width: Int, height: Int): Bitmap {
 fun Bitmap.engraveColorBytes(channelType: Int = Color.RED): ByteArray {
     return colorChannel(channelType) { color, channelValue ->
         if (color == Color.TRANSPARENT) {
-            255 //白色像素, 不雕刻
+            0xFF //255 白色像素, 白色在纸上不雕刻, 在金属上雕刻
         } else {
             channelValue
         }

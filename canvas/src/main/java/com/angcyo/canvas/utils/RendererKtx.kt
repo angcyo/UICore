@@ -6,7 +6,10 @@ import android.graphics.drawable.Drawable
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.Strategy
-import com.angcyo.canvas.items.*
+import com.angcyo.canvas.items.PictureBitmapItem
+import com.angcyo.canvas.items.PictureItem
+import com.angcyo.canvas.items.PictureShapeItem
+import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.canvas.items.renderer.*
 import com.pixplicity.sharp.SharpDrawable
 
@@ -70,12 +73,17 @@ fun CanvasDelegate.addPictureDrawableRenderer(drawable: Drawable?): PictureItem 
 /**添加一个绘制[SharpDrawable]的渲染器
  * [com.pixplicity.sharp.SharpDrawable]
  * */
-fun CanvasDelegate.addPictureSharpRenderer(drawable: SharpDrawable?): PictureSharpItem {
-    val renderer = PictureSharpItemRenderer(this)
-    val item = renderer.setRenderSharp(drawable)
-    addCentreItemRenderer(renderer, Strategy.normal)
-    selectedItem(renderer)
-    return item
+fun CanvasDelegate.addPictureSharpRenderer(drawable: SharpDrawable?): PictureItem {
+    if (drawable?.pathList.isNullOrEmpty()) {
+        //无path数据
+        return addPictureDrawableRenderer(drawable)
+    } else {
+        val renderer = PictureSharpItemRenderer(this)
+        val item = renderer.setRenderSharp(drawable)
+        addCentreItemRenderer(renderer, Strategy.normal)
+        selectedItem(renderer)
+        return item
+    }
 }
 
 //</editor-fold desc="PictureItemRenderer">

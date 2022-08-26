@@ -19,7 +19,7 @@ class ByteArrayWriter(
 
     fun toByteArray() = outputStream.toByteArray()
 
-    /**
+    /**写入一个指定字节长度的整数
      * [int] 整数
      * [length] 字节数, 不够前面补0
      * */

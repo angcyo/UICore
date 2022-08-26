@@ -390,7 +390,10 @@ fun DslAdapterItem.afterItem(
     var findAnchor = false
     var startIndex = -1
     var result: DslAdapterItem? = null
-    adapter.getDataList(useFilterList).forEachIndexed { index, dslAdapterItem ->
+
+    val dataList = adapter.getDataList(useFilterList)
+    var index = 0
+    for (dslAdapterItem in dataList) {
         if (this == dslAdapterItem) {
             findAnchor = true
             startIndex = index
@@ -398,10 +401,11 @@ fun DslAdapterItem.afterItem(
             if (findAnchor) {
                 if (predicate(dslAdapterItem, index - startIndex)) {
                     result = dslAdapterItem
-                    return@forEachIndexed
+                    break
                 }
             }
         }
+        index++
     }
     return result
 }

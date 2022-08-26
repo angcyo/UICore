@@ -578,11 +578,11 @@ fun CharSequence?.pattern(regexList: Iterable<String>, allowEmpty: Boolean = tru
     //        }
     //    }
 
-    regexList.forEach {
+    for (regex in regexList) {
         //闭包外面声明的变量, 虽然已经修改了, 但是修改后的值, 不影响 if 条件判断
-        if (this.pattern(it, allowEmpty)) {
+        if (this.pattern(regex, allowEmpty)) {
             result = true
-            return@forEach
+            break
         }
     }
 

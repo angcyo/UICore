@@ -26,4 +26,8 @@ class PictureSharpItemRenderer(canvasView: ICanvasView) :
         return item
     }
 
+    override fun onRendererItemUpdate() {
+        super.onRendererItemUpdate()
+    }
+
 }

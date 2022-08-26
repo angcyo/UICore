@@ -118,7 +118,7 @@ fun Int.toDataTypeStr() = when (this) {
     DATA_TYPE_GCODE -> "GCode"
     DATA_TYPE_PATH -> "Path"
     DATA_TYPE_GROUP -> "Group"
-    else -> "Unknown-${this}"
+    else -> "DataType-${this}"
 }
 
 fun Int.toDataModeStr() = when (this) {
@@ -128,5 +128,5 @@ fun Int.toDataModeStr() = when (this) {
     DATA_MODE_GREY -> "灰度"
     DATA_MODE_SEAL -> "印章"
     DATA_MODE_GCODE -> "GCode"
-    else -> "Unknown-${this}"
+    else -> "DataMode-${this}"
 }

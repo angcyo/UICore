@@ -8,7 +8,6 @@ import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.CanvasDataHandleOperate
 import com.angcyo.gcode.GCodeDrawable
 import com.angcyo.library.component.ScalePictureDrawable
-import com.pixplicity.sharp.SharpDrawable
 
 /**
  * 渲染 [ScalePictureDrawable]
@@ -26,11 +25,6 @@ class PictureDrawableItemRenderer(canvasView: ICanvasView) :
             item.dataMode = CanvasConstant.DATA_MODE_GCODE
 
             item.setHoldData(CanvasDataHandleOperate.KEY_GCODE, drawable.gCodeData)
-        } else if (drawable is SharpDrawable) {
-            item.dataType = CanvasConstant.DATA_TYPE_SVG
-            item.dataMode = CanvasConstant.DATA_MODE_GCODE
-
-            item.setHoldData(CanvasDataHandleOperate.KEY_SVG, drawable.pathList)
         } else {
             item.dataType = CanvasConstant.DATA_TYPE_BITMAP
             item.dataMode = CanvasConstant.DATA_MODE_GREY

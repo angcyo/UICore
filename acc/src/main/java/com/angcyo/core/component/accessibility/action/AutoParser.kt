@@ -864,16 +864,16 @@ open class AutoParser {
         if (!constraintBean.selectNodeList.isNullOrEmpty()) {
             var selectResult = true
 
-            constraintBean.selectNodeList?.forEach {
-                val index = when (it) {
+            for (selectNode in constraintBean.selectNodeList!!) {
+                val index = when (selectNode) {
                     666666 -> nextInt(0, result.size)
-                    else -> it
+                    else -> selectNode
                 }
                 val node = result.getOrNull2(index)
                 if (node != null) {
                     if (!matchClassAndRectAndState(constraintBean, node, index)) {
                         selectResult = false
-                        return@forEach
+                        break
                     }
                 }
             }

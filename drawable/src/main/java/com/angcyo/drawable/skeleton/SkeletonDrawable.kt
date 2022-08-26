@@ -394,10 +394,10 @@ class SkeletonDrawable : AbsDslDrawable() {
         var allUseWidth = 0f
         var allUseHeight = 0f
 
-        groupBean.groupList?.forEach {
+        for (group in groupBean.groupList ?: emptyList()) {
             _groupLayoutParams.left = groupLeft
             _groupLayoutParams.top = groupTop
-            _drawGroup(canvas, _groupLayoutParams, it)
+            _drawGroup(canvas, _groupLayoutParams, group)
 
             allUseWidth += _groupLayoutParams.useWidth
             allUseHeight += _groupLayoutParams.useHeight
@@ -410,17 +410,17 @@ class SkeletonDrawable : AbsDslDrawable() {
                 groupTop += _groupLayoutParams.useHeight
 
                 if (groupTop > viewHeight) {
-                    return@forEach
+                    break
                 }
             } else if (orientation == LinearLayout.HORIZONTAL) {
                 groupLeft += _groupLayoutParams.useWidth
 
                 if (groupLeft > viewWidth) {
-                    return@forEach
+                    break
                 }
             } else {
                 if (groupLeft > viewWidth || groupTop > viewHeight) {
-                    return@forEach
+                    break
                 }
             }
         }
