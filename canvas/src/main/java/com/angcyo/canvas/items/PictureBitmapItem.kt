@@ -15,7 +15,7 @@ import com.angcyo.library.ex.withPicture
  */
 class PictureBitmapItem(
     /**原始的图片, 未修改前的数据*/
-    val originBitmap: Bitmap,
+    var originBitmap: Bitmap,
     /**算法修改后的图片*/
     var modifyBitmap: Bitmap? = null,
     /**预览的Drawable, 可以实现障眼法*/

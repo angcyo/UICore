@@ -41,11 +41,18 @@ class PictureShapeItem(
         val path = shapePath
         val shapeBounds = RectF()
         path.computeBounds(shapeBounds, true)
+        val strokeWidth = paint.strokeWidth
 
-        val shapeWidth = shapeBounds.width().toInt()
-        val shapeHeight = shapeBounds.height().toInt()
+        val shapeWidth = (shapeBounds.width() + strokeWidth).toInt()
+        val shapeHeight = (shapeBounds.height() + strokeWidth).toInt()
 
         val picture = withPicture(shapeWidth, shapeHeight) {
+
+            val dx = strokeWidth / 2 - shapeBounds.left
+            val dy = strokeWidth / 2 - shapeBounds.top
+
+            translate(dx, dy)
+
             //线段的描边用虚线处理处理
             if (path is LinePath) {
                 if (paint.style == Paint.Style.STROKE) {
@@ -61,8 +68,8 @@ class PictureShapeItem(
         val drawable = ScalePictureDrawable(picture)
 
         this.drawable = drawable
-        this.itemWidth = drawable.minimumWidth.toFloat()
-        this.itemHeight = drawable.minimumHeight.toFloat()
+        this.itemWidth = shapeWidth.toFloat()
+        this.itemHeight = shapeHeight.toFloat()
     }
 
 }

@@ -124,6 +124,64 @@ object CanvasDataHandleOperate {
         return outputFile
     }
 
+    /**将路径 填充/描边 转换为G1代码. 输出的GCode可以直接打印
+     * [path] 最终的数据
+     * */
+    fun pathToGCode(
+        path: Path,
+        pathStep: Float = 1f,
+        offsetLeft: Float = 0f, //偏移的像素
+        offsetTop: Float = 0f,
+        outputFile: File = _defaultGCodeOutputFile()
+    ): File {
+        val targetPath = path
+
+        //像素单位转成mm单位
+        val gCodeHandler = GCodeWriteHandler()
+        val mmValueUnit = MmValueUnit()
+        outputFile.writer().use { writer ->
+            gCodeHandler.gapValue = 0f
+
+            //first
+            gCodeHandler.writeFirst(writer, mmValueUnit)
+
+            val style = path.pathStyle()
+
+            //先填充
+            if (style == Paint.Style.FILL || style == Paint.Style.FILL_AND_STROKE) {
+                gCodeHandler.pathFillToGCode(
+                    targetPath,
+                    mmValueUnit,
+                    writer,
+                    false,
+                    false,
+                    offsetLeft,
+                    offsetTop,
+                    pathStep
+                )
+            }
+
+            //后描边
+            if (style == Paint.Style.STROKE || style == Paint.Style.FILL_AND_STROKE) {
+                gCodeHandler.pathStrokeToGCode(
+                    targetPath,
+                    mmValueUnit,
+                    writer,
+                    false,
+                    false,
+                    offsetLeft,
+                    offsetTop,
+                    pathStep
+                )
+            }
+
+            //finish
+            gCodeHandler.writeFinish(writer)
+        }
+
+        return outputFile
+    }
+
     /**将路径集合转换成GCode. 输出的GCode可以直接打印
      * [pathList] 未缩放旋转的原始路径数据
      * [bounds] 未旋转时的bounds, 用来实现缩放

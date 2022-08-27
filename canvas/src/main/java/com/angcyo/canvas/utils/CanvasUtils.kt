@@ -188,10 +188,10 @@ fun Path.pathStyle() = if (this is StylePath) {
 //<editor-fold desc="Svg">
 
 /**加载[assets]中的Svg[SharpDrawable]*/
-fun loadAssetsSvg(assetsName: String): SharpDrawable? {
+fun loadAssetsSvg(assetsName: String): Pair<String?, SharpDrawable?>? {
     val svg = app().readAssets(assetsName)
     return try {
-        Svg.loadSvgDrawable(svg!!)
+        svg to Svg.loadSvgDrawable(svg!!)
     } catch (e: Exception) {
         e.printStackTrace()
         null
@@ -207,10 +207,10 @@ fun loadAssetsSvgPath(
     drawStyle: Paint.Style? = null, //Paint.Style.STROKE //描边
     viewWidth: Int = 0,
     viewHeight: Int = 0,
-): SharpDrawable? {
+): Pair<String?, SharpDrawable?>? {
     val svg = app().readAssets(assetsName)
     return try {
-        Svg.loadSvgPathDrawable(svg!!, color, drawStyle, null, viewWidth, viewHeight)
+        svg to Svg.loadSvgPathDrawable(svg!!, color, drawStyle, null, viewWidth, viewHeight)
     } catch (e: Exception) {
         e.printStackTrace()
         null
@@ -222,10 +222,17 @@ fun loadAssetsSvgPath(
     paint: Paint, //createPaint(Color.BLACK, Paint.Style.STROKE),
     viewWidth: Int = 0,
     viewHeight: Int = 0,
-): SharpDrawable? {
+): Pair<String?, SharpDrawable?>? {
     val svg = app().readAssets(assetsName)
     return try {
-        Svg.loadSvgPathDrawable(svg!!, paint.color, paint.style, paint, viewWidth, viewHeight)
+        svg to Svg.loadSvgPathDrawable(
+            svg!!,
+            paint.color,
+            paint.style,
+            paint,
+            viewWidth,
+            viewHeight
+        )
     } catch (e: Exception) {
         e.printStackTrace()
         null

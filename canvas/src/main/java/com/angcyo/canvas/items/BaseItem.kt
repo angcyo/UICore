@@ -2,9 +2,11 @@ package com.angcyo.canvas.items
 
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.library.ex.computePathBounds
 import com.angcyo.library.ex.uuid
 
 /**
@@ -71,6 +73,29 @@ abstract class BaseItem : ICanvasItem {
 
     open fun getItemScaleY(renderer: BaseItemRenderer<*>): Float {
         return renderer.getBounds().height() / itemHeight
+    }
+
+    /**转换一个[path]*/
+    open fun transformPath(renderer: BaseItemRenderer<*>, path: Path, result: Path): Path {
+        val matrix = Matrix()
+        val pathBounds = path.computePathBounds()
+
+        //平移到左上角0,0, 然后缩放, 旋转
+        matrix.setTranslate(-pathBounds.left, -pathBounds.top)
+
+        //缩放
+        val bounds = renderer.getBounds()
+        matrix.postScale(bounds.width() / itemWidth, bounds.height() / itemHeight, 0f, 0f)
+
+        //旋转到指定角度
+        matrix.postRotate(renderer.rotate, bounds.width() / 2f, bounds.height() / 2f)
+
+        //平移到指定位置
+        matrix.postTranslate(bounds.left, bounds.top)
+
+        //
+        path.transform(matrix, result)
+        return result
     }
 
     /**获取数据变换的矩阵*/

@@ -11,6 +11,8 @@ import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.DrawableItemRenderer
 import com.angcyo.canvas.items.renderer.PictureItemRenderer
 import com.angcyo.canvas.items.renderer.PictureTextItemRenderer
+import com.angcyo.gcode.GCodeDrawable
+import com.angcyo.library.ex.toBitmap
 import com.pixplicity.sharp.SharpDrawable
 
 /**
@@ -27,6 +29,36 @@ fun BaseItemRenderer<*>.isLineShape(): Boolean {
         }
     }
     return false
+}
+
+/**获取一个用于雕刻的图片数据*/
+fun BaseItemRenderer<*>.getEngraveBitmap(): Bitmap? {
+    val item = getRendererRenderItem()
+    if (item is PictureBitmapItem) {
+        return item.modifyBitmap ?: item.originBitmap
+    }
+    return preview()?.toBitmap()
+}
+
+/**获取GCode数据, 如固有*/
+fun BaseItemRenderer<*>.getGCodeText(): String? {
+    val item = getRendererRenderItem()
+    if (item is PictureBitmapItem) {
+        if (item.dataMode == CanvasConstant.DATA_MODE_GCODE) {
+            return item.data as? String
+        }
+    } else if (item is PictureGCodeItem) {
+        return item.gCode
+    }
+    return null
+}
+
+fun BaseItemRenderer<*>.getPathList(): List<Path>? {
+    val item = getRendererRenderItem()
+    if (item is PictureSharpItem) {
+        return item.sharpDrawable.pathList
+    }
+    return null
 }
 
 //<editor-fold desc="PictureItemRenderer">
@@ -92,6 +124,21 @@ fun CanvasDelegate.addPictureSharpRenderer(
         selectedItem(renderer)
         return item
     }
+}
+
+/**添加一个绘制[PictureGCodeItem]的渲染器
+ * [com.angcyo.gcode.GCodeDrawable]
+ * */
+fun CanvasDelegate.addPictureGCodeRenderer(
+    gCode: String,
+    drawable: GCodeDrawable
+): PictureGCodeItem {
+    val renderer = PictureItemRenderer<PictureGCodeItem>(this)
+    val item = PictureGCodeItem(gCode, drawable)
+    renderer.setRendererRenderItem(item)
+    addCentreItemRenderer(renderer, Strategy.normal)
+    selectedItem(renderer)
+    return item
 }
 
 //</editor-fold desc="PictureItemRenderer">

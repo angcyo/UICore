@@ -110,15 +110,15 @@ class GCodeWriteHandler {
     /**
      * [Path] 填充路径转GCode
      * [pathToGCode]
-     * [isFirst] 是否是头数据
-     * [isFinish] 是否是尾数据
+     * [isFirst] 是否是头数据, 决定[writeFirst]
+     * [isFinish] 是否是尾数据, 决定[writeFinish]
      * */
     fun pathFillToGCode(
         path: Path,
         unit: IValueUnit,
         writer: Appendable,
-        isFirst: Boolean,
-        isFinish: Boolean,
+        isFirst: Boolean = false,
+        isFinish: Boolean = false,
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
         pathStep: Float = 1f
