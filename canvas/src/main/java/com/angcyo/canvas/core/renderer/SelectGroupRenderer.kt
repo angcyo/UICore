@@ -107,7 +107,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         selectRect.setEmpty()
         //重置滚动
         rotate = 0f
-        _rendererItem = null
+        rendererItem = null
     }
 
     override fun render(canvas: Canvas) {

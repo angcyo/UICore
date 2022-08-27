@@ -2,7 +2,6 @@ package com.angcyo.canvas.items.renderer
 
 import android.graphics.*
 import android.graphics.drawable.Drawable
-import android.widget.LinearLayout
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.*
@@ -11,7 +10,6 @@ import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.renderer.BaseRenderer
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.BaseItem
-import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.library.L
@@ -45,14 +43,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     var isLockScaleRatio: Boolean = true
 
     /**需要渲染的数据*/
-    var _rendererItem: T? = null
-        set(value) {
-            val old = field
-            field = value
-            if (old != value) {
-                onUpdateRendererItem(value, old)
-            }
-        }
+    var rendererItem: T? = null
 
     val _rotateBounds = emptyRectF()
 
@@ -86,7 +77,15 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     //</editor-fold desc="计算属性">
 
-    override fun getRendererItem(): T? = _rendererItem
+    override fun getRendererRenderItem(): T? = rendererItem
+
+    override fun setRendererRenderItem(item: T?) {
+        val old = getRendererRenderItem()
+        if (old != item) {
+            rendererItem = item
+            onUpdateRendererItem(item, old)
+        }
+    }
 
     /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
     override fun getRotateBounds(): RectF = _rotateBounds
@@ -118,7 +117,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         L.d(
             buildString {
                 appendLine(this@BaseItemRenderer)
-                append(getRendererItem()?.simpleHash())
+                append(getRendererRenderItem()?.simpleHash())
                 appendLine(":Bounds改变:(w:${changeBeforeBounds.width()} h:${changeBeforeBounds.height()} -> w:${getBounds().width()} h:${getBounds().height()})")
                 append("->${changeBeforeBounds}->${getBounds()}")
             }
@@ -146,13 +145,15 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         //getBounds().limitMinWidthHeight(100f, 100f, ADJUST_TYPE_LT)
         if (reason.flag == Reason.REASON_FLAG_BOUNDS || reason.flag == Reason.REASON_FLAG_ROTATE) {
             //旋转或者改变宽高后, 需要重新索引
-            getRendererItem()?.engraveIndex = null
+            getRendererRenderItem()?.engraveIndex = null
         }
     }
 
     override fun onUpdateRendererItem(item: T?, oldItem: T?) {
         super.onUpdateRendererItem(item, oldItem)
-        _rendererItem = item
+        item?.let {
+            requestRendererItemUpdate(oldItem)
+        }
     }
 
     override fun updateLockScaleRatio(lock: Boolean) {
@@ -170,7 +171,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     }
 
     override fun preview(): Drawable? {
-        return _rendererItem?.run {
+        return rendererItem?.run {
             val renderBounds = getRenderBounds()
             renderBounds.withSave(0f, 0f, renderBounds.width(), renderBounds.height()) {
                 val rotateBounds = getRenderRotateBounds()
@@ -241,7 +242,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     override fun containsPoint(point: PointF): Boolean {
         var rendererBounds = getRenderBounds()
 
-        val item = getRendererItem()
+        /*val item = getRendererItem()
         if (item is PictureShapeItem && item.shapePath is LinePath) {
             //如果是线段, 方法矩形区域
             _tempRectF.set(rendererBounds)
@@ -251,7 +252,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
                 _tempRectF.inset(0f, -10 * dp)
             }
             rendererBounds = _tempRectF
-        }
+        }*/
 
         return getRotateMatrix(rendererBounds.centerX(), rendererBounds.centerY()).run {
             rotatePath.reset()
@@ -413,10 +414,10 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     /**当渲染的[drawable]改变后, 调用此方法, 更新bounds*/
     fun updateDrawableBounds(
-        oldWidth: Float = getRendererItem()?.itemWidth ?: 0f,
-        oldHeight: Float = getRendererItem()?.itemHeight ?: 0f
+        oldWidth: Float = getRendererRenderItem()?.itemWidth ?: 0f,
+        oldHeight: Float = getRendererRenderItem()?.itemHeight ?: 0f
     ) {
-        getRendererItem()?.let { item ->
+        getRendererRenderItem()?.let { item ->
             var isUpdate = false
 
             val bounds = getBounds()
@@ -480,7 +481,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
             return
         }
         paint.textAlign = align
-        onRendererItemUpdate()
+        requestRendererItemUpdate()
 
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
             canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
@@ -504,7 +505,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         paint.color = color
 
         //更新需要绘制的元素
-        onRendererItemUpdate()
+        requestRendererItemUpdate()
 
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
             canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
@@ -521,11 +522,12 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     /**重写此方法, 更新需要渲染的元素.
      * 比如: 画笔颜色改变, 需要重绘文本; 图片更新; Drawable更新等
+     * [fromItem] 之前的item, 如果有
      * */
-    open fun onRendererItemUpdate() {
-        getRendererItem()?.let { item ->
-            val oldWidth = getRendererItem()?.itemWidth ?: 0f
-            val oldHeight = getRendererItem()?.itemHeight ?: 0f
+    open fun requestRendererItemUpdate(fromItem: BaseItem? = null) {
+        getRendererRenderItem()?.let { item ->
+            val oldWidth = fromItem?.itemWidth ?: item.itemWidth
+            val oldHeight = fromItem?.itemHeight ?: item.itemHeight
             item.updateItem(paint)
             updateDrawableBounds(oldWidth, oldHeight)
         }

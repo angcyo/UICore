@@ -583,11 +583,11 @@ class CanvasDelegate(val view: View) : ICanvasView {
             return null
         }
         val selectedRenderer = getSelectedRenderer()
-        if (selectedRenderer?.getRendererItem()?.uuid == uuid) {
+        if (selectedRenderer?.getRendererRenderItem()?.uuid == uuid) {
             return selectedRenderer
         }
         for (item in itemsRendererList) {
-            if (item.getRendererItem()?.uuid == uuid) {
+            if (item.getRendererRenderItem()?.uuid == uuid) {
                 return item
             }
         }

@@ -12,7 +12,7 @@ import com.angcyo.library.ex.withPicture
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/29
  */
-open class PictureItem : DrawableItem() {
+open class PictureDrawableItem : DrawableItem() {
 
     init {
         dataType = CanvasConstant.DATA_TYPE_BITMAP
@@ -24,25 +24,27 @@ open class PictureItem : DrawableItem() {
     }
 
     override fun updateDrawable(drawable: Drawable?) {
-        super.updateDrawable(drawable)
         drawable?.let {
             updatePictureDrawable(it)
         }
     }
 
     /**更新Drawable 使用[ScalePictureDrawable]*/
-    fun updatePictureDrawable(drawable: Drawable) {
-        val width = drawable.minimumWidth
-        val height = drawable.minimumHeight
-
-        val pictureDrawable = ScalePictureDrawable(withPicture(width, height) {
-            drawable.setBounds(0, 0, width, height)
-            drawable.draw(this)
-        })
-
-        this.drawable = pictureDrawable
+    open fun updatePictureDrawable(drawable: Drawable) {
+        val width = drawable.intrinsicWidth
+        val height = drawable.intrinsicHeight
         this.itemWidth = width.toFloat()
         this.itemHeight = height.toFloat()
+
+        if (drawable is ScalePictureDrawable) {
+            this.drawable = drawable
+        } else {
+            val pictureDrawable = ScalePictureDrawable(withPicture(width, height) {
+                drawable.setBounds(0, 0, width, height)
+                drawable.draw(this)
+            })
+            this.drawable = pictureDrawable
+        }
     }
 
 }

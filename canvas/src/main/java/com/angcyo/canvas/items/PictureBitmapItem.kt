@@ -2,9 +2,10 @@ package com.angcyo.canvas.items
 
 import android.graphics.Bitmap
 import android.graphics.Paint
+import android.graphics.RectF
+import android.graphics.drawable.Drawable
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.component.ScalePictureDrawable
-import com.angcyo.library.ex.emptyRectF
 import com.angcyo.library.ex.withPicture
 
 /**
@@ -12,19 +13,14 @@ import com.angcyo.library.ex.withPicture
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/05/06
  */
-class PictureBitmapItem : PictureItem() {
-
+class PictureBitmapItem(
     /**原始的图片, 未修改前的数据*/
-    var originBitmap: Bitmap? = null
-
-    /**绘制的图片, 可能是修改后的数据*/
-    var bitmap: Bitmap? = null
-
-    /**预览的图片*/
-    var previewBitmap: Bitmap? = null
-
-    //记录图片的真实bounds
-    val bitmapBounds = emptyRectF()
+    val originBitmap: Bitmap,
+    /**算法修改后的图片*/
+    var modifyBitmap: Bitmap? = null,
+    /**预览的Drawable, 可以实现障眼法*/
+    var previewDrawable: Drawable? = null
+) : PictureDrawableItem() {
 
     init {
         itemLayerName = "Bitmap"
@@ -34,21 +30,38 @@ class PictureBitmapItem : PictureItem() {
 
     /**更新Drawable*/
     override fun updateItem(paint: Paint) {
-        val b = /*previewBitmap ?: */bitmap
-        if (b == null) {
-            super.updateItem(paint)
-        } else {
-            val itemWidth = b.width
-            val itemHeight = b.height
-
-            bitmapBounds.set(0f, 0f, itemWidth.toFloat(), itemHeight.toFloat())
-            val drawable = ScalePictureDrawable(withPicture(itemWidth, itemHeight) {
-                drawBitmap(b, null, bitmapBounds, null)
+        val _modifyBitmap = modifyBitmap
+        if (_modifyBitmap == null) {
+            //没有修改后的图片, 则使用原图预览
+            val width = originBitmap.width
+            val height = originBitmap.height
+            val bitmapDrawable = ScalePictureDrawable(withPicture(width, height) {
+                drawBitmap(
+                    originBitmap,
+                    null,
+                    RectF(0f, 0f, width.toFloat(), height.toFloat()),
+                    null
+                )
             })
+            updateDrawable(bitmapDrawable)
+        } else {
+            //有修改后的图片则使用
+            val width = _modifyBitmap.width
+            val height = _modifyBitmap.height
+            val bitmapDrawable = ScalePictureDrawable(withPicture(width, height) {
+                drawBitmap(
+                    _modifyBitmap,
+                    null,
+                    RectF(0f, 0f, width.toFloat(), height.toFloat()),
+                    null
+                )
+            })
+            updateDrawable(bitmapDrawable)
+        }
 
-            this.drawable = drawable
-            this.itemWidth = bitmapBounds.width()
-            this.itemHeight = bitmapBounds.height()
+        if (previewDrawable != null) {
+            //强制指定了预览的drawable
+            drawable = previewDrawable
         }
     }
 }

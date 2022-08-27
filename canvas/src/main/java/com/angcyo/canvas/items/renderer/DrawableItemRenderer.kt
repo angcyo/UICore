@@ -3,7 +3,6 @@ package com.angcyo.canvas.items.renderer
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
-import android.graphics.drawable.Drawable
 import androidx.core.graphics.withMatrix
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.ICanvasView
@@ -34,7 +33,7 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
     //<editor-fold desc="初始化">
 
     override fun getName(): CharSequence? {
-        return _name ?: _rendererItem?.dataType?.toDataTypeStr() ?: super.getName()
+        return _name ?: rendererItem?.dataType?.toDataTypeStr() ?: super.getName()
     }
 
     override fun onUpdateRendererItem(item: T?, oldItem: T?) {
@@ -42,7 +41,7 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
     }
 
     override fun render(canvas: Canvas) {
-        _rendererItem?.drawable?.let { drawable ->
+        rendererItem?.drawable?.let { drawable ->
             val bounds = getRenderBounds()
             //需要处理矩形翻转的情况
             if (drawable is ScalePictureDrawable) {
@@ -88,7 +87,7 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
             return
         }
         paint.style = style
-        onRendererItemUpdate()
+        requestRendererItemUpdate()
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
             canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                 override fun runUndo() {
@@ -100,14 +99,5 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
                 }
             })
         }
-    }
-
-    /**设置渲染的[drawable]*/
-    open fun setRenderDrawable(drawable: Drawable?): T {
-        val item = DrawableItem()
-        item.drawable = drawable
-        _rendererItem = item as T
-        onRendererItemUpdate()
-        return item
     }
 }

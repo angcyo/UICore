@@ -82,7 +82,8 @@ object ShapesHelper {
 
     /**画线*/
     fun linePath(length: Float = defaultWidth): Path = LinePath().apply {
-        initPath(length)
+        moveTo(0f, 0f)
+        lineTo(length, 0f)
     }
 
     /**圆形Path

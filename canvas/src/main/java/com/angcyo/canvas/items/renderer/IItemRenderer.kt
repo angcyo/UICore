@@ -28,7 +28,10 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     //<editor-fold desc="bounds">
 
     /**渲染具体的项*/
-    fun getRendererItem(): T?
+    fun getRendererRenderItem(): T?
+
+    /**设置一个渲染项*/
+    fun setRendererRenderItem(item: T?)
 
     /**旋转后的坐标
      * [getBounds]

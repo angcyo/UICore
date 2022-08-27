@@ -14,6 +14,7 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.*
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.getMaxLineWidth
+import com.angcyo.library.L
 import com.angcyo.library.ex.*
 
 /**
@@ -50,6 +51,8 @@ class MonitorRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView), ICanv
         if (_isTouchDown) {
             _touchPoint.set(event.x, event.y)
         }
+        _tempPoint.set(event.x, event.y)
+        L.i(canvasViewBox.viewPointToCoordinateSystemPoint(_tempPoint)) //手指在坐标系中的位置, px
         canvasViewBox.canvasView.refresh()
         return false
     }

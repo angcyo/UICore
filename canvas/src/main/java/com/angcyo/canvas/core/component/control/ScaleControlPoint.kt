@@ -193,13 +193,13 @@ class ScaleControlPoint : ControlPoint() {
                         var newHeight = this[1] - touchDiffHeight
 
                         if (itemRenderer.isLineShape()) {
-                            val linePath =
-                                (itemRenderer.getRendererItem() as PictureShapeItem).shapePath as LinePath
+                            /*val linePath =
+                                (itemRenderer.getRendererRenderItem() as PictureShapeItem).shapePath as LinePath
                             if (linePath.orientation == LinearLayout.VERTICAL) {
                                 newWidth = linePath.lineBounds.width()
                             } else {
                                 newHeight = linePath.lineBounds.height()
-                            }
+                            }*/
                         } else {
                             if (isLockScaleRatio) {
                                 //等比调整

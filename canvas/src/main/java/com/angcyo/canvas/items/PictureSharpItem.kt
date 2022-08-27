@@ -2,7 +2,6 @@ package com.angcyo.canvas.items
 
 import android.graphics.Paint
 import com.angcyo.canvas.utils.CanvasConstant
-import com.angcyo.canvas.utils.CanvasDataHandleOperate
 import com.angcyo.svg.Svg
 import com.pixplicity.sharp.SharpDrawable
 
@@ -10,9 +9,12 @@ import com.pixplicity.sharp.SharpDrawable
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/08/26
  */
-class PictureSharpItem : PictureItem() {
-
-    var sharpDrawable: SharpDrawable? = null
+class PictureSharpItem(
+    /**svg原始数据*/
+    val svg: String,
+    /**可视化对象*/
+    val sharpDrawable: SharpDrawable
+) : PictureDrawableItem() {
 
     init {
         itemLayerName = "SVG"
@@ -21,7 +23,7 @@ class PictureSharpItem : PictureItem() {
     }
 
     override fun updateItem(paint: Paint) {
-        val sharpDrawable = sharpDrawable ?: return
+        val sharpDrawable = sharpDrawable
         if (!sharpDrawable.pathList.isNullOrEmpty()) {
             val newDrawable = Svg.loadPathList(
                 sharpDrawable.pathList,
@@ -31,13 +33,13 @@ class PictureSharpItem : PictureItem() {
                 0,
                 0
             )
-            setHoldData(CanvasDataHandleOperate.KEY_SVG, newDrawable.pathList)
             this.drawable = newDrawable
+            this.dataMode = CanvasConstant.DATA_MODE_GCODE
             this.itemWidth = newDrawable.pathBounds.width()
             this.itemHeight = newDrawable.pathBounds.height()
         } else {
-            dataMode = CanvasConstant.DATA_MODE_GREY
             this.drawable = sharpDrawable
+            this.dataMode = CanvasConstant.DATA_MODE_GREY
             this.itemWidth = sharpDrawable.intrinsicWidth.toFloat()
             this.itemHeight = sharpDrawable.intrinsicHeight.toFloat()
         }

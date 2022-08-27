@@ -16,6 +16,7 @@ open class DrawableItem : BaseItem() {
     init {
         itemLayerName = "Drawable"
         dataType = CanvasConstant.DATA_TYPE_BITMAP
+        dataMode = CanvasConstant.DATA_MODE_GREY
     }
 
     /**更新[drawable]*/

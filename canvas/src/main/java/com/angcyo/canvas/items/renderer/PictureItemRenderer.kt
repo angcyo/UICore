@@ -1,17 +1,18 @@
 package com.angcyo.canvas.items.renderer
 
+import android.graphics.Bitmap
+import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.PictureDrawable
-import android.widget.LinearLayout
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.ControlPoint
-import com.angcyo.canvas.core.component.SmartAssistant
 import com.angcyo.canvas.core.renderer.ICanvasStep
-import com.angcyo.canvas.items.PictureItem
+import com.angcyo.canvas.items.PictureBitmapItem
+import com.angcyo.canvas.items.PictureDrawableItem
 import com.angcyo.canvas.items.PictureShapeItem
 
 /**
@@ -22,8 +23,13 @@ import com.angcyo.canvas.items.PictureShapeItem
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/29
  */
-abstract class PictureItemRenderer<T : PictureItem>(canvasView: ICanvasView) :
+open class PictureItemRenderer<T : PictureDrawableItem>(canvasView: ICanvasView) :
     DrawableItemRenderer<T>(canvasView) {
+
+    init {
+        paint.strokeWidth = 1f //* dp
+        paint.style = Paint.Style.FILL
+    }
 
     override fun changeBounds(reason: Reason, block: RectF.() -> Unit): Boolean {
         return super.changeBounds(reason, block)
@@ -31,7 +37,7 @@ abstract class PictureItemRenderer<T : PictureItem>(canvasView: ICanvasView) :
 
     override fun isSupportControlPoint(type: Int): Boolean {
         if (type == ControlPoint.POINT_TYPE_LOCK) {
-            val item = getRendererItem()
+            val item = getRendererRenderItem()
             if (item is PictureShapeItem) {
                 if (item.shapePath is LinePath) {
                     //线段不支持任意比例缩放
@@ -43,17 +49,17 @@ abstract class PictureItemRenderer<T : PictureItem>(canvasView: ICanvasView) :
     }
 
     override fun isSupportSmartAssistant(type: Int): Boolean {
-        val item = getRendererItem()
+        val item = getRendererRenderItem()
         if (item is PictureShapeItem) {
             val shapePath = item.shapePath
             if (shapePath is LinePath) {
-                if (shapePath.orientation == LinearLayout.VERTICAL) {
+                /*if (shapePath.orientation == LinearLayout.VERTICAL) {
                     //垂直的线, 不支持w调整
                     return type != SmartAssistant.SMART_TYPE_W
                 } else {
                     //水平的线, 不支持h调整
                     return type != SmartAssistant.SMART_TYPE_H
-                }
+                }*/
             }
         }
         return super.isSupportSmartAssistant(type)
@@ -114,50 +120,126 @@ abstract class PictureItemRenderer<T : PictureItem>(canvasView: ICanvasView) :
 
     //<editor-fold desc="渲染操作方法">
 
-    /**直接更新[drawable]*/
-    fun updateItemDrawable(
-        drawable: Drawable?,
-        holdData: Map<String, Any?>? = null,
-        keepBounds: RectF? = null,
-        strategy: Strategy = Strategy.normal
-    ) {
-        val item = getRendererItem() ?: return
-        val oldValue = item.drawable
-
-        if (oldValue == drawable) {
+    /**设置一个新的[rendererItem]
+     * [bounds] 是否强制指定新的bounds*/
+    fun updateRendererItem(item: T?, bounds: RectF? = null, strategy: Strategy = Strategy.normal) {
+        val oldItem = getRendererRenderItem()
+        if (oldItem == item) {
             return
         }
 
         val oldBounds = RectF(getBounds())
-        val oldData = item.holdData
+        var setBounds: RectF? = null
 
-        if (keepBounds != null) {
-            item.holdData = holdData
-            item.drawable = drawable
+        setRendererRenderItem(item)
+
+        if (bounds != null) {
+            setBounds = RectF(bounds)
             changeBounds {
-                set(keepBounds)
+                set(bounds)
             }
-        } else {
-            item.holdData = holdData
         }
 
-        onRendererItemUpdate()//
-
-        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL && oldValue != null) {
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
             canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
 
                 val newBounds = RectF(getBounds())
 
                 override fun runUndo() {
-                    updateItemDrawable(oldValue, oldData, oldBounds, Strategy.undo)
+                    updateRendererItem(oldItem, oldBounds, Strategy.undo)
                 }
 
                 override fun runRedo() {
-                    updateItemDrawable(drawable, holdData, newBounds, Strategy.redo)
+                    updateRendererItem(item, setBounds ?: newBounds, Strategy.redo)
+                }
+            })
+        }
+    }
+
+    /**直接更新[drawable]*/
+    fun updateItemDrawable(
+        drawable: Drawable?,
+        bounds: RectF? = null,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val item = getRendererRenderItem() ?: return
+        val oldValue = item.drawable
+
+        val oldBounds = RectF(getBounds())
+        item.drawable = drawable
+
+        requestRendererItemUpdate()//
+
+        if (bounds != null) {
+            changeBounds {
+                set(bounds)
+            }
+        }
+
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+
+                val newBounds = RectF(getBounds())
+
+                override fun runUndo() {
+                    updateItemDrawable(oldValue, oldBounds, Strategy.undo)
+                }
+
+                override fun runRedo() {
+                    updateItemDrawable(drawable, newBounds, Strategy.redo)
+                }
+            })
+        }
+    }
+
+    /**更新算法修改后的图片, 并保持原先的缩放比例
+     * [bounds] 需要强制更新的Bounds, 如果有*/
+    fun updateItemModifyBitmap(
+        modifyBitmap: Bitmap?,
+        previewDrawable: Drawable?,
+        bounds: RectF? = null,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val item = getRendererRenderItem() ?: return
+        if (item !is PictureBitmapItem) {
+            throw IllegalStateException("类型不匹配")
+        }
+        val oldBounds = RectF(getBounds())
+
+        val oldModifyBitmap = item.modifyBitmap
+        val oldPreviewDrawable = item.previewDrawable
+        item.modifyBitmap = modifyBitmap
+        item.previewDrawable = previewDrawable
+
+        requestRendererItemUpdate()//
+
+        bounds?.let {
+            changeBounds {
+                set(it)
+            }
+        }
+
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+
+                val newBounds = RectF(getBounds())
+
+                override fun runUndo() {
+                    updateItemModifyBitmap(
+                        oldModifyBitmap,
+                        oldPreviewDrawable,
+                        oldBounds,
+                        Strategy.undo
+                    )
+                }
+
+                override fun runRedo() {
+                    updateItemModifyBitmap(modifyBitmap, previewDrawable, newBounds, Strategy.redo)
                 }
             })
         }
     }
 
     //</editor-fold desc="渲染操作方法">
+
 }

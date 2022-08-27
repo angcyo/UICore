@@ -20,7 +20,10 @@ import kotlin.math.tan
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/21
  */
-class PictureTextItem : PictureItem() {
+class PictureTextItem(
+    /**需要绘制的文本*/
+    var text: String
+) : PictureDrawableItem() {
 
     companion object {
 
@@ -60,11 +63,8 @@ class PictureTextItem : PictureItem() {
         const val ITALIC_SKEW = -0.25f
     }
 
-    /**需要绘制的文本*/
-    var text: String? = null
-
     /**是否使用紧凑文本绘制*/
-    var compactText: Boolean = false
+    var isCompactText: Boolean = false
 
     /**文本排列方向
      * [LinearLayout.HORIZONTAL]
@@ -91,7 +91,7 @@ class PictureTextItem : PictureItem() {
 
     init {
         itemLayerName = "Text"
-        compactText = true
+        isCompactText = true
         wordSpacing = 1 * dp //字间距
         dataType = CanvasConstant.DATA_TYPE_TEXT
         dataMode = CanvasConstant.DATA_MODE_GREY
@@ -156,7 +156,7 @@ class PictureTextItem : PictureItem() {
     /**单行文本字符的宽度*/
     fun measureTextWidth(paint: Paint, text: String): Float {
         paint.textBounds(text, _textMeasureBounds)
-        val textWidth = if (compactText) {
+        val textWidth = if (isCompactText) {
             _textMeasureBounds.width().toFloat()
         } else {
             paint.textWidth(text)
@@ -180,7 +180,7 @@ class PictureTextItem : PictureItem() {
 
     /**单个文本字符的高度*/
     fun measureTextHeight(paint: Paint, text: String): Float {
-        return if (compactText) {
+        return if (isCompactText) {
             paint.textBounds(text, _textMeasureBounds)
             _textMeasureBounds.height().toFloat()
         } else {
@@ -190,7 +190,7 @@ class PictureTextItem : PictureItem() {
 
     /**下沉的距离*/
     fun measureTextDescent(paint: Paint, text: String): Float {
-        return if (compactText) {
+        return if (isCompactText) {
             paint.textBounds(text).bottom.toFloat()
         } else {
             paint.descent()
@@ -201,78 +201,77 @@ class PictureTextItem : PictureItem() {
      * [com.angcyo.canvas.items.DrawableItem.drawable]
      * */
     override fun updateItem(paint: Paint) {
-        text?.let { drawText ->
-            //createStaticLayout(drawText, paint)
-            val width = calcTextWidth(paint, drawText) + widthIncrease
-            val height = calcTextHeight(paint, drawText) + heightIncrease
+        val drawText = text
+        //createStaticLayout(drawText, paint)
+        val width = calcTextWidth(paint, drawText) + widthIncrease
+        val height = calcTextHeight(paint, drawText) + heightIncrease
 
-            val drawable = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
-                val lineTextList = lineTextList(drawText)
+        val drawable = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
+            val lineTextList = lineTextList(drawText)
 
-                var x = 0f
-                var y = 0f
+            var x = 0f
+            var y = 0f
 
-                if (orientation == LinearLayout.HORIZONTAL) {
-                    x = when (paint.textAlign) {
-                        Paint.Align.RIGHT -> width
-                        Paint.Align.CENTER -> width / 2
+            if (orientation == LinearLayout.HORIZONTAL) {
+                x = when (paint.textAlign) {
+                    Paint.Align.RIGHT -> width
+                    Paint.Align.CENTER -> width / 2
+                    else -> 0f
+                }
+
+                lineTextList.forEach { lineText ->
+                    val lineTextHeight = calcTextHeight(paint, lineText)
+                    val descent = measureTextDescent(paint, lineText)
+
+                    val offsetX = if (isCompactText) {
+                        when (paint.textAlign) {
+                            Paint.Align.RIGHT -> -_skewWidth.toInt()
+                            Paint.Align.CENTER -> -_textMeasureBounds.left / 2 - _skewWidth.toInt() / 2
+                            else -> -_textMeasureBounds.left
+                        }
+                    } else {
+                        0
+                    }
+
+                    y += lineTextHeight
+                    drawText(lineText, x + offsetX, y - descent, paint)
+                    y += lineSpacing
+                }
+            } else {
+                lineTextList.forEach { lineText ->
+                    val textWidth = calcTextWidth(paint, lineText)
+
+                    var offsetX = when (paint.textAlign) {
+                        Paint.Align.RIGHT -> textWidth - _skewWidth.toInt()
+                        Paint.Align.CENTER -> textWidth / 2 - _skewWidth.toInt() / 2
                         else -> 0f
                     }
 
-                    lineTextList.forEach { lineText ->
-                        val lineTextHeight = calcTextHeight(paint, lineText)
-                        val descent = measureTextDescent(paint, lineText)
+                    lineText.forEach { char ->
+                        val text = "$char"
+                        y += measureTextHeight(paint, text)
+                        val descent = measureTextDescent(paint, text)
+                        val textBounds = paint.textBounds(text)
 
-                        val offsetX = if (compactText) {
-                            when (paint.textAlign) {
-                                Paint.Align.RIGHT -> -_skewWidth.toInt()
-                                Paint.Align.CENTER -> -_textMeasureBounds.left / 2 - _skewWidth.toInt() / 2
-                                else -> -_textMeasureBounds.left
+                        if (isCompactText) {
+                            offsetX = when (paint.textAlign) {
+                                Paint.Align.RIGHT -> textWidth - _skewWidth.toInt() /*+ textBounds.left.toFloat()*/
+                                Paint.Align.CENTER -> textWidth / 2 - _skewWidth.toInt() / 2
+                                else -> -textBounds.left.toFloat()
                             }
-                        } else {
-                            0
                         }
 
-                        y += lineTextHeight
-                        drawText(lineText, x + offsetX, y - descent, paint)
-                        y += lineSpacing
+                        drawText(text, x + offsetX, y - descent, paint)
+                        y += wordSpacing
                     }
-                } else {
-                    lineTextList.forEach { lineText ->
-                        val textWidth = calcTextWidth(paint, lineText)
-
-                        var offsetX = when (paint.textAlign) {
-                            Paint.Align.RIGHT -> textWidth - _skewWidth.toInt()
-                            Paint.Align.CENTER -> textWidth / 2 - _skewWidth.toInt() / 2
-                            else -> 0f
-                        }
-
-                        lineText.forEach { char ->
-                            val text = "$char"
-                            y += measureTextHeight(paint, text)
-                            val descent = measureTextDescent(paint, text)
-                            val textBounds = paint.textBounds(text)
-
-                            if (compactText) {
-                                offsetX = when (paint.textAlign) {
-                                    Paint.Align.RIGHT -> textWidth - _skewWidth.toInt() /*+ textBounds.left.toFloat()*/
-                                    Paint.Align.CENTER -> textWidth / 2 - _skewWidth.toInt() / 2
-                                    else -> -textBounds.left.toFloat()
-                                }
-                            }
-
-                            drawText(text, x + offsetX, y - descent, paint)
-                            y += wordSpacing
-                        }
-                        x += textWidth + lineSpacing
-                        y = 0f
-                    }
+                    x += textWidth + lineSpacing
+                    y = 0f
                 }
-            })
+            }
+        })
 
-            this.drawable = drawable
-            this.itemWidth = width
-            this.itemHeight = height
-        }
+        this.drawable = drawable
+        this.itemWidth = width
+        this.itemHeight = height
     }
 }

@@ -3,8 +3,6 @@ package com.angcyo.canvas.utils
 import android.graphics.*
 import android.view.Gravity
 import com.angcyo.canvas.core.MmValueUnit
-import com.angcyo.canvas.items.getHoldData
-import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.gcode.GCodeAdjust
 import com.angcyo.gcode.GCodeWriteHandler
 import com.angcyo.library.ex.*
@@ -407,14 +405,4 @@ object CanvasDataHandleOperate {
         }
         return outputFile
     }
-}
-
-/**获取渲染器对应的GCode数据, 如果有*/
-fun BaseItemRenderer<*>.getGCodeText(): String? {
-    return getRendererItem()?.getHoldData(CanvasDataHandleOperate.KEY_GCODE)
-}
-
-/**获取渲染器对应的List<Path>数据, 如果有*/
-fun BaseItemRenderer<*>.getPathList(): List<Path>? {
-    return getRendererItem()?.getHoldData(CanvasDataHandleOperate.KEY_SVG)
 }

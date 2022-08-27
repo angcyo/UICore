@@ -1,7 +1,9 @@
 package com.angcyo.canvas.items
 
+import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
+import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.ex.uuid
 
@@ -35,15 +37,12 @@ abstract class BaseItem : ICanvasItem {
     /**用来存放自定义的数据*/
     var data: Any? = null
 
-    /**额外存储的数据, 支持回退栈管理*/
-    var holdData: Map<String, Any?>? = null
-
     //
 
-    /**自身实际的宽*/
+    /**自身实际的宽, 用来计算最终的缩放比*/
     var itemWidth: Float = 0f
 
-    /**自身实际的高*/
+    /**自身实际的高, 用来计算最终的缩放比*/
     var itemHeight: Float = 0f
 
     //
@@ -54,40 +53,36 @@ abstract class BaseItem : ICanvasItem {
     /**图层预览的图形*/
     override var itemLayerDrawable: Drawable? = null
 
-    //
+    // ---
 
-    /**更新[BaseItem]用来重新绘制内容*/
+    /**更新[BaseItem]用来重新绘制内容
+     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.requestRendererItemUpdate]
+     * */
     open fun updateItem(paint: Paint) {
 
     }
-}
 
-/**获取额外存储的数据
- * [com.angcyo.canvas.items.BaseItem.holdData]*/
-inline fun <reified T> BaseItem.getHoldData(key: String): T? {
-    val any = holdData?.get(key)
-    if (any is T) {
-        return any
-    }
-    return null
-}
+    // ---
 
-/**设置额外的数据存储*/
-fun <T> BaseItem.setHoldData(key: String, value: T?) {
-    if (holdData == null) {
-        holdData = hashMapOf()
-    }
-    var data = holdData
-    if (data is MutableMap<String, Any?>) {
-        //no
-    } else {
-        holdData = hashMapOf<String, Any?>().apply {
-            putAll(data!!)
-        }
-        data = holdData
+    /**当前x的缩放比*/
+    open fun getItemScaleX(renderer: BaseItemRenderer<*>): Float {
+        return renderer.getBounds().width() / itemWidth
     }
 
-    if (data is MutableMap<String, Any?>) {
-        data.put(key, value)
+    open fun getItemScaleY(renderer: BaseItemRenderer<*>): Float {
+        return renderer.getBounds().height() / itemHeight
+    }
+
+    /**获取数据变换的矩阵*/
+    open fun getMatrix(renderer: BaseItemRenderer<*>): Matrix {
+        val matrix = Matrix()
+        val bounds = renderer.getBounds()
+        //缩放到指定大小
+        matrix.setScale(bounds.width() / itemWidth, bounds.height() / itemHeight, 0f, 0f)
+        //旋转到指定角度
+        matrix.postRotate(renderer.rotate, bounds.width() / 2f, bounds.height() / 2f)
+        //平移到指定位置
+        matrix.postTranslate(bounds.left, bounds.top)
+        return matrix
     }
 }

@@ -28,16 +28,15 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
 
     /**设置渲染的[text]*/
     fun setRenderText(text: String): PictureTextItem {
-        val item = PictureTextItem()
-        item.text = text
-        _rendererItem = item
+        val item = PictureTextItem(text)
+        rendererItem = item
         updatePaint()
         return item
     }
 
     /**更新画笔*/
     fun updatePaint() {
-        val item = getRendererItem() ?: return
+        val item = getRendererRenderItem() ?: return
         paint.let {
             it.isStrikeThruText = item.textStyle.isDeleteLine
             it.isUnderlineText = item.textStyle.isUnderLine
@@ -48,7 +47,7 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
             //it.style = paintStyle
         }
         //更新对应的drawable
-        onRendererItemUpdate()
+        requestRendererItemUpdate()
     }
 
     //</editor-fold desc="core">
@@ -57,14 +56,14 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
 
     /**更新渲染的文本*/
     fun updateItemText(text: String, strategy: Strategy = Strategy.normal) {
-        val item = getRendererItem() ?: return
+        val item = getRendererRenderItem() ?: return
         val oldValue = item.text
         if (oldValue == text) {
             return
         }
         item.text = text
-        onRendererItemUpdate()
-        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL && oldValue != null) {
+        requestRendererItemUpdate()
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
             canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                 override fun runUndo() {
                     updateItemText(oldValue, Strategy.undo)
@@ -79,7 +78,7 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
 
     /**更新文本样式*/
     fun updateTextStyle(style: Int, strategy: Strategy = Strategy.normal) {
-        val item = getRendererItem() ?: return
+        val item = getRendererRenderItem() ?: return
         val oldValue = item.textStyle
         if (oldValue == style) {
             return
@@ -101,7 +100,7 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
 
     /**激活文本样式*/
     fun enableTextStyle(style: Int, enable: Boolean = true, strategy: Strategy = Strategy.normal) {
-        val item = getRendererItem() ?: return
+        val item = getRendererRenderItem() ?: return
         val oldValue = item.textStyle
 
         val newValue = if (enable) {
@@ -130,7 +129,7 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
 
     /**更新笔的字体*/
     fun updateTextTypeface(typeface: Typeface?, strategy: Strategy = Strategy.normal) {
-        val item = getRendererItem() ?: return
+        val item = getRendererRenderItem() ?: return
         val oldValue = paint.typeface
         if (oldValue == typeface) {
             return
@@ -152,13 +151,13 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
 
     /**更新文本的方向*/
     fun updateTextOrientation(orientation: Int, strategy: Strategy = Strategy.normal) {
-        val item = getRendererItem() ?: return
+        val item = getRendererRenderItem() ?: return
         val oldValue = item.orientation
         if (oldValue == orientation) {
             return
         }
         item.orientation = orientation
-        onRendererItemUpdate()//更新Drawable
+        requestRendererItemUpdate()//更新Drawable
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
             canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                 override fun runUndo() {
