@@ -129,11 +129,19 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         val minSize = 2 * cornerHeight
 
         //限制裁剪框
-        onLimitWidthAction = { newWidth, dx, dy ->
-            clamp(newWidth, minSize, cropDelegate._bestRect.width().toFloat())
+        onLimitWidthScaleAction = { scaleX ->
+            clamp(
+                scaleX,
+                minSize / targetRect.width(),
+                cropDelegate._bestRect.width() / targetRect.width()
+            )
         }
-        onLimitHeightAction = { newHeight, dx, dy ->
-            clamp(newHeight, minSize, cropDelegate._bestRect.height().toFloat())
+        onLimitHeightScaleAction = { scaleY ->
+            clamp(
+                scaleY,
+                minSize / targetRect.width(),
+                cropDelegate._bestRect.height() / targetRect.width()
+            )
         }
 
         //限制大小

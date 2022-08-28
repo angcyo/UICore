@@ -169,8 +169,8 @@ class RectScaleGestureHandler {
             keepRadio: Boolean = true,
             moveToCenter: Boolean = false
         ): Matrix {
-            val maxScaleX = limitRect.width() / targetRect.width()
-            val maxScaleY = limitRect.height() / targetRect.height()
+            val maxScaleX = (limitRect.width() / targetRect.width()).ensure()
+            val maxScaleY = (limitRect.height() / targetRect.height()).ensure()
 
             //计算缩放
             val sx: Float
@@ -320,8 +320,8 @@ class RectScaleGestureHandler {
             anchorX: Float,
             anchorY: Float
         ): Matrix {
-            val scaleX = newWidth / target.width()
-            val scaleY = newHeight / target.height()
+            val scaleX = (newWidth / target.width()).ensure()
+            val scaleY = (newHeight / target.height()).ensure()
             return scaleRectTo(target, result, scaleX, scaleY, rotate, anchorX, anchorY)
         }
     }
@@ -386,15 +386,16 @@ class RectScaleGestureHandler {
         false
     }
 
-    /**限制新宽度的回调*/
-    var onLimitWidthAction: (newWidth: Float, dx: Float, dy: Float) -> Float = { newWidth, dx, dy ->
-        newWidth
-    }
+    /**限制新宽度的缩放比回调*/
+    var onLimitWidthScaleAction: (scaleX: Float) -> Float =
+        { scaleX ->
+            scaleX
+        }
 
-    /**限制新高度的回调*/
-    var onLimitHeightAction: (newHeight: Float, dx: Float, dy: Float) -> Float =
-        { newHeight, dx, dy ->
-            newHeight
+    /**限制新高度的缩放比回调*/
+    var onLimitHeightScaleAction: (scaleY: Float) -> Float =
+        { scaleY ->
+            scaleY
         }
 
     /**是否需要转换[point]*/
@@ -404,19 +405,19 @@ class RectScaleGestureHandler {
 
     /**当前改变的x比例*/
     val currentScaleX: Float
-        get() = changedRect.width() / targetRect.width()
+        get() = (changedRect.width() / targetRect.width()).ensure()
 
     /**当前改变的y比例*/
     val currentScaleY: Float
-        get() = changedRect.height() / targetRect.height()
+        get() = (changedRect.height() / targetRect.height()).ensure()
 
     /**移动时x拖拽比例*/
     val moveScaleX: Float
-        get() = _pendingRect.width() / changedRect.width()
+        get() = (_pendingRect.width() / changedRect.width()).ensure()
 
     /**移动时y拖拽比例*/
     val moveScaleY: Float
-        get() = _pendingRect.height() / changedRect.height()
+        get() = (_pendingRect.height() / changedRect.height()).ensure()
 
     //endregion ---可读取/配置属性---
 
@@ -463,9 +464,13 @@ class RectScaleGestureHandler {
     @CallPoint
     fun initialize(rect: RectF, rotate: Float, rectPosition: Int) {
         if (rectPosition in RECT_LEFT..RECT_LB) {
+            //根据[_rectPosition]查找锚点
+            val point = getRectPositionPoint(rect, rectPosition) ?: return
             _isInitialize = true
             _rectPosition = rectPosition
             _initialize(rect, rotate)
+            //自动设置对应的锚点, 这个关键
+            updateScaleAnchor(point.x, point.y)
         } else {
             _isInitialize = false
         }
@@ -475,7 +480,7 @@ class RectScaleGestureHandler {
      * [anchorX] [anchorY] 旋转后的参考锚点坐标*/
     @CallPoint
     fun initialize(rect: RectF, rotate: Float, anchorX: Float, anchorY: Float) {
-        _isInitialize = false
+        _isInitialize = true
         _rectPosition = 0
 
         _initialize(rect, rotate)
@@ -509,11 +514,11 @@ class RectScaleGestureHandler {
             }
             MotionEvent.ACTION_MOVE -> {
                 if (_onTouchMove(x, y)) {
+                    //last move
+                    _touchMoveX = x
+                    _touchMoveY = y
                     onRectScaleChangeAction(changedRect, false)
                 }
-                //last move
-                _touchMoveX = x
-                _touchMoveY = y
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 //操作结束
@@ -554,14 +559,14 @@ class RectScaleGestureHandler {
 
     /**缩放到指定比例, 并触发对应的回调
      * [onRectScaleChangeAction]*/
-    fun startScaleTo(scaleX: Float, scaleY: Float, end: Boolean) {
-        _handleScale(scaleX, scaleY)
+    fun rectScaleTo(scaleX: Float, scaleY: Float, end: Boolean) {
+        _handleScale(onLimitWidthScaleAction(scaleX), onLimitHeightScaleAction(scaleY))
         onRectScaleChangeAction(changedRect, end)
     }
 
     /**缩放比例, 并触发对应的回调
      * [onRectScaleChangeAction]*/
-    fun startScaleBy(scaleX: Float, scaleY: Float, end: Boolean) {
+    fun rectScaleBy(scaleX: Float, scaleY: Float, end: Boolean) {
         val sx = currentScaleX * scaleX
         val sy = currentScaleY * scaleY
         _handleScale(sx, sy)
@@ -582,13 +587,7 @@ class RectScaleGestureHandler {
 
     /**手势按下时, 记录对角坐标*/
     fun _onTouchDown(x: Float, y: Float): Boolean {
-        if (!_isInitialize) {
-            return false
-        }
         val rect = targetRect
-
-        //根据[_rectPosition]查找锚点
-        val point = getRectPositionPoint(rect, _rectPosition) ?: return false
 
         //把touch坐标反向旋转, 用来和move事件计算scale
         _invertRotatePoint(x, y, rect.centerX(), rect.centerY())
@@ -599,18 +598,10 @@ class RectScaleGestureHandler {
         _touchDownX = x
         _touchDownY = y*/
 
-        //锚点
-        updateScaleAnchor(point.x, point.y)
-
         return true
     }
 
     fun _onTouchMove(x: Float, y: Float): Boolean {
-        if (!_isInitialize) {
-            return false
-        }
-        val rect = targetRect
-
         if ((x - _touchMoveX).absoluteValue >= _scaledTouchSlop ||
             (y - _touchMoveY).absoluteValue >= _scaledTouchSlop
         ) {
@@ -619,10 +610,12 @@ class RectScaleGestureHandler {
             return false
         }
 
+        val rect = targetRect
         _invertRotatePoint(x, y, rect.centerX(), rect.centerY())
         val touchX = _tempValues[0]
         val touchY = _tempValues[1]
 
+        /*//使用dx dy计算
         var dx = touchX - _touchDownX
         var dy = touchY - _touchDownY
 
@@ -639,11 +632,19 @@ class RectScaleGestureHandler {
         val newHeight = onLimitHeightAction(rect.height() + dy, dx, dy)
 
         var scaleX = newWidth / rect.width()
-        var scaleY = newHeight / rect.height()
+        var scaleY = newHeight / rect.height()*/
+
+        //使用scale计算
+        var scaleX = ((touchX - rectAnchorX) / (_touchDownX - rectAnchorX)).ensure()
+        var scaleY = ((touchY - rectAnchorY) / (_touchDownY - rectAnchorY)).ensure()
+
+        //限制缩放比
+        scaleX = onLimitWidthScaleAction(scaleX)
+        scaleY = onLimitHeightScaleAction(scaleY)
 
         var keepRatio = keepScaleRatio
 
-        if (_rectPosition < RECT_LT) {
+        if (_rectPosition in RECT_LEFT..RECT_BOTTOM) {
             //在边上拖动
             keepRatio = keepScaleRatioOnFrame
         }
@@ -732,8 +733,8 @@ class RectScaleGestureHandler {
             rect.flipVertical(isFlipVertical)
         }
 
-        rectScaleX = rect.width() / targetRect.width()
-        rectScaleY = rect.height() / targetRect.height()
+        rectScaleX = (rect.width() / targetRect.width()).ensure()
+        rectScaleY = (rect.height() / targetRect.height()).ensure()
 
         /*isFlipHorizontal = if (_isSideLeft(targetRect)) {
             !_isSideLeft(rect)

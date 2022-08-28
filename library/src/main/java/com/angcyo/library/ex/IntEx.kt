@@ -168,5 +168,20 @@ fun String?.toBigLongOrNull(): Long? {
 fun Float.eq(other: Float): Boolean =
     java.lang.Float.floatToIntBits(this) == java.lang.Float.floatToIntBits(other)
 
+/**确保当前的浮点对象返回一个有效的值*/
+fun Float.ensure(): Float {
+    if (isFinite()) {
+        return this
+    }
+    return 0f
+}
+
 fun Double.eq(other: Double): Boolean =
     java.lang.Double.doubleToLongBits(this) == java.lang.Double.doubleToLongBits(other)
+
+fun Double.ensure(): Double {
+    if (isFinite()) {
+        return this
+    }
+    return 0.0
+}
