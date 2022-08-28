@@ -454,7 +454,7 @@ class RectScaleGestureHandler {
 
     init {
         //_scaledTouchSlop = ViewConfiguration.get(app()).scaledTouchSlop //28
-        _scaledTouchSlop = 1
+        _scaledTouchSlop = 3
     }
 
     //region ---core---
