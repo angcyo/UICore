@@ -6,9 +6,7 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
-import com.angcyo.library.ex._tempPoint
-import com.angcyo.library.ex.invertRotate
-import com.angcyo.library.ex.mapRectF
+import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
@@ -253,24 +251,30 @@ class RectScaleGestureHandler {
             return matrix
         }
 
-        /**根据指定锚点, 缩放矩形
+        /**根据指定锚点, 缩放矩形. 会保持翻转信息
          * [target] 目标矩形, 未旋转的状态
          * [rotate] 目标矩形当前旋转的角度
          * [anchorX] [anchorY] 旋转后的锚点(在圆上任何一个点效果都一样)
-         *
+         * [scaleX] [scaleY] 宽高缩放比
          * [result] 返回值存储
          * */
         fun scaleRectTo(
             target: RectF,
             result: RectF,
-            rotate: Float,
             scaleX: Float,
             scaleY: Float,
+            rotate: Float,
             anchorX: Float,
             anchorY: Float
         ): Matrix {
+            val isFlipH = target.width() * scaleX < 0
+            val isFlipV = target.height() * scaleY < 0
+
             val matrix = Matrix()
             val temp = RectF()
+
+            val centerX = target.centerX()
+            val centerY = target.centerY()
 
             //缩放, 在原始的矩形数据上进行缩放
             matrix.reset()
@@ -280,7 +284,7 @@ class RectScaleGestureHandler {
 
             //按照原始的矩形中点进行旋转, 这样能保证锚点坐标固定
             matrix.reset()
-            matrix.setRotate(rotate, target.centerX(), target.centerY())
+            matrix.setRotate(rotate, centerX, centerY)
             temp.set(result)
             matrix.mapRect(temp)
 
@@ -295,7 +299,30 @@ class RectScaleGestureHandler {
             matrix.setTranslate(centerDx, centerDy)
             matrix.mapRect(result)
 
+            if (isFlipH) {
+                result.flipHorizontal(true)
+            }
+            if (isFlipV) {
+                result.flipVertical(true)
+            }
             return matrix
+        }
+
+        /**更新矩形使用指定的宽高
+         * [newWidth] [newHeight] 宽高缩放比
+         * */
+        fun updateRectTo(
+            target: RectF,
+            result: RectF,
+            newWidth: Float,
+            newHeight: Float,
+            rotate: Float,
+            anchorX: Float,
+            anchorY: Float
+        ): Matrix {
+            val scaleX = newWidth / target.width()
+            val scaleY = newHeight / target.height()
+            return scaleRectTo(target, result, scaleX, scaleY, rotate, anchorX, anchorY)
         }
     }
 
@@ -320,7 +347,7 @@ class RectScaleGestureHandler {
 
     /**激活矩形翻转, 如果调整后的矩形[宽/高]为负数, 那么会交换[left/right] [top/bottom]的值
      * 宽高小于0的Rect直接绘制是没有效果的*/
-    var enableRectFlip: Boolean = false
+    var enableRectFlip: Boolean = true
 
     /**改变后的矩形是否水平翻转了*/
     var isFlipHorizontal = false
@@ -701,24 +728,8 @@ class RectScaleGestureHandler {
         isFlipVertical = (targetRect.width() * scaleY) < 0
 
         if (enableRectFlip) {
-            val hMin = min(rect.left, rect.right)
-            val hMax = max(rect.left, rect.right)
-            val vMin = min(rect.top, rect.bottom)
-            val vMax = max(rect.top, rect.bottom)
-            if (isFlipHorizontal) {
-                rect.left = hMax
-                rect.right = hMin
-            } else {
-                rect.left = hMin
-                rect.right = hMax
-            }
-            if (isFlipVertical) {
-                rect.top = vMax
-                rect.bottom = vMin
-            } else {
-                rect.top = vMin
-                rect.bottom = vMax
-            }
+            rect.flipHorizontal(isFlipHorizontal)
+            rect.flipVertical(isFlipVertical)
         }
 
         rectScaleX = rect.width() / targetRect.width()

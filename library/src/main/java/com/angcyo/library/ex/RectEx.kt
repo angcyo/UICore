@@ -453,4 +453,32 @@ fun RectF.adjustFlipRect(result: RectF): RectF {
     return result
 }
 
+/**水平翻转矩形*/
+fun RectF.flipHorizontal(flip: Boolean = true): RectF {
+    val hMin = min(left, right)
+    val hMax = max(left, right)
+    if (flip) {
+        left = hMax
+        right = hMin
+    } else {
+        left = hMin
+        right = hMax
+    }
+    return this
+}
+
+/**垂直翻转矩形*/
+fun RectF.flipVertical(flip: Boolean = true): RectF {
+    val vMin = min(top, bottom)
+    val vMax = max(top, bottom)
+    if (flip) {
+        top = vMax
+        bottom = vMin
+    } else {
+        top = vMin
+        bottom = vMax
+    }
+    return this
+}
+
 //</editor-fold desc="rect flip">
