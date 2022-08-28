@@ -10,10 +10,14 @@ import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.ControlPoint
+import com.angcyo.canvas.core.component.SmartAssistant
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.PictureBitmapItem
 import com.angcyo.canvas.items.PictureDrawableItem
 import com.angcyo.canvas.items.PictureShapeItem
+import com.angcyo.canvas.utils.isLineShape
+import com.angcyo.library.ex.isNoSize
+import com.angcyo.library.gesture.RectScaleGestureHandler
 
 /**
  * [PictureDrawable]
@@ -49,46 +53,30 @@ open class PictureItemRenderer<T : PictureDrawableItem>(canvasView: ICanvasView)
     }
 
     override fun isSupportSmartAssistant(type: Int): Boolean {
-        val item = getRendererRenderItem()
-        if (item is PictureShapeItem) {
-            val shapePath = item.shapePath
-            if (shapePath is LinePath) {
-                /*if (shapePath.orientation == LinearLayout.VERTICAL) {
-                    //垂直的线, 不支持w调整
-                    return type != SmartAssistant.SMART_TYPE_W
-                } else {
-                    //水平的线, 不支持h调整
-                    return type != SmartAssistant.SMART_TYPE_H
-                }*/
-            }
+        if (isLineShape()) {
+            //线段不支持调整高度
+            return type != SmartAssistant.SMART_TYPE_H
         }
         return super.isSupportSmartAssistant(type)
     }
 
     override fun onChangeBoundsAfter(reason: Reason) {
         super.onChangeBoundsAfter(reason)
-        /*getRendererItem()?.let {
-            if (it is PictureShapeItem) {
-                val path = it.shapePath
-                if (path is LinePath) {
-                    val bounds = getBounds()
-                    if (path.orientation == LinearLayout.VERTICAL) {
-                        val size = path.lineBounds.width()
-                        //只能调整高度
-                        bounds.adjustSize(size, bounds.height(), ADJUST_TYPE_LT)
-                        path.initPath(getBounds().height())
-                        it.updatePictureDrawable(true)
-                    } else {
-                        //只能调整宽度
-                        val size = path.lineBounds.height()
-                        //只能调整高度
-                        bounds.adjustSize(bounds.width(), size, ADJUST_TYPE_LT)
-                        path.initPath(getBounds().width())
-                        it.updatePictureDrawable(true)
-                    }
-                }
+        if (isLineShape()) {
+            if (reason.reason == Reason.REASON_USER && !changeBeforeBounds.isNoSize()) {
+                val bounds = getBounds()
+                //线段,只能调整宽度
+                RectScaleGestureHandler.updateRectTo(
+                    changeBeforeBounds,
+                    bounds,
+                    bounds.width(),
+                    getRendererRenderItem()?.itemHeight ?: 1f,
+                    rotate,
+                    changeBeforeBounds.left,
+                    changeBeforeBounds.top
+                )
             }
-        }*/
+        }
     }
 
     override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {

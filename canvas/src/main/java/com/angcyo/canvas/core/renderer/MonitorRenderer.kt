@@ -98,7 +98,8 @@ class MonitorRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView), ICanv
                     appendLine()
                     append("touch:(${_touchPoint.x}, ${_touchPoint.y})") //touch在视图上的真实坐标
                     append("->")
-                    append("(${touchPoint.x}, ${touchPoint.y})") //映射后的坐标
+                    canvasViewBox.viewPointToCoordinateSystemPoint(_touchPoint, touchPoint)
+                    append("(${touchPoint.x}, ${touchPoint.y})") //坐标系中的坐标
 
                     //当前视图中点, 距离坐标系左上角的距离 像素和单位数值
                     val centerPoint = canvasViewBox.getCoordinateSystemCenter()

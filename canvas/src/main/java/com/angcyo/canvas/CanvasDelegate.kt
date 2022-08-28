@@ -619,7 +619,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
                     //更新坐标
                     val rect = getCanvasViewBox().getCoordinateSystemCenterRect(_width, _height)
-                    item.changeBounds {
+                    item.changeBounds(Reason(Reason.REASON_CODE, true)) {
                         set(rect)
                     }
                 }

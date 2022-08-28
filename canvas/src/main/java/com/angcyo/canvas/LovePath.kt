@@ -15,11 +15,11 @@ import kotlin.math.sqrt
  */
 class LovePath : Path() {
 
-    val loveBounds = RectF()
+    val pathBounds = RectF()
 
     override fun computeBounds(bounds: RectF, exact: Boolean) {
         //super.computeBounds(bounds, exact)
-        bounds.set(loveBounds)
+        bounds.set(pathBounds)
     }
 
     /**菱形+左右2个半圆*/
@@ -44,17 +44,17 @@ class LovePath : Path() {
         val y2 = y1
 
         moveTo(w2, height)
-        loveBounds.bottom = height
+        pathBounds.bottom = height
         lineTo(0f, h2)
         val rect = RectF()
         rect.set(x1 - r, y1 - r, x1 + r, y1 + r)
-        loveBounds.left = rect.left
-        loveBounds.top = rect.top
+        pathBounds.left = rect.left
+        pathBounds.top = rect.top
         val angle = 90f + 90f - atan(h2 / w2).toDegrees()
         arcTo(rect, angle, 180f)
 
         rect.set(x2 - r, y2 - r, x2 + r, y2 + r)
-        loveBounds.right = rect.right
+        pathBounds.right = rect.right
         arcTo(rect, -angle, 180f)
 
         lineTo(w2, height)

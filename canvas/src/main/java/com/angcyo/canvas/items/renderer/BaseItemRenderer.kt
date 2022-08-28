@@ -56,6 +56,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     /**[changeBounds]之前的bounds*/
     val changeBeforeBounds = emptyRectF()
 
+    //临时变量
     val _oldBounds = emptyRectF()
 
     //</editor-fold desc="属性">

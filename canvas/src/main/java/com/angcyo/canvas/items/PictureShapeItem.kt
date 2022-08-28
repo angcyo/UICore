@@ -28,7 +28,7 @@ class PictureShapeItem(
     }
 
     /**线段描边时, 用虚线绘制*/
-    val lineStrokeEffect = DashPathEffect(floatArrayOf(4 * density, 5 * density), 0f)
+    val lineStrokeEffect = DashPathEffect(floatArrayOf(2 * density, 3 * density), 0f)
 
     init {
         itemLayerName = "Shape"
@@ -55,13 +55,17 @@ class PictureShapeItem(
 
             //线段的描边用虚线处理处理
             if (path is LinePath) {
+                val linePaint = Paint(paint)
+                linePaint.style = Paint.Style.STROKE //线只能使用此模式¬
                 if (paint.style == Paint.Style.STROKE) {
-                    paint.pathEffect = lineStrokeEffect
+                    linePaint.pathEffect = lineStrokeEffect //虚线
                 } else {
-                    paint.pathEffect = null
+                    linePaint.pathEffect = null //实线
                 }
+                drawPath(path, linePaint)
+            } else {
+                drawPath(path, paint)
             }
-            drawPath(path, paint)
         }
 
         //draw
