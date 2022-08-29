@@ -11,6 +11,7 @@ import com.angcyo.canvas.core.renderer.BaseRenderer
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.utils.createTextPaint
+import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.library.L
 import com.angcyo.library.component.ScalePictureDrawable
@@ -245,17 +246,12 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     override fun containsPoint(point: PointF): Boolean {
         var rendererBounds = getRenderBounds()
 
-        /*val item = getRendererItem()
-        if (item is PictureShapeItem && item.shapePath is LinePath) {
-            //如果是线段, 方法矩形区域
+        if (isLineShape()) {
+            //如果是线段, 放大矩形高度区域
             _tempRectF.set(rendererBounds)
-            if ((item.shapePath as LinePath).orientation == LinearLayout.VERTICAL) {
-                _tempRectF.inset(-10 * dp, 0f)
-            } else {
-                _tempRectF.inset(0f, -10 * dp)
-            }
+            _tempRectF.inset(0f, -10 * dp)
             rendererBounds = _tempRectF
-        }*/
+        }
 
         return getRotateMatrix(rendererBounds.centerX(), rendererBounds.centerY()).run {
             rotatePath.reset()

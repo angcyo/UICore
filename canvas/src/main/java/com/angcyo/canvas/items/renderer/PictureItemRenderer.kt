@@ -64,46 +64,28 @@ open class PictureItemRenderer<T : PictureDrawableItem>(canvasView: ICanvasView)
         super.onChangeBoundsAfter(reason)
         if (isLineShape()) {
             if (reason.reason == Reason.REASON_USER && !changeBeforeBounds.isNoSize()) {
-                val bounds = getBounds()
-                //线段,只能调整宽度
-                RectScaleGestureHandler.updateRectTo(
-                    changeBeforeBounds,
-                    bounds,
-                    bounds.width(),
-                    getRendererRenderItem()?.itemHeight ?: 1f,
-                    rotate,
-                    changeBeforeBounds.left,
-                    changeBeforeBounds.top
-                )
+                if (reason.flag == Reason.REASON_FLAG_BOUNDS) {
+                    val bounds = getBounds()
+                    //val left = bounds.left
+                    //val top = bounds.top
+                    //线段,只能调整宽度
+                    RectScaleGestureHandler.updateRectTo(
+                        changeBeforeBounds,
+                        bounds,
+                        bounds.width(),
+                        getRendererRenderItem()?.itemHeight ?: 1f,
+                        rotate,
+                        changeBeforeBounds.left,
+                        changeBeforeBounds.top
+                    )
+                    //bounds.offsetTo(left, top)
+                }
             }
         }
     }
 
     override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
         super.itemBoundsChanged(reason, oldBounds)
-        /*getRendererItem()?.let {
-            if (it is PictureShapeItem && !oldBounds.isNoSize() && oldBounds.isSizeChanged(getBounds())) {
-                it.shapePath?.apply {
-                    if (this is LinePath) {
-                        //no
-                    } else {
-                        val scaleX = getBounds().width() / oldBounds.width()
-                        val scaleY = getBounds().height() / oldBounds.height()
-                        if (scaleX != 1f || scaleY != 1f) {
-                            val matrix = Matrix()
-                            matrix.postScale(
-                                scaleX,
-                                scaleY,
-                                it.shapeBounds.left,
-                                it.shapeBounds.top
-                            )
-                            transform(matrix)
-                            it.updatePictureDrawable(true)
-                        }
-                    }
-                }
-            }
-        }*/
     }
 
     //<editor-fold desc="渲染操作方法">

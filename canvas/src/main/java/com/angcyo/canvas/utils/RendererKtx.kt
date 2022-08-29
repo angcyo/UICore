@@ -1,6 +1,7 @@
 package com.angcyo.canvas.utils
 
 import android.graphics.Bitmap
+import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.CanvasDelegate
@@ -75,6 +76,9 @@ fun CanvasDelegate.addPictureTextRender(text: String): PictureTextItem {
 /**添加一个绘制[path]的渲染器*/
 fun CanvasDelegate.addPictureShapeRenderer(path: Path): PictureShapeItem {
     val renderer = PictureItemRenderer<PictureShapeItem>(this)
+    if (path is LinePath) {
+        renderer.paint.style = Paint.Style.FILL
+    }
     val item = PictureShapeItem(path)
     renderer.setRendererRenderItem(item)
     addCentreItemRenderer(renderer, Strategy.normal)

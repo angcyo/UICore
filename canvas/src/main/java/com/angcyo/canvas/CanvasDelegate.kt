@@ -243,6 +243,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
             }
         }
 
+        //item渲染
         itemsRendererList.reversed().forEach {
             if (it.isVisible() && it.containsPoint(point)) {
                 return it

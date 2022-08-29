@@ -8,6 +8,7 @@ import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.*
+import kotlin.math.max
 
 /**
  * 形状组件渲染数据
@@ -42,8 +43,11 @@ class PictureShapeItem(
         val shapeBounds = RectF()
         path.computeBounds(shapeBounds, true)
 
-        val shapeWidth = shapeBounds.width().toInt()
-        val shapeHeight = shapeBounds.height().toInt()
+        val shapeWidth = max(1, shapeBounds.width().toInt())
+        var shapeHeight = max(1, shapeBounds.height().toInt())
+        if (path is LinePath) {
+            shapeHeight = paint.strokeWidth.toInt()
+        }
 
         val picture = withPicture(shapeWidth, shapeHeight) {
             val strokeWidth = paint.strokeWidth
