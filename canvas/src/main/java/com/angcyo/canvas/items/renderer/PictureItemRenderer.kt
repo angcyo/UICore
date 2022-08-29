@@ -32,7 +32,7 @@ open class PictureItemRenderer<T : PictureDrawableItem>(canvasView: ICanvasView)
 
     init {
         paint.strokeWidth = 1f //* dp
-        paint.style = Paint.Style.FILL
+        paint.style = Paint.Style.STROKE
     }
 
     override fun changeBounds(reason: Reason, block: RectF.() -> Unit): Boolean {
