@@ -13,7 +13,7 @@ open class SelectGroupItem : BaseItem() {
     init {
         itemLayerName = "Group"
         dataType = CanvasConstant.DATA_TYPE_GROUP
-        dataMode = 0
+        dataMode = CanvasConstant.DATA_MODE_DITHERING
     }
 
 }

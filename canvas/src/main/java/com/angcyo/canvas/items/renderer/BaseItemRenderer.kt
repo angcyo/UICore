@@ -174,7 +174,9 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     override fun preview(): Drawable? {
         return rendererItem?.run {
             val renderBounds = getRenderBounds()
-            renderBounds.withSave(0f, 0f, renderBounds.width(), renderBounds.height()) {
+            val renderWidth = renderBounds.width()
+            val renderHeight = renderBounds.height()
+            renderBounds.withSave(0f, 0f, renderWidth, renderHeight) {
                 val rotateBounds = getRenderRotateBounds()
 
                 val width = rotateBounds.width()
@@ -183,8 +185,8 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
                 val result = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
                     withRotation(rotate, width / 2, height / 2) {
                         withTranslation(
-                            width / 2 - renderBounds.width() / 2,
-                            height / 2 - renderBounds.height() / 2
+                            width / 2 - renderWidth / 2,
+                            height / 2 - renderHeight / 2
                         ) {
                             render(this)
                         }

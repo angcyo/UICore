@@ -276,6 +276,7 @@ class DslFormHelper {
 }
 
 /**检查所有Item, 判断是否有错误, 并提示错误
+ * [com.angcyo.dsladapter.DslAdapterItem.itemThrowable] 错误信息存储
  * [predicate] 返回当前item是否有错误
  * @return 是否有错误*/
 fun DslAdapter.checkItemThrowable(

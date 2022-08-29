@@ -1,6 +1,8 @@
 package com.angcyo.library.ex
 
 import android.animation.ArgbEvaluator
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.os.SystemClock
 import androidx.annotation.ColorInt
@@ -187,4 +189,12 @@ fun Int.toBrightness(factor: Float = 0.8f): Int {
     hsv[2] *= factor // value component
     result = Color.HSVToColor(hsv)
     return result
+}
+
+/**将颜色绘制出来*/
+fun Int.toBitmap(size: Int = 10 * dpi): Bitmap {
+    val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    canvas.drawColor(this)
+    return bitmap
 }

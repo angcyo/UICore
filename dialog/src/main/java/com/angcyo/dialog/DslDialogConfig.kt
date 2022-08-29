@@ -191,7 +191,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     var dimAmount: Float = undefined_float
 
     /** 64
-     * 高斯模糊背景
+     * 高斯模糊背景, api 31+
      * [Build.VERSION_CODES.S]
      * */
     var blurBehindRadius: Int = undefined_size
