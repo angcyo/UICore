@@ -491,7 +491,7 @@ fun String?.isFontType(): Boolean {
 fun CharSequence?.patternList(
     regex: String?,
     orNoFind: String? = null /*未找到时, 默认*/
-): MutableList<String> {
+): List<String> {
     return this.patternList(regex?.toPattern(), orNoFind)
 }
 
@@ -499,7 +499,7 @@ fun CharSequence?.patternList(
 fun CharSequence?.patternList(
     pattern: Pattern?,
     orNoFind: String? = null /*未找到时, 默认*/
-): MutableList<String> {
+): List<String> {
     val result = mutableListOf<String>()
     if (this == null) {
         return result
@@ -523,12 +523,24 @@ fun CharSequence?.patternList(
  * https://www.w3cschool.cn/regexp/nck51pqj.html*/
 fun String?.getChineseList() = this?.patternList("[\u4e00-\u9fa5]+")
 
-fun CharSequence?.pattern(regex: String?, allowEmpty: Boolean = true): Boolean {
-    return pattern(regex?.toPattern(), allowEmpty)
+fun CharSequence?.pattern(
+    regex: String?,
+    allowEmpty: Boolean = true,
+    contain: Boolean = false
+): Boolean {
+    return pattern(regex?.toPattern(), allowEmpty, contain)
 }
 
-/**是否匹配成功(完成匹配)*/
-fun CharSequence?.pattern(pattern: Pattern?, allowEmpty: Boolean = true): Boolean {
+/**是否匹配成功(完整匹配)
+ * [contain] 是否模糊匹配, 否则就是完整匹配
+ * [java.util.regex.Matcher.matches]
+ * [java.util.regex.Matcher.find]
+ * */
+fun CharSequence?.pattern(
+    pattern: Pattern?,
+    allowEmpty: Boolean = true,
+    contain: Boolean = false
+): Boolean {
 
     if (TextUtils.isEmpty(this)) {
         if (allowEmpty) {
@@ -546,11 +558,19 @@ fun CharSequence?.pattern(pattern: Pattern?, allowEmpty: Boolean = true): Boolea
         return !TextUtils.isEmpty(this)
     }
     val matcher = pattern.matcher(this)
-    return matcher.matches()
+    return if (contain) {
+        matcher.find()
+    } else {
+        matcher.matches()
+    }
 }
 
 /**列表中的所有正则都匹配*/
-fun CharSequence?.pattern(regexList: Iterable<String>, allowEmpty: Boolean = true): Boolean {
+fun CharSequence?.pattern(
+    regexList: Iterable<String>,
+    allowEmpty: Boolean = true,
+    contain: Boolean = false
+): Boolean {
     if (TextUtils.isEmpty(this)) {
         if (allowEmpty) {
             return true
@@ -570,17 +590,9 @@ fun CharSequence?.pattern(regexList: Iterable<String>, allowEmpty: Boolean = tru
 
     var result = false
 
-    // 有BUG的代码, if 条件永远不会为true, 虽然你已经给 result 赋值了true
-    //    regexList.forEach {
-    //        result = this.pattern(it, allowEmpty)
-    //        if (result) {
-    //            return@forEach
-    //        }
-    //    }
-
     for (regex in regexList) {
         //闭包外面声明的变量, 虽然已经修改了, 但是修改后的值, 不影响 if 条件判断
-        if (this.pattern(regex, allowEmpty)) {
+        if (this.pattern(regex, allowEmpty, contain)) {
             result = true
             break
         }
