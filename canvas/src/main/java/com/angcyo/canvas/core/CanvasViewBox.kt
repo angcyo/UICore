@@ -197,8 +197,15 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     /**将视图坐标点[point] 转换成对应的坐标系中的点[result]*/
     fun viewPointToCoordinateSystemPoint(point: PointF, result: PointF = _tempPoint): PointF {
         invertMatrix.mapPoint(point, result)
-        result.x -= getCoordinateSystemX()
-        result.y -= getCoordinateSystemY()
+        result.offset(-getCoordinateSystemX(), -getCoordinateSystemY())
+        return result
+    }
+
+    /**将坐标系中的坐标, 转换*/
+    fun coordinateSystemPointToViewPoint(point: PointF, result: PointF = _tempPoint): PointF {
+        result.set(point.x, point.y)
+        result.offset(getCoordinateSystemX(), getCoordinateSystemY())
+        matrix.mapPoint(result, result)
         return result
     }
 
