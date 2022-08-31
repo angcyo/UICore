@@ -751,7 +751,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
             val y2 = rectRBPoint.y
 
             //逆向算出新的宽度
-            val smartWidth = ScaleControlPoint.calcRotateBeforeDistance(
+            /*val smartWidth = ScaleControlPoint.calcRotateBeforeDistance(
                 rectLTPoint.x,
                 rectLTPoint.y,
                 x2,
@@ -765,7 +765,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                 rotateBounds.width(),
                 SmartAssistantValueData(smartWidth, smartValue.refRenderer),
                 drawRect
-            )
+            )*/
         }
         return result
     }
@@ -819,7 +819,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
             val y2 = smartValue.refValue //推荐的y
 
             //逆向算出新的高度
-            val smartHeight = ScaleControlPoint.calcRotateBeforeDistance(
+            /*val smartHeight = ScaleControlPoint.calcRotateBeforeDistance(
                 rectLTPoint.x,
                 rectLTPoint.y,
                 x2,
@@ -833,7 +833,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                 rotateBounds.height(),
                 SmartAssistantValueData(smartHeight, smartValue.refRenderer),
                 drawRect
-            )
+            )*/
         }
         return result
     }

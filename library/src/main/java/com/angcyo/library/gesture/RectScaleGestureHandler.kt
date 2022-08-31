@@ -389,18 +389,20 @@ class RectScaleGestureHandler {
     /**限制新宽度的缩放比回调*/
     var onLimitWidthScaleAction: (scaleX: Float) -> Float =
         { scaleX ->
+            //即将缩放的X
             scaleX
         }
 
     /**限制新高度的缩放比回调*/
     var onLimitHeightScaleAction: (scaleY: Float) -> Float =
         { scaleY ->
+            //即将缩放的Y
             scaleY
         }
 
-    /**是否需要转换[point]*/
+    /**是否需要转换[point]
+     * 将point映射成一个新的值*/
     var onTransformPoint: (point: PointF) -> Unit = {
-
     }
 
     /**当前改变的x比例*/
@@ -477,9 +479,20 @@ class RectScaleGestureHandler {
     }
 
     /**指定一个锚点, 用来操作缩放
+     * [anchorX] [anchorY] 未旋转的参考锚点坐标*/
+    @CallPoint
+    fun initializeAnchor(rect: RectF, rotate: Float, anchorX: Float, anchorY: Float) {
+        _isInitialize = true
+        _rectPosition = 0
+
+        _initialize(rect, rotate)
+        updateScaleAnchor(anchorX, anchorY)
+    }
+
+    /**指定一个锚点, 用来操作缩放
      * [anchorX] [anchorY] 旋转后的参考锚点坐标*/
     @CallPoint
-    fun initialize(rect: RectF, rotate: Float, anchorX: Float, anchorY: Float) {
+    fun initializeRotateAnchor(rect: RectF, rotate: Float, anchorX: Float, anchorY: Float) {
         _isInitialize = true
         _rectPosition = 0
 
@@ -507,86 +520,18 @@ class RectScaleGestureHandler {
 
         //
         when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN -> {
-                _touchMoveX = x
-                _touchMoveY = y
-                _onTouchDown(x, y)
-            }
-            MotionEvent.ACTION_MOVE -> {
-                if (_onTouchMove(x, y)) {
-                    //last move
-                    _touchMoveX = x
-                    _touchMoveY = y
-                    onRectScaleChangeAction(changedRect, false)
-                }
-            }
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                //操作结束
-                _isInitialize = false
-
-                //end
-                onRectScaleChangeAction(changedRect, true)
-            }
+            MotionEvent.ACTION_DOWN -> onTouchDown(x, y)
+            MotionEvent.ACTION_MOVE -> onTouchMove(x, y)
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> onTouchFinish(x, y)
         }
         return handle
     }
 
-    /**更新矩形缩放参考的锚点
-     * [x] [y] 未旋转的参考坐标*/
-    fun updateScaleAnchor(x: Float, y: Float) {
-        val rect = targetRect
-
-        rectAnchorX = x
-        rectAnchorY = y
-
-        _rotatePoint(rectAnchorX, rectAnchorY, rect.centerX(), rect.centerY())
-        rectAnchorRotateX = _tempValues[0]
-        rectAnchorRotateY = _tempValues[1]
-    }
-
-    /**更新矩形缩放参考的锚点
-     * [x] [y] 旋转的参考坐标*/
-    fun updateScaleRotateAnchor(x: Float, y: Float) {
-        val rect = targetRect
-
-        rectAnchorRotateX = x
-        rectAnchorRotateY = y
-
-        _invertRotatePoint(rectAnchorRotateX, rectAnchorRotateY, rect.centerX(), rect.centerY())
-        rectAnchorX = _tempValues[0]
-        rectAnchorY = _tempValues[1]
-    }
-
-    /**缩放到指定比例, 并触发对应的回调
-     * [onRectScaleChangeAction]*/
-    fun rectScaleTo(scaleX: Float, scaleY: Float, end: Boolean) {
-        _handleScale(onLimitWidthScaleAction(scaleX), onLimitHeightScaleAction(scaleY))
-        onRectScaleChangeAction(changedRect, end)
-    }
-
-    /**缩放比例, 并触发对应的回调
-     * [onRectScaleChangeAction]*/
-    fun rectScaleBy(scaleX: Float, scaleY: Float, end: Boolean) {
-        val sx = currentScaleX * scaleX
-        val sy = currentScaleY * scaleY
-        _handleScale(sx, sy)
-        onRectScaleChangeAction(changedRect, end)
-    }
-
-    //endregion ---core---
-
-    //region ---method---
-
-    fun _initialize(rect: RectF, rotate: Float) {
-        targetRect.set(rect)
-        changedRect.set(rect)
-        _rotate = rotate
-        isFlipHorizontal = rect.width() < 0
-        isFlipVertical = rect.height() < 0
-    }
-
     /**手势按下时, 记录对角坐标*/
-    fun _onTouchDown(x: Float, y: Float): Boolean {
+    fun onTouchDown(x: Float, y: Float): Boolean {
+        _touchMoveX = x
+        _touchMoveY = y
+
         val rect = targetRect
 
         //把touch坐标反向旋转, 用来和move事件计算scale
@@ -601,7 +546,7 @@ class RectScaleGestureHandler {
         return true
     }
 
-    fun _onTouchMove(x: Float, y: Float): Boolean {
+    fun onTouchMove(x: Float, y: Float): Boolean {
         if ((x - _touchMoveX).absoluteValue >= _scaledTouchSlop ||
             (y - _touchMoveY).absoluteValue >= _scaledTouchSlop
         ) {
@@ -609,6 +554,9 @@ class RectScaleGestureHandler {
         } else {
             return false
         }
+
+        _touchMoveX = x
+        _touchMoveY = y
 
         val rect = targetRect
         _invertRotatePoint(x, y, rect.centerX(), rect.centerY())
@@ -678,7 +626,73 @@ class RectScaleGestureHandler {
         //handle
         _handleScale(scaleX, scaleY)
 
+        //change
+        onRectScaleChangeAction(changedRect, false)
+
         return true
+    }
+
+    /**手势完成*/
+    fun onTouchFinish(x: Float, y: Float) {
+        //操作结束
+        _isInitialize = false
+
+        //end
+        onRectScaleChangeAction(changedRect, true)
+    }
+
+    /**更新矩形缩放参考的锚点
+     * [x] [y] 未旋转的参考坐标*/
+    fun updateScaleAnchor(x: Float, y: Float) {
+        val rect = targetRect
+
+        rectAnchorX = x
+        rectAnchorY = y
+
+        _rotatePoint(rectAnchorX, rectAnchorY, rect.centerX(), rect.centerY())
+        rectAnchorRotateX = _tempValues[0]
+        rectAnchorRotateY = _tempValues[1]
+    }
+
+    /**更新矩形缩放参考的锚点
+     * [x] [y] 旋转的参考坐标*/
+    fun updateScaleRotateAnchor(x: Float, y: Float) {
+        val rect = targetRect
+
+        rectAnchorRotateX = x
+        rectAnchorRotateY = y
+
+        _invertRotatePoint(rectAnchorRotateX, rectAnchorRotateY, rect.centerX(), rect.centerY())
+        rectAnchorX = _tempValues[0]
+        rectAnchorY = _tempValues[1]
+    }
+
+    /**缩放到指定比例, 并触发对应的回调
+     * [onRectScaleChangeAction]*/
+    fun rectScaleTo(scaleX: Float, scaleY: Float, end: Boolean) {
+        _handleScale(onLimitWidthScaleAction(scaleX), onLimitHeightScaleAction(scaleY))
+        onRectScaleChangeAction(changedRect, end)
+    }
+
+    /**缩放比例, 并触发对应的回调
+     * [onRectScaleChangeAction]*/
+    fun rectScaleBy(scaleX: Float, scaleY: Float, end: Boolean) {
+        val sx = currentScaleX * scaleX
+        val sy = currentScaleY * scaleY
+        _handleScale(sx, sy)
+        onRectScaleChangeAction(changedRect, end)
+    }
+
+    //endregion ---core---
+
+    //region ---method---
+
+    fun _initialize(rect: RectF, rotate: Float) {
+        targetRect.set(rect)
+        changedRect.set(rect)
+        _rotate = rotate
+        isFlipHorizontal = rect.width() < 0
+        isFlipVertical = rect.height() < 0
     }
 
     /**处理缩放, scale to*/
