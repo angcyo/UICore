@@ -75,7 +75,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     //<editor-fold desc="计算属性">
 
     val _tempMatrix = Matrix()
-    val _rotateMatrix: Matrix = Matrix()
+    val _rotateMatrix = Matrix()
 
     //</editor-fold desc="计算属性">
 
@@ -279,6 +279,19 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
             rotatePath.transform(this)
             rotatePath.intersect(rect)
         }
+    }
+
+    val _anchorPoint = PointF()
+
+    /**获取Bounds缩放时的锚点, 旋转后的坐标
+     * 默认是左上角旋转后的坐标*/
+    fun getBoundsScaleAnchor(): PointF {
+        val bounds = getBounds()
+        _anchorPoint.set(bounds.left, bounds.top)
+        _tempMatrix.reset()
+        _tempMatrix.setRotate(rotate, bounds.centerX(), bounds.centerY())
+        _tempMatrix.mapPoint(_anchorPoint, _anchorPoint)
+        return _anchorPoint
     }
 
     //<editor-fold desc="控制方法">

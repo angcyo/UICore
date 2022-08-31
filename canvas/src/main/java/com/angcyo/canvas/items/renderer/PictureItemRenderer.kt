@@ -69,7 +69,7 @@ open class PictureItemRenderer<T : PictureDrawableItem>(canvasView: ICanvasView)
                     //val left = bounds.left
                     //val top = bounds.top
                     //线段,只能调整宽度
-                    RectScaleGestureHandler.updateRectTo(
+                    RectScaleGestureHandler.rectUpdateTo(
                         changeBeforeBounds,
                         bounds,
                         bounds.width(),

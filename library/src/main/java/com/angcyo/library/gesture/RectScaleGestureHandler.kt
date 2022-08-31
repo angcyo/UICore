@@ -254,11 +254,11 @@ class RectScaleGestureHandler {
         /**根据指定锚点, 缩放矩形. 会保持翻转信息
          * [target] 目标矩形, 未旋转的状态
          * [rotate] 目标矩形当前旋转的角度
-         * [anchorX] [anchorY] 旋转后的锚点(在圆上任何一个点效果都一样)
+         * [anchorX] [anchorY] 旋转后的锚点
          * [scaleX] [scaleY] 宽高缩放比
          * [result] 返回值存储
          * */
-        fun scaleRectTo(
+        fun rectScaleTo(
             target: RectF,
             result: RectF,
             scaleX: Float,
@@ -310,8 +310,9 @@ class RectScaleGestureHandler {
 
         /**更新矩形使用指定的宽高
          * [newWidth] [newHeight] 宽高缩放比
+         * [anchorX] [anchorY] 旋转后的锚点
          * */
-        fun updateRectTo(
+        fun rectUpdateTo(
             target: RectF,
             result: RectF,
             newWidth: Float,
@@ -322,7 +323,7 @@ class RectScaleGestureHandler {
         ): Matrix {
             val scaleX = (newWidth / target.width()).ensure()
             val scaleY = (newHeight / target.height()).ensure()
-            return scaleRectTo(target, result, scaleX, scaleY, rotate, anchorX, anchorY)
+            return rectScaleTo(target, result, scaleX, scaleY, rotate, anchorX, anchorY)
         }
     }
 
@@ -385,6 +386,20 @@ class RectScaleGestureHandler {
     var onRectScaleLimitAction: (rect: RectF) -> Boolean = {
         false
     }
+
+    /**限制新宽度的回调*/
+    var onLimitWidthAction: (width: Float) -> Float =
+        { width ->
+            //即将设置的宽
+            width
+        }
+
+    /**限制新高度的回调*/
+    var onLimitHeightAction: (height: Float) -> Float =
+        { height ->
+            //即将设置的高
+            height
+        }
 
     /**限制新宽度的缩放比回调*/
     var onLimitWidthScaleAction: (scaleX: Float) -> Float =
@@ -560,32 +575,52 @@ class RectScaleGestureHandler {
 
         val rect = targetRect
         _invertRotatePoint(x, y, rect.centerX(), rect.centerY())
-        val touchX = _tempValues[0]
-        val touchY = _tempValues[1]
+        val moveX = _tempValues[0]
+        val moveY = _tempValues[1]
 
-        /*//使用dx dy计算
-        var dx = touchX - _touchDownX
-        var dy = touchY - _touchDownY
+        //使用dx dy计算, 跟手
+        var dx = (moveX - _touchDownX).absoluteValue
+        var dy = (moveY - _touchDownY).absoluteValue
 
-        if (_rectPosition == RECT_LEFT || _rectPosition == RECT_LT || _rectPosition == RECT_LB) {
-            //touch在左边
-            dx = _touchDownX - touchX
+        //dx dy 是增加还是减少
+        val addX = if (_touchDownX >= rectAnchorX) {
+            //按在锚点的右边
+            moveX >= _touchDownX
+        } else {
+            moveX <= _touchDownX
         }
-        if (_rectPosition == RECT_TOP || _rectPosition == RECT_LT || _rectPosition == RECT_RT) {
-            //touch在上边
-            dy = _touchDownY - touchY
+        val addY = if (_touchDownY >= rectAnchorY) {
+            //按在锚点的下边
+            moveY >= _touchDownY
+        } else {
+            moveY <= _touchDownY
         }
 
-        val newWidth = onLimitWidthAction(rect.width() + dx, dx, dy)
-        val newHeight = onLimitHeightAction(rect.height() + dy, dx, dy)
+        if (!addX) {
+            dx = -dx
+        }
+        if (!addY) {
+            dy = -dy
+        }
+
+        //限制宽高
+        val newWidth = onLimitWidthAction(rect.width() + dx)
+        val newHeight = onLimitHeightAction(rect.height() + dy)
 
         var scaleX = newWidth / rect.width()
-        var scaleY = newHeight / rect.height()*/
+        var scaleY = newHeight / rect.height()
 
-        //使用scale计算
+        /*
+        //使用scale计算, 在很小状态缩放时, 不跟手
         var scaleX = ((touchX - rectAnchorX) / (_touchDownX - rectAnchorX)).ensure()
-        var scaleY = ((touchY - rectAnchorY) / (_touchDownY - rectAnchorY)).ensure()
+        var scaleY = ((touchY - rectAnchorY) / (_touchDownY - rectAnchorY)).ensure()*/
 
+        /*var dx = touchX - _touchDownX
+        var dy = touchY - _touchDownY
+
+        val newWidth = onLimitWidthAction(rect.width() + dx, dx, dy)
+        val newHeight = onLimitHeightAction(rect.height() + dy, dx, dy)*/
+        
         //限制缩放比
         scaleX = onLimitWidthScaleAction(scaleX)
         scaleY = onLimitHeightScaleAction(scaleY)

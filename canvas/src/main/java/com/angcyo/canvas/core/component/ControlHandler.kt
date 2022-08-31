@@ -15,8 +15,8 @@ import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
-import com.angcyo.library.gesture.DoubleGestureDetector2
 import com.angcyo.library.ex.*
+import com.angcyo.library.gesture.DoubleGestureDetector2
 import kotlin.math.absoluteValue
 
 /**
@@ -208,7 +208,8 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                                     canvasDelegate.boundsOperateHandler.changeBoundsItemList(
                                         itemList,
                                         newBounds,
-                                        originBounds
+                                        originBounds,
+                                        item.getBoundsScaleAnchor()
                                     )
                                     if (canvasDelegate.getSelectedRenderer() == item) {
                                         item.updateSelectBounds()
@@ -225,7 +226,8 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                                     canvasDelegate.boundsOperateHandler.changeBoundsItemList(
                                         itemList,
                                         originBounds,
-                                        newBounds
+                                        newBounds,
+                                        item.getBoundsScaleAnchor()
                                     )
                                     if (canvasDelegate.getSelectedRenderer() == item) {
                                         item.updateSelectBounds()
