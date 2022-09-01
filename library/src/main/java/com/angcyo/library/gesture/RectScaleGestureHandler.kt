@@ -6,6 +6,8 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.component.pool.acquireTempPointF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 import kotlin.math.max
@@ -43,9 +45,10 @@ class RectScaleGestureHandler {
             y: Float,
             threshold: Float
         ): Int {
-            val point = _tempPoint
+            val point = acquireTempPointF()
             point.set(x, y)
             point.invertRotate(rotate, rect.centerX(), rect.centerY())
+            point.release()
 
             val px = point.x
             val py = point.y
@@ -90,7 +93,7 @@ class RectScaleGestureHandler {
         fun getRectPositionPoint(
             rect: RectF,
             rectPosition: Int,
-            result: PointF = _tempPoint
+            result: PointF = acquireTempPointF()
         ): PointF? {
             val handle = when (rectPosition) {
                 //4个角
@@ -579,35 +582,43 @@ class RectScaleGestureHandler {
         val moveY = _tempValues[1]
 
         //使用dx dy计算, 跟手
-        var dx = (moveX - _touchDownX).absoluteValue
-        var dy = (moveY - _touchDownY).absoluteValue
+        val dx = (moveX - _touchDownX).absoluteValue
+        val dy = (moveY - _touchDownY).absoluteValue
 
-        //dx dy 是增加还是减少
-        val addX = if (_touchDownX >= rectAnchorX) {
-            //按在锚点的右边
-            moveX >= _touchDownX
+        val width = rect.width()
+        val height = rect.height()
+        var newWidth = if (width >= 0) {
+            if (_touchDownX in rectAnchorX..moveX || _touchDownX in moveX..rectAnchorX) {
+                width + dx
+            } else {
+                width - dx
+            }
         } else {
-            moveX <= _touchDownX
+            if (_touchDownX in rectAnchorX..moveX || _touchDownX in moveX..rectAnchorX) {
+                width - dx
+            } else {
+                width + dx
+            }
         }
-        val addY = if (_touchDownY >= rectAnchorY) {
-            //按在锚点的下边
-            moveY >= _touchDownY
+        var newHeight = if (height >= 0) {
+            if (_touchDownY in rectAnchorY..moveY || _touchDownY in moveY..rectAnchorY) {
+                height + dy
+            } else {
+                height - dy
+            }
         } else {
-            moveY <= _touchDownY
-        }
-
-        if (!addX) {
-            dx = -dx
-        }
-        if (!addY) {
-            dy = -dy
+            if (_touchDownY in rectAnchorY..moveY || _touchDownY in moveY..rectAnchorX) {
+                height - dy
+            } else {
+                height + dy
+            }
         }
 
         //限制宽高
-        val newWidth = onLimitWidthAction(rect.width() + dx)
-        val newHeight = onLimitHeightAction(rect.height() + dy)
+        newWidth = onLimitWidthAction(newWidth)
+        newHeight = onLimitHeightAction(newHeight)
 
-        var scaleX = newWidth / rect.width()
+        var scaleX = newWidth / width
         var scaleY = newHeight / rect.height()
 
         /*
@@ -620,7 +631,7 @@ class RectScaleGestureHandler {
 
         val newWidth = onLimitWidthAction(rect.width() + dx, dx, dy)
         val newHeight = onLimitHeightAction(rect.height() + dy, dx, dy)*/
-        
+
         //限制缩放比
         scaleX = onLimitWidthScaleAction(scaleX)
         scaleY = onLimitHeightScaleAction(scaleY)

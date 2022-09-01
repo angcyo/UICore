@@ -943,7 +943,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                         itemList,
                         newBounds,
                         originBounds,
-                        itemRenderer.getBoundsScaleAnchor()
+                        Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
                     )
                     if (getSelectedRenderer() == item) {
                         item.updateSelectBounds()
@@ -955,7 +955,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                         itemList,
                         originBounds,
                         newBounds,
-                        itemRenderer.getBoundsScaleAnchor()
+                        Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
                     )
                     if (getSelectedRenderer() == item) {
                         item.updateSelectBounds()
