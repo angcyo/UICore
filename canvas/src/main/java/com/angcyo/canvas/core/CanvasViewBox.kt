@@ -92,50 +92,6 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         canvasView.refresh()
     }
 
-    /**获取当前坐标系在可视窗口的矩形, 原始坐标保持不变.
-     * [contentRect] 缩放平移[matrix]之后的变成的[RectF]
-     * */
-    fun getVisualCoordinateSystemRect(result: RectF = acquireTempRectF()): RectF {
-        /*matrix.getValues(_tempValues)
-        _tempValues[Matrix.MTRANS_X] -= _tempValues[Matrix.MTRANS_X]
-        _tempValues[Matrix.MTRANS_Y] -= _tempValues[Matrix.MTRANS_Y]
-        tempMatrix.setValues(_tempValues)
-        tempMatrix.mapRect(_tempRectF, contentRect)*/
-        matrix.mapRect(result, contentRect)
-        return result
-    }
-
-    /**计算[item]在当前视图中的坐标, 相对于[view]左上角的矩形坐标
-     * [bounds] 可以直接绘制的坐标*/
-    fun calcItemVisualBounds(bounds: RectF, result: RectF): RectF {
-        //重点
-
-        //映射之后, 坐标相对于视图左上角的坐标
-        matrix.mapRectF(bounds, result)
-
-        //将相对于与视图左上角的坐标转换成可以直接绘制的坐标, 最终会和bounds一直
-        /*val test = emptyRectF()
-        invertMatrix.mapRectF(result, test)*/
-
-        return result
-    }
-
-    /**获取当前能够看到的坐标系的范围矩形, 肉眼坐标保持不变.
-     * [contentRect] 保持原先的位置, [matrix]缩放平移之后,一个新的[RectF]
-     * */
-    fun getVisualRect(result: RectF = acquireTempRectF()): RectF {
-        invertMatrix.mapRect(result, contentRect)
-        return result
-    }
-
-    /**将可视化矩形, 映射成坐标系矩形
-     * 可视化的坐标, 映射成坐标系中的坐标.
-     * 比如: 当前手势按下在View的[100,100]处,此时返回在坐标系中的[x,y]处*/
-    fun mapCoordinateSystemRect(rect: RectF, result: RectF = _tempRect): RectF {
-        invertMatrix.mapRect(result, rect)
-        return result
-    }
-
     /**在当前视图中心获取一个坐标系中指定宽高的矩形*/
     fun getCoordinateSystemCenterRect(
         width: Float,
@@ -175,11 +131,6 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         return result
     }
 
-    /**将可视化坐标点, 映射成坐标系点*/
-    fun mapCoordinateSystemPoint(point: PointF, result: PointF = _tempPoint): PointF {
-        return invertMatrix.mapPoint(point, result)
-    }
-
     /**将屏幕上的点坐标, 映射成坐标系中的坐标*/
     fun mapCoordinateSystemPoint(x: Float, y: Float, result: PointF = _tempPoint): PointF {
         _tempPoint.set(x, y)
@@ -195,6 +146,29 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         return result
     }
 
+    //---
+
+    /**获取当前能够看到的坐标系的范围矩形, 肉眼坐标保持不变.
+     * [contentRect] 保持原先的位置, [matrix]缩放平移之后,一个新的[RectF]
+     * */
+    fun getVisualRect(result: RectF = acquireTempRectF()): RectF {
+        invertMatrix.mapRect(result, contentRect)
+        return result
+    }
+
+    /**将可视化矩形, 映射成坐标系矩形
+     * 可视化的坐标, 映射成坐标系中的坐标.
+     * 比如: 当前手势按下在View的[100,100]处,此时返回在坐标系中的[x,y]处*/
+    fun mapCoordinateSystemRect(rect: RectF, result: RectF = _tempRect): RectF {
+        invertMatrix.mapRect(result, rect)
+        return result
+    }
+
+    /**将可视化坐标点, 映射成坐标系点*/
+    fun mapCoordinateSystemPoint(point: PointF, result: PointF = _tempPoint): PointF {
+        return invertMatrix.mapPoint(point, result)
+    }
+
     /**将视图坐标点[point] 转换成对应的坐标系中的点[result]*/
     fun viewPointToCoordinateSystemPoint(point: PointF, result: PointF = _tempPoint): PointF {
         invertMatrix.mapPoint(point, result)
@@ -202,11 +176,41 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         return result
     }
 
+    //---
+
     /**将坐标系中的坐标, 转换*/
     fun coordinateSystemPointToViewPoint(point: PointF, result: PointF = _tempPoint): PointF {
         result.set(point.x, point.y)
         result.offset(getCoordinateSystemX(), getCoordinateSystemY())
         matrix.mapPoint(result, result)
+        return result
+    }
+
+    /**获取当前坐标系在可视窗口的矩形, 原始坐标保持不变.
+     * [contentRect] 缩放平移[matrix]之后的变成的[RectF]
+     * */
+    fun getVisualCoordinateSystemRect(result: RectF = acquireTempRectF()): RectF {
+        /*matrix.getValues(_tempValues)
+        _tempValues[Matrix.MTRANS_X] -= _tempValues[Matrix.MTRANS_X]
+        _tempValues[Matrix.MTRANS_Y] -= _tempValues[Matrix.MTRANS_Y]
+        tempMatrix.setValues(_tempValues)
+        tempMatrix.mapRect(_tempRectF, contentRect)*/
+        matrix.mapRect(result, contentRect)
+        return result
+    }
+
+    /**计算[item]在当前视图中的坐标, 相对于[view]左上角的矩形坐标
+     * [bounds] 可以直接绘制的坐标*/
+    fun calcItemVisualBounds(bounds: RectF, result: RectF): RectF {
+        //重点
+
+        //映射之后, 坐标相对于视图左上角的坐标
+        matrix.mapRectF(bounds, result)
+
+        //将相对于与视图左上角的坐标转换成可以直接绘制的坐标, 最终会和bounds一直
+        /*val test = emptyRectF()
+        invertMatrix.mapRectF(result, test)*/
+
         return result
     }
 

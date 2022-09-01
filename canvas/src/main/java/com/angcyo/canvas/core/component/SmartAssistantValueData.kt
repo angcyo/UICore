@@ -9,7 +9,7 @@ import com.angcyo.canvas.items.renderer.IItemRenderer
  * @since 2022/07/02
  */
 data class SmartAssistantValueData(
-    /**参考的值, 比如x,y, w,h 像素, 或者旋转的角度*/
+    /**参考的值, 比如x,y, w,h 像素, 或者旋转的角度, 坐标系统的值*/
     var refValue: Float = -1f,
     /**[refValue]参考的[IItemRenderer], 如果有*/
     var refRenderer: IRenderer? = null,

@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.emptyRectF
 
 /**
@@ -40,6 +41,7 @@ open class ControlPoint : BaseComponent() {
     //是否在控制点按下
     var isTouchDownIn: Boolean = false
 
+    @CallPoint
     open fun onTouch(
         canvasDelegate: CanvasDelegate,
         itemRenderer: BaseItemRenderer<*>,

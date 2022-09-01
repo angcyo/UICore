@@ -5,6 +5,7 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import androidx.core.graphics.contains
 import com.angcyo.canvas.CanvasDelegate
+import com.angcyo.canvas.Reason
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasTouch
 import com.angcyo.canvas.core.component.control.DeleteControlPoint
@@ -13,6 +14,7 @@ import com.angcyo.canvas.core.component.control.RotateControlPoint
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.core.renderer.SelectGroupRenderer
+import com.angcyo.canvas.data.ControlTouchInfo
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.library.component.pool.acquireTempMatrix
@@ -55,33 +57,34 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     /**手指移动多少距离后, 才算作移动了*/
     var translateThreshold = 3
 
-    //缓存
-    val _controlPointOffsetRect = emptyRectF()
+    //---
 
-    //按下的坐标
-    val _touchPoint = PointF()
-    val _moveStartPoint = PointF()
-    val _movePoint = PointF()
-    var touchPointerId: Int = -1
+    /**按下时的一些信息*/
+    var touchDownInfo: ControlTouchInfo? = null
 
-    //是否双击在同一个[BaseItemRenderer]中
+    /**当前手势移动的坐标*/
+    val movePoint = PointF()
+    val moveSystemPointPoint = PointF()
+
+    val touchPoint = PointF()
+    val touchSystemPointPoint = PointF()
+
+    /**
+     * 是否触发了双击在同一个[BaseItemRenderer]中
+     * */
     var isDoubleTouch: Boolean = false
-
-    /**按下时, 记录bounds 用于恢复*/
-    val touchItemBounds = emptyRectF()
-
-    //通过bounds的计算, 来实现平移距离的计算
-    val moveItemBounds = emptyRectF()
 
     //是否移动过
     var isTranslated = false
 
     /**双击检测*/
     val doubleGestureDetector = DoubleGestureDetector2() {
-        val itemRenderer = canvasDelegate.findItemRenderer(_touchPoint)
-        if (itemRenderer != null) {
-            isDoubleTouch = true
-            canvasDelegate.dispatchDoubleTapItem(itemRenderer)
+        touchDownInfo?.let {
+            val itemRenderer = canvasDelegate.findItemRenderer(it.touchPoint)
+            if (itemRenderer != null) {
+                isDoubleTouch = true
+                canvasDelegate.dispatchDoubleTapItem(itemRenderer)
+            }
         }
     }
 
@@ -94,23 +97,42 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
         var handle = isDoubleTouch
         var holdControlPoint = touchControlPoint
-
         val selectedItemRender = selectedItemRender
+
+        val canvasViewBox = canvasDelegate.getCanvasViewBox()
+
+        //第1个手指的id
+        val touchPointerId = event.getPointerId(0)
+        val x = event.x
+        val y = event.y
+        updateTouchPoint(x, y, canvasViewBox)
+
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                touchItemBounds.setEmpty()
                 isTranslated = false
+                touchDownInfo?.release()
 
-                touchPointerId = event.getPointerId(0)
-                _touchPoint.set(event.x, event.y)
-                _moveStartPoint.set(event.x, event.y)
-                val touchPoint = _touchPoint
+                //事件的一些手势信息
+                val touchInfo = ControlTouchInfo()
+                touchDownInfo = touchInfo
+                touchInfo.controlPoint = touchControlPoint
+                touchInfo.itemRenderer = selectedItemRender
+                touchInfo.itemRenderer?.let {
+                    touchInfo.itemBounds.set(it.getBounds())
+                }
+                touchInfo.touchPointerId = touchPointerId
+                touchInfo.updateTouchPoint(x, y, canvasViewBox)
+
+                //
+                updateMovePoint(x, y, canvasViewBox)
+                val touchPoint = touchInfo.touchPoint
 
                 if (selectedItemRender != null) {
                     //已经有选中, 则查找控制点
                     val controlPoint = findItemControlPoint(touchPoint)
                     touchControlPoint = controlPoint
                     holdControlPoint = controlPoint
+                    touchInfo.controlPoint = controlPoint
 
                     //notify
                     if (controlPoint != null) {
@@ -121,49 +143,47 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                 if (touchControlPoint == null) {
                     //未点在控制点上, 则检查是否点在[BaseItemRenderer]中
                     val itemRenderer = canvasDelegate.findItemRenderer(touchPoint)
-                    if (itemRenderer != null) {
-                        touchItemBounds.set(itemRenderer.getBounds())
+                    //selectedItemRender = itemRenderer
+                    touchInfo.itemRenderer = itemRenderer
+                    touchInfo.itemRenderer?.let {
+                        touchInfo.itemBounds.set(it.getBounds())
                     }
                     canvasDelegate.selectedItem(itemRenderer)
                 }
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
                 touchControlPoint = null
-                touchPointerId = -1
+                //touchPointerId = -1
             }
             MotionEvent.ACTION_MOVE -> {
-                _movePoint.set(event.x, event.y)
+                if (touchDownInfo?.touchPointerId == touchPointerId) {
+                    //按下的手指和移动的手指同一个时, 才处理
 
-                if (touchPointerId == event.getPointerId(0)) {
                     //L.d("\ntouch:${_touchPoint}\nmove:${_movePoint}")
                     if (touchControlPoint == null) {
-                        //没有在控制点上按压时, 才处理本体的移动
+                        //没有在控制点上按压时, 才处理item的移动
                         if (selectedItemRender != null) {
-                            //canvasView.canvasViewBox.matrix.invert(_tempMatrix)
-                            //canvasView.canvasViewBox.matrix.mapPoint(_movePointList[0])
-                            //val p1 = _tempMatrix.mapPoint(_movePointList[0]) //_movePointList[0]
-                            //canvasView.canvasViewBox.matrix.mapPoint(_touchPointList[0])
-                            //val p2 = _tempMatrix.mapPoint(_touchPointList[0])//_touchPointList[0]
 
-                            val p1 = canvasDelegate.getCanvasViewBox()
-                                .mapCoordinateSystemPoint(_movePoint)
-                            val p1x = p1.x
-                            val p1y = p1.y
+                            val dx = touchPoint.x - movePoint.x
+                            val dy = touchPoint.y - movePoint.y
 
-                            val p2 = canvasDelegate.getCanvasViewBox()
-                                .mapCoordinateSystemPoint(_moveStartPoint)
-                            val p2x = p2.x
-                            val p2y = p2.y
-
-                            val dx1 = p1x - p2x
-                            val dy1 = p1y - p2y
-
-                            if (dx1.absoluteValue > translateThreshold || dy1.absoluteValue > translateThreshold) {
+                            if (dx.absoluteValue >= translateThreshold ||
+                                dy.absoluteValue >= translateThreshold
+                            ) {
+                                //触发了移动
+                                //移动的时候不绘制控制点
                                 handle = true
                                 isTranslated = true
-                                //移动的时候不绘制控制点
                                 canvasDelegate.controlRenderer.drawControlPoint = false
+
+                                val translateX = touchSystemPointPoint.x - moveSystemPointPoint.x
+                                val translateY = touchSystemPointPoint.y - moveSystemPointPoint.y
                                 canvasDelegate.smartAssistant.smartTranslateItemBy(
+                                    selectedItemRender,
+                                    translateX,
+                                    translateY
+                                )
+                                /*canvasDelegate.smartAssistant.smartTranslateItemBy(
                                     selectedItemRender,
                                     dx1,
                                     dy1
@@ -174,7 +194,10 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                                     if (this[1]) {
                                         _moveStartPoint.y = _movePoint.y
                                     }
-                                }
+                                }*/
+
+                                //move point
+                                updateMovePoint(x, y, canvasViewBox)
                             }
                         }
                     } else {
@@ -194,7 +217,8 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                 }
                 //平移的撤销
                 selectedItemRender?.let {
-                    if (!touchItemBounds.isNoSize() && isTranslated) {
+                    val touchItemBounds = touchDownInfo?.itemBounds
+                    if (touchItemBounds != null && !touchItemBounds.isNoSize() && isTranslated) {
 
                         val itemList = mutableListOf<BaseItemRenderer<*>>()
                         if (it is SelectGroupRenderer) {
@@ -212,7 +236,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                                         itemList,
                                         newBounds,
                                         originBounds,
-                                        item.getBoundsScaleAnchor()
+                                        Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
                                     )
                                     if (canvasDelegate.getSelectedRenderer() == item) {
                                         item.updateSelectBounds()
@@ -230,7 +254,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                                         itemList,
                                         originBounds,
                                         newBounds,
-                                        item.getBoundsScaleAnchor()
+                                        Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
                                     )
                                     if (canvasDelegate.getSelectedRenderer() == item) {
                                         item.updateSelectBounds()
@@ -246,12 +270,13 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                 }
                 isDoubleTouch = false
                 touchControlPoint = null
-                touchPointerId = -1
+                //touchPointerId = -1
             }
         }
 
         //控制点
         selectedItemRender?.let {
+            //控制点的事件转发
             holdControlPoint?.onTouch(canvasDelegate, it, event)
         }
 
@@ -271,6 +296,19 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         }
         return null
     }
+
+    fun updateMovePoint(x: Float, y: Float, canvasViewBox: CanvasViewBox) {
+        movePoint.set(x, y)
+        canvasViewBox.viewPointToCoordinateSystemPoint(movePoint, moveSystemPointPoint)
+    }
+
+    fun updateTouchPoint(x: Float, y: Float, canvasViewBox: CanvasViewBox) {
+        touchPoint.set(x, y)
+        canvasViewBox.viewPointToCoordinateSystemPoint(touchPoint, touchSystemPointPoint)
+    }
+
+    //临时变量
+    val _controlPointOffsetRect = RectF()
 
     /**计算4个控制点的矩形位置坐标
      * [itemRect] 目标元素坐标系的矩形坐标*/

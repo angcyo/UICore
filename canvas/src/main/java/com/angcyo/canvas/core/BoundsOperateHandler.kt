@@ -9,6 +9,9 @@ import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.canvas.utils.isLineShape
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import java.lang.Math.tan
 
@@ -37,13 +40,13 @@ class BoundsOperateHandler {
             toHeight: Float
         ): Boolean {
 
-            if (itemRenderer is SelectGroupRenderer) {
+            /*if (itemRenderer is SelectGroupRenderer) {
                 //群组选择, 不允许反向
                 if (toWidth <= 1f || toHeight <= 1f) {
                     //不允许反向调整
                     return false
                 }
-                /*var haveLineShape = false
+                *//*var haveLineShape = false
                 itemRenderer.selectItemList.forEach {
                     if (it.isLineShape()) {
                         haveLineShape = true
@@ -56,11 +59,16 @@ class BoundsOperateHandler {
                         //不允许反向调整
                         return false
                     }
-                }*/
-            }
+                }*//*
+            }*/
 
-            if (toWidth.abs() < 1f || toHeight.abs() < 1f) {
-                //不允许设置小于1像素
+            /*val mmUnit = MmValueUnit()
+            val minSize = mmUnit.convertValueToPixel(1f)*/ //最小1毫米
+
+            val minSize = 1f
+
+            if (toWidth.abs() < minSize || toHeight.abs() < minSize) {
+                //不允许设置小于1毫米
                 return false
             }
 
@@ -89,95 +97,100 @@ class BoundsOperateHandler {
         pivotY: Float
     ) {
         val changeReason = Reason(Reason.REASON_CODE, flag = Reason.REASON_FLAG_ROTATE)
+        val tempRect = acquireTempRectF()
         list.forEach { item ->
-            _tempRectF.set(item.getBounds())
-            _tempRectF.rotate(degrees, pivotX, pivotY)
+            tempRect.set(item.getBounds())
+            tempRect.rotate(degrees, pivotX, pivotY)
             item.rotate += degrees
-            item.changeBounds(changeReason) {
-                offset(_tempRectF.centerX() - centerX(), _tempRectF.centerY() - centerY())
+            item.changeBoundsAction(changeReason) {
+                offset(tempRect.centerX() - centerX(), tempRect.centerY() - centerY())
+            }
+        }
+        tempRect.release()
+    }
+
+    /**平移所有item*/
+    fun translateItemList(
+        list: Iterable<BaseItemRenderer<*>>,
+        offsetLeft: Float,
+        offsetTop: Float,
+        reason: Reason = Reason(Reason.REASON_CODE, flag = Reason.REASON_FLAG_TRANSLATE)
+    ) {
+        list.forEach { item ->
+            item.changeBoundsAction(reason) {
+                offset(offsetLeft, offsetTop)
             }
         }
     }
 
-    /**批量平移/缩放[BaseItemRenderer]*/
+    /**批量平移/缩放[BaseItemRenderer] */
     fun changeBoundsItemList(
         list: Iterable<BaseItemRenderer<*>>,
         oldBounds: RectF,
-        newBounds: RectF
+        newBounds: RectF,
+        reason: Reason
     ) {
-        if (newBounds.width() == 0f || newBounds.height() == 0f) {
-            //no op
-            return
-        }
-        if (!oldBounds.isNoSize() && oldBounds.width() != 0f && oldBounds.height() != 0f) {
-            val changeReason = Reason(Reason.REASON_CODE, flag = Reason.REASON_FLAG_BOUNDS)
-
-            //平移
-            val offsetLeft: Float = newBounds.left - oldBounds.left
-            val offsetTop: Float = newBounds.top - oldBounds.top
-            if (offsetLeft.isFinite() && offsetTop.isFinite() && (offsetLeft != 0f || offsetTop != 0f)) {
-                list.forEach { item ->
-                    item.changeBounds(changeReason) {
-                        offset(offsetLeft, offsetTop)
-                    }
-                }
-            }
-
-            //缩放
-            val offsetWidth = newBounds.width() - oldBounds.width()
-            val offsetHeight = newBounds.height() - oldBounds.height()
-            if (offsetWidth.isFinite() && offsetHeight.isFinite() && (offsetWidth != 0f || offsetHeight != 0f)) {
-                val scaleX = newBounds.width() / oldBounds.width()
-                val scaleY = newBounds.height() / oldBounds.height()
-
-                val tempBounds = RectF()
-                list.forEach { item ->
-                    tempBounds.set(item.getBounds())
-                    tempBounds.scale(scaleX, scaleY, newBounds.left, newBounds.top)
-                    //L.i("缩放矩形:sx:$scaleX sy:$scaleY ->$this")
-                    if (canChangeBounds(item, tempBounds)) {
-                        item.changeBounds(changeReason) {
-                            set(tempBounds)
-                        }
-                    }
-                }
-            }
-
-            //旋转
-            /*list.forEach { item ->
-                _tempRectF.set(item.getBounds())
-                _tempRectF.rotate(rotate, bounds.centerX(), bounds.centerY())
-                item.rotate = rotate
-                item.changeBounds(changeReason) {
-                    offset(_tempRectF.centerX() - centerX(), _tempRectF.centerY() - centerY())
-                }
-            }*/
-        }
+        val boundsList = list.map { it.getBounds() }
+        changeBoundsItemList(list, boundsList, oldBounds, newBounds, reason)
     }
 
-    /**计算当边界Bounds改变后, 真实的Bounds应该怎么变化
-     * 支持旋转后的Bounds
-     * [bounds] 真实的Bounds, 也是返回值
-     * [com.angcyo.canvas.core.BoundsOperateHandler.calcBoundsWidthHeightWithFrame]*/
-    @Deprecated("此算法有问题")
-    fun calcBoundsWithFrame(frameFrom: RectF, frameTo: RectF, bounds: RectF) {
-        //平移
-        val offsetLeft = frameTo.left - frameFrom.left
-        val offsetTop = frameTo.top - frameFrom.top
-        if (offsetLeft.isFinite() && offsetTop.isFinite() && (offsetLeft != 0f || offsetTop != 0f)) {
-            bounds.offset(offsetLeft, offsetTop)
+    /**
+     * 批量平移/缩放 [BaseItemRenderer]
+     * [itemList] 需要批量平移的item
+     * [itemBoundsList] item的原始bounds
+     * [oldBounds] [newBounds] group的变化bounds
+     *
+     * [com.angcyo.canvas.core.renderer.SelectGroupRenderer]
+     * */
+    fun changeBoundsItemList(
+        itemList: Iterable<BaseItemRenderer<*>>,
+        itemBoundsList: List<RectF>,
+        oldBounds: RectF,
+        newBounds: RectF,
+        reason: Reason
+    ) {
+
+        //平移量
+        val offsetLeft: Float = newBounds.left - oldBounds.left
+        val offsetTop: Float = newBounds.top - oldBounds.top
+
+        //缩放比
+        val scaleX = (newBounds.width() / oldBounds.width()).ensure()
+        val scaleY = (newBounds.height() / oldBounds.height()).ensure()
+
+        if (offsetLeft == 0f && offsetTop == 0f && scaleX == 1f && scaleY == 1f) {
+            return
         }
 
-        //缩放
-        val offsetWidth = frameTo.width() - frameFrom.width()
-        val offsetHeight = frameTo.height() - frameFrom.height()
-        if (offsetWidth.isFinite() && offsetHeight.isFinite() && (offsetWidth != 0f || offsetHeight != 0f)) {
-            bounds.scale(
-                frameTo.width() / frameFrom.width(),
-                frameTo.height() / frameFrom.height(),
-                frameTo.left,
-                frameTo.top
-            )
+        itemList.forEachIndexed { index, renderer ->
+            val itemOriginBounds = itemBoundsList[index]
+
+            val centerX = itemOriginBounds.centerX()
+            val centerY = itemOriginBounds.centerY()
+
+            val cdx = centerX - oldBounds.left
+            val cdy = centerY - oldBounds.top
+
+            val newCenterX = oldBounds.left + cdx * scaleX
+            val newCenterY = oldBounds.top + cdy * scaleY
+
+            val offsetCenterX = newCenterX - centerX
+            val offsetCenterY = newCenterY - centerY
+
+            val itemNewBounds = acquireTempRectF()
+            itemNewBounds.set(itemOriginBounds)
+
+            if (renderer.isLineShape()) {
+                itemNewBounds.scale(scaleX, 1f, centerX, centerY)
+            } else {
+                itemNewBounds.scale(scaleX, scaleY, centerX, centerY)
+            }
+            itemNewBounds.offset(offsetLeft + offsetCenterX, offsetTop + offsetCenterY)
+
+            renderer.changeBoundsAction(reason) {
+                set(itemNewBounds)
+                itemNewBounds.release()
+            }
         }
     }
 
@@ -269,7 +282,7 @@ class BoundsOperateHandler {
         val step = object : ICanvasStep {
             override fun runUndo() {
                 undoOffsetList.forEach { item ->
-                    item.item.changeBounds(
+                    item.item.changeBoundsAction(
                         Reason(
                             Reason.REASON_CODE,
                             false,
@@ -284,7 +297,7 @@ class BoundsOperateHandler {
 
             override fun runRedo() {
                 offsetList.forEach { item ->
-                    item.item.changeBounds(
+                    item.item.changeBoundsAction(
                         Reason(
                             Reason.REASON_CODE,
                             false,

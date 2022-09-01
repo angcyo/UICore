@@ -28,6 +28,7 @@ class LimitRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView) {
     /**用来[InitialPointHandler]恢复显示范围*/
     var limitBounds: RectF? = null
 
+    //坐标系统中的坐标
     val _limitPathBounds: RectF = RectF()
 
     override fun render(canvas: Canvas) {

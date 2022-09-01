@@ -11,7 +11,7 @@ import com.angcyo.library.ex.have
  */
 data class AxisPoint(
 
-    /**坐标值, 像素*/
+    /**坐标值, 像素. 相对于View的坐标*/
     var pixel: Float,
 
     /**[pixel]从0开始的索引*/

@@ -7,7 +7,6 @@ import android.view.MotionEvent
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.IRenderer
-import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.L
@@ -110,7 +109,9 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
             if (enable) {
                 initSmartAssistantData(canvasDelegate)
             }
-        } else if (event.actionMasked == MotionEvent.ACTION_CANCEL || event.actionMasked == MotionEvent.ACTION_UP) {
+        } else if (event.actionMasked == MotionEvent.ACTION_CANCEL ||
+            event.actionMasked == MotionEvent.ACTION_UP
+        ) {
             lastXAssistant = null
             lastYAssistant = null
             lastRotateAssistant = null
@@ -142,7 +143,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
             }
             canvasDelegate.itemsRendererList.forEach {
                 if (it.isVisible()) {
-                    val bounds = it.getRotateBounds()
+                    val bounds = it.getBounds()
                     xRefValueList.add(SmartAssistantValueData(bounds.left, it))
                     xRefValueList.add(SmartAssistantValueData(bounds.right, it))
                 }
@@ -170,7 +171,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
             }
             canvasDelegate.itemsRendererList.forEach {
                 if (it.isVisible()) {
-                    val bounds = it.getRotateBounds()
+                    val bounds = it.getBounds()
                     yRefValueList.add(SmartAssistantValueData(bounds.top, it))
                     yRefValueList.add(SmartAssistantValueData(bounds.bottom, it))
                 }
