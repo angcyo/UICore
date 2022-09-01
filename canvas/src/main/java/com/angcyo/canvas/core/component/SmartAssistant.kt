@@ -382,7 +382,8 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         return result != 0f
     }
 
-    /**智能算法改变矩形的宽高*/
+    /**智能算法改变矩形的宽高
+     * [anchor] 旋转后的锚点*/
     fun smartChangeBounds(
         itemRenderer: BaseItemRenderer<*>,
         equalRatio: Boolean, //等比缩放
@@ -390,14 +391,14 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         height: Float,
         dx: Float,
         dy: Float,
-        adjustType: Int = ADJUST_TYPE_LT
+        anchor: PointF
     ): BooleanArray {
         if (!enable) {
             canvasDelegate.changeItemBounds(
                 itemRenderer,
                 width,
                 height,
-                adjustType
+                anchor
             )
             return booleanArrayOf(true, true)
         }
@@ -542,7 +543,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                     itemRenderer,
                     newWidth,
                     newHeight,
-                    adjustType
+                    anchor
                 )
             }
         }

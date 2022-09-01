@@ -6,7 +6,6 @@ import com.angcyo.canvas.Reason
 import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.ICanvasItem
-import com.angcyo.library.ex.ADJUST_TYPE_LT
 
 /**
  * 绘制在[CanvasView]上的具体项目
@@ -95,17 +94,17 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     fun translateBy(distanceX: Float, distanceY: Float)
 
     /**缩放元素, 在元素左上角位置开始缩放
-     * [scaleX] 横向需要移动的像素距离
-     * [scaleY] 纵向需要移动的像素距离
-     * [withCenter] 缩放缩放是否使用中点坐标, 默认是左上角
+     * [sx] 横向需要移动的像素距离
+     * [sy] 纵向需要移动的像素距离
+     * [anchor] 操作时的锚点, 旋转后的
      * */
-    fun scaleBy(scaleX: Float, scaleY: Float, adjustType: Int = ADJUST_TYPE_LT)
+    fun scaleBy(sx: Float, sy: Float, anchor: PointF)
 
     /**缩放到指定比例*/
-    fun scaleTo(scaleX: Float, scaleY: Float, adjustType: Int = ADJUST_TYPE_LT)
+    fun scaleTo(scaleX: Float, scaleY: Float, anchor: PointF)
 
     /**更新bounds到指定的宽高*/
-    fun updateBounds(width: Float, height: Float, adjustType: Int = ADJUST_TYPE_LT)
+    fun updateBounds(width: Float, height: Float, anchor: PointF)
 
     /**旋转元素, 旋转操作不能用matrix
      * [degrees] 旋转的角度, 非弧度

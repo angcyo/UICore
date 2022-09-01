@@ -4,7 +4,10 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withTranslation
-import com.angcyo.canvas.*
+import com.angcyo.canvas.CanvasDelegate
+import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.Reason
+import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.BoundsOperateHandler
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
@@ -19,6 +22,7 @@ import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
+import com.angcyo.library.gesture.RectScaleGestureHandler
 
 /**
  *
@@ -35,12 +39,6 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     /**当前旋转的角度, 在[CanvasView]中处理此属性
      * [com.angcyo.canvas.CanvasView.onDraw]*/
     var rotate: Float = 0f
-
-    /**当前宽度的缩放比例*/
-    var scaleX: Float = 1f
-
-    /**当前高度的缩放比例*/
-    var scaleY: Float = 1f
 
     /**是否锁定了缩放比例
      * [com.angcyo.canvas.items.renderer.BaseItemRenderer.updateLockScaleRatio]*/
@@ -336,77 +334,34 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     }
 
     /**缩放元素, 在元素左上角位置开始缩放
-     * [scaleX] 横向需要移动的像素距离
-     * [scaleY] 纵向需要移动的像素距离
-     * [withCenter] 缩放缩放是否使用中点坐标, 默认是左上角
+     * [sx] 横向需要移动的像素距离
+     * [sy] 纵向需要移动的像素距离
      * */
-    override fun scaleBy(scaleX: Float, scaleY: Float, adjustType: Int) {
-        L.i("缩放by->x:$scaleX y:$scaleY")
-        _tempMatrix.reset()
-        this.scaleX *= scaleX
-        this.scaleY *= scaleY
-        _adjustType = adjustType
-        changeBoundsAction(Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_BOUNDS)) {
-            val x = when (adjustType) {
-                ADJUST_TYPE_LT, ADJUST_TYPE_LB -> left
-                ADJUST_TYPE_RB, ADJUST_TYPE_RT -> right
-                else -> centerX()
-            }
-            val y = when (adjustType) {
-                ADJUST_TYPE_LT, ADJUST_TYPE_RT -> top
-                ADJUST_TYPE_RB, ADJUST_TYPE_LB -> bottom
-                else -> centerY()
-            }
-            _tempPoint.set(x, y)
-            mapRotatePoint(centerX(), centerY(), _tempPoint, _tempPoint)
-            _tempMatrix.postScale(scaleX, scaleY, _tempPoint.x, _tempPoint.y)
-            _tempMatrix.mapRect(this, this)
-        }
+    override fun scaleBy(sx: Float, sy: Float, anchor: PointF) {
+        L.i("缩放by->x:$sx y:$sy")
+        val renderItem = getRendererRenderItem() ?: return
+        val scaleX = renderItem.getItemScaleX(this) * sx
+        val scaleY = renderItem.getItemScaleY(this) * sy
+        scaleTo(scaleX, scaleY, anchor)
     }
 
-    override fun scaleTo(scaleX: Float, scaleY: Float, adjustType: Int) {
+    override fun scaleTo(scaleX: Float, scaleY: Float, anchor: PointF) {
         L.i("缩放to->x:$scaleX y:$scaleY")
-        _tempMatrix.reset()
-        //复原矩形
         val bounds = getBounds()
-        val oldScaleX = this.scaleX
-        val oldScaleY = this.scaleY
-        bounds.apply {
-            val x = when (adjustType) {
-                ADJUST_TYPE_LT, ADJUST_TYPE_LB -> left
-                ADJUST_TYPE_RB, ADJUST_TYPE_RT -> right
-                else -> centerX()
-            }
-            val y = when (adjustType) {
-                ADJUST_TYPE_LT, ADJUST_TYPE_RT -> top
-                ADJUST_TYPE_RB, ADJUST_TYPE_LB -> bottom
-                else -> centerY()
-            }
-            _tempPoint.set(x, y)
-            mapRotatePoint(centerX(), centerY(), _tempPoint, _tempPoint)
-            _tempMatrix.postScale(1f / oldScaleX, 1f / oldScaleY, _tempPoint.x, _tempPoint.y)
-            _tempMatrix.mapRect(this, this)
-        }
-
-        this.scaleX = scaleX
-        this.scaleY = scaleY
-        _adjustType = adjustType
+        val newBounds = acquireTempRectF()
+        RectScaleGestureHandler.rectScaleTo(
+            bounds,
+            newBounds,
+            scaleX,
+            scaleY,
+            rotate,
+            anchor.x,
+            anchor.y
+        )
         changeBoundsAction(Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_BOUNDS)) {
-            val x = when (adjustType) {
-                ADJUST_TYPE_LT, ADJUST_TYPE_LB -> left
-                ADJUST_TYPE_RB, ADJUST_TYPE_RT -> right
-                else -> centerX()
-            }
-            val y = when (adjustType) {
-                ADJUST_TYPE_LT, ADJUST_TYPE_RT -> top
-                ADJUST_TYPE_RB, ADJUST_TYPE_LB -> bottom
-                else -> centerY()
-            }
-            _tempPoint.set(x, y)
-            mapRotatePoint(centerX(), centerY(), _tempPoint, _tempPoint)
-            _tempMatrix.setScale(scaleX, scaleY, _tempPoint.x, _tempPoint.y)
-            _tempMatrix.mapRect(this, this)
+            set(newBounds)
         }
+        newBounds.release()
     }
 
     /**旋转元素, 旋转操作不能用matrix, 不能将操作数据更新到bounds
@@ -434,15 +389,20 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         L.i("旋转by->$degrees -> $rotate")
     }
 
-    /**临时存储一下更新Bounds的方式*/
-    var _adjustType: Int = ADJUST_TYPE_LT
-
     /**调整矩形的宽高, 支持旋转后的矩形*/
-    override fun updateBounds(width: Float, height: Float, adjustType: Int) {
-        L.i("调整宽高->w:${getBounds().width()}->$width h:${getBounds().height()}->${height} type:$adjustType")
-        _adjustType = adjustType
+    override fun updateBounds(width: Float, height: Float, anchor: PointF) {
+        L.i("调整宽高->w:${getBounds().width()}->$width h:${getBounds().height()}->${height} anchor:$anchor")
         changeBoundsAction(Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_BOUNDS)) {
-            adjustSizeWithRotate(width, height, rotate, adjustType)
+            //adjustSizeWithRotate(width, height, rotate, adjustType)
+            RectScaleGestureHandler.rectUpdateTo(
+                this,
+                this,
+                width,
+                height,
+                rotate,
+                anchor.x,
+                anchor.y
+            )
         }
     }
 
@@ -470,7 +430,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
                 //首次更新bounds
                 if (width != newWith || height != newHeight) {
                     isUpdate = true
-                    updateBounds(newWith, newHeight)
+                    updateBounds(newWith, newHeight, getBoundsScaleAnchor())
                 }
             } else {
                 //再次更新bounds
@@ -483,23 +443,31 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
                         //限制目标大小到原来的大小
                         limitMaxWidthHeight(newWith, newHeight, oldWidth, oldHeight).apply {
                             isUpdate = true
-                            updateBounds(this[0], this[1])
+                            updateBounds(this[0], this[1], getBoundsScaleAnchor())
                         }
                     } else {
                         //方向不一致, 使用新的宽高
                         isUpdate = true
-                        updateBounds(newWith, newHeight)
+                        updateBounds(newWith, newHeight, getBoundsScaleAnchor())
                     }
                 } else {
                     //重新缩放当前的大小,达到和原来的缩放效果一致性
                     if ((width >= height && newWith >= newHeight) || (width < height && newWith < newHeight)) {
                         //方向一致, 比如一致的宽图, 一致的长图
                         isUpdate = true
-                        updateBounds(newWith * scaleWidth, newHeight * scaleHeight)
+                        updateBounds(
+                            newWith * scaleWidth,
+                            newHeight * scaleHeight,
+                            getBoundsScaleAnchor()
+                        )
                     } else {
                         //方向不一致
                         isUpdate = true
-                        updateBounds(newWith * scaleHeight, newHeight * scaleWidth)
+                        updateBounds(
+                            newWith * scaleHeight,
+                            newHeight * scaleWidth,
+                            getBoundsScaleAnchor()
+                        )
                     }
                 }
             }

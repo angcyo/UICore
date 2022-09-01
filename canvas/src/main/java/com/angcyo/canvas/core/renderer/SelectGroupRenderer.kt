@@ -186,21 +186,23 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         }
 
         if (reason.reason == Reason.REASON_USER) {
-            if (itemBoundsMap.isEmpty()) {
-                canvasDelegate.boundsOperateHandler.changeBoundsItemList(
-                    selectItemList,
-                    oldBounds,
-                    getBounds(),
-                    Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
-                )
-            } else {
-                canvasDelegate.boundsOperateHandler.changeBoundsItemList(
-                    selectItemList,
-                    selectItemList.map { itemBoundsMap[it]!! },
-                    originBounds,
-                    getBounds(),
-                    Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
-                )
+            if (reason.flag.have(Reason.REASON_FLAG_TRANSLATE) || reason.flag.have(Reason.REASON_FLAG_BOUNDS)) {
+                if (itemBoundsMap.isEmpty()) {
+                    canvasDelegate.boundsOperateHandler.changeBoundsItemList(
+                        selectItemList,
+                        oldBounds,
+                        getBounds(),
+                        Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
+                    )
+                } else {
+                    canvasDelegate.boundsOperateHandler.changeBoundsItemList(
+                        selectItemList,
+                        selectItemList.map { itemBoundsMap[it]!! },
+                        originBounds,
+                        getBounds(),
+                        Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
+                    )
+                }
             }
         }
     }

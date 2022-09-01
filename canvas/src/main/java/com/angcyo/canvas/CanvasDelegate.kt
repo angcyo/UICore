@@ -782,10 +782,10 @@ class CanvasDelegate(val view: View) : ICanvasView {
         itemRenderer: BaseItemRenderer<*>,
         scaleX: Float = 1f,
         scaleY: Float = 1f,
-        adjustType: Int = ADJUST_TYPE_LT
+        anchor: PointF
     ) {
         itemRenderer.apply {
-            scaleBy(scaleX, scaleY, adjustType)
+            scaleBy(scaleX, scaleY, anchor)
             refresh()
         }
     }
@@ -794,10 +794,10 @@ class CanvasDelegate(val view: View) : ICanvasView {
         itemRenderer: BaseItemRenderer<*>,
         scaleX: Float = 1f,
         scaleY: Float = 1f,
-        adjustType: Int = ADJUST_TYPE_LT
+        anchor: PointF
     ) {
         itemRenderer.apply {
-            scaleTo(scaleX, scaleY, adjustType)
+            scaleTo(scaleX, scaleY, anchor)
             refresh()
         }
     }
@@ -815,13 +815,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
         itemRenderer: BaseItemRenderer<*>,
         width: Float,
         height: Float,
-        adjustType: Int = ADJUST_TYPE_LT
+        anchor: PointF
     ) {
         if (width == 0f || height == 0f) {
             return
         }
         itemRenderer.apply {
-            updateBounds(width, height, adjustType)
+            updateBounds(width, height, anchor)
             refresh()
         }
     }

@@ -324,6 +324,10 @@ class RectScaleGestureHandler {
             anchorX: Float,
             anchorY: Float
         ): Matrix {
+            if (target.isNoSize()) {
+                target.right = target.left + newWidth
+                target.bottom = target.top + newHeight
+            }
             val scaleX = (newWidth / target.width()).ensure()
             val scaleY = (newHeight / target.height()).ensure()
             return rectScaleTo(target, result, scaleX, scaleY, rotate, anchorX, anchorY)
@@ -459,6 +463,10 @@ class RectScaleGestureHandler {
     var _touchMoveX = 0f
     var _touchMoveY = 0f
 
+    //当前的手指的真实偏移量
+    var _touchDx = 0f
+    var _touchDY = 0f
+
     /**手势按下时的坐标, (反向旋转后的点)*/
     var _touchDownX: Float = 0f
     var _touchDownY: Float = 0f
@@ -565,8 +573,10 @@ class RectScaleGestureHandler {
     }
 
     fun onTouchMove(x: Float, y: Float): Boolean {
-        if ((x - _touchMoveX).absoluteValue >= _scaledTouchSlop ||
-            (y - _touchMoveY).absoluteValue >= _scaledTouchSlop
+        _touchDx = x - _touchMoveX
+        _touchDY = y - _touchMoveY
+        if (_touchDx.absoluteValue >= _scaledTouchSlop ||
+            _touchDY.absoluteValue >= _scaledTouchSlop
         ) {
             //slop
         } else {

@@ -131,12 +131,6 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         return result
     }
 
-    /**将屏幕上的点坐标, 映射成坐标系中的坐标*/
-    fun mapCoordinateSystemPoint(x: Float, y: Float, result: PointF = _tempPoint): PointF {
-        _tempPoint.set(x, y)
-        return invertMatrix.mapPoint(_tempPoint, result)
-    }
-
     /**[bounds] 相对于坐标系原点的坐标
      * [result] 返回相对于视图原点的坐标*/
     fun calcItemRenderBounds(bounds: RectF, result: RectF): RectF {
@@ -167,6 +161,12 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     /**将可视化坐标点, 映射成坐标系点*/
     fun mapCoordinateSystemPoint(point: PointF, result: PointF = _tempPoint): PointF {
         return invertMatrix.mapPoint(point, result)
+    }
+
+    /**将屏幕上的点坐标, 映射成坐标系中的坐标. 没有偏移到坐标系原点*/
+    fun mapCoordinateSystemPoint(x: Float, y: Float, result: PointF = _tempPoint): PointF {
+        _tempPoint.set(x, y)
+        return invertMatrix.mapPoint(_tempPoint, result)
     }
 
     /**将视图坐标点[point] 转换成对应的坐标系中的点[result]*/
