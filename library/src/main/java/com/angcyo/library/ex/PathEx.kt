@@ -127,7 +127,7 @@ fun Path.contains(rect: RectF): Boolean {
     val tempPath = acquireTempPath()
     tempPath.reset()
     tempPath.addRect(rect, Path.Direction.CW)
-    val result = this.contains(tempPath)
+    val result = contains(tempPath)
     tempPath.release()
     return result
 }
@@ -137,7 +137,7 @@ fun Path.intersect(rect: RectF): Boolean {
     val tempPath = acquireTempPath()
     tempPath.reset()
     tempPath.addRect(rect, Path.Direction.CW)
-    val result = this.contains(tempPath)
+    val result = intersect(tempPath)
     tempPath.release()
     return result
 }
