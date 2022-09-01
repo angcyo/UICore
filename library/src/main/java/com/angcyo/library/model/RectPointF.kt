@@ -4,8 +4,9 @@ import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.RectF
-import com.angcyo.library.ex._tempMatrix
-import com.angcyo.library.ex._tempPath
+import com.angcyo.library.component.pool.acquireTempMatrix
+import com.angcyo.library.component.pool.acquireTempPath
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.mapPoint
 import com.angcyo.library.ex.toRectF
 
@@ -40,8 +41,9 @@ fun RectF.toRectPoint(rotate: Float = 0f): RectPointF = toFourPoint(rotate)
  * [rotate] 矩形需要旋转的角度
  * */
 fun RectF.toFourPoint(rotate: Float = 0f): RectPointF {
-    _tempMatrix.reset()
-    _tempMatrix.setRotate(rotate, centerX(), centerY())
+    val matrix = acquireTempMatrix()
+    matrix.reset()
+    matrix.setRotate(rotate, centerX(), centerY())
 
     //赋值
     val result = RectPointF(originRotate = rotate)
@@ -54,23 +56,26 @@ fun RectF.toFourPoint(rotate: Float = 0f): RectPointF {
     result.rightBottom.set(right, bottom)
 
     //旋转
-    _tempMatrix.mapPoint(result.leftTop, result.leftTop)
-    _tempMatrix.mapPoint(result.leftBottom, result.leftBottom)
-    _tempMatrix.mapPoint(result.rightTop, result.rightTop)
-    _tempMatrix.mapPoint(result.rightBottom, result.rightBottom)
+    matrix.mapPoint(result.leftTop, result.leftTop)
+    matrix.mapPoint(result.leftBottom, result.leftBottom)
+    matrix.mapPoint(result.rightTop, result.rightTop)
+    matrix.mapPoint(result.rightBottom, result.rightBottom)
 
+    matrix.release()
     return result
 }
 
 /**转换成[Path]*/
-fun RectPointF.toPath(result: Path = _tempPath): Path {
-    _tempMatrix.reset()
-    _tempMatrix.setRotate(originRotate, originRectF.centerX(), originRectF.centerY())
+fun RectPointF.toPath(result: Path = acquireTempPath()): Path {
+    val matrix = acquireTempMatrix()
+    matrix.reset()
+    matrix.setRotate(originRotate, originRectF.centerX(), originRectF.centerY())
 
     result.rewind()
     result.addRect(originRectF, Path.Direction.CW)
-    result.transform(_tempMatrix)
+    result.transform(matrix)
 
+    matrix.release()
     return result
 }
 

@@ -16,6 +16,8 @@ class InitialPointHandler : BaseComponent() {
     val initialPointRect: RectF = emptyRectF()
     var isTouchDownInInitial = false
 
+    val _tempRect: RectF = emptyRectF()
+
     fun onTouch(view: CanvasDelegate, event: MotionEvent): Boolean {
         val canvasViewBox = view.getCanvasViewBox()
         when (event.actionMasked) {

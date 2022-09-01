@@ -19,9 +19,11 @@ import com.angcyo.component.shot
 import com.angcyo.dsladapter.getViewRect
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
+import com.angcyo.library.annotation.Implementation
+import com.angcyo.library.component.pool.acquireTempRect
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.ex.ViewEx._tempArray
-import com.angcyo.library.ex.ViewEx._tempRect
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.edit.IEditDelegate
@@ -550,23 +552,27 @@ fun String.textToBitmap(context: Context): Bitmap? {
 
 //<editor-fold desc="坐标">
 
+@Implementation
 private fun View.getVisibleRect() {
+    val rect = acquireTempRect()
     //获取全局可见状态矩形坐标, 在浮窗中, 则以根视图大小为参考
     //浮窗中, 根视图获取到的矩形就是自身的[0,0 自身的宽高]
-    getGlobalVisibleRect(_tempRect)
+    getGlobalVisibleRect(rect)
 
     //去掉不可见位置时的矩形
-    getLocalVisibleRect(_tempRect)
+    getLocalVisibleRect(rect)
 
     //视图左上角坐标, 相对于window的坐标, 全屏情况下会等于[getLocationOnScreen]
     getLocationInWindow(_tempArray)
 
     //视图左上角坐标, 相对于屏幕的坐标. (包含了状态的高度)
     getLocationOnScreen(_tempArray)
+
+    rect.release()
 }
 
 /**获取[View]在屏幕中的矩形坐标*/
-fun View.screenRect(rect: Rect = _tempRect): Rect {
+fun View.screenRect(rect: Rect = acquireTempRect()): Rect {
     getLocationOnScreen(_tempArray)
     val left = _tempArray[0]
     val top = _tempArray[1]

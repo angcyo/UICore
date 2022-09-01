@@ -4,6 +4,9 @@ import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
+import com.angcyo.library.component.pool.acquireTempMatrix
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -14,10 +17,6 @@ import kotlin.math.roundToInt
  */
 
 //<editor-fold desc="base">
-
-val _tempRect = Rect()
-val _tempRectF = RectF()
-val _tempMatrix = Matrix()
 
 fun emptyRectF() = RectF(0f, 0f, 0f, 0f)
 
@@ -117,13 +116,14 @@ const val ADJUST_TYPE_LB = 0x12
 
 /**缩放一个矩形
  * [scaleX] [scaleY] 宽高缩放的比例
- * [pivotX] [pivotY] 缩放的轴点
+ * [pivotX] [pivotY] 缩放的锚点
  * */
 fun RectF.scale(scaleX: Float, scaleY: Float, pivotX: Float = left, pivotY: Float = top): RectF {
-    val matrix = _tempMatrix
+    val matrix = acquireTempMatrix()
     matrix.reset()
     matrix.setScale(scaleX, scaleY, pivotX, pivotY)
     matrix.mapRect(this)
+    matrix.release()
     return this
 }
 
@@ -143,10 +143,11 @@ fun RectF.rotate(
     pivotY: Float = centerY(),
     result: RectF = this
 ): RectF {
-    val matrix = _tempMatrix
+    val matrix = acquireTempMatrix()
     matrix.reset()
     matrix.setRotate(degrees, pivotX, pivotY)
     matrix.mapRect(result, this)
+    matrix.release()
     return result
 }
 
@@ -157,12 +158,13 @@ fun RectF.rotateToPath(
     pivotY: Float = centerY(),
     result: Path = Path()
 ): Path {
-    val matrix = _tempMatrix
+    val matrix = acquireTempMatrix()
     matrix.reset()
     matrix.setRotate(degrees, pivotX, pivotY)
     result.rewind()
     result.addRect(this, Path.Direction.CW)
     result.transform(matrix)
+    matrix.release()
     return result
 }
 
@@ -239,8 +241,8 @@ fun RectF.adjustSizeWithRotate(
     adjustSize(width, height, adjustType)
 
     //按照原始的旋转中点坐标, 旋转调整后的矩形
-    val rotateRect = _tempRectF
-    val matrix = _tempMatrix
+    val rotateRect = acquireTempRectF()
+    val matrix = acquireTempMatrix()
     matrix.reset()
     matrix.postRotate(rotate, originCenterX, originCenterY) //旋转矩形
     matrix.mapRect(rotateRect, this)
@@ -257,6 +259,9 @@ fun RectF.adjustSizeWithRotate(
     val dy = rotateRect.centerY() - centerY()
 
     offset(dx, dy)
+
+    rotateRect.release()
+    matrix.release()
 }
 
 /**[adjustScaleSize]*/
@@ -393,7 +398,7 @@ fun RectF.trapToRect(
         Float.NEGATIVE_INFINITY
     )
 ): RectF {
-    val matrix = _tempMatrix
+    val matrix = acquireTempMatrix()
     val values = toCornersValues()
     matrix.setRotate(rotate)
     matrix.mapPoints(values)
@@ -410,6 +415,7 @@ fun RectF.trapToRect(
     }
 
     result.sort()
+    matrix.release()
 
     return result
 }

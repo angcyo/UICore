@@ -7,6 +7,7 @@ import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.*
 import com.angcyo.canvas.core.BoundsOperateHandler
 import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.core.renderer.BaseRenderer
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.BaseItem
@@ -15,6 +16,8 @@ import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.library.L
 import com.angcyo.library.component.ScalePictureDrawable
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 
 /**
@@ -76,6 +79,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     val _tempMatrix = Matrix()
     val _rotateMatrix = Matrix()
+    val _tempPoint = PointF()
 
     //</editor-fold desc="计算属性">
 
@@ -107,7 +111,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         bounds.block()
 
         //check
-        if (!canChangeBounds(getBounds())) {
+        if (reason.reason == Reason.REASON_USER && !canChangeBounds(getBounds())) {
             L.w("不允许修改Bounds->${getBounds()}")
             bounds.set(_oldBounds)
             return false
@@ -246,19 +250,24 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     override fun containsPoint(point: PointF): Boolean {
         var rendererBounds = getRenderBounds()
 
+        val tempRect = acquireTempRectF()
         if (isLineShape()) {
             //如果是线段, 放大矩形高度区域
-            _tempRectF.set(rendererBounds)
-            _tempRectF.inset(0f, -10 * dp)
-            rendererBounds = _tempRectF
+            tempRect.set(rendererBounds)
+            tempRect.inset(0f, -10 * dp)
+            rendererBounds = tempRect
         }
 
-        return getRotateMatrix(rendererBounds.centerX(), rendererBounds.centerY()).run {
+        val result = getRotateMatrix(rendererBounds.centerX(), rendererBounds.centerY()).run {
             rotatePath.reset()
             rotatePath.addRect(rendererBounds, Path.Direction.CW)
             rotatePath.transform(this)
             rotatePath.contains(point.x.toInt(), point.y.toInt())
         }
+
+        tempRect.release()
+
+        return result
     }
 
     override fun containsRect(rect: RectF): Boolean {
@@ -293,6 +302,23 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         _tempMatrix.mapPoint(_anchorPoint, _anchorPoint)
         return _anchorPoint
     }
+
+    //<editor-fold desc="scale control">
+
+    /**开始拖拽缩放*/
+    open fun onScaleControlStart(controlPoint: ScaleControlPoint) {
+
+    }
+
+    /**拖拽缩放结束*/
+    open fun onScaleControlFinish(controlPoint: ScaleControlPoint, rect: RectF, end: Boolean) {
+        L.i("拖动调整矩形:w:${rect.width()} h:${rect.height()} $rect $end")
+        changeBounds {
+            set(rect)
+        }
+    }
+
+    //</editor-fold desc="scale control">
 
     //<editor-fold desc="控制方法">
 

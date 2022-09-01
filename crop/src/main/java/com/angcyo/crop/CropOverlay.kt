@@ -4,6 +4,8 @@ import android.graphics.*
 import android.view.MotionEvent
 import androidx.core.graphics.toRect
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.gesture.RectScaleGestureHandler
 import kotlin.math.min
@@ -282,8 +284,11 @@ class CropOverlay(val cropDelegate: CropDelegate) {
     fun findTouchRectPosition(x: Float, y: Float): Int {
         val factor = 5
         val refWidth = cornerWidth * factor
-        _tempRectF.set(clipRect)
-        return RectScaleGestureHandler.findRectPosition(_tempRectF, 0f, x, y, refWidth)
+        val rect = acquireTempRectF()
+        rect.set(clipRect)
+        val result = RectScaleGestureHandler.findRectPosition(rect, 0f, x, y, refWidth)
+        rect.release()
+        return result
     }
 
     val _ltPath = Path()
@@ -484,8 +489,10 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         val rect = clipRect.toRectF()
         if (anim) {
             matrixAnimator(startMatrix, endMatrix, cropDelegate.animatorDuration) {
-                it.mapRect(_tempRectF, rect)
-                updateClipRect(_tempRectF)
+                val tempRect = acquireTempRectF()
+                it.mapRect(tempRect, rect)
+                updateClipRect(tempRect)
+                tempRect.release()
             }
         } else {
             endMatrix.mapRect(rect)

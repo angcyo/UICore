@@ -9,6 +9,8 @@ import android.view.View
 import androidx.core.graphics.*
 import androidx.core.view.GestureDetectorCompat
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.component.pool.acquireTempMatrix
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.gesture.RotationGestureDetector
 import kotlin.math.max
@@ -276,9 +278,11 @@ class CropDelegate(val view: View) {
 
     /**旋转矩形[rect]*/
     fun _rotate(rect: RectF) {
-        _tempMatrix.reset()
-        _tempMatrix.setRotate(rotate, rect.centerX(), rect.centerY())
-        _tempMatrix.mapRect(rect)
+        val matrix = acquireTempMatrix()
+        matrix.reset()
+        matrix.setRotate(rotate, rect.centerX(), rect.centerY())
+        matrix.mapRect(rect)
+        matrix.release()
     }
 
     /**计算[from]能够完全显示的最佳矩形

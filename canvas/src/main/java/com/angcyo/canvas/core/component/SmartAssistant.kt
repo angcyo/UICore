@@ -11,6 +11,8 @@ import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.L
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 import kotlin.math.max
@@ -661,7 +663,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
             val refRenderer = smartValue.refRenderer
 
             val viewRect = canvasViewBox
-                .mapCoordinateSystemRect(canvasDelegate.viewBounds, _tempRect)
+                .mapCoordinateSystemRect(canvasDelegate.viewBounds, acquireTempRectF())
             val renderBounds = itemRenderer.getRenderBounds()
             var left = viewRect.left - renderBounds.centerX()
             var right = viewRect.right + canvasViewBox.getContentRight() - renderBounds.centerX()
@@ -697,6 +699,8 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                 right - canvasViewBox.getCoordinateSystemX(),
                 bottom - canvasViewBox.getCoordinateSystemY()
             )
+
+            viewRect.release()
         }
 
         return result

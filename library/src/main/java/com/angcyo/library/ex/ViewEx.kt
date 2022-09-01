@@ -2,6 +2,7 @@ package com.angcyo.library.ex
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -22,8 +23,10 @@ import androidx.core.math.MathUtils.clamp
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
+import com.angcyo.library.component.pool.acquireTempRect
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.ViewEx._tempArray
-import com.angcyo.library.ex.ViewEx._tempRect
 
 /**
  *
@@ -34,11 +37,7 @@ import com.angcyo.library.ex.ViewEx._tempRect
  */
 
 object ViewEx {
-    val _tempRect = Rect()
-
-    val _tempRectF = RectF()
-
-    val _tempArray = intArrayOf(-1, -1)
+    val _tempArray: IntArray by lazy { intArrayOf(-1, -1) }
 }
 
 //<editor-fold desc="基础扩展">
@@ -56,6 +55,7 @@ fun View.getStatusBarHeight(): Int {
 }
 
 /**双击事件*/
+@SuppressLint("ClickableViewAccessibility")
 fun View.onDoubleTap(action: (View) -> Boolean) {
     val view = this
     val gestureDetector = GestureDetectorCompat(context,
@@ -160,48 +160,48 @@ fun View.drawRect(rect: Rect) {
     rect.set(paddingLeft, paddingTop, measuredWidth - paddingRight, measuredHeight - paddingBottom)
 }
 
-fun View.drawRect(rect: RectF) {
-    rect.set(
+fun View.drawRect(result: RectF) {
+    result.set(
         paddingLeft.toFloat(), paddingTop.toFloat(),
         (measuredWidth - paddingRight).toFloat(),
         (measuredHeight - paddingBottom).toFloat()
     )
 }
 
-fun View.viewRect(rect: Rect = _tempRect): Rect {
-    rect.set(0, 0, measuredWidth, measuredHeight)
-    return rect
+fun View.viewRect(result: Rect = acquireTempRect()): Rect {
+    result.set(0, 0, measuredWidth, measuredHeight)
+    return result
 }
 
-fun View.viewRect(rect: RectF = _tempRectF): RectF {
-    rect.set(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat())
-    return rect
+fun View.viewRect(result: RectF = acquireTempRectF()): RectF {
+    result.set(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat())
+    return result
 }
 
-fun View.viewFrame(rect: Rect = _tempRect): Rect {
-    rect.set(left, top, right, bottom)
-    return rect
+fun View.viewFrame(result: Rect = acquireTempRect()): Rect {
+    result.set(left, top, right, bottom)
+    return result
 }
 
 /**视图在父控件中的位置*/
-fun View.viewFrameF(rect: RectF = _tempRectF): RectF {
-    rect.set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
-    return rect
+fun View.viewFrameF(result: RectF = acquireTempRectF()): RectF {
+    result.set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
+    return result
 }
 
 /**视图在屏幕中的位置*/
-fun View.viewScreenFrameF(rect: RectF = _tempRectF): RectF {
+fun View.viewScreenFrameF(result: RectF = acquireTempRectF()): RectF {
 
     //视图左上角坐标, 相对于屏幕的坐标. (包含了状态的高度)
     getLocationOnScreen(_tempArray)
 
     val x = _tempArray[0]
     val y = _tempArray[1]
-    rect.set(
+    result.set(
         x.toFloat(), y.toFloat(),
         (x + measuredWidth).toFloat(), (y + measuredHeight).toFloat()
     )
-    return rect
+    return result
 }
 
 /**视图View 变灰, 灰度处理*/
@@ -557,8 +557,10 @@ fun View.showSoftInput() {
  */
 fun View.getSoftKeyboardHeight(): Int {
     val screenHeight = getScreenHeightPixels()
-    getWindowVisibleDisplayFrame(_tempRect)
-    val visibleBottom = _tempRect.bottom
+    val rect = acquireTempRect()
+    getWindowVisibleDisplayFrame(rect)
+    val visibleBottom = rect.bottom
+    rect.release()
     return screenHeight - visibleBottom
 }
 

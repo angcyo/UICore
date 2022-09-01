@@ -3,6 +3,10 @@ package com.angcyo.library.ex
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
+import com.angcyo.library.component.pool.acquireTempMatrix
+import com.angcyo.library.component.pool.acquireTempPointF
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import java.util.*
 import kotlin.math.*
 
@@ -44,7 +48,7 @@ fun dotDegrees(
     degrees: Float,
     pivotX: Float,
     pivotY: Float,
-    result: PointF = _tempPoint
+    result: PointF = acquireTempPointF()
 ): PointF {
     val x = pivotX + radius * cos(degrees * Math.PI / 180)
     val y = pivotY + radius * sin(degrees * Math.PI / 180)
@@ -59,7 +63,7 @@ fun dotRadians(
     radians: Float,
     pivotX: Float,
     pivotY: Float,
-    result: PointF = _tempPoint
+    result: PointF = acquireTempPointF()
 ): PointF {
     val x = pivotX + radius * cos(radians)
     val y = pivotY + radius * sin(radians)
@@ -149,8 +153,6 @@ val _tempValues = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
 /**临时对象, 用来存储坐标点位值*/
 val _tempPoints = floatArrayOf(0f, 0f)
 
-val _tempPoint = PointF()
-
 /**当前矩阵, 偏移的x*/
 fun Matrix.getTranslateX(): Float {
     getValues(_tempValues)
@@ -235,13 +237,13 @@ fun Matrix.getRotateDegrees(): Float {
 }
 
 /**[PointF]*/
-fun Matrix.mapPoint(x: Float, y: Float): PointF {
+fun Matrix.mapPoint(x: Float, y: Float, result: PointF = acquireTempPointF()): PointF {
     _tempPoints[0] = x
     _tempPoints[1] = y
     mapPoints(_tempPoints, _tempPoints)
-    _tempPoint.x = _tempPoints[0]
-    _tempPoint.y = _tempPoints[1]
-    return _tempPoint
+    result.x = _tempPoints[0]
+    result.y = _tempPoints[1]
+    return result
 }
 
 /**[PointF]
@@ -264,7 +266,7 @@ fun Matrix.mapPoint(point: PointF, result: PointF): PointF {
 }
 
 /**[RectF]*/
-fun Matrix.mapRectF(rect: RectF, result: RectF = _tempRectF): RectF {
+fun Matrix.mapRectF(rect: RectF, result: RectF = acquireTempRectF()): RectF {
     mapRect(result, rect)
     return result
 }
@@ -305,9 +307,11 @@ fun Matrix.mapYValueList(yList: List<Float>): List<Float> {
 
 /**旋转一个点*/
 fun PointF.rotate(rotate: Float, pivotX: Float, pivotY: Float, result: PointF = this): PointF {
-    _tempMatrix.reset()
-    _tempMatrix.setRotate(rotate, pivotX, pivotY)
-    _tempMatrix.mapPoint(this, result)
+    val matrix = acquireTempMatrix()
+    matrix.reset()
+    matrix.setRotate(rotate, pivotX, pivotY)
+    matrix.mapPoint(this, result)
+    matrix.release()
     return result
 }
 
@@ -318,10 +322,12 @@ fun PointF.invertRotate(
     pivotY: Float,
     result: PointF = this
 ): PointF {
-    _tempMatrix.reset()
-    _tempMatrix.setRotate(rotate, pivotX, pivotY)
-    _tempMatrix.invert(_tempMatrix)
-    _tempMatrix.mapPoint(this, result)
+    val matrix = acquireTempMatrix()
+    matrix.reset()
+    matrix.setRotate(rotate, pivotX, pivotY)
+    matrix.invert(matrix)
+    matrix.mapPoint(this, result)
+    matrix.release()
     return result
 }
 

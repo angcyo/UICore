@@ -3,6 +3,10 @@ package com.angcyo.library.ex
 import android.graphics.*
 import android.os.Build
 import androidx.core.graphics.withTranslation
+import com.angcyo.library.component.pool.acquireTempPath
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.acquireTempRegion
+import com.angcyo.library.component.pool.release
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
@@ -80,74 +84,94 @@ fun Path.getProgressPath(progress: Float, dst: Path = Path()): Path {
     return dst
 }
 
-val _computeBounds: RectF = RectF()
-val _clipRegion: Region = Region()
-val _pathRegion: Region = Region()
-val _tempPath: Path = Path()
-val _resultPath: Path = Path()
-
 /**判断点是否在[Path]内, path是否包含点
  * [clipRect] 需要裁剪的矩形区域, 限制点位只在这个区域内有效*/
 fun Path.contains(x: Int, y: Int, clipRect: RectF? = null): Boolean {
     val _clipRect = if (clipRect == null) {
-        val rectF = _computeBounds
+        val rectF = acquireTempRectF()
         computeBounds(rectF, true)
         rectF
     } else {
         clipRect
     }
-    _clipRegion.setEmpty()
-    _clipRegion.set(
+
+    //限制一下矩形区域
+    val rectRegion = acquireTempRegion()
+    rectRegion.setEmpty()
+    rectRegion.set(
         _clipRect.left.toInt(),
         _clipRect.top.toInt(),
         _clipRect.right.toInt(),
         _clipRect.bottom.toInt()
     )
-    val rectRegion = _clipRegion
+    if (clipRect == null) {
+        _clipRect.release()
+    }
 
-    _pathRegion.setEmpty()
-    _pathRegion.setPath(this, rectRegion)
-    return _pathRegion.contains(x, y)
+    //碰撞范围
+    val pathRegion = acquireTempRegion()
+    pathRegion.setEmpty()
+    pathRegion.setPath(this, rectRegion)
+
+    //点是否在范围内
+    val result = pathRegion.contains(x, y)
+
+    rectRegion.release()
+    pathRegion.release()
+
+    return result
 }
 
 /**判断矩形是否在[Path]内, path是否包含矩形*/
 fun Path.contains(rect: RectF): Boolean {
-    _tempPath.reset()
-    _tempPath.addRect(rect, Path.Direction.CW)
-    return this.contains(_tempPath)
+    val tempPath = acquireTempPath()
+    tempPath.reset()
+    tempPath.addRect(rect, Path.Direction.CW)
+    val result = this.contains(tempPath)
+    tempPath.release()
+    return result
 }
 
 /**判断路径是否和[rect]相交*/
 fun Path.intersect(rect: RectF): Boolean {
-    _tempPath.reset()
-    _tempPath.addRect(rect, Path.Direction.CW)
-    return this.intersect(_tempPath)
+    val tempPath = acquireTempPath()
+    tempPath.reset()
+    tempPath.addRect(rect, Path.Direction.CW)
+    val result = this.contains(tempPath)
+    tempPath.release()
+    return result
 }
 
 /**判断矩形是否在[Path]内, path是否包含矩形
  * 判断[this]是否完全包含[path]
  * */
 fun Path.contains(path: Path): Boolean {
-    val result = _resultPath
-    result.reset()
+    val tempPath = acquireTempPath()
+    tempPath.reset()
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        result.op(this, path, Path.Op.REVERSE_DIFFERENCE)
+        tempPath.op(this, path, Path.Op.REVERSE_DIFFERENCE)
     } else {
+        tempPath.release()
         return false
     }
-    return result.isEmpty
+    val result = tempPath.isEmpty
+    tempPath.release()
+    return result
 }
 
 /**判断2个Path是否相交*/
 fun Path.intersect(path: Path): Boolean {
-    val result = _resultPath
-    result.reset()
+    val tempPath = acquireTempPath()
+    tempPath.reset()
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        result.op(this, path, Path.Op.INTERSECT)
+        tempPath.op(this, path, Path.Op.INTERSECT)
     } else {
+        tempPath.release()
         return false
     }
-    return !result.isEmpty
+    val result = !tempPath.isEmpty
+    tempPath.release()
+    return result
 }
 
 /**路径的长度*/

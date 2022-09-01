@@ -6,7 +6,8 @@ import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.isLineShape
-import com.angcyo.library.L
+import com.angcyo.library.component.pool.acquireTempPointF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.gesture.RectScaleGestureHandler
 
@@ -38,8 +39,9 @@ class ScaleControlPoint : ControlPoint() {
         event: MotionEvent
     ): Boolean {
         val canvasViewBox = canvasDelegate.getCanvasViewBox()
-        _tempPoint.set(event.x, event.y)
-        canvasViewBox.viewPointToCoordinateSystemPoint(_tempPoint, _tempPoint)
+        val point = acquireTempPointF()
+        point.set(event.x, event.y)
+        canvasViewBox.viewPointToCoordinateSystemPoint(point, point)
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 val bounds = itemRenderer.getBounds()
@@ -57,17 +59,15 @@ class ScaleControlPoint : ControlPoint() {
                         }
                     }
                     onRectScaleChangeAction = { rect, end ->
-                        L.i("拖动调整矩形:$rect $end")
-                        itemRenderer.changeBounds {
-                            set(rect)
-                        }
+                        itemRenderer.onScaleControlFinish(this@ScaleControlPoint, rect, end)
                     }
                     initializeAnchor(bounds, itemRenderer.rotate, bounds.left, bounds.top)
-                    onTouchDown(_tempPoint.x, _tempPoint.y)
+                    onTouchDown(point.x, point.y)
                 }
+                itemRenderer.onScaleControlStart(this)
             }
             MotionEvent.ACTION_MOVE -> {
-                rectScaleGestureHandler.onTouchMove(_tempPoint.x, _tempPoint.y)
+                rectScaleGestureHandler.onTouchMove(point.x, point.y)
                 /*canvasDelegate.smartAssistant.smartChangeBounds(
                     itemRenderer,
                     isLockScaleRatio,
@@ -86,7 +86,7 @@ class ScaleControlPoint : ControlPoint() {
                 }*/
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                rectScaleGestureHandler.onTouchFinish(_tempPoint.x, _tempPoint.y)
+                rectScaleGestureHandler.onTouchFinish(point.x, point.y)
                 /*if (!touchItemBounds.isNoSize() && isScaled) {
                     itemRenderer.let {
                         val itemList = mutableListOf<BaseItemRenderer<*>>()
@@ -136,6 +136,7 @@ class ScaleControlPoint : ControlPoint() {
                 }*/
             }
         }
+        point.release()
         return true
     }
 }

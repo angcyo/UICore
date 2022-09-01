@@ -15,6 +15,9 @@ import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.library.component.pool.acquireTempMatrix
+import com.angcyo.library.component.pool.acquireTempPointF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.gesture.DoubleGestureDetector2
 import kotlin.math.absoluteValue
@@ -382,16 +385,17 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         x: Float,
         y: Float
     ) {
-        _tempPoint.set(x, y)
+        val point = acquireTempPointF()
+        val matrix = acquireTempMatrix()
+        point.set(x, y)
         //旋转后的点坐标
-        _tempMatrix.reset()
-        _tempMatrix.postRotate(
+        matrix.reset()
+        matrix.postRotate(
             itemRenderer.rotate,
             _controlPointOffsetRect.centerX(),
             _controlPointOffsetRect.centerY()
         )
-        _tempMatrix.mapPoint(_tempPoint, _tempPoint)
-        val point = _tempPoint
+        matrix.mapPoint(point, point)
 
         controlPoint.bounds.set(
             point.x - controlPointSize / 2,
@@ -399,5 +403,8 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
             point.x + controlPointSize / 2,
             point.y + controlPointSize / 2
         )
+
+        point.release()
+        matrix.release()
     }
 }

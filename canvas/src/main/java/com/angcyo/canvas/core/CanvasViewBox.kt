@@ -4,6 +4,7 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import androidx.annotation.UiThread
+import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.ex.*
 
 /**
@@ -94,7 +95,7 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     /**获取当前坐标系在可视窗口的矩形, 原始坐标保持不变.
      * [contentRect] 缩放平移[matrix]之后的变成的[RectF]
      * */
-    fun getVisualCoordinateSystemRect(result: RectF = _tempRectF): RectF {
+    fun getVisualCoordinateSystemRect(result: RectF = acquireTempRectF()): RectF {
         /*matrix.getValues(_tempValues)
         _tempValues[Matrix.MTRANS_X] -= _tempValues[Matrix.MTRANS_X]
         _tempValues[Matrix.MTRANS_Y] -= _tempValues[Matrix.MTRANS_Y]
@@ -122,7 +123,7 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     /**获取当前能够看到的坐标系的范围矩形, 肉眼坐标保持不变.
      * [contentRect] 保持原先的位置, [matrix]缩放平移之后,一个新的[RectF]
      * */
-    fun getVisualRect(result: RectF = _tempRectF): RectF {
+    fun getVisualRect(result: RectF = acquireTempRectF()): RectF {
         invertMatrix.mapRect(result, contentRect)
         return result
     }

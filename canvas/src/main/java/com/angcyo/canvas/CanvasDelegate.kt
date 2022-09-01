@@ -15,6 +15,9 @@ import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer.Companion.ROTATE_FLAG_NORMAL
 import com.angcyo.canvas.utils.limitMaxWidthHeight
+import com.angcyo.library.component.pool.acquireTempPointF
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import kotlin.math.max
 import kotlin.math.min
@@ -233,12 +236,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
     }
 
     override fun findItemRenderer(touchPoint: PointF): BaseItemRenderer<*>? {
-        val point = getCanvasViewBox().mapCoordinateSystemPoint(touchPoint, _tempPoint)
+        val point = getCanvasViewBox().mapCoordinateSystemPoint(touchPoint, acquireTempPointF())
 
         //多选渲染优先
         val selectedRenderer = getSelectedRenderer()
         if (selectedRenderer is SelectGroupRenderer) {
             if (selectedRenderer.isVisible() && selectedRenderer.containsPoint(point)) {
+                point.release()
                 return selectedRenderer
             }
         }
@@ -246,9 +250,11 @@ class CanvasDelegate(val view: View) : ICanvasView {
         //item渲染
         itemsRendererList.reversed().forEach {
             if (it.isVisible() && it.containsPoint(point)) {
+                point.release()
                 return it
             }
         }
+        point.release()
         return null
     }
 
@@ -518,11 +524,12 @@ class CanvasDelegate(val view: View) : ICanvasView {
         var bottom = 0f
 
         itemsRendererList.forEach {
-            val bounds = it.getRotateBounds().adjustFlipRect(_tempRectF)
+            val bounds = it.getRotateBounds().adjustFlipRect(acquireTempRectF())
             left = min(left, bounds.left)
             top = min(top, bounds.top)
             right = max(right, bounds.right)
             bottom = max(bottom, bounds.bottom)
+            bounds.release()
         }
 
         return getBitmap(left, top, (right - left).toInt(), (bottom - top).toInt())
@@ -932,14 +939,24 @@ class CanvasDelegate(val view: View) : ICanvasView {
             itemList.addAll(item.selectItemList)
             step = object : ICanvasStep {
                 override fun runUndo() {
-                    boundsOperateHandler.changeBoundsItemList(itemList, newBounds, originBounds)
+                    boundsOperateHandler.changeBoundsItemList(
+                        itemList,
+                        newBounds,
+                        originBounds,
+                        itemRenderer.getBoundsScaleAnchor()
+                    )
                     if (getSelectedRenderer() == item) {
                         item.updateSelectBounds()
                     }
                 }
 
                 override fun runRedo() {
-                    boundsOperateHandler.changeBoundsItemList(itemList, originBounds, newBounds)
+                    boundsOperateHandler.changeBoundsItemList(
+                        itemList,
+                        originBounds,
+                        newBounds,
+                        itemRenderer.getBoundsScaleAnchor()
+                    )
                     if (getSelectedRenderer() == item) {
                         item.updateSelectBounds()
                     }
