@@ -4,6 +4,7 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
+import android.view.VelocityTracker
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.IRenderer
@@ -17,6 +18,7 @@ import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
+
 
 /**
  * 智能提示助手
@@ -66,6 +68,9 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     /**改变bounds时, 吸附大距离大小*/
     var boundsAdsorbThreshold: Float = 10f
 
+    /**当速率<=此值时, 才激活智能吸附*/
+    var velocityAdsorbThreshold: Float = 100f
+
     //---temp
 
     val rotateMatrix = Matrix()
@@ -96,6 +101,9 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     var enableHeightSmart: Boolean = true
     var enableRotateSmart: Boolean = true
 
+    /**速率计算*/
+    val velocityTracker: VelocityTracker = VelocityTracker.obtain()
+
     //endregion ---field---
 
     init {
@@ -104,6 +112,9 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     }
 
     override fun onCanvasTouchEvent(canvasDelegate: CanvasDelegate, event: MotionEvent): Boolean {
+        if (enable) {
+            velocityTracker.addMovement(event)
+        }
         if (event.actionMasked == MotionEvent.ACTION_DOWN) {
             //初始化智能提示数据
             if (enable) {
@@ -117,7 +128,13 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
             lastRotateAssistant = null
             lastWidthAssistant = null
             lastHeightAssistant = null
+
+            velocityTracker.clear()
             canvasDelegate.refresh()
+        }
+        if (enable) {
+            velocityTracker.computeCurrentVelocity(1000)//计算1秒内的速率
+            //L.i(velocityTracker.xVelocity, velocityTracker.yVelocity)
         }
         return super.onCanvasTouchEvent(canvasDelegate, event)
     }
@@ -254,7 +271,10 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
             }
         }
 
-        if (adsorbDx == null && itemRenderer.isSupportControlPoint(SMART_TYPE_X)) {
+        if (adsorbDx == null &&
+            itemRenderer.isSupportControlPoint(SMART_TYPE_X) &&
+            velocityTracker.xVelocity.absoluteValue <= velocityAdsorbThreshold
+        ) {
             //x未吸附
             val xRef = findSmartXValue(itemRenderer, left, right, dx)?.apply {
                 dx = smartValue.refValue - fromValue
@@ -268,7 +288,10 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
             }
         }
 
-        if (adsorbDy == null && itemRenderer.isSupportControlPoint(SMART_TYPE_Y)) {
+        if (adsorbDy == null &&
+            itemRenderer.isSupportControlPoint(SMART_TYPE_Y) &&
+            velocityTracker.yVelocity.absoluteValue <= velocityAdsorbThreshold
+        ) {
             //y未吸附
             val yRef = findSmartYValue(itemRenderer, top, bottom, dy)?.apply {
                 dy = smartValue.refValue - fromValue
@@ -328,7 +351,11 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
             }
         }
 
-        if (adsorbAngle == null && itemRenderer.isSupportControlPoint(SMART_TYPE_R)) {
+        if (adsorbAngle == null &&
+            itemRenderer.isSupportControlPoint(SMART_TYPE_R) &&
+            velocityTracker.xVelocity.absoluteValue <= velocityAdsorbThreshold &&
+            velocityTracker.yVelocity.absoluteValue <= velocityAdsorbThreshold
+        ) {
             //未吸附, 查找推荐点
 
             val rotateRef = findSmartRotateValue(itemRenderer, rotate, angle)?.apply {
@@ -434,7 +461,10 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
         if (notSmartWidth) {
             //no op
-        } else if (adsorbWidth == null && itemRenderer.isSupportControlPoint(SMART_TYPE_W)) {
+        } else if (adsorbWidth == null &&
+            itemRenderer.isSupportControlPoint(SMART_TYPE_W) &&
+            velocityTracker.xVelocity.absoluteValue <= velocityAdsorbThreshold
+        ) {
             //x未吸附
             val wRef = findSmartWidthValue(itemRenderer, width, dx)?.apply {
                 newWidth = smartValue.refValue
@@ -450,7 +480,10 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
         if (notSmartHeight) {
             //no op
-        } else if (adsorbHeight == null && itemRenderer.isSupportControlPoint(SMART_TYPE_H)) {
+        } else if (adsorbHeight == null &&
+            itemRenderer.isSupportControlPoint(SMART_TYPE_H) &&
+            velocityTracker.yVelocity.absoluteValue <= velocityAdsorbThreshold
+        ) {
             //y未吸附
             val hRef = findSmartHeightValue(itemRenderer, height, dy)?.apply {
                 newHeight = smartValue.refValue

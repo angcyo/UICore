@@ -59,6 +59,22 @@ class ScaleControlPoint : ControlPoint() {
                         }
                     }
                     onRectScaleChangeAction = { rect, end ->
+                        /*canvasDelegate.smartAssistant.smartChangeBounds(
+                            itemRenderer,
+                            isLockScaleRatio,
+                            rect.width(),
+                            rect.height(),
+                            dx,
+                            dy,
+                            if (isCenterScale) ADJUST_TYPE_CENTER else ADJUST_TYPE_LT
+                        ).apply {
+                            if (this[0]) {
+                                _moveStartPoint.x = _movePoint.x
+                            }
+                            if (this[1]) {
+                                _moveStartPoint.y = _movePoint.y
+                            }
+                        }*/
                         itemRenderer.onScaleControlFinish(this@ScaleControlPoint, rect, end)
                     }
                     initializeAnchor(bounds, itemRenderer.rotate, bounds.left, bounds.top)
@@ -68,22 +84,6 @@ class ScaleControlPoint : ControlPoint() {
             }
             MotionEvent.ACTION_MOVE -> {
                 rectScaleGestureHandler.onTouchMove(point.x, point.y)
-                /*canvasDelegate.smartAssistant.smartChangeBounds(
-                    itemRenderer,
-                    isLockScaleRatio,
-                    newWidth,
-                    newHeight,
-                    dx,
-                    dy,
-                    if (isCenterScale) ADJUST_TYPE_CENTER else ADJUST_TYPE_LT
-                ).apply {
-                    if (this[0]) {
-                        _moveStartPoint.x = _movePoint.x
-                    }
-                    if (this[1]) {
-                        _moveStartPoint.y = _movePoint.y
-                    }
-                }*/
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 rectScaleGestureHandler.onTouchFinish(point.x, point.y)

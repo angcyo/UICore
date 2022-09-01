@@ -214,6 +214,9 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     override fun onScaleControlStart(controlPoint: ScaleControlPoint) {
         //记录开始时所有item的bounds
         originBounds.set(getBounds())
+        itemBoundsMap.values.forEach {
+            it.release()
+        }
         itemBoundsMap.clear()
         selectItemList.forEach {
             val rect = acquireTempRectF()
