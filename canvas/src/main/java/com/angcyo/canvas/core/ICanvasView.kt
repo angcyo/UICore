@@ -32,7 +32,7 @@ interface ICanvasView : IComponent {
     /**[com.angcyo.canvas.core.CanvasViewBox.refresh]*/
     fun dispatchCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix) {}
 
-    /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.changeBounds]*/
+    /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.changeBoundsAction]*/
     fun dispatchItemBoundsChanged(item: IRenderer, reason: Reason, oldBounds: RectF) {}
 
     /**当[CanvasViewBox]的坐标系原点改变时触发*/

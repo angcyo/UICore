@@ -57,7 +57,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     /**[_visualBounds]旋转后的坐标*/
     val _visualRotateBounds = emptyRectF()
 
-    /**[changeBounds]之前的bounds*/
+    /**[changeBoundsAction]之前的bounds*/
     val changeBeforeBounds = emptyRectF()
 
     //临时变量
@@ -102,7 +102,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
     override fun getVisualRotateBounds(): RectF = _visualRotateBounds
 
-    override fun changeBounds(reason: Reason, block: RectF.() -> Unit): Boolean {
+    override fun changeBoundsAction(reason: Reason, block: RectF.() -> Unit): Boolean {
         val bounds = getBounds()
         _oldBounds.set(bounds)
         changeBeforeBounds.set(bounds)
@@ -146,7 +146,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     }
 
     /**Bounds改变后, 触发. 可以再次限制Bounds的大小
-     * [changeBounds]*/
+     * [changeBoundsAction]*/
     open fun onChangeBoundsAfter(reason: Reason) {
         //getBounds().limitMinWidthHeight(100f, 100f, ADJUST_TYPE_LT)
         if (reason.flag == Reason.REASON_FLAG_BOUNDS || reason.flag == Reason.REASON_FLAG_ROTATE) {
@@ -313,7 +313,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     /**拖拽缩放结束*/
     open fun onScaleControlFinish(controlPoint: ScaleControlPoint, rect: RectF, end: Boolean) {
         L.i("拖动调整矩形:w:${rect.width()} h:${rect.height()} $rect $end")
-        changeBounds {
+        changeBoundsAction {
             set(rect)
         }
     }
@@ -330,7 +330,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         if (distanceX == 0f && distanceY == 0f) {
             return
         }
-        changeBounds(Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_TRANSLATE)) {
+        changeBoundsAction(Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_TRANSLATE)) {
             offset(distanceX, distanceY)
         }
     }
@@ -346,7 +346,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         this.scaleX *= scaleX
         this.scaleY *= scaleY
         _adjustType = adjustType
-        changeBounds(Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_BOUNDS)) {
+        changeBoundsAction(Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_BOUNDS)) {
             val x = when (adjustType) {
                 ADJUST_TYPE_LT, ADJUST_TYPE_LB -> left
                 ADJUST_TYPE_RB, ADJUST_TYPE_RT -> right
@@ -391,7 +391,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         this.scaleX = scaleX
         this.scaleY = scaleY
         _adjustType = adjustType
-        changeBounds(Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_BOUNDS)) {
+        changeBoundsAction(Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_BOUNDS)) {
             val x = when (adjustType) {
                 ADJUST_TYPE_LT, ADJUST_TYPE_LB -> left
                 ADJUST_TYPE_RB, ADJUST_TYPE_RT -> right
@@ -426,7 +426,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
             return
         }
         val oldRotate = rotate
-        changeBounds(Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_ROTATE)) {
+        changeBoundsAction(Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_ROTATE)) {
             rotate += degrees
             rotate %= 360
         }
@@ -441,7 +441,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     override fun updateBounds(width: Float, height: Float, adjustType: Int) {
         L.i("调整宽高->w:${getBounds().width()}->$width h:${getBounds().height()}->${height} type:$adjustType")
         _adjustType = adjustType
-        changeBounds(Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_BOUNDS)) {
+        changeBoundsAction(Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_BOUNDS)) {
             adjustSizeWithRotate(width, height, rotate, adjustType)
         }
     }

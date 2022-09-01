@@ -218,7 +218,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                                         item.updateSelectBounds()
                                     }
                                 } else {
-                                    item.changeBounds {
+                                    item.changeBoundsAction {
                                         set(originBounds)
                                     }
                                 }
@@ -236,7 +236,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                                         item.updateSelectBounds()
                                     }
                                 } else {
-                                    item.changeBounds {
+                                    item.changeBoundsAction {
                                         set(newBounds)
                                     }
                                 }

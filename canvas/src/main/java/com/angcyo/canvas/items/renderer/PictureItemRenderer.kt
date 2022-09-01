@@ -35,8 +35,8 @@ open class PictureItemRenderer<T : PictureDrawableItem>(canvasView: ICanvasView)
         paint.style = Paint.Style.STROKE
     }
 
-    override fun changeBounds(reason: Reason, block: RectF.() -> Unit): Boolean {
-        return super.changeBounds(reason, block)
+    override fun changeBoundsAction(reason: Reason, block: RectF.() -> Unit): Boolean {
+        return super.changeBoundsAction(reason, block)
     }
 
     override fun isSupportControlPoint(type: Int): Boolean {
@@ -105,7 +105,7 @@ open class PictureItemRenderer<T : PictureDrawableItem>(canvasView: ICanvasView)
 
         if (bounds != null) {
             setBounds = RectF(bounds)
-            changeBounds {
+            changeBoundsAction {
                 set(bounds)
             }
         }
@@ -141,7 +141,7 @@ open class PictureItemRenderer<T : PictureDrawableItem>(canvasView: ICanvasView)
         requestRendererItemUpdate()//
 
         if (bounds != null) {
-            changeBounds {
+            changeBoundsAction {
                 set(bounds)
             }
         }
@@ -184,7 +184,7 @@ open class PictureItemRenderer<T : PictureDrawableItem>(canvasView: ICanvasView)
         requestRendererItemUpdate()//
 
         bounds?.let {
-            changeBounds {
+            changeBoundsAction {
                 set(it)
             }
         }

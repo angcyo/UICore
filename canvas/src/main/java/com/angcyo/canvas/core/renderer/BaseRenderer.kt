@@ -91,7 +91,7 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
     /**调用此方法用来更新[getBounds]
      * 同时需要更新[getRenderBounds],[getVisualBounds]等信息
      * @return 修改是否成功*/
-    open fun changeBounds(
+    open fun changeBoundsAction(
         reason: Reason = Reason(Reason.REASON_USER, true),
         block: RectF.() -> Unit
     ): Boolean {

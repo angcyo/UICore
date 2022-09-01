@@ -320,7 +320,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
         eachAllRenderer {
             if (this is IItemRenderer<*>) {
-                changeBounds {
+                changeBoundsAction {
                     //notify changed
                 }
             }
@@ -627,7 +627,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
                     //更新坐标
                     val rect = getCanvasViewBox().getCoordinateSystemCenterRect(_width, _height)
-                    item.changeBounds(Reason(Reason.REASON_CODE, true)) {
+                    item.changeBoundsAction(Reason(Reason.REASON_CODE, true)) {
                         set(rect)
                     }
                 }
@@ -965,13 +965,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
         } else {
             step = object : ICanvasStep {
                 override fun runUndo() {
-                    item.changeBounds {
+                    item.changeBoundsAction {
                         set(originBounds)
                     }
                 }
 
                 override fun runRedo() {
-                    item.changeBounds {
+                    item.changeBoundsAction {
                         set(newBounds)
                     }
                 }
