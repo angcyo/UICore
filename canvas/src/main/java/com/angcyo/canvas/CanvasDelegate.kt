@@ -929,6 +929,10 @@ class CanvasDelegate(val view: View) : ICanvasView {
      * 支持[SelectGroupRenderer]
      * [toBounds] 需要最终设置的矩形*/
     fun addChangeItemBounds(itemRenderer: BaseItemRenderer<*>, toBounds: RectF) {
+        if (!itemRenderer.canChangeBounds(toBounds)) {
+            return
+        }
+
         val oldBounds = RectF(itemRenderer.getBounds())
         val newBounds = RectF(toBounds)
 
@@ -944,10 +948,10 @@ class CanvasDelegate(val view: View) : ICanvasView {
                         itemList,
                         newBounds,
                         oldBounds,
-                        Reason(Reason.REASON_USER, flag = Reason.REASON_FLAG_ROTATE)
+                        Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_ROTATE)
                     )
                     if (getSelectedRenderer() == itemRenderer) {
-                        itemRenderer.updateSelectBounds(false)
+                        itemRenderer.updateSelectBounds()
                     }
                 }
 
@@ -956,12 +960,16 @@ class CanvasDelegate(val view: View) : ICanvasView {
                         itemList,
                         oldBounds,
                         newBounds,
-                        Reason(Reason.REASON_USER, flag = Reason.REASON_FLAG_ROTATE)
+                        Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_ROTATE)
                     )
                     if (getSelectedRenderer() == itemRenderer) {
-                        itemRenderer.updateSelectBounds(false)
+                        itemRenderer.updateSelectBounds()
                     }
                 }
+            }
+            getCanvasUndoManager().addUndoAction(step)
+            itemRenderer.changeBoundsAction(reason) {
+                set(newBounds)
             }
         } else {
             step = object : ICanvasStep {
@@ -977,10 +985,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
                     }
                 }
             }
+            getCanvasUndoManager().addUndoAction(step)
+            step.runRedo()
         }
-
-        getCanvasUndoManager().addUndoAction(step)
-        step.runRedo()
     }
 
     /**改变旋转角度
