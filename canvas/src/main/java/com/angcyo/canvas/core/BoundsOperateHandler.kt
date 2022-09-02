@@ -95,7 +95,7 @@ class BoundsOperateHandler {
         degrees: Float, //需要旋转多少度. by
         pivotX: Float,
         pivotY: Float,
-        reason: Reason = Reason(Reason.REASON_CODE, flag = Reason.REASON_FLAG_ROTATE)
+        reason: Reason
     ) {
         val tempRect = acquireTempRectF()
         list.forEach { item ->

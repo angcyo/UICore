@@ -929,20 +929,52 @@ class CanvasDelegate(val view: View) : ICanvasView {
      * 支持[SelectGroupRenderer]
      * [toBounds] 需要最终设置的矩形*/
     fun addChangeItemBounds(itemRenderer: BaseItemRenderer<*>, toBounds: RectF) {
-        val originBounds = RectF(itemRenderer.getBounds())
+        val oldBounds = RectF(itemRenderer.getBounds())
         val newBounds = RectF(toBounds)
 
         val reason = Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_BOUNDS)
-        val step = object : ICanvasStep {
-            override fun runUndo() {
-                itemRenderer.changeBoundsAction(reason) {
-                    set(originBounds)
+        val step: ICanvasStep
+
+        if (itemRenderer is SelectGroupRenderer) {
+            val itemList = mutableListOf<BaseItemRenderer<*>>()
+            itemList.addAll(itemRenderer.selectItemList)
+            step = object : ICanvasStep {
+                override fun runUndo() {
+                    boundsOperateHandler.changeBoundsItemList(
+                        itemList,
+                        newBounds,
+                        oldBounds,
+                        Reason(Reason.REASON_USER, flag = Reason.REASON_FLAG_ROTATE)
+                    )
+                    if (getSelectedRenderer() == itemRenderer) {
+                        itemRenderer.updateSelectBounds(false)
+                    }
+                }
+
+                override fun runRedo() {
+                    boundsOperateHandler.changeBoundsItemList(
+                        itemList,
+                        oldBounds,
+                        newBounds,
+                        Reason(Reason.REASON_USER, flag = Reason.REASON_FLAG_ROTATE)
+                    )
+                    if (getSelectedRenderer() == itemRenderer) {
+                        itemRenderer.updateSelectBounds(false)
+                    }
                 }
             }
+        } else {
+            step = object : ICanvasStep {
+                override fun runUndo() {
+                    itemRenderer.changeBoundsAction(reason) {
+                        set(oldBounds)
+                    }
+                }
 
-            override fun runRedo() {
-                itemRenderer.changeBoundsAction(reason) {
-                    set(newBounds)
+                override fun runRedo() {
+                    itemRenderer.changeBoundsAction(reason) {
+                        set(newBounds)
+                    }
                 }
             }
         }

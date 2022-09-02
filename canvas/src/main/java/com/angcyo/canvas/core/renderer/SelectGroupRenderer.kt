@@ -175,7 +175,8 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
             selectItemList,
             degrees,
             getBounds().centerX(),
-            getBounds().centerY()
+            getBounds().centerY(),
+            Reason(Reason.REASON_CODE, flag = Reason.REASON_FLAG_ROTATE)
         )
     }
 
@@ -238,11 +239,13 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     }
 
     /**更新选中的bounds大小, 需要包含所有选中的元素*/
-    fun updateSelectBounds() {
+    fun updateSelectBounds(resetRotate: Boolean = true) {
         if (selectItemList.isEmpty()) {
             return
         }
-        rotate = 0f//重置旋转
+        if (resetRotate) {
+            rotate = 0f//重置旋转
+        }
         changeBoundsAction(Reason(Reason.REASON_CODE, true)) {
             var l = 0f
             var t = 0f
