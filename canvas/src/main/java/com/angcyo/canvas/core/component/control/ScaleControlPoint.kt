@@ -63,17 +63,18 @@ class ScaleControlPoint : ControlPoint() {
                         }
                     }
                     onRectScaleChangeAction = { rect, end ->
-                        canvasDelegate.smartAssistant.smartChangeBounds(
-                            itemRenderer,
-                            isLockScaleRatio,
-                            rect.width(),
-                            rect.height(),
-                            _touchDx,
-                            _touchDY,
-                            itemRenderer.getBoundsScaleAnchor()
-                        )
                         if (end) {
                             addChangeBoundsUndoAction(canvasDelegate, itemRenderer)
+                        } else {
+                            canvasDelegate.smartAssistant.smartChangeBounds(
+                                itemRenderer,
+                                isLockScaleRatio,
+                                rect.width(),
+                                rect.height(),
+                                _touchDx,
+                                _touchDY,
+                                itemRenderer.getBoundsScaleAnchor()
+                            )
                         }
                         //itemRenderer.onScaleControlFinish(this@ScaleControlPoint, rect, end)
                     }

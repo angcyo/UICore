@@ -182,22 +182,13 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                                     selectedItemRender,
                                     translateX,
                                     translateY
-                                )
-                                /*canvasDelegate.smartAssistant.smartTranslateItemBy(
-                                    selectedItemRender,
-                                    dx1,
-                                    dy1
                                 ).apply {
-                                    if (this[0]) {
-                                        _moveStartPoint.x = _movePoint.x
+                                    if (this[0] || this[1]) {
+                                        //如果被消耗了, 才更新坐标
+                                        //move point
+                                        updateMovePoint(x, y, canvasViewBox)
                                     }
-                                    if (this[1]) {
-                                        _moveStartPoint.y = _movePoint.y
-                                    }
-                                }*/
-
-                                //move point
-                                updateMovePoint(x, y, canvasViewBox)
+                                }
                             }
                         }
                     } else {
