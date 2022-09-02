@@ -65,18 +65,21 @@ open class PictureItemRenderer<T : PictureDrawableItem>(canvasView: ICanvasView)
         if (isLineShape()) {
             if (reason.reason == Reason.REASON_USER && !changeBeforeBounds.isNoSize()) {
                 if (reason.flag == Reason.REASON_FLAG_BOUNDS) {
+                    val lineHeight = getRendererRenderItem()?.itemHeight ?: 1f
                     val bounds = getBounds()
-                    //线段,只能调整宽度
-                    val anchor = getBoundsScaleAnchor()
-                    RectScaleGestureHandler.rectUpdateTo(
-                        changeBeforeBounds,
-                        bounds,
-                        bounds.width(),
-                        getRendererRenderItem()?.itemHeight ?: 1f,
-                        rotate,
-                        anchor.x,
-                        anchor.y
-                    )
+                    if (bounds.height() != lineHeight) {
+                        //线段,只能调整宽度
+                        val anchor = getBoundsScaleAnchor()
+                        RectScaleGestureHandler.rectUpdateTo(
+                            changeBeforeBounds,
+                            bounds,
+                            bounds.width(),
+                            getRendererRenderItem()?.itemHeight ?: 1f,
+                            rotate,
+                            anchor.x,
+                            anchor.y
+                        )
+                    }
                 }
             }
         }
