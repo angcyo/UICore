@@ -986,50 +986,18 @@ class CanvasDelegate(val view: View) : ICanvasView {
      * 支持[SelectGroupRenderer]
      * [rotate] 需要旋转到的角度*/
     fun addChangeItemRotate(itemRenderer: BaseItemRenderer<*>, rotate: Float) {
-        val item = itemRenderer
         val originRotate = itemRenderer.rotate
-        val newRotate = rotate
-        val bounds = RectF(item.getBounds())
 
-        val step: ICanvasStep
-        if (item is SelectGroupRenderer) {
-            val itemList = mutableListOf<BaseItemRenderer<*>>()
-            itemList.addAll(item.selectItemList)
-
-            step = object : ICanvasStep {
-                override fun runUndo() {
-                    boundsOperateHandler.rotateItemList(
-                        itemList, originRotate - newRotate,
-                        bounds.centerX(),
-                        bounds.centerY()
-                    )
-                    if (getSelectedRenderer() == item) {
-                        item.updateSelectBounds()
-                    }
-                }
-
-                override fun runRedo() {
-                    boundsOperateHandler.rotateItemList(
-                        itemList, newRotate - originRotate,
-                        bounds.centerX(),
-                        bounds.centerY()
-                    )
-                    if (getSelectedRenderer() == item) {
-                        item.updateSelectBounds()
-                    }
-                }
+        val step = object : ICanvasStep {
+            override fun runUndo() {
+                itemRenderer.rotateBy(originRotate - rotate, ROTATE_FLAG_NORMAL)
             }
-        } else {
-            step = object : ICanvasStep {
-                override fun runUndo() {
-                    item.rotateBy(originRotate - newRotate, ROTATE_FLAG_NORMAL)
-                }
 
-                override fun runRedo() {
-                    item.rotateBy(newRotate - originRotate, ROTATE_FLAG_NORMAL)
-                }
+            override fun runRedo() {
+                itemRenderer.rotateBy(rotate - originRotate, ROTATE_FLAG_NORMAL)
             }
         }
+
         getCanvasUndoManager().addUndoAction(step)
         step.runRedo()
     }
