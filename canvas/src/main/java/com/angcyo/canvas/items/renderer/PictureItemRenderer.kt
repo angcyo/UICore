@@ -66,19 +66,17 @@ open class PictureItemRenderer<T : PictureDrawableItem>(canvasView: ICanvasView)
             if (reason.reason == Reason.REASON_USER && !changeBeforeBounds.isNoSize()) {
                 if (reason.flag == Reason.REASON_FLAG_BOUNDS) {
                     val bounds = getBounds()
-                    //val left = bounds.left
-                    //val top = bounds.top
                     //线段,只能调整宽度
+                    val anchor = getBoundsScaleAnchor()
                     RectScaleGestureHandler.rectUpdateTo(
                         changeBeforeBounds,
                         bounds,
                         bounds.width(),
                         getRendererRenderItem()?.itemHeight ?: 1f,
                         rotate,
-                        changeBeforeBounds.left,
-                        changeBeforeBounds.top
+                        anchor.x,
+                        anchor.y
                     )
-                    //bounds.offsetTo(left, top)
                 }
             }
         }

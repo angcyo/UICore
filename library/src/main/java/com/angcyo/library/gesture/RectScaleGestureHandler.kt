@@ -300,7 +300,7 @@ class RectScaleGestureHandler {
             matrix.reset()
             matrix.setRotate(rotate, centerX, centerY)
             temp.set(result)
-            matrix.mapRect(temp)
+            matrix.mapRect(temp)//temp的中点坐标, 就是旋转后矩形的目标中点坐标
 
             //缩放且旋转后的矩形, 和仅缩放后的矩形, 进行中点偏移, 就能实现最终效果
             val changedCenterX = result.centerX()

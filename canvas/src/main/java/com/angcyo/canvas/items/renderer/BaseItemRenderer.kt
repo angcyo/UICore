@@ -120,10 +120,12 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         onChangeBoundsAfter(reason)
         L.d(
             buildString {
+                val endBounds = getBounds()
                 appendLine(this@BaseItemRenderer)
                 append(getRendererRenderItem()?.simpleHash())
-                appendLine(":Bounds改变:(w:${changeBeforeBounds.width()} h:${changeBeforeBounds.height()} -> w:${getBounds().width()} h:${getBounds().height()})")
-                append("->${changeBeforeBounds}->${getBounds()}")
+                appendLine(":Bounds改变:(w:${changeBeforeBounds.width()} h:${changeBeforeBounds.height()} -> w:${endBounds.width()} h:${endBounds.height()})")
+                append("Bounds->${changeBeforeBounds}->${endBounds}")
+                //append("Anchor->${getBoundsScaleAnchor(changeBeforeBounds)}->${getBoundsScaleAnchor()}")
             }
         )
         itemBoundsChanged(reason, changeBeforeBounds)
@@ -292,8 +294,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     /**获取Bounds缩放时的锚点, 旋转后的坐标
      * 默认是左上角旋转后的坐标*/
-    fun getBoundsScaleAnchor(): PointF {
-        val bounds = getBounds()
+    fun getBoundsScaleAnchor(bounds: RectF = getBounds()): PointF {
         _anchorPoint.set(bounds.left, bounds.top)
         _tempMatrix.reset()
         _tempMatrix.setRotate(rotate, bounds.centerX(), bounds.centerY())
