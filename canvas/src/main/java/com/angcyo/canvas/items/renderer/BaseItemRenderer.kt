@@ -138,6 +138,16 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         return true
     }
 
+    /**当渲染的bounds改变后, 需要主动触发此方法, 用来更新主要的bounds和辅助的bounds*/
+    override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
+        canvasViewBox.calcItemRenderBounds(getBounds(), getRenderBounds())
+        canvasViewBox.calcItemVisualBounds(getRenderBounds(), getVisualBounds())
+
+        mapRotateRect(getBounds(), getRotateBounds())
+        mapRotateRect(getRenderBounds(), getRenderRotateBounds())
+        mapRotateRect(getVisualBounds(), getVisualRotateBounds())
+    }
+
     /**是否可以改变bound*/
     open fun canChangeBounds(toBounds: RectF): Boolean {
         return BoundsOperateHandler.canChangeBounds(this, toBounds)
@@ -198,16 +208,6 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
                 result
             }
         }
-    }
-
-    /**当渲染的bounds改变后, 需要主动触发此方法, 用来更新主要的bounds和辅助的bounds*/
-    override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
-        canvasViewBox.calcItemRenderBounds(getBounds(), getRenderBounds())
-        canvasViewBox.calcItemVisualBounds(getRenderBounds(), getVisualBounds())
-
-        mapRotateRect(getBounds(), getRotateBounds())
-        mapRotateRect(getRenderBounds(), getRenderRotateBounds())
-        mapRotateRect(getVisualBounds(), getVisualRotateBounds())
     }
 
     fun getRotateMatrix(rotateCenterX: Float, rotateCenterY: Float): Matrix {

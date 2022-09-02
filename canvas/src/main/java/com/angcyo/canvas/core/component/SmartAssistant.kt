@@ -17,7 +17,6 @@ import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.roundToInt
 
 
 /**
@@ -60,13 +59,13 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
      *
      * 当距离推荐值, 小于等于这个值, 就选取这个推荐值
      * */
-    var translateAdsorbThreshold: Float = 10f
+    var translateAdsorbThreshold: Float = 10f * dp
 
     /**旋转吸附角度, 当和目标角度小于这个值时, 自动吸附到目标*/
     var rotateAdsorbThreshold: Float = 5f
 
     /**改变bounds时, 吸附大距离大小*/
-    var boundsAdsorbThreshold: Float = 10f
+    var boundsAdsorbThreshold: Float = 10f * dp
 
     /**当速率<=此值时, 才激活智能吸附*/
     var velocityAdsorbThreshold: Float = 100f
@@ -272,7 +271,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         }
 
         if (adsorbDx == null &&
-            itemRenderer.isSupportControlPoint(SMART_TYPE_X) &&
+            itemRenderer.isSupportSmartAssistant(SMART_TYPE_X) &&
             velocityTracker.xVelocity.absoluteValue <= velocityAdsorbThreshold
         ) {
             //x未吸附
@@ -289,7 +288,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         }
 
         if (adsorbDy == null &&
-            itemRenderer.isSupportControlPoint(SMART_TYPE_Y) &&
+            itemRenderer.isSupportSmartAssistant(SMART_TYPE_Y) &&
             velocityTracker.yVelocity.absoluteValue <= velocityAdsorbThreshold
         ) {
             //y未吸附
@@ -352,7 +351,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         }
 
         if (adsorbAngle == null &&
-            itemRenderer.isSupportControlPoint(SMART_TYPE_R) &&
+            itemRenderer.isSupportSmartAssistant(SMART_TYPE_R) &&
             velocityTracker.xVelocity.absoluteValue <= velocityAdsorbThreshold &&
             velocityTracker.yVelocity.absoluteValue <= velocityAdsorbThreshold
         ) {
@@ -393,7 +392,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         dy: Float,
         anchor: PointF
     ): BooleanArray {
-        if (!enable) {
+        if (!enable || itemRenderer.rotate != 0f  /*旋转之后不支持*/) {
             canvasDelegate.changeItemBounds(
                 itemRenderer,
                 width,
@@ -408,7 +407,9 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         val originWidth = rotateBounds.width()
         val originHeight = rotateBounds.height()
 
-        L.i("智能宽高请求: dx:${dx} dy:${dy}")
+        val dw = width - originWidth
+        val dh = height - originHeight
+        L.i("智能宽高请求: dx:$dx dy:$dy dw:$dw dh:$dh")
 
         var newWidth = width
         var newHeight = height
@@ -426,21 +427,19 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
         //去掉高度智能
         //!itemRenderer.isLineShape() && equalRatio && dx.absoluteValue > dy.absoluteValue
-        var notSmartHeight = false
+        var notSmartHeight = false //equalRatio //2022-9-2 暂且只支持宽度智能提示
 
-        if ((rotate % 90).roundToInt() != 0) {
-            if (originWidth > originHeight) {
-                //宽图, 只使用宽度智能
-                notSmartHeight = true
-            } else {
-                //长图, 只使用高度智能
-                notSmartWidth = true
-            }
-        }
+        /*if (originWidth > originHeight) {
+            //宽图, 只使用宽度智能
+            notSmartHeight = true
+        } else {
+            //长图, 只使用高度智能
+            notSmartWidth = true
+        }*/
 
         //w吸附
         lastWidthAssistant?.let {
-            if (dx.absoluteValue <= boundsAdsorbThreshold) {
+            if (dw.absoluteValue <= boundsAdsorbThreshold) {
                 //需要吸附
                 adsorbWidth = it.smartValue.refValue
                 L.d("智能提示吸附W:${adsorbWidth}")
@@ -451,7 +450,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
         //h吸附
         lastHeightAssistant?.let {
-            if (dy.absoluteValue <= boundsAdsorbThreshold) {
+            if (dh.absoluteValue <= boundsAdsorbThreshold) {
                 //需要吸附
                 adsorbHeight = it.smartValue.refValue
                 L.d("智能提示吸附H:${adsorbHeight}")
@@ -463,7 +462,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         if (notSmartWidth) {
             //no op
         } else if (adsorbWidth == null &&
-            itemRenderer.isSupportControlPoint(SMART_TYPE_W) &&
+            itemRenderer.isSupportSmartAssistant(SMART_TYPE_W) &&
             velocityTracker.xVelocity.absoluteValue <= velocityAdsorbThreshold
         ) {
             //x未吸附
@@ -482,7 +481,7 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         if (notSmartHeight) {
             //no op
         } else if (adsorbHeight == null &&
-            itemRenderer.isSupportControlPoint(SMART_TYPE_H) &&
+            itemRenderer.isSupportSmartAssistant(SMART_TYPE_H) &&
             velocityTracker.yVelocity.absoluteValue <= velocityAdsorbThreshold
         ) {
             //y未吸附
@@ -502,9 +501,8 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         newHeight = adsorbHeight ?: newHeight
 
         if (newWidth != originWidth || newHeight != originHeight) {
-
             if (itemRenderer.isLineShape()) {
-                //线段不处理
+                //line
             } else if (equalRatio) {
                 //等比调整
 
@@ -515,14 +513,31 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                 if ((newScale - originScale).absoluteValue <= 0.00001) {
                     //已经是等比
                 } else {
-                    if ((newWidth - originWidth).absoluteValue > (newHeight - originHeight).absoluteValue) {
-                        //宽度变化比高度大
+                    //无推荐
+                    val isNoAssistant = lastWidthAssistant == null && lastHeightAssistant == null
+                    //都有推荐
+                    val isAllAssistant = lastWidthAssistant == null && lastHeightAssistant == null
+
+                    var widthPriority = false //是否宽度优先
+                    if (isNoAssistant || isAllAssistant) {
+                        if ((newWidth - originWidth).absoluteValue > (newHeight - originHeight).absoluteValue) {
+                            //宽度变化比高度大
+                            widthPriority = true
+                        }
+                    } else if (lastWidthAssistant != null) {
+                        //宽度有推荐
+                        widthPriority = true
+                    }
+
+                    if (widthPriority) {
+                        //优先使用宽度计算出高度
                         newHeight = originHeight * newWidth / originWidth
                         lastHeightAssistant?.apply {
                             smartValue.refValue = newHeight
                             drawRect = null
                         }
                     } else {
+                        //优先使用高度计算出宽度
                         newWidth = originWidth * newHeight / originHeight
                         lastWidthAssistant?.apply {
                             smartValue.refValue = newWidth
@@ -752,9 +767,15 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
         var result: SmartAssistantData? = null
         val bounds = itemRenderer.getBounds()
-        val rotateBounds = itemRenderer.getRotateBounds()
-        val left = rotateBounds.left
-        val right = rotateBounds.right
+        val flipBounds = acquireTempRectF()
+        bounds.adjustFlipRect(flipBounds)
+
+        //增加宽度, 还是减少宽度
+        val isAdd = width.absoluteValue >= bounds.width().absoluteValue
+        val dw = width - bounds.width()
+
+        val left = flipBounds.left
+        val right = flipBounds.right
 
         rectLTPoint.set(bounds.left, bounds.top)
         itemRenderer.mapRotatePoint(bounds.centerX(), bounds.centerY(), rectLTPoint, rectLTPoint)
@@ -762,50 +783,48 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         rectRBPoint.set(bounds.right, bounds.bottom)
         itemRenderer.mapRotatePoint(bounds.centerX(), bounds.centerY(), rectRBPoint, rectRBPoint)
 
-        val xSmartValue = if (bounds.isFlipHorizontal || rectLTPoint.x > rectRBPoint.x) {
-            findSmartXValue(itemRenderer, left, left, dx, boundsAdsorbThreshold)
+        //最后计算宽度时的参考值
+        var rectRefValue = 0f
+
+        val xSmartValue = if (rectRBPoint.x >= rectLTPoint.x) {
+            rectRefValue = left
+            if (isAdd) {
+                findSmartXValue(itemRenderer, right, right, dw.absoluteValue, boundsAdsorbThreshold)
+            } else {
+                findSmartXValue(
+                    itemRenderer,
+                    right,
+                    right,
+                    -dw.absoluteValue,
+                    boundsAdsorbThreshold
+                )
+            }
         } else {
-            findSmartXValue(itemRenderer, right, right, dx, boundsAdsorbThreshold)
+            rectRefValue = right
+            if (isAdd) {
+                findSmartXValue(itemRenderer, left, left, -dw.absoluteValue, boundsAdsorbThreshold)
+            } else {
+                findSmartXValue(
+                    itemRenderer,
+                    left,
+                    left,
+                    dw.absoluteValue,
+                    boundsAdsorbThreshold
+                )
+            }
         }
 
         xSmartValue?.apply {
-            //通过推荐的right, 计算推荐的width
-
-            rotateMatrix.reset()
-            rotateMatrix.postRotate(
-                itemRenderer.rotate,
-                bounds.centerX(),
-                bounds.centerY()
-            )
-            //先算出原始左上角旋转后的坐标
-            rectLTPoint.set(bounds.left, bounds.top)
-            rotateMatrix.mapPoint(rectLTPoint, rectLTPoint)
-
-            //再算出原始右下角旋转后的坐标
-            rectRBPoint.set(bounds.right, bounds.top)//注意top
-            rotateMatrix.mapPoint(rectRBPoint, rectRBPoint)
-
-            //修改右下角的x坐标
-            val x2 = smartValue.refValue //推荐的x
-            val y2 = rectRBPoint.y
-
-            //逆向算出新的宽度
-            /*val smartWidth = ScaleControlPoint.calcRotateBeforeDistance(
-                rectLTPoint.x,
-                rectLTPoint.y,
-                x2,
-                y2,
-                bounds.centerX(),
-                bounds.centerY(),
-                itemRenderer.rotate
-            )[0]
-
+            //通过推荐的值, 计算推荐的width
+            val smartWidth = smartValue.refValue - rectRefValue
             result = SmartAssistantData(
-                rotateBounds.width(),
+                width,
                 SmartAssistantValueData(smartWidth, smartValue.refRenderer),
                 drawRect
-            )*/
+            )
         }
+
+        flipBounds.release()
         return result
     }
 
@@ -820,9 +839,15 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
         var result: SmartAssistantData? = null
         val bounds = itemRenderer.getBounds()
-        val rotateBounds = itemRenderer.getRotateBounds()
-        val top = rotateBounds.top
-        val bottom = rotateBounds.bottom
+        val flipBounds = acquireTempRectF()
+        bounds.adjustFlipRect(flipBounds)
+
+        //增加宽度, 还是减少宽度
+        val isAdd = height.absoluteValue >= bounds.height().absoluteValue
+        val dh = height - bounds.height()
+
+        val top = flipBounds.top
+        val bottom = flipBounds.bottom
 
         rectLTPoint.set(bounds.left, bounds.top)
         itemRenderer.mapRotatePoint(bounds.centerX(), bounds.centerY(), rectLTPoint, rectLTPoint)
@@ -830,49 +855,51 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         rectRBPoint.set(bounds.right, bounds.bottom)
         itemRenderer.mapRotatePoint(bounds.centerX(), bounds.centerY(), rectRBPoint, rectRBPoint)
 
-        val ySmartValue = if (bounds.isFlipVertical || rectLTPoint.y > rectRBPoint.y) {
-            findSmartYValue(itemRenderer, top, top, dy, boundsAdsorbThreshold)
+        //最后计算高度时的参考值
+        var rectRefValue = 0f
+
+        val ySmartValue = if (rectRBPoint.y >= rectLTPoint.y) {
+            rectRefValue = top
+            if (isAdd) {
+                findSmartYValue(
+                    itemRenderer,
+                    bottom,
+                    bottom,
+                    dh.absoluteValue,
+                    boundsAdsorbThreshold
+                )
+            } else {
+                findSmartYValue(
+                    itemRenderer,
+                    bottom,
+                    bottom,
+                    -dh.absoluteValue,
+                    boundsAdsorbThreshold
+                )
+            }
         } else {
-            findSmartYValue(itemRenderer, bottom, bottom, dy, boundsAdsorbThreshold)
+            rectRefValue = bottom
+            if (isAdd) {
+                findSmartYValue(itemRenderer, top, top, -dh.absoluteValue, boundsAdsorbThreshold)
+            } else {
+                findSmartYValue(
+                    itemRenderer,
+                    top,
+                    top,
+                    dh.absoluteValue,
+                    boundsAdsorbThreshold
+                )
+            }
         }
 
         ySmartValue?.apply {
-            //通过推荐的bottom, 计算推荐的height
-
-            rotateMatrix.reset()
-            rotateMatrix.postRotate(
-                itemRenderer.rotate,
-                bounds.centerX(),
-                bounds.centerY()
-            )
-            //先算出原始左上角旋转后的坐标
-            rectLTPoint.set(bounds.left, bounds.top)
-            rotateMatrix.mapPoint(rectLTPoint, rectLTPoint)
-
-            //再算出原始右下角旋转后的坐标
-            rectRBPoint.set(bounds.right, bounds.bottom) //注意bottom
-            rotateMatrix.mapPoint(rectRBPoint, rectRBPoint)
-
-            //修改右下角的y坐标
-            val x2 = rectRBPoint.x
-            val y2 = smartValue.refValue //推荐的y
-
-            //逆向算出新的高度
-            /*val smartHeight = ScaleControlPoint.calcRotateBeforeDistance(
-                rectLTPoint.x,
-                rectLTPoint.y,
-                x2,
-                y2,
-                bounds.centerX(),
-                bounds.centerY(),
-                itemRenderer.rotate
-            )[1]
-
+            //通过推荐的值, 计算推荐的height
+            val smartHeight = smartValue.refValue - rectRefValue
             result = SmartAssistantData(
-                rotateBounds.height(),
+                height,
                 SmartAssistantValueData(smartHeight, smartValue.refRenderer),
                 drawRect
-            )*/
+            )
         }
         return result
     }
