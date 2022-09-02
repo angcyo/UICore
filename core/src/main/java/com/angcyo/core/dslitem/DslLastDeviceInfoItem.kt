@@ -59,6 +59,7 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             append("/")
             append(LanguageModel.getCurrentLanguageTag())
 
+            //vpn 代理
             val vpn = Device.vpnInfo()
             val proxy = Device.proxyInfo()
             if (!vpn.isNullOrBlank() || !proxy.isNullOrBlank()) {
@@ -73,6 +74,7 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             }
 
             appendln()
+            //id
             append("${Device.androidId}/${Device.serial}") {
                 foregroundColor = getColor(R.color.colorPrimary)
             }
@@ -80,16 +82,19 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             append(Device.deviceId) {
                 foregroundColor = getColor(R.color.colorPrimaryDark)
             }
+
             appendln()
+            //本地APK编译信息
             Device.buildString(this._builder)
+            //屏幕信息
             Device.screenInfo(context, this._builder)
 
-            //机型信息
             appendln()
+            //机型信息
             Device.deviceInfoLess(this._builder)
 
-            //网络信息
             appendln()
+            //网络信息
             append(Trackers.getInstance().networkStateTracker.activeNetworkState.toString())
 
             config(this)
