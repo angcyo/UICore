@@ -6,7 +6,9 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempPointF
+import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
@@ -89,8 +91,8 @@ class RectScaleGestureHandler {
             return 0
         }
 
-        /**根据点击位置, 获取参考点*/
-        fun getRectPositionPoint(
+        /**根据点击位置, 获取矩形上的参考点/锚点*/
+        fun getRectPositionAnchorPoint(
             rect: RectF,
             rectPosition: Int,
             result: PointF = acquireTempPointF()
@@ -256,10 +258,10 @@ class RectScaleGestureHandler {
 
         /**根据指定锚点, 缩放矩形. 会保持翻转信息
          * [target] 目标矩形, 未旋转的状态
+         * [result] 返回值存储
+         * [scaleX] [scaleY] 宽高缩放比
          * [rotate] 目标矩形当前旋转的角度
          * [anchorX] [anchorY] 旋转后的锚点
-         * [scaleX] [scaleY] 宽高缩放比
-         * [result] 返回值存储
          * */
         fun rectScaleTo(
             target: RectF,
@@ -269,21 +271,30 @@ class RectScaleGestureHandler {
             rotate: Float,
             anchorX: Float,
             anchorY: Float
-        ): Matrix {
+        ) {
             val isFlipH = target.width() * scaleX < 0
             val isFlipV = target.height() * scaleY < 0
 
-            val matrix = Matrix()
-            val temp = RectF()
+            val matrix = acquireTempMatrix()
+            val temp = acquireTempRectF()
 
             val centerX = target.centerX()
             val centerY = target.centerY()
 
+            //缩放的锚点, 一定要是未旋转的
+            matrix.reset()
+            matrix.setRotate(rotate, centerX, centerY)
+            matrix.invert(matrix)
+            val invertAnchor = acquireTempPointF()
+            invertAnchor.set(anchorX, anchorY)
+            matrix.mapPoint(invertAnchor)
+
             //缩放, 在原始的矩形数据上进行缩放
             matrix.reset()
-            matrix.setScale(scaleX, scaleY, anchorX, anchorY)
+            matrix.setScale(scaleX, scaleY, invertAnchor.x, invertAnchor.y)
             result.set(target)
             matrix.mapRect(result)
+            invertAnchor.release()
 
             //按照原始的矩形中点进行旋转, 这样能保证锚点坐标固定
             matrix.reset()
@@ -308,7 +319,9 @@ class RectScaleGestureHandler {
             if (isFlipV) {
                 result.flipVertical(true)
             }
-            return matrix
+
+            temp.release()
+            matrix.release()
         }
 
         /**更新矩形使用指定的宽高
@@ -323,14 +336,14 @@ class RectScaleGestureHandler {
             rotate: Float,
             anchorX: Float,
             anchorY: Float
-        ): Matrix {
+        ) {
             if (target.isNoSize()) {
                 target.right = target.left + newWidth
                 target.bottom = target.top + newHeight
             }
             val scaleX = (newWidth / target.width()).ensure()
             val scaleY = (newHeight / target.height()).ensure()
-            return rectScaleTo(target, result, scaleX, scaleY, rotate, anchorX, anchorY)
+            rectScaleTo(target, result, scaleX, scaleY, rotate, anchorX, anchorY)
         }
     }
 
@@ -342,16 +355,16 @@ class RectScaleGestureHandler {
     /**改变之后的矩形*/
     val changedRect = RectF()
 
-    /**手势按下时, 原始矩形参考点的坐标. (未旋转)
-     * 矩形上的锚点坐标
+    /**矩形缩放时的参考锚点, 视觉上看到的那个点坐标
+     * 如果矩形旋转了, 那么就是旋转后的坐标.
+     * 如果矩形未旋转, 那就是未旋转的坐标.
      * */
     var rectAnchorX = 0f
     var rectAnchorY = 0f
 
-    /**[rectAnchorX] [rectAnchorY] 旋转后的锚点
-     * 绕着[targetRect]中心旋转后的坐标*/
-    var rectAnchorRotateX = 0f
-    var rectAnchorRotateY = 0f
+    /**[rectAnchorX] [rectAnchorY] 反向旋转后的点坐标*/
+    var rectInvertAnchorX = 0f
+    var rectInvertAnchorY = 0f
 
     /**激活矩形翻转, 如果调整后的矩形[宽/高]为负数, 那么会交换[left/right] [top/bottom]的值
      * 宽高小于0的Rect直接绘制是没有效果的*/
@@ -493,19 +506,19 @@ class RectScaleGestureHandler {
     fun initialize(rect: RectF, rotate: Float, rectPosition: Int) {
         if (rectPosition in RECT_LEFT..RECT_LB) {
             //根据[_rectPosition]查找锚点
-            val point = getRectPositionPoint(rect, rectPosition) ?: return
+            val point = getRectPositionAnchorPoint(rect, rectPosition) ?: return
             _isInitialize = true
             _rectPosition = rectPosition
             _initialize(rect, rotate)
             //自动设置对应的锚点, 这个关键
-            updateScaleAnchor(point.x, point.y)
+            updateScaleAnchorWithRotate(point.x, point.y)
         } else {
             _isInitialize = false
         }
     }
 
     /**指定一个锚点, 用来操作缩放
-     * [anchorX] [anchorY] 未旋转的参考锚点坐标*/
+     * [anchorX] [anchorY] 锚点的参考锚点坐标*/
     @CallPoint
     fun initializeAnchor(rect: RectF, rotate: Float, anchorX: Float, anchorY: Float) {
         _isInitialize = true
@@ -516,14 +529,14 @@ class RectScaleGestureHandler {
     }
 
     /**指定一个锚点, 用来操作缩放
-     * [anchorX] [anchorY] 旋转后的参考锚点坐标*/
+     * [anchorX] [anchorY] 需要旋转的锚点坐标*/
     @CallPoint
-    fun initializeRotateAnchor(rect: RectF, rotate: Float, anchorX: Float, anchorY: Float) {
+    fun initializeAnchorWithRotate(rect: RectF, rotate: Float, anchorX: Float, anchorY: Float) {
         _isInitialize = true
         _rectPosition = 0
 
         _initialize(rect, rotate)
-        updateScaleRotateAnchor(anchorX, anchorY)
+        updateScaleAnchorWithRotate(anchorX, anchorY)
     }
 
     /**手势回调, 拆开[x] [y] 方便对数据进行转换
@@ -598,26 +611,26 @@ class RectScaleGestureHandler {
         val width = rect.width()
         val height = rect.height()
         var newWidth = if (width >= 0) {
-            if (_touchDownX in rectAnchorX..moveX || _touchDownX in moveX..rectAnchorX) {
+            if (_touchDownX in rectInvertAnchorX..moveX || _touchDownX in moveX..rectInvertAnchorX) {
                 width + dx
             } else {
                 width - dx
             }
         } else {
-            if (_touchDownX in rectAnchorX..moveX || _touchDownX in moveX..rectAnchorX) {
+            if (_touchDownX in rectInvertAnchorX..moveX || _touchDownX in moveX..rectInvertAnchorX) {
                 width - dx
             } else {
                 width + dx
             }
         }
         var newHeight = if (height >= 0) {
-            if (_touchDownY in rectAnchorY..moveY || _touchDownY in moveY..rectAnchorY) {
+            if (_touchDownY in rectInvertAnchorY..moveY || _touchDownY in moveY..rectInvertAnchorY) {
                 height + dy
             } else {
                 height - dy
             }
         } else {
-            if (_touchDownY in rectAnchorY..moveY || _touchDownY in moveY..rectAnchorX) {
+            if (_touchDownY in rectInvertAnchorY..moveY || _touchDownY in moveY..rectInvertAnchorX) {
                 height - dy
             } else {
                 height + dy
@@ -629,12 +642,12 @@ class RectScaleGestureHandler {
         newHeight = onLimitHeightAction(newHeight)
 
         var scaleX = newWidth / width
-        var scaleY = newHeight / rect.height()
+        var scaleY = newHeight / height
 
         /*
         //使用scale计算, 在很小状态缩放时, 不跟手
-        var scaleX = ((touchX - rectAnchorX) / (_touchDownX - rectAnchorX)).ensure()
-        var scaleY = ((touchY - rectAnchorY) / (_touchDownY - rectAnchorY)).ensure()*/
+        var scaleX = ((touchX - rectInvertAnchorX) / (_touchDownX - rectInvertAnchorX)).ensure()
+        var scaleY = ((touchY - rectInvertAnchorY) / (_touchDownY - rectInvertAnchorY)).ensure()*/
 
         /*var dx = touchX - _touchDownX
         var dy = touchY - _touchDownY
@@ -698,29 +711,23 @@ class RectScaleGestureHandler {
     }
 
     /**更新矩形缩放参考的锚点
-     * [x] [y] 未旋转的参考坐标*/
+     * [x] [y] 锚点的参考坐标*/
     fun updateScaleAnchor(x: Float, y: Float) {
-        val rect = targetRect
-
         rectAnchorX = x
         rectAnchorY = y
 
-        _rotatePoint(rectAnchorX, rectAnchorY, rect.centerX(), rect.centerY())
-        rectAnchorRotateX = _tempValues[0]
-        rectAnchorRotateY = _tempValues[1]
+        val rect = targetRect
+        _invertRotatePoint(x, y, rect.centerX(), rect.centerY())
+        rectInvertAnchorX = _tempValues[0]
+        rectInvertAnchorY = _tempValues[1]
     }
 
-    /**更新矩形缩放参考的锚点
-     * [x] [y] 旋转的参考坐标*/
-    fun updateScaleRotateAnchor(x: Float, y: Float) {
+    /**更新矩形缩放参考的锚点, 此锚点会进行一个旋转
+     * [x] [y] 未旋转的参考坐标*/
+    fun updateScaleAnchorWithRotate(x: Float, y: Float) {
         val rect = targetRect
-
-        rectAnchorRotateX = x
-        rectAnchorRotateY = y
-
-        _invertRotatePoint(rectAnchorRotateX, rectAnchorRotateY, rect.centerX(), rect.centerY())
-        rectAnchorX = _tempValues[0]
-        rectAnchorY = _tempValues[1]
+        _rotatePoint(x, y, rect.centerX(), rect.centerY())
+        updateScaleAnchor(_tempValues[0], _tempValues[1])
     }
 
     /**缩放到指定比例, 并触发对应的回调
@@ -755,9 +762,9 @@ class RectScaleGestureHandler {
     fun _handleScale(scaleX: Float, scaleY: Float) {
         val rect = targetRect
 
-        //缩放, 在原始的矩形数据上进行缩放
+        //缩放, 在原始的矩形数据上进行缩放, 这里的锚点要用未旋转的坐标
         _matrix.reset()
-        _matrix.setScale(scaleX, scaleY, rectAnchorX, rectAnchorY)
+        _matrix.setScale(scaleX, scaleY, rectInvertAnchorX, rectInvertAnchorY)
         _pendingRect.set(rect)
         _matrix.mapRect(_pendingRect)
         L.i("scaleX:$scaleX scaleY:$scaleY $_pendingRect")
@@ -805,44 +812,6 @@ class RectScaleGestureHandler {
 
         rectScaleX = (rect.width() / targetRect.width()).ensure()
         rectScaleY = (rect.height() / targetRect.height()).ensure()
-
-        /*isFlipHorizontal = if (_isSideLeft(targetRect)) {
-            !_isSideLeft(rect)
-        } else {
-            _isSideLeft(rect)
-        }
-        isFlipVertical = if (_isSideTop(targetRect)) {
-            !_isSideTop(rect)
-        } else {
-            _isSideTop(rect)
-        }*/
-
-        /*val cx = rect.centerX()
-        val cy = rect.centerY()
-        isFlipHorizontal = cx < rect.left
-        isFlipVertical = cy < rect.top
-        if (_rectPosition == RECT_LEFT || _rectPosition == RECT_LT || _rectPosition == RECT_LB) {
-            //touch在左边
-            isFlipHorizontal = cx > rect.right
-        }
-        if (_rectPosition == RECT_TOP || _rectPosition == RECT_LT || _rectPosition == RECT_RT) {
-            //touch在上边
-            isFlipVertical = cy > rect.bottom
-        }*/
-    }
-
-    /**判断矩形是否在锚点的左边*/
-    fun _isSideLeft(rect: RectF): Boolean {
-        val left = min(rect.left, rect.right)
-        val right = max(rect.left, rect.right)
-        return left < rectAnchorX && right <= rectAnchorX
-    }
-
-    /**判断矩形是否在锚点的上边*/
-    fun _isSideTop(rect: RectF): Boolean {
-        val top = min(rect.top, rect.bottom)
-        val bottom = max(rect.top, rect.bottom)
-        return top < rectAnchorY && bottom <= rectAnchorY
     }
 
     /**旋转点的坐标

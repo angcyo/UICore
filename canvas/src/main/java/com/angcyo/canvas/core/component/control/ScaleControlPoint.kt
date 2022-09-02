@@ -77,7 +77,7 @@ class ScaleControlPoint : ControlPoint() {
                         }
                         //itemRenderer.onScaleControlFinish(this@ScaleControlPoint, rect, end)
                     }
-                    initializeAnchor(bounds, itemRenderer.rotate, bounds.left, bounds.top)
+                    initializeAnchorWithRotate(bounds, itemRenderer.rotate, bounds.left, bounds.top)
                     onTouchDown(point.x, point.y)
                 }
                 itemRenderer.onScaleControlStart(this)

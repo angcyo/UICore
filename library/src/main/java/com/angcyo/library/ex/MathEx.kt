@@ -250,7 +250,7 @@ fun Matrix.mapPoint(x: Float, y: Float, result: PointF = acquireTempPointF()): P
  * [point] 入参
  * @return 返回值*/
 fun Matrix.mapPoint(point: PointF): PointF {
-    return mapPoint(point.x, point.y)
+    return mapPoint(point.x, point.y, point)
 }
 
 /**

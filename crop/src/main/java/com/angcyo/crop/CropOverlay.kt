@@ -177,8 +177,8 @@ class CropOverlay(val cropDelegate: CropDelegate) {
                 onClipRectChangedAction(
                     rect.width() / targetRect.width(),
                     rect.height() / targetRect.height(),
-                    rectAnchorRotateX,
-                    rectAnchorRotateY
+                    rectAnchorX,
+                    rectAnchorY
                 )
             } else {
                 cropDelegate.refresh()
@@ -554,7 +554,7 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         rectMatrix.mapRect(endRect)
 
         //锚点移动距离计算
-        val point = RectScaleGestureHandler.getRectPositionPoint(
+        val point = RectScaleGestureHandler.getRectPositionAnchorPoint(
             endRect,
             rectScaleGestureHandler._rectPosition
         )
