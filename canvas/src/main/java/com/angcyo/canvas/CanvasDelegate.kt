@@ -927,56 +927,26 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**改变宽高/平移
      * 支持撤销
      * 支持[SelectGroupRenderer]
-     * [bounds] 需要最终设置的矩形*/
-    fun addChangeItemBounds(itemRenderer: BaseItemRenderer<*>, bounds: RectF) {
-        val item = itemRenderer
-        val originBounds = RectF(item.getBounds())
-        val newBounds = RectF(bounds)
+     * [toBounds] 需要最终设置的矩形*/
+    fun addChangeItemBounds(itemRenderer: BaseItemRenderer<*>, toBounds: RectF) {
+        val originBounds = RectF(itemRenderer.getBounds())
+        val newBounds = RectF(toBounds)
 
-        val step: ICanvasStep
-        if (item is SelectGroupRenderer) {
-            val itemList = mutableListOf<BaseItemRenderer<*>>()
-            itemList.addAll(item.selectItemList)
-            step = object : ICanvasStep {
-                override fun runUndo() {
-                    boundsOperateHandler.changeBoundsItemList(
-                        itemList,
-                        newBounds,
-                        originBounds,
-                        Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
-                    )
-                    if (getSelectedRenderer() == item) {
-                        item.updateSelectBounds()
-                    }
-                }
-
-                override fun runRedo() {
-                    boundsOperateHandler.changeBoundsItemList(
-                        itemList,
-                        originBounds,
-                        newBounds,
-                        Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
-                    )
-                    if (getSelectedRenderer() == item) {
-                        item.updateSelectBounds()
-                    }
+        val reason = Reason(Reason.REASON_USER, true, Reason.REASON_FLAG_BOUNDS)
+        val step = object : ICanvasStep {
+            override fun runUndo() {
+                itemRenderer.changeBoundsAction(reason) {
+                    set(originBounds)
                 }
             }
-        } else {
-            step = object : ICanvasStep {
-                override fun runUndo() {
-                    item.changeBoundsAction {
-                        set(originBounds)
-                    }
-                }
 
-                override fun runRedo() {
-                    item.changeBoundsAction {
-                        set(newBounds)
-                    }
+            override fun runRedo() {
+                itemRenderer.changeBoundsAction(reason) {
+                    set(newBounds)
                 }
             }
         }
+
         getCanvasUndoManager().addUndoAction(step)
         step.runRedo()
     }
@@ -984,22 +954,63 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**改变旋转角度
      * 支持撤销
      * 支持[SelectGroupRenderer]
-     * [rotate] 需要旋转到的角度*/
-    fun addChangeItemRotate(itemRenderer: BaseItemRenderer<*>, rotate: Float) {
-        val originRotate = itemRenderer.rotate
+     * [fromRotate] 从什么角度开始 [toRotate] 旋转到的角度
+     * [run] 是否要执行一次
+     * */
+    fun addChangeItemRotate(
+        itemRenderer: BaseItemRenderer<*>,
+        fromRotate: Float,
+        toRotate: Float,
+        run: Boolean = true
+    ) {
+        val step: ICanvasStep
+        if (itemRenderer is SelectGroupRenderer) {
+            val itemList = mutableListOf<BaseItemRenderer<*>>()
+            itemList.addAll(itemRenderer.selectItemList)
+            val bounds = RectF(itemRenderer.getBounds())
+            step = object : ICanvasStep {
+                override fun runUndo() {
+                    boundsOperateHandler.rotateItemList(
+                        itemList,
+                        fromRotate - toRotate,
+                        bounds.centerX(),
+                        bounds.centerY(),
+                        Reason(Reason.REASON_USER, flag = Reason.REASON_FLAG_ROTATE)
+                    )
+                    if (getSelectedRenderer() == itemRenderer) {
+                        itemRenderer.updateSelectBounds()
+                    }
+                }
 
-        val step = object : ICanvasStep {
-            override fun runUndo() {
-                itemRenderer.rotateBy(originRotate - rotate, ROTATE_FLAG_NORMAL)
+                override fun runRedo() {
+                    boundsOperateHandler.rotateItemList(
+                        itemList,
+                        toRotate - fromRotate,
+                        bounds.centerX(),
+                        bounds.centerY(),
+                        Reason(Reason.REASON_USER, flag = Reason.REASON_FLAG_ROTATE)
+                    )
+                    if (getSelectedRenderer() == itemRenderer) {
+                        itemRenderer.updateSelectBounds()
+                    }
+                }
             }
+        } else {
+            step = object : ICanvasStep {
+                override fun runUndo() {
+                    itemRenderer.rotateBy(fromRotate - toRotate, ROTATE_FLAG_NORMAL)
+                }
 
-            override fun runRedo() {
-                itemRenderer.rotateBy(rotate - originRotate, ROTATE_FLAG_NORMAL)
+                override fun runRedo() {
+                    itemRenderer.rotateBy(toRotate - fromRotate, ROTATE_FLAG_NORMAL)
+                }
             }
         }
 
         getCanvasUndoManager().addUndoAction(step)
-        step.runRedo()
+        if (run) {
+            step.runRedo()
+        }
     }
 
     /**检查[renderer]是否可以执行指定的排序操作*/

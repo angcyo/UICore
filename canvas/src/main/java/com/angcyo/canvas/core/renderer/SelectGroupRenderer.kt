@@ -242,7 +242,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         if (selectItemList.isEmpty()) {
             return
         }
-        //rotate = 0f//重置旋转
+        rotate = 0f//重置旋转
         changeBoundsAction(Reason(Reason.REASON_CODE, true)) {
             var l = 0f
             var t = 0f

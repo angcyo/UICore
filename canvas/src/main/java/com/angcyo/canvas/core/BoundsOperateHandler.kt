@@ -94,15 +94,15 @@ class BoundsOperateHandler {
         list: Iterable<BaseItemRenderer<*>>,
         degrees: Float, //需要旋转多少度. by
         pivotX: Float,
-        pivotY: Float
+        pivotY: Float,
+        reason: Reason = Reason(Reason.REASON_CODE, flag = Reason.REASON_FLAG_ROTATE)
     ) {
-        val changeReason = Reason(Reason.REASON_CODE, flag = Reason.REASON_FLAG_ROTATE)
         val tempRect = acquireTempRectF()
         list.forEach { item ->
             tempRect.set(item.getBounds())
             tempRect.rotate(degrees, pivotX, pivotY)
             item.rotate += degrees
-            item.changeBoundsAction(changeReason) {
+            item.changeBoundsAction(reason) {
                 offset(tempRect.centerX() - centerX(), tempRect.centerY() - centerY())
             }
         }

@@ -1,16 +1,12 @@
 package com.angcyo.canvas.core.component.control
 
 import android.graphics.PointF
-import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.component.ControlPoint
-import com.angcyo.canvas.core.renderer.ICanvasStep
-import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer.Companion.ROTATE_FLAG_MOVE
-import com.angcyo.canvas.items.renderer.IItemRenderer.Companion.ROTATE_FLAG_NORMAL
 import com.angcyo.library.L
 import com.angcyo.library.ex._drawable
 import kotlin.math.atan2
@@ -84,50 +80,12 @@ class RotateControlPoint : ControlPoint() {
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 angle = 0f
                 if (!touchItemRotate.isNaN() && isRotated) {
-                    itemRenderer.let {
-                        val itemList = mutableListOf<BaseItemRenderer<*>>()
-                        if (it is SelectGroupRenderer) {
-                            itemList.addAll(it.selectItemList)
-                        }
-                        canvasDelegate.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
-                            val item = it
-                            val originRotate = touchItemRotate
-                            val newRotate = itemRenderer.rotate
-                            val bounds = RectF(it.getBounds())
-
-                            override fun runUndo() {
-                                if (item is SelectGroupRenderer) {
-                                    canvasDelegate.boundsOperateHandler.rotateItemList(
-                                        itemList,
-                                        originRotate - newRotate,
-                                        bounds.centerX(),
-                                        bounds.centerY()
-                                    )
-                                    if (canvasDelegate.getSelectedRenderer() == item) {
-                                        item.updateSelectBounds()
-                                    }
-                                } else {
-                                    item.rotateBy(originRotate - newRotate, ROTATE_FLAG_NORMAL)
-                                }
-                            }
-
-                            override fun runRedo() {
-                                if (item is SelectGroupRenderer) {
-                                    canvasDelegate.boundsOperateHandler.rotateItemList(
-                                        itemList,
-                                        newRotate - originRotate,
-                                        bounds.centerX(),
-                                        bounds.centerY()
-                                    )
-                                    if (canvasDelegate.getSelectedRenderer() == item) {
-                                        item.updateSelectBounds()
-                                    }
-                                } else {
-                                    item.rotateBy(newRotate - originRotate, ROTATE_FLAG_NORMAL)
-                                }
-                            }
-                        })
-                    }
+                    canvasDelegate.addChangeItemRotate(
+                        itemRenderer,
+                        touchItemRotate,
+                        itemRenderer.rotate,
+                        false
+                    )
                 }
             }
         }

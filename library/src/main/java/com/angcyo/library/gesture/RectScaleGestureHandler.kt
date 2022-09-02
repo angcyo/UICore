@@ -325,7 +325,7 @@ class RectScaleGestureHandler {
         }
 
         /**更新矩形使用指定的宽高
-         * [newWidth] [newHeight] 宽高缩放比
+         * [newWidth] [newHeight] 指定的调整宽高值
          * [anchorX] [anchorY] 旋转后的锚点
          * */
         fun rectUpdateTo(
