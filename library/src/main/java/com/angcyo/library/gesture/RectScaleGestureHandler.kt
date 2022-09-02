@@ -484,6 +484,10 @@ class RectScaleGestureHandler {
     var _touchDownX: Float = 0f
     var _touchDownY: Float = 0f
 
+    //当前手势反向旋转后与_touchDownX的偏移量
+    var _touchDownDx = 0f
+    var _touchDownDy = 0f
+
     //临时存储2个值
     val _tempValues = floatArrayOf(0f, 0f)
 
@@ -604,9 +608,11 @@ class RectScaleGestureHandler {
         val moveX = _tempValues[0]
         val moveY = _tempValues[1]
 
+        _touchDownDx = moveX - _touchDownX
+        _touchDownDy = moveY - _touchDownY
         //使用dx dy计算, 跟手
-        val dx = (moveX - _touchDownX).absoluteValue
-        val dy = (moveY - _touchDownY).absoluteValue
+        val dx = _touchDownDx.absoluteValue
+        val dy = _touchDownDy.absoluteValue
 
         val width = rect.width()
         val height = rect.height()
