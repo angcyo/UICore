@@ -255,7 +255,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         }
     }
 
-    /**初始化样式
+    /**初始化样式, 在这个方法中操作[titleControl] [leftControl] [rightControl] 会应用颜色配置
      * [initBaseView]*/
     open fun onInitFragment(savedInstanceState: Bundle?) {
         _vh.itemView.isClickable = fragmentConfig.interceptRootTouchEvent
