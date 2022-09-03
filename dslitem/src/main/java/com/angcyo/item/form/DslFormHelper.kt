@@ -63,6 +63,9 @@ class DslFormHelper {
             return
         }
 
+        //
+        formItemDecoration.restoreLabelColor()
+
         _dslAdapter {
             val dslAdapter = this
             val position = formItem.itemIndexPosition(dslAdapter)

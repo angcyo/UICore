@@ -1,6 +1,8 @@
 package com.angcyo.item.form
 
+import android.content.res.ColorStateList
 import android.graphics.*
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
@@ -19,13 +21,14 @@ import kotlin.math.min
  */
 
 class DslFormItemDecoration : DslItemDecoration() {
+
     /**必填文本绘制*/
     var th: String = "*"
 
-    /**必填文本颜色*/
+    /**必填文本[th]的颜色*/
     var thColor = "#FF3622".toColorInt()
 
-    /**必填文本相对于label左边的偏移*/
+    /**必填文本[th]相对于label左边的偏移*/
     var thOffset = 2 * dpi
 
     val formPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -33,11 +36,14 @@ class DslFormItemDecoration : DslItemDecoration() {
     /**错误时Label的提示颜色*/
     var errorLabelColor = "#FF3622".toColorInt()
 
+    /**label控件的id*/
+    var labelViewId = R.id.lib_label_view
+
     /**错误提示*/
     var itemErrorTipTask: ItemErrorTipTask? = null
 
-    /**label控件的id*/
-    var labelViewId = R.id.lib_label_view
+    /**保存[DslAdapterItem]错误之前的Label控件颜色*/
+    val errorItemColorMap = hashMapOf<TextView, ColorStateList?>()
 
     //具有分组的表单, 不进行错误提示, 因为会被悬停挡住
     var haveGroup = false
@@ -72,6 +78,14 @@ class DslFormItemDecoration : DslItemDecoration() {
                 }
             }
         }
+    }
+
+    /**恢复Label控件的默认颜色*/
+    fun restoreLabelColor() {
+        errorItemColorMap.forEach { entry ->
+            entry.key.setTextColor(entry.value)
+        }
+        errorItemColorMap.clear()
     }
 
     /**绘制星星*/
@@ -117,7 +131,13 @@ class DslFormItemDecoration : DslItemDecoration() {
         ) {
 
             //错误文本的颜色
-            viewHolder.tv(labelViewId)?.setTextColor(errorLabelColor)
+            viewHolder.tv(labelViewId)?.apply {
+                val old = errorItemColorMap[this]
+                if (old == null) {
+                    errorItemColorMap[this] = textColors
+                }
+                setTextColor(errorLabelColor)
+            }
 
             val task = itemErrorTipTask!!
 
