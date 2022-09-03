@@ -344,6 +344,14 @@ fun DslAdapterItem.isItemDetached(): Boolean {
     return lifecycle.currentState != Lifecycle.State.RESUMED
 }
 
+/**是否是占满宽度的item
+ *
+ * [com.angcyo.dsladapter.AdapterLibExKt.fullSpan]
+ * */
+fun DslAdapterItem.fullWidthItem() {
+    itemSpanCount = DslAdapterItem.FULL_ITEM
+}
+
 /**是否是占满宽度的item*/
 fun DslAdapterItem.isFullWidthItem(): Boolean {
     return isInLinearLayoutManager() || itemSpanCount == DslAdapterItem.FULL_ITEM
