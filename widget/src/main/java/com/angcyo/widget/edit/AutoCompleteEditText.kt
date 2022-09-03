@@ -28,6 +28,9 @@ open class AutoCompleteEditText : CompleteEditText {
     var autoCompleteShowOnFocus = false
     var autoCompleteFocusDelay = 0L
 
+    /**有多少个值时, 才显示*/
+    var showDropDownCountThreshold = 0
+
     /**显示下拉框删除的按钮*/
     var autoCompleteShowItemDelete = false
 
@@ -86,6 +89,11 @@ open class AutoCompleteEditText : CompleteEditText {
             autoCompleteFocusDelay.toInt()
         ).toLong()
 
+        showDropDownCountThreshold = typedArray.getInt(
+            R.styleable.AutoCompleteEditText_r_show_drop_down_count_threshold,
+            showDropDownCountThreshold
+        )
+
         autoCompleteShowItemDelete = typedArray.getBoolean(
             R.styleable.AutoCompleteEditText_r_auto_complete_show_item_delete,
             autoCompleteShowItemDelete
@@ -130,7 +138,8 @@ open class AutoCompleteEditText : CompleteEditText {
         if (!TextUtils.isEmpty(autoCompleteText)) {
             setDataList(
                 autoCompleteText.splitList(autoCompleteTextSeparator, false),
-                autoCompleteShowOnFocus, autoCompleteFocusDelay.toLong()
+                autoCompleteShowOnFocus,
+                autoCompleteFocusDelay
             )
         }
     }
@@ -178,7 +187,8 @@ open class AutoCompleteEditText : CompleteEditText {
     }
 
     override fun showDropDown() {
-        if (adapter == null || adapter.count <= 0) {
+        if (adapter == null || adapter.count <= showDropDownCountThreshold) {
+            //大于1个以上的数据才提示
             dismissDropDown()
             return
         }

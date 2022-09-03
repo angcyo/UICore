@@ -261,6 +261,23 @@ class JsonBuilder {
         return this
     }
 
+    /**
+     * 可以在一个json数组中添加一个json对象
+     * ```
+     * jsonObject {
+     *   add("id", orderId)
+     *   addArray("itemList") {
+     *     orderBean?.itemList?.forEach { itemBean ->
+     *       add(jsonObject {
+     *         add("id", itemBean.id)
+     *         add("technicalAnalysis", itemBean.technicalAnalysis)
+     *         add("factoryConclusion", itemBean.factoryConclusion)
+     *       })
+     *     }
+     *   }
+     * }
+     * ```
+     * */
     fun add(element: JsonElement?): JsonBuilder {
         operateElement(
             operateElement,
@@ -567,12 +584,12 @@ class JsonBuilder {
 
         private fun isArray(element: JsonElement?): Boolean {
             return element is JsonArray ||
-                element is WrapJsonArray
+                    element is WrapJsonArray
         }
 
         private fun isObj(element: JsonElement?): Boolean {
             return element is JsonObject ||
-                element is WrapJsonObject
+                    element is WrapJsonObject
         }
     }
 }

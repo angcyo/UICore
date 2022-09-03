@@ -132,6 +132,7 @@
         <attr name="r_auto_complete_focus_delay" format="integer" />
 
         <attr name="r_auto_complete_show_item_delete" format="boolean" />
+        <attr name="r_show_drop_down_count_threshold" format="integer" />
     </declare-styleable>
 
 </resources>
