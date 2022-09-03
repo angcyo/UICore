@@ -3,6 +3,7 @@ package com.angcyo.dialog2
 import android.app.Dialog
 import android.content.Context
 import android.view.Gravity
+import androidx.annotation.Px
 import com.angcyo.dialog.BaseDialogConfig
 import com.angcyo.dialog.configBottomDialog
 import com.angcyo.library.L
@@ -26,8 +27,9 @@ open class WheelDateDialogConfig : BaseDialogConfig() {
     var dateType = booleanArrayOf(true, true, true, false, false, false)//显示类型，默认显示： 年月日
     var dateTextGravity = Gravity.CENTER
 
-    /**DP 单位*/
-    var dateTextSize = _dimen(R.dimen.wheel_text_size)
+    /**px 单位*/
+    @Px
+    var dateTextSize: Float = _dimen(R.dimen.wheel_text_size).toFloat()
 
     var isLunarCalendar = false//是否显示农历
 
