@@ -205,6 +205,19 @@ open class DslSelector {
         }
     }
 
+    /**选择所有
+     * [select] true:选择所有, false:取消所有*/
+    fun selectorAll(
+        select: Boolean = true,
+        notify: Boolean = true,
+        fromUser: Boolean = true
+    ) {
+        val indexList = visibleViewList.mapIndexedTo(mutableListOf()) { index, _ ->
+            index
+        }
+        selector(indexList, select, notify, fromUser)
+    }
+
     /**
      * 操作多个
      * @param select 选中 or 取消选中
