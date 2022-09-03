@@ -44,11 +44,11 @@ fun hideLoading(
     action: DslViewHolder.() -> Unit = {}
 ) {
     if (dialogPool.isNotEmpty()) {
-        dialogPool.pop().get()?.run {
+        dialogPool.pop().get()?.apply {
             try {
                 if (transition) {
                     //执行转换
-                    window?.decorView?.run {
+                    window?.decorView?.apply {
                         val dialogViewHolder = dslViewHolder()
 
                         dslTransition(this as ViewGroup) {

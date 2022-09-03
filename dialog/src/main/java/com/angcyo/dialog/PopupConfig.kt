@@ -42,7 +42,8 @@ typealias WindowClickAction = (window: TargetWindow, view: View) -> Unit
  * */
 typealias TargetWindow = Any
 
-fun TargetWindow.dismiss() {
+/**销毁[TargetWindow]*/
+fun TargetWindow.dismissWindow() {
     if (this is PopupWindow) {
         dismiss()
     } else if (this is Dialog) {
