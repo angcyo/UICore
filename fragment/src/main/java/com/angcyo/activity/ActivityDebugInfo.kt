@@ -23,7 +23,6 @@ import androidx.fragment.app.FragmentManager
 import com.angcyo.activity.ActivityDebugInfo.DEFAULT_NORMAL_SIZE
 import com.angcyo.drawable.isGravityTop
 import com.angcyo.fragment.R
-import com.angcyo.http.base.toJson
 import com.angcyo.library.L
 import com.angcyo.library._isNavigationBarShow
 import com.angcyo.library.app
@@ -395,7 +394,7 @@ fun Activity.logActivityInfo(debug: Boolean = isShowDebug()) {
             L.d(buildString {
                 appendln()
                 appendln("${this@logActivityInfo.simpleHash()} ActivityInfo->↓")
-                appendln(it.toJson())
+                appendln(it)
             })
         }
     }
