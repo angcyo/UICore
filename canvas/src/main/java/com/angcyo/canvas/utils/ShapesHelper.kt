@@ -3,7 +3,7 @@ package com.angcyo.canvas.utils
 import android.graphics.Path
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.LovePath
-import com.angcyo.canvas.core.MmValueUnit
+import com.angcyo.library.unit.MmValueUnit
 import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.library.ex.toRadians
 import kotlin.math.cos

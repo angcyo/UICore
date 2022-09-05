@@ -6,13 +6,13 @@ import android.graphics.Paint
 import android.graphics.PointF
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.core.IValueUnit
 import com.angcyo.canvas.core.component.BaseAxis
 import com.angcyo.canvas.core.component.YAxis
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.textWidth
 import com.angcyo.library.ex.toColor
+import com.angcyo.library.unit.IValueUnit
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>

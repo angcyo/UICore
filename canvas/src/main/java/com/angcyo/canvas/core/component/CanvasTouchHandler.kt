@@ -11,9 +11,8 @@ import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.dp
 import com.angcyo.library.gesture.DoubleGestureDetector2
-import kotlin.math.atan2
+import com.angcyo.vector.VectorHelper
 import kotlin.math.min
-import kotlin.math.sqrt
 
 /** [CanvasView]手势处理类, 双击缩放地图, 双指平移, 捏合放大缩小等
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -27,72 +26,6 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
         const val TOUCH_TYPE_NONE = 0
         const val TOUCH_TYPE_TRANSLATE = 1
         const val TOUCH_TYPE_SCALE = 2
-
-        /**获取2个点的中点坐标*/
-        fun midPoint(x1: Float, y1: Float, x2: Float, y2: Float, result: PointF) {
-            result.x = (x1 + x2) / 2f
-            result.y = (y1 + y2) / 2f
-        }
-
-        fun midPoint(p1: PointF, p2: PointF, result: PointF) {
-            midPoint(p1.x, p1.y, p2.x, p2.y, result)
-        }
-
-        /**获取2个点之间的距离, 勾股定律*/
-        fun spacing(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-            val x: Float = x2 - x1
-            val y: Float = y2 - y1
-            return sqrt((x * x + y * y).toDouble()).toFloat()
-        }
-
-        fun spacing(p1: PointF, p2: PointF): Float {
-            return spacing(p1.x, p1.y, p2.x, p2.y)
-        }
-
-        /**获取2个点之间的角度, 非弧度
-         * [0~180°] [0~-180°]
-         * https://blog.csdn.net/weixin_38351681/article/details/115512792
-         *
-         * [0~-90]    点2 在第一象限
-         * [-90~-180] 点2 在第二象限
-         * [90~180]   点2 在第三象限
-         * [0~90]     点2 在第四象限
-         * */
-        fun angle(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-            val degrees = 180.0 / Math.PI * atan2((y2 - y1), (x2 - x1))
-            return degrees.toFloat()
-        }
-
-        /*fun angle(y1: Float, x1: Float, y2: Float, x2: Float): Float {
-            return Math.toDegrees(
-                atan2(y1.toDouble(), x1.toDouble()) -
-                        atan2(y2.toDouble(), x2.toDouble())
-            ).toFloat() % 360
-        }*/
-
-        /**视图坐标系中的角度
-         * [0~360°]*/
-        fun angle2(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-            val degrees = angle(x1, y1, x2, y2)
-            if (degrees < 0) {
-                return 360 + degrees
-            }
-            return degrees
-        }
-
-        fun angle(p1: PointF, p2: PointF): Float {
-            return angle(p1.x, p1.y, p2.x, p2.y)
-        }
-
-        /**判断2个点是否是想要横向平移
-         * 否则就是纵向平移*/
-        fun isHorizontalIntent(x1: Float, y1: Float, x2: Float, y2: Float): Boolean {
-            return (x2 - x1).abs() < (y2 - y1).abs()
-        }
-
-        fun isHorizontalIntent(p1: PointF, p2: PointF): Boolean {
-            return isHorizontalIntent(p1.x, p1.y, p2.x, p2.y)
-        }
     }
 
     /**当双指捏合的距离大于此值时, 才视为是缩放手势*/
@@ -192,8 +125,8 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
 
         val selectedRenderer = canvasDelegate.getSelectedRenderer()
         if (_touchPointList.size >= 2) {
-            _touchDistance = spacing(_touchPointList[0], _touchPointList[1])
-            midPoint(_touchPointList[0], _touchPointList[1], _touchMiddlePoint)
+            _touchDistance = VectorHelper.spacing(_touchPointList[0], _touchPointList[1])
+            VectorHelper.midPoint(_touchPointList[0], _touchPointList[1], _touchMiddlePoint)
             isDoubleTouch = false
 
             if (selectedRenderer != null) {
@@ -240,7 +173,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
                 _touchType == TOUCH_TYPE_SCALE ||
                 _touchDistance > canvasView.canvasViewBox.getContentWidth() / 3
             ) {*/
-            val moveDistance = spacing(_movePointList[0], _movePointList[1])
+            val moveDistance = VectorHelper.spacing(_movePointList[0], _movePointList[1])
             if ((moveDistance - _touchDistance).abs() > minScalePointerDistance &&
                 view.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_SCALE) //激活了缩放手势
             ) {
@@ -271,7 +204,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
             ) {
                 //开始平移
                 _touchType = TOUCH_TYPE_TRANSLATE
-                if (isHorizontalIntent(_movePointList[0], _movePointList[1])) {
+                if (VectorHelper.isHorizontalIntent(_movePointList[0], _movePointList[1])) {
                     canvasDelegate.getCanvasViewBox().translateBy(dx, 0f, false)
                 } else {
                     canvasDelegate.getCanvasViewBox().translateBy(0f, dy, false)

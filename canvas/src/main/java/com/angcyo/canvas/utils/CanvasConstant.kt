@@ -1,9 +1,5 @@
 package com.angcyo.canvas.utils
 
-import com.angcyo.canvas.core.IValueUnit
-import com.angcyo.canvas.core.InchValueUnit
-import com.angcyo.canvas.core.MmValueUnit
-import com.angcyo.canvas.core.PixelValueUnit
 import com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_BLACK_WHITE
 import com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_DITHERING
 import com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_GCODE
@@ -19,6 +15,10 @@ import com.angcyo.canvas.utils.CanvasConstant.DATA_TYPE_QRCODE
 import com.angcyo.canvas.utils.CanvasConstant.DATA_TYPE_SVG
 import com.angcyo.canvas.utils.CanvasConstant.DATA_TYPE_TEXT
 import com.angcyo.library.component.HawkPropertyValue
+import com.angcyo.library.unit.IValueUnit
+import com.angcyo.library.unit.InchValueUnit
+import com.angcyo.library.unit.MmValueUnit
+import com.angcyo.library.unit.PixelValueUnit
 
 /**
  * 常量

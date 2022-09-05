@@ -6,6 +6,8 @@ import android.graphics.RectF
 import androidx.annotation.UiThread
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.ex.*
+import com.angcyo.library.unit.IValueUnit
+import com.angcyo.library.unit.MmValueUnit
 
 /**
  * CanvasView 内容可视区域范围

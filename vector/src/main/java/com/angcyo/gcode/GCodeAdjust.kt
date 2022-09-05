@@ -3,8 +3,8 @@ package com.angcyo.gcode
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
-import com.angcyo.canvas.core.InchValueUnit
-import com.angcyo.canvas.core.MmValueUnit
+import com.angcyo.library.unit.InchValueUnit
+import com.angcyo.library.unit.MmValueUnit
 import com.angcyo.library.ex.mapPoint
 import com.angcyo.library.ex.mapRectF
 import java.io.File

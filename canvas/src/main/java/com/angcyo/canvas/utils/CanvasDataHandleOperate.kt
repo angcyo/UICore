@@ -2,13 +2,14 @@ package com.angcyo.canvas.utils
 
 import android.graphics.*
 import android.view.Gravity
-import com.angcyo.canvas.core.MmValueUnit
 import com.angcyo.gcode.GCodeAdjust
 import com.angcyo.gcode.GCodeWriteHandler
 import com.angcyo.library.ex.*
+import com.angcyo.library.unit.MmValueUnit
 import com.angcyo.library.utils.fileName
 import com.angcyo.library.utils.filePath
 import com.angcyo.svg.StylePath
+import com.angcyo.vector.pathStyle
 import java.io.File
 import kotlin.math.max
 import kotlin.math.min

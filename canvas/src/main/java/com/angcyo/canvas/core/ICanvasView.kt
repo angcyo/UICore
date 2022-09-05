@@ -7,6 +7,7 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.library.unit.IValueUnit
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>

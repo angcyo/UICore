@@ -11,11 +11,15 @@ import android.view.MotionEvent
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.CanvasDelegate
-import com.angcyo.canvas.core.*
+import com.angcyo.canvas.core.ICanvasListener
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.getMaxLineWidth
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
+import com.angcyo.library.unit.InchValueUnit
+import com.angcyo.library.unit.MmValueUnit
+import com.angcyo.library.unit.convertPixelToValueUnit
 
 /**
  * 调试监视渲染

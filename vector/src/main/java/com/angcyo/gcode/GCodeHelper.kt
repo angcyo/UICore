@@ -5,16 +5,15 @@ import android.graphics.*
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import androidx.annotation.WorkerThread
-import com.angcyo.canvas.core.CanvasEntryPoint
-import com.angcyo.canvas.core.InchValueUnit
-import com.angcyo.canvas.core.MmValueUnit
-import com.angcyo.canvas.core.component.CanvasTouchHandler
-import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.L
+import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.app
 import com.angcyo.library.ex.ceil
 import com.angcyo.library.ex.dotDegrees
 import com.angcyo.library.ex.emptyRectF
+import com.angcyo.library.unit.InchValueUnit
+import com.angcyo.library.unit.MmValueUnit
+import com.angcyo.vector.VectorHelper
 
 /**
  *
@@ -72,8 +71,8 @@ object GCodeHelper {
     @WorkerThread
     fun parseGCode(
         text: String?,
+        paint: Paint,
         context: Context = app(),
-        paint: Paint = createPaint(Color.BLACK)
     ): GCodeDrawable? {
         if (text.isNullOrEmpty()) {
             return null
@@ -262,8 +261,8 @@ object GCodeHelper {
     ): PointF {
         val circleX = lastX + i
         val circleY = lastY + j
-        val r = CanvasTouchHandler.spacing(circleX, circleY, lastX, lastY)
-        val newPointAngle = CanvasTouchHandler.angle2(circleX, circleY, x, y)
+        val r = VectorHelper.spacing(circleX, circleY, lastX, lastY)
+        val newPointAngle = VectorHelper.angle2(circleX, circleY, x, y)
         return dotDegrees(r, newPointAngle, circleX, circleY)
     }
 
@@ -313,10 +312,10 @@ object GCodeHelper {
         }
 
         /**入口, 开始解析[GCodeLineData]*/
-        @CanvasEntryPoint
+        @CallPoint
         fun parsePicture(
             gCodeLineDataList: List<GCodeLineData>,
-            paint: Paint = createPaint(Color.BLUE)
+            paint: Paint
         ): Picture? {
             parseGCodeBound(gCodeLineDataList)//bound
             if (gCodeBounds.width() <= 0 || gCodeBounds.height() <= 0) {
@@ -472,7 +471,7 @@ object GCodeHelper {
                                 circleY = _lastY + j
 
                                 //圆弧的半径
-                                val r = CanvasTouchHandler.spacing(circleX, circleY, _lastX, _lastY)
+                                val r = VectorHelper.spacing(circleX, circleY, _lastX, _lastY)
 
                                 //圆弧的矩形范围
                                 val arcRect = emptyRectF()
@@ -480,9 +479,9 @@ object GCodeHelper {
 
                                 //圆弧的角度
                                 val lastPointAngle =
-                                    CanvasTouchHandler.angle2(circleX, circleY, _lastX, _lastY)
+                                    VectorHelper.angle2(circleX, circleY, _lastX, _lastY)
                                 val newPointAngle =
-                                    CanvasTouchHandler.angle2(circleX, circleY, x, y)
+                                    VectorHelper.angle2(circleX, circleY, x, y)
 
                                 val startAngle = if (number == 2) {
                                     //顺时针

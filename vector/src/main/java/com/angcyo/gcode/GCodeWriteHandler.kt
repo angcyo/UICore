@@ -4,14 +4,14 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.os.Debug
-import com.angcyo.canvas.core.IValueUnit
-import com.angcyo.canvas.core.InchValueUnit
-import com.angcyo.canvas.core.component.CanvasTouchHandler
-import com.angcyo.canvas.utils.pathStyle
 import com.angcyo.library.L
 import com.angcyo.library.ex.eachPath
 import com.angcyo.library.ex.size
 import com.angcyo.library.ex.toBitmap
+import com.angcyo.library.unit.IValueUnit
+import com.angcyo.library.unit.InchValueUnit
+import com.angcyo.vector.VectorHelper
+import com.angcyo.vector.pathStyle
 import kotlin.math.absoluteValue
 
 /**
@@ -381,13 +381,13 @@ class GCodeWriteHandler {
     /**判断G1的线的角度是否相同, 相同角度也视为是相同的线*/
     fun _isSameAngle(newX: Float, newY: Float): Boolean {
         if (_xList.size() > 1 && _yList.size() > 1) {
-            val a1 = CanvasTouchHandler.angle(
+            val a1 = VectorHelper.angle(
                 _xList.first(),
                 _yList.first(),
                 _xList.last(),
                 _yList.last()
             )
-            val a2 = CanvasTouchHandler.angle(
+            val a2 = VectorHelper.angle(
                 _xList.last(),
                 _yList.last(),
                 newX,

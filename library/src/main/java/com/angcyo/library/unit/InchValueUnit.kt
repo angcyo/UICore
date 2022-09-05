@@ -1,8 +1,7 @@
-package com.angcyo.canvas.core
+package com.angcyo.library.unit
 
 import android.util.DisplayMetrics
 import android.util.TypedValue
-import com.angcyo.canvas.utils.canvasDecimal
 import com.angcyo.library.app
 
 /**
@@ -26,7 +25,7 @@ class InchValueUnit : IValueUnit {
         if (index % 10 == 0) {
             return "${(index / 10f).toInt()}"
         }
-        return (index / 10f).canvasDecimal(1)
+        return (index / 10f).unitDecimal(1)
     }
 
     /**获取每个单位间隔刻度对应的像素大小
@@ -44,7 +43,7 @@ class InchValueUnit : IValueUnit {
         return when {
             //value.abs() / 100 > 1 -> "${(value / 100).decimal(2)}m"
             //value.abs() / 10 > 1 -> "${(value / 10).decimal(2)}cm"
-            else -> "${value.canvasDecimal(2)}in"
+            else -> "${value.unitDecimal(2)}in"
         }
     }
 }

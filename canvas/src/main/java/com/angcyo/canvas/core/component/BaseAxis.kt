@@ -1,7 +1,7 @@
 package com.angcyo.canvas.core.component
 
 import com.angcyo.canvas.core.CanvasViewBox
-import com.angcyo.canvas.core.InchValueUnit
+import com.angcyo.library.unit.InchValueUnit
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.floor
 

@@ -6,7 +6,7 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import com.angcyo.canvas.CanvasDelegate
-import com.angcyo.canvas.core.MmValueUnit
+import com.angcyo.library.unit.MmValueUnit
 import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.library.app
 import com.angcyo.library.ex.*
@@ -174,13 +174,6 @@ fun CanvasDelegate.engraveMode(enable: Boolean = true) {
     controlHandler.enable = !enable
     controlRenderer.drawControlPoint = !enable
     refresh()
-}
-
-/**[android.graphics.Paint.Style]*/
-fun Path.pathStyle() = if (this is StylePath) {
-    this.pathStyle
-} else {
-    Paint.Style.STROKE
 }
 
 //</editor-fold desc="Other">
