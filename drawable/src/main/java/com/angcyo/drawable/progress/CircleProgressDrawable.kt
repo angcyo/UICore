@@ -20,6 +20,9 @@ class CircleProgressDrawable : BaseValueProgressDrawable() {
     /**有多少度会出现重叠*/
     var coverAngle: Float = 0f
 
+    /**尾部需要预留的角度*/
+    var tailAngle: Float = 0f
+
     init {
         progressGradientColors =
             intArrayOf(Color.parseColor("#79B2FF"), Color.parseColor("#437AFF"))
@@ -91,7 +94,7 @@ class CircleProgressDrawable : BaseValueProgressDrawable() {
             _tempRect.set(rect)
             val inset = (progressWidth / 2).toInt()
             _tempRect.inset(inset, inset)
-            val sweepAngle = (360f - coverAngle) * progressRatio
+            val sweepAngle = (360f - coverAngle - tailAngle) * progressRatio
             val rotation = coverAngle * progressRatio
 
             //旋转背景补偿
