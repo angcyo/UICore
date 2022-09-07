@@ -1307,7 +1307,7 @@ open class DslAdapterItem : LifecycleOwner {
         }
     }
 
-    /**是否 允许被选中*/
+    /**是否 允许改变选中状态*/
     var isItemCanSelected: (fromSelector: Boolean, toSelector: Boolean) -> Boolean =
         { from, to -> from != to }
 
