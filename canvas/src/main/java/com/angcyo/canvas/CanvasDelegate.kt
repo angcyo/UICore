@@ -818,9 +818,6 @@ class CanvasDelegate(val view: View) : ICanvasView {
         height: Float,
         anchor: PointF
     ) {
-        if (width == 0f || height == 0f) {
-            return
-        }
         itemRenderer.apply {
             updateBounds(width, height, anchor)
             refresh()

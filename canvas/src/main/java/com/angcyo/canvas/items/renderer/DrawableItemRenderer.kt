@@ -3,17 +3,18 @@ package com.angcyo.canvas.items.renderer
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.RectF
 import androidx.core.graphics.withMatrix
+import com.angcyo.canvas.CanvasDelegate
+import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.DrawableItem
 import com.angcyo.canvas.utils.toDataTypeStr
 import com.angcyo.library.component.ScalePictureDrawable
-import com.angcyo.library.ex.adjustFlipRect
-import com.angcyo.library.ex.emptyRectF
-import com.angcyo.library.ex.isFlipHorizontal
-import com.angcyo.library.ex.isFlipVertical
+import com.angcyo.library.ex.*
+import kotlin.math.absoluteValue
 
 /**
  * 用来绘制[android.graphics.drawable.Drawable]
@@ -72,6 +73,20 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
                         _flipRect.bottom.toInt()
                     )
                     drawable.draw(canvas)
+                }
+            }
+        }
+    }
+
+    override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
+        super.itemBoundsChanged(reason, oldBounds)
+        if (reason.flag.have(Reason.REASON_FLAG_BOUNDS)) {
+            if (canvasView is CanvasDelegate && !canvasView.isTouchHold) {
+                val bounds = getBounds()
+                val width = bounds.width().absoluteValue
+                val height = bounds.height().absoluteValue
+                if (width > 0 && height > 0) {
+                    getRendererRenderItem()?.updateDrawable(paint, width, height)
                 }
             }
         }

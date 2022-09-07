@@ -1,7 +1,7 @@
 package com.angcyo.canvas
 
+import android.graphics.Matrix
 import android.graphics.Path
-import android.graphics.RectF
 import com.angcyo.canvas.utils.ShapesHelper
 
 /**
@@ -11,11 +11,8 @@ import com.angcyo.canvas.utils.ShapesHelper
  */
 class LinePath : Path() {
 
-    val pathBounds = RectF()
-
-    override fun computeBounds(bounds: RectF, exact: Boolean) {
-        //super.computeBounds(bounds, exact)
-        bounds.set(pathBounds)
+    override fun transform(matrix: Matrix, dst: Path?) {
+        super.transform(matrix, dst)
     }
 
     /**横线*/
@@ -23,6 +20,5 @@ class LinePath : Path() {
         reset()
         moveTo(0f, 0f)
         lineTo(length, 0f)
-        pathBounds.set(0f, 0f, length, 0f)
     }
 }

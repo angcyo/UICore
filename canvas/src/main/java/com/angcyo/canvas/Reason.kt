@@ -6,11 +6,18 @@ package com.angcyo.canvas
  * @since 2022/05/10
  */
 data class Reason(
-    /**更新数据的原因*/
+    /**更新数据的原因
+     * [REASON_USER]
+     * [REASON_CODE]
+     * */
     val reason: Int = REASON_USER,
     /**是否要发送通知[dispatchItemBoundsChanged]*/
     val notify: Boolean = true,
-    /**Flag*/
+    /**Flag
+     * [REASON_FLAG_BOUNDS]
+     * [REASON_FLAG_TRANSLATE]
+     * [REASON_FLAG_ROTATE]
+     * */
     val flag: Int = 0,
 ) {
     companion object {

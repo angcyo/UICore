@@ -2,7 +2,6 @@ package com.angcyo.canvas.items
 
 import android.graphics.Paint
 import com.angcyo.canvas.utils.CanvasConstant
-import com.angcyo.svg.Svg
 import com.pixplicity.sharp.SharpDrawable
 
 /**
@@ -25,7 +24,7 @@ class PictureSharpItem(
     override fun updateItem(paint: Paint) {
         val sharpDrawable = sharpDrawable
         if (!sharpDrawable.pathList.isNullOrEmpty()) {
-            val newDrawable = Svg.loadPathList(
+            /*val newDrawable = Svg.loadPathList(
                 sharpDrawable.pathList,
                 sharpDrawable.pathBounds,
                 paint.style,
@@ -33,15 +32,20 @@ class PictureSharpItem(
                 0,
                 0
             )
-            this.drawable = newDrawable
+            this.drawable = newDrawable*/
             this.dataMode = CanvasConstant.DATA_MODE_GCODE
-            this.itemWidth = newDrawable.pathBounds.width()
-            this.itemHeight = newDrawable.pathBounds.height()
+            this.itemWidth = sharpDrawable.pathBounds.width()
+            this.itemHeight = sharpDrawable.pathBounds.height()
+            this.drawable = createPathDrawable(sharpDrawable.pathList, itemWidth, itemHeight, paint)
         } else {
             this.drawable = sharpDrawable
             this.dataMode = CanvasConstant.DATA_MODE_GREY
             this.itemWidth = sharpDrawable.intrinsicWidth.toFloat()
             this.itemHeight = sharpDrawable.intrinsicHeight.toFloat()
         }
+    }
+
+    override fun updateDrawable(paint: Paint, width: Float, height: Float) {
+        drawable = createPathDrawable(sharpDrawable.pathList, width, height, paint)
     }
 }

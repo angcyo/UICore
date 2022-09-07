@@ -141,6 +141,7 @@ object GCodeHelper {
                     append(gCodeLineData.lineCode)
                 }
             }
+            gCodePath.set(gCodeHandler.path)
         }
     }
 

@@ -1,5 +1,6 @@
 package com.angcyo.canvas
 
+import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.RectF
 import com.angcyo.canvas.utils.ShapesHelper
@@ -20,6 +21,10 @@ class LovePath : Path() {
     override fun computeBounds(bounds: RectF, exact: Boolean) {
         //super.computeBounds(bounds, exact)
         bounds.set(pathBounds)
+    }
+
+    override fun transform(matrix: Matrix, dst: Path?) {
+        super.transform(matrix, dst)
     }
 
     /**菱形+左右2个半圆*/

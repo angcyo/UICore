@@ -5,6 +5,7 @@ import android.graphics.Path
 import android.graphics.PointF
 import com.angcyo.library.ex.abs
 import com.angcyo.svg.StylePath
+import com.pixplicity.sharp.Sharp
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
@@ -91,3 +92,7 @@ fun Path.pathStyle() = if (this is StylePath) {
 } else {
     Paint.Style.STROKE
 }
+
+/**SVG 字符数据 转 Path
+ * M250,150L150,350L350,350Z,*/
+fun String.toPath(): Path = Sharp.loadPath(this)

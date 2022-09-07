@@ -162,7 +162,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                     //L.d("\ntouch:${_touchPoint}\nmove:${_movePoint}")
                     if (touchControlPoint == null) {
                         //没有在控制点上按压时, 才处理item的移动
-                        if (selectedItemRender != null) {
+                        if (selectedItemRender != null && event.pointerCount < 2 /*单手操作*/) {
 
                             val dx = touchPoint.x - movePoint.x
                             val dy = touchPoint.y - movePoint.y

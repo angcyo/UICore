@@ -23,9 +23,14 @@ class PictureGCodeItem(
     }
 
     override fun updateItem(paint: Paint) {
-        this.drawable = gCodeDrawable
         this.itemWidth = gCodeDrawable.gCodeBound.width()
         this.itemHeight = gCodeDrawable.gCodeBound.height()
+        //this.drawable = gCodeDrawable
+        this.drawable = createPathDrawable(gCodeDrawable.gCodePath, itemWidth, itemHeight, paint)
+    }
+
+    override fun updateDrawable(paint: Paint, width: Float, height: Float) {
+        drawable = createPathDrawable(gCodeDrawable.gCodePath, width, height, paint)
     }
 
 }

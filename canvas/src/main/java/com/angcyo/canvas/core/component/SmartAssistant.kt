@@ -500,68 +500,64 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         newWidth = adsorbWidth ?: newWidth
         newHeight = adsorbHeight ?: newHeight
 
-        if (newWidth != originWidth || newHeight != originHeight) {
-            if (itemRenderer.isLineShape()) {
-                //line
-            } else if (equalRatio) {
-                //等比调整
+        if (itemRenderer.isLineShape()) {
+            //line
+        } else if (equalRatio) {
+            //等比调整
 
-                //原先的缩放比
-                val originScale = originWidth / originHeight
-                val newScale = newWidth / newHeight
+            //原先的缩放比
+            val originScale = originWidth / originHeight
+            val newScale = newWidth / newHeight
 
-                if ((newScale - originScale).absoluteValue <= 0.00001) {
-                    //已经是等比
-                } else {
-                    //无推荐
-                    val isNoAssistant = lastWidthAssistant == null && lastHeightAssistant == null
-                    //都有推荐
-                    val isAllAssistant = lastWidthAssistant == null && lastHeightAssistant == null
+            if ((newScale - originScale).absoluteValue <= 0.00001) {
+                //已经是等比
+            } else {
+                //无推荐
+                val isNoAssistant = lastWidthAssistant == null && lastHeightAssistant == null
+                //都有推荐
+                val isAllAssistant = lastWidthAssistant == null && lastHeightAssistant == null
 
-                    var widthPriority = false //是否宽度优先
-                    if (isNoAssistant || isAllAssistant) {
-                        if ((newWidth - originWidth).absoluteValue > (newHeight - originHeight).absoluteValue) {
-                            //宽度变化比高度大
-                            widthPriority = true
-                        }
-                    } else if (lastWidthAssistant != null) {
-                        //宽度有推荐
+                var widthPriority = false //是否宽度优先
+                if (isNoAssistant || isAllAssistant) {
+                    if ((newWidth - originWidth).absoluteValue > (newHeight - originHeight).absoluteValue) {
+                        //宽度变化比高度大
                         widthPriority = true
                     }
+                } else if (lastWidthAssistant != null) {
+                    //宽度有推荐
+                    widthPriority = true
+                }
 
-                    if (widthPriority) {
-                        //优先使用宽度计算出高度
-                        newHeight = originHeight * newWidth / originWidth
-                        lastHeightAssistant?.apply {
-                            smartValue.refValue = newHeight
-                            drawRect = null
-                        }
-                    } else {
-                        //优先使用高度计算出宽度
-                        newWidth = originWidth * newHeight / originHeight
-                        lastWidthAssistant?.apply {
-                            smartValue.refValue = newWidth
-                            drawRect = null
-                        }
+                if (widthPriority) {
+                    //优先使用宽度计算出高度
+                    newHeight = originHeight * newWidth / originWidth
+                    lastHeightAssistant?.apply {
+                        smartValue.refValue = newHeight
+                        drawRect = null
+                    }
+                } else {
+                    //优先使用高度计算出宽度
+                    newWidth = originWidth * newHeight / originHeight
+                    lastWidthAssistant?.apply {
+                        smartValue.refValue = newWidth
+                        drawRect = null
                     }
                 }
             }
-
-            if (feedback) {
-                //震动反馈
-                canvasDelegate.longFeedback()
-                L.i("智能提示: w:${originWidth} h:${originHeight} -> nw:${newWidth} nh:${newHeight}")
-            }
-
-            if (newWidth != originWidth || newHeight != originHeight) {
-                canvasDelegate.changeItemBounds(
-                    itemRenderer,
-                    newWidth,
-                    newHeight,
-                    anchor
-                )
-            }
         }
+
+        if (feedback) {
+            //震动反馈
+            canvasDelegate.longFeedback()
+            L.i("智能提示: w:${originWidth} h:${originHeight} -> nw:${newWidth} nh:${newHeight}")
+        }
+
+        canvasDelegate.changeItemBounds(
+            itemRenderer,
+            newWidth,
+            newHeight,
+            anchor
+        )
 
         return booleanArrayOf(originWidth != newWidth, originHeight != newHeight)
     }

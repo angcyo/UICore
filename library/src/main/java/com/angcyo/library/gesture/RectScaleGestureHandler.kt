@@ -456,6 +456,9 @@ class RectScaleGestureHandler {
     val moveScaleY: Float
         get() = (_pendingRect.height() / changedRect.height()).ensure()
 
+    /**手势是否完成*/
+    var isTouchFinish = true
+
     //endregion ---可读取/配置属性---
 
     //region ---内部---
@@ -562,10 +565,14 @@ class RectScaleGestureHandler {
         val y = _point.y
 
         //
+        isTouchFinish = false
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> onTouchDown(x, y)
             MotionEvent.ACTION_MOVE -> onTouchMove(x, y)
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> onTouchFinish(x, y)
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                isTouchFinish = true
+                onTouchFinish(x, y)
+            }
         }
         return handle
     }

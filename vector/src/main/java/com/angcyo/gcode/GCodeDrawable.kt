@@ -1,5 +1,6 @@
 package com.angcyo.gcode
 
+import android.graphics.Path
 import android.graphics.Picture
 import android.graphics.RectF
 import com.angcyo.library.component.ScalePictureDrawable
@@ -17,6 +18,9 @@ class GCodeDrawable(picture: Picture) : ScalePictureDrawable(picture) {
 
     /**GCode数据*/
     var gCodeData: String? = null
+
+    /**GCode绘制路径[Path]*/
+    val gCodePath: Path = Path()
 
     init {
         gCodeBound.set(0f, 0f, minimumWidth.toFloat(), minimumHeight.toFloat())

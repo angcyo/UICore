@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
 import android.net.Uri
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -21,6 +23,8 @@ import androidx.core.text.getSpans
 import com.angcyo.library.L
 import com.angcyo.library.R
 import com.angcyo.library.app
+import com.angcyo.library.component.pool.acquireTempRect
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.utils.PATTERN_EMAIL
 import com.angcyo.library.utils.PATTERN_MOBILE_SIMPLE
 import com.angcyo.library.utils.PATTERN_URL
@@ -363,6 +367,20 @@ fun String?.toUri(): Uri? {
         L.w(e)
         null
     }
+}
+
+/**将文本转换成[Path], 获取文本轮廓的[Path]*/
+fun String.toTextPath(paint: Paint, result: Path = Path()): Path {
+    val textBounds = acquireTempRect()
+    paint.getTextBounds(this, 0, length, textBounds)
+    paint.getTextPath(
+        this, 0, length,
+        -textBounds.left.toFloat(),
+        -textBounds.top.toFloat(),
+        result
+    )
+    textBounds.release()
+    return result
 }
 
 /**url中的参数获取*/

@@ -79,19 +79,19 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
             MotionEvent.ACTION_DOWN -> {
                 _touchPoint.set(event.x, event.y)
                 obtainPointList(event, _touchPointList)
-                handleActionDown(event)
+                handleActionDown(event, canvasDelegate)
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
                 //多指按下
                 obtainPointList(event, _touchPointList)
-                handleActionDown(event)
+                handleActionDown(event, canvasDelegate)
             }
             MotionEvent.ACTION_POINTER_UP -> {
                 obtainPointList(event, _touchPointList)
             }
             MotionEvent.ACTION_MOVE -> {
                 obtainPointList(event, _movePointList)
-                handleActionMove(canvasDelegate)
+                handleActionMove(event, canvasDelegate)
                 obtainPointList(event, _touchPointList)
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -120,7 +120,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
     val _touchMiddlePoint = PointF()
 
     /**手势(多指)按下时, 记录一些数据*/
-    fun handleActionDown(event: MotionEvent) {
+    fun handleActionDown(event: MotionEvent, canvasDelegate: CanvasDelegate) {
         _touchDistance = 0f
 
         val selectedRenderer = canvasDelegate.getSelectedRenderer()
@@ -159,7 +159,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
     val _moveDistanceList: MutableList<PointF> = mutableListOf()
 
     /**处理手势移动, 平移/缩放*/
-    fun handleActionMove(view: CanvasDelegate) {
+    fun handleActionMove(event: MotionEvent, canvasDelegate: CanvasDelegate) {
         _moveDistanceList.clear()
 
         val dx1 = _movePointList[0].x - _touchPointList[0].x
@@ -175,7 +175,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
             ) {*/
             val moveDistance = VectorHelper.spacing(_movePointList[0], _movePointList[1])
             if ((moveDistance - _touchDistance).abs() > minScalePointerDistance &&
-                view.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_SCALE) //激活了缩放手势
+                canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_SCALE) //激活了缩放手势
             ) {
                 //开始缩放
                 _touchType = TOUCH_TYPE_SCALE
@@ -200,7 +200,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
             val dy = min(dy1, dy2)
 
             if ((dx.abs() > dragTriggerDistance || dy.abs() > dragTriggerDistance) &&
-                view.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_TRANSLATE) //激活了平移手势
+                canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_TRANSLATE)//激活了平移手势
             ) {
                 //开始平移
                 _touchType = TOUCH_TYPE_TRANSLATE
@@ -212,7 +212,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
             }
             /*}*/
         } else {
-            if (view.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_MULTI_SELECT)) {
+            if (canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_MULTI_SELECT) && event.pointerCount < 2) {
                 //移动多选框
                 canvasDelegate.selectGroupRenderer.moveSelect(
                     _movePointList[0].x,

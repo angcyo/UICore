@@ -166,6 +166,20 @@ open class DslAdapterItem : LifecycleOwner {
         }
     }
 
+    /**更新选项*/
+    open fun updateItemSelect(
+        select: Boolean,
+        selectorParams: SelectorParams = SelectorParams(
+            this,
+            select.toSelectOption(),
+            _useFilterList = false
+        )
+    ) {
+        itemDslAdapter?.itemSelectorHelper?.selector(selectorParams).elseNull {
+            L.w("跳过操作! updateItemSelector需要[itemDslAdapter],请赋值.")
+        }
+    }
+
     /**有依赖时, 才更新
      * [updateItemDepend]*/
     @UpdateByDiff
