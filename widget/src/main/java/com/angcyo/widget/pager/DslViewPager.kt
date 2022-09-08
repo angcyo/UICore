@@ -114,7 +114,7 @@ open class DslViewPager : ViewPager {
         _disallowIntercept = disallowIntercept
     }
 
-    override fun onTouchEvent(ev: MotionEvent?): Boolean {
+    override fun onTouchEvent(ev: MotionEvent): Boolean {
         if (!isEnabled) {
             return true
         }

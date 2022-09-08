@@ -7,9 +7,11 @@ dependencies {
 
     //https://github.com/davemorrissey/subsampling-scale-image-view
     //https://jcenter.bintray.com/com/davemorrissey/labs/
+    //https://mvnrepository.com/artifact/com.davemorrissey.labs/subsampling-scale-image-view-androidx
     api 'com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0'
 
     //https://github.com/chrisbanes/PhotoView/
+    //https://jitpack.io/#chrisbanes/PhotoView
     api 'com.github.chrisbanes:PhotoView:2.3.0'
 
     //https://github.com/jsibbold/zoomage

@@ -1,5 +1,6 @@
 package com.angcyo.dialog
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
@@ -476,6 +477,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
             lp.height = ViewGroup.LayoutParams.MATCH_PARENT
         }
         //替换标题栏
+        @SuppressLint("ResourceType")
         if (dialogTitleLayoutId > 0) {
             dialogViewHolder.group(R.id.title_layout)?.replace(dialogTitleLayoutId)
         }
@@ -546,7 +548,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
         if (dialogContext == null) {
             throw NullPointerException("context is null.")
         }
-        val dialog = AppCompatDialog(dialogContext, dialogThemeResId)
+        val dialog = AppCompatDialog(dialogContext!!, dialogThemeResId)
         showAndConfigDialog(dialog)
         return dialog
     }

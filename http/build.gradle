@@ -6,14 +6,14 @@ dependencies {
 
     //https://github.com/square/okhttp
     //https://jcenter.bintray.com/com/squareup/okhttp3/
-    api "com.squareup.okhttp3:okhttp:4.9.3"
+    api "com.squareup.okhttp3:okhttp:4.10.0"
 
-    // https://mvnrepository.com/artifact/com.squareup.okhttp3/logging-interceptor
-    api "com.squareup.okhttp3:logging-interceptor:4.9.3"
+    //https://mvnrepository.com/artifact/com.squareup.okhttp3/logging-interceptor
+    api "com.squareup.okhttp3:logging-interceptor:4.10.0"
 
     //https://github.com/google/conscrypt
     //https://jcenter.bintray.com/org/conscrypt
-    debugImplementation 'org.conscrypt:conscrypt-android:2.2.1'
+    debugImplementation 'org.conscrypt:conscrypt-android:2.5.2'
 
     //https://github.com/ReactiveX/RxJava
 
@@ -23,21 +23,27 @@ dependencies {
     //https://github.com/ReactiveX/RxJava/tree/2.x
     //https://jcenter.bintray.com/io/reactivex/rxjava2/
     //https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxjava
-    api "io.reactivex.rxjava2:rxjava:2.2.20"
+    api "io.reactivex.rxjava2:rxjava:2.2.21"
+    //https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxandroid
     api "io.reactivex.rxjava2:rxandroid:2.1.1"
+    //https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxkotlin
     api "io.reactivex.rxjava2:rxkotlin:2.4.0"
 
     //https://github.com/square/retrofit
     //https://jcenter.bintray.com/com/squareup/retrofit2
+    //https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit
     api "com.squareup.retrofit2:retrofit:2.9.0"
+    //https://mvnrepository.com/artifact/com.squareup.retrofit2/adapter-rxjava2
     api "com.squareup.retrofit2:adapter-rxjava2:2.9.0"
+    //https://mvnrepository.com/artifact/com.squareup.retrofit2/converter-gson
     api "com.squareup.retrofit2:converter-gson:2.9.0"
 
     //https://github.com/tbruyelle/RxPermissions
-    api 'com.github.tbruyelle:rxpermissions:0.11'
+    api 'com.github.tbruyelle:rxpermissions:0.11' //0.12 需要rxjava3.x
 
     //https://github.com/AndroidKnife/RxBus/tree/2.x
     //https://jcenter.bintray.com/com/hwangjr/rxbus
+    //https://mvnrepository.com/artifact/com.hwangjr.rxbus/rxbus
     api 'com.hwangjr.rxbus:rxbus:2.0.3'
 
     //https://github.com/ikidou/TypeBuilder/

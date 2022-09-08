@@ -10,14 +10,14 @@ dependencies {
     //https://mvnrepository.com/artifact/androidx.camera
 
     //https://mvnrepository.com/artifact/androidx.camera/camera-core
-    def camerax_version = '1.0.2'
+    def camerax_version = '1.1.0'
     api "androidx.camera:camera-core:${camerax_version}"
     //https://mvnrepository.com/artifact/androidx.camera/camera-camera2
     api "androidx.camera:camera-camera2:${camerax_version}"
     api "androidx.camera:camera-lifecycle:${camerax_version}"
 
     //https://mvnrepository.com/artifact/androidx.camera/camera-view
-    def camerax_ex = '1.0.0-alpha30'
+    def camerax_ex = '1.1.0'
     api "androidx.camera:camera-view:${camerax_ex}"
     //https://mvnrepository.com/artifact/androidx.camera/camera-extensions
     api "androidx.camera:camera-extensions:${camerax_ex}"

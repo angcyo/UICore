@@ -52,7 +52,7 @@ class LanguageModel : ViewModel() {
             val result = mutableListOf<Locale>()
 
             for (i in 0 until locales.size()) {
-                result.add(locales.get(i))
+                locales.get(i)?.let { result.add(it) }
             }
             return result
         }

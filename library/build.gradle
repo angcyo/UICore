@@ -15,13 +15,15 @@ dependencies {
     //https://mvnrepository.com/artifact/androidx
 
     //https://mvnrepository.com/artifact/androidx.appcompat/appcompat
-    api "androidx.appcompat:appcompat:1.4.2"
+    api "androidx.appcompat:appcompat:1.5.1"
 
-    api 'androidx.core:core:1.7.0'
-    api 'androidx.core:core-ktx:1.7.0'
+    //https://mvnrepository.com/artifact/androidx.core/core
+    api 'androidx.core:core:1.8.0' //1.9.0 minCompileSdk (33)
+    //https://mvnrepository.com/artifact/androidx.core/core-ktx
+    api 'androidx.core:core-ktx:1.8.0'
 
     //https://mvnrepository.com/artifact/androidx.activity/
-    //implementation "androidx.activity:activity-ktx:1.4.0"
+    //implementation "androidx.activity:activity-ktx:1.5.1"
 
     //https://github.com/orhanobut/hawk
     //https://jcenter.bintray.com/com/orhanobut/
@@ -29,7 +31,7 @@ dependencies {
 
     //[androidx.media.app.NotificationCompat.MediaStyle.MediaStyle()]
     //https://mvnrepository.com/artifact/androidx.media
-    api "androidx.media:media:1.5.0"
+    api "androidx.media:media:1.6.0"
 
     //kotlinx-serialization
     //https://github.com/Kotlin/kotlinx.serialization

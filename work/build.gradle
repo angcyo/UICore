@@ -6,6 +6,7 @@ dependencies {
 
     def work_version = "2.7.1"
 
+    //https://mvnrepository.com/artifact/androidx.work/work-runtime
     // (Java only)
     implementation "androidx.work:work-runtime:$work_version"
 
@@ -21,6 +22,7 @@ dependencies {
     // optional - Test helpers
     androidTestImplementation "androidx.work:work-testing:$work_version"
 
+    //https://mvnrepository.com/artifact/androidx.work/work-multiprocess
     // optional - Multiprocess support
     implementation "androidx.work:work-multiprocess:$work_version"
 }

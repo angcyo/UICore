@@ -1,8 +1,8 @@
 apply from: allGradle.libBase
 
 dependencies {
-    implementation project(allModule.dslitem)
     implementation project(allModule.library)
+    implementation project(allModule.dslitem)
 
     //https://github.com/Bigkoo/Android-PickerView
     //https://jcenter.bintray.com/com/contrarywind/wheelview/

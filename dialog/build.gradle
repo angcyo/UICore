@@ -1,8 +1,8 @@
 apply from: allGradle.libBase
 
 dependencies {
-    implementation project(allModule.widget)
     implementation project(allModule.library)
+    implementation project(allModule.widget)
 
     //com.angcyo.dialog.LoadingDialogKt.hideLoading
     implementation project(allModule.transition)

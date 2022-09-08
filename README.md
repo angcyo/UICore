@@ -1,2 +1,179 @@
 # UICore
 2019-12-19
+
+```
+implementation 'com.angcyo:<xxx>:<version>'
+
+implementation 'com.angcyo:<xxx>:master-SNAPSHOT'
+implementation 'com.angcyo:<xxx>:hingin-SNAPSHOT'
+```
+
+- [acc]() `implementation 'com.angcyo:acc:<version>'`
+    - library
+    - core
+- [acc2]() `implementation 'com.angcyo:acc2:<version>'`
+    - library
+    - [com.github.czy1121:settingscompat:1.1.4](https://github.com/czy1121/settingscompat)
+- [browser]() `implementation 'com.angcyo:browser:<version>'`
+    - library
+    - fragment
+    - tbs
+    - [androidx.browser:browser:1.4.0](http://mvnrepository.com/artifact/androidx.browser)
+    - [com.google.androidbrowserhelper:androidbrowserhelper:2.4.0](https://mvnrepository.com/artifact/com.google.androidbrowserhelper/androidbrowserhelper)
+- [camera]() `implementation 'com.angcyo:camera:<version>'`
+    - widget
+    - [com.gitee.angcyo.aar:CameraCapturer:CameraCapturer_1.3](https://gitee.com/angcyo/aar)
+- [camerax]() `implementation 'com.angcyo:camerax:<version>'`
+    - dslitem
+    - core
+    - media
+    - [androidx.camera:camera-core:1.1.0](https://mvnrepository.com/artifact/androidx.camera/camera-core)
+    - [androidx.camera:camera-camera2:1.1.0](https://mvnrepository.com/artifact/androidx.camera/camera-camera2)
+    - [androidx.camera:camera-lifecycle:1.1.0](https://mvnrepository.com/artifact/androidx.camera)
+    - [androidx.camera:camera-view:1.1.0](https://mvnrepository.com/artifact/androidx.camera/camera-view)
+    - [androidx.camera:camera-extensions:1.1.0](https://mvnrepository.com/artifact/androidx.camera/camera-extensions)
+- [canvas]() `implementation 'com.angcyo:canvas:<version>'`
+    - library
+    - drawable
+    - vector
+- [component]() `implementation 'com.angcyo:component:<version>'`
+    - library
+    - coroutine
+    - [top.zibin:Luban:1.1.8](https://github.com/Curzibn/Luban)
+- [core]() `implementation 'com.angcyo:core:<version>'`
+    - fragment
+    - coroutine
+    - http
+    - dialog
+    - viewmodel
+    - [org.lsposed.hiddenapibypass:hiddenapibypass:4.3](https://github.com/LSPosed/AndroidHiddenApiBypass)
+    - [com.github.czy1121:settingscompat:1.1.4](https://github.com/czy1121/settingscompat)
+- [coroutine]() `implementation 'com.angcyo:coroutine:<version>'`
+    - library
+    - [org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4](https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core)
+    - [org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4](https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-android)
+    - [androidx.lifecycle:lifecycle-common:2.5.1](https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-common)
+    - [androidx.lifecycle:lifecycle-runtime:2.5.1](https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-runtime)
+    - [androidx.lifecycle:lifecycle-runtime-ktx:2.5.1](https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-runtime-ktx)
+- [crop]() `implementation 'com.angcyo:crop:<version>'`
+    - library
+    - widget
+    - dialog
+- [dialog]() `implementation 'com.angcyo:dialog:<version>'`
+    - library
+    - widget
+    - transition
+    - fragment
+    - viewmodel
+    - [com.github.LaserPeckerIst:ColorPickerView:2.2.4.5](https://github.com/LaserPeckerIst/ColorPickerView)
+- [dialog2]() `implementation 'com.angcyo:dialog2:<version>'`
+    - library
+    - dslitem
+    - [com.github.WaytoInc:Android-PickerView:4.1.0.8](https://github.com/WaytoInc/Android-PickerView)
+    - [com.github.angcyo:CalendarView:3.7.1.42](https://github.com/angcyo/CalendarView)
+    - [com.github.LaserPeckerIst:ColorPicker:1.1.0.2](https://github.com/LaserPeckerIst/ColorPicker)
+- [doodle]() `implementation 'com.angcyo:doodle:<version>'`
+    - library
+    - widget
+    - dialog
+- [download]() `implementation 'com.angcyo:download:<version>'`
+    - library
+    - http
+    - coroutine
+    - dslitem
+    - [com.liulishuo.okdownload:okdownload:1.0.7](https://github.com/lingochamp/okdownload)
+- [drawable]() `implementation 'com.angcyo:drawable:<version>'`
+    - library
+- [dslitem]() `implementation 'com.angcyo:dslitem:<version>'`
+    - dialog
+    - core
+    - widget
+    - glide
+- [fragment]() `implementation 'com.angcyo:fragment:<version>'`
+    - widget
+    - http
+- [glide]() `implementation 'com.angcyo:glide:<version>'`
+    - library
+    - widget
+    - http
+    - [com.github.bumptech.glide:glide:4.13.1](https://github.com/bumptech/glide)
+    - [pl.droidsonroids.gif:android-gif-drawable:1.2.25](https://github.com/koral--/android-gif-drawable)
+    - [jp.wasabeef:glide-transformations:4.3.0](https://github.com/wasabeef/glide-transformations)
+- [guard]() `implementation 'com.angcyo:guard:<version>'`
+    - library
+- [http]() `implementation 'com.angcyo:http:<version>'`
+    - library
+    - [com.squareup.okhttp3:okhttp:4.10.0](https://github.com/square/okhttp)
+    - [com.squareup.okhttp3:logging-interceptor:4.10.0](https://mvnrepository.com/artifact/com.squareup.okhttp3/logging-interceptor)
+    - [io.reactivex.rxjava2:rxjava:2.2.21](https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxjava)
+    - [io.reactivex.rxjava2:rxandroid:2.1.1](https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxandroid)
+    - [io.reactivex.rxjava2:rxkotlin:2.4.0](https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxkotlin)
+    - [com.squareup.retrofit2:retrofit:2.9.0](https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit)
+    - [com.squareup.retrofit2:adapter-rxjava2:2.9.0](https://mvnrepository.com/artifact/com.squareup.retrofit2/adapter-rxjava2)
+    - [com.squareup.retrofit2:converter-gson:2.9.0](https://mvnrepository.com/artifact/com.squareup.retrofit2/converter-gson)
+    - [com.github.tbruyelle:rxpermissions:0.11](https://github.com/tbruyelle/RxPermissions)
+    - [com.hwangjr.rxbus:rxbus:2.0.3](https://mvnrepository.com/artifact/com.hwangjr.rxbus/rxbus)
+    - [com.github.ikidou:TypeBuilder:1.0](https://github.com/ikidou/TypeBuilder/)
+    - [com.github.AndroidStudioIst:ProgressManager:1.5.0_fix4](https://github.com/AndroidStudioIst/ProgressManager)
+- [image]() `implementation 'com.angcyo:image:<version>'`
+    - dslitem
+    - download
+    - glide
+    - [com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0](https://mvnrepository.com/artifact/com.davemorrissey.labs/subsampling-scale-image-view-androidx)
+    - [com.github.chrisbanes:PhotoView:2.3.0](https://github.com/chrisbanes/PhotoView/)
+- [library]() `implementation 'com.angcyo:library:<version>'`
+    - [androidx.appcompat:appcompat:1.5.1](https://mvnrepository.com/artifact/androidx.appcompat/appcompat)
+    - [androidx.core:core:1.8.0](https://mvnrepository.com/artifact/androidx.core/core)
+    - [androidx.core:core-ktx:1.8.0](https://mvnrepository.com/artifact/androidx.core/core-ktx)
+    - [com.orhanobut:hawk:2.0.1](https://github.com/orhanobut/hawk)
+    - [androidx.media:media:1.6.0](https://mvnrepository.com/artifact/androidx.media)
+- [media]() `implementation 'com.angcyo:media:<version>'`
+    - dslitem
+    - download
+    - glide
+- [pager]()  `implementation 'com.angcyo:pager:<version>'`
+    - core
+    - dslitem
+    - transition
+    - download
+    - media
+    - image
+    - glide
+    - component
+- [picker]() `implementation 'com.angcyo:picker:<version>'`
+    - viewmodel
+    - camera
+    - pager
+    - [androidx.loader:loader:1.1.0](https://mvnrepository.com/artifact/androidx.loader/loader)
+    - [com.github.yalantis:ucrop:2.2.8](https://github.com/Yalantis/uCrop)
+- [qrcode]() `implementation 'com.angcyo:qrcode:<version>'`
+    - fragment
+    - [com.github.angcyo:QrCodeZxingZbar:1.1.2](https://github.com/angcyo/QrCodeZxingZbar)
+- [transition]() `implementation 'com.angcyo:transition:<version>'`
+    - library
+    - [androidx.transition:transition:1.4.1](https://mvnrepository.com/artifact/androidx.transition/transition)
+    - [androidx.interpolator:interpolator:1.0.0](https://mvnrepository.com/artifact/androidx.interpolator/interpolator)
+- [vector]() `implementation 'com.angcyo:vector:<version>'`
+    - library
+    - drawable
+    - [com.github.LaserPeckerIst:sharp:1.1.3.9](https://github.com/LaserPeckerIst/sharp)
+- [viewmodel]() `implementation 'com.angcyo:viewmodel:<version>'`
+    - coroutine
+    - [androidx.fragment:fragment:1.5.2](https://mvnrepository.com/artifact/androidx.fragment)
+    - [androidx.lifecycle:lifecycle-viewmodel:2.5.1](https://developer.android.google.cn/jetpack/androidx/releases/lifecycle)
+    - [androidx.lifecycle:lifecycle-livedata:2.5.1](https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-livedata)
+- [widget]() `implementation 'com.angcyo:widget:<version>'`
+    - library
+    - drawable
+    - [androidx.fragment:fragment:1.5.2](https://mvnrepository.com/artifact/androidx.fragment)
+    - [androidx.activity:activity-ktx:1.5.1](https://mvnrepository.com/artifact/androidx.activity/)
+    - [androidx.recyclerview:recyclerview:1.2.1](https://mvnrepository.com/artifact/androidx.recyclerview/recyclerview)
+    - [androidx.constraintlayout:constraintlayout:2.1.4](https://mvnrepository.com/artifact/androidx.constraintlayout/constraintlayout)
+    - [androidx.coordinatorlayout:coordinatorlayout:1.2.0](https://mvnrepository.com/artifact/androidx.coordinatorlayout/coordinatorlayout)
+    - [androidx.viewpager2:viewpager2:1.0.0](https://mvnrepository.com/artifact/androidx.viewpager2/viewpager2)
+    - [com.github.angcyo:BufferTextInputLayout:1.2.0](https://github.com/angcyo/BufferTextInputLayout)
+    - [com.github.LaserPeckerIst:AnimatedSvgView:1.0.6.3](https://github.com/LaserPeckerIst/AnimatedSvgView)
+- [work]() `implementation 'com.angcyo:work:<version>'`
+    - library
+    - [androidx.work:work-runtime:2.7.1](https://mvnrepository.com/artifact/androidx.work/work-runtime)
+    - [androidx.work:work-multiprocess:2.7.1](https://mvnrepository.com/artifact/androidx.work/work-multiprocess)
