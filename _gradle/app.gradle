@@ -54,7 +54,7 @@ android {
         multiDexEnabled true
 
         //https://developer.android.com/studio/build/shrink-code?hl=zh-cn#groovy
-        resConfigs "zh", "xhdpi" //, "en"
+        //resConfigs "zh", "xhdpi" //, "en"
 
         buildConfigField "boolean", "SHOW_DEBUG", "false"
 
