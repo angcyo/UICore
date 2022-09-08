@@ -178,7 +178,7 @@ fun CanvasDelegate.engraveMode(enable: Boolean = true) {
 }
 
 /**扩展张*/
-fun GCodeHelper.parseGCode(gCodeText: String): GCodeDrawable? =
+fun GCodeHelper.parseGCode(gCodeText: String?): GCodeDrawable? =
     parseGCode(gCodeText, createPaint(Color.BLACK))
 
 //</editor-fold desc="Other">
