@@ -6,11 +6,12 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import com.angcyo.canvas.CanvasDelegate
-import com.angcyo.library.unit.MmValueUnit
 import com.angcyo.canvas.items.PictureTextItem
+import com.angcyo.gcode.GCodeDrawable
+import com.angcyo.gcode.GCodeHelper
 import com.angcyo.library.app
 import com.angcyo.library.ex.*
-import com.angcyo.svg.StylePath
+import com.angcyo.library.unit.MmValueUnit
 import com.angcyo.svg.Svg
 import com.pixplicity.sharp.SharpDrawable
 import kotlin.math.max
@@ -175,6 +176,10 @@ fun CanvasDelegate.engraveMode(enable: Boolean = true) {
     controlRenderer.drawControlPoint = !enable
     refresh()
 }
+
+/**扩展张*/
+fun GCodeHelper.parseGCode(gCodeText: String): GCodeDrawable? =
+    parseGCode(gCodeText, createPaint(Color.BLACK))
 
 //</editor-fold desc="Other">
 
