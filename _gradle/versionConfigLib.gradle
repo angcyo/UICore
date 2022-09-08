@@ -4,7 +4,7 @@ ext.libVersionConfig = [
         "androidx.annotation:annotation"      : "1.4.0",
 
         //https://mvnrepository.com/artifact/androidx.appcompat
-        "androidx.appcompat:appcompat"        : "1.5.1",
+        "androidx.appcompat:appcompat"        : "1.5.1", //minCompileSdk (32)
 
         //https://mvnrepository.com/artifact/androidx.loader
         "androidx.loader:loader"              : "1.1.0",

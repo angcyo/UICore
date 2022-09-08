@@ -15,7 +15,7 @@ dependencies {
     //https://mvnrepository.com/artifact/androidx
 
     //https://mvnrepository.com/artifact/androidx.appcompat/appcompat
-    api "androidx.appcompat:appcompat:1.5.1"
+    api "androidx.appcompat:appcompat:1.5.1" //minCompileSdk (32)
 
     //https://mvnrepository.com/artifact/androidx.core/core
     api 'androidx.core:core:1.8.0' //1.9.0 minCompileSdk (33)
