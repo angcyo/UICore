@@ -166,6 +166,7 @@ open class DslGradientDrawable : AbsDslDrawable() {
                 gradientRadius = this@DslGradientDrawable.gradientRadius
                 gradientType = this@DslGradientDrawable.gradientType
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    //渐变方向
                     orientation = gradientOrientation
                 }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
