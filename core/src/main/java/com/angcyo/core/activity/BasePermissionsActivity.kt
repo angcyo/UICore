@@ -10,7 +10,7 @@ import com.tbruyelle.rxpermissions2.Permission
 import com.tbruyelle.rxpermissions2.RxPermissions
 
 /**
- * 基础权限配置
+ * 加入了权限配置检查, 通常用来当做启动页
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/12/26

@@ -16,7 +16,7 @@ import com.angcyo.library.utils.RUtils
 import com.angcyo.widget.span.span
 
 /**
- *
+ * 加入了合规检查, 崩溃检查的[Activity], 通常用来当做主页[Activity]
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/02/02
@@ -58,7 +58,7 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
 
     /**检查是否有崩溃*/
     open fun checkCrash() {
-        if (!isRelease()) {
+        if (isDebug()) {
             showCrashDialog()
         }
     }
