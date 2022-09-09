@@ -2,7 +2,8 @@
 <resources>
 
     <style name="BaseAppTheme27" parent="BaseAppTheme21">
-        <item name="android:navigationBarDividerColor">@color/navigation_bar_divider_color</item>
+        <!--去掉默认配置-->
+        <!--<item name="android:navigationBarDividerColor">@color/navigation_bar_divider_color</item>-->
     </style>
 
 </resources>

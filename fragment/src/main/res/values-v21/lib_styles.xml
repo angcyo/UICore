@@ -7,7 +7,8 @@
 
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:statusBarColor">@color/status_bar_color</item>
-        <item name="android:navigationBarColor">@color/navigation_bar_color</item>
+        <!--<item name="android:navigationBarColor">@color/navigation_bar_color</item>-->
+
         <!--<item name="android:windowLightStatusBar">true</item>-->
         <!--<item name="android:windowLightNavigationBar">true</item>-->
         <!--<item name="android:isLightTheme">true</item>-->
@@ -23,6 +24,10 @@
     <style name="BaseWhiteAppTheme" parent="BaseAppTheme">
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@drawable/lib_splash_bg</item>
+        <!--BaseAppTheme21↓-->
+        <!--<item name="android:windowLightStatusBar">true</item>-->
+        <!--<item name="android:windowLightNavigationBar">true</item>-->
+        <!--<item name="android:isLightTheme">true</item>-->
     </style>
 
     <style name="BasePrimaryAppTheme" parent="BaseWhiteAppTheme">
