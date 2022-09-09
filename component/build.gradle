@@ -5,5 +5,8 @@ dependencies {
     implementation project(allModule.coroutine)
 
     //https://github.com/Curzibn/Luban
+    //https://mvnrepository.com/artifact/top.zibin/Luban
+    //maven { url 'https://jcenter.bintray.com/' }
+    //maven { url 'https://maven.aliyun.com/repository/public' }
     implementation 'top.zibin:Luban:1.1.8'
 }
