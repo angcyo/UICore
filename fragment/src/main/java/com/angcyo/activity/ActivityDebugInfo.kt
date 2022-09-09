@@ -179,7 +179,8 @@ fun Activity.showDebugInfoView(
             val screenInches = sqrt(x + y)
 
             textView.text = buildString {
-                appendln(this@showDebugInfoView.javaClass.name)
+                appendLine(packageName)
+                appendLine(this@showDebugInfoView.javaClass.name)
                 (this@showDebugInfoView as? FragmentActivity)?.supportFragmentManager?.logAllFragment(
                     this,
                     true,
@@ -187,7 +188,7 @@ fun Activity.showDebugInfoView(
                 )
 
                 NetUtils.localIPAddress?.toString()?.apply {
-                    appendln(this)
+                    appendLine(this)
                 }
                 val navBarHeight = max(
                     decorView.measuredWidth - contentView.measuredWidth,
@@ -204,42 +205,42 @@ fun Activity.showDebugInfoView(
                     .appendLine()
 
                 append("wp:").append(displayMetrics.widthPixels)
-                append(" hp:").appendln(displayMetrics.heightPixels)
+                append(" hp:").appendLine(displayMetrics.heightPixels)
 
                 append("realW:").append(realMetrics.widthPixels)
-                append(" realH:").appendln(realMetrics.heightPixels)
+                append(" realH:").appendLine(realMetrics.heightPixels)
 
                 append("decorW:").append(decorView.measuredWidth)
-                append(" decorH:").appendln(decorView.measuredHeight)
+                append(" decorH:").appendLine(decorView.measuredHeight)
 
                 append("contentW:").append(contentView.measuredWidth)
-                append(" contentH:").appendln(contentView.measuredHeight)
+                append(" contentH:").appendLine(contentView.measuredHeight)
 
                 append("wDp:").append(widthDp)
                 append(" hDp:").append(heightDp)
                 append(" dp:").append(displayMetrics.density)
                 append(" sp:").append(displayMetrics.scaledDensity)
-                append(" dpi:").appendln(displayMetrics.densityDpi)
+                append(" dpi:").appendLine(displayMetrics.densityDpi)
 
                 append("w:").append("%.02f".format(width))
                 append(" h:").append("%.02f".format(height))
-                append(" inches:").appendln("%.02f".format(screenInches))
+                append(" inches:").appendLine("%.02f".format(screenInches))
 
                 val rect = Rect()
                 val point = Point()
                 decorView.getGlobalVisibleRect(rect, point)
                 append(" d:").append(rect)
-                append(" d:").append(point).appendln()
+                append(" d:").append(point).appendLine()
 
                 contentView.getGlobalVisibleRect(rect, point)
                 append(" c:").append(rect)
                 append(" c:").append(point)
 
                 decorView.getWindowVisibleDisplayFrame(rect)
-                appendln()
+                appendLine()
                 append(" frame:").append(rect)
 
-                appendln()
+                appendLine()
                 Device.beautifyDeviceLog(this)
             }
         }
@@ -343,7 +344,7 @@ fun FragmentManager.logAllFragment(
             name = "$name √"
         }
 
-        builder.appendln(name)
+        builder.appendLine(name)
 
         if (fragment.isResumed) {
             if (builder is SpannableStringBuilder) {
@@ -392,9 +393,9 @@ fun Activity.logActivityInfo(debug: Boolean = isShowDebug()) {
             })
 
             L.d(buildString {
-                appendln()
-                appendln("${this@logActivityInfo.simpleHash()} ActivityInfo->↓")
-                appendln(it)
+                appendLine()
+                appendLine("${this@logActivityInfo.simpleHash()} ActivityInfo->↓")
+                appendLine(it)
             })
         }
     }
