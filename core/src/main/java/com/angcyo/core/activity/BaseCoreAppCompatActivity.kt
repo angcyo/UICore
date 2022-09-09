@@ -1,5 +1,6 @@
 package com.angcyo.core.activity
 
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import com.angcyo.activity.BaseAppCompatActivity
@@ -12,10 +13,10 @@ import com.angcyo.core.vmApp
 import com.angcyo.dialog.normalDialog
 import com.angcyo.library.ex.*
 import com.angcyo.library.toastQQ
-import com.angcyo.library.utils.RUtils
 import com.angcyo.widget.span.span
 
 /**
+ * back提示
  * 加入了合规检查, 崩溃检查的[Activity], 通常用来当做主页[Activity]
  * Email:angcyo@126.com
  * @author angcyo
@@ -65,35 +66,7 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
 
     /**显示崩溃日志对话框*/
     open fun showCrashDialog() {
-        haveLastCrash = DslCrashHandler.checkCrash(true) { filePath, message, crashTime ->
-            filePath?.file()?.readText()?.copy(this)
-
-            normalDialog {
-                canceledOnTouchOutside = false
-                dialogTitle = "发生了什么啊^_^"
-                dialogMessage = span {
-                    append(crashTime) {
-                        foregroundColor = _color(R.color.colorAccent)
-                    }
-                    appendln()
-                    append(message)
-                }
-                positiveButton("粘贴给作者?") { _, _ ->
-                    RUtils.chatQQ(this@BaseCoreAppCompatActivity)
-                }
-                negativeButton("加入QQ群?") { _, _ ->
-                    RUtils.joinQQGroup(this@BaseCoreAppCompatActivity)
-                }
-                neutralButton("分享文件?") { _, _ ->
-                    filePath?.file()?.shareFile(this@BaseCoreAppCompatActivity)
-                }
-                onDialogInitListener = { _, dialogViewHolder ->
-                    dialogViewHolder.click(R.id.message_view) {
-                        filePath?.file()?.open(this@BaseCoreAppCompatActivity)
-                    }
-                }
-            }
-        }
+        checkShowCrashDialog()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -127,4 +100,45 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
     }
 
     //</editor-fold desc="双击Back回调">
+}
+
+/**崩溃对话框, 带复制/查看/分享功能*/
+fun Context.checkShowCrashDialog() {
+    BaseCoreAppCompatActivity.haveLastCrash =
+        DslCrashHandler.checkCrash(true) { filePath, message, crashTime ->
+            val file = filePath?.file()
+            file?.readText()?.copy(this)
+
+            normalDialog {
+                canceledOnTouchOutside = false
+                dialogTitle = "发生了什么^_^"
+                dialogMessage = span {
+                    append(crashTime) {
+                        foregroundColor = _color(R.color.colorAccent)
+                    }
+                    appendln()
+                    append(message)
+                }
+                /*positiveButton("粘贴给开发?") { _, _ ->
+                    RUtils.chatQQ(this@checkShowCrashDialog)
+                }
+                negativeButton("加入QQ群?") { _, _ ->
+                    RUtils.joinQQGroup(this@checkShowCrashDialog)
+                }
+                neutralButton("分享文件?") { _, _ ->
+                    file?.shareFile(this@checkShowCrashDialog)
+                }*/
+                negativeButton("无视") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                positiveButton("分享") { _, _ ->
+                    file?.shareFile(this@checkShowCrashDialog)
+                }
+                onDialogInitListener = { _, dialogViewHolder ->
+                    dialogViewHolder.click(R.id.message_view) {
+                        file?.open(this@checkShowCrashDialog)
+                    }
+                }
+            }
+        }
 }
