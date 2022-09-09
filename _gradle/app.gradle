@@ -55,8 +55,7 @@ android {
 
         //https://developer.android.com/studio/build/shrink-code?hl=zh-cn#groovy
         //resConfigs "zh", "xhdpi" //, "en"
-
-        buildConfigField "boolean", "SHOW_DEBUG", "false"
+        //buildConfigField "boolean", "SHOW_DEBUG", "false"
 
         //可以直接使用 ${applicationId}
 //        manifestPlaceholders = [
@@ -94,8 +93,6 @@ android {
         _dev {
             dimension "flavor"
             minSdkVersion Math.max(Integer.parseInt(_M_SDK), 21)
-            buildConfigField "boolean", "SHOW_DEBUG", "true"
-            resValue "bool", "show_debug", "true"
         }
         //preview
         pre {
@@ -105,14 +102,11 @@ android {
             //applicationId "com.acc.xxx.pre"
             dimension "flavor"
             minSdkVersion Integer.parseInt(_M_SDK)
-            buildConfigField "boolean", "SHOW_DEBUG", "true"
-            resValue "bool", "show_debug", "true"
         }
         //apk
         apk {
             dimension "flavor"
             minSdkVersion Integer.parseInt(_M_SDK)
-            resValue "bool", "show_debug", "false"
         }
     }
     buildTypes {
@@ -130,6 +124,8 @@ android {
 
             ext.enableCrashlytics = false
             ext.alwaysUpdateBuildId = false
+
+            resValue "bool", "show_debug", "true"
         }
         pretest {
             //https://developer.android.com/studio/build/build-variants
@@ -137,6 +133,11 @@ android {
             //manifestPlaceholders = [hostName:"internal.example.com"]
             initWith debug
             minifyEnabled _minify_enabled
+
+            resValue "bool", "show_debug", "true"
+
+            //匹配回退
+            matchingFallbacks = ['debug']
         }
         release {
             //applicationIdSuffix ".release"
@@ -145,6 +146,8 @@ android {
             debuggable false
             jniDebuggable = false
             crunchPngs = true
+
+            resValue "bool", "show_debug", "false"
         }
     }
 
