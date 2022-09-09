@@ -3,6 +3,8 @@
  * 关闭自动依赖
  * transitive = false
  *
+ * [versionForce.gradle]
+ *
  * 用@aar结尾，以中断依赖传递
  * `implementation('com.github.angcyo:DslItem:1.0.10@aar')`
  *
