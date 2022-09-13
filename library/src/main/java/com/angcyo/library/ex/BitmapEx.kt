@@ -246,7 +246,7 @@ fun Bitmap.save(
 /**将图片旋转指定角度
  * [degrees] 需要旋转的角度[0-360]
  * */
-fun Bitmap.rotate(degrees: Float = 0f): Bitmap = if (degrees > 0) {
+fun Bitmap.rotate(degrees: Float = 0f): Bitmap = if (degrees != 0f) {
     val matrix = Matrix()
     matrix.postRotate(degrees)
     val rotatedBitmap = Bitmap.createBitmap(

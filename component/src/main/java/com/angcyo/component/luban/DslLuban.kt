@@ -8,6 +8,9 @@ import com.angcyo.library.LTime
 import com.angcyo.library.app
 import com.angcyo.library.ex.bitmapSize
 import com.angcyo.library.ex.fileSize
+import com.angcyo.library.ex.save
+import com.angcyo.library.ex.toBitmap
+import com.angcyo.library.libCacheFile
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.library.model.isImage
 import com.angcyo.library.model.toLoaderMedia
@@ -18,6 +21,7 @@ import com.angcyo.library.utils.folderPath
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import top.zibin.luban.Luban
+import java.util.*
 import java.util.concurrent.CancellationException
 import kotlin.math.max
 
@@ -43,6 +47,9 @@ class DslLuban {
 
     /**是否异步调用执行*/
     var async: Boolean = true
+
+    /**自动旋转图片*/
+    var isAutoRotating: Boolean = true
 
     /**回调*/
     //@WorkerThread
@@ -97,7 +104,7 @@ class DslLuban {
     }
 
     private fun _doIt(context: Context, media: LoaderMedia) {
-        val path = media.run {
+        var path = media.run {
             cropPath?.run {
                 //优先使用剪切后的文件路径
                 this
@@ -112,14 +119,24 @@ class DslLuban {
 
         if (path != null) {
             try {
+                if (isAutoRotating) {
+                    if (path is String) {
+                        path.toBitmap()?.let {
+                            val cacheFilePath = libCacheFile().absolutePath
+                            it.save(cacheFilePath)
+                            path = cacheFilePath
+                        }
+                    }
+                }
+
                 Luban.with(context)
                     .setTargetDir(folderPath(targetFolderName))
                     .ignoreBy(leastCompressSize)
                     .setFocusAlpha(enableAlpha)
                     .filter {
                         //跳过gif文件压缩
-                        !(TextUtils.isEmpty(it) ||
-                                it.toLowerCase().endsWith(".gif"))
+                        !(TextUtils.isEmpty(it) || it.lowercase(Locale.getDefault())
+                            .endsWith(".gif"))
                     }
                     .setRenameListener {
                         fileNameUUID()
