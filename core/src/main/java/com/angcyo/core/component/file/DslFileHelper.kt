@@ -133,7 +133,10 @@ fun FileTextData?.writeToCache(
     return FileUtils.writeExternal(libCacheFile, this, append)
 }
 
-/**将日志写入到指定的日志文件[log.log]*/
+/**将日志写入到指定的日志文件[log.log], 默认在[log]文件夹下
+ * [log] 是否还需要输出到控制台
+ * [log/log.log]
+ * [com.angcyo.library.utils.Constant.LOG_FOLDER_NAME]*/
 fun String.writeToLog(name: String = "log.log", log: Boolean = true): String {
     wrapLog().writeTo(Constant.LOG_FOLDER_NAME, name)
     if (log) {
@@ -142,8 +145,20 @@ fun String.writeToLog(name: String = "log.log", log: Boolean = true): String {
     return this
 }
 
-/**将日志写入到[error.log]*/
+/**将日志写入到[error.log]
+ * [log] 是否还需要输出到控制台
+ * [log/error.log]
+ * */
 fun String.writeErrorLog(log: Boolean = true): String {
     writeToLog("error.log", log)
+    return this
+}
+
+/**将日志写入到[http.log]
+ * [log] 是否还需要输出到控制台
+ * [log/http.log]
+ * */
+fun String.writeHttpLog(log: Boolean = true): String {
+    writeToLog("http.log", log)
     return this
 }
