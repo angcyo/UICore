@@ -13,6 +13,7 @@ import android.os.LocaleList
 import android.view.View
 import android.view.Window
 import androidx.annotation.*
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import com.angcyo.library.L
 import com.angcyo.library.PlaceholderApplication
@@ -28,7 +29,7 @@ import java.util.*
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-/**获取状态栏高度*/
+/**获取状态栏定义的高度*/
 fun Context.getStatusBarHeight(): Int {
     return defaultDensityAdapter {
         val resources = resources
@@ -42,8 +43,7 @@ fun Context.getStatusBarHeight(): Int {
 }
 
 /**
- * 导航栏高度
- *
+ * 导航栏定义的高度, 并非当前显示的高度
  * @see [navBarHeight]
  */
 fun Context.getNavBarHeight(): Int {
@@ -56,9 +56,7 @@ fun Context.getNavBarHeight(): Int {
     }
 }
 
-/**
- * 显示的导航栏高度
- */
+/** 显示的导航栏高度 */
 fun Context.navBarHeight(): Int {
     var result = 0
     if (this is Activity) {
@@ -186,4 +184,24 @@ fun localResources(context: Context, locale: Locale?): Resources {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
         context.createConfigurationContext(config).resources
     } else Resources(context.assets, context.resources.displayMetrics, config)
+}
+
+/**是否是暗黑模式*/
+fun isDarkMode(context: Context = app()): Boolean {
+    return when (AppCompatDelegate.getDefaultNightMode()) {
+        AppCompatDelegate.MODE_NIGHT_YES -> true
+        AppCompatDelegate.MODE_NIGHT_NO -> false
+        AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
+        AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY,
+        AppCompatDelegate.MODE_NIGHT_UNSPECIFIED -> isDarkModeOnSystem(context)
+        else -> false
+    }
+}
+
+fun isDarkModeOnSystem(context: Context = app()): Boolean {
+    return when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+        Configuration.UI_MODE_NIGHT_YES -> true
+        Configuration.UI_MODE_NIGHT_NO -> false
+        else -> false
+    }
 }
