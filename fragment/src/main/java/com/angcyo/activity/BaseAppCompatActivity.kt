@@ -227,6 +227,20 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * [android.content.pm.PackageManager.PERMISSION_GRANTED]
+     * [android.content.pm.PackageManager.PERMISSION_DENIED]
+     *
+     * [androidx.activity.ComponentActivity.getActivityResultRegistry]
+     * */
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
     //</editor-fold desc="默认回调">
 
     //<editor-fold desc="高级扩展">
