@@ -4,10 +4,10 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.*
-import android.media.ExifInterface
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Base64
+import androidx.exifinterface.media.ExifInterface
 import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.toastQQ
@@ -184,6 +184,29 @@ fun InputStream.bitmapSize(): IntArray {
         e.printStackTrace()
     }
     return result
+}
+
+/**从流中读取图片的旋转的角度*/
+fun Uri.bitmapDegree(context: Context = app()) = inputStream(context)?.bitmapDegree() ?: 0
+
+/**从流中读取图片的旋转的角度*/
+fun InputStream.bitmapDegree(): Int {
+    return try {
+        val exifInterface = ExifInterface(this)
+        val orientation: Int = exifInterface.getAttributeInt(
+            ExifInterface.TAG_ORIENTATION,
+            ExifInterface.ORIENTATION_NORMAL
+        )
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> 90
+            ExifInterface.ORIENTATION_ROTATE_180 -> 180
+            ExifInterface.ORIENTATION_ROTATE_270 -> 270
+            else -> 0
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        0
+    }
 }
 
 /**
