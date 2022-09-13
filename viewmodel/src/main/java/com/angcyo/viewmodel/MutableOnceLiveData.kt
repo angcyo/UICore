@@ -18,6 +18,9 @@ class MutableOnceLiveData<T>(value: T? = null) : MutableErrorLiveData<T>(value) 
 
     /**立马清空数据*/
     override fun setValue(value: T?) {
+        if (getValue() == null && value == null) {
+            return
+        }
         super.setValue(value)
         if (value != null) {
             lastValue = value
