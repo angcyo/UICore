@@ -122,12 +122,26 @@ fun Path.contains(x: Int, y: Int, clipRect: RectF? = null): Boolean {
     return result
 }
 
-/**判断矩形是否在[Path]内, path是否包含矩形*/
+/**判断矩形是否在[Path]内, path是否包含矩形
+ * 如果[rect]的边框正好在path的边界上, 返回值也是true
+ * */
 fun Path.contains(rect: RectF): Boolean {
     val tempPath = acquireTempPath()
     tempPath.reset()
     tempPath.addRect(rect, Path.Direction.CW)
     val result = contains(tempPath)
+    tempPath.release()
+    return result
+}
+
+/**[rect]是否溢出了
+ * 如果[rect]的边框正好在path的边界上, 则未溢出
+ * */
+fun Path.overflow(rect: RectF): Boolean {
+    val tempPath = acquireTempPath()
+    tempPath.reset()
+    tempPath.addRect(rect, Path.Direction.CW)
+    val result = overflow(tempPath)
     tempPath.release()
     return result
 }
@@ -157,6 +171,21 @@ fun Path.contains(path: Path): Boolean {
     val result = tempPath.isEmpty
     tempPath.release()
     return result
+}
+
+/**[path]溢出[this]*/
+fun Path.overflow(path: Path): Boolean {
+    val tempPath = acquireTempPath()
+    tempPath.reset()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        tempPath.op(path, this, Path.Op.DIFFERENCE)
+    } else {
+        tempPath.release()
+        return false
+    }
+    val result = tempPath.isEmpty
+    tempPath.release()
+    return !result
 }
 
 /**判断2个Path是否相交*/
