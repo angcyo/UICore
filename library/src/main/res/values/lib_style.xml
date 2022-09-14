@@ -81,6 +81,12 @@
         <item name="android:backgroundDimEnabled">true</item>
         <!--<item name="android:windowClipToOutline">true</item>-->
         <item name="android:windowCloseOnTouchOutside">false</item>
+        <item name="android:navigationBarColor">@color/navigation_bar_color</item>
+        <item name="android:navigationBarDividerColor">@color/navigation_bar_divider_color</item>
+        <!--api31 背景模糊-->
+        <!--<item name="android:windowBlurBehindEnabled">false</item>-->
+        <!--<item name="android:windowBackgroundBlurRadius"></item>-->
+        <!--<item name="android:windowBlurBehindRadius"></item>-->
     </style>
 
 </resources>

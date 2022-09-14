@@ -32,6 +32,16 @@
     <color name="bg_primary_color">#f4f4f4</color>
     <color name="bg_sub_color">#dedede</color>
 
+    <!--图标强调颜色-->
+    <color name="lib_icon_color_accent">@color/colorAccent</color>
+
+    <!--状态栏的颜色-->
+    <color name="status_bar_color">#60000000</color>
+    <!--导航栏的颜色-->
+    <color name="navigation_bar_color">@color/colorPrimary</color>
+    <!--API27 底部导航分割线的颜色-->
+    <color name="navigation_bar_divider_color">@color/colorPrimary</color>
+
     <!--app字号选择-->
     <!--主标题-->
     <dimen name="text_primary_size">22dp</dimen>
