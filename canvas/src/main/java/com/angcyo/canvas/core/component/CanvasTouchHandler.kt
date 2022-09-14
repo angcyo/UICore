@@ -29,7 +29,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
     }
 
     /**当双指捏合的距离大于此值时, 才视为是缩放手势*/
-    var minScalePointerDistance = 3.5 * dp
+    var minScalePointerDistance = 8 * dp
 
     /**双击时, 需要放大的比例*/
     var doubleScaleValue = 1.5f
@@ -91,8 +91,9 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
             }
             MotionEvent.ACTION_MOVE -> {
                 obtainPointList(event, _movePointList)
-                handleActionMove(event, canvasDelegate)
-                obtainPointList(event, _touchPointList)
+                if (handleActionMove(event, canvasDelegate)) {
+                    obtainPointList(event, _touchPointList)
+                }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 isDoubleTouch = false
@@ -158,12 +159,18 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
     /**各个点位移动的距离*/
     val _moveDistanceList: MutableList<PointF> = mutableListOf()
 
-    /**处理手势移动, 平移/缩放*/
-    fun handleActionMove(event: MotionEvent, canvasDelegate: CanvasDelegate) {
+    /**处理手势移动, 平移/缩放
+     * @return 表示是否消耗了当前的事件
+     * */
+    fun handleActionMove(event: MotionEvent, canvasDelegate: CanvasDelegate): Boolean {
         _moveDistanceList.clear()
+
+        val canvasViewBox = canvasDelegate.getCanvasViewBox()
 
         val dx1 = _movePointList[0].x - _touchPointList[0].x
         val dy1 = _movePointList[0].y - _touchPointList[0].y
+
+        var handle = false
 
         if (_movePointList.size >= 2) {
             //双指 操作, 平移和缩放
@@ -174,19 +181,20 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
                 _touchDistance > canvasView.canvasViewBox.getContentWidth() / 3
             ) {*/
             val moveDistance = VectorHelper.spacing(_movePointList[0], _movePointList[1])
-            if ((moveDistance - _touchDistance).abs() > minScalePointerDistance &&
+            if ((moveDistance - _touchDistance).abs() >= minScalePointerDistance &&
                 canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_SCALE) //激活了缩放手势
             ) {
                 //开始缩放
                 _touchType = TOUCH_TYPE_SCALE
                 val scale = moveDistance / _touchDistance
-                canvasDelegate.getCanvasViewBox().scaleBy(
+                canvasViewBox.scaleBy(
                     scale,
                     scale,
                     _touchMiddlePoint.x,
                     _touchMiddlePoint.y
                 )
                 _touchDistance = moveDistance
+                handle = true
             }
             /*}*/
 
@@ -205,10 +213,11 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
                 //开始平移
                 _touchType = TOUCH_TYPE_TRANSLATE
                 if (VectorHelper.isHorizontalIntent(_movePointList[0], _movePointList[1])) {
-                    canvasDelegate.getCanvasViewBox().translateBy(dx, 0f, false)
+                    canvasViewBox.translateBy(dx, 0f, false)
                 } else {
-                    canvasDelegate.getCanvasViewBox().translateBy(0f, dy, false)
+                    canvasViewBox.translateBy(0f, dy, false)
                 }
+                handle = true
             }
             /*}*/
         } else {
@@ -218,12 +227,10 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
                     _movePointList[0].x,
                     _movePointList[0].y
                 )
+                handle = true
             }
         }
 
-        /*val dx = event.x - touchPoint.x
-        val dy = event.y - touchPoint.y
-        canvasView.canvasViewBox.translateBy(dx, dy)
-        touchPoint.set(event.x, event.y)*/
+        return handle
     }
 }

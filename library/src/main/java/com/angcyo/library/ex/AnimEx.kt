@@ -13,6 +13,7 @@ import android.view.ViewAnimationUtils
 import android.view.animation.*
 import androidx.annotation.AnimRes
 import androidx.annotation.AnimatorRes
+import androidx.core.animation.addListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import com.angcyo.library.L
@@ -423,14 +424,16 @@ fun matrixAnimator(
     endMatrix: Matrix,
     duration: Long = ANIM_DURATION,
     interpolator: Interpolator? = DecelerateInterpolator(),
+    finish: (isCancel: Boolean) -> Unit = {},
     block: (Matrix) -> Unit
 ): ValueAnimator {
     return ObjectAnimator.ofObject(MatrixEvaluator(), startMatrix, endMatrix).apply {
         this.duration = duration
         this.interpolator = interpolator
-        addUpdateListener {
+        this.addUpdateListener {
             block(it.animatedValue as Matrix)
         }
+        this.addListener(onEnd = { finish(false) }, onCancel = { finish(true) })
         start()
     }
 }

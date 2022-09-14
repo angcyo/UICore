@@ -376,19 +376,24 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     //<editor-fold desc="matrix">
 
     /**重置坐标系*/
-    fun updateTo(endMatrix: Matrix = Matrix(), anim: Boolean = true) {
+    fun updateTo(
+        endMatrix: Matrix = Matrix(),
+        anim: Boolean = true,
+        finish: (isCancel: Boolean) -> Unit = {}
+    ) {
         if (anim) {
-            matrixAnimator(matrix, endMatrix) {
+            matrixAnimator(matrix, endMatrix, finish = finish) {
                 adjustScaleOutToLimit(it)
                 refresh(it)
             }
         } else {
             adjustScaleOutToLimit(endMatrix)
             refresh(endMatrix)
+            finish(false)
         }
     }
 
-    fun updateTo(anim: Boolean = true, endMatrix: Matrix.() -> Unit) {
+    fun updateToMatrix(anim: Boolean = true, endMatrix: Matrix.() -> Unit) {
         updateTo(Matrix().apply(endMatrix), anim)
     }
 

@@ -846,6 +846,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
      * [scale] 是否要缩放, 以适应过大的矩形
      * [lockScale] 锁定缩放的比例
      * [margin] 边缘额外显示的距离
+     * [offsetRectTop] 自动偏移到[rect]的顶部
      * [offsetX] 额外偏移的x
      * [offsetY] 额外偏移的y
      * */
@@ -855,13 +856,25 @@ class CanvasDelegate(val view: View) : ICanvasView {
         scale: Boolean = true,
         lockScale: Boolean = true,
         anim: Boolean = true,
+        offsetRectTop: Boolean = false,
         offsetX: Float = 0f,
-        offsetY: Float = 0f
+        offsetY: Float = 0f,
+        finish: (isCancel: Boolean) -> Unit = {}
     ) {
         val canvasViewBox = getCanvasViewBox()
         if (!canvasViewBox.isCanvasInit()) {
             view.post {
-                showRectBounds(rect, margin, scale, lockScale, anim)
+                showRectBounds(
+                    rect,
+                    margin,
+                    scale,
+                    lockScale,
+                    anim,
+                    offsetRectTop,
+                    offsetX,
+                    offsetY,
+                    finish
+                )
             }
             return
         }
@@ -873,8 +886,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
             canvasViewBox.getContentCenterY() - canvasViewBox.getCoordinateSystemY()
 
         //再计算目标中心需要偏移的距离量
-        val translateX = coordinateTranslateX - rect.centerX() - offsetX
-        val translateY = coordinateTranslateY - rect.centerY() - offsetY
+        val translateX = coordinateTranslateX - rect.centerX()
+        val translateY = coordinateTranslateY - rect.centerY()
 
         val matrix = Matrix()
         //平移
@@ -886,40 +899,44 @@ class CanvasDelegate(val view: View) : ICanvasView {
         val contentWidth = canvasViewBox.getContentWidth()
         val contentHeight = canvasViewBox.getContentHeight()
 
+        var scaleX = 1f
+        var scaleY = 1f
+
         if (width > contentWidth || height > contentHeight) {
             if (scale) {
                 //自动缩放
                 val scaleCenterX = canvasViewBox.getContentCenterX()
                 val scaleCenterY = canvasViewBox.getContentCenterY()
 
-                val scaleX = (contentWidth - margin * 2) / rect.width()
-                val scaleY = (contentHeight - margin * 2) / rect.height()
+                scaleX = (contentWidth - margin * 2) / rect.width()
+                scaleY = (contentHeight - margin * 2) / rect.height()
 
                 if (lockScale) {
                     val targetScale = min(scaleX, scaleY)
-
-                    matrix.postScale(
-                        targetScale,
-                        targetScale,
-                        scaleCenterX,
-                        scaleCenterY
-                    )
-                } else {
-                    matrix.postScale(
-                        scaleX,
-                        scaleY,
-                        scaleCenterX,
-                        scaleCenterY
-                    )
+                    scaleX = targetScale
+                    scaleY = targetScale
                 }
-
+                matrix.postScale(
+                    scaleX,
+                    scaleY,
+                    scaleCenterX,
+                    scaleCenterY
+                )
             }
         } else {
             //不处理自动放大的情况, 只处理平移
         }
 
+        //偏移量的平移
+        matrix.postTranslate(offsetX, offsetY)
+
+        if (offsetRectTop) {
+            val offset = (canvasViewBox.getContentHeight() - rect.height() * scaleY) / 2 - margin
+            matrix.postTranslate(0f, -offset)
+        }
+
         //更新
-        canvasViewBox.updateTo(matrix, anim)
+        canvasViewBox.updateTo(matrix, anim, finish)
     }
 
     /**改变宽高/平移

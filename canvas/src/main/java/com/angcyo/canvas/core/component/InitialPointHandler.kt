@@ -53,7 +53,7 @@ class InitialPointHandler : BaseComponent() {
                         if (!def) {
                             view.showRectBounds(_tempRect)
                         } else {
-                            canvasViewBox.updateTo {
+                            canvasViewBox.updateToMatrix {
                                 setTranslate(0f, 0f)
                                 postScale(
                                     canvasViewBox.getScaleX(),
