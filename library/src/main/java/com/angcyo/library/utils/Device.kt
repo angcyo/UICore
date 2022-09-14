@@ -16,6 +16,7 @@ import android.telephony.TelephonyManager
 import android.text.format.Formatter
 import android.view.View
 import android.view.Window
+import android.view.WindowManager
 import com.angcyo.library.*
 import com.angcyo.library.ex.connect
 import java.io.BufferedReader
@@ -283,6 +284,7 @@ object Device {
     fun deviceInfoLess(builder: Appendable, abi: Boolean = true, cpu: Boolean = true) {
         // 硬件制造商/品牌名称/型号/产品名称
         // OnePlus/OnePlus/ONEPLUS A6000/OnePlus6
+        // [Build.MODEL] 最终用户可见的名称
         builder.append("API${Build.VERSION.SDK_INT}/${Build.MANUFACTURER}/${Build.BRAND}/${Build.MODEL}/${Build.PRODUCT}")
         if (abi) {
             builder.appendln()
@@ -387,6 +389,27 @@ object Device {
                 appendln()
                 contentView.getWindowVisibleDisplayFrame(rect)
                 append("frame:").append(rect)
+            }
+
+            //刷新率
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val windowManager =
+                    context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+                val modes = windowManager.defaultDisplay.supportedModes
+                val first = modes.first()
+                val count = modes.size
+                appendln()
+                if (count > 1) {
+                    append("1/${count} ")
+                }
+                append("w:${first.physicalWidth} h:${first.physicalHeight} fps:${first.refreshRate.toInt()} ")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    append(
+                        "[${
+                            first.alternativeRefreshRates.toList().connect { "${it.toInt()}" }
+                        }]"
+                    )
+                }
             }
         }
         return builder

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import com.angcyo.drawable.base.AbsDslDrawable
+import com.angcyo.library._refreshRateRatio
 
 /**
  * 加载动画基类
@@ -63,7 +64,7 @@ abstract class BaseLoadingDrawable : AbsDslDrawable() {
                 }
             }
 
-            loadingProgress += _loadingStep
+            loadingProgress += (_loadingStep / _refreshRateRatio).toInt()
         }
     }
 }

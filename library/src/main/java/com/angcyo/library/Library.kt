@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import androidx.lifecycle.LifecycleOwner
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.fileNameUUID
@@ -225,6 +226,21 @@ val _screenWidth: Int get() = app().getScreenWidth()
 val _screenHeight: Int get() = app().getScreenHeight()
 val _statusBarHeight: Int get() = app().getStatusBarHeight()
 val _navBarHeight: Int get() = app().getNavBarHeight()
+
+/**获取当前设备的刷新帧率*/
+val _refreshRate: Float
+    get() {
+        val windowManager = app().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val mode = windowManager.defaultDisplay.mode
+            mode.refreshRate
+        } else {
+            60f
+        }
+    }
+
+/**刷新率缩放的倍数, 比如120fps相对于60fps, 就是2倍, 动画时长就要放大2倍, 动画步长就要缩小2倍*/
+val _refreshRateRatio: Float get() = _refreshRate / 60f
 
 fun View.getScreenWidth() = resources.displayMetrics.widthPixels
 
