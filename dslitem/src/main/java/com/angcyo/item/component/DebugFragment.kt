@@ -1,14 +1,24 @@
-package com.angcyo.core.component
+package com.angcyo.item.component
 
 import android.os.Bundle
 import android.widget.TextView
 import com.angcyo.base.dslFHelper
 import com.angcyo.core.CoreApplication
 import com.angcyo.core.R
+import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.file.appFilePath
+import com.angcyo.core.component.fileSelector
+import com.angcyo.core.component.fileViewDialog
 import com.angcyo.core.dslitem.DslLastDeviceInfoItem
 import com.angcyo.core.fragment.BaseDslFragment
+import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.bindItem
+import com.angcyo.dsladapter.drawBottom
+import com.angcyo.item.DslPropertySwitchItem
+import com.angcyo.item.style.itemDes
+import com.angcyo.item.style.itemLabel
+import com.angcyo.item.style.itemSwitchChangedAction
+import com.angcyo.item.style.itemSwitchChecked
 import com.angcyo.library.Library
 import com.angcyo.library.ex.*
 import com.angcyo.library.libFolderPath
@@ -30,12 +40,21 @@ class DebugFragment : BaseDslFragment() {
 
         /**调试入口*/
         val DEBUG_ACTION_LIST = mutableListOf<DebugAction>().apply {
-            add(DebugAction("debug ${if (isDebug()) "√" else "×"}", action = {
+            add(DebugAction("debug ${if (isDebug()) "√" else "×"}", action = { fragment, value ->
                 Library.isDebugTypeVal = !Library.isDebugTypeVal
             }))
+            /*add(DebugAction().apply {
+                key = "key_debug_type"
+                label = "Debug环境"
+                des = "强制开启调试环境?"
+                action = { debugFragment, value ->
+                    Library.isDebugTypeVal = value as Boolean
+                    debugFragment._adapter.updateAllItem()
+                }
+            })*/
 
-            add(DebugAction("浏览目录", action = {
-                it.dslFHelper {
+            add(DebugAction("浏览目录", action = { fragment, value ->
+                fragment.dslFHelper {
                     fileSelector({
                         targetPath = libFolderPath("")
                         showFileMd5 = true
@@ -47,10 +66,13 @@ class DebugFragment : BaseDslFragment() {
                 }
             }))
 
-            //add(DebugAction("l.log", appFilePath("l.log", Constant.LOG_FOLDER_NAME)))
+            //单独的日志
             add(DebugAction("l.log", CoreApplication.DEFAULT_FILE_PRINT_PATH))
             add(DebugAction("crash.log", DslCrashHandler.KEY_CRASH_FILE.hawkGet()))
-            add(DebugAction("http.log", appFilePath(logFileName(), Constant.HTTP_FOLDER_NAME)))
+            add(DebugAction("http-date.log", appFilePath(logFileName(), Constant.HTTP_FOLDER_NAME)))
+            //log/目录下的日志
+            add(DebugAction("log.log", appFilePath("log.log", Constant.LOG_FOLDER_NAME)))
+            add(DebugAction("http.log", appFilePath("http.log", Constant.LOG_FOLDER_NAME)))
             add(DebugAction("error.log", appFilePath("error.log", Constant.LOG_FOLDER_NAME)))
         }
 
@@ -79,7 +101,7 @@ class DebugFragment : BaseDslFragment() {
             bindItem(R.layout.item_debug_flow_layout) { itemHolder, itemPosition, adapterItem, payloads ->
                 itemHolder.group(R.id.lib_flow_layout)
                     ?.resetChild(
-                        DEBUG_ACTION_LIST,
+                        DEBUG_ACTION_LIST.filter { it.key.isNullOrEmpty() },
                         R.layout.lib_button_layout
                     ) { itemView, item, itemIndex ->
                         itemView.find<TextView>(R.id.lib_button)?.apply {
@@ -107,13 +129,35 @@ class DebugFragment : BaseDslFragment() {
                                         toast("not support!")
                                     }
                                 } else {
-                                    item.action?.invoke(this@DebugFragment)
+                                    item.action?.invoke(this@DebugFragment, item)
                                 }
                             }
                         }
                     }
             }
 
+            //item
+            DEBUG_ACTION_LIST.forEach { debugAction ->
+                if (!debugAction.key.isNullOrEmpty()) {
+                    //有key
+                    if (debugAction.type == Boolean::class.java) {
+                        DslPropertySwitchItem()() {
+                            itemLabel = debugAction.label
+                            itemDes = debugAction.des
+                            initItem()
+
+                            itemSwitchChecked = debugAction.key.hawkGetBoolean() == true
+                            itemSwitchChangedAction = {
+                                debugAction.key.hawkPut(it)
+
+                                debugAction.action?.invoke(this@DebugFragment, it)
+                            }
+                        }
+                    }
+                }
+            }
+
+            //last
             DslLastDeviceInfoItem()() {
                 itemClick = {
                     dslFHelper {
@@ -129,6 +173,10 @@ class DebugFragment : BaseDslFragment() {
             }
         }
     }
+
+    fun DslAdapterItem.initItem() {
+        drawBottom()
+    }
 }
 
 /**调试入口点*/
@@ -138,6 +186,17 @@ data class DebugAction(
     /**日志的路径, 如果设置了则会直接显示对应的日志内容
      * 设置了[action]会覆盖默认的点击行为*/
     var logPath: String? = null,
-    /**按钮的点击回调*/
-    var action: ((DebugFragment) -> Unit)? = null
-)
+    /**按钮的点击回调, 或者属性item的回调*/
+    var action: ((DebugFragment, value: Any?) -> Unit)? = null,
+
+    //Hawk开关属性控制
+    /**显示的属性标签*/
+    var label: CharSequence? = null,
+    /**属性描述内容*/
+    var des: CharSequence? = null,
+    /**属性类型, 暂且只支持bool类型*/
+    var type: Class<*> = Boolean::class.java,
+    /**存储的key, 有这个值时, 才会激活属性item*/
+    var key: String? = null,
+
+    )
