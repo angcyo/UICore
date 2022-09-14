@@ -65,6 +65,7 @@
     <string name="canvas_angle">角度</string>
     <string name="canvas_direction">方向</string>
     <string name="canvas_inch_unit">英制</string>
+    <string name="canvas_pixel_unit">像素</string>
     <string name="canvas_grid">网格</string>
     <string name="canvas_smart_assistant">智能指南</string>
     <string name="canvas_preview">预览</string>
