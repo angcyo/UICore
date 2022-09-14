@@ -167,14 +167,20 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     @Transient
     var dialogBgDrawable: Drawable? = UndefinedDrawable()
     var dialogWidth: Int = undefined_res
+
+    /**如果高度用-1, 那么状态栏和导航栏都会变成黑色.
+     * 可以使用[_screenHeight - _statusBarHeight] */
     var dialogHeight: Int = undefined_res
     var dialogGravity: Int = undefined_res
 
     /**作用在view上*/
     var contentBgDrawable: Drawable? = UndefinedDrawable()
 
-    //测试好像没效果.
+    /**任意颜色都会变成全透明...
+     * -2 表示半透明效果*/
     var statusBarColor: Int = undefined_res
+
+    /**-2 表示半透明效果*/
     var navigationBarColor: Int = undefined_res
     var navigationBarDividerColor: Int = undefined_res
 
@@ -278,11 +284,8 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
      * 正数表示addFlags, 负数表示clearFlags
      *
      * @see WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-     *
      * @see WindowManager.LayoutParams.FLAG_DIM_BEHIND
-     *
      * @see WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-     *
      * @see WindowManager.LayoutParams.FLAG_LAYOUT_IN_OVERSCAN
      */
     var windowFlags: IntArray? = null
@@ -420,11 +423,19 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
                 window.clearFlags(FLAG_TRANSLUCENT_STATUS)
                 window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 window.statusBarColor = statusBarColor
+            } else if (statusBarColor == -2) {
+                //半透明效果
+                window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                window.addFlags(FLAG_TRANSLUCENT_STATUS)
             }
             if (navigationBarColor != undefined_res) {
                 window.clearFlags(FLAG_TRANSLUCENT_NAVIGATION)
                 window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 window.navigationBarColor = navigationBarColor
+            } else if (navigationBarColor == -2) {
+                //半透明效果
+                window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                window.addFlags(FLAG_TRANSLUCENT_NAVIGATION)
             }
             if (navigationBarDividerColor != undefined_res &&
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
