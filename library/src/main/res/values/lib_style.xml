@@ -56,7 +56,7 @@
         <!--<item name="android:windowHideAnimation">@anim/lib_tran_alpha_bottom_exit</item>-->
     </style>
 
-    <!--Dialog样式的Activity
+    <!--Dialog样式的Activity, 继承此样式似乎效果会无效
     属性列表[https://developer.android.google.cn/reference/android/R.attr]-->
     <!--@android:style/Theme.Dialog-->
     <style name="LibDialogActivity" parent="Theme.AppCompat.Dialog">
