@@ -2,10 +2,9 @@ package com.angcyo.canvas.utils
 
 import android.graphics.Path
 import com.angcyo.canvas.LinePath
-import com.angcyo.canvas.LovePath
-import com.angcyo.library.unit.MmValueUnit
 import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.library.ex.toRadians
+import com.angcyo.library.unit.MmValueUnit
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -177,66 +176,6 @@ object ShapesHelper {
                 }
             }
             close()
-        }
-
-    /**心形Path*/
-    fun lovePath(width: Float = defaultWidth, height: Float = defaultHeight): Path =
-        LovePath().apply {
-
-            /*val r = width / 4
-            val R = width * 3 / 4
-
-            val x1 = r
-            val y1 = r
-
-            val x2 = R
-            val y2 = r
-
-            val rect = emptyRectF()
-            moveTo(0f, r)
-
-            val offsetAngle = 10f
-            rect.set(0f, 0f, r * 2, r * 2)
-            arcTo(rect, 180f, 180f - offsetAngle)
-            rect.set(r * 2, 0f, r * 4, r * 2)
-            arcTo(rect, 180f + offsetAngle, 180f)
-
-            val sweepAngle = acos(r / R).toDegrees()
-            rect.set(x1 - R, y1 - R, x1 + R, y1 + R)
-            arcTo(rect, 0f, sweepAngle)
-
-            rect.set(x2 - R, y2 - R, x2 + R, y2 + R)
-            arcTo(rect, 180f - sweepAngle, sweepAngle)
-            close()*/
-
-            /*val w2 = width / 2f
-            val h2 = height / 2f
-
-            val c = sqrt(w2 * w2 + h2 * h2)
-            val r = c / 2
-
-            val a = atan(h2 / w2)
-
-            val x1 = cos(a) * r
-            val y1 = sin(a) * r //h2 - sqrt(r * r + x1 * x1)
-
-            val x2 = w2 * 3 / 2
-            val y2 = y1
-
-            moveTo(w2, height)
-            lineTo(0f, h2)
-            val rect = emptyRectF()
-            rect.set(x1 - r, y1 - r, x1 + r, y1 + r)
-            val angle = 90f + 90f - atan(h2 / w2).toDegrees()
-            arcTo(rect, angle, 180f)
-
-            rect.set(x2 - r, y2 - r, x2 + r, y2 + r)
-            arcTo(rect, -angle, 180f)
-
-            lineTo(w2, height)
-            close()*/
-
-            initPath(width, height)
         }
 }
 

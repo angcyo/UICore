@@ -14,6 +14,7 @@ import kotlin.math.sqrt
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/05/05
  */
+@Deprecated("会有空白边距")
 class LovePath : Path() {
 
     val pathBounds = RectF()
