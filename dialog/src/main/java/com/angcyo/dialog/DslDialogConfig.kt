@@ -169,7 +169,9 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     var dialogWidth: Int = undefined_res
 
     /**如果高度用-1, 那么状态栏和导航栏都会变成黑色.
-     * 可以使用[_screenHeight - _statusBarHeight] */
+     * 可以使用[_screenHeight - _statusBarHeight]
+     * -1 的时候, 请使用[R.style.LibDialogBaseFullTheme] 主题
+     * */
     var dialogHeight: Int = undefined_res
     var dialogGravity: Int = undefined_res
 

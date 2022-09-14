@@ -17,6 +17,12 @@
         <item name="android:windowIsFloating">true</item>
     </style>
 
+    <!--dialogHeight=-1时-->
+    <style name="LibDialogBaseFullTheme" parent="LibDialogBaseTheme">
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
     <style name="LibDialogStyle" parent="LibDialogBaseTheme">
         <!--占位-->
     </style>

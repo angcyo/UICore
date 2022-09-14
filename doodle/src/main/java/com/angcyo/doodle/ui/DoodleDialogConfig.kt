@@ -3,15 +3,12 @@ package com.angcyo.doodle.ui
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Color
 import com.angcyo.dialog.DslDialogConfig
 import com.angcyo.dialog.configBottomDialog
 import com.angcyo.doodle.R
 import com.angcyo.doodle.core.IDoodleListener
 import com.angcyo.doodle.element.BaseElement
 import com.angcyo.doodle.layer.BaseLayer
-import com.angcyo.library._screenHeight
-import com.angcyo.library._statusBarHeight
 import com.angcyo.library.ex.trimEdgeColor
 import com.angcyo.widget.DslViewHolder
 
@@ -88,8 +85,8 @@ fun Context.doodleDialog(config: DoodleDialogConfig.() -> Unit): Dialog {
     return DoodleDialogConfig().run {
         configBottomDialog(this@doodleDialog)
         dialogWidth = -1
-        //dialogHeight = -1
-        dialogHeight = _screenHeight - _statusBarHeight
+        dialogHeight = -1
+        dialogThemeResId = R.style.LibDialogBaseFullTheme
         config()
         show()
     }
