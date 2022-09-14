@@ -94,7 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/lib_hdpi"
-                android:text="大小" />
+                android:text="@string/doodle_size" />
 
             <com.angcyo.widget.progress.DslSeekBar
                 android:id="@+id/size_seek_bar"

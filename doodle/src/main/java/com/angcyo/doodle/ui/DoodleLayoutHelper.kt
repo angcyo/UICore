@@ -21,6 +21,7 @@ import com.angcyo.drawable.BubbleDrawable
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library._screenWidth
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.ex._string
 import com.angcyo.library.ex.interceptParentTouchEvent
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.resetDslItem
@@ -52,7 +53,7 @@ class DoodleLayoutHelper {
         viewHolder.rv(R.id.doodle_item_view)?.renderDslAdapter {
             DoodleFunItem()() {
                 itemIco = R.drawable.doodle_pencil
-                itemText = "钢笔"
+                itemText = _string(R.string.doodle_pencil)
                 itemClick = {
                     if (!itemIsSelected) {
                         itemIsSelected = true
@@ -67,7 +68,7 @@ class DoodleLayoutHelper {
             }
             DoodleFunItem()() {
                 itemIco = R.drawable.doodle_brush
-                itemText = "毛笔"
+                itemText = _string(R.string.doodle_brush)
                 itemClick = {
                     if (!itemIsSelected) {
                         itemIsSelected = true
@@ -79,7 +80,7 @@ class DoodleLayoutHelper {
             }
             DoodleFunItem()() {
                 itemIco = R.drawable.doodle_eraser
-                itemText = "橡皮擦"
+                itemText = _string(R.string.doodle_eraser)
                 itemClick = {
                     if (!itemIsSelected) {
                         itemIsSelected = true
@@ -91,7 +92,7 @@ class DoodleLayoutHelper {
             }
             DoodleIconItem()() {
                 itemIco = R.drawable.doodle_palette
-                itemText = "颜色"
+                itemText = _string(R.string.doodle_color)
                 itemClick = {
                     itemIsSelected = true
                     updateAdapterItem()
@@ -147,7 +148,7 @@ class DoodleLayoutHelper {
     val undoItemList = mutableListOf<DslAdapterItem>().apply {
         add(DoodleIconItem().apply {
             itemIco = R.drawable.doodle_undo
-            itemText = "撤销"
+            itemText = _string(R.string.doodle_undo)
             itemEnable = false
             itemClick = {
                 doodleView?.doodleDelegate?.undoManager?.undo()
@@ -155,7 +156,7 @@ class DoodleLayoutHelper {
         })
         add(DoodleIconItem().apply {
             itemIco = R.drawable.doodle_redo
-            itemText = "重做"
+            itemText = _string(R.string.doodle_redo)
             itemEnable = false
             itemClick = {
                 doodleView?.doodleDelegate?.undoManager?.redo()
