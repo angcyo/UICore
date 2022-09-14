@@ -14,6 +14,7 @@ import com.angcyo.canvas.core.renderer.*
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer.Companion.ROTATE_FLAG_NORMAL
+import com.angcyo.canvas.utils.ShapesHelper
 import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -616,6 +617,19 @@ class CanvasDelegate(val view: View) : ICanvasView {
                 var _height = bounds.height()
 
                 if (_width > 0 && _height > 0) {
+                    if (_width < ShapesHelper.defaultWidth && _height < ShapesHelper.defaultHeight) {
+                        //同时小于最小值, 则放大到最小的限度值
+                        if (_width > _height) {
+                            val scale = ShapesHelper.defaultWidth / _width
+                            _width = ShapesHelper.defaultWidth
+                            _height *= scale
+                        } else {
+                            val scale = ShapesHelper.defaultHeight / _height
+                            _height = ShapesHelper.defaultHeight
+                            _width *= scale
+                        }
+                    }
+
                     //当前可视化的中点坐标
 
                     val visualRect = getCanvasViewBox().getVisualRect()
