@@ -7,7 +7,7 @@
     android:background="@drawable/dialog_white_top_round_common_bg_shape"
     android:orientation="vertical">
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/lib_title_wrap_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/action_bar_height"
@@ -28,10 +28,9 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/lib_title_text_view"
             style="@style/LibTitleTextStyle"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="1"
             android:gravity="center"
             android:text="@string/doodle_title" />
 
@@ -46,7 +45,7 @@
             android:text="@string/dialog_positive"
             tools:ignore="TouchTargetSizeCheck" />
 
-    </LinearLayout>
+    </FrameLayout>
 
     <!--主体-->
     <com.angcyo.doodle.DoodleView
