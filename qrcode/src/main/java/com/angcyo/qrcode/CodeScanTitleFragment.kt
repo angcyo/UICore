@@ -16,7 +16,6 @@ import com.angcyo.library.ex.*
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
-import com.angcyo.library.ex.replace
 import com.angcyo.widget.span.span
 import com.angcyo.widget.text.DslTextView
 
@@ -88,7 +87,7 @@ open class CodeScanTitleFragment : CodeScanFragment() {
                                     loadDrawable(backIconDrawableId).colorFilter(fragmentConfig.titleItemIconColor)
                             }
                             if (showBackText) {
-                                drawable("返回") {
+                                drawable(_string(R.string.ui_back)) {
                                     textSize = backTextSize
                                     marginLeft = -8 * dpi
                                     marginTop = 1 * dpi

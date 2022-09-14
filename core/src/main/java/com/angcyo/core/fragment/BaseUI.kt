@@ -96,7 +96,7 @@ open class FragmentUI {
                             loadDrawable(backIconDrawableId).colorFilter(fragment.fragmentConfig.titleItemIconColor)
                     }
                     if (showBackText) {
-                        drawable("返回") {
+                        drawable(_string(R.string.ui_back)) {
                             textSize = backTextSize
                             marginLeft = -8 * dpi
                             marginTop = 1 * dpi
