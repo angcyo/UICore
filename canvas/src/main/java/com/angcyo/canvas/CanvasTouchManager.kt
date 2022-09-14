@@ -35,6 +35,14 @@ class CanvasTouchManager(val canvasView: CanvasDelegate) {
         when (event.actionMasked) {
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 interceptCanvasTouch = null
+
+                //取消手势处理
+                canvasView.canvasListenerList.forEach {
+                    if (it != touch) {
+                        it.onCanvasTouchEvent(canvasView, event)
+                    }
+                }
+
                 if (touch != null) {
                     return touch.onCanvasTouchEvent(canvasView, event)
                 }

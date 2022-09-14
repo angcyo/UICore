@@ -411,7 +411,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**入口点*/
     @CanvasEntryPoint
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return canvasTouchManager.onTouchEvent(event)
+        canvasTouchManager.onTouchEvent(event)
+        return true
     }
 
     /**入口点*/
