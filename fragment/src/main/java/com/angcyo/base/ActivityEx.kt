@@ -142,6 +142,42 @@ fun Window.lightStatusBar(light: Boolean = true) {
     }
 }
 
+fun Activity.lightNavigationBar(light: Boolean = true) {
+    window.lightNavigationBar(light)
+}
+
+/**是否为白色导航栏*/
+fun Window.lightNavigationBar(light: Boolean = true) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        //android 11 //30
+        if (light) {
+            insetsController?.setSystemBarsAppearance(
+                WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
+                WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+            )
+        } else {
+            insetsController?.setSystemBarsAppearance(0, 0)
+        }
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        //android 8 //26
+        val decorView = decorView
+        val systemUiVisibility = decorView.systemUiVisibility
+        if (light) {
+            if (systemUiVisibility.have(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)) {
+                return
+            }
+            decorView.systemUiVisibility =
+                systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+        } else {
+            if (!systemUiVisibility.have(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)) {
+                return
+            }
+            decorView.systemUiVisibility =
+                systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
+        }
+    }
+}
+
 fun Activity.moveToBack(nonRoot: Boolean = true): Boolean {
     return moveTaskToBack(nonRoot)
 }
