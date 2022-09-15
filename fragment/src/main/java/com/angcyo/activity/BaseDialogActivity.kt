@@ -35,6 +35,10 @@ abstract class BaseDialogActivity : BaseAppCompatActivity() {
     /**点击窗口外是否可以关闭*/
     var closeOnTouchOutside: Boolean = false
 
+    init {
+        enableLayoutFullScreen = false
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }

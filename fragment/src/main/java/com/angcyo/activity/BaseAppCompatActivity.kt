@@ -44,6 +44,9 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
     /**布局*/
     var activityLayoutId = R.layout.lib_activity_main_layout
 
+    /**激活布局全屏*/
+    var enableLayoutFullScreen = true
+
     //<editor-fold desc="基础方法处理">
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,7 +111,9 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     /**布局设置之后触发*/
     open fun onCreateAfter(savedInstanceState: Bundle?) {
-        enableLayoutFullScreen()
+        if (enableLayoutFullScreen) {
+            enableLayoutFullScreen()
+        }
         with(activityLayoutId) {
             if (this > 0) {
                 setContentView(this)
