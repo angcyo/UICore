@@ -211,11 +211,10 @@ open class DslButton : AppCompatTextView {
             typedArray.getBoolean(R.styleable.DslButton_button_enable_ripple, enableRipple)
         enableTextStyle =
             typedArray.getBoolean(R.styleable.DslButton_button_enable_text_style, enableTextStyle)
-        enableBackgroundStyle =
-            typedArray.getBoolean(
-                R.styleable.DslButton_button_enable_background_style,
-                background == null //智能开启
-            )
+        enableBackgroundStyle = typedArray.getBoolean(
+            R.styleable.DslButton_button_enable_background_style,
+            background == null //智能开启
+        )
         rippleColor = typedArray.getColor(R.styleable.DslButton_button_ripple_color, rippleColor)
 
         //向下覆盖属性
@@ -349,11 +348,10 @@ open class DslButton : AppCompatTextView {
         disableShape = typedArray.getInt(R.styleable.DslButton_button_disable_shape, disableShape)
         disableSolidColor =
             typedArray.getColor(R.styleable.DslButton_button_disable_solid_color, disableSolidColor)
-        disableStrokeColor =
-            typedArray.getColor(
-                R.styleable.DslButton_button_disable_stroke_color,
-                disableStrokeColor
-            )
+        disableStrokeColor = typedArray.getColor(
+            R.styleable.DslButton_button_disable_stroke_color,
+            disableStrokeColor
+        )
         disableStrokeWidth = typedArray.getDimensionPixelOffset(
             R.styleable.DslButton_button_disable_stroke_width,
             disableStrokeWidth
@@ -389,11 +387,10 @@ open class DslButton : AppCompatTextView {
         focusShape = typedArray.getInt(R.styleable.DslButton_button_focus_shape, focusShape)
         focusSolidColor =
             typedArray.getColor(R.styleable.DslButton_button_focus_solid_color, focusSolidColor)
-        focusStrokeColor =
-            typedArray.getColor(
-                R.styleable.DslButton_button_focus_stroke_color,
-                focusStrokeColor
-            )
+        focusStrokeColor = typedArray.getColor(
+            R.styleable.DslButton_button_focus_stroke_color,
+            focusStrokeColor
+        )
         focusStrokeWidth = typedArray.getDimensionPixelOffset(
             R.styleable.DslButton_button_focus_stroke_width,
             focusStrokeWidth
@@ -581,9 +578,8 @@ open class DslButton : AppCompatTextView {
                 val normalColors =
                     typedArray.getString(R.styleable.DslButton_button_gradient_colors)
                 _fillColor(normalColors)
-            } else if (typedArray.hasValue(R.styleable.DslButton_button_gradient_start_color) || typedArray.hasValue(
-                    R.styleable.DslButton_button_gradient_end_color
-                )
+            } else if (typedArray.hasValue(R.styleable.DslButton_button_gradient_start_color) ||
+                typedArray.hasValue(R.styleable.DslButton_button_gradient_end_color)
             ) {
                 buttonGradientStartColor = typedArray.getColor(
                     R.styleable.DslButton_button_gradient_start_color,
@@ -708,8 +704,11 @@ open class DslButton : AppCompatTextView {
             return null
         }
         val split = colors.split(",")
-
-        return IntArray(split.size) { split[it].toColorInt() }
+        return if (split.size > 1) {
+            IntArray(split.size) { split[it].toColorInt() }
+        } else {
+            IntArray(2) { split[0].toColorInt() }
+        }
     }
 
     fun Int.color(df: Int = Color.TRANSPARENT): Int = if (this == NO_COLOR) df else this
