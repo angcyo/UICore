@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/lib_sdpi"
+    android:layout_marginHorizontal="@dimen/lib_dpi"
     android:layout_marginVertical="@dimen/lib_sdpi"
     android:background="@drawable/lib_theme_horizontal_gradient_selector"
     android:gravity="center_horizontal"
