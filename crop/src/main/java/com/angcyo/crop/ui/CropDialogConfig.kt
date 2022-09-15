@@ -54,6 +54,7 @@ fun Context.cropDialog(config: CropDialogConfig.() -> Unit): Dialog {
         configBottomDialog(this@cropDialog)
         dialogWidth = -1
         dialogHeight = -1
+        dialogThemeResId = R.style.LibDialogBaseFullTheme
         config()
         //cropBitmap
         //onCropResultAction
