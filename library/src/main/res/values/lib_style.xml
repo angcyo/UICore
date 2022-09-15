@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <integer name="lib_animation_duration">240</integer>
     <integer name="lib_animation_delay">360</integer>
@@ -60,13 +60,15 @@
     属性列表[https://developer.android.google.cn/reference/android/R.attr]-->
     <!--@android:style/Theme.Dialog-->
     <style name="LibDialogActivity" parent="Theme.AppCompat.Dialog">
-        <!--设置无标题-->
+        <!--设置没有窗口标题、dialog标题等各种标题-->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:title">@null</item>
+        <item name="android:dialogTitle">@null</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <!--设置Dialog的windowFrame框为无-->
         <item name="android:windowFrame">@null</item>
-        <item name="android:windowNoTitle">true</item>
-        <!--是否浮现在activity之上, 如果为true 则会布局到导航栏上-->
+        <!--是否浮现在activity之上, 如果为true 则会布局到导航栏后面-->
         <item name="android:windowIsFloating">false</item>
         <!--是否半透明, 注意 Android O. 如果为true 则导航栏不会挡住内容布局-->
         <item name="android:windowIsTranslucent">true</item>
@@ -81,6 +83,8 @@
         <item name="android:backgroundDimEnabled">true</item>
         <!--<item name="android:windowClipToOutline">true</item>-->
         <item name="android:windowCloseOnTouchOutside">false</item>
+
+        <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="21">true</item>
 
         <!--加了这2个属性之后, [windowAnimationStyle]动画执行有问题-->
         <!--<item name="android:navigationBarColor">@color/navigation_bar_color</item>
