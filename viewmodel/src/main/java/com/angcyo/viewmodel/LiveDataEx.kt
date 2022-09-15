@@ -68,6 +68,7 @@ fun <T> LiveData<T>.observe(
 
 /**快速观察[LiveData]一次
  * [action] 返回值表示是否处理了数据, 如果没有处理, 则不会remove
+ * [allowBackward] 是否允许数据倒灌, 接收到旧数据
  * */
 fun <T> LiveData<T>.observeOnce(
     owner: LifecycleOwner? = null,
