@@ -8,6 +8,7 @@ import com.angcyo.library.ex._color
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.color
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.span.span
 
 /**
  * 涂鸦功能item
@@ -22,6 +23,9 @@ open class DoodleIconItem : DslAdapterItem() {
 
     /**文本*/
     var itemText: CharSequence? = null
+
+    /**上角标*/
+    var itemTextSuperscript: CharSequence? = null
 
     /**被禁用时的图标颜色*/
     @ColorInt
@@ -52,6 +56,11 @@ open class DoodleIconItem : DslAdapterItem() {
 
         //
         itemHolder.gone(R.id.lib_text_view, itemText == null)
-        itemHolder.tv(R.id.lib_text_view)?.text = itemText
+        itemHolder.tv(R.id.lib_text_view)?.text = span {
+            append(itemText)
+            append(itemTextSuperscript) {
+                isSuperscript = true
+            }
+        }
     }
 }

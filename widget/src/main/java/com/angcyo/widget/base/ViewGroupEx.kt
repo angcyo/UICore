@@ -341,7 +341,11 @@ fun ViewGroup.addDslItem(
     return dslViewHolder
 }
 
-/**将[DslAdapterItem]绑定到[itemView]上*/
+/**将[DslAdapterItem]绑定到[itemView]上, 用来更新界面.
+ * 添加到界面, 请使用以下方法
+ * [android.view.ViewGroup.appendDslItem]
+ * [android.view.ViewGroup.resetDslItem]
+ * */
 fun DslAdapterItem.bindInRootView(
     itemView: View?,
     index: Int = -1,
@@ -350,7 +354,7 @@ fun DslAdapterItem.bindInRootView(
     if (itemView == null) {
         return null
     }
-    val dslViewHolder = DslViewHolder(itemView)
+    val dslViewHolder = itemView.dslViewHolder()
     itemView.tag = dslViewHolder
     itemView.setDslViewHolder(dslViewHolder)
     itemView.setDslAdapterItem(this)
