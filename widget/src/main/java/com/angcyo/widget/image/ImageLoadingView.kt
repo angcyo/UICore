@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.ViewCompat
+import com.angcyo.library._refreshRateRatio
 import com.angcyo.widget.R
 
 /**
@@ -32,10 +33,18 @@ class ImageLoadingView(context: Context, attributeSet: AttributeSet? = null) :
         canvas.rotate(_rotateDegrees, width / 2.toFloat(), height / 2.toFloat())
         super.onDraw(canvas)
 
-        if (isEnabled && drawable != null) {
-            _rotateDegrees += rotateStep
+        if (isEnabled && drawable != null && rotateStep != 0f) {
+            //动画控制
+            _rotateDegrees += rotateStep / _refreshRateRatio
             _rotateDegrees = if (_rotateDegrees < 360) _rotateDegrees else _rotateDegrees - 360
             ViewCompat.postInvalidateOnAnimation(this)
         }
     }
+
+    /**设置加载的资源*/
+    fun setLoadingRes(resId: Int, loading: Boolean = true) {
+        isEnabled = loading
+        setImageResource(resId)
+    }
+
 }
