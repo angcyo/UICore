@@ -8,7 +8,7 @@
     android:minHeight="@dimen/dialog_item_height">
 
     <com.angcyo.widget.DslButton
-        android:id="@+id/negative_button"
+        android:id="@+id/dialog_negative_button"
         style="@style/DefaultButtonStyleNormal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
         tools:text="取消" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/title_view"
+        android:id="@+id/dialog_title_view"
         style="@style/LibBodyTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
         tools:text="标题" />
 
     <com.angcyo.widget.DslButton
-        android:id="@+id/positive_button"
+        android:id="@+id/dialog_positive_button"
         style="@style/DefaultButtonStyleNormal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -8,7 +8,7 @@
     android:orientation="vertical">
 
     <include
-        android:id="@+id/title_layout"
+        android:id="@+id/dialog_title_layout"
         layout="@layout/lib_dialog_base_title_layout" />
 
     <View

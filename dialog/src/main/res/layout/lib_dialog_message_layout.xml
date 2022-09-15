@@ -9,7 +9,7 @@
     app:r_layout_mask_drawable="@drawable/dialog_white_round_common_bg_shape">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/title_view"
+        android:id="@+id/dialog_title_view"
         style="@style/LibTitleTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,10 +28,10 @@
         android:layout_height="wrap_content"
         android:maxHeight="400dp"
         app:layout_constraintHeight_max="400dp"
-        app:layout_constraintTop_toBottomOf="@id/title_view">
+        app:layout_constraintTop_toBottomOf="@id/dialog_title_view">
 
         <com.angcyo.widget.text.DslTextView
-            android:id="@+id/message_view"
+            android:id="@+id/dialog_message_view"
             style="@style/LibBodyTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
             tools:text="中立" />
 
         <com.angcyo.widget.DslButton
-            android:id="@+id/negative_button"
+            android:id="@+id/dialog_negative_button"
             style="@style/DefaultButtonMinStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
             tools:text="取消" />
 
         <com.angcyo.widget.DslButton
-            android:id="@+id/positive_button"
+            android:id="@+id/dialog_positive_button"
             style="@style/DefaultButtonMinStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

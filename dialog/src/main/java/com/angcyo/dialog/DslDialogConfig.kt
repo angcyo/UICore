@@ -153,7 +153,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     var dialogTitle: CharSequence? = null
         set(value) {
             field = value
-            _dialogViewHolder?.tv(R.id.title_view)?.text = value
+            _dialogViewHolder?.tv(R.id.dialog_title_view)?.text = value
         }
 
     /**对话框内容*/
@@ -492,7 +492,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
         //替换标题栏
         @SuppressLint("ResourceType")
         if (dialogTitleLayoutId > 0) {
-            dialogViewHolder.group(R.id.title_layout)?.replace(dialogTitleLayoutId)
+            dialogViewHolder.group(R.id.dialog_title_layout)?.replace(dialogTitleLayoutId)
         }
     }
 

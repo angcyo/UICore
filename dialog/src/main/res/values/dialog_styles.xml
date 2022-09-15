@@ -118,4 +118,19 @@
 
     <!--Popup样式-->
     <style name="LibPopupWindowStyle" parent="android:Widget.Material.ListPopupWindow" />
+
+    <!--对话框标题图标样式-->
+    <style name="LibDialogIcoItemStyle">
+        <item name="android:layout_width">@dimen/lib_icon_title_size</item>
+        <item name="android:layout_height">@dimen/lib_icon_title_size</item>
+        <item name="android:padding">@dimen/lib_hdpi</item>
+        <item name="android:background">@drawable/lib_bg2_selector</item>
+    </style>
+
+    <!--对话框标题下的阴影样式-->
+    <style name="LibDialogTitleShadowStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">6dp</item>
+        <item name="android:background">@drawable/lib_t2b_shadow</item>
+    </style>
 </resources>

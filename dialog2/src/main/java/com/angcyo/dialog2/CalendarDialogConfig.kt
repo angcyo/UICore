@@ -109,7 +109,7 @@ open class CalendarDialogConfig : BaseDialogConfig() {
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         super.initDialogView(dialog, dialogViewHolder)
 
-        dialogViewHolder.enable(R.id.positive_button, false)
+        dialogViewHolder.enable(R.id.dialog_positive_button, false)
 
         //当前时间提示控件
         val currentCalendarTipView = dialogViewHolder.tv(R.id.current_calendar_tip)
@@ -167,7 +167,7 @@ open class CalendarDialogConfig : BaseDialogConfig() {
                             calendarList.add(calendar)
                         }
                         checkCalendar(dialogViewHolder, calendarViewDelegate)
-                        dialogViewHolder.enable(R.id.positive_button, true)
+                        dialogViewHolder.enable(R.id.dialog_positive_button, true)
                     }
                 }
             })
@@ -181,7 +181,7 @@ open class CalendarDialogConfig : BaseDialogConfig() {
 
                 override fun onCalendarSelect(calendar: Calendar, isClick: Boolean) {
                     dialogViewHolder.enable(
-                        R.id.positive_button,
+                        R.id.dialog_positive_button,
                         this@CalendarDialogConfig.calendar != calendar
                     )
                     this@CalendarDialogConfig.calendar = calendar

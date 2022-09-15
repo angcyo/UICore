@@ -27,7 +27,7 @@
             app:srcCompat="@drawable/ic_drag_drop_hints" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/title_view"
+            android:id="@+id/dialog_title_view"
             style="@style/LibBodyTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
             tools:text="标题" />
 
         <com.angcyo.widget.text.DslTextView
-            android:id="@+id/message_view"
+            android:id="@+id/dialog_message_view"
             style="@style/LibBodyTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

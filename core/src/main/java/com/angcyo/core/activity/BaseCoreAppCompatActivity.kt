@@ -135,7 +135,7 @@ fun Context.checkShowCrashDialog() {
                     file?.shareFile(this@checkShowCrashDialog)
                 }
                 onDialogInitListener = { _, dialogViewHolder ->
-                    dialogViewHolder.click(R.id.message_view) {
+                    dialogViewHolder.click(R.id.dialog_message_view) {
                         file?.open(this@checkShowCrashDialog)
                     }
                 }

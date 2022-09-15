@@ -13,6 +13,7 @@ import android.view.ViewAnimationUtils
 import android.view.animation.*
 import androidx.annotation.AnimRes
 import androidx.annotation.AnimatorRes
+import androidx.annotation.RequiresApi
 import androidx.core.animation.addListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
@@ -456,6 +457,7 @@ fun matrixAnimatorFraction(
 }
 
 /**[Rect]动画*/
+@RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 fun rectAnimator(
     startRect: Rect,
     endRect: Rect,
@@ -473,6 +475,7 @@ fun rectAnimator(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 fun rectAnimatorFraction(
     startRect: Rect,
     endRect: Rect,
@@ -493,6 +496,7 @@ fun rectAnimatorFraction(
 /**clip动画, 从左到右展开显示
  * [com.angcyo.library.ex.AnimEx.clipBoundsAnimator]
  * */
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun View.clipBoundsAnimatorFromLeft(
     start: Rect = Rect(0, 0, 0, mH()),
     end: Rect = Rect(0, 0, mW(), mH()),
@@ -504,6 +508,7 @@ fun View.clipBoundsAnimatorFromLeft(
 /**clip动画, 从右到左隐藏
  * [com.angcyo.library.ex.AnimEx.clipBoundsAnimator]
  * */
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun View.clipBoundsAnimatorFromRightHide(
     start: Rect = Rect(0, 0, mW(), mH()),
     end: Rect = Rect(0, 0, 0, mH()),
@@ -515,6 +520,7 @@ fun View.clipBoundsAnimatorFromRightHide(
 /**clip动画
  * [androidx.transition.ChangeClipBounds]
  * */
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun View.clipBoundsAnimator(
     start: Rect = Rect(mW() / 2, mH() / 2, mW() / 2, mH() / 2),
     end: Rect = Rect(0, 0, mW(), mH()),
@@ -556,7 +562,7 @@ fun View.setAnimator(animator: Animator) {
     setTag(R.id.lib_tag_animator, WeakReference(animator))
 }
 
-/**取消动画[Animator]*/
+/**取消动画[Animator] [Animation] [Animate]*/
 fun View.cancelAnimator() {
     val tag = getTag(R.id.lib_tag_animator)
     var animator: Animator? = null
@@ -569,6 +575,11 @@ fun View.cancelAnimator() {
         animator = tag
     }
     animator?.cancel()
+
+    //animation
+    clearAnimation()
+    //animate
+    animate().cancel()
 }
 
 /**[Camera]*/
@@ -620,7 +631,9 @@ fun View.rotateXAnimator(
         val centerY = mH() / 2f
         matrix.preTranslate(-centerX, -centerY)
         matrix.postTranslate(centerX, centerY)
-        animationMatrix = matrix
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            animationMatrix = matrix
+        }
     }
 }
 
@@ -640,6 +653,15 @@ fun View.rotateYAnimator(
         val centerY = mH() / 2f
         matrix.preTranslate(-centerX, -centerY)
         matrix.postTranslate(centerX, centerY)
-        animationMatrix = matrix
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            animationMatrix = matrix
+        }
     }
+}
+
+/**无限循环*/
+fun Animation.infinite(mode: Int = ValueAnimator.RESTART) {
+    //repeatMode = ValueAnimator.REVERSE
+    repeatMode = mode
+    repeatCount = ValueAnimator.INFINITE
 }

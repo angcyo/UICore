@@ -135,7 +135,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
 
         val editView = dialogViewHolder.ev(R.id.edit_text_view)
         val indicatorView = dialogViewHolder.v<TextIndicator>(R.id.single_text_indicator_view)
-        val positiveButton = dialogViewHolder.view(R.id.positive_button)
+        val positiveButton = dialogViewHolder.view(R.id.dialog_positive_button)
 
         _configView(editView, indicatorView, positiveButton)
 

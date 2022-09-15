@@ -23,7 +23,7 @@
             android:layout_height="40dp"
             android:layout_gravity="center_vertical"
             android:padding="8dp"
-            app:srcCompat="@drawable/doodle_back" />
+            app:srcCompat="@drawable/dialog_back" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/lib_title_text_view"
@@ -119,10 +119,8 @@
 
     <!--标题阴影-->
     <View
-        android:id="@+id/title_line_view"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:background="@drawable/lib_t2b_shadow"
+        android:id="@+id/dialog_title_line_view"
+        style="@style/LibDialogTitleShadowStyle"
         app:layout_constraintTop_toBottomOf="@id/lib_title_wrap_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

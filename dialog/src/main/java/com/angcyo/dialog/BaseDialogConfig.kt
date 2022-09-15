@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.View
+import android.widget.TextView
 import com.angcyo.library.L
 import com.angcyo.library.ex._string
 import com.angcyo.widget.DslViewHolder
@@ -46,13 +47,13 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
         super.initDialogView(dialog, dialogViewHolder)
 
         //标题
-        dialogViewHolder.tv(R.id.title_view)?.apply {
+        dialogViewHolder.tv(R.id.dialog_title_view)?.apply {
             visibility = if (dialogTitle == null) View.GONE else View.VISIBLE
             text = dialogTitle
         }
 
         //消息体
-        dialogViewHolder.tv(R.id.message_view)?.apply {
+        dialogViewHolder.tv(R.id.dialog_message_view)?.apply {
             visibility = if (dialogMessage == null) View.GONE else View.VISIBLE
             text = dialogMessage
 
@@ -61,8 +62,8 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
         }
 
         //标题栏控制
-        dialogViewHolder.visible(R.id.title_layout, dialogTitle != null)
-        dialogViewHolder.gone(R.id.title_line_view, dialogTitle == null || hideDialogTitleLine)
+        dialogViewHolder.visible(R.id.dialog_title_layout, dialogTitle != null)
+        dialogViewHolder.gone(R.id.dialog_title_line_view, dialogTitle == null || hideDialogTitleLine)
 
         initControlLayout(dialog, dialogViewHolder)
     }
@@ -70,9 +71,13 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
     /**[initDialogView]*/
     open fun initControlLayout(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         //确定按钮
-        dialogViewHolder.tv(R.id.positive_button)?.apply {
+        val positiveButton = dialogViewHolder.view(R.id.dialog_positive_button)
+        positiveButton?.apply {
             visibility = if (positiveButtonText == null) View.GONE else View.VISIBLE
-            text = positiveButtonText
+
+            if (positiveButton is TextView) {
+                positiveButton.text = positiveButtonText
+            }
 
             clickIt {
                 positiveButtonListener?.invoke(dialog, dialogViewHolder)
@@ -80,9 +85,12 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
         }
 
         //取消按钮
-        dialogViewHolder.tv(R.id.negative_button)?.apply {
+        val negativeButton = dialogViewHolder.view(R.id.dialog_negative_button)
+        negativeButton?.apply {
             visibility = if (negativeButtonText == null) View.GONE else View.VISIBLE
-            text = negativeButtonText
+            if (negativeButton is TextView) {
+                negativeButton.text = negativeButtonText
+            }
 
             clickIt {
                 negativeButtonListener?.invoke(dialog, dialogViewHolder)
@@ -90,9 +98,13 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
         }
 
         //中立按钮
-        dialogViewHolder.tv(R.id.dialog_neutral_button)?.apply {
+        val neutralButton = dialogViewHolder.view(R.id.dialog_neutral_button)
+
+        neutralButton?.apply {
             visibility = if (neutralButtonText == null) View.GONE else View.VISIBLE
-            text = neutralButtonText
+            if (neutralButton is TextView) {
+                neutralButton.text = neutralButtonText
+            }
 
             clickIt {
                 neutralButtonListener?.invoke(dialog, dialogViewHolder)

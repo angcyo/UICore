@@ -32,13 +32,13 @@ abstract class BaseTouchBackDialogConfig(context: Context? = null) : DslDialogCo
         super.initDialogView(dialog, dialogViewHolder)
 
         //标题
-        dialogViewHolder.tv(R.id.title_view)?.apply {
+        dialogViewHolder.tv(R.id.dialog_title_view)?.apply {
             visibility = if (dialogTitle == null) View.GONE else View.VISIBLE
             text = dialogTitle
         }
 
         //消息体
-        dialogViewHolder.tv(R.id.message_view)?.apply {
+        dialogViewHolder.tv(R.id.dialog_message_view)?.apply {
             visibility = if (dialogMessage == null) View.GONE else View.VISIBLE
             text = dialogMessage
         }

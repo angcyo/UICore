@@ -77,7 +77,7 @@ open class WheelDialogConfig : BaseDialogConfig() {
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         super.initDialogView(dialog, dialogViewHolder)
 
-        dialogViewHolder.enable(R.id.positive_button, !wheelItems.isNullOrEmpty())
+        dialogViewHolder.enable(R.id.dialog_positive_button, !wheelItems.isNullOrEmpty())
 
         dialogViewHolder.v<WheelView>(R.id.lib_wheel_view)?.apply {
             _wheelView = this

@@ -187,7 +187,7 @@ open class OptionDialogConfig : BaseDialogConfig() {
 
         //确定按钮状态
         dialogViewHolder.enable(
-            R.id.positive_button,
+            R.id.dialog_positive_button,
             optionAnySelector || (isEnd && optionList.isNotEmpty())
         )
     }

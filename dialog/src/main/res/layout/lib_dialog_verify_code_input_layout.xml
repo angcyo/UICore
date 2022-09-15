@@ -8,11 +8,11 @@
     android:orientation="vertical">
 
     <include
-        android:id="@+id/title_layout"
+        android:id="@+id/dialog_title_layout"
         layout="@layout/lib_dialog_base_title_layout" />
 
     <View
-        android:id="@+id/title_line_view"
+        android:id="@+id/dialog_title_line_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/lib_line_px"
         android:background="@color/dialog_line" />
@@ -24,7 +24,7 @@
         android:maxHeight="400dp">
 
         <com.angcyo.widget.text.DslTextView
-            android:id="@+id/message_view"
+            android:id="@+id/dialog_message_view"
             style="@style/LibBodyTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

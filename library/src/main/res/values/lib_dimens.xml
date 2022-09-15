@@ -38,6 +38,8 @@
     <dimen name="lib_line">1dp</dimen>
 
     <dimen name="lib_icon_tip_size">25dp</dimen>
+    <!--标题栏上图标的大小-->
+    <dimen name="lib_icon_title_size">40dp</dimen>
     <dimen name="lib_drawable_padding">10dp</dimen>
 
     <dimen name="lib_spacing_extra">4dp</dimen>

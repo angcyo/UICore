@@ -79,11 +79,11 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
             dialogSelectorModel == ItemSelectorHelper.MODEL_MULTI
         ) {
             //选择模式
-            dialogViewHolder.enable(R.id.positive_button, false)
+            dialogViewHolder.enable(R.id.dialog_positive_button, false)
         } else {
             //隐藏多余的按钮
-            dialogViewHolder.gone(R.id.positive_button)
-            dialogViewHolder.gone(R.id.negative_button)
+            dialogViewHolder.gone(R.id.dialog_positive_button)
+            dialogViewHolder.gone(R.id.dialog_negative_button)
             dialogViewHolder.gone(R.id.dialog_neutral_button)
         }
 

@@ -9,11 +9,11 @@
     app:r_max_height="0.5sh">
 
     <include
-        android:id="@+id/title_layout"
+        android:id="@+id/dialog_title_layout"
         layout="@layout/lib_dialog_base_title_layout" />
 
     <View
-        android:id="@+id/title_line_view"
+        android:id="@+id/dialog_title_line_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/lib_line_px"
         android:background="@color/dialog_line" />
