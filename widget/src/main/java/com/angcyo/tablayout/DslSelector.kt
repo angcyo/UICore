@@ -197,7 +197,7 @@ open class DslSelector {
             needNotify = false
         }
 
-        if (needNotify) {
+        if (needNotify || reselect) {
             dslSelectIndex = selectorIndexList.lastOrNull() ?: -1
             if (notify) {
                 notifySelectChange(lastSelectorIndex ?: -1, reselect, fromUser)
