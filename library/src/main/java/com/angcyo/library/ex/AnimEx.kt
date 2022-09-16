@@ -19,6 +19,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import com.angcyo.library.L
 import com.angcyo.library.R
+import com.angcyo.library.animation.YRotateAnimation
 import com.angcyo.library.app
 import com.angcyo.library.component.MatrixEvaluator
 import com.angcyo.library.component.RAnimationListener
@@ -657,6 +658,26 @@ fun View.rotateYAnimator(
             animationMatrix = matrix
         }
     }
+}
+
+/**Y轴旋转动画*/
+fun View.rotateYAnimation(
+    from: Float = 0f,
+    to: Float = 180f,
+    config: YRotateAnimation.() -> Unit = {
+        duration = 1_000
+    }
+): Animation {
+    val animation = YRotateAnimation()
+    animation.from = from
+    animation.to = to
+    animation.repeatCount = ValueAnimator.INFINITE
+    animation.repeatMode = ValueAnimator.REVERSE
+
+    animation.config()
+
+    startAnimation(animation)
+    return animation
 }
 
 /**无限循环*/

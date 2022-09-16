@@ -1,6 +1,7 @@
 package com.angcyo.library.component
 
 import android.animation.LayoutTransition
+import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -39,10 +40,13 @@ class StateLayoutManager {
 
         group?.doOnPreDraw {
             if (info.clipAnim) {
-                rootView?.clipBoundsAnimatorFromLeft()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    rootView?.clipBoundsAnimatorFromLeft()
+                }
             }
             if (info.rotateAnim) {
-                imageView?.rotateYAnimator()
+                //imageView?.rotateYAnimator()
+                imageView?.rotateYAnimation()
             }
         }
     }
@@ -56,7 +60,9 @@ class StateLayoutManager {
             viewList.forEach {
                 updateStateLayout(it, info)
                 if (info.updateAnim) {
-                    it.clipBoundsAnimatorFromLeft()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        it.clipBoundsAnimatorFromLeft()
+                    }
                 }
             }
         }
@@ -79,7 +85,7 @@ class StateLayoutManager {
             rootView.cancelAnimator()
 
             //动画结束后, 移除view
-            if (info.clipAnim) {
+            if (info.clipAnim && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 rootView.clipBoundsAnimatorFromRightHide {
                     group?.removeView(rootView)
                 }
