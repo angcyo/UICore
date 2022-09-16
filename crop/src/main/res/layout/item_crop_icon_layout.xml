@@ -4,23 +4,23 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/lib_dpi"
+    android:layout_marginVertical="@dimen/lib_sdpi"
     android:background="@drawable/lib_theme_horizontal_gradient_selector"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingHorizontal="@dimen/lib_ldpi"
-    android:paddingBottom="@dimen/lib_sdpi">
+    android:paddingHorizontal="@dimen/lib_xhdpi"
+    android:paddingVertical="@dimen/lib_sdpi">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/lib_image_view"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:padding="@dimen/lib_sdpi"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:scaleType="fitCenter"
         tools:src="@drawable/crop_rotate_icon" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/lib_text_view"
-        style="@style/LibBodyTextStyle"
+        style="@style/LibSubTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/lib_theme_text_selector"

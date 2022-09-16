@@ -84,5 +84,6 @@
 
     <string name="canvas_photo">相册</string>
     <string name="preview_out_of_range">预览超出范围</string>
+    <string name="canvas_crop">剪裁</string>
 
 </resources>

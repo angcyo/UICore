@@ -20,7 +20,7 @@ class CropDialogConfig(context: Context? = null) : DslDialogConfig(context) {
     var cropBitmap: Bitmap? = null
 
     /**裁剪图片的回调*/
-    var onCropResultAction: (cropBitmap: Bitmap) -> Unit = {}
+    var onCropResultAction: (cropBitmap: Bitmap?) -> Unit = {}
 
     init {
         dialogLayoutId = R.layout.lib_crop_dialog_layout
@@ -44,6 +44,11 @@ class CropDialogConfig(context: Context? = null) : DslDialogConfig(context) {
             }
             dialog.dismiss()
         }
+    }
+
+    override fun onDialogCancel(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+        super.onDialogCancel(dialog, dialogViewHolder)
+        onCropResultAction(null)
     }
 
 }

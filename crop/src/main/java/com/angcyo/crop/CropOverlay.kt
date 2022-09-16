@@ -225,7 +225,7 @@ class CropOverlay(val cropDelegate: CropDelegate) {
             _isTouchInClipRect = false
         }
         //
-        handle = handle || rectScaleGestureHandler.onTouchEvent(event)
+        handle = rectScaleGestureHandler.onTouchEvent(event) || handle
         return handle
     }
 

@@ -50,10 +50,11 @@ class RectScaleGestureHandler {
             val point = acquireTempPointF()
             point.set(x, y)
             point.invertRotate(rotate, rect.centerX(), rect.centerY())
-            point.release()
 
             val px = point.x
             val py = point.y
+
+            point.release()//释放
 
             //先判断是否在4个角上
             if ((px - rect.left).absoluteValue <= threshold) {
