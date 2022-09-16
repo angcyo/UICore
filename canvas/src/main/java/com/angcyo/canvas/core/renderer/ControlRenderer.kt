@@ -20,6 +20,7 @@ import com.angcyo.canvas.utils.createPaint
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.library.ex.*
 import com.angcyo.library.unit.convertPixelToValueUnit
+import com.angcyo.library.unit.unitDecimal
 
 /**
  * 选中[IItemsRenderer]后, 用来绘制控制按钮的渲染器
@@ -228,10 +229,11 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
             val point = _tempPoint
             val value = canvasViewBox.calcDistanceValueWithOrigin(point)
 
+            val x = value.x.unitDecimal(2)
             val xUnit = canvasViewBox.valueUnit.formattedValueUnit(value.x)
             val yUnit = canvasViewBox.valueUnit.formattedValueUnit(value.y)
 
-            val text = "$xUnit x $yUnit"
+            val text = "$x * $yUnit"
 
             textWidth = sizePaint.textWidth(text)
             _textBounds.set(

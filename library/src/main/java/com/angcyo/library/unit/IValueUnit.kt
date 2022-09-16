@@ -34,11 +34,11 @@ interface IValueUnit {
 
     /**将value转换成对应单位的文本*/
     fun formattedValueUnit(value: Float): String
+}
 
-    /**保留小数点后几位*/
-    fun Float.unitDecimal(digit: Int = 2, fadedUp: Boolean = true): String {
-        return this.toDouble().decimal(digit, fadedUp)
-    }
+/**保留小数点后几位*/
+fun Float.unitDecimal(digit: Int = 2, fadedUp: Boolean = true): String {
+    return this.toDouble().decimal(digit, fadedUp)
 }
 
 /**[convertPixelToValue]
