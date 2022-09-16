@@ -23,6 +23,7 @@ import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.gesture.RectScaleGestureHandler
+import com.angcyo.library.isInEditMode
 
 /**
  *
@@ -110,7 +111,9 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
         //check
         if (reason.reason == Reason.REASON_USER && !canChangeBounds(getBounds())) {
-            L.w("不允许修改Bounds->${getBounds()}")
+            if (!isInEditMode) {
+                L.w("不允许修改Bounds->${getBounds()}")
+            }
             bounds.set(_oldBounds)
             return false
         }

@@ -25,7 +25,7 @@ class DoubleGestureDetector2(context: Context = app(), val action: (event: Motio
     var _touchTime = 0L
 
     init {
-        val configuration = ViewConfiguration.get(context)
+        //val configuration = ViewConfiguration.get(context)
         //touchSlop = configuration.scaledTouchSlop
         //doubleTapSlop = configuration.scaledDoubleTapSlop.toFloat()
     }

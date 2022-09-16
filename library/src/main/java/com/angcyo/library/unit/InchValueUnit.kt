@@ -3,6 +3,7 @@ package com.angcyo.library.unit
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import com.angcyo.library.app
+import com.angcyo.library.isPlaceholderApplication
 
 /**
  * 英制单位, 英寸
@@ -32,7 +33,11 @@ class InchValueUnit : IValueUnit {
      * 将1个单位的值, 转换成屏幕像素点数值
      * [TypedValue.COMPLEX_UNIT_MM]*/
     override fun convertValueToPixel(value: Float): Float {
-        val dm: DisplayMetrics = app().resources.displayMetrics
+        val app = app()
+        if (app.isPlaceholderApplication()) {
+            return value
+        }
+        val dm: DisplayMetrics = app.resources.displayMetrics
         //1毫米等于多少像素                             //21.176456
         //1英寸等于多少像素, 1英寸=2.54厘米=25.4毫米      //537.882
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, value, dm)

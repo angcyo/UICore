@@ -75,6 +75,12 @@ fun app(): Context = Library.application
         Log.e("PlaceholderApplication", "application 未初始化")
     }
 
+/**Ide编辑模式*/
+val isInEditMode: Boolean
+    get() = app().isPlaceholderApplication()
+
+fun Context?.isPlaceholderApplication() = this is PlaceholderApplication
+
 fun appLifecycleOwner(): LifecycleOwner? =
     if (Library.application is LifecycleOwner) Library.application as LifecycleOwner else null
 
