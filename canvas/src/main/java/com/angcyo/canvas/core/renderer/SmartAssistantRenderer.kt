@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import androidx.core.graphics.withMatrix
 import androidx.core.graphics.withTranslation
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.SmartAssistant
@@ -25,6 +26,13 @@ class SmartAssistantRenderer(val smartAssistant: SmartAssistant, canvasView: ICa
     var strokeWidth = 1 * dp
 
     override fun render(canvas: Canvas) {
+        val view = canvasView
+        if (view is CanvasDelegate) {
+            if (!view.isTouchHold) {
+                //手势没有按下时, 不绘制
+                return
+            }
+        }
         val scale = canvasViewBox.getScaleX()
         paint.strokeWidth = strokeWidth / scale //抵消坐标系的缩放
         canvas.withMatrix(canvasViewBox.matrix) {

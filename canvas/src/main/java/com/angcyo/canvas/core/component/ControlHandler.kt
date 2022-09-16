@@ -46,13 +46,13 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     val controlPointList = mutableListOf<ControlPoint>()
 
     /**控制点的大小, 背景圆的直径*/
-    var controlPointSize = 22 * dp
+    var controlPointSize = 24 * dp
 
     /**图标padding的大小*/
     var controlPointPadding: Int = 4 * dpi
 
     /**相对于目标点的偏移距离*/
-    var controlPointOffset = 2 * dp
+    var controlPointOffset = -4 * dp
 
     /**手指移动多少距离后, 才算作移动了*/
     var translateThreshold = 3

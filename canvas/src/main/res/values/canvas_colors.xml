@@ -3,7 +3,7 @@
     <!--画布主题色-->
     <color name="canvas_primary">#EAC632</color>
     <!--画布选择框颜色-->
-    <color name="canvas_select">#719bcd</color>
+    <color name="canvas_select">@color/colorAccent</color>
     <!--画布item包裹布局颜色-->
     <color name="canvas_item_layout">#f5f5f5</color>
     <!--画布item 控制包裹布局颜色-->

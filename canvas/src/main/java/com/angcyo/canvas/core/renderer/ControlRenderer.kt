@@ -40,11 +40,11 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
         textSize = 9 * dp
     }
 
-    /**用来绘制控制点图标的笔*/
-    val controlPointPaint = createPaint(Color.GRAY, Paint.Style.FILL)
+    /**用来绘制控制点图标的背景笔*/
+    val controlPointPaint = createPaint("#333333".toColor(), Paint.Style.FILL)
 
-    /**绘制按下的控制点*/
-    val controlTouchPointPaint = createPaint(Color.DKGRAY, Paint.Style.FILL)
+    /**绘制按下的控制点背景*/
+    val controlTouchPointPaint = createPaint(_color(R.color.transparent50), Paint.Style.FILL)
 
     /**是否需要绘制控制点*/
     var drawControlPoint: Boolean = true
