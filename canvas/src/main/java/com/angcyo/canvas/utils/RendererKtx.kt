@@ -67,6 +67,7 @@ fun BaseItemRenderer<*>.getPathList(): List<Path>? {
 /**添加一个绘制[text]渲染器*/
 fun CanvasDelegate.addPictureTextRender(text: String): PictureTextItem {
     val renderer = PictureTextItemRenderer(this)
+    renderer.paint.style = Paint.Style.FILL//fill
     val item = renderer.setRenderText(text)
     addCentreItemRenderer(renderer, Strategy.normal)
     selectedItem(renderer)

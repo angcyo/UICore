@@ -29,7 +29,7 @@
     <dimen name="lib_radius_common">12dp</dimen>
     <dimen name="lib_radius_common2">15dp</dimen>
     <!--25dp就可以实现圆形-->
-    <dimen name="lib_radius_big">25dp</dimen>
+    <dimen name="lib_radius_big">24dp</dimen>
     <!--45dp在有些版本上会出现菱形, 而非圆形-->
     <dimen name="lib_radius_max">45dp</dimen>
     <dimen name="lib_elevation">2dp</dimen>

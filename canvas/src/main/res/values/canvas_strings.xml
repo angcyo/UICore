@@ -9,6 +9,7 @@
     <!--libcanvas-->
     <string name="canvas_image">图片</string>
     <string name="canvas_text">文本</string>
+    <string name="canvas_input_text">输入文本</string>
     <string name="canvas_shapes">形状</string>
     <string name="canvas_material">素材</string>
     <string name="canvas_doodle">涂鸦</string>

@@ -201,14 +201,20 @@ fun TextView?.setSingleLineMode(singleLine: Boolean = true, maxLength: Int = -1)
     }
 }
 
+/**添加一个过滤器[filter], 自动去重*/
 fun TextView.addFilter(filter: InputFilter) {
     val oldFilters = filters
+    if (oldFilters.find { it == filter } != null) {
+        //找到相同的对象
+        return
+    }
     val newFilters = arrayOfNulls<InputFilter>(oldFilters.size + 1)
     System.arraycopy(oldFilters, 0, newFilters, 0, oldFilters.size)
     newFilters[oldFilters.size] = filter
     filters = newFilters
 }
 
+/**强制指定一个过滤器[filter]*/
 fun TextView.setFilter(filter: InputFilter, update: Boolean = true) {
     val newFilters = arrayOfNulls<InputFilter>(1)
     newFilters[0] = filter

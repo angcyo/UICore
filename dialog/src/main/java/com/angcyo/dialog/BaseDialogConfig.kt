@@ -63,12 +63,15 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
 
         //标题栏控制
         dialogViewHolder.visible(R.id.dialog_title_layout, dialogTitle != null)
-        dialogViewHolder.gone(R.id.dialog_title_line_view, dialogTitle == null || hideDialogTitleLine)
+        dialogViewHolder.gone(
+            R.id.dialog_title_line_view,
+            dialogTitle == null || hideDialogTitleLine
+        )
 
         initControlLayout(dialog, dialogViewHolder)
     }
 
-    /**[initDialogView]*/
+    /**in [initDialogView]*/
     open fun initControlLayout(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         //确定按钮
         val positiveButton = dialogViewHolder.view(R.id.dialog_positive_button)

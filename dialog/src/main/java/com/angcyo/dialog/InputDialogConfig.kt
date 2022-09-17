@@ -112,7 +112,9 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
         dialogLayoutId = R.layout.lib_dialog_input_layout
         positiveButtonListener = { dialog, dialogViewHolder ->
             val result = dialogViewHolder.ev(R.id.edit_text_view).string()
-            if (onInputResult.invoke(dialog, result)) {
+            if (!canInputEmpty && result.isBlank()) {
+                //空
+            } else if (onInputResult.invoke(dialog, result)) {
                 //被拦截
             } else {
                 inputHistoryHawkKey?.let {
@@ -134,11 +136,11 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
         super.initDialogView(dialog, dialogViewHolder)
 
         val editView = dialogViewHolder.ev(R.id.edit_text_view)
-        val indicatorView = dialogViewHolder.v<TextIndicator>(R.id.single_text_indicator_view)
-        val positiveButton = dialogViewHolder.view(R.id.dialog_positive_button)
 
-        _configView(editView, indicatorView, positiveButton)
+        //edit
+        updateEditView(dialogViewHolder)
 
+        //
         if (showSoftInput) {
             dialogViewHolder.postDelay(showSoftInputDelay) { editView?.showSoftInput() }
         }
@@ -172,6 +174,16 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
 
     override fun onDialogDestroy(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         super.onDialogDestroy(dialog, dialogViewHolder)
+    }
+
+    /**更新输入框属性*/
+    fun updateEditView(dialogViewHolder: DslViewHolder) {
+        val editView = dialogViewHolder.ev(R.id.edit_text_view)
+        val indicatorView = dialogViewHolder.v<TextIndicator>(R.id.single_text_indicator_view)
+        val positiveButton = dialogViewHolder.view(R.id.dialog_positive_button)
+
+        editView?.filters = arrayOf() //清空
+        _configView(editView, indicatorView, positiveButton)
     }
 
     fun _configView(editView: EditText?, indicatorView: TextIndicator?, positiveButton: View?) {
