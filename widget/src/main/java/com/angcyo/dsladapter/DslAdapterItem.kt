@@ -281,6 +281,9 @@ open class DslAdapterItem : LifecycleOwner {
     /**唯一标识此item的值*/
     var itemTag: String? = null
 
+    /**自定义的标识*/
+    var itemFlag: Int = 0
+
     /**异常标识, 自定义数据*/
     var itemThrowable: Throwable? = null
 

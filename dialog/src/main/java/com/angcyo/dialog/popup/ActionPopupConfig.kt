@@ -7,6 +7,7 @@ import android.widget.TextView
 import com.angcyo.dialog.R
 import com.angcyo.dialog.TargetWindow
 import com.angcyo.dialog.WindowClickAction
+import com.angcyo.library.annotation.DSL
 import com.angcyo.library.ex.find
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
@@ -53,7 +54,8 @@ class ActionPopupConfig : AnchorPopupConfig() {
 }
 
 /** 展示一个 弹窗菜单 popup window */
-fun Context.actionPopupWindow(anchor: View?, config: ActionPopupConfig.() -> Unit): Any {
+@DSL
+fun Context.actionPopupWindow(anchor: View?, config: ActionPopupConfig.() -> Unit): TargetWindow {
     val popupConfig = ActionPopupConfig()
     popupConfig.anchor = anchor
 

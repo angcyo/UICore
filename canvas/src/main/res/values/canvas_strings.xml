@@ -2,8 +2,8 @@
 <resources>
     <string name="canvas_width">宽度</string>
     <string name="canvas_height">高度</string>
-    <string name="canvas_axis_x">X轴位置</string>
-    <string name="canvas_axis_y">Y轴位置</string>
+    <string name="canvas_axis_x">X轴</string>
+    <string name="canvas_axis_y">Y轴</string>
     <string name="canvas_rotate">旋转</string>
 
     <!--libcanvas-->
@@ -71,10 +71,11 @@
     <string name="canvas_preview">预览</string>
     <string name="canvas_regulate">调整</string>
     <string name="canvas_confirm">确定</string>
-    <string name="canvas_forward">前进</string>
-    <string name="canvas_backward">后退</string>
+    <string name="canvas_forward">上移一层</string>
+    <string name="canvas_backward">下移一层</string>
     <string name="canvas_front">置为顶层</string>
     <string name="canvas_back">置为底层</string>
+    <string name="canvas_sort">排序</string>
 
     <string name="canvas_import_font">导入</string>
     <string name="canvas_invalid_font">无效的字体</string>

@@ -11,6 +11,7 @@ import com.angcyo.dialog.PopupConfig
 import com.angcyo.dialog.R
 import com.angcyo.dialog.TargetWindow
 import com.angcyo.dsladapter.getViewRect
+import com.angcyo.library.annotation.DSL
 import com.angcyo.library.ex.adjustOrder
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.mH
@@ -102,7 +103,8 @@ open class AnchorPopupConfig : PopupConfig() {
 }
 
 /**Dsl*/
-fun Context.anchorPopupWindow(anchor: View?, config: AnchorPopupConfig.() -> Unit): Any {
+@DSL
+fun Context.anchorPopupWindow(anchor: View?, config: AnchorPopupConfig.() -> Unit): TargetWindow {
     val popupConfig = AnchorPopupConfig()
     popupConfig.anchor = anchor
 

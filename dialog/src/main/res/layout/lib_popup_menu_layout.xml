@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/lib_dialog_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/lib_white_round_shadow_common"
+    android:clipChildren="true"
+    android:elevation="@dimen/lib_elevation"
+    android:orientation="vertical"
+    app:r_clip_radius="@dimen/lib_radius_common2"
+    app:r_clip_to_outline="true"
+    app:r_clip_type="CLIP_TYPE_ROUND"
+    app:r_max_height="0.5sh">
+
+    <com.angcyo.widget.recycler.DslRecyclerView
+        android:id="@+id/lib_recycler_view"
+        style="@style/LibInnerRecyclerViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</com.angcyo.widget.layout.RFrameLayout>

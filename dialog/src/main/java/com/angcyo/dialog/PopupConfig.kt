@@ -19,6 +19,7 @@ import com.angcyo.dsladapter.getViewRect
 import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
+import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.*
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.*
@@ -133,7 +134,8 @@ open class PopupConfig {
     var exactlyHeight = false
 
     /**
-     * 动画样式, 0 表示没有动画, -1 表示 默认动画.
+     * 动画样式, 0:表示没有动画, -1:表示默认动画.
+     * [android.widget.PopupWindow.setAnimationStyle]
      * */
     var animationStyle = R.style.LibPopupAnimation
 
@@ -176,6 +178,7 @@ open class PopupConfig {
     var _container: TargetWindow? = null
 
     /**显示, 根据条件, 选择使用[PopupWindow]or[Window]载体*/
+    @CallPoint
     open fun show(context: Context): TargetWindow {
         return if (showWithActivity && context is Activity) {
             showWidthActivity(context).apply {
@@ -191,6 +194,7 @@ open class PopupConfig {
     //<editor-fold desc="PopupWindow">
 
     /**显示[PopupWindow]*/
+    @CallPoint
     open fun showWithPopupWindow(context: Context): PopupWindow {
         val window = if (popupStyleAttr != undefined_res) {
             try {
