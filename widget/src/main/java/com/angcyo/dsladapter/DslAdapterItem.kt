@@ -167,7 +167,7 @@ open class DslAdapterItem : LifecycleOwner {
     }
 
     /**更新选项*/
-    open fun updateItemSelect(
+    open fun  updateItemSelect(
         select: Boolean,
         selectorParams: SelectorParams = SelectorParams(
             this,
