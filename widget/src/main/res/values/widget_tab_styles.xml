@@ -31,4 +31,24 @@
         <item name="tab_indicator_style">STYLE_NONE</item>
         <item name="tab_item_is_equ_width">true</item>
     </style>
+
+    <!--Segment样式-->
+    <style name="LibTabSegmentStyle">
+        <!--去掉指示器-->
+        <item name="tab_indicator_style">STYLE_NONE</item>
+        <!--选中/未选中颜色-->
+        <item name="tab_select_color">@color/lib_white</item>
+        <item name="tab_deselect_color">@color/colorAccent</item>
+        <!--边框圆角/颜色/描边/填充-->
+        <item name="tab_border_radius_size">@dimen/lib_radius_max</item>
+        <item name="tab_border_solid_color">@color/lib_white</item>
+        <item name="tab_border_stroke_color">@color/colorAccent</item>
+        <!--激活边框-->
+        <item name="tab_draw_border">true</item>
+        <!--等宽-->
+        <item name="tab_item_is_equ_width">true</item>
+        <!--激活分割线-->
+        <item name="tab_draw_divider">true</item>
+    </style>
+
 </resources>

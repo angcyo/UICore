@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,19 +7,12 @@
 
     <com.angcyo.tablayout.DslTabLayout
         android:id="@+id/lib_tab_layout"
+        style="@style/LibTabSegmentStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginHorizontal="@dimen/lib_padding_left"
         android:minHeight="40dp"
-        app:tab_border_radius_size="45dp"
-        app:tab_border_solid_color="@color/lib_white"
-        app:tab_border_stroke_color="@color/colorAccent"
-        app:tab_deselect_color="@color/colorAccent"
-        app:tab_draw_border="true"
-        app:tab_indicator_style="STYLE_NONE"
-        app:tab_item_is_equ_width="true"
-        app:tab_select_color="@color/lib_white"
         tools:layout_height="@dimen/lib_item_min_height"
         tools:tab_default_index="1">
 

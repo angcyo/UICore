@@ -11,7 +11,7 @@ import com.angcyo.library.ex.dpi
 import com.angcyo.widget.R
 
 /**
- * 边框
+ * 边框绘制, 支持首尾圆角中间不圆角的样式
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/11/27
