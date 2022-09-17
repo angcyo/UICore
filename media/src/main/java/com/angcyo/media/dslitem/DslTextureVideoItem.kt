@@ -10,7 +10,7 @@ import com.angcyo.library.app
 import com.angcyo.library.ex.fileUri
 import com.angcyo.library.ex.isHttpScheme
 import com.angcyo.library.ex.loadUrl
-import com.angcyo.media.MediaProgressHelper
+import com.angcyo.media.MediaHelper
 import com.angcyo.media.R
 import com.angcyo.media.video.widget.TextureVideoView
 import com.angcyo.widget.DslViewHolder
@@ -82,7 +82,7 @@ open class DslTextureVideoItem : DslBaseDownloadItem() {
             visibility = View.VISIBLE
         }
         itemHolder.visible(R.id.play_view)
-        MediaProgressHelper.resetLayout(itemHolder) { value, fraction ->
+        MediaHelper.resetLayout(itemHolder) { value, fraction ->
             videoView?.seekToFraction(fraction)
         }
 
@@ -122,7 +122,7 @@ open class DslTextureVideoItem : DslBaseDownloadItem() {
 
             override fun onVideoPlayProgress(mp: MediaPlayer, progress: Int, duration: Int) {
                 super.onVideoPlayProgress(mp, progress, duration)
-                MediaProgressHelper.showMediaProgressView(
+                MediaHelper.showMediaProgressView(
                     itemHolder, progress.toLong(),
                     duration.toLong()
                 )
@@ -181,7 +181,7 @@ open class DslTextureVideoItem : DslBaseDownloadItem() {
     override fun onDownloadStart(itemHolder: DslViewHolder?, task: DownloadTask) {
         super.onDownloadStart(itemHolder, task)
         //开始下载视频
-        MediaProgressHelper.showMediaLoadingView(itemHolder)
+        MediaHelper.showMediaLoadingView(itemHolder)
     }
 
     override fun onDownloadFinish(
@@ -192,7 +192,7 @@ open class DslTextureVideoItem : DslBaseDownloadItem() {
     ) {
         super.onDownloadFinish(itemHolder, task, cause, error)
         //下载完成
-        MediaProgressHelper.showMediaLoadingView(itemHolder, false)
+        MediaHelper.showMediaLoadingView(itemHolder, false)
     }
 
     /**播放视频*/

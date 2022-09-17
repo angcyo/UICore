@@ -11,7 +11,7 @@
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:layout_gravity="center"
-        android:background="@drawable/media_record_ui_bg">
+        android:background="@drawable/record_record_ui_bg">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/record_tip_layout"
@@ -30,7 +30,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/record_anim_view"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/media_record_voice" />
+                app:srcCompat="@drawable/record_record_voice" />
 
             <com.angcyo.media.audio.widget.RecordAnimView
                 android:id="@+id/record_anim_view"
@@ -61,7 +61,7 @@
             android:layout_height="80dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
-            app:srcCompat="@drawable/media_record_undo"
+            app:srcCompat="@drawable/record_record_undo"
             tools:visibility="gone" />
 
         <TextView
@@ -76,7 +76,7 @@
             android:paddingRight="10dp"
             android:paddingBottom="6dp"
             android:textColor="@color/lib_white"
-            tools:background="@drawable/media_cancel_record_tip_shape"
+            tools:background="@drawable/record_cancel_record_tip_shape"
             tools:text="上滑取消录制" />
 
     </FrameLayout>

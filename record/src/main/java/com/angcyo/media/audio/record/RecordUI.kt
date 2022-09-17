@@ -2,15 +2,14 @@ package com.angcyo.media.audio.record
 
 import android.app.Activity
 import android.graphics.Rect
-import android.text.TextUtils
 import android.view.*
 import android.widget.TextView
-import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.find
-import com.angcyo.media.R
+import com.angcyo.media.MediaHelper
 import com.angcyo.media.audio.widget.RecordAnimView
+import com.angcyo.record.R
 import com.angcyo.widget.base.frameParams
 
 /**
@@ -24,30 +23,6 @@ import com.angcyo.widget.base.frameParams
 class RecordUI {
 
     companion object {
-
-        /** 从url中, 获取录制的音频时长, 对应的数字 */
-        fun getRecordTime(url: String?): Int {
-            if (TextUtils.isEmpty(url)) {
-                return -1
-            }
-            var result = -1
-            try {
-                val end =
-                    url!!.split("_t_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
-                val index = end.indexOf(".")
-                result = if (index != -1) {
-                    Integer.parseInt(end.substring(0, index))
-                } else {
-                    Integer.parseInt(end)
-                }
-            } catch (e: Exception) {
-                //e.printStackTrace()
-                L.w("$url 无时间参数信息`_t_`")
-            }
-
-            return result
-        }
-
         /**
          * 00:00的格式输出, 如果有小时: 01:00:00
          */
@@ -262,7 +237,7 @@ class RecordUI {
             val tipImageCancelView: View = it.findViewById(R.id.record_cancel_tip_image_view)
             if (show) {
                 tipView.text = "释放手指, 取消录制"
-                tipView.setBackgroundResource(R.drawable.media_cancel_record_tip_shape)
+                tipView.setBackgroundResource(R.drawable.record_cancel_record_tip_shape)
                 tipImageView.visibility = View.GONE
                 tipImageCancelView.visibility = View.VISIBLE
             } else {
@@ -297,7 +272,7 @@ class RecordUI {
 
 /**返回毫秒时间*/
 fun String?.getRecordTime(): Long {
-    val time = RecordUI.getRecordTime(this)
+    val time = MediaHelper.getRecordTime(this)
 
     return if (time > 0) {
         time * 1_000L

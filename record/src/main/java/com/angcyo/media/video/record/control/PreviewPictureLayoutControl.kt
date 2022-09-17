@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.view.View
 import android.widget.ImageView
 import com.angcyo.library.ex.dp
-import com.angcyo.media.R
+import com.angcyo.record.R
 
 /**
  * Email:angcyo@126.com

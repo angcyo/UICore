@@ -18,13 +18,13 @@ import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.fileNameUUID
 import com.angcyo.library.utils.filePath
-import com.angcyo.media.R
 import com.angcyo.media.video.record.control.PreviewPictureLayoutControl
 import com.angcyo.media.video.record.control.PreviewVideoLayoutControl
 import com.angcyo.media.video.record.inner.RecordVideoCallback
 import com.angcyo.media.video.record.inner.RecordVideoControl
 import com.angcyo.media.video.record.inner.RecordVideoInterface
 import com.angcyo.media.video.record.inner.SizeSurfaceView
+import com.angcyo.record.R
 import com.angcyo.widget.layout.ExpandRecordLayout
 import java.io.File
 

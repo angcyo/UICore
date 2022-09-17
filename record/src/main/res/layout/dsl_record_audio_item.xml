@@ -36,7 +36,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/form_recycler_view"
-        tools:drawableLeft="@drawable/media_record_voice"
+        tools:drawableLeft="@drawable/record_record_voice"
         tools:text="长按输入语音" />
 
 </LinearLayout>

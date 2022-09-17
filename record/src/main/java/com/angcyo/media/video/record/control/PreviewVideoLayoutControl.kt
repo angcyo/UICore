@@ -3,8 +3,8 @@ package com.angcyo.media.video.record.control
 import android.view.View
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.toUri
-import com.angcyo.media.R
 import com.angcyo.media.video.widget.TextureVideoView
+import com.angcyo.record.R
 
 /**
  * Email:angcyo@126.com

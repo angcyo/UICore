@@ -8,8 +8,8 @@ import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.elseNull
 import com.angcyo.library.ex.loadUrl
+import com.angcyo.media.MediaHelper
 import com.angcyo.media.R
-import com.angcyo.media.audio.record.RecordUI
 import com.angcyo.media.audio.widget.VoiceView
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
@@ -56,7 +56,7 @@ open class DslPlayAudioItem : DslBaseAudioItem() {
         //缓存时长, 先从路径中获取, 再从流中获取
         if (itemAudioDuration == -1L) {
             itemAudioUri?.let {
-                itemAudioDuration = RecordUI.getRecordTime(it.loadUrl()).run {
+                itemAudioDuration = MediaHelper.getRecordTime(it.loadUrl()).run {
                     if (this > 0) {
                         this * 1_000L
                     } else {

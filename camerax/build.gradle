@@ -25,6 +25,7 @@ dependencies {
     implementation project(allModule.dslitem)
     implementation project(allModule.core)
     implementation project(allModule.media)
+    implementation project(allModule.record)
 
     // Machine learning for mobile developers 机器学习
 

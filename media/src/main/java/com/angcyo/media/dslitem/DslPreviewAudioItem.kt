@@ -1,7 +1,7 @@
 package com.angcyo.media.dslitem
 
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.media.MediaProgressHelper
+import com.angcyo.media.MediaHelper
 import com.angcyo.media.R
 import com.angcyo.media.audio.SimplePlayerListener
 import com.angcyo.widget.DslViewHolder
@@ -28,14 +28,14 @@ open class DslPreviewAudioItem : DslBaseAudioItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
-        MediaProgressHelper.resetLayout(itemHolder) { value, fraction ->
+        MediaHelper.resetLayout(itemHolder) { value, fraction ->
             _player.playSeekToFraction(fraction)
         }
 
         _player.onPlayListener = object : SimplePlayerListener() {
             override fun onPlayProgress(progress: Int, duration: Int) {
                 super.onPlayProgress(progress, duration)
-                MediaProgressHelper.showMediaProgressView(
+                MediaHelper.showMediaProgressView(
                     itemHolder,
                     progress.toLong(),
                     duration.toLong()
@@ -66,7 +66,7 @@ open class DslPreviewAudioItem : DslBaseAudioItem() {
     override fun onDownloadStart(itemHolder: DslViewHolder?, task: DownloadTask) {
         super.onDownloadStart(itemHolder, task)
         //开始下载视频
-        MediaProgressHelper.showMediaLoadingView(itemHolder)
+        MediaHelper.showMediaLoadingView(itemHolder)
     }
 
     override fun onDownloadFinish(
@@ -77,6 +77,6 @@ open class DslPreviewAudioItem : DslBaseAudioItem() {
     ) {
         super.onDownloadFinish(itemHolder, task, cause, error)
         //下载完成
-        MediaProgressHelper.showMediaLoadingView(itemHolder, false)
+        MediaHelper.showMediaLoadingView(itemHolder, false)
     }
 }

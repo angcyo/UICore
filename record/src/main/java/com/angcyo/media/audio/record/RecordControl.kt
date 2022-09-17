@@ -1,6 +1,7 @@
 package com.angcyo.media.audio.record
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.MotionEvent
 import android.view.View
@@ -37,6 +38,7 @@ open class RecordControl {
     /**
      * 监听那个view的事件, 触发录制
      * */
+    @SuppressLint("ClickableViewAccessibility")
     open fun wrap(
         view: View?,
         activity: Activity?,

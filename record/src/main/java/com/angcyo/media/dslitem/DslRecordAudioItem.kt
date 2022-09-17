@@ -11,8 +11,8 @@ import com.angcyo.library.ex.*
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.library.model.loadUri
 import com.angcyo.library.toastQQ
-import com.angcyo.media.R
 import com.angcyo.media.audio.record.RecordControl
+import com.angcyo.record.R
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.span.span
@@ -31,7 +31,7 @@ open class DslRecordAudioItem : DslNestedRecyclerItem() {
     var itemRecordText: CharSequence? = span {
         drawable {
             backgroundDrawable =
-                _drawable(R.drawable.media_record_voice)?.color(_color(R.color.media_audio_tip_color))
+                _drawable(R.drawable.record_record_voice)?.color(_color(R.color.media_audio_tip_color))
         }
         append("长按录制语音")
     }

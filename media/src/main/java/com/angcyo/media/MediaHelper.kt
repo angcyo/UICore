@@ -1,5 +1,7 @@
 package com.angcyo.media
 
+import android.text.TextUtils
+import com.angcyo.library.L
 import com.angcyo.library.ex.toElapsedTime
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.progress.DslSeekBar
@@ -13,8 +15,32 @@ import kotlin.math.max
  * @date 2020/02/24
  */
 
-object MediaProgressHelper {
+object MediaHelper {
 
+    /** 从url中, 获取录制的音频时长, 对应的数字 */
+    fun getRecordTime(url: String?): Int {
+        if (TextUtils.isEmpty(url)) {
+            return -1
+        }
+        var result = -1
+        try {
+            val end =
+                url!!.split("_t_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+            val index = end.indexOf(".")
+            result = if (index != -1) {
+                Integer.parseInt(end.substring(0, index))
+            } else {
+                Integer.parseInt(end)
+            }
+        } catch (e: Exception) {
+            //e.printStackTrace()
+            L.w("$url 无时间参数信息`_t_`")
+        }
+
+        return result
+    }
+
+    /**重置布局*/
     fun resetLayout(itemHolder: DslViewHolder?, onSeekTo: (value: Int, fraction: Float) -> Unit) {
         showMediaLoadingView(itemHolder, false)
         itemHolder?.v<DslSeekBar>(R.id.lib_seek_bar)?.setProgress(0, 0, 0)
@@ -47,7 +73,7 @@ object MediaProgressHelper {
         itemHolder?.tv(R.id.left_text_view)?.text = progress.toElapsedTime(pattern, units = units)
         val maxProgress = max(1, duration)
         itemHolder?.tv(R.id.right_text_view)?.text =
-                maxProgress.toElapsedTime(pattern, units = units)
+            maxProgress.toElapsedTime(pattern, units = units)
 
         itemHolder?.v<DslSeekBar>(R.id.lib_seek_bar)?.run {
             if (!isTouchDown) {

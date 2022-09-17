@@ -14,6 +14,7 @@ dependencies {
     api project(allModule.viewmodel)
     api project(allModule.camera)
     api project(allModule.pager)
+    implementation project(allModule.record)
 
     //https://mvnrepository.com/artifact/androidx.loader/loader
     api "androidx.loader:loader:1.1.0"

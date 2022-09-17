@@ -9,7 +9,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.animation.LinearInterpolator
 import com.angcyo.library.ex.getColor
-import com.angcyo.media.R
+import com.angcyo.record.R
 import java.util.*
 
 /**
