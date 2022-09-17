@@ -19,10 +19,7 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/lib_title_back_view"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_vertical"
-            android:padding="8dp"
+            style="@style/LibTitleIcoStyle"
             app:srcCompat="@drawable/dialog_back" />
 
         <androidx.appcompat.widget.AppCompatTextView
