@@ -49,7 +49,7 @@ open class PopupTipConfig : PopupConfig() {
         gravity = Gravity.LEFT or Gravity.TOP
 
         //必须指定
-        layoutId
+        popupLayoutId
     }
 
     override fun showWithPopupWindow(context: Context): PopupWindow {
@@ -97,7 +97,7 @@ fun Context.popupTipWindow(
     config: PopupTipConfig.() -> Unit
 ): TargetWindow {
     val popupConfig = PopupTipConfig()
-    popupConfig.layoutId = layoutId
+    popupConfig.popupLayoutId = layoutId
     popupConfig.anchor = anchor
     popupConfig.config()
     return popupConfig.show(this)

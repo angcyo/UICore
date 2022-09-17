@@ -37,7 +37,7 @@ open class MenuPopupConfig : PopupConfig() {
 
     init {
         animationStyle = R.style.LibActionPopupAnimation
-        layoutId = R.layout.lib_popup_menu_layout
+        popupLayoutId = R.layout.lib_popup_menu_layout
         autoOffset = true
         autoOffsetCenterInAnchor = true
 
@@ -51,7 +51,7 @@ open class MenuPopupConfig : PopupConfig() {
         viewHolder._rv(R.id.lib_recycler_view)?.apply {
             _recyclerView = this
             renderDslAdapter {
-                renderAdapterAction()
+                initRecyclerView(window, viewHolder, this@apply, this)
 
                 //托管itemClick
                 wrapItemClick(window)
@@ -62,6 +62,16 @@ open class MenuPopupConfig : PopupConfig() {
         viewHolder.itemView.clipBoundsAnimator {
             //no op
         }
+    }
+
+    /**初始化列表*/
+    open fun initRecyclerView(
+        window: TargetWindow,
+        viewHolder: DslViewHolder,
+        recyclerView: DslRecyclerView,
+        adapter: DslAdapter
+    ) {
+        renderAdapterAction(adapter)
     }
 
     /**自动销毁[window]*/

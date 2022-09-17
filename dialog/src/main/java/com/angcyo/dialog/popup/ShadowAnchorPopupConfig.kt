@@ -19,7 +19,7 @@ open class ShadowAnchorPopupConfig : AnchorPopupConfig() {
     var contentLayoutId: Int = -1
 
     init {
-        layoutId = R.layout.lib_popup_shadow_anchor_layout
+        popupLayoutId = R.layout.lib_popup_shadow_anchor_layout
         triangleMinMargin = 22 * dpi
         minHorizontalOffset = 0
         yoff = 2 * dpi

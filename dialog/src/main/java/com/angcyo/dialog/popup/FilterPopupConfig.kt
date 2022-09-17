@@ -49,7 +49,7 @@ class FilterPopupConfig : FullPopupConfig() {
         }
 
     init {
-        layoutId = R.layout.lib_popup_filter_layout
+        popupLayoutId = R.layout.lib_popup_filter_layout
     }
 
     override fun initLayout(window: Any, viewHolder: DslViewHolder) {

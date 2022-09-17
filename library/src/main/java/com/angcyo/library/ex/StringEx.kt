@@ -497,7 +497,9 @@ fun String?.isTextMimeType(): Boolean {
     return this?.startsWith("text", true) ?: false
 }
 
-/**是否是字体*/
+/**是否是字体
+ * https://developer.android.com/guide/topics/resources/font-resource?hl=zh-cn
+ * */
 fun String?.isFontType(): Boolean {
     if (mimeType()?.startsWith("font", true) == true) {
         return true

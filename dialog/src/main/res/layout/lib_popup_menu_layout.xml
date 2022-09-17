@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.angcyo.widget.layout.RFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/lib_dialog_root_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -11,7 +12,8 @@
     app:r_clip_radius="@dimen/lib_radius_common2"
     app:r_clip_to_outline="true"
     app:r_clip_type="CLIP_TYPE_ROUND"
-    app:r_max_height="0.5sh">
+    app:r_max_height="0.5sh"
+    tools:layout_margin="40dp">
 
     <com.angcyo.widget.recycler.DslRecyclerView
         android:id="@+id/lib_recycler_view"

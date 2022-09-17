@@ -33,8 +33,8 @@ open class FullPopupConfig : PopupConfig() {
     override fun createContentView(context: Context): View? {
         val rootLayout = FrameLayout(context)
         rootLayout.layoutParams = FrameLayout.LayoutParams(-1, -1)
-        if (layoutId != -1) {
-            LayoutInflater.from(context).inflate(layoutId, rootLayout, true)
+        if (popupLayoutId != -1) {
+            LayoutInflater.from(context).inflate(popupLayoutId, rootLayout, true)
         } else {
             rootLayout.addView(contentView)
         }

@@ -4,8 +4,8 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.widget.LinearLayout
-import com.angcyo.canvas.TypefaceInfo
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.canvas.utils.FontManager
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
@@ -26,23 +26,6 @@ class PictureTextItem(
 ) : PictureDrawableItem() {
 
     companion object {
-
-        /**默认的字体列表*/
-        val DEFAULT_TYPEFACE_LIST = mutableListOf<TypefaceInfo>().apply {
-            //系统默认字体
-            //typefaceItem("normal", Typeface.DEFAULT)
-            //typefaceItem("sans", Typeface.SANS_SERIF)
-            add(TypefaceInfo("serif", Typeface.SERIF))
-            add(TypefaceInfo("Default-Normal", Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)))
-            add(TypefaceInfo("Default-Bold", Typeface.create(Typeface.DEFAULT, Typeface.BOLD)))
-            add(TypefaceInfo("Default-Italic", Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)))
-            add(
-                TypefaceInfo(
-                    "Default-Bold-Italic",
-                    Typeface.create(Typeface.DEFAULT, Typeface.BOLD_ITALIC)
-                )
-            )
-        }
 
         /**字体样式, 无*/
         const val TEXT_STYLE_NONE = 0x00
@@ -87,7 +70,7 @@ class PictureTextItem(
     var textStyle: Int = TEXT_STYLE_NONE
 
     /**默认字体*/
-    var textTypeface: Typeface? = DEFAULT_TYPEFACE_LIST[1].typeface
+    var textTypeface: Typeface? = FontManager.getSystemFontList().firstOrNull()?.typeface
 
     init {
         itemLayerName = "Text"

@@ -8,12 +8,14 @@ import android.graphics.Typeface
  * @since 2022/06/07
  */
 data class TypefaceInfo(
-    //字体显示的名字
+    /**字体显示的名字*/
     val name: String,
-    //字体
+    /**字体对象*/
     val typeface: Typeface,
-    //字体的本地路径, 如果有
+    /**字体的本地路径, 如果有*/
     val filePath: String? = null,
-    //字体是否重复
-    var isRepeat: Boolean = false
+    /**导入字体时, 字体是否重复了*/
+    var isRepeat: Boolean = false,
+    /**是否是自定义的字体, 自定义的字体支持删除操作*/
+    var isCustom: Boolean = false,
 )

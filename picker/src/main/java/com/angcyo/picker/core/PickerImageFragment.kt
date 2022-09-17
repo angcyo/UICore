@@ -464,7 +464,7 @@ class PickerImageFragment : BasePickerFragment() {
         var selectorFolder: LoaderFolder? = null
         fContext().fullPopupWindow(_vh.view(R.id.title_wrap_layout)) {
             showWithActivity = true
-            layoutId = R.layout.picker_folder_dialog_layout
+            popupLayoutId = R.layout.picker_folder_dialog_layout
             onInitLayout = { _, viewHolder ->
                 viewHolder._rv(R.id.lib_recycler_view)?.apply {
                     renderDslAdapter {

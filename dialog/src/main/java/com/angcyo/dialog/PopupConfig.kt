@@ -117,7 +117,7 @@ open class PopupConfig {
 
     /** 指定布局id */
     @LayoutRes
-    var layoutId: Int = -1
+    var popupLayoutId: Int = -1
 
     //<editor-fold desc="Popup属性">
 
@@ -319,9 +319,9 @@ open class PopupConfig {
     }
 
     open fun createContentView(context: Context): View? {
-        if (layoutId != -1) {
+        if (popupLayoutId != -1) {
             contentView = LayoutInflater.from(context)
-                .inflate(layoutId, FrameLayout(context), false)
+                .inflate(popupLayoutId, FrameLayout(context), false)
         }
         if (showWithActivity) {
             val rootLayout = FrameLayout(context)

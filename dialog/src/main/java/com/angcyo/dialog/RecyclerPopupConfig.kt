@@ -25,7 +25,7 @@ open class RecyclerPopupConfig : PopupConfig() {
         { _, _, _ -> false }
 
     init {
-        layoutId = R.layout.lib_popup_recycler_layout
+        popupLayoutId = R.layout.lib_popup_recycler_layout
     }
 
     override fun initPopupWindow(popupWindow: PopupWindow, popupViewHolder: DslViewHolder) {

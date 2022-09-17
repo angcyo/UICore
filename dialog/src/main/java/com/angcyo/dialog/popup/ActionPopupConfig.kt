@@ -29,7 +29,7 @@ class ActionPopupConfig : AnchorPopupConfig() {
     val actionList = mutableListOf<PopupAction>()
 
     init {
-        layoutId = R.layout.lib_popup_action_layout
+        popupLayoutId = R.layout.lib_popup_action_layout
     }
 
     override fun initLayout(window: TargetWindow, viewHolder: DslViewHolder) {
