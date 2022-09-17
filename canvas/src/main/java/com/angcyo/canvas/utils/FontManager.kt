@@ -71,7 +71,7 @@ object FontManager {
 
                 val typefaceInfo =
                     TypefaceInfo(file.name.noExtName(), typeface, file.absolutePath)
-
+                typefaceInfo.isCustom = true
                 val find = fontList.find { it.name == typefaceInfo.name }
                 if (find == null) {
                     _customFontList.add(0, typefaceInfo)
