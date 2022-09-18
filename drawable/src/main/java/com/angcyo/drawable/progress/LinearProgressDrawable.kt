@@ -14,12 +14,25 @@ class LinearProgressDrawable : BaseValueProgressDrawable() {
     @Px
     var roundRadius: Float = 15f
 
+    /**固定进度的宽度*/
+    var fixedWidth: Boolean = true
+
+    /**进度固定的宽度*/
+    var progressFixedWidth: Float = 50f
+
     init {
+        //滑块颜色渐变
         progressGradientColors =
             intArrayOf(Color.parseColor("#FFD666"), Color.parseColor("#FFD666"))
+        //背景颜色渐变
         backgroundGradientColors =
             intArrayOf(Color.parseColor("#B0B8CB"), Color.parseColor("#B0B8CB"))
+        //当前进度
         currentProgressValue = 50
+        //背景的高度
+        backgroundWidth
+        //滑块的高度
+        progressWidth
     }
 
     override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
@@ -66,8 +79,22 @@ class LinearProgressDrawable : BaseValueProgressDrawable() {
         //进度绘制
         _tempRect.top = rect.centerY() - progressWidth / 2
         _tempRect.bottom = rect.centerY() + progressWidth / 2
-        _tempRect.right = rect.left + rect.width() * progressRatio
-        textPaint.shader = _progressShader
+        if (fixedWidth) {
+            textPaint.shader = LinearGradient(
+                _tempRect.left,
+                0f,
+                _tempRect.right,
+                0f,
+                progressGradientColors,
+                null,
+                Shader.TileMode.REPEAT
+            )
+            _tempRect.left = rect.left + (rect.width() - progressFixedWidth) * progressRatio
+            _tempRect.right = _tempRect.left + progressFixedWidth
+        } else {
+            _tempRect.right = rect.left + rect.width() * progressRatio
+            textPaint.shader = _progressShader
+        }
         canvas.drawRoundRect(
             _tempRect.left,
             _tempRect.top,

@@ -27,14 +27,14 @@ abstract class BaseValueProgressDrawable : BaseDrawable() {
     /**当前的进度值*/
     var currentProgressValue: Int by InvalidateDrawableProperty(0)
 
-    /**进度的宽度*/
+    /**进度的宽度, 也是高度*/
     @Px
     var progressWidth: Float = 30f
 
     /**进度的渐变颜色, 至少需要2个颜色*/
     var progressGradientColors = intArrayOf(Color.WHITE, Color.WHITE)
 
-    /**背景的宽度*/
+    /**背景的宽度, 也是高度*/
     @Px
     var backgroundWidth: Float = 20f
 
