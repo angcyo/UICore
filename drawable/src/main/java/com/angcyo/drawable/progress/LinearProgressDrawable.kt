@@ -17,6 +17,12 @@ class LinearProgressDrawable : BaseValueProgressDrawable() {
     /**固定进度的宽度*/
     var fixedWidth: Boolean = true
 
+    /**是否绘制进度*/
+    var drawProgress: Boolean = true
+
+    /**是否自动检查进度的值, 如果超出范围自动控制[drawProgress]不绘制进度*/
+    var checkDrawProgress: Boolean = false
+
     /**进度固定的宽度*/
     var progressFixedWidth: Float = 50f
 
@@ -33,6 +39,20 @@ class LinearProgressDrawable : BaseValueProgressDrawable() {
         backgroundWidth
         //滑块的高度
         progressWidth
+    }
+
+    override fun invalidateSelf() {
+        super.invalidateSelf()
+        if (checkDrawProgress) {
+            drawProgress = currentProgressValue in minProgressValue..maxProgressValue
+        }
+    }
+
+    override fun validProgressValue(progressValue: Int): Int {
+        if (checkDrawProgress) {
+            return progressValue
+        }
+        return super.validProgressValue(progressValue)
     }
 
     override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
@@ -77,31 +97,33 @@ class LinearProgressDrawable : BaseValueProgressDrawable() {
         )
 
         //进度绘制
-        _tempRect.top = rect.centerY() - progressWidth / 2
-        _tempRect.bottom = rect.centerY() + progressWidth / 2
-        if (fixedWidth) {
-            textPaint.shader = LinearGradient(
+        if (drawProgress) {
+            _tempRect.top = rect.centerY() - progressWidth / 2
+            _tempRect.bottom = rect.centerY() + progressWidth / 2
+            if (fixedWidth) {
+                textPaint.shader = LinearGradient(
+                    _tempRect.left,
+                    0f,
+                    _tempRect.right,
+                    0f,
+                    progressGradientColors,
+                    null,
+                    Shader.TileMode.REPEAT
+                )
+                _tempRect.left = rect.left + (rect.width() - progressFixedWidth) * progressRatio
+                _tempRect.right = _tempRect.left + progressFixedWidth
+            } else {
+                _tempRect.right = rect.left + rect.width() * progressRatio
+                textPaint.shader = _progressShader
+            }
+            canvas.drawRoundRect(
                 _tempRect.left,
-                0f,
+                _tempRect.top,
                 _tempRect.right,
-                0f,
-                progressGradientColors,
-                null,
-                Shader.TileMode.REPEAT
+                _tempRect.bottom,
+                roundRadius, roundRadius, textPaint
             )
-            _tempRect.left = rect.left + (rect.width() - progressFixedWidth) * progressRatio
-            _tempRect.right = _tempRect.left + progressFixedWidth
-        } else {
-            _tempRect.right = rect.left + rect.width() * progressRatio
-            textPaint.shader = _progressShader
         }
-        canvas.drawRoundRect(
-            _tempRect.left,
-            _tempRect.top,
-            _tempRect.right,
-            _tempRect.bottom,
-            roundRadius, roundRadius, textPaint
-        )
     }
 
 }
