@@ -106,6 +106,11 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
      * */
     var enableShakeInput: Boolean = false
 
+    /**首次输入时, 覆盖输入.
+     * 比如:默认值是888, 那么首次输入多少就是多少
+     * */
+    var firstOverrideInput: Boolean = true
+
     //意图
     var _pendingRunnable: Runnable? = null
 
@@ -129,7 +134,9 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         list.add(createNumberIncrementItem(window))
         viewHolder.group(R.id.lib_flow_layout)?.appendDslItem(list)
 
-        if (!enableShakeInput) {
+        if (firstOverrideInput) {
+            newValueBuilder.clear()
+        } else if (!enableShakeInput) {
             newValueBuilder.clear()
             newValueBuilder.append(keyboardBindTextView?.text?.toString() ?: "")
         }

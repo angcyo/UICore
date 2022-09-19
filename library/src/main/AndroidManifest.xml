@@ -67,8 +67,8 @@
     <!--startForegroundService API 28后需要-->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
-    <!--安装apk-->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!--安装apk,谷歌隐私政策不允许声明此权限-->
+    <!--<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />-->
 
     <!--网络检查权限-->
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />

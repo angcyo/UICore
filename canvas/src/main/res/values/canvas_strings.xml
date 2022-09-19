@@ -92,4 +92,9 @@
     <string name="canvas_style">样式</string>
     <string name="canvas_align">对齐</string>
 
+    <string name="canvas_font_size">字号</string>
+    <string name="canvas_word_spacing">字间距</string>
+    <string name="canvas_line_spacing">行间距</string>
+    <string name="canvas_curve">曲线</string>
+
 </resources>

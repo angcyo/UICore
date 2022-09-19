@@ -17,7 +17,8 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:scaleType="fitCenter"
-        tools:src="@drawable/doodle_eraser" />
+        tools:src="@drawable/doodle_eraser"
+        tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/lib_text_view"

@@ -171,5 +171,94 @@ class PictureTextItemRenderer(canvasView: ICanvasView) :
         }
     }
 
+    /**更新笔的大小
+     * [textSize] 大小像素*/
+    fun updateTextSize(textSize: Float, strategy: Strategy = Strategy.normal) {
+        val oldValue = paint.textSize
+        if (oldValue == textSize) {
+            return
+        }
+        paint.textSize = textSize
+        updatePaint()
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updateTextSize(oldValue, Strategy.undo)
+                }
+
+                override fun runRedo() {
+                    updateTextSize(textSize, Strategy.redo)
+                }
+            })
+        }
+    }
+
+    /**更新文本的字间距*/
+    fun updateTextWordSpacing(wordSpacing: Float, strategy: Strategy = Strategy.normal) {
+        val item = getRendererRenderItem() ?: return
+        val oldValue = item.wordSpacing
+        if (oldValue == wordSpacing) {
+            return
+        }
+        item.wordSpacing = wordSpacing
+        updatePaint()
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updateTextWordSpacing(oldValue, Strategy.undo)
+                }
+
+                override fun runRedo() {
+                    updateTextWordSpacing(wordSpacing, Strategy.redo)
+                }
+            })
+        }
+    }
+
+    /**更新文本的行间距*/
+    fun updateTextLineSpacing(lineSpacing: Float, strategy: Strategy = Strategy.normal) {
+        val item = getRendererRenderItem() ?: return
+        val oldValue = item.lineSpacing
+        if (oldValue == lineSpacing) {
+            return
+        }
+        item.lineSpacing = lineSpacing
+        updatePaint()
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updateTextLineSpacing(oldValue, Strategy.undo)
+                }
+
+                override fun runRedo() {
+                    updateTextLineSpacing(lineSpacing, Strategy.redo)
+                }
+            })
+        }
+    }
+
+    /**更新文本的行间距
+     * [compactText] 是否使用紧凑文本*/
+    fun updateTextCompact(compactText: Boolean, strategy: Strategy = Strategy.normal) {
+        val item = getRendererRenderItem() ?: return
+        val oldValue = item.isCompactText
+        if (oldValue == compactText) {
+            return
+        }
+        item.isCompactText = compactText
+        updatePaint()
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    updateTextCompact(oldValue, Strategy.undo)
+                }
+
+                override fun runRedo() {
+                    updateTextCompact(compactText, Strategy.redo)
+                }
+            })
+        }
+    }
+
     //</editor-fold desc="文本渲染操作方法">
 }

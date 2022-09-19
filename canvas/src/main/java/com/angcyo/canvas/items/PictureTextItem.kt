@@ -54,11 +54,11 @@ class PictureTextItem(
      * [LinearLayout.VERTICAL]*/
     var orientation: Int = LinearLayout.HORIZONTAL
 
-    /**换行绘制文本时的行间距, 行于行之间的间隙*/
-    var lineSpacing: Float = 0f
-
-    /**垂直绘制文本时的行间距, 字与字之间的间隙*/
+    /**绘制文本时的行间距, 字与字之间的间隙*/
     var wordSpacing: Float = 0f
+
+    /**绘制文本时的行间距, 行于行之间的间隙*/
+    var lineSpacing: Float = 0f
 
     /**宽度增益的大小*/
     var widthIncrease: Float = 0f
@@ -75,7 +75,10 @@ class PictureTextItem(
     init {
         itemLayerName = "Text"
         isCompactText = true
-        wordSpacing = 1 * dp //字间距
+        if (isCompactText) {
+            wordSpacing = 1 * dp //字间距
+            lineSpacing = 1 * dp //行间距
+        }
         dataType = CanvasConstant.DATA_TYPE_TEXT
         dataMode = CanvasConstant.DATA_MODE_GREY
     }
@@ -89,8 +92,14 @@ class PictureTextItem(
         val lineTextList = lineTextList(text)
         if (orientation == LinearLayout.HORIZONTAL) {
             //横向排列
-            lineTextList.forEach {
-                result = max(result, measureTextWidth(paint, it))
+            lineTextList.forEach { lineText ->
+                var lineWidth = 0f
+                lineText.forEach {
+                    //一个字一个字的宽度
+                    lineWidth += measureTextWidth(paint, "$it")
+                }
+                lineWidth += wordSpacing * (lineText.length - 1)
+                result = max(result, lineWidth)
             }
         } else {
             //纵向排列
@@ -196,58 +205,61 @@ class PictureTextItem(
             var y = 0f
 
             if (orientation == LinearLayout.HORIZONTAL) {
-                x = when (paint.textAlign) {
-                    Paint.Align.RIGHT -> width
-                    Paint.Align.CENTER -> width / 2
-                    else -> 0f
-                }
-
                 lineTextList.forEach { lineText ->
                     val lineTextHeight = calcTextHeight(paint, lineText)
                     val descent = measureTextDescent(paint, lineText)
 
-                    val offsetX = if (isCompactText) {
-                        when (paint.textAlign) {
-                            Paint.Align.RIGHT -> -_skewWidth.toInt()
-                            Paint.Align.CENTER -> -_textMeasureBounds.left / 2 - _skewWidth.toInt() / 2
-                            else -> -_textMeasureBounds.left
+                    y += lineTextHeight
+
+                    //逐字绘制
+                    lineText.forEach { char ->
+                        val text = "$char"
+                        val charWidth = measureTextWidth(paint, text)
+
+                        val offsetX = when (paint.textAlign) {
+                            Paint.Align.RIGHT -> charWidth - _skewWidth
+                            Paint.Align.CENTER -> charWidth / 2 - _textMeasureBounds.left / 2 - _skewWidth / 2
+                            else -> -_textMeasureBounds.left.toFloat()
                         }
-                    } else {
-                        0
+                        
+                        drawText(text, x + offsetX, y - descent, paint)
+                        x += charWidth + wordSpacing
                     }
 
-                    y += lineTextHeight
-                    drawText(lineText, x + offsetX, y - descent, paint)
                     y += lineSpacing
+                    x = 0f
                 }
             } else {
                 lineTextList.forEach { lineText ->
-                    val textWidth = calcTextWidth(paint, lineText)
+                    val lineTextWidth = calcTextWidth(paint, lineText)
 
-                    var offsetX = when (paint.textAlign) {
-                        Paint.Align.RIGHT -> textWidth - _skewWidth.toInt()
-                        Paint.Align.CENTER -> textWidth / 2 - _skewWidth.toInt() / 2
-                        else -> 0f
-                    }
-
+                    //逐字绘制
                     lineText.forEach { char ->
                         val text = "$char"
-                        y += measureTextHeight(paint, text)
+                        val charHeight = measureTextHeight(paint, text)
                         val descent = measureTextDescent(paint, text)
                         val textBounds = paint.textBounds(text)
 
-                        if (isCompactText) {
-                            offsetX = when (paint.textAlign) {
-                                Paint.Align.RIGHT -> textWidth - _skewWidth.toInt() /*+ textBounds.left.toFloat()*/
-                                Paint.Align.CENTER -> textWidth / 2 - _skewWidth.toInt() / 2
+                        y += charHeight
+
+                        val offsetX = if (isCompactText) {
+                            when (paint.textAlign) {
+                                Paint.Align.RIGHT -> lineTextWidth - _skewWidth /*+ textBounds.left.toFloat()*/
+                                Paint.Align.CENTER -> lineTextWidth / 2 - _skewWidth / 2
                                 else -> -textBounds.left.toFloat()
+                            }
+                        } else {
+                            when (paint.textAlign) {
+                                Paint.Align.RIGHT -> lineTextWidth - _skewWidth.toInt()
+                                Paint.Align.CENTER -> lineTextWidth / 2 - _skewWidth.toInt() / 2
+                                else -> 0f
                             }
                         }
 
                         drawText(text, x + offsetX, y - descent, paint)
                         y += wordSpacing
                     }
-                    x += textWidth + lineSpacing
+                    x += lineTextWidth + lineSpacing
                     y = 0f
                 }
             }
