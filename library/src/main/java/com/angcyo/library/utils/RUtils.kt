@@ -623,7 +623,9 @@ fun String.getSystemProperty() = RUtils.getSystemProperty(this)
 ///**[positive] 是否只获取正数, 否则会支持负数*/
 //fun String?.getFloatNum(positive: Boolean = false) = RUtils.getFloatNumFromStr(this, positive)
 
-/**[positive] 是否只获取正数, 否则会支持负数*/
+/**
+ * 从字符串中, 获取正负整数
+ * [positive] 是否只获取正数, 否则会支持负数*/
 fun String?.getLongNum(positive: Boolean = false) = getLongNumList(positive)?.firstOrNull()
 
 fun String?.getLongNumList(positive: Boolean = false) = (if (positive)
@@ -639,7 +641,9 @@ else
     result
 }
 
-/**[positive] 是否只获取正数, 否则会支持负数*/
+/**
+ * 从字符串中, 获取正负浮点数
+ * [positive] 是否只获取正数, 否则会支持负数*/
 fun String?.getFloatNum(positive: Boolean = false) = getFloatNumList(positive)?.firstOrNull()
 
 fun String?.getFloatNumList(positive: Boolean = false) = (if (positive)

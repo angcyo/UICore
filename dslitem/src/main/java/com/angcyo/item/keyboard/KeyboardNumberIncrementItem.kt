@@ -12,7 +12,7 @@ import com.angcyo.widget.DslViewHolder
 class KeyboardNumberIncrementItem : DslAdapterItem() {
 
     /**回调*/
-    var itemIncrementAction: (plus: Boolean) -> Unit = {
+    var itemIncrementAction: (plus: Boolean, longPress: Boolean) -> Unit = { _, _ ->
 
     }
 
@@ -28,12 +28,17 @@ class KeyboardNumberIncrementItem : DslAdapterItem() {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-
-        itemHolder.click(R.id.minus_increment_view) {
-            itemIncrementAction(false)
+        itemHolder.longTouch(R.id.minus_increment_view) { view, event, longPress ->
+            longPress?.let {
+                itemIncrementAction(false, it)
+            }
+            true
         }
-        itemHolder.click(R.id.plus_increment_view) {
-            itemIncrementAction(true)
+        itemHolder.longTouch(R.id.plus_increment_view) { view, event, longPress ->
+            longPress?.let {
+                itemIncrementAction(true, it)
+            }
+            true
         }
     }
 }

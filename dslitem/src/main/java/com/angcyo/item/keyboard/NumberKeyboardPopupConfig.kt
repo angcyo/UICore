@@ -12,6 +12,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.R
 import com.angcyo.item.style.itemText
 import com.angcyo.library.L
+import com.angcyo.library.utils.getFloatNum
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.appendDslItem
 
@@ -33,7 +34,8 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
             firstValue: String?,
             shakeInput: Boolean,
             op: String,
-            step: Float
+            step: Float,
+            longStep: Float,
         ): String {
             val oldValue: String? = if (shakeInput) {
                 firstValue
@@ -63,6 +65,18 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                     newValueBuild.append(oldValue?.toFloatOrNull()?.run { "${this + step}" }
                         ?: "$step")
                 }
+                "--1" -> {
+                    //长按自减
+                    newValueBuild.clear()
+                    newValueBuild.append(oldValue?.toFloatOrNull()?.run { "${this - longStep}" }
+                        ?: "${-step}")
+                }
+                "++1" -> {
+                    //长按自增
+                    newValueBuild.clear()
+                    newValueBuild.append(oldValue?.toFloatOrNull()?.run { "${this + longStep}" }
+                        ?: "$step")
+                }
                 "." -> {
                     val value = newValueBuild.toString()
                     if (value.contains(".")) {
@@ -79,12 +93,22 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
             L.v("input result:$result")
             return result
         }
+
+        /**是否是控制输入[number]*/
+        fun isControlInputNumber(number: String): Boolean = number == "-0" ||
+                number == "-1" ||
+                number == "--1" ||
+                number == "+1" ||
+                number == "++1" ||
+                number == "."
     }
 
     /**点击按键的回调
      * [number] -0,表示退格
      * [number] -1,表示--
+     * [number] --1,表示长按--
      * [number] +1,表示++
+     * [number] ++1,表示长按++
      * @return true 表示自动销毁window*/
     var onClickNumberAction: (number: String) -> Boolean = { onInputValue(it) }
 
@@ -92,16 +116,32 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
      * 不能覆盖[onClickNumberAction]方法*/
     var onNumberResultAction: (number: Float) -> Unit = { }
 
+    /**格式化文本内容, 比如90°, 则应该返回90*/
+    var onFormatTextAction: (value: String) -> String = {
+        val float = it.toFloatOrNull()
+        if (float == null) {
+            "${it.getFloatNum() ?: it}"
+        } else {
+            "$float"
+        }
+    }
+
     /**自动绑定输入的控件*/
     var keyboardBindTextView: TextView? = null
 
     /**自增的步长*/
     var incrementStep: Float = 1f
 
+    /**长按的自增长步长*/
+    var longIncrementStep: Float = 10f
+
     /**绑定限流*/
     var bindPendingDelay = DEFAULT_INPUT_DELAY
 
-    /**是否激活抖动输入, 关闭之后, 那就相当于普通键盘
+    /**是否激活抖动输入, 关闭之后, 那就相当于普通键盘.
+     *
+     * 抖动输入, 表示每次输出上屏时, 都自动清除旧数据, 这样每次输入都是从空的输入开始
+     *
      * [bindPendingDelay] 限流依旧有效
      * */
     var enableShakeInput: Boolean = false
@@ -122,6 +162,9 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         contentLayoutId = R.layout.lib_keyboard_number_keyboard_layout
     }
 
+    /**默认值*/
+    var _firstValue: String = ""
+
     override fun initContentLayout(window: TargetWindow, viewHolder: DslViewHolder) {
         super.initContentLayout(window, viewHolder)
         val list = mutableListOf<DslAdapterItem>()
@@ -134,11 +177,14 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         list.add(createNumberIncrementItem(window))
         viewHolder.group(R.id.lib_flow_layout)?.appendDslItem(list)
 
+        //
+        _firstValue = onFormatTextAction(keyboardBindTextView?.text?.toString() ?: "")
+
         if (firstOverrideInput) {
             newValueBuilder.clear()
         } else if (!enableShakeInput) {
             newValueBuilder.clear()
-            newValueBuilder.append(keyboardBindTextView?.text?.toString() ?: "")
+            newValueBuilder.append(_firstValue)
         }
     }
 
@@ -170,11 +216,13 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
     /**自增/自减键*/
     fun createNumberIncrementItem(window: TargetWindow): DslAdapterItem =
         KeyboardNumberIncrementItem().apply {
-            itemIncrementAction = {
-                if (onClickNumberAction(
-                        if (it) "+1" else "-1"
-                    )
-                ) {
+            itemIncrementAction = { plus, longPress ->
+                val value = if (longPress) {
+                    if (plus) "++1" else "--1"
+                } else {
+                    if (plus) "+1" else "-1"
+                }
+                if (onClickNumberAction(value)) {
                     if (window is PopupWindow) {
                         window.dismiss()
                     }
@@ -186,12 +234,21 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
      * [onClickNumberAction]*/
     fun onInputValue(value: String): Boolean {
         _pendingRunnable?.let { mainHandle.removeCallbacks(it) }
+
+        val defaultValue = onFormatTextAction(keyboardBindTextView?.text?.toString() ?: "")
+
+        if (isControlInputNumber(value) && !enableShakeInput) {
+            newValueBuilder.clear()
+            newValueBuilder.append(defaultValue)
+        }
+
         val result = keyboardInputValueParse(
             newValueBuilder,
-            keyboardBindTextView?.text?.toString(),
+            defaultValue,
             enableShakeInput,
             value,
-            incrementStep
+            incrementStep,
+            longIncrementStep
         ).apply {
             toFloatOrNull()?.let { toValue ->
                 _pendingRunnable = Runnable {

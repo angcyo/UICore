@@ -1,9 +1,11 @@
 package com.angcyo.widget
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.EditText
@@ -206,6 +208,46 @@ open class DslViewHolder(
 
     fun touch(view: View?, block: (view: View, event: MotionEvent) -> Boolean) {
         view?.setOnTouchListener(block)
+    }
+
+    fun longTouch(
+        @IdRes id: Int,
+        block: (view: View, event: MotionEvent, longPress: Boolean?) -> Boolean
+    ) {
+        longTouch(v<View>(id), block)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    fun longTouch(
+        view: View?,
+        block: (view: View, event: MotionEvent, longPress: Boolean?) -> Boolean
+    ) {
+        var isLongPress: Boolean? = null
+        val longRunnable = Runnable {
+            if (isLongPress == null) {
+                isLongPress = true
+            }
+        }
+        view?.setOnTouchListener { _, event ->
+            val actionMasked = event.actionMasked
+            when (actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    view.postDelayed(longRunnable, ViewConfiguration.getLongPressTimeout().toLong())
+                }
+                MotionEvent.ACTION_MOVE -> Unit
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    if (isLongPress == null) {
+                        isLongPress = false
+                    }
+                    view.removeCallbacks(longRunnable)
+                }
+            }
+            val result = block(view, event, isLongPress)
+            when (actionMasked) {
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> isLongPress = null
+            }
+            result
+        }
     }
 
     /**初始化, 点击之后再次初始化*/
