@@ -1,6 +1,7 @@
 package com.angcyo.canvas.items
 
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.widget.LinearLayout
@@ -193,6 +194,12 @@ class PictureTextItem(
      * [com.angcyo.canvas.items.DrawableItem.drawable]
      * */
     override fun updateItem(paint: Paint) {
+        drawNormalText(paint)
+        //drawPathText(paint)
+    }
+
+    /**绘制普通文本*/
+    fun drawNormalText(paint: Paint) {
         val drawText = text
         //createStaticLayout(drawText, paint)
         val width = calcTextWidth(paint, drawText) + widthIncrease
@@ -221,11 +228,10 @@ class PictureTextItem(
                             Paint.Align.CENTER -> charWidth / 2 - _textMeasureBounds.left / 2 - _skewWidth / 2
                             else -> -_textMeasureBounds.left.toFloat()
                         }
-                        
+
                         drawText(text, x + offsetX, y - descent, paint)
                         x += charWidth + wordSpacing
                     }
-
                     y += lineSpacing
                     x = 0f
                 }
@@ -262,6 +268,67 @@ class PictureTextItem(
                     x += lineTextWidth + lineSpacing
                     y = 0f
                 }
+            }
+        })
+
+        this.drawable = drawable
+        this.itemWidth = width
+        this.itemHeight = height
+    }
+
+    /**绘制路径文本*/
+    fun drawPathText(paint: Paint) {
+        val drawText = text
+        //createStaticLayout(drawText, paint)
+        val textWidth = calcTextWidth(paint, drawText)
+        val textHeight = calcTextHeight(paint, drawText)
+        var width = widthIncrease
+        var height = heightIncrease
+
+        val path = Path()
+        //path.addOval(0f, 0f, 2000f, 1000f, Path.Direction.CCW)
+        val pathWidth = textWidth
+        val pathHeight = textHeight
+        path.moveTo(0f, pathHeight)
+        path.bezier(pathWidth / 2, 0f, pathWidth, pathHeight)
+        val bounds = path.computePathBounds()
+
+        width += bounds.width() + textHeight
+        height += bounds.height() + textHeight
+
+        val drawable = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
+            translate(width / 2 - bounds.width() / 2, 0f)
+
+            val lineTextList = lineTextList(drawText)
+
+            //CW, 绘制在圈外
+            //CCW, 绘制在圈内
+            paint.style = Paint.Style.FILL_AND_STROKE
+            drawPath(path, paint)
+            paint.style = Paint.Style.FILL_AND_STROKE
+
+            var hOffset = 0f
+            var vOffset = 0f
+            lineTextList.reversed().forEach { lineText ->
+                val lineTextHeight = calcTextHeight(paint, lineText)
+                val descent = measureTextDescent(paint, lineText)
+                vOffset += descent
+                lineText.forEach { char ->
+                    val text = "$char"
+                    val charWidth = measureTextWidth(paint, text)
+
+                    val offsetX = when (paint.textAlign) {
+                        Paint.Align.RIGHT -> charWidth - _skewWidth
+                        Paint.Align.CENTER -> charWidth / 2 - _textMeasureBounds.left / 2 - _skewWidth / 2
+                        else -> -_textMeasureBounds.left.toFloat()
+                    }
+
+                    drawTextOnPath(text, path, hOffset + offsetX, -vOffset, paint)
+                    hOffset += charWidth + wordSpacing
+                }
+
+                hOffset = 0f
+                vOffset += lineTextHeight + lineSpacing
             }
         })
 

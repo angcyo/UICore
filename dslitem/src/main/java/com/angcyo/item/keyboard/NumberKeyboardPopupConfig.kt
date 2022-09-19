@@ -26,7 +26,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
     companion object {
 
         /**输入延迟*/
-        var DEFAULT_INPUT_DELAY = 300L
+        var DEFAULT_INPUT_DELAY = 800L
 
         /**键盘输入解析*/
         fun keyboardInputValueParse(
@@ -118,11 +118,16 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
 
     /**格式化文本内容, 比如90°, 则应该返回90*/
     var onFormatTextAction: (value: String) -> String = {
-        val float = it.toFloatOrNull()
-        if (float == null) {
-            "${it.getFloatNum() ?: it}"
+        if (it.endsWith(".") || !it.contains(".")) {
+            //xx. 的情况
+            it
         } else {
-            "$float"
+            val float = it.toFloatOrNull()
+            if (float == null) {
+                "${it.getFloatNum() ?: it}"
+            } else {
+                "$float"
+            }
         }
     }
 
