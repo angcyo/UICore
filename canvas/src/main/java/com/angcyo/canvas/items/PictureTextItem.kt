@@ -1,9 +1,6 @@
 package com.angcyo.canvas.items
 
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.Rect
-import android.graphics.Typeface
+import android.graphics.*
 import android.widget.LinearLayout
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.FontManager
@@ -198,6 +195,9 @@ class PictureTextItem(
         //drawPathText(paint)
     }
 
+    val _deleteLineRect = RectF()
+    val _underLineRect = RectF()
+
     /**绘制普通文本*/
     fun drawNormalText(paint: Paint) {
         val drawText = text
@@ -205,6 +205,12 @@ class PictureTextItem(
         val width = calcTextWidth(paint, drawText) + widthIncrease
         val height = calcTextHeight(paint, drawText) + heightIncrease
 
+        val oldUnderLine = paint.isUnderlineText
+        val oldDeleteLine = paint.isStrikeThruText
+
+        //因为是自己一个一个绘制的, 所以删除线和下划线也需要手绘
+        paint.isUnderlineText = false
+        paint.isStrikeThruText = false
         val drawable = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
             val lineTextList = lineTextList(drawText)
 
@@ -213,8 +219,23 @@ class PictureTextItem(
 
             if (orientation == LinearLayout.HORIZONTAL) {
                 lineTextList.forEach { lineText ->
+                    val lineTextWidth = calcTextWidth(paint, lineText)
                     val lineTextHeight = calcTextHeight(paint, lineText)
                     val descent = measureTextDescent(paint, lineText)
+
+                    val lineHeight = lineTextHeight / 10
+                    _deleteLineRect.set(
+                        x,
+                        y + lineTextHeight / 2 - lineHeight / 2,
+                        lineTextWidth,
+                        y + lineTextHeight / 2 + lineHeight / 2
+                    )
+                    _underLineRect.set(
+                        x,
+                        y + lineTextHeight - lineHeight,
+                        lineTextWidth,
+                        y + lineTextHeight
+                    )
 
                     y += lineTextHeight
 
@@ -232,12 +253,23 @@ class PictureTextItem(
                         drawText(text, x + offsetX, y - descent, paint)
                         x += charWidth + wordSpacing
                     }
+
+                    //删除线
+                    if (oldDeleteLine) {
+                        drawRect(_deleteLineRect, paint)
+                    }
+                    //下划线
+                    if (oldUnderLine) {
+                        drawRect(_underLineRect, paint)
+                    }
+
                     y += lineSpacing
                     x = 0f
                 }
             } else {
                 lineTextList.forEach { lineText ->
                     val lineTextWidth = calcTextWidth(paint, lineText)
+                    val lineTextHeight = calcTextHeight(paint, lineText)
 
                     //逐字绘制
                     lineText.forEach { char ->
@@ -262,14 +294,41 @@ class PictureTextItem(
                             }
                         }
 
+                        val lineHeight = charHeight / 10
+                        //删除线
+                        if (oldDeleteLine) {
+                            _deleteLineRect.set(
+                                x,
+                                y + charHeight / 2 - lineHeight / 2,
+                                lineTextWidth,
+                                y + charHeight / 2 + lineHeight / 2
+                            )
+
+                            drawRect(_deleteLineRect, paint)
+                        }
+                        //下划线
+                        if (oldUnderLine) {
+                            _underLineRect.set(
+                                x,
+                                y + charHeight - lineHeight,
+                                lineTextWidth,
+                                y + charHeight
+                            )
+                            drawRect(_underLineRect, paint)
+                        }
+
                         drawText(text, x + offsetX, y - descent, paint)
                         y += wordSpacing
                     }
+
                     x += lineTextWidth + lineSpacing
                     y = 0f
                 }
             }
         })
+
+        paint.isUnderlineText = oldUnderLine
+        paint.isStrikeThruText = oldDeleteLine
 
         this.drawable = drawable
         this.itemWidth = width
