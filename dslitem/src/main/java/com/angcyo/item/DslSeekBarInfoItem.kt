@@ -98,7 +98,7 @@ open class DslSeekBarInfoItem : DslBaseInfoItem() {
                     onInitLayout = { window, viewHolder ->
                         viewHolder.view(R.id.lib_bubble_view)?.background = BubbleDrawable()
                         viewHolder.tv(R.id.lib_text_view)?.text = if (view is DslProgressBar) {
-                            "${view.progressValue}"
+                            itemProgressTextFormatAction(view)
                         } else {
                             "${(touchX * 1f / _screenWidth * 100).toInt()}"
                         }
