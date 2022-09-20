@@ -131,10 +131,12 @@ fun isAppDebug() = RUtils.isAppDebug()
 
 fun isRoot() = RUtils.isRoot()
 fun isXposedExistByThrow() = RUtils.isXposedExistByThrow()
-fun isMultiApp(packageName: String) = RUtils.checkByOriginApkPackageName(packageName = packageName)
 fun isRootUI() = RUtils.isRootUI()
 fun isProxyUsed() = Device.isProxyUsed()
 fun isVpnUsed() = Device.isVpnUsed()
+
+/**判断应用是否多开*/
+fun isMultiApp(packageName: String) = RUtils.checkByOriginApkPackageName(packageName = packageName)
 
 //运行在模拟器中
 fun isRunningInEmulator() = EmulatorCheckUtil.singleInstance.readSysProperty()
