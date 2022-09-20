@@ -59,21 +59,21 @@ fun String?.hawkPutList(value: CharSequence?, sort: Boolean = true): Boolean {
     } ?: false
 }
 
-/**直接追加整个[value]*/
+/**直接替换整个[value]*/
 fun String?.hawkPutList(
     value: List<CharSequence>?,
     sort: Boolean = true,
     allowEmpty: Boolean = true
 ): Boolean {
+    this ?: return false
     var result = false
+    Hawk.put(this, "")//先清空
     if (value.isNullOrEmpty() && allowEmpty) {
-        this?.let {
-            Hawk.put(it, "")
-            result = true
-        }
+        result = true
     } else {
         value?.forEach {
-            result = this?.hawkPutList(it, sort) == true || result
+            //挨个追加
+            result = hawkPutList(it, sort) == true || result
         }
     }
     return result

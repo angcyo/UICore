@@ -7,14 +7,15 @@
     android:background="@drawable/lib_input_history_selector"
     android:gravity="center"
     android:orientation="horizontal"
-    android:paddingHorizontal="@dimen/lib_hdpi"
-    android:paddingVertical="@dimen/lib_dpi">
+    android:paddingVertical="@dimen/lib_dpi"
+    android:paddingLeft="@dimen/lib_hdpi">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/lib_text_view"
         style="@style/LibBodyTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:ellipsize="end"
         android:maxWidth="100dp"
         android:maxLines="1"
@@ -23,9 +24,12 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/lib_delete_view"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/lib_hdpi"
+        android:layout_marginRight="@dimen/lib_dpi"
+        android:padding="2dp"
         android:scaleType="fitCenter"
         app:srcCompat="@drawable/lib_edit_delete" />
 
