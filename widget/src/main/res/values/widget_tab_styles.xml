@@ -51,4 +51,17 @@
         <item name="tab_draw_divider">true</item>
     </style>
 
+    <!--保持每个item的圆角-->
+    <style name="LibTabSegmentSolidStyle" parent="LibTabSegmentStyle">
+        <item name="tab_border_item_background_height_offset">-8dp</item>
+        <item name="tab_border_item_background_width_offset">-8dp</item>
+        <item name="tab_border_item_background_solid_color">@color/colorAccent</item>
+        <item name="tab_border_keep_item_radius">true</item>
+        <item name="tab_border_radius_size">@dimen/lib_radius_normal</item>
+        <item name="tab_border_solid_color">@color/bg_primary_color</item>
+        <item name="tab_border_stroke_color">@color/bg_primary_color</item>
+        <item name="tab_deselect_color">@color/text_primary_color</item>
+        <item name="tab_select_color">@color/text_primary_color</item>
+    </style>
+
 </resources>

@@ -31,5 +31,7 @@
     <color name="canvas_progress_color">@color/canvas_primary</color>
     <color name="canvas_progress_text_color">@color/error</color>
 
+    <color name="canvas_segment_tab_bg_color">#f6f6f6</color>
+    <dimen name="canvas_segment_tab_radius_size">4dp</dimen>
 
 </resources>
