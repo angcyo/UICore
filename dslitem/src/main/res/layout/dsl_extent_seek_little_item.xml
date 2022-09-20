@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical|right"
+    tools:background="@color/transparent10">
+
+    <com.angcyo.widget.progress.DslSeekBar
+        android:id="@+id/lib_seek_view"
+        style="@style/LibSeekBarLittleStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|right"
+        tools:progress_show_text="true"
+        tools:progress_value="0"
+        tools:seek_show_thumb_text="true" />
+</FrameLayout>

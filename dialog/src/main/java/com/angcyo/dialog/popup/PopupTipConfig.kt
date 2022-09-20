@@ -45,6 +45,7 @@ open class PopupTipConfig : PopupConfig() {
         minHorizontalOffset = 0
 
         autoOffset = true
+        autoAdjustGravity = false
         offsetY = 2 * dpi
         gravity = Gravity.LEFT or Gravity.TOP
 
@@ -71,7 +72,7 @@ open class PopupTipConfig : PopupConfig() {
         if (autoOffsetCenterInScreen || autoOffsetCenterInAnchor) {
             //no op
         } else {
-            xoff = (touchX - rootViewRect.width() / 2).toInt()
+            offsetX = (touchX - rootViewRect.width() / 2).toInt()
             checkLimit()
         }
     }
@@ -83,7 +84,7 @@ open class PopupTipConfig : PopupConfig() {
             val rootViewWidth = rootViewRect.width() //Popup内容view的宽度
             val minOffset = rect.left - rootViewWidth / 2
             val maxOffset = rect.right - rootViewWidth / 2
-            xoff = clamp(xoff, minOffset, maxOffset)
+            offsetX = clamp(offsetX, minOffset, maxOffset)
         }
         //L.i(xoff)
     }

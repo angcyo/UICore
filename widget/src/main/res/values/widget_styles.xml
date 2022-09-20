@@ -62,4 +62,12 @@
         <item name="counterMode">standard</item>
         <item name="counterMaxLength">-1</item>
     </style>
+
+    <!--mini的seek bar样式-->
+    <style name="LibSeekBarLittleStyle">
+        <item name="progress_height">@dimen/lib_dpi</item>
+        <item name="seek_thumb_over_height">@dimen/lib_hdpi</item>
+        <item name="seek_thumb_stroke_width">0dp</item>
+        <item name="seek_enable_halo">true</item>
+    </style>
 </resources>

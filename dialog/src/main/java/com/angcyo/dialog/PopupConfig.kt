@@ -73,11 +73,12 @@ open class PopupConfig {
      * */
     var parent: View? = null
 
-    /**设置给[PopupWindow]的属性*/
+    /**设置给[PopupWindow]的属性, 此属性会自动赋值
+     * 更好的自定义设置属性[offsetX] [offsetY]*/
     var xoff: Int = 0
     var yoff: Int = 0
 
-    /**额外的偏移量
+    /**额外的偏移量,
      * 为了兼容 [updatePopup]*/
     var offsetX: Int = 0
 
@@ -110,6 +111,9 @@ open class PopupConfig {
 
     /**自动设置offset, 到达锚点横向居中的状态*/
     var autoOffsetCenterInAnchor: Boolean = true
+
+    /**是否根据锚点的中心位置, 自动设置[gravity]*/
+    var autoAdjustGravity: Boolean = true
 
     /** 标准属性
      * [com.angcyo.dialog.PopupConfig.createContentView]*/
@@ -391,6 +395,7 @@ open class PopupConfig {
             }
             rootViewRect.top = anchorViewRect.bottom + yoff
             rootViewRect.bottom = rootViewRect.top + rootViewHeight
+            _updateRootViewRectLeft(xoff, rootViewWidth)
 
             //计算横向偏移
             if (autoOffsetCenterInScreen) {
@@ -446,7 +451,7 @@ open class PopupConfig {
 
                     _updateRootViewRectRight(anchorViewRect.right + xoff, rootViewWidth)
                 }
-            } else {
+            } else if (autoAdjustGravity) {
                 //优先目标横向居右的位置
                 if (isAnchorInLeftArea(anchorView)) {
                     gravity = Gravity.LEFT
@@ -476,6 +481,8 @@ open class PopupConfig {
 
                     _updateRootViewRectRight(anchorViewRect.right + xoff, rootViewWidth)
                 }
+            } else {
+                //no op
             }
         }
     }

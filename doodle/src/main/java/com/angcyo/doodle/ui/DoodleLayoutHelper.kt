@@ -185,7 +185,7 @@ class DoodleLayoutHelper {
         view.interceptParentTouchEvent(event)
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                window = view.context.popupTipWindow(view, R.layout.lib_doodle_bubble_tip_layout) {
+                window = view.context.popupTipWindow(view, R.layout.lib_bubble_tip_layout) {
                     touchX = event.x
                     popupTipConfig = this
                     onInitLayout = { window, viewHolder ->

@@ -4,4 +4,5 @@ dependencies {
     implementation project(allModule.library)
     implementation project(allModule.widget)
     implementation project(allModule.dialog)
+    implementation project(allModule.dslitem)
 }

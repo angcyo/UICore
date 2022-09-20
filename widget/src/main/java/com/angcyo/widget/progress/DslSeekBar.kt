@@ -18,7 +18,6 @@ import com.angcyo.library.ex.getColor
 import com.angcyo.library.ex.setBounds
 import com.angcyo.widget.R
 import com.angcyo.widget.base.*
-import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.min
 
@@ -321,11 +320,8 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
-                val absX = abs(distanceX)
-                val absY = abs(distanceY)
-
                 var handle = false
-                if (absX > absY && e2 != null) {
+                if (e2 != null) {
                     parent.requestDisallowInterceptTouchEvent(true)
                     _onTouchMoveTo(e2.x, e2.y, false)
                     handle = true
