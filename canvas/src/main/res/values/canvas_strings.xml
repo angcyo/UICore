@@ -53,7 +53,7 @@
     <string name="canvas_grey">灰度</string>
     <string name="canvas_seal">印章</string>
 
-    <string name="canvas_font_text">激光啄木鸟</string>
+    <string name="canvas_font_text">LaserPecker</string>
     <string name="canvas_invert">反色</string>
     <string name="canvas_threshold">阈值</string>
     <string name="canvas_contrast">对比度</string>
