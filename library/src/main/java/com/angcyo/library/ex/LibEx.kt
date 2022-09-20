@@ -117,10 +117,11 @@ fun isDebugType() = Library.isDebugTypeVal || "debug".equals(BuildConfig.BUILD_T
 
 fun isMac() = getAppString("os_name")?.toLowerCase()?.contains("mac") == true
 
-/**
- * resValue "bool", "show_debug", "true"
- * */
+/** resValue "bool", "show_debug", "true" */
 fun isShowDebug() = getAppBoolean("show_debug") == true
+
+/** resValue "bool", "is_preview", "true" */
+fun isPreview() = getAppBoolean("is_preview") == true
 
 /**库打包成aar之后, [BuildConfig.DEBUG] 是 release*/
 fun isDebug() = BuildConfig.DEBUG || isAppDebug() || isDebugType()

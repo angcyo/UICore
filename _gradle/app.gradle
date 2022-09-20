@@ -93,6 +93,7 @@ android {
         _dev {
             dimension "flavor"
             minSdkVersion Math.max(Integer.parseInt(_M_SDK), 21)
+            resValue "bool", "is_preview", "true"
         }
         //preview
         pre {
@@ -102,11 +103,13 @@ android {
             //applicationId "com.acc.xxx.pre"
             dimension "flavor"
             minSdkVersion Integer.parseInt(_M_SDK)
+            resValue "bool", "is_preview", "true"
         }
         //apk
         apk {
             dimension "flavor"
             minSdkVersion Integer.parseInt(_M_SDK)
+            resValue "bool", "is_preview", "false"
         }
     }
     buildTypes {
