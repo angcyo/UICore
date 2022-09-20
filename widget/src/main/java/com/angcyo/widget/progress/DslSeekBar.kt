@@ -7,9 +7,7 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
-import android.view.GestureDetector
 import android.view.MotionEvent
-import androidx.core.view.GestureDetectorCompat
 import com.angcyo.drawable.base.DslGradientDrawable
 import com.angcyo.drawable.text.DslTextDrawable
 import com.angcyo.library.ex.alpha
@@ -305,32 +303,6 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 
     //<editor-fold desc="Touch事件">
 
-    //手势检测
-    val _gestureDetector: GestureDetectorCompat by lazy {
-        GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
-
-            override fun onDown(e: MotionEvent): Boolean {
-                _onTouchMoveTo(e.x, e.y, false)
-                return true
-            }
-
-            override fun onScroll(
-                e1: MotionEvent?,
-                e2: MotionEvent?,
-                distanceX: Float,
-                distanceY: Float
-            ): Boolean {
-                var handle = false
-                if (e2 != null) {
-                    parent.requestDisallowInterceptTouchEvent(true)
-                    _onTouchMoveTo(e2.x, e2.y, false)
-                    handle = true
-                }
-                return handle
-            }
-        })
-    }
-
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
 
@@ -341,6 +313,9 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
             if (_isTouchDownInThumb) {
                 seekThumbDrawable?.state = intArrayOf(android.R.attr.state_pressed)
             }
+        } else if (event.isTouchMove()) {
+            parent.requestDisallowInterceptTouchEvent(true)
+            _onTouchMoveTo(event.x, event.y, false)
         } else if (event.isTouchFinish()) {
             _isTouchDownInThumb = false
             isTouchDown = false
@@ -350,8 +325,6 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 
             onSeekBarConfig?.apply { onSeekTouchEnd(progressValue, _progressFraction) }
         }
-
-        _gestureDetector.onTouchEvent(event)
         _touchListener?.onTouch(this, event)
         return true
     }
