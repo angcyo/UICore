@@ -79,6 +79,7 @@ fun Uri.saveTo(filePath: String = libCacheFile().absolutePath, context: Context 
 
 /**默认按照原文件名存储
  * @return 文件路径*/
+@RequiresApi(Build.VERSION_CODES.KITKAT)
 fun Uri.saveToFolder(
     folderPath: String = libCacheFolderPath(),
     fileName: String? = null,

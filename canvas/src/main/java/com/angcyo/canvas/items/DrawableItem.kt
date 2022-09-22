@@ -5,7 +5,6 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.LinePath
-import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -26,8 +25,6 @@ open class DrawableItem : BaseItem() {
 
     init {
         itemLayerName = "Drawable"
-        dataType = CanvasConstant.DATA_TYPE_BITMAP
-        dataMode = CanvasConstant.DATA_MODE_GREY
     }
 
     /**当[paint]更新时触发*/
@@ -38,8 +35,6 @@ open class DrawableItem : BaseItem() {
     /**更新[drawable]*/
     open fun updateDrawable(drawable: Drawable?) {
         this.drawable = drawable
-        this.itemWidth = drawable?.intrinsicWidth?.toFloat() ?: 0f
-        this.itemHeight = drawable?.intrinsicHeight?.toFloat() ?: 0f
     }
 
     /**当[com.angcyo.canvas.items.renderer.DrawableItemRenderer]的bounds宽高改变时,

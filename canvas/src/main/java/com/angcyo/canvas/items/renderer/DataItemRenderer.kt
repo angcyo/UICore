@@ -2,26 +2,25 @@ package com.angcyo.canvas.items.renderer
 
 import android.graphics.Canvas
 import android.graphics.Matrix
-import android.graphics.Paint
 import android.graphics.RectF
 import androidx.core.graphics.withMatrix
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
-import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.core.renderer.ICanvasStep
-import com.angcyo.canvas.items.DrawableItem
+import com.angcyo.canvas.items.DataItem
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 
 /**
- * 用来绘制[android.graphics.drawable.Drawable]
+ * 数据渲染器
+ *
+ * [com.angcyo.canvas.data.ItemDataBean]
+ *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
- * @since 2022/04/11
+ * @since 2022/09/21
  */
-open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
-    BaseItemRenderer<T>(canvasView) {
+class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(canvasView) {
 
     //<editor-fold desc="临时变量">
 
@@ -30,11 +29,7 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
 
     //</editor-fold desc="临时变量">
 
-    //<editor-fold desc="初始化">
-
-    override fun onUpdateRendererItem(item: T?, oldItem: T?) {
-        super.onUpdateRendererItem(item, oldItem)
-    }
+    //<editor-fold desc="核心回调">
 
     override fun render(canvas: Canvas) {
         rendererItem?.drawable?.let { drawable ->
@@ -76,39 +71,33 @@ open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
 
     override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
         super.itemBoundsChanged(reason, oldBounds)
+        getRendererRenderItem()?.dataBean?.apply {
+            updateByBounds(getBounds())
+        }
         if (reason.flag.have(Reason.REASON_FLAG_BOUNDS)) {
             if (canvasView is CanvasDelegate && !canvasView.isTouchHold) {
                 val bounds = getBounds()
                 val width = bounds.width().absoluteValue
                 val height = bounds.height().absoluteValue
                 if (width > 0 && height > 0) {
-                    getRendererRenderItem()?.updateDrawable(paint, width, height)
+                    //getRendererRenderItem()?.updateDrawable(paint, width, height)
                 }
             }
         }
     }
 
-    //</editor-fold desc="初始化">
-
-    /**更新笔的样式
-     * 针对[com.pixplicity.sharp.SharpDrawable]特殊处理*/
-    open fun updatePaintStyle(style: Paint.Style, strategy: Strategy = Strategy.normal) {
-        /*val oldValue = paint.style
-        if (oldValue == style) {
-            return
+    override fun itemRotateChanged(oldRotate: Float, rotateFlag: Int) {
+        super.itemRotateChanged(oldRotate, rotateFlag)
+        getRendererRenderItem()?.dataBean?.apply {
+            angle = rotate
         }
-        paint.style = style
-        requestRendererItemUpdate()
-        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
-            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
-                override fun runUndo() {
-                    updatePaintStyle(oldValue, Strategy.undo)
-                }
-
-                override fun runRedo() {
-                    updatePaintStyle(style, Strategy.redo)
-                }
-            })
-        }*/
     }
+
+    //</editor-fold desc="核心回调">
+
+    //<editor-fold desc="操作方法">
+
+
+    //</editor-fold desc="操作方法">
+
 }

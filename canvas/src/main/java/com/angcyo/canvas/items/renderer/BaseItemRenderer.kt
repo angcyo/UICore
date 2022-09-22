@@ -12,11 +12,9 @@ import com.angcyo.canvas.core.BoundsOperateHandler
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.core.renderer.BaseRenderer
-import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.isLineShape
-import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.library.L
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -170,9 +168,9 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     override fun onUpdateRendererItem(item: T?, oldItem: T?) {
         super.onUpdateRendererItem(item, oldItem)
-        item?.let {
-            requestRendererItemUpdate(oldItem)
-        }
+        //刷新
+        refresh()
+        canvasView.dispatchItemRenderUpdate(this)
     }
 
     override fun updateLockScaleRatio(lock: Boolean) {
@@ -419,7 +417,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         oldWidth: Float = getRendererRenderItem()?.itemWidth ?: 0f,
         oldHeight: Float = getRendererRenderItem()?.itemHeight ?: 0f
     ) {
-        getRendererRenderItem()?.let { item ->
+        /*getRendererRenderItem()?.let { item ->
             var isUpdate = false
 
             val bounds = getBounds()
@@ -481,12 +479,13 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
                 canvasView.dispatchItemRenderUpdate(this)
                 refresh()
             }
-        }
+        }*/
     }
+
 
     /**更新画笔绘制文本时的对齐方式*/
     open fun updatePaintAlign(align: Paint.Align, strategy: Strategy = Strategy.normal) {
-        val oldValue = paint.textAlign
+        /*val oldValue = paint.textAlign
         if (oldValue == align) {
             return
         }
@@ -503,12 +502,12 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
                     updatePaintAlign(align, Strategy.redo)
                 }
             })
-        }
+        }*/
     }
 
     /**更新笔的颜色*/
     open fun updatePaintColor(color: Int, strategy: Strategy = Strategy.normal) {
-        val oldValue = paint.color
+        /*val oldValue = paint.color
         if (oldValue == color) {
             return
         }
@@ -527,15 +526,16 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
                     updatePaintColor(color, Strategy.redo)
                 }
             })
-        }
+        }*/
     }
+
 
     /**重写此方法, 更新需要渲染的元素.
      * 比如: 画笔颜色改变, 需要重绘文本; 图片更新; Drawable更新等
      * [fromItem] 之前的item, 如果有
      * */
     open fun requestRendererItemUpdate(fromItem: BaseItem? = null) {
-        getRendererRenderItem()?.let { item ->
+        /*getRendererRenderItem()?.let { item ->
             val oldWidth = fromItem?.itemWidth ?: item.itemWidth
             val oldHeight = fromItem?.itemHeight ?: item.itemHeight
             item.updateItem(paint)
@@ -544,7 +544,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
         //刷新
         refresh()
-        canvasView.dispatchItemRenderUpdate(this)
+        canvasView.dispatchItemRenderUpdate(this)*/
     }
 
     //</editor-fold desc="绘制相关方法">

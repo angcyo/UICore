@@ -124,9 +124,7 @@ fun Bitmap.toBytes(
     return bytes
 }
 
-/**
- * 将图片转成base64字符串
- * */
+/** 将图片转成base64字符串, 不包含 `data:image/` 开头*/
 fun Bitmap.toBase64(
     format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,
     quality: Int = 100
@@ -140,7 +138,7 @@ fun Bitmap.toBase64(
 
 /**
  * data:image/png;base64,xxx
- * [com.angcyo.library.ex.StringExKt.toBitmapOfBase64]
+ * [String.toBitmapOfBase64]
  * */
 fun Bitmap.toBase64Data(
     format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,

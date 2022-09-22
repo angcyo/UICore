@@ -339,6 +339,8 @@ fun Any?.toJson(config: (GsonBuilder.() -> Unit)? = null): String? {
 
 /**json字符串, 转成指定对象.
  * 注意, 如果json格式有问题,会返回null, 异常会被捕获
+ *
+ * [fromJson<List<ItemDataBean>>(listType(ItemDataBean::class.java))]
  * */
 fun <T> String?.fromJson(typeOfT: Type, exception: Boolean = false): T? {
     return this?.run {
@@ -369,8 +371,10 @@ fun <T> String?.fromJson(classOfT: Class<T>, throwError: Boolean = false): T? {
     }
 }
 
+/**[String.fromJson]*/
 fun String?.fromJsonMap(): Map<String, Any>? = this?.fromJson<Map<String, Any>>()
 
+/**[String.fromJson]*/
 inline fun <reified T> String?.fromJson(): T? = this?.fromJson(T::class.java)
 
 inline fun <reified T> String?.fromJson2(): T? =

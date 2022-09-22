@@ -30,19 +30,46 @@ object CanvasConstant {
     //region ---数据类型---
 
     /**数据类型, 图片数据*/
-    const val DATA_TYPE_BITMAP = 1
-
-    /**数据类型, 二维码*/
-    const val DATA_TYPE_QRCODE = 2
-
-    /**数据类型, 条形维码*/
-    const val DATA_TYPE_BARCODE = 3
+    const val DATA_TYPE_BITMAP = 10010
 
     /**数据类型, 文本*/
-    const val DATA_TYPE_TEXT = 4
+    const val DATA_TYPE_TEXT = 10001
 
-    /**数据类型, SVG数据*/
-    const val DATA_TYPE_SVG = 5
+    /**数据类型, 二维码*/
+    const val DATA_TYPE_QRCODE = 10015
+
+    /**数据类型, 条形维码*/
+    const val DATA_TYPE_BARCODE = 10016
+
+    /**数据类型, 矩形*/
+    const val DATA_TYPE_RECT = 10005
+
+    /**数据类型, 椭圆*/
+    const val DATA_TYPE_OVAL = 10006
+
+    /**数据类型, 线条*/
+    const val DATA_TYPE_LINE = 10008
+
+    /**数据类型, 钢笔*/
+    const val DATA_TYPE_PEN = 10002
+
+    /**数据类型, 画笔*/
+    const val DATA_TYPE_BRUSH = 10003
+
+    /**数据类型, SVG数据/导入进来的矢量元素*/
+    const val DATA_TYPE_SVG = 10004
+
+    /**数据类型, 多边形*/
+    const val DATA_TYPE_POLYGON = 10007
+
+    /**数据类型, 星星*/
+    const val DATA_TYPE_PENTAGRAM = 10009
+
+    /**数据类型, 爱心*/
+    const val DATA_TYPE_LOVE = 10012
+
+    /**数据类型, 单线字*/
+    const val DATA_TYPE_SINGLE_WORD = 10013
 
     /**数据类型, GCODE数据*/
     const val DATA_TYPE_GCODE = 6
@@ -58,22 +85,22 @@ object CanvasConstant {
     //region ---数据处理模式---
 
     /**数据模式, 版画*/
-    const val DATA_MODE_PRINT = 1
+    const val DATA_MODE_PRINT = 4
 
     /**数数据模式, 黑白*/
-    const val DATA_MODE_BLACK_WHITE = 2
+    const val DATA_MODE_BLACK_WHITE = 1
 
     /**数据模式, 抖动*/
-    const val DATA_MODE_DITHERING = 3
+    const val DATA_MODE_DITHERING = 5
 
     /**数据模式, 灰度*/
-    const val DATA_MODE_GREY = 4
+    const val DATA_MODE_GREY = 3
 
     /**数据模式, 印章*/
-    const val DATA_MODE_SEAL = 5
+    const val DATA_MODE_SEAL = 2
 
     /**数据模式, GCode*/
-    const val DATA_MODE_GCODE = 10
+    const val DATA_MODE_GCODE = 6
 
     //endregion ---数据处理模式---
 

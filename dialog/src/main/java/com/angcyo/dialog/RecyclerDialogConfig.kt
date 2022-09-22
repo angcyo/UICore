@@ -7,6 +7,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.ItemSelectorHelper
 import com.angcyo.dsladapter.itemIndexPosition
 import com.angcyo.library.ex._color
+import com.angcyo.library.ex._string
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.addDslItem
@@ -114,7 +115,7 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
             itemTopInsert = 4 * dpi
             itemDecorationColor = _color(R.color.dialog_cancel_line)
             itemTextBold = true
-            itemText = "取消"
+            itemText = _string(R.string.dialog_negative)
         }
     }
 

@@ -4,5 +4,8 @@ dependencies {
     implementation project(allModule.library)
     implementation project(allModule.drawable)
 
+    //json
+    implementation project(allModule.http)
+
     api project(allModule.vector)
 }

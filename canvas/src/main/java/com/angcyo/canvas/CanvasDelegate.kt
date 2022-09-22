@@ -11,11 +11,17 @@ import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.core.*
 import com.angcyo.canvas.core.component.*
 import com.angcyo.canvas.core.renderer.*
+import com.angcyo.canvas.data.CanvasDataBean
+import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.canvas.items.renderer.DataItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer.Companion.ROTATE_FLAG_NORMAL
 import com.angcyo.canvas.utils.ShapesHelper
 import com.angcyo.canvas.utils.limitMaxWidthHeight
+import com.angcyo.http.base.json
+import com.angcyo.http.base.jsonArray
+import com.angcyo.http.base.toJson
 import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
@@ -588,6 +594,28 @@ class CanvasDelegate(val view: View) : ICanvasView {
         return bitmap
     }
 
+    /**获取画布上的元素数据*/
+    fun getCanvasDataBean(): CanvasDataBean {
+        val bitmap = getBitmap()
+        val width = mmUnit.convertPixelToValue(bitmap.width.toFloat())
+        val height = mmUnit.convertPixelToValue(bitmap.height.toFloat())
+
+        val data = jsonArray {
+            itemsRendererList.forEach {
+                try {
+                    if (it is DataItemRenderer) {
+                        it.getRendererRenderItem()?.dataBean?.let { bean ->
+                            add(bean.toJson().json())
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }.toString()
+        return CanvasDataBean(width, height, bitmap.toBase64Data(), data)
+    }
+
     /**通过[uuid], 获取对应的[BaseItemRenderer]*/
     fun getRendererItem(uuid: String?): BaseItemRenderer<*>? {
         if (uuid.isNullOrEmpty()) {
@@ -706,6 +734,11 @@ class CanvasDelegate(val view: View) : ICanvasView {
         } else {
             pendingTaskList.add(Runnable { addItemRenderer(list, strategy) })
         }
+    }
+
+    /**移除所有元素*/
+    fun removeAllItemRenderer(strategy: Strategy = Strategy.normal) {
+        removeItemRenderer(itemsRendererList.toList(), strategy)
     }
 
     /**移除一个绘制元素*/
