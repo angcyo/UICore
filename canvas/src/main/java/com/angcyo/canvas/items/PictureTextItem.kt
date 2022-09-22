@@ -25,6 +25,8 @@ class PictureTextItem(
 
     companion object {
 
+        //---
+
         /**字体样式, 无*/
         const val TEXT_STYLE_NONE = 0x00
 
@@ -39,6 +41,8 @@ class PictureTextItem(
 
         /**字体样式, 删除线*/
         const val TEXT_STYLE_DELETE_LINE = 0x08
+
+        //---
 
         /**斜体的倾斜角度*/
         const val ITALIC_SKEW = -0.25f

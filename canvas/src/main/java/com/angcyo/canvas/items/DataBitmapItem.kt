@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.data.ItemDataBean
-import com.angcyo.canvas.graphics.GraphicsHelper
 import com.angcyo.canvas.items.renderer.DataItemRenderer
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.gcode.GCodeDrawable
@@ -63,7 +62,7 @@ class DataBitmapItem(bean: ItemDataBean) : DataItem(bean) {
         }
 
         //更新
-        GraphicsHelper.updateRenderItem(renderer, dataBean)
+        updateRenderItem(renderer)
     }
 
     /**多了2个指定宽高的参数*/
@@ -111,7 +110,7 @@ class DataBitmapItem(bean: ItemDataBean) : DataItem(bean) {
         }
 
         //更新
-        GraphicsHelper.updateRenderItem(renderer, dataBean)
+        updateRenderItem(renderer)
     }
 
     //endregion ---操作---

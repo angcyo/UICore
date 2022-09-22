@@ -3,14 +3,15 @@ package com.angcyo.canvas.items
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.widget.LinearLayout
+import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.data.*
 import com.angcyo.canvas.graphics.lineTextList
+import com.angcyo.canvas.items.renderer.DataItemRenderer
 import com.angcyo.canvas.utils.FontManager
-import com.angcyo.library.ex.textBounds
-import com.angcyo.library.ex.textHeight
-import com.angcyo.library.ex.textWidth
-import com.angcyo.library.ex.toColor
+import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.tan
@@ -161,5 +162,207 @@ class DataTextItem(bean: ItemDataBean) : DataItem(bean) {
     }
 
     //endregion ---操作---
+
+    //region ---可恢复的操作---
+
+    /**紧凑/宽松文本*/
+    fun updateTextCompact(
+        compactText: Boolean,
+        renderer: DataItemRenderer,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val old = dataBean.isCompactText
+        if (old == compactText) {
+            return
+        }
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.isCompactText = old
+            updateRenderItem(renderer)
+        }) {
+            dataBean.isCompactText = compactText
+            updateRenderItem(renderer)
+        }
+    }
+
+    /**更新字体*/
+    fun updateTextTypeface(
+        typeface: Typeface?,
+        renderer: DataItemRenderer,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val typefaceInfo = if (typeface == null) {
+            FontManager.getSystemFontList().firstOrNull()
+        } else {
+            FontManager.loadTypefaceInfo(typeface)
+        }
+        updateTextTypeface(typefaceInfo?.name, renderer, strategy)
+    }
+
+    /**更新字体*/
+    fun updateTextTypeface(
+        name: String?,
+        renderer: DataItemRenderer,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val old = dataBean.fontFamily
+        if (old == name) {
+            return
+        }
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.fontFamily = old
+            updateRenderItem(renderer)
+        }) {
+            dataBean.fontFamily = name
+            updateRenderItem(renderer)
+        }
+    }
+
+    /**更新文本样式*/
+    fun updateTextStyle(
+        style: Int,
+        enable: Boolean,
+        renderer: DataItemRenderer,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val old = dataBean.textStyle()
+        val newValue = if (enable) {
+            old.add(style)
+        } else {
+            old.remove(style)
+        }
+        if (old == newValue) {
+            return
+        }
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.setTextStyle(old)
+            updateRenderItem(renderer)
+        }) {
+            dataBean.setTextStyle(newValue)
+            updateRenderItem(renderer)
+        }
+    }
+
+    /**更新画笔绘制文本时的对齐方式*/
+    fun updatePaintAlign(
+        align: Paint.Align,
+        renderer: DataItemRenderer,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val old = dataBean.textAlign
+        val new = align.toAlignString()
+        if (old == new) {
+            return
+        }
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.textAlign = old
+            updateRenderItem(renderer)
+        }) {
+            dataBean.textAlign = new
+            updateRenderItem(renderer)
+        }
+    }
+
+    /**更新笔的样式*/
+    fun updatePaintStyle(
+        style: Paint.Style,
+        renderer: DataItemRenderer,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val old = dataBean.paintStyle.toPaintStyle()
+        val new = style
+        if (old == new) {
+            return
+        }
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.paintStyle = old.toPaintStyleInt()
+            updateRenderItem(renderer)
+        }) {
+            dataBean.paintStyle = new.toPaintStyleInt()
+            updateRenderItem(renderer)
+        }
+    }
+
+    /**更新字体大小*/
+    fun updateTextSize(
+        @Pixel
+        textSize: Float,
+        renderer: DataItemRenderer,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val old = dataBean.fontSize.toPixel()
+        val new = textSize
+        if (old == new) {
+            return
+        }
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.fontSize = old.toMm()
+            updateRenderItem(renderer)
+        }) {
+            dataBean.fontSize = new.toMm()
+            updateRenderItem(renderer)
+        }
+    }
+
+    /**更新字间距*/
+    fun updateTextWordSpacing(
+        wordSpacing: Float,
+        renderer: DataItemRenderer,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val old = dataBean.charSpacing.toPixel()
+        val new = wordSpacing
+        if (old == new) {
+            return
+        }
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.charSpacing = old.toMm()
+            updateRenderItem(renderer)
+        }) {
+            dataBean.charSpacing = new.toMm()
+            updateRenderItem(renderer)
+        }
+    }
+
+    /**更新行间距*/
+    fun updateTextLineSpacing(
+        lineSpacing: Float,
+        renderer: DataItemRenderer,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val old = dataBean.charSpacing.toPixel()
+        val new = lineSpacing
+        if (old == new) {
+            return
+        }
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.lineSpacing = old.toMm()
+            updateRenderItem(renderer)
+        }) {
+            dataBean.lineSpacing = new.toMm()
+            updateRenderItem(renderer)
+        }
+    }
+
+    /**更新文本排列方向*/
+    fun updateTextOrientation(
+        orientation: Int,
+        renderer: DataItemRenderer,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val old = dataBean.orientation
+        val new = orientation
+        if (old == new) {
+            return
+        }
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.orientation = old
+            updateRenderItem(renderer)
+        }) {
+            dataBean.orientation = new
+            updateRenderItem(renderer)
+        }
+    }
+
+    //endregion ---可恢复的操作---
 
 }

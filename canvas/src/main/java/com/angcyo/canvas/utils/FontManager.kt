@@ -68,6 +68,23 @@ object FontManager {
         return null
     }
 
+    /**通过内存字体对象, 获取字体描述信息*/
+    fun loadTypefaceInfo(typeface: Typeface): TypefaceInfo? {
+        var result = getCustomFontList().find { it.typeface == typeface }
+        if (result != null) {
+            return result
+        }
+        result = getSystemFontList().find { it.typeface == typeface }
+        if (result != null) {
+            return result
+        }
+        result = getPrimaryFontList().find { it.typeface == typeface }
+        if (result != null) {
+            return result
+        }
+        return null
+    }
+
     //region ---导入自定义的字体---
 
     /**导入字体*/

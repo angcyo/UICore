@@ -4,11 +4,18 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.widget.LinearLayout
 import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
+import com.angcyo.canvas.items.PictureTextItem.Companion.TEXT_STYLE_BOLD
+import com.angcyo.canvas.items.PictureTextItem.Companion.TEXT_STYLE_DELETE_LINE
+import com.angcyo.canvas.items.PictureTextItem.Companion.TEXT_STYLE_ITALIC
+import com.angcyo.canvas.items.PictureTextItem.Companion.TEXT_STYLE_NONE
+import com.angcyo.canvas.items.PictureTextItem.Companion.TEXT_STYLE_UNDER_LINE
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.annotation.Implementation
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.ex.add
 import com.angcyo.library.ex.ensure
+import com.angcyo.library.ex.have
 import com.angcyo.library.unit.MmValueUnit
 
 /**
@@ -289,6 +296,32 @@ fun Int?.toPaintStyle(): Paint.Style = when (this) {
 }
 
 //---
+
+/**文本演示*/
+fun ItemDataBean.textStyle(): Int {
+    var result = TEXT_STYLE_NONE
+    if (isBold()) {
+        result = result.add(TEXT_STYLE_BOLD)
+    }
+    if (isItalic()) {
+        result = result.add(TEXT_STYLE_ITALIC)
+    }
+    if (underline) {
+        result = result.add(TEXT_STYLE_UNDER_LINE)
+    }
+    if (linethrough) {
+        result = result.add(TEXT_STYLE_DELETE_LINE)
+    }
+    return result
+}
+
+/**设置文本样式*/
+fun ItemDataBean.setTextStyle(style: Int) {
+    fontWeight = if (style.have(TEXT_STYLE_BOLD)) "bold" else null
+    fontStyle = if (style.have(TEXT_STYLE_ITALIC)) "italic" else null
+    underline = style.have(TEXT_STYLE_UNDER_LINE)
+    linethrough = style.have(TEXT_STYLE_DELETE_LINE)
+}
 
 /**是否加粗*/
 fun ItemDataBean.isBold() = fontWeight == "bold"

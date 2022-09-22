@@ -126,11 +126,10 @@ class TextGraphicsParser : IGraphicsParser {
                 //逐字绘制
                 lineText.forEach { char ->
                     val text = "$char"
+                    val charWidth = textItem.measureTextWidth(text)
                     val charHeight = textItem.measureTextHeight(text)
                     val descent = textItem.measureTextDescent(text)
                     val textBounds = paint.textBounds(text)
-
-                    y += charHeight
 
                     val offsetX = if (dataBean.isCompactText) {
                         when (paint.textAlign) {
@@ -152,7 +151,7 @@ class TextGraphicsParser : IGraphicsParser {
                         _deleteLineRect.set(
                             x,
                             y + charHeight / 2 - lineHeight / 2,
-                            lineTextWidth,
+                            x + charWidth,
                             y + charHeight / 2 + lineHeight / 2
                         )
 
@@ -163,12 +162,13 @@ class TextGraphicsParser : IGraphicsParser {
                         _underLineRect.set(
                             x,
                             y + charHeight - lineHeight,
-                            lineTextWidth,
+                            x + charWidth,
                             y + charHeight
                         )
                         canvas.drawRect(_underLineRect, paint)
                     }
 
+                    y += charHeight
                     canvas.drawText(text, x + offsetX, y - descent, paint)
                     y += dataBean.charSpacing.toPixel()
                 }

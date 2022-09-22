@@ -7,7 +7,9 @@ import androidx.core.graphics.withMatrix
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.items.DataBitmapItem
 import com.angcyo.canvas.items.DataItem
+import com.angcyo.canvas.items.DataTextItem
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
@@ -97,6 +99,14 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
 
     //<editor-fold desc="操作方法">
 
+    val dataItem: DataItem?
+        get() = getRendererRenderItem()
+
+    val dataTextItem: DataTextItem?
+        get() = getRendererRenderItem() as? DataTextItem
+
+    val dataBitmapItem: DataBitmapItem?
+        get() = getRendererRenderItem() as? DataBitmapItem
 
     //</editor-fold desc="操作方法">
 

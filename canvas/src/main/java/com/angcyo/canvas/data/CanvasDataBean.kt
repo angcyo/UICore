@@ -20,4 +20,7 @@ data class CanvasDataBean(
      * [com.angcyo.canvas.data.ItemDataBean]
      * */
     val data: String? = null,
+
+    /**工程名*/
+    val projectName: String? = null
 )
