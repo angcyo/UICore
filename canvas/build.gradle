@@ -8,4 +8,10 @@ dependencies {
     implementation project(allModule.http)
 
     api project(allModule.vector)
+
+    //code
+    implementation project(allModule.qrcode)
+
+    //无法访问[com.google.zxing.BarcodeFormat]
+    compileOnly 'com.google.zxing:core:3.4.1'
 }

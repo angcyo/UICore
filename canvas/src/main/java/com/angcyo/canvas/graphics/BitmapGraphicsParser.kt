@@ -1,13 +1,12 @@
 package com.angcyo.canvas.graphics
 
 import com.angcyo.canvas.data.ItemDataBean
+import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.items.DataBitmapItem
 import com.angcyo.canvas.items.DataItem
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.parseGCode
 import com.angcyo.gcode.GCodeHelper
-import com.angcyo.library.component.pool.acquireTempRectF
-import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.toBitmapOfBase64
 
 /**
@@ -20,6 +19,11 @@ class BitmapGraphicsParser : IGraphicsParser {
     override fun parse(bean: ItemDataBean): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_BITMAP && !bean.imageOriginal.isNullOrEmpty()) {
             try {
+                val originBitmap = bean.imageOriginal?.toBitmapOfBase64()
+                originBitmap?.let {
+                    bean.width = originBitmap.width.toMm()
+                    bean.height = originBitmap.height.toMm()
+                }
                 if (bean.imageFilter == CanvasConstant.DATA_MODE_GCODE) {
                     //图片转成了GCode
                     if (bean.src.isNullOrEmpty()) {
@@ -28,7 +32,7 @@ class BitmapGraphicsParser : IGraphicsParser {
                     } else {
                         val gcodeDrawable = GCodeHelper.parseGCode(bean.src) ?: return null
                         val item = DataBitmapItem(bean)
-                        item.originBitmap = bean.imageOriginal?.toBitmapOfBase64()
+                        item.originBitmap = originBitmap
                         item.gCodeDrawable = gcodeDrawable
 
                         val bound = gcodeDrawable.gCodeBound
@@ -43,18 +47,11 @@ class BitmapGraphicsParser : IGraphicsParser {
                 } else {
                     //其他
                     val item = DataBitmapItem(bean)
-                    item.originBitmap = bean.imageOriginal?.toBitmapOfBase64()
+                    item.originBitmap = originBitmap
                     item.modifyBitmap = bean.src?.toBitmapOfBase64()
 
                     val bitmap = item.modifyBitmap ?: item.originBitmap ?: return null
-                    val width = bitmap.width
-                    val height = bitmap.height
-                    item.drawable = wrapScalePictureDrawable(width, height) {
-                        val rect = acquireTempRectF()
-                        rect.set(0f, 0f, width.toFloat(), height.toFloat())
-                        drawBitmap(bitmap, null, rect, null)
-                        rect.release()
-                    }
+                    wrapBitmap(item, bitmap)
                     return item
                 }
             } catch (e: Exception) {

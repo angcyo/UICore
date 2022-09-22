@@ -1,9 +1,9 @@
 package com.angcyo.canvas.data
 
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.widget.LinearLayout
+import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.annotation.Implementation
 import com.angcyo.library.annotation.MM
@@ -55,10 +55,10 @@ data class ItemDataBean(
     var mtype: Int = -1,
 
     /**填充颜色*/
-    var fill: Int = Color.TRANSPARENT,
+    var fill: String? = null,
 
     /**描边颜色*/
-    var stroke: Int = Color.BLACK,
+    var stroke: String? = null,
 
     /**
      * [Paint.Style.STROKE]
@@ -125,6 +125,12 @@ data class ItemDataBean(
 
     /**文本排列方向*/
     var orientation: Int = LinearLayout.HORIZONTAL,
+
+    /**绘制紧凑文本, 这种绘制方式的文本边框留白少*/
+    var isCompactText: Boolean = true,
+
+    /**文本颜色*/
+    var textColor: String? = null,
 
     //endregion ---文本类型---
 
@@ -250,6 +256,7 @@ data class ItemDataBean(
 
 //---
 
+/**对齐方式*/
 fun Paint.Align.toAlignString(): String = when (this) {
     Paint.Align.CENTER -> "center"
     Paint.Align.LEFT -> "left"
@@ -266,6 +273,7 @@ fun String?.toPaintAlign(): Paint.Align = when (this) {
 
 //---
 
+/**文本样式*/
 fun Paint.Style.toPaintStyleInt(): Int = when (this) {
     Paint.Style.STROKE -> 0
     Paint.Style.FILL -> 1
@@ -287,3 +295,12 @@ fun ItemDataBean.isBold() = fontWeight == "bold"
 
 /**是否斜体*/
 fun ItemDataBean.isItalic() = fontStyle == "italic"
+
+/**毫米转像素*/
+fun Float?.toPixel() = mmUnit.convertValueToPixel(this ?: 0f)
+
+/**MmValueUnit*/
+fun Int.toMm() = toFloat().toMm()
+
+/**像素转毫米*/
+fun Float?.toMm() = mmUnit.convertPixelToValue(this ?: 0f)

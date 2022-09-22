@@ -1,9 +1,12 @@
 package com.angcyo.canvas.graphics
 
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import com.angcyo.canvas.data.ItemDataBean
 import com.angcyo.canvas.items.DataItem
 import com.angcyo.library.component.ScalePictureDrawable
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.withPicture
 
 /**
@@ -23,4 +26,15 @@ interface IGraphicsParser {
         ScalePictureDrawable(withPicture(width, height) {
             block()
         })
+
+    /**包裹一个bitmap对象*/
+    fun wrapBitmap(item: DataItem, bitmap: Bitmap) {
+        item.drawable = wrapScalePictureDrawable(bitmap.width, bitmap.height) {
+            val rect = acquireTempRectF()
+            rect.set(0f, 0f, width.toFloat(), height.toFloat())
+            drawBitmap(bitmap, null, rect, null)
+            rect.release()
+        }
+    }
+
 }

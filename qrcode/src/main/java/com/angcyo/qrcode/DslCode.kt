@@ -77,8 +77,17 @@ fun CharSequence.createQRCode(
     size: Int = 100 * dpi,
     foregroundColor: Int = Color.BLACK,
     backgroundColor: Int = Color.WHITE,
-    logo: Bitmap? = null
-): Bitmap? = RCode.syncEncodeQRCode(this.toString(), size, foregroundColor, backgroundColor, logo)
+    logo: Bitmap? = null,
+    format: BarcodeFormat = BarcodeFormat.QR_CODE
+): Bitmap? = RCode.syncEncodeCode(
+    this.toString(),
+    size,
+    size,
+    foregroundColor,
+    backgroundColor,
+    logo,
+    format
+)
 
 /**使用字符串, 创建条形码, 不支持中文*/
 fun CharSequence.createBarCode(
@@ -86,7 +95,8 @@ fun CharSequence.createBarCode(
     height: Int = 100 * dpi,
     foregroundColor: Int = Color.BLACK,
     backgroundColor: Int = Color.WHITE,
-    logo: Bitmap? = null
+    logo: Bitmap? = null,
+    format: BarcodeFormat = BarcodeFormat.CODE_128
 ): Bitmap? = RCode.syncEncodeCode(
     this.toString(),
     width,
@@ -94,5 +104,5 @@ fun CharSequence.createBarCode(
     foregroundColor,
     backgroundColor,
     logo,
-    BarcodeFormat.CODE_128
+    format
 )

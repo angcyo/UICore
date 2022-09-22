@@ -162,11 +162,6 @@ fun Bitmap.engraveColorBytes(channelType: Int = Color.RED): ByteArray {
     }
 }
 
-/**MmValueUnit*/
-fun Int.toMm() = toFloat().toMm()
-
-fun Float.toMm() = MmValueUnit().convertPixelToValue(this)
-
 /**
  * 进入雕刻模式, 此时只有画布能响应手势
  * */

@@ -25,6 +25,8 @@ object GraphicsHelper {
     fun initParser() {
         if (_parserList.isEmpty()) {
             _parserList.add(BitmapGraphicsParser())
+            _parserList.add(TextGraphicsParser())
+            _parserList.add(CodeGraphicsParser())
         }
     }
 

@@ -49,6 +49,25 @@ object FontManager {
         }
     }
 
+    /**通过字体名称, 获取一个字体信息, 如果不存在则使用默认字体, 但是不应该修改需要存储的数据
+     * [FontManager.getSystemFontList().firstOrNull()?.typeface]
+     * */
+    fun loadTypefaceInfo(name: String?): TypefaceInfo? {
+        var result = getCustomFontList().find { it.name == name }
+        if (result != null) {
+            return result
+        }
+        result = getSystemFontList().find { it.name == name }
+        if (result != null) {
+            return result
+        }
+        result = getPrimaryFontList().find { it.name == name }
+        if (result != null) {
+            return result
+        }
+        return null
+    }
+
     //region ---导入自定义的字体---
 
     /**导入字体*/
