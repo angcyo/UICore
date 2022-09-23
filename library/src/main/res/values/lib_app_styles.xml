@@ -45,6 +45,9 @@
     <color name="lib_text_color">#333333</color>
     <color name="lib_text_disable_color">#B0B0B0</color>
 
+    <color name="lib_normal_disable_bg_color">#ececec</color>
+    <color name="lib_normal_check_bg_color">#f6f6f6</color>
+
     <!--app字号选择-->
     <!--主标题-->
     <dimen name="text_primary_size">22dp</dimen>
