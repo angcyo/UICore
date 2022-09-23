@@ -1,11 +1,11 @@
-package com.angcyo.canvas.items
+package com.angcyo.canvas.items.data
 
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.data.ItemDataBean
 import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
 import com.angcyo.canvas.graphics.GraphicsHelper
+import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
-import com.angcyo.canvas.items.renderer.DataItemRenderer
 
 /**
  * [com.angcyo.canvas.data.ItemDataBean]

@@ -8,6 +8,7 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.items.*
+import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.DrawableItemRenderer
 import com.angcyo.canvas.items.renderer.PictureItemRenderer
@@ -28,6 +29,8 @@ fun BaseItemRenderer<*>.isLineShape(): Boolean {
         if (item.shapePath is LinePath) {
             return true
         }
+    } else if (item is DataItem) {
+        return item.dataBean.mtype == CanvasConstant.DATA_TYPE_LINE
     }
     return false
 }

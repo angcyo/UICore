@@ -5,7 +5,6 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.PictureDrawable
-import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.ICanvasView
@@ -14,7 +13,6 @@ import com.angcyo.canvas.core.component.SmartAssistant
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.PictureBitmapItem
 import com.angcyo.canvas.items.PictureDrawableItem
-import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.ex.isNoSize
 import com.angcyo.library.gesture.RectScaleGestureHandler
@@ -41,12 +39,9 @@ open class PictureItemRenderer<T : PictureDrawableItem>(canvasView: ICanvasView)
 
     override fun isSupportControlPoint(type: Int): Boolean {
         if (type == ControlPoint.POINT_TYPE_LOCK) {
-            val item = getRendererRenderItem()
-            if (item is PictureShapeItem) {
-                if (item.shapePath is LinePath) {
-                    //线段不支持任意比例缩放
-                    return false
-                }
+            if (isLineShape()) {
+                //线段不支持任意比例缩放
+                return false
             }
         }
         return super.isSupportControlPoint(type)

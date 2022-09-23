@@ -1,18 +1,20 @@
-package com.angcyo.canvas.items.renderer
+package com.angcyo.canvas.items.data
 
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.RectF
 import androidx.core.graphics.withMatrix
-import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.items.DataBitmapItem
-import com.angcyo.canvas.items.DataItem
-import com.angcyo.canvas.items.DataTextItem
+import com.angcyo.canvas.core.component.ControlPoint
+import com.angcyo.canvas.core.component.SmartAssistant
+import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.component.ScalePictureDrawable
-import com.angcyo.library.ex.*
-import kotlin.math.absoluteValue
+import com.angcyo.library.ex.adjustFlipRect
+import com.angcyo.library.ex.emptyRectF
+import com.angcyo.library.ex.isFlipHorizontal
+import com.angcyo.library.ex.isFlipVertical
 
 /**
  * 数据渲染器
@@ -71,12 +73,30 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
         }
     }
 
+    override fun isSupportControlPoint(type: Int): Boolean {
+        if (type == ControlPoint.POINT_TYPE_LOCK) {
+            if (isLineShape()) {
+                //线段不支持任意比例缩放
+                return false
+            }
+        }
+        return super.isSupportControlPoint(type)
+    }
+
+    override fun isSupportSmartAssistant(type: Int): Boolean {
+        if (isLineShape()) {
+            //线段不支持调整高度
+            return type != SmartAssistant.SMART_TYPE_H
+        }
+        return super.isSupportSmartAssistant(type)
+    }
+
     override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
         super.itemBoundsChanged(reason, oldBounds)
         getRendererRenderItem()?.dataBean?.apply {
             updateByBounds(getBounds())
         }
-        if (reason.flag.have(Reason.REASON_FLAG_BOUNDS)) {
+        /*if (reason.flag.have(Reason.REASON_FLAG_BOUNDS)) {
             if (canvasView is CanvasDelegate && !canvasView.isTouchHold) {
                 val bounds = getBounds()
                 val width = bounds.width().absoluteValue
@@ -85,7 +105,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
                     //getRendererRenderItem()?.updateDrawable(paint, width, height)
                 }
             }
-        }
+        }*/
     }
 
     override fun itemRotateChanged(oldRotate: Float, rotateFlag: Int) {

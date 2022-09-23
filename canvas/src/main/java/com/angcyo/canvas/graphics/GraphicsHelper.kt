@@ -5,12 +5,16 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.ItemDataBean
+import com.angcyo.canvas.graphics.PathGraphicsParser.Companion.MIN_PATH_SIZE
 import com.angcyo.canvas.items.BaseItem
-import com.angcyo.canvas.items.DataItem
+import com.angcyo.canvas.items.data.DataItem
+import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
-import com.angcyo.canvas.items.renderer.DataItemRenderer
+import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.http.rx.doMain
+import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.ex.abs
 
 /**
  * 用来解析[ItemDataBean]
@@ -27,6 +31,7 @@ object GraphicsHelper {
             _parserList.add(BitmapGraphicsParser())
             _parserList.add(TextGraphicsParser())
             _parserList.add(CodeGraphicsParser())
+            _parserList.add(LineGraphicsParser())
         }
     }
 
@@ -41,6 +46,11 @@ object GraphicsHelper {
             result = parser.parse(bean)
             if (result != null) {
                 break
+            }
+        }
+        if (result != null) {
+            if (bean.width == 0f && bean.height == 0f) {
+                L.e("请注意,添加了一个无大小的[Item].${bean}")
             }
         }
         return result
@@ -99,6 +109,10 @@ object GraphicsHelper {
         //bounds
         renderer.changeBoundsAction {
             bean.setRenderBounds(this)
+            if (renderer.isLineShape() && height().abs() < MIN_PATH_SIZE) {
+                //如果是线条, 则高度强制使用1像素
+                bottom = top + MIN_PATH_SIZE
+            }
         }
     }
 

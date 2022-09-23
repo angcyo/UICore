@@ -34,7 +34,7 @@ data class ItemDataBean(
     @MM
     var top: Float = 0f,
 
-    /**数据原始的宽高*/
+    /**数据原始的宽高, 线条的长度*/
     @MM
     var width: Float = 0f,
 
@@ -61,16 +61,16 @@ data class ItemDataBean(
      * */
     var mtype: Int = -1,
 
-    /**填充颜色*/
+    /**填充颜色, 形状的颜色*/
     var fill: String? = null,
 
     /**描边颜色*/
     var stroke: String? = null,
 
     /**
-     * [Paint.Style.STROKE]
-     * [Paint.Style.FILL]
-     * [Paint.Style.FILL_AND_STROKE]
+     * 0 [Paint.Style.FILL]
+     * 1 [Paint.Style.STROKE]
+     * 2 [Paint.Style.FILL_AND_STROKE]
      * */
     var paintStyle: Int = 0,
 
@@ -233,7 +233,7 @@ data class ItemDataBean(
     }
 
     /**设置渲染的位置*/
-    fun setRenderBounds(bounds: RectF): RectF {
+    fun setRenderBounds(@Pixel bounds: RectF): RectF {
         val l = mmUnit.convertValueToPixel(left)
         val t = mmUnit.convertValueToPixel(top)
         val w = mmUnit.convertValueToPixel(width)
@@ -282,17 +282,17 @@ fun String?.toPaintAlign(): Paint.Align = when (this) {
 
 /**文本样式*/
 fun Paint.Style.toPaintStyleInt(): Int = when (this) {
-    Paint.Style.STROKE -> 0
-    Paint.Style.FILL -> 1
+    Paint.Style.FILL -> 0
+    Paint.Style.STROKE -> 1
     Paint.Style.FILL_AND_STROKE -> 2
     else -> 0
 }
 
 fun Int?.toPaintStyle(): Paint.Style = when (this) {
-    0 -> Paint.Style.STROKE
-    1 -> Paint.Style.FILL
+    0 -> Paint.Style.FILL
+    1 -> Paint.Style.STROKE
     2 -> Paint.Style.FILL_AND_STROKE
-    else -> Paint.Style.STROKE
+    else -> Paint.Style.FILL
 }
 
 //---

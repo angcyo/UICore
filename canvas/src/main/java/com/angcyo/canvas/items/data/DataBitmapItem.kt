@@ -1,21 +1,22 @@
-package com.angcyo.canvas.items
+package com.angcyo.canvas.items.data
 
 import android.graphics.Bitmap
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.data.ItemDataBean
-import com.angcyo.canvas.items.renderer.DataItemRenderer
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.gcode.GCodeDrawable
 import com.angcyo.library.annotation.Pixel
 
 /**
- * 图片数据类型
+ * 图片数据item
  * [com.angcyo.canvas.utils.CanvasConstant.DATA_TYPE_BITMAP]
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/21
  */
 class DataBitmapItem(bean: ItemDataBean) : DataItem(bean) {
+
+    //region ---属性---
 
     /**原始的图片, 未修改前的数据*/
     var originBitmap: Bitmap? = null
@@ -26,7 +27,9 @@ class DataBitmapItem(bean: ItemDataBean) : DataItem(bean) {
     /**转成GCode后的Drawable*/
     var gCodeDrawable: GCodeDrawable? = null
 
-    //region ---操作---
+    //endregion ---属性---
+
+    //region ---方法---
 
     /**更新图片模式
      * [src] 可以是修改后的图片base64数据, 也可以是GCode数据
@@ -113,7 +116,7 @@ class DataBitmapItem(bean: ItemDataBean) : DataItem(bean) {
         updateRenderItem(renderer)
     }
 
-    //endregion ---操作---
+    //endregion ---方法---
 
 
 }

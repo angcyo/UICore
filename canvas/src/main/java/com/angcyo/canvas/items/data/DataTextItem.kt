@@ -1,4 +1,4 @@
-package com.angcyo.canvas.items
+package com.angcyo.canvas.items.data
 
 import android.graphics.Color
 import android.graphics.Paint
@@ -8,7 +8,7 @@ import android.widget.LinearLayout
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.data.*
 import com.angcyo.canvas.graphics.lineTextList
-import com.angcyo.canvas.items.renderer.DataItemRenderer
+import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.canvas.utils.FontManager
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
@@ -17,10 +17,13 @@ import kotlin.math.max
 import kotlin.math.tan
 
 /**
+ * 文本数据item
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/22
  */
 class DataTextItem(bean: ItemDataBean) : DataItem(bean) {
+
+    //region ---属性---
 
     /**画笔*/
     val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -30,7 +33,9 @@ class DataTextItem(bean: ItemDataBean) : DataItem(bean) {
         strokeCap = Paint.Cap.ROUND
     }
 
-    //region ---操作---
+    //endregion ---属性---
+
+    //region ---方法---
 
     /**更新画笔属性*/
     fun updatePaint() {
@@ -161,7 +166,7 @@ class DataTextItem(bean: ItemDataBean) : DataItem(bean) {
         }
     }
 
-    //endregion ---操作---
+    //endregion ---方法---
 
     //region ---可恢复的操作---
 

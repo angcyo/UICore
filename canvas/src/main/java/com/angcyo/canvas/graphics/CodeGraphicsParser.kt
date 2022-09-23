@@ -3,7 +3,7 @@ package com.angcyo.canvas.graphics
 import android.graphics.Bitmap
 import com.angcyo.canvas.data.ItemDataBean
 import com.angcyo.canvas.data.toMm
-import com.angcyo.canvas.items.DataItem
+import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.qrcode.createBarCode
 import com.angcyo.qrcode.createQRCode

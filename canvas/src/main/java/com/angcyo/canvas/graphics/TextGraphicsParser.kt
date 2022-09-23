@@ -8,8 +8,8 @@ import android.widget.LinearLayout
 import com.angcyo.canvas.data.ItemDataBean
 import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.data.toPixel
-import com.angcyo.canvas.items.DataItem
-import com.angcyo.canvas.items.DataTextItem
+import com.angcyo.canvas.items.data.DataItem
+import com.angcyo.canvas.items.data.DataTextItem
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.ex.bezier
 import com.angcyo.library.ex.computePathBounds
