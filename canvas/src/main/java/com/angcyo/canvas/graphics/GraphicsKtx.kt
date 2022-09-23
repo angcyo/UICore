@@ -26,7 +26,7 @@ fun CanvasDelegate.addBitmapRender(bitmap: Bitmap?): DataItemRenderer? {
     val bean = ItemDataBean()
     bean.mtype = CanvasConstant.DATA_TYPE_BITMAP
     bean.imageOriginal = bitmap.toBase64Data()
-    return GraphicsHelper.renderItemData(this, bean)
+    return GraphicsHelper.renderItemDataBean(this, bean, true)
 }
 
 /**添加一个[text]数据渲染*/
@@ -36,7 +36,7 @@ fun CanvasDelegate.addTextRender(text: CharSequence?): DataItemRenderer? {
     bean.mtype = CanvasConstant.DATA_TYPE_TEXT
     bean.text = "$text"
     bean.paintStyle = Paint.Style.FILL.toPaintStyleInt()
-    return GraphicsHelper.renderItemData(this, bean)
+    return GraphicsHelper.renderItemDataBean(this, bean, true)
 }
 
 /**添加一个二维码数据渲染*/
@@ -45,7 +45,7 @@ fun CanvasDelegate.addQRTextRender(text: CharSequence?): DataItemRenderer? {
     val bean = ItemDataBean()
     bean.mtype = CanvasConstant.DATA_TYPE_QRCODE
     bean.text = "$text"
-    return GraphicsHelper.renderItemData(this, bean)
+    return GraphicsHelper.renderItemDataBean(this, bean, true)
 }
 
 /**添加一个条形码数据渲染*/
@@ -54,7 +54,7 @@ fun CanvasDelegate.addBarTextRender(text: CharSequence?): DataItemRenderer? {
     val bean = ItemDataBean()
     bean.mtype = CanvasConstant.DATA_TYPE_BARCODE
     bean.text = "$text"
-    return GraphicsHelper.renderItemData(this, bean)
+    return GraphicsHelper.renderItemDataBean(this, bean, true)
 }
 
 //endregion ---图/文---
@@ -68,7 +68,7 @@ fun CanvasDelegate.addLineRender(@Pixel length: Float = ShapesHelper.defaultWidt
     val bean = ItemDataBean()
     bean.mtype = CanvasConstant.DATA_TYPE_LINE
     bean.width = length.toMm()
-    return GraphicsHelper.renderItemData(this, bean)
+    return GraphicsHelper.renderItemDataBean(this, bean, true)
 }
 
 //endregion ---形状---

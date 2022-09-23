@@ -59,10 +59,10 @@ object GraphicsHelper {
     /**渲染一个[bean]
      * [selected] 是否要选中*/
     @CallPoint
-    fun renderItemData(
+    fun renderItemDataBean(
         canvasView: ICanvasView,
         bean: ItemDataBean,
-        selected: Boolean = true
+        selected: Boolean
     ): DataItemRenderer? {
         val item = parseItemFrom(bean) ?: return null
         val renderer = DataItemRenderer(canvasView)
