@@ -290,6 +290,7 @@ class DataTextItem(bean: ItemDataBean) : DataItem(bean) {
 
     /**更新字间距*/
     fun updateTextWordSpacing(
+        @Pixel
         wordSpacing: Float,
         renderer: DataItemRenderer,
         strategy: Strategy = Strategy.normal
@@ -310,6 +311,7 @@ class DataTextItem(bean: ItemDataBean) : DataItem(bean) {
 
     /**更新行间距*/
     fun updateTextLineSpacing(
+        @Pixel
         lineSpacing: Float,
         renderer: DataItemRenderer,
         strategy: Strategy = Strategy.normal
