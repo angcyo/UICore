@@ -162,4 +162,24 @@ fun CanvasDelegate.addLoveRender(
 
 //region ---矢量---
 
+/**添加一个SVG渲染*/
+fun CanvasDelegate.addSvgRender(svg: String?): DataItemRenderer? {
+    svg ?: return null
+    val bean = ItemDataBean()
+    bean.mtype = CanvasConstant.DATA_TYPE_SVG
+    bean.data = svg
+    bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
+    return GraphicsHelper.addRenderItemDataBean(this, bean)
+}
+
+/**添加一个GCode渲染*/
+fun CanvasDelegate.addGCodeRender(gcode: String?): DataItemRenderer? {
+    gcode ?: return null
+    val bean = ItemDataBean()
+    bean.mtype = CanvasConstant.DATA_TYPE_GCODE
+    bean.data = gcode
+    bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
+    return GraphicsHelper.addRenderItemDataBean(this, bean)
+}
+
 //endregion ---矢量---

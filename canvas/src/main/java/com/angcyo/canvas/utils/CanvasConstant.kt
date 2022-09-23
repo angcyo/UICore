@@ -72,7 +72,7 @@ object CanvasConstant {
     const val DATA_TYPE_SINGLE_WORD = 10013
 
     /**数据类型, GCODE数据*/
-    const val DATA_TYPE_GCODE = 6
+    const val DATA_TYPE_GCODE = 10020
 
     /**数据类型, Path数据*/
     const val DATA_TYPE_PATH = 7

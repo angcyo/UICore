@@ -11,6 +11,6 @@ import java.nio.charset.Charset
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 
-fun InputStream.toText(charset: Charset = Charsets.UTF_8): String {
-    return String(readBytes(), charset)
-}
+fun InputStream.toText(charset: Charset = Charsets.UTF_8) = readText(charset)
+
+fun InputStream.readText(charset: Charset = Charsets.UTF_8) = readBytes().toString(charset)

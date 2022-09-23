@@ -4,14 +4,17 @@ import androidx.annotation.MainThread
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
+import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.ItemDataBean
+import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.graphics.PathGraphicsParser.Companion.MIN_PATH_SIZE
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.isLineShape
+import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.http.rx.doMain
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
@@ -34,12 +37,15 @@ object GraphicsHelper {
             _parserList.add(BitmapGraphicsParser())
             _parserList.add(TextGraphicsParser())
             _parserList.add(CodeGraphicsParser())
+            _parserList.add(PathGraphicsParser())
             _parserList.add(LineGraphicsParser())
             _parserList.add(OvalGraphicsParser())
             _parserList.add(RectGraphicsParser())
             _parserList.add(PolygonGraphicsParser())
             _parserList.add(PentagramGraphicsParser())
             _parserList.add(LoveGraphicsParser())
+            _parserList.add(SvgGraphicsParser())
+            _parserList.add(GCodeGraphicsParser())
         }
     }
 
@@ -57,8 +63,8 @@ object GraphicsHelper {
     @MM
     const val POSITION_CUT = 30f
 
-    /**分配一个位置*/
-    fun assignLocation(bean: ItemDataBean) {
+    /**分配一个位置, 和智能调整缩放*/
+    fun assignLocation(canvasViewBox: CanvasViewBox, bean: ItemDataBean) {
         if (_lastLeft > POSITION_CUT) {
             //换行
             _lastLeft = 0f
@@ -72,6 +78,27 @@ object GraphicsHelper {
         _lastTop += POSITION_STEP
         bean.left = _lastLeft
         bean.top = _lastTop
+
+        //调整可视化的缩放比例
+        val visualRect = canvasViewBox.getVisualRect()
+        if (!visualRect.isEmpty) {
+            val maxWidth = visualRect.width() * 3 / 4
+            val maxHeight = visualRect.height() * 3 / 4
+
+            val width = bean.width.toPixel()
+            val height = bean.height.toPixel()
+
+            val targetWidth: Float
+            val targetHeight: Float
+
+            limitMaxWidthHeight(width, height, maxWidth, maxHeight).apply {
+                targetWidth = this[0]
+                targetHeight = this[1]
+            }
+
+            bean.scaleX = targetWidth / width
+            bean.scaleY = targetHeight / height
+        }
     }
 
     /**开始解析
@@ -106,12 +133,14 @@ object GraphicsHelper {
         selected: Boolean,
         assignLocation: Boolean = false
     ): DataItemRenderer? {
-        if (assignLocation) {
-            assignLocation(bean)
-        }
         val item = parseItemFrom(bean) ?: return null
         val renderer = DataItemRenderer(canvasView)
         renderer.setRendererRenderItem(item)
+        if (assignLocation) {
+            //更新位置和可视的缩放比例
+            assignLocation(canvasView.getCanvasViewBox(), bean)
+            updateRenderItem(renderer, bean)
+        }
         doMain {
             updateRendererProperty(renderer, bean)
             (canvasView as? CanvasDelegate)?.apply {
@@ -125,19 +154,19 @@ object GraphicsHelper {
     }
 
     /**添加一个元素用来渲染指定的数据
-     * [renderItemDataBean]*/
+     * [renderItemDataBean] 此方法的缩短写法*/
     @CallPoint
     fun addRenderItemDataBean(canvasView: ICanvasView, bean: ItemDataBean) =
         renderItemDataBean(canvasView, bean, true, true)
 
-    /**更新一个新的渲染[DataItem]*/
+    /**更新一个新的渲染[DataItem], 重新渲染数据*/
     @CallPoint
     fun updateRenderItem(renderer: DataItemRenderer, bean: ItemDataBean) {
         val item = parseItemFrom(bean) ?: return
         updateRenderItem(renderer, item)
     }
 
-    /**更新一个新的渲染[DataItem]*/
+    /**更新[renderer]的[DataItem]*/
     @CallPoint
     fun updateRenderItem(renderer: DataItemRenderer, item: DataItem) {
         //更新渲染item

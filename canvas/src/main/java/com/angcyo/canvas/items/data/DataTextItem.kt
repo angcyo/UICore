@@ -316,7 +316,7 @@ class DataTextItem(bean: ItemDataBean) : DataItem(bean) {
         renderer: DataItemRenderer,
         strategy: Strategy = Strategy.normal
     ) {
-        val old = dataBean.charSpacing.toPixel()
+        val old = dataBean.lineSpacing.toPixel()
         val new = lineSpacing
         if (old == new) {
             return

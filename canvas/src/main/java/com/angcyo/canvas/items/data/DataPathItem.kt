@@ -71,11 +71,11 @@ open class DataPathItem(bean: ItemDataBean) : DataItem(bean) {
 
     /**添加一个数据路径, 同时添加一个可以绘制的路径, 返回可绘制路径*/
     fun addDataPath(path: Path): Path {
-        return addDataPathList(listOf(path)).last()
+        return addDataPath(listOf(path)).last()
     }
 
     /**添加一组数据路径, 同时添加一组可以绘制的路径, 返回可绘制路径*/
-    fun addDataPathList(pathList: List<Path>): List<Path> {
+    fun addDataPath(pathList: List<Path>): List<Path> {
         //需要缩放到的目标宽高
         val renderBounds = acquireTempRectF()
         dataBean.setRenderBounds(renderBounds)

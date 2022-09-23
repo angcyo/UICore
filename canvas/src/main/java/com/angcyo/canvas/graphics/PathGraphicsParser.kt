@@ -3,13 +3,19 @@ package com.angcyo.canvas.graphics
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.LinePath
+import com.angcyo.canvas.data.ItemDataBean
+import com.angcyo.canvas.data.toMm
+import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataPathItem
+import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.computeBounds
+import com.angcyo.library.ex.computePathBounds
 import com.angcyo.library.ex.withPicture
+import com.pixplicity.sharp.Sharp
 import kotlin.math.max
 
 /**
@@ -17,13 +23,52 @@ import kotlin.math.max
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/23
  */
-abstract class PathGraphicsParser : IGraphicsParser {
+open class PathGraphicsParser : IGraphicsParser {
 
     companion object {
 
         /**最小的绘制大小*/
         @Pixel
         const val MIN_PATH_SIZE = 1f
+    }
+
+    override fun parse(bean: ItemDataBean): DataItem? {
+        if (bean.mtype == CanvasConstant.DATA_TYPE_SINGLE_WORD /*单线字*/ ||
+            bean.mtype == CanvasConstant.DATA_TYPE_PEN /*钢笔*/ /*||
+            bean.mtype == CanvasConstant.DATA_TYPE_SVG *//*svg*/
+        ) {
+            //
+            val data = bean.path
+            if (!data.isNullOrEmpty()) {
+                /*if (data.startsWith("[")) {
+                    //svg数组
+                } else {
+                    //svg对象
+                }*/
+
+                val item = DataPathItem(bean)
+                item.updatePaint()
+                val path = Sharp.loadPath(data)
+
+                //
+                val pathBounds = acquireTempRectF()
+                path.computePathBounds(pathBounds)
+                if (bean.width == 0f) {
+                    bean.width = pathBounds.width().toMm()
+                }
+                if (bean.height == 0f) {
+                    bean.height = pathBounds.height().toMm()
+                }
+                //
+                pathBounds.release()
+
+                //
+                item.addDataPath(path)
+                item.drawable = createPathDrawable(item)
+                return item
+            }
+        }
+        return super.parse(bean)
     }
 
     /**创建绘制矢量的[Drawable] */
