@@ -22,7 +22,7 @@ import com.angcyo.library.ex.toColor
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/23
  */
-class DataPathItem(bean: ItemDataBean) : DataItem(bean) {
+open class DataPathItem(bean: ItemDataBean) : DataItem(bean) {
 
     //region ---属性---
 

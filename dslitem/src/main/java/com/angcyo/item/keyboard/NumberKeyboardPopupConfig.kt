@@ -12,6 +12,8 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.R
 import com.angcyo.item.style.itemText
 import com.angcyo.library.L
+import com.angcyo.library.ex.have
+import com.angcyo.library.ex.remove
 import com.angcyo.library.utils.getFloatNum
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.appendDslItem
@@ -24,6 +26,12 @@ import com.angcyo.widget.base.appendDslItem
 class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
 
     companion object {
+
+        /**需要点输入, 小数输入*/
+        const val STYLE_DECIMAL = 0x01
+
+        /**需要自增/自减*/
+        const val STYLE_INCREMENT = 0x02
 
         /**输入延迟*/
         var DEFAULT_INPUT_DELAY = 800L
@@ -131,6 +139,9 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         }
     }
 
+    /**键盘输入样式, 用来控制需要显示那些按键*/
+    var keyboardStyle: Int = 0xff
+
     /**自动绑定输入的控件*/
     var keyboardBindTextView: TextView? = null
 
@@ -176,10 +187,18 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         for (i in 1..9) {
             list.add(createNumberItem(window, "$i"))
         }
-        list.add(createNumberItem(window, "."))
+        if (keyboardStyle.have(STYLE_DECIMAL)) {
+            list.add(createNumberItem(window, "."))
+        } else {
+            list.add(DslAdapterItem().apply {
+                itemLayoutId = R.layout.lib_keyboard_empty_item_layout
+            })
+        }
         list.add(createNumberItem(window, "0"))
         list.add(createNumberImageItem(window))
-        list.add(createNumberIncrementItem(window))
+        if (keyboardStyle.have(STYLE_INCREMENT)) {
+            list.add(createNumberIncrementItem(window))
+        }
         viewHolder.group(R.id.lib_flow_layout)?.appendDslItem(list)
 
         //
@@ -268,6 +287,14 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         }
         keyboardBindTextView?.text = result
         return false
+    }
+
+    /**移除键盘样式
+     * [com.angcyo.item.keyboard.NumberKeyboardPopupConfig.STYLE_DECIMAL]
+     * [com.angcyo.item.keyboard.NumberKeyboardPopupConfig.STYLE_INCREMENT]
+     * */
+    fun removeKeyboardStyle(style: Int) {
+        keyboardStyle = keyboardStyle.remove(style)
     }
 }
 

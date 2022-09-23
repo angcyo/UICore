@@ -133,6 +133,12 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
     val dataBitmapItem: DataBitmapItem?
         get() = getRendererRenderItem() as? DataBitmapItem
 
+    val dataPathItem: DataPathItem?
+        get() = getRendererRenderItem() as? DataPathItem
+
+    val dataShapeItem: DataShapeItem?
+        get() = getRendererRenderItem() as? DataShapeItem
+
     //</editor-fold desc="操作方法">
 
 }

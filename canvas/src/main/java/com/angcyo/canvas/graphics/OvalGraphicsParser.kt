@@ -4,7 +4,7 @@ import android.graphics.Path
 import com.angcyo.canvas.data.ItemDataBean
 import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
-import com.angcyo.canvas.items.data.DataPathItem
+import com.angcyo.canvas.items.data.DataShapeItem
 import com.angcyo.canvas.utils.CanvasConstant
 
 /**
@@ -16,7 +16,7 @@ class OvalGraphicsParser : PathGraphicsParser() {
 
     override fun parse(bean: ItemDataBean): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_OVAL) {
-            val item = DataPathItem(bean)
+            val item = DataShapeItem(bean)
             item.updatePaint()
 
             //rx ry 支持

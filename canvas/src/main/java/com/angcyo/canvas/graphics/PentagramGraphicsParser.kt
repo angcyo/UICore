@@ -3,7 +3,7 @@ package com.angcyo.canvas.graphics
 import com.angcyo.canvas.data.ItemDataBean
 import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
-import com.angcyo.canvas.items.data.DataPathItem
+import com.angcyo.canvas.items.data.DataShapeItem
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.ShapesHelper
 
@@ -16,13 +16,13 @@ class PentagramGraphicsParser : PathGraphicsParser() {
 
     override fun parse(bean: ItemDataBean): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_PENTAGRAM && bean.side >= 3) {
-            val item = DataPathItem(bean)
+            val item = DataShapeItem(bean)
             item.updatePaint()
 
             val dataWidth = bean.width.toPixel()
             val dataHeight = bean.height.toPixel()
             val side = bean.side //边数
-            val depth = bean.depth //深度, 决定内圈的半径 (内圈半径 = 固定外圈半径 * [depth] / 100)
+            val depth = bean.depth //深度, 决定内圈的半径 (内圈半径 = 固定外圈半径 * (1 - [depth] / 100))
 
             //path
             val dataPath = ShapesHelper.pentagramPath(side, dataWidth, dataHeight, depth)

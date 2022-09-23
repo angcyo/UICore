@@ -267,26 +267,6 @@ class DataTextItem(bean: ItemDataBean) : DataItem(bean) {
         }
     }
 
-    /**更新笔的样式*/
-    fun updatePaintStyle(
-        style: Paint.Style,
-        renderer: DataItemRenderer,
-        strategy: Strategy = Strategy.normal
-    ) {
-        val old = dataBean.paintStyle.toPaintStyle()
-        val new = style
-        if (old == new) {
-            return
-        }
-        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
-            dataBean.paintStyle = old.toPaintStyleInt()
-            updateRenderItem(renderer)
-        }) {
-            dataBean.paintStyle = new.toPaintStyleInt()
-            updateRenderItem(renderer)
-        }
-    }
-
     /**更新字体大小*/
     fun updateTextSize(
         @Pixel

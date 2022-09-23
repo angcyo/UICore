@@ -150,7 +150,7 @@ object ShapesHelper {
 
             val R = min(width, height) / 2 //五角星外圆的半径
             //val r = min(width, height) / 4 //五角星内圆的半径
-            val r = R * depth / 100 //星星内圆的半径
+            val r = R * (1 - depth * 1f / 100) //星星内圆的半径
 
             val originX = width / 2
             val originY = height / 2

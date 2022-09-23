@@ -4,7 +4,7 @@ import android.graphics.Path
 import com.angcyo.canvas.data.ItemDataBean
 import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
-import com.angcyo.canvas.items.data.DataPathItem
+import com.angcyo.canvas.items.data.DataShapeItem
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
@@ -18,7 +18,7 @@ class RectGraphicsParser : PathGraphicsParser() {
 
     override fun parse(bean: ItemDataBean): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_RECT) {
-            val item = DataPathItem(bean)
+            val item = DataShapeItem(bean)
             item.updatePaint()
 
             val dataWidth = bean.width.toPixel()

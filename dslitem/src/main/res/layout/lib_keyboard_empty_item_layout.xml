@@ -5,8 +5,8 @@
     style="@style/LibBodyTextStyle"
     android:layout_width="@dimen/lib_keyboard_size"
     android:layout_height="@dimen/lib_keyboard_size"
-    android:background="@drawable/lib_keyboard_number_selector"
     android:gravity="center"
     android:textColor="@color/lib_dark_gray"
     android:textSize="20dp"
+    tools:background="@drawable/lib_keyboard_number_selector"
     tools:text="1" />

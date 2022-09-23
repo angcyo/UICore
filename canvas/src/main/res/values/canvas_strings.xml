@@ -93,4 +93,8 @@
     <string name="canvas_line_spacing">行间距</string>
     <string name="canvas_curve">曲线</string>
 
+    <string name="canvas_side">边数</string>
+    <string name="canvas_depth">深度</string>
+    <string name="canvas_corner">圆角</string>
+
 </resources>
