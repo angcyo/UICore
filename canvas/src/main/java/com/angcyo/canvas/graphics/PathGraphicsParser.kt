@@ -50,12 +50,9 @@ abstract class PathGraphicsParser : IGraphicsParser {
             //缩放边框, 以便于不会被Bounds裁剪
             val drawWidth = shapeWidth - strokeWidth * 2
             val drawHeight = shapeHeight - strokeWidth * 2
-            scale(
-                drawWidth / shapeWidth,
-                drawHeight / shapeHeight,
-                shapeWidth / 2f,
-                shapeHeight / 2f
-            )
+            val scaleX = drawWidth / shapeWidth
+            val scaleY = drawHeight / shapeHeight
+            scale(scaleX, scaleY, shapeWidth / 2f, shapeHeight / 2f)
 
             pathList.forEach { path ->
                 //线段的描边用虚线处理处理

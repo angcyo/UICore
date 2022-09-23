@@ -71,6 +71,93 @@ fun CanvasDelegate.addLineRender(@Pixel length: Float = ShapesHelper.defaultWidt
     return GraphicsHelper.renderItemDataBean(this, bean, true)
 }
 
+/**添加一个椭圆, 宽高相等时, 就是圆了*/
+fun CanvasDelegate.addOvalRender(
+    @Pixel width: Float = ShapesHelper.defaultWidth,
+    @Pixel height: Float = ShapesHelper.defaultHeight
+): DataItemRenderer? {
+    val bean = ItemDataBean()
+    bean.mtype = CanvasConstant.DATA_TYPE_OVAL
+    bean.width = width.toMm()
+    bean.height = height.toMm()
+    bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
+
+    bean.rx = width / 2
+    bean.ry = height / 2
+
+    return GraphicsHelper.renderItemDataBean(this, bean, true)
+}
+
+/**添加一个矩形, 支持圆角*/
+fun CanvasDelegate.addRectRender(
+    @Pixel width: Float = ShapesHelper.defaultWidth,
+    @Pixel height: Float = ShapesHelper.defaultHeight
+): DataItemRenderer? {
+    val bean = ItemDataBean()
+    bean.mtype = CanvasConstant.DATA_TYPE_RECT
+    bean.width = width.toMm()
+    bean.height = height.toMm()
+    bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
+
+    //bean.rx = 0f
+    //bean.ry = 0f
+
+    return GraphicsHelper.renderItemDataBean(this, bean, true)
+}
+
+/**添加一个多边形, 支持任意边数
+ * [com.angcyo.canvas.data.ItemDataBean.side]*/
+fun CanvasDelegate.addPolygonRender(
+    @Pixel width: Float = ShapesHelper.defaultWidth,
+    @Pixel height: Float = ShapesHelper.defaultHeight
+): DataItemRenderer? {
+    val bean = ItemDataBean()
+    bean.mtype = CanvasConstant.DATA_TYPE_POLYGON
+    bean.width = width.toMm()
+    bean.height = height.toMm()
+    bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
+
+    //多边形的边数[3-50]
+    //bean.side = 3
+
+    return GraphicsHelper.renderItemDataBean(this, bean, true)
+}
+
+/**添加一个星星, 支持任意边数, 和深度
+ * [com.angcyo.canvas.data.ItemDataBean.side]
+ * [com.angcyo.canvas.data.ItemDataBean.depth]
+ * */
+fun CanvasDelegate.addPentagramRender(
+    @Pixel width: Float = ShapesHelper.defaultWidth,
+    @Pixel height: Float = ShapesHelper.defaultHeight
+): DataItemRenderer? {
+    val bean = ItemDataBean()
+    bean.mtype = CanvasConstant.DATA_TYPE_PENTAGRAM
+    bean.width = width.toMm()
+    bean.height = height.toMm()
+    bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
+
+    //多边形的边数[3-50]
+    bean.side = 5
+    //星星的深度[1-100]
+    //bean.depth = 40
+
+    return GraphicsHelper.renderItemDataBean(this, bean, true)
+}
+
+/**添加一个爱心*/
+fun CanvasDelegate.addLoveRender(
+    @Pixel width: Float = ShapesHelper.defaultWidth,
+    @Pixel height: Float = ShapesHelper.defaultHeight
+): DataItemRenderer? {
+    val bean = ItemDataBean()
+    bean.mtype = CanvasConstant.DATA_TYPE_LOVE
+    bean.width = width.toMm()
+    bean.height = height.toMm()
+    bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
+    return GraphicsHelper.renderItemDataBean(this, bean, true)
+}
+
 //endregion ---形状---
 
 //region ---矢量---

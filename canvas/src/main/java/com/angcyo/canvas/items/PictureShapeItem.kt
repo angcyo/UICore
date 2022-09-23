@@ -3,6 +3,7 @@ package com.angcyo.canvas.items
 import android.graphics.Paint
 import android.graphics.Path
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.library.annotation.MM
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
@@ -20,9 +21,11 @@ class PictureShapeItem(
 
     companion object {
         /**默认的形状宽度, cm单位*/
+        @MM
         const val SHAPE_DEFAULT_WIDTH = 10f
 
         /**默认的形状高度, cm单位*/
+        @MM
         const val SHAPE_DEFAULT_HEIGHT = 10f
     }
 

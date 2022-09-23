@@ -25,6 +25,8 @@ import com.angcyo.library.gesture.RectScaleGestureHandler
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/29
  */
+
+@Deprecated("请使用数据渲染[DataItemRenderer]")
 open class PictureItemRenderer<T : PictureDrawableItem>(canvasView: ICanvasView) :
     DrawableItemRenderer<T>(canvasView) {
 

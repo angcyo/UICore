@@ -1,6 +1,7 @@
 package com.angcyo.canvas.items.data
 
 import android.graphics.drawable.Drawable
+import com.angcyo.canvas.Reason
 import com.angcyo.canvas.data.ItemDataBean
 import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
 import com.angcyo.canvas.graphics.GraphicsHelper
@@ -28,6 +29,9 @@ open class DataItem(val dataBean: ItemDataBean) : BaseItem() {
         val height = mmUnit.convertValueToPixel(dataBean.height)
         return renderer.getBounds().height() / height
     }
+
+    /**当渲染的bounds改变时, 是否需要刷新[updateRenderItem]*/
+    open fun needUpdateOfBoundsChanged(reason: Reason): Boolean = false
 
     //
 

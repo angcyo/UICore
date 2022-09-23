@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.RectF
 import androidx.core.graphics.withMatrix
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.ControlPoint
@@ -93,19 +94,23 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
 
     override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
         super.itemBoundsChanged(reason, oldBounds)
-        getRendererRenderItem()?.dataBean?.apply {
+
+        val renderItem = getRendererRenderItem()
+        renderItem?.dataBean?.apply {
             updateByBounds(getBounds())
-        }
-        /*if (reason.flag.have(Reason.REASON_FLAG_BOUNDS)) {
+
+            //
             if (canvasView is CanvasDelegate && !canvasView.isTouchHold) {
-                val bounds = getBounds()
-                val width = bounds.width().absoluteValue
-                val height = bounds.height().absoluteValue
-                if (width > 0 && height > 0) {
-                    //getRendererRenderItem()?.updateDrawable(paint, width, height)
+                val oldWidth = oldBounds.width()
+                val oldHeight = oldBounds.height()
+                if (oldWidth != 0f && oldHeight != 0f) {
+                    //
+                    if (renderItem.needUpdateOfBoundsChanged(reason)) {
+                        renderItem.updateRenderItem(this@DataItemRenderer)
+                    }
                 }
             }
-        }*/
+        }
     }
 
     override fun itemRotateChanged(oldRotate: Float, rotateFlag: Int) {

@@ -2,6 +2,7 @@ package com.angcyo.canvas.graphics
 
 import androidx.annotation.MainThread
 import com.angcyo.canvas.CanvasDelegate
+import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.ItemDataBean
@@ -26,12 +27,18 @@ object GraphicsHelper {
     /**解析器集合*/
     val _parserList = mutableListOf<IGraphicsParser>()
 
+    /**初始化解析器*/
     fun initParser() {
         if (_parserList.isEmpty()) {
             _parserList.add(BitmapGraphicsParser())
             _parserList.add(TextGraphicsParser())
             _parserList.add(CodeGraphicsParser())
             _parserList.add(LineGraphicsParser())
+            _parserList.add(OvalGraphicsParser())
+            _parserList.add(RectGraphicsParser())
+            _parserList.add(PolygonGraphicsParser())
+            _parserList.add(PentagramGraphicsParser())
+            _parserList.add(LoveGraphicsParser())
         }
     }
 
@@ -107,7 +114,7 @@ object GraphicsHelper {
         renderer.rotate = bean.angle
 
         //bounds
-        renderer.changeBoundsAction {
+        renderer.changeBoundsAction(Reason(Reason.REASON_CODE, true, Reason.REASON_FLAG_BOUNDS)) {
             bean.setRenderBounds(this)
             if (renderer.isLineShape() && height().abs() < MIN_PATH_SIZE) {
                 //如果是线条, 则高度强制使用1像素

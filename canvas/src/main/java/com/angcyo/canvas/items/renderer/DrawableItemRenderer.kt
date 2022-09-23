@@ -9,7 +9,6 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.items.DrawableItem
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.*
@@ -20,6 +19,8 @@ import kotlin.math.absoluteValue
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/11
  */
+
+@Deprecated("请使用数据渲染[DataItemRenderer]")
 open class DrawableItemRenderer<T : DrawableItem>(canvasView: ICanvasView) :
     BaseItemRenderer<T>(canvasView) {
 

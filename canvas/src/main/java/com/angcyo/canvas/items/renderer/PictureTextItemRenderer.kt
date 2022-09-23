@@ -21,6 +21,7 @@ import com.angcyo.library.ex.remove
  * @since 2022/04/21
  */
 
+@Deprecated("请使用数据渲染[DataItemRenderer]")
 class PictureTextItemRenderer(canvasView: ICanvasView) :
     PictureItemRenderer<PictureTextItem>(canvasView) {
 

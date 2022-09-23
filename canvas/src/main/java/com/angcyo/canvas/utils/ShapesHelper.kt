@@ -2,9 +2,9 @@ package com.angcyo.canvas.utils
 
 import android.graphics.Path
 import com.angcyo.canvas.LinePath
+import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
 import com.angcyo.canvas.items.PictureShapeItem
 import com.angcyo.library.ex.toRadians
-import com.angcyo.library.unit.MmValueUnit
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -20,10 +20,10 @@ import kotlin.math.sin
 object ShapesHelper {
 
     val defaultWidth: Float
-        get() = MmValueUnit().convertValueToPixel(PictureShapeItem.SHAPE_DEFAULT_WIDTH)
+        get() = mmUnit.convertValueToPixel(PictureShapeItem.SHAPE_DEFAULT_WIDTH)
 
     val defaultHeight: Float
-        get() = MmValueUnit().convertValueToPixel(PictureShapeItem.SHAPE_DEFAULT_HEIGHT)
+        get() = mmUnit.convertValueToPixel(PictureShapeItem.SHAPE_DEFAULT_HEIGHT)
 
     /**多边形的Path*/
     fun polygonPath(
@@ -138,16 +138,19 @@ object ShapesHelper {
         }
 
     /**星星Path
-     * [number] 角的数量*/
+     * [number] 角的数量
+     * [depth] 深度, 决定内圈的半径*/
     fun pentagramPath(
         number: Int = 5,
         width: Float = defaultWidth,
-        height: Float = defaultHeight
+        height: Float = defaultHeight,
+        depth: Int = 40,
     ): Path =
         Path().apply {
 
-            val r = min(width, height) / 4 //五角星内圆的半径
             val R = min(width, height) / 2 //五角星外圆的半径
+            //val r = min(width, height) / 4 //五角星内圆的半径
+            val r = R * depth / 100 //星星内圆的半径
 
             val originX = width / 2
             val originY = height / 2

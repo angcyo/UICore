@@ -3,10 +3,7 @@ package com.angcyo.library.ex
 import android.graphics.*
 import android.os.Build
 import androidx.core.graphics.withTranslation
-import com.angcyo.library.component.pool.acquireTempPath
-import com.angcyo.library.component.pool.acquireTempRectF
-import com.angcyo.library.component.pool.acquireTempRegion
-import com.angcyo.library.component.pool.release
+import com.angcyo.library.component.pool.*
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
@@ -385,4 +382,28 @@ fun Path.bezier(c1x: Float, c1y: Float, c2x: Float, c2y: Float, endX: Float, end
 
 fun Path.bezier(c1Point: PointF, c2Point: PointF, endPoint: PointF): Path {
     return bezier(c1Point.x, c1Point.y, c2Point.x, c2Point.y, endPoint.x, endPoint.y)
+}
+
+/**调整path的宽高*/
+fun Path.adjustWidthHeight(newWidth: Float, newHeight: Float, result: Path = Path()): Path {
+    //path实际的宽高
+    val pathBounds = acquireTempRectF()
+    computeBounds(pathBounds, true)
+    val pathWidth = pathBounds.width()
+    val pathHeight = pathBounds.height()
+
+    //
+    val matrix = acquireTempMatrix()
+    val scaleX = newWidth / pathWidth
+    val scaleY = newHeight / pathHeight
+    matrix.setScale(scaleX, scaleY, pathBounds.left, pathBounds.top)
+
+    //
+    transform(matrix, result)
+
+    //release
+    pathBounds.release()
+    matrix.release()
+
+    return result
 }
