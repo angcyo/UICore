@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
+import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import com.angcyo.dsladapter.annotation.UpdateByDiff
 import com.angcyo.dsladapter.annotation.UpdateByNotify
@@ -286,6 +287,17 @@ fun <T : DslAdapterItem> DslAdapter.dslCustomItem(
     return dslItem
 }
 
+/**横线item*/
+@UpdateFlag
+fun DslAdapter.renderLineItem(
+    height: Int = _dimen(R.dimen.lib_line),
+    backgroundColor: Int = _color(R.color.lib_line),
+    list: MutableList<DslAdapterItem> = dataItems,
+    action: DslAdapterItem.() -> Unit = {}
+) {
+    renderEmptyItem(height, ColorDrawable(backgroundColor), list, action)
+}
+
 /**空的占位item*/
 @UpdateFlag
 fun DslAdapter.renderEmptyItem(
@@ -308,7 +320,7 @@ fun DslAdapter.renderEmptyItem(
     adapterItem.itemLayoutId = R.layout.lib_empty_item
     adapterItem.itemBindOverride = { itemHolder, _, _, _ ->
         itemHolder.itemView.setBgDrawable(background)
-        itemHolder.itemView.setWidthHeight(-1, height)
+        itemHolder.itemView.setWidthHeight(ViewGroup.LayoutParams.MATCH_PARENT, height)
     }
     adapterItem.action()
     addLastItem(list, adapterItem)
