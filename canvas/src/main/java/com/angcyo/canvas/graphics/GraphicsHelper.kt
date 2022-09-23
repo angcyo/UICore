@@ -15,6 +15,7 @@ import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.http.rx.doMain
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.annotation.MM
 import com.angcyo.library.ex.abs
 
 /**
@@ -42,6 +43,37 @@ object GraphicsHelper {
         }
     }
 
+    @MM
+    var _lastLeft = 0f
+
+    @MM
+    var _lastTop = 0f
+
+    var _lastTopIndex = 0
+
+    @MM
+    const val POSITION_STEP = 5f
+
+    @MM
+    const val POSITION_CUT = 30f
+
+    /**分配一个位置*/
+    fun assignLocation(bean: ItemDataBean) {
+        if (_lastLeft > POSITION_CUT) {
+            //换行
+            _lastLeft = 0f
+            _lastTopIndex++
+            _lastTop = POSITION_STEP * _lastTopIndex
+        }
+        if (_lastTop > POSITION_CUT) {
+            _lastTopIndex = 0
+        }
+        _lastLeft += POSITION_STEP
+        _lastTop += POSITION_STEP
+        bean.left = _lastLeft
+        bean.top = _lastTop
+    }
+
     /**开始解析
      * 更具[bean]解析出一个可以用来渲染的[BaseItem]
      * */
@@ -64,13 +96,19 @@ object GraphicsHelper {
     }
 
     /**渲染一个[bean]
-     * [selected] 是否要选中*/
+     * [selected] 是否要选中
+     * [assignLocation] 是否需要分配一个位置
+     * */
     @CallPoint
     fun renderItemDataBean(
         canvasView: ICanvasView,
         bean: ItemDataBean,
-        selected: Boolean
+        selected: Boolean,
+        assignLocation: Boolean = false
     ): DataItemRenderer? {
+        if (assignLocation) {
+            assignLocation(bean)
+        }
         val item = parseItemFrom(bean) ?: return null
         val renderer = DataItemRenderer(canvasView)
         renderer.setRendererRenderItem(item)
@@ -85,6 +123,12 @@ object GraphicsHelper {
         }
         return renderer
     }
+
+    /**添加一个元素用来渲染指定的数据
+     * [renderItemDataBean]*/
+    @CallPoint
+    fun addRenderItemDataBean(canvasView: ICanvasView, bean: ItemDataBean) =
+        renderItemDataBean(canvasView, bean, true, true)
 
     /**更新一个新的渲染[DataItem]*/
     @CallPoint

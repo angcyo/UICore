@@ -26,7 +26,7 @@ fun CanvasDelegate.addBitmapRender(bitmap: Bitmap?): DataItemRenderer? {
     val bean = ItemDataBean()
     bean.mtype = CanvasConstant.DATA_TYPE_BITMAP
     bean.imageOriginal = bitmap.toBase64Data()
-    return GraphicsHelper.renderItemDataBean(this, bean, true)
+    return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
 
 /**添加一个[text]数据渲染*/
@@ -36,7 +36,7 @@ fun CanvasDelegate.addTextRender(text: CharSequence?): DataItemRenderer? {
     bean.mtype = CanvasConstant.DATA_TYPE_TEXT
     bean.text = "$text"
     bean.paintStyle = Paint.Style.FILL.toPaintStyleInt()
-    return GraphicsHelper.renderItemDataBean(this, bean, true)
+    return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
 
 /**添加一个二维码数据渲染*/
@@ -45,7 +45,7 @@ fun CanvasDelegate.addQRTextRender(text: CharSequence?): DataItemRenderer? {
     val bean = ItemDataBean()
     bean.mtype = CanvasConstant.DATA_TYPE_QRCODE
     bean.text = "$text"
-    return GraphicsHelper.renderItemDataBean(this, bean, true)
+    return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
 
 /**添加一个条形码数据渲染*/
@@ -54,7 +54,7 @@ fun CanvasDelegate.addBarTextRender(text: CharSequence?): DataItemRenderer? {
     val bean = ItemDataBean()
     bean.mtype = CanvasConstant.DATA_TYPE_BARCODE
     bean.text = "$text"
-    return GraphicsHelper.renderItemDataBean(this, bean, true)
+    return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
 
 //endregion ---图/文---
@@ -68,7 +68,7 @@ fun CanvasDelegate.addLineRender(@Pixel length: Float = ShapesHelper.defaultWidt
     val bean = ItemDataBean()
     bean.mtype = CanvasConstant.DATA_TYPE_LINE
     bean.width = length.toMm()
-    return GraphicsHelper.renderItemDataBean(this, bean, true)
+    return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
 
 /**添加一个椭圆, 宽高相等时, 就是圆了*/
@@ -85,7 +85,7 @@ fun CanvasDelegate.addOvalRender(
     bean.rx = width / 2
     bean.ry = height / 2
 
-    return GraphicsHelper.renderItemDataBean(this, bean, true)
+    return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
 
 /**添加一个矩形, 支持圆角*/
@@ -102,7 +102,7 @@ fun CanvasDelegate.addRectRender(
     //bean.rx = 0f
     //bean.ry = 0f
 
-    return GraphicsHelper.renderItemDataBean(this, bean, true)
+    return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
 
 /**添加一个多边形, 支持任意边数
@@ -120,7 +120,7 @@ fun CanvasDelegate.addPolygonRender(
     //多边形的边数[3-50]
     //bean.side = 3
 
-    return GraphicsHelper.renderItemDataBean(this, bean, true)
+    return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
 
 /**添加一个星星, 支持任意边数, 和深度
@@ -142,7 +142,7 @@ fun CanvasDelegate.addPentagramRender(
     //星星的深度[1-100]
     //bean.depth = 40
 
-    return GraphicsHelper.renderItemDataBean(this, bean, true)
+    return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
 
 /**添加一个爱心*/
@@ -155,7 +155,7 @@ fun CanvasDelegate.addLoveRender(
     bean.width = width.toMm()
     bean.height = height.toMm()
     bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
-    return GraphicsHelper.renderItemDataBean(this, bean, true)
+    return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
 
 //endregion ---形状---
