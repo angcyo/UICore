@@ -4,9 +4,9 @@
     android:id="@+id/lib_item_root_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/lib_padding_left"
+    android:paddingLeft="@dimen/lib_xhdpi"
     android:paddingTop="@dimen/lib_hdpi"
-    android:paddingRight="@dimen/lib_padding_left"
+    android:paddingRight="@dimen/lib_xhdpi"
     android:paddingBottom="@dimen/lib_hdpi">
 
     <com.angcyo.widget.DslButton
@@ -14,7 +14,6 @@
         style="@style/LibButtonBlackSolidStyle"
         android:layout_width="match_parent"
         android:layout_height="@dimen/lib_item_min_height"
-        android:layout_marginHorizontal="@dimen/lib_xhdpi"
         tools:text="@string/dialog_positive" />
 
 </FrameLayout>

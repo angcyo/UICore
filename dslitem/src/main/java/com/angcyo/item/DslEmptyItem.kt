@@ -5,6 +5,9 @@ import com.angcyo.dsladapter.DslAdapterItem
 
 /**
  * 空的占位item
+ *
+ * [com.angcyo.item.DslLineItem]
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/06/24

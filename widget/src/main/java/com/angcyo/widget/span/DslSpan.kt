@@ -183,8 +183,8 @@ class DslSpan : Appendable {
         return this
     }
 
-    /**追加图片*/
-    fun appendImage(
+    /**追加Drawable[drawable]*/
+    fun appendDrawable(
         drawable: Drawable?,
         alignment: Int = DynamicDrawableSpan.ALIGN_BASELINE
     ): DslSpan {
@@ -195,6 +195,14 @@ class DslSpan : Appendable {
             append("<img>", ImageSpan(drawable, alignment))
         }
         return this
+    }
+
+    /**追加图片*/
+    fun appendImage(
+        drawable: Drawable?,
+        alignment: Int = DynamicDrawableSpan.ALIGN_BASELINE
+    ): DslSpan {
+        return appendDrawable(drawable, alignment)
     }
 
     /**快速追加[DslDrawableSpan]*/
