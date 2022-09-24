@@ -1,8 +1,9 @@
 package com.angcyo.iview
 
 import androidx.annotation.AnyThread
-import androidx.annotation.MainThread
 import com.angcyo.dsladapter.DslAdapter
+import com.angcyo.dsladapter._dslAdapter
+import com.angcyo.library.component.onMain
 import com.angcyo.widget.R
 import com.angcyo.widget.recycler.noItemChangeAnim
 import com.angcyo.widget.recycler.renderDslAdapter
@@ -20,6 +21,9 @@ abstract class BaseRecyclerIView : IView() {
             field = value
             updateTitle(value)
         }
+
+    val _dslAdapter: DslAdapter?
+        get() = viewHolder?.rv(R.id.lib_recycler_view)?._dslAdapter
 
     init {
         iViewLayoutId = R.layout.lib_recycler_iview_layout
@@ -43,10 +47,12 @@ abstract class BaseRecyclerIView : IView() {
     }
 
     /**显示关闭按钮*/
-    @MainThread
+    @AnyThread
     open fun showCloseView(show: Boolean = true) {
         cancelable = show
-        viewHolder?.visible(R.id.lib_close_view, show)
+        onMain {
+            viewHolder?.visible(R.id.lib_close_view, show)
+        }
     }
 
     /**DslAdapter*/

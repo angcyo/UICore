@@ -34,6 +34,9 @@ interface IValueUnit {
 
     /**将value转换成对应单位的文本*/
     fun formattedValueUnit(value: Float): String
+
+    /**获取描述的单位字符创*/
+    fun getUnit(): String
 }
 
 /**保留小数点后几位*/

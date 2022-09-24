@@ -35,5 +35,7 @@ class PointValueUnit : IValueUnit {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, value, dm)
     }
 
-    override fun formattedValueUnit(value: Float): String = "${value.unitDecimal(2)}pt"
+    override fun formattedValueUnit(value: Float): String = "${value.unitDecimal(2)}${getUnit()}"
+
+    override fun getUnit(): String = "pt"
 }

@@ -48,7 +48,9 @@ class InchValueUnit : IValueUnit {
         return when {
             //value.abs() / 100 > 1 -> "${(value / 100).decimal(2)}m"
             //value.abs() / 10 > 1 -> "${(value / 10).decimal(2)}cm"
-            else -> "${value.unitDecimal(2)}in"
+            else -> "${value.unitDecimal(2)}${getUnit()}"
         }
     }
+
+    override fun getUnit(): String = "inch"
 }

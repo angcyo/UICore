@@ -1,5 +1,6 @@
 package com.angcyo.library.component
 
+import com.angcyo.library.isMain
 import java.util.*
 import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -52,5 +53,14 @@ object ThreadExecutor : Executor {
         synchronized(executorLock) {
             MainExecutor.execute(command)
         }
+    }
+}
+
+/**在主进程执行*/
+fun onMain(check: Boolean = true, command: Runnable) {
+    if (check && isMain()) {
+        command.run()
+    } else {
+        ThreadExecutor.onMain(command)
     }
 }

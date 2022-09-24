@@ -14,5 +14,7 @@ class PixelValueUnit : IValueUnit {
 
     override fun convertValueToPixel(value: Float): Float = 1f
 
-    override fun formattedValueUnit(value: Float): String = "${value.toInt()}px"
+    override fun formattedValueUnit(value: Float): String = "${value.toInt()}${getUnit()}"
+
+    override fun getUnit(): String = "px"
 }
