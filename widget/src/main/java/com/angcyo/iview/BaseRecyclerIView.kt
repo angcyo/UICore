@@ -19,7 +19,7 @@ abstract class BaseRecyclerIView : IView() {
     var iViewTitle: CharSequence? = null
         set(value) {
             field = value
-            updateTitle(value)
+            updateIViewTitle(value)
         }
 
     val _dslAdapter: DslAdapter?
@@ -34,7 +34,7 @@ abstract class BaseRecyclerIView : IView() {
         if (iViewTitle == null) {
             iViewTitle = viewHolder?.tv(R.id.lib_title_view)?.text
         }
-        updateTitle(iViewTitle)
+        updateIViewTitle(iViewTitle)
 
         //init
         viewHolder?.throttleClick(R.id.lib_close_view) {
@@ -42,7 +42,7 @@ abstract class BaseRecyclerIView : IView() {
         }
     }
 
-    open fun updateTitle(title: CharSequence?) {
+    open fun updateIViewTitle(title: CharSequence?) {
         viewHolder?.tv(R.id.lib_title_view)?.text = title
     }
 

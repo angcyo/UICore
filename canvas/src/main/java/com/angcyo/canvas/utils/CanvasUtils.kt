@@ -163,7 +163,7 @@ fun Bitmap.engraveColorBytes(channelType: Int = Color.RED): ByteArray {
 }
 
 /**
- * 进入雕刻模式, 此时只有画布能响应手势
+ * 是否进入雕刻模式, 此时只有画布能响应手势
  * */
 fun CanvasDelegate.engraveMode(enable: Boolean = true) {
     disableTouchFlag(CanvasDelegate.TOUCH_FLAG_MULTI_SELECT, enable)

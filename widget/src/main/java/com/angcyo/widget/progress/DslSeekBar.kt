@@ -362,12 +362,16 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 }
 
 open class SeekBarConfig {
+
     /**进度改变回调,
      * [value] 进度值[0~100]
      * [fraction] 进度比例[0~1]
      * [fromUser] 是否是用户触发*/
     var onSeekChanged: (value: Int, fraction: Float, fromUser: Boolean) -> Unit = { _, _, _ -> }
 
-    /**Touch结束后的回调*/
+    /**Touch结束后的回调
+     * [value] 进度值[0~100]
+     * [fraction] 进度比例[0~1]
+     * */
     var onSeekTouchEnd: (value: Int, fraction: Float) -> Unit = { _, _ -> }
 }
