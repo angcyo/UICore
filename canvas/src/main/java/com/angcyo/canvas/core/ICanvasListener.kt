@@ -27,11 +27,15 @@ interface ICanvasListener : ICanvasTouch {
 
     //<editor-fold desc="Item相关">
 
-    /**选中[IItemRenderer], 有可能[oldItemRenderer]会等于[itemRenderer]*/
-    fun onSelectedItem(itemRenderer: IItemRenderer<*>, oldItemRenderer: IItemRenderer<*>?) {}
+    /**选中[IItemRenderer], 有可能[oldItemRenderer]会等于[itemRenderer]
+     * [itemRenderer] 有可能为空, 为空表示没有选中
+     * [com.angcyo.canvas.CanvasDelegate.selectedItem]
+     * */
+    fun onSelectedItem(itemRenderer: IItemRenderer<*>?, oldItemRenderer: IItemRenderer<*>?) {}
 
     /**清除选中[IItemRenderer]
-     * [itemRenderer] 之前选中的渲染项*/
+     * [itemRenderer] 之前选中的渲染项
+     * [com.angcyo.canvas.CanvasDelegate.selectedItem]*/
     fun onClearSelectItem(itemRenderer: IItemRenderer<*>) {}
 
     /**[IItemRenderer]改变[Bounds]之后的回调*/

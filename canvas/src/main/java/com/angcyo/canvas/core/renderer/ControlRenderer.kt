@@ -80,11 +80,13 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
     }
 
     override fun onSelectedItem(
-        itemRenderer: IItemRenderer<*>,
+        itemRenderer: IItemRenderer<*>?,
         oldItemRenderer: IItemRenderer<*>?
     ) {
         super.onSelectedItem(itemRenderer, oldItemRenderer)
-        updateControlPointLocation()
+        if (itemRenderer != null) {
+            updateControlPointLocation()
+        }
     }
 
     /**更新控制点位坐标*/

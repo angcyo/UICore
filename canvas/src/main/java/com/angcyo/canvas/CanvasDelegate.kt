@@ -13,8 +13,8 @@ import com.angcyo.canvas.core.component.*
 import com.angcyo.canvas.core.renderer.*
 import com.angcyo.canvas.data.CanvasDataBean
 import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
-import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.data.DataItemRenderer
+import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer.Companion.ROTATE_FLAG_NORMAL
 import com.angcyo.canvas.utils.ShapesHelper
@@ -797,15 +797,15 @@ class CanvasDelegate(val view: View) : ICanvasView {
         controlHandler.setLockScaleRatio(itemRenderer?.isLockScaleRatio ?: true)
 
         //通知
+        canvasListenerList.forEach {
+            it.onSelectedItem(itemRenderer, oldItemRenderer)
+        }
+
         if (itemRenderer == null) {
             if (oldItemRenderer != null) {
                 canvasListenerList.forEach {
                     it.onClearSelectItem(oldItemRenderer)
                 }
-            }
-        } else {
-            canvasListenerList.forEach {
-                it.onSelectedItem(itemRenderer, oldItemRenderer)
             }
         }
 

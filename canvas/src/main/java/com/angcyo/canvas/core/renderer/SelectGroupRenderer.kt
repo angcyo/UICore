@@ -85,13 +85,13 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     }
 
     override fun onSelectedItem(
-        itemRenderer: IItemRenderer<*>,
+        itemRenderer: IItemRenderer<*>?,
         oldItemRenderer: IItemRenderer<*>?
     ) {
         super.onSelectedItem(itemRenderer, oldItemRenderer)
         if (itemRenderer == this) {
             //选中的是自己
-        } else {
+        } else if (itemRenderer != null) {
             reset()
         }
     }
