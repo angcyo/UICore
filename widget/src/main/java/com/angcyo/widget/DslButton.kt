@@ -472,9 +472,9 @@ open class DslButton : AppCompatTextView {
         endIndex: Int,
         defaultValue: IntArray?
     ): IntArray? {
-        return if (typedArray.hasValue(attrIndex)) {
-            val normalColors = typedArray.getString(attrIndex)
-            _fillColor(normalColors)
+        val colors = typedArray.getString(attrIndex)
+        return if (!colors.isNullOrEmpty()) {
+            _fillColor(colors)
         } else if (typedArray.hasValue(startIndex) || typedArray.hasValue(endIndex)) {
             val startColor = typedArray.getColor(startIndex, Color.TRANSPARENT)
             val endColor = typedArray.getColor(endIndex, Color.TRANSPARENT)
@@ -573,26 +573,24 @@ open class DslButton : AppCompatTextView {
             }
         }
 
-        val bGradientColors =
-            if (typedArray.hasValue(R.styleable.DslButton_button_gradient_colors)) {
-                val normalColors =
-                    typedArray.getString(R.styleable.DslButton_button_gradient_colors)
-                _fillColor(normalColors)
-            } else if (typedArray.hasValue(R.styleable.DslButton_button_gradient_start_color) ||
-                typedArray.hasValue(R.styleable.DslButton_button_gradient_end_color)
-            ) {
-                buttonGradientStartColor = typedArray.getColor(
-                    R.styleable.DslButton_button_gradient_start_color,
-                    buttonGradientStartColor
-                )
-                buttonGradientEndColor = typedArray.getColor(
-                    R.styleable.DslButton_button_gradient_end_color,
-                    buttonGradientEndColor
-                )
-                intArrayOf(buttonGradientStartColor, buttonGradientEndColor)
-            } else {
-                normalGradientColors
-            }
+        val normalColors = typedArray.getString(R.styleable.DslButton_button_gradient_colors)
+        val bGradientColors = if (!normalColors.isNullOrEmpty()) {
+            _fillColor(normalColors)
+        } else if (typedArray.hasValue(R.styleable.DslButton_button_gradient_start_color) ||
+            typedArray.hasValue(R.styleable.DslButton_button_gradient_end_color)
+        ) {
+            buttonGradientStartColor = typedArray.getColor(
+                R.styleable.DslButton_button_gradient_start_color,
+                buttonGradientStartColor
+            )
+            buttonGradientEndColor = typedArray.getColor(
+                R.styleable.DslButton_button_gradient_end_color,
+                buttonGradientEndColor
+            )
+            intArrayOf(buttonGradientStartColor, buttonGradientEndColor)
+        } else {
+            normalGradientColors
+        }
 
         setButtonGradientColors(bGradientColors)
     }
