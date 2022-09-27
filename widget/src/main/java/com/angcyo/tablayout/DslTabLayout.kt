@@ -236,6 +236,19 @@ open class DslTabLayout(
         scrollAnimDuration =
             typedArray.getInt(R.styleable.DslTabLayout_tab_scroll_anim_duration, scrollAnimDuration)
 
+        //preview
+        if (isInEditMode) {
+            val layoutId =
+                typedArray.getResourceId(R.styleable.DslTabLayout_tab_preview_item_layout_id, -1)
+            val layoutCount =
+                typedArray.getResourceId(R.styleable.DslTabLayout_tab_preview_item_count, 3)
+            if (layoutId != -1) {
+                for (i in 0 until layoutCount) {
+                    inflate(layoutId, true)
+                }
+            }
+        }
+
         typedArray.recycle()
 
         val vc = ViewConfiguration.get(context)
@@ -395,9 +408,9 @@ open class DslTabLayout(
             if (scrollX or scrollY == 0) {
                 draw(canvas)
             } else {
-                canvas.translate(scrollX.toFloat(), scrollY.toFloat())
-                draw(canvas)
-                canvas.translate(-scrollX.toFloat(), -scrollY.toFloat())
+                canvas.holdLocation {
+                    draw(canvas)
+                }
             }
         }
 
@@ -479,7 +492,10 @@ open class DslTabLayout(
             }
         }
         if (drawBorder) {
-            tabBorder?.draw(canvas)
+            //边框不跟随滚动
+            canvas.holdLocation {
+                tabBorder?.draw(canvas)
+            }
         }
         if (drawIndicator && tabIndicator.indicatorStyle > DslTabIndicator.INDICATOR_STYLE_DIVIDE) {
             tabIndicator.draw(canvas)
@@ -543,13 +559,23 @@ open class DslTabLayout(
         super.onDraw(canvas)
 
         if (drawBorder) {
-            tabBorder?.drawBorderBackground(canvas)
+            //边框不跟随滚动
+            canvas.holdLocation {
+                tabBorder?.drawBorderBackground(canvas)
+            }
         }
 
         //绘制在child的后面
         if (drawIndicator && tabIndicator.indicatorStyle < DslTabIndicator.INDICATOR_STYLE_DIVIDE) {
             tabIndicator.draw(canvas)
         }
+    }
+
+    /**保持位置不变*/
+    fun Canvas.holdLocation(action: () -> Unit) {
+        translate(scrollX.toFloat(), scrollY.toFloat())
+        action()
+        translate(-scrollX.toFloat(), -scrollY.toFloat())
     }
 
     override fun drawChild(canvas: Canvas, child: View, drawingTime: Long): Boolean {

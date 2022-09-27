@@ -11,7 +11,10 @@
     <attr name="r_flow_vertical_divider" format="reference" />
     <attr name="r_flow_vertical_divider_size" format="dimension" />
     <attr name="r_flow_horizontal_divider_size" format="dimension" />
-
+    <!--预览的布局id-->
+    <attr name="r_flow_preview_item_layout_id" format="reference" />
+    <!--预览的布局数量-->
+    <attr name="r_flow_preview_item_count" format="integer" />
 
     <declare-styleable name="FlowLayoutDelegate">
         <attr name="r_flow_max_line_child_count" />
@@ -25,6 +28,9 @@
         <attr name="r_flow_vertical_divider" />
         <attr name="r_flow_vertical_divider_size" />
         <attr name="r_flow_horizontal_divider_size" />
+
+        <attr name="r_flow_preview_item_layout_id" />
+        <attr name="r_flow_preview_item_count" />
     </declare-styleable>
 
     <declare-styleable name="DslFlowLayout">
@@ -42,6 +48,9 @@
         <attr name="r_flow_vertical_divider" />
         <attr name="r_flow_vertical_divider_size" />
         <attr name="r_flow_horizontal_divider_size" />
+
+        <attr name="r_flow_preview_item_layout_id" />
+        <attr name="r_flow_preview_item_count" />
     </declare-styleable>
 
     <declare-styleable name="DslRadioFlowLayout">
@@ -59,5 +68,8 @@
         <attr name="r_flow_vertical_divider" />
         <attr name="r_flow_vertical_divider_size" />
         <attr name="r_flow_horizontal_divider_size" />
+
+        <attr name="r_flow_preview_item_layout_id" />
+        <attr name="r_flow_preview_item_count" />
     </declare-styleable>
 </resources>

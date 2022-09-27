@@ -40,8 +40,8 @@ dependencies {
     //https://mvnrepository.com/artifact/com.wajahatkarim3.BufferTextInputLayout/buffertextinputlayout
     //api 'com.wajahatkarim3.BufferTextInputLayout:buffertextinputlayout:1.2.0'
 
-    //https://github.com/angcyo/BufferTextInputLayout
-    api 'com.github.angcyo:BufferTextInputLayout:1.2.0'
+    //https://github.com/angcyo/BufferTextInputLayout, 不支持AndroidX
+    //api 'com.github.angcyo:BufferTextInputLayout:1.2.0'
 
     //https://github.com/LaserPeckerIst/AnimatedSvgView
     api 'com.github.LaserPeckerIst:AnimatedSvgView:1.0.6.3'

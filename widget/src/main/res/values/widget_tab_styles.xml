@@ -62,6 +62,8 @@
         <item name="tab_border_stroke_color">@color/bg_primary_color</item>
         <item name="tab_deselect_color">@color/text_primary_color</item>
         <item name="tab_select_color">@color/text_primary_color</item>
+        <!--等宽-->
+        <item name="tab_item_is_equ_width">false</item>
     </style>
 
 </resources>

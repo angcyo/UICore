@@ -51,18 +51,6 @@
         <item name="r_enable_shape">true</item>
     </style>
 
-    <!--org.buffer.android.buffertextinputlayout.BufferTextInputLayout-->
-    <style name="LibTextInputLayoutStyle" parent="LibBodyTextStyle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="hintAnimationEnabled">true</item>
-        <item name="hintEnabled">true</item>
-        <item name="errorEnabled">false</item>
-        <item name="counterEnabled">false</item>
-        <item name="counterMode">standard</item>
-        <item name="counterMaxLength">-1</item>
-    </style>
-
     <!--mini的seek bar样式-->
     <style name="LibSeekBarLittleStyle">
         <item name="progress_height">@dimen/lib_dpi</item>

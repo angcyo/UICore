@@ -75,7 +75,7 @@ open class TextStyleConfig : ViewStyleConfig() {
                 }
 
                 //兼容
-                view.setBufferHint(this@TextStyleConfig.hint)
+                view.setInputHint(this@TextStyleConfig.hint)
 
                 gravity = textGravity
 

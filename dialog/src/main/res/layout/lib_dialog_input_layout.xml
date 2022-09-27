@@ -52,18 +52,7 @@
         android:visibility="gone"
         app:r_flow_item_horizontal_space="@dimen/lib_hdpi"
         app:r_flow_item_vertical_space="@dimen/lib_hdpi"
-        tools:visibility="visible">
-
-        <!--<include layout="@layout/lib_input_history_layout" />
-
-        <include layout="@layout/lib_input_history_layout" />
-
-        <include layout="@layout/lib_input_history_layout" />
-
-        <include layout="@layout/lib_input_history_layout" />
-
-        <include layout="@layout/lib_input_history_layout" />-->
-
-    </com.angcyo.widget.layout.DslFlowLayout>
+        app:r_flow_preview_item_layout_id="@layout/lib_input_history_layout"
+        tools:visibility="visible" />
 
 </LinearLayout>

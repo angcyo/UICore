@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.GravityCompat
+import com.angcyo.library.ex.inflate
 import com.angcyo.library.ex.size
 import com.angcyo.widget.R
 import com.angcyo.widget.base.atMost
@@ -94,6 +95,22 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
             R.styleable.FlowLayoutDelegate_r_flow_vertical_divider_size,
             dividerVerticalSize
         )
+
+        //preview
+        if (view.isInEditMode && view is ViewGroup) {
+            val layoutId =
+                array.getResourceId(
+                    R.styleable.FlowLayoutDelegate_r_flow_preview_item_layout_id,
+                    -1
+                )
+            val layoutCount =
+                array.getResourceId(R.styleable.FlowLayoutDelegate_r_flow_preview_item_count, 3)
+            if (layoutId != -1) {
+                for (i in 0 until layoutCount) {
+                    view.inflate(layoutId, true)
+                }
+            }
+        }
 
         array.recycle()
 

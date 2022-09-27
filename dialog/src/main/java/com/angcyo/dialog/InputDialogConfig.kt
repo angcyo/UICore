@@ -177,7 +177,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
     }
 
     /**更新输入框属性*/
-    fun updateEditView(dialogViewHolder: DslViewHolder) {
+    open fun updateEditView(dialogViewHolder: DslViewHolder) {
         val editView = dialogViewHolder.ev(R.id.edit_text_view)
         val indicatorView = dialogViewHolder.v<TextIndicator>(R.id.single_text_indicator_view)
         val positiveButton = dialogViewHolder.view(R.id.dialog_positive_button)
@@ -186,7 +186,11 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
         _configView(editView, indicatorView, positiveButton)
     }
 
-    fun _configView(editView: EditText?, indicatorView: TextIndicator?, positiveButton: View?) {
+    open fun _configView(
+        editView: EditText?,
+        indicatorView: TextIndicator?,
+        positiveButton: View?
+    ) {
         //空输入
         if (!canInputEmpty) {
             editView?.onTextChange {
@@ -225,7 +229,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
 
         editView?.inputType = inputType
         //editView?.hint = hintInputString
-        editView?.setBufferHint(hintInputString)
+        editView?.setInputHint(hintInputString)
 
         //digits 放在[inputType]后面
         digits?.let {

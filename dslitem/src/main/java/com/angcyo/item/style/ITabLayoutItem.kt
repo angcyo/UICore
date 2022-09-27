@@ -35,13 +35,18 @@ interface ITabLayoutItem : IAutoInitItem {
                 }
                 //选中回调
                 onSelectIndexChange = { fromIndex, selectList, reselect, fromUser ->
-                    tabLayoutItemConfig.itemCurrentIndex = selectList.firstOrNull() ?: -1
+                    val toIndex = selectList.firstOrNull() ?: -1
+                    val oldIndex = tabLayoutItemConfig.itemCurrentIndex
+                    tabLayoutItemConfig.itemCurrentIndex = toIndex
                     tabLayoutItemConfig.onSelectIndexChange(
                         fromIndex,
                         selectList,
                         reselect,
                         fromUser
                     )
+                    if (oldIndex != toIndex) {
+                        adapterItem.itemChanging = true
+                    }
                 }
             }
             setCurrentItem(tabLayoutItemConfig.itemCurrentIndex, false, false)

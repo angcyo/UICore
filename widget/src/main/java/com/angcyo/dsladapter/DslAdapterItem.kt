@@ -167,7 +167,7 @@ open class DslAdapterItem : LifecycleOwner {
     }
 
     /**更新选项*/
-    open fun  updateItemSelect(
+    open fun updateItemSelect(
         select: Boolean,
         selectorParams: SelectorParams = SelectorParams(
             this,
@@ -1179,6 +1179,8 @@ open class DslAdapterItem : LifecycleOwner {
     //<editor-fold desc="定向更新">
 
     /**标识此[Item]是否发生过改变, 可用于实现退出界面提示是否保存内容.*/
+    @UpdateByDiff
+    @UpdateByNotify
     var itemChanged = false
         set(value) {
             field = value
@@ -1190,6 +1192,8 @@ open class DslAdapterItem : LifecycleOwner {
 
     /**[Item]是否正在改变, 会影响[thisAreContentsTheSame]的判断, 并且会在[Diff]计算完之后, 重置为[false]
      * [itemUpdateFlag]*/
+    @UpdateByDiff
+    @UpdateByNotify
     var itemChanging = false
         set(value) {
             field = value

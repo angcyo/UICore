@@ -16,7 +16,6 @@ import com.angcyo.library.ex.loadDrawable
 import com.angcyo.library.ex.remove
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.span.span
-import org.buffer.android.buffertextinputlayout.BufferTextInputLayout
 import java.util.*
 
 /**
@@ -26,6 +25,16 @@ import java.util.*
  * @date 2019/12/23
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+/**设置文本的hint[]*/
+var setTextViewHintAction: (TextView, CharSequence?) -> Unit = { textView, hint ->
+    textView.hint = hint
+}
+
+/**[TextInputLayout]*/
+fun TextView.setInputHint(hint: CharSequence?) {
+    setTextViewHintAction(this, hint)
+}
 
 fun TextView.setLeftIco(id: Int) {
     setLeftIco(loadDrawable(id))
@@ -249,15 +258,3 @@ var TextView._textColor: Int
         setTextColor(value)
     }
 
-/**[BufferTextInputLayout]*/
-fun TextView.setBufferHint(hint: CharSequence?) {
-    //兼容
-    val parent = parent
-    if (parent is BufferTextInputLayout) {
-        parent.hint = hint
-    } else if (parent?.parent is BufferTextInputLayout) {
-        (parent.parent as BufferTextInputLayout).hint = hint
-    } else {
-        this.hint = hint
-    }
-}
