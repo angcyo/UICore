@@ -215,11 +215,8 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
 
     /**处理返回按键*/
     override fun handleOnBackPressed() {
-        if (cancelable) {
-            //可以被取消
-            hide {
-                //no op
-            }
+        hide {
+            //no op
         }
     }
 
