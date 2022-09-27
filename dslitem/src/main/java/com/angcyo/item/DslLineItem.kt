@@ -16,7 +16,7 @@ import com.angcyo.widget.DslViewHolder
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/24
  */
-class DslLineItem : DslAdapterItem() {
+open class DslLineItem : DslAdapterItem() {
 
     /**线的高度*/
     @Px
