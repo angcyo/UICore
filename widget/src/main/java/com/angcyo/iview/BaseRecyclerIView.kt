@@ -55,6 +55,17 @@ abstract class BaseRecyclerIView : IView() {
         }
     }
 
+    /**显示关闭按钮
+     * [closeText] 文本
+     * */
+    @AnyThread
+    open fun showCloseView(show: Boolean, closeText: CharSequence?) {
+        onMain {
+            showCloseView(show)
+            viewHolder?.tv(R.id.lib_close_view)?.text = closeText
+        }
+    }
+
     /**DslAdapter*/
     @AnyThread
     open fun renderDslAdapter(
@@ -65,6 +76,7 @@ abstract class BaseRecyclerIView : IView() {
     ) {
         viewHolder?.rv(R.id.lib_recycler_view)?.apply {
             noItemChangeAnim()
+            //noItemAnim()
             this.renderDslAdapter(append, new, updateState, action)
         }
     }

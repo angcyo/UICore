@@ -6,9 +6,13 @@
         <attr name="r_enable_animator" format="boolean" />
         <attr name="r_animator_duration" format="integer" />
         <attr name="r_handler_mode" format="enum">
+            <!--同时改变内容和emoji布局的高度-->
             <enum name="MODE_HEIGHT" value="1" />
+            <!--同时偏移内容和emoji布局-->
             <enum name="MODE_OFFSET" value="2" />
+            <!--只改变内容布局的高度, emoji跟随布局-->
             <enum name="MODE_CONTENT_HEIGHT" value="3" />
+            <!--只改变emoji的高度, 内容顶上去-->
             <enum name="MODE_EMOJI_HEIGHT" value="4" />
         </attr>
         <attr name="r_soft_input_padding_top" format="dimension" />

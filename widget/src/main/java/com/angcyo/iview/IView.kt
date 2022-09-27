@@ -83,7 +83,7 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
      * 将[IView]显示到[parent]中, 如果[parent]为空, 会将[IView]从原来的[parent]中移除
      * */
     @CallPoint
-    fun show(parent: ViewGroup?) {
+    open fun show(parent: ViewGroup?) {
         if (_parentView != parent) {
             removeInner(_parentView) {
                 addInner(parent)
@@ -97,7 +97,7 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
      * 将[IView]从到[_parentView]中移除
      * */
     @CallPoint
-    fun hide(end: (() -> Unit)? = null) {
+    open fun hide(end: (() -> Unit)? = null) {
         if (cancelable) {
             if (iViewHolder == null) {
                 return
@@ -215,8 +215,11 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
 
     /**处理返回按键*/
     override fun handleOnBackPressed() {
-        hide {
-            //no op
+        if (cancelable) {
+            //可以被取消
+            hide {
+                //no op
+            }
         }
     }
 
