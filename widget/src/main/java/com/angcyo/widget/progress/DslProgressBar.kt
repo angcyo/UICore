@@ -4,12 +4,14 @@ import android.animation.Animator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
+import androidx.core.graphics.withClip
 import androidx.core.graphics.withSave
 import androidx.core.math.MathUtils
 import com.angcyo.drawable.base.DslGradientDrawable
@@ -73,7 +75,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     var enableProgressFlowMode: Boolean = false
 
     /**圆角大小, 未强制指定[progressBgDrawable] [progressTrackDrawable]的情况下生效*/
-    var progressRadius: Int = 5 * dpi
+    var progressRadius = 5 * dp
 
     /**Wrap_Content时的最小高度*/
     var progressMinHeight = 8 * dpi
@@ -159,8 +161,8 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
         progressRadius = typedArray.getDimensionPixelOffset(
             R.styleable.DslProgressBar_progress_radius,
-            progressRadius
-        )
+            progressRadius.toInt()
+        ).toFloat()
         progressTextOffset = typedArray.getDimensionPixelOffset(
             R.styleable.DslProgressBar_progress_text_offset,
             progressTextOffset
@@ -311,11 +313,32 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         }
     }
 
+    /**进度圆角的clip路径*/
+    val progressClipPath: Path = Path()
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        drawBg(canvas)
-        drawSecondProgress(canvas)
-        drawTrack(canvas) //进度
+        if (progressRadius > 0) {
+            progressClipPath.rewind()
+            progressClipPath.addRoundRect(
+                _progressBound.left.toFloat(),
+                _progressBound.top.toFloat(),
+                _progressBound.right.toFloat(),
+                _progressBound.bottom.toFloat(),
+                progressRadius,
+                progressRadius,
+                Path.Direction.CW
+            )
+            canvas.withClip(progressClipPath) {
+                drawBg(canvas)
+                drawSecondProgress(canvas)
+                drawTrack(canvas) //进度
+            }
+        } else {
+            drawBg(canvas)
+            drawSecondProgress(canvas)
+            drawTrack(canvas) //进度
+        }
         drawProgressText(canvas)
         drawCenterProgressText(canvas)
     }
