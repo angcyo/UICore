@@ -30,7 +30,7 @@
 
     <!--app背景色颜色配置-->
     <color name="bg_primary_color">#f4f4f4</color>
-    <color name="bg_sub_color">#dedede</color>
+    <color name="bg_sub_color">#d8d8d8</color>
 
     <!--图标强调颜色-->
     <color name="lib_icon_color_accent">@color/colorAccent</color>

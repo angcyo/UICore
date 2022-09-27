@@ -150,6 +150,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DslProgressBar)
 
+        //使用progress_bg_drawable属性, 则圆角属性无效
         progressBgDrawable = typedArray.getDrawable(R.styleable.DslProgressBar_progress_bg_drawable)
         progressSecondDrawable =
             typedArray.getDrawable(R.styleable.DslProgressBar_progress_second_drawable)
