@@ -1,6 +1,9 @@
 apply from: allGradle.libBase
 
 dependencies {
+    // https://mvnrepository.com/artifact/androidx.cardview/cardview
+    implementation 'androidx.cardview:cardview:1.0.0'
+
     api project(allModule.dialog)
     api project(allModule.core)
     api project(allModule.widget)
