@@ -16,5 +16,6 @@ dependencies {
     implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:4.3'
 
     //浮窗权限 https://github.com/czy1121/settingscompat
-    api 'com.github.czy1121:settingscompat:1.1.4'
+    //api 'com.github.czy1121:settingscompat:1.1.4'
+    api 'com.github.angcyo:settingscompat:1.1.4.1'
 }
