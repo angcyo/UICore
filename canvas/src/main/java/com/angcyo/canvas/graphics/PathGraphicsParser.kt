@@ -65,6 +65,9 @@ open class PathGraphicsParser : IGraphicsParser {
                 //
                 item.addDataPath(path)
                 item.drawable = createPathDrawable(item)
+
+                initDataMode(bean, item.paint)
+
                 return item
             }
         }

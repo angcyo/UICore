@@ -1,6 +1,10 @@
 package com.angcyo.canvas.core.renderer
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.PointF
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import androidx.core.graphics.drawable.toDrawable
@@ -16,10 +20,24 @@ import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
-import com.angcyo.drawable.*
+import com.angcyo.drawable.isGravityBottom
+import com.angcyo.drawable.isGravityCenter
+import com.angcyo.drawable.isGravityCenterHorizontal
+import com.angcyo.drawable.isGravityCenterVertical
+import com.angcyo.drawable.isGravityLeft
+import com.angcyo.drawable.isGravityRight
+import com.angcyo.drawable.isGravityTop
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex._color
+import com.angcyo.library.ex.adjustFlipRect
+import com.angcyo.library.ex.alpha
+import com.angcyo.library.ex.c
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.emptyRectF
+import com.angcyo.library.ex.have
+import com.angcyo.library.ex.size
+import kotlin.collections.set
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
@@ -320,9 +338,35 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         }
     }
 
+    /**重新选择元素列表*/
+    fun selectedRendererList(list: List<BaseItemRenderer<*>>, strategy: Strategy) {
+        if (list.isEmpty()) {
+            return
+        }
+        val oldList = selectItemList.toList()
+        selectItemList.clear()
+        selectItemList.addAll(list)
+        updateSelectBounds()
+        if (oldList.isEmpty()) {
+            canvasDelegate.selectedItem(this)
+        }
+
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasDelegate.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    selectedRendererList(oldList, Strategy.undo)
+                }
+
+                override fun runRedo() {
+                    selectedRendererList(list, Strategy.redo)
+                }
+            })
+        }
+    }
+
     /**主动添加一个渲染器*/
     fun addSelectedRenderer(itemRenderer: BaseItemRenderer<*>) {
-        if (itemRenderer == this || !itemRenderer.isVisible()) {
+        if (itemRenderer == this) {
             return
         }
         val selectedRenderer = canvasDelegate.getSelectedRenderer()
@@ -338,6 +382,25 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
             selectItemList.add(itemRenderer)
             updateSelectBounds()
             canvasDelegate.selectedItem(this)
+        }
+    }
+
+    /**清空选中的列表*/
+    fun clearSelectedList(strategy: Strategy) {
+        val oldList = selectItemList.toList()
+        selectItemList.clear()
+        canvasDelegate.selectedItem(null)
+
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasDelegate.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    selectedRendererList(oldList, Strategy.undo)
+                }
+
+                override fun runRedo() {
+                    clearSelectedList(Strategy.redo)
+                }
+            })
         }
     }
 

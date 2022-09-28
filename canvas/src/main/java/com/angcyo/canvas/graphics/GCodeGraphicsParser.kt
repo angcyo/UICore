@@ -33,6 +33,8 @@ class GCodeGraphicsParser : PathGraphicsParser() {
                     //
                     item.addDataPath(gCodeDrawable.gCodePath)
                     item.drawable = createPathDrawable(item)
+
+                    bean._dataMode = CanvasConstant.DATA_MODE_GCODE
                     return item
                 }
             }

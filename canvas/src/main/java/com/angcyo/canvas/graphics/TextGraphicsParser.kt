@@ -42,6 +42,9 @@ class TextGraphicsParser : IGraphicsParser {
 
             bean.width = textWidth.toMm()
             bean.height = textHeight.toMm()
+
+            initDataMode(bean, item.textPaint)
+
             return item
         }
         return super.parse(bean)

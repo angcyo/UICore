@@ -28,6 +28,8 @@ class LineGraphicsParser : PathGraphicsParser() {
             item.addDataPath(linePath)
 
             item.drawable = createPathDrawable(item)
+
+            initDataMode(bean, item.paint)
             return item
         }
         return super.parse(bean)

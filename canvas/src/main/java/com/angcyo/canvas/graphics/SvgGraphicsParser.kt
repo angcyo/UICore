@@ -33,6 +33,7 @@ class SvgGraphicsParser : PathGraphicsParser() {
                     //
                     item.addDataPath(sharpDrawable.pathList)
                     item.drawable = createPathDrawable(item)
+                    initDataMode(bean, item.paint)
                     return item
                 }
             }

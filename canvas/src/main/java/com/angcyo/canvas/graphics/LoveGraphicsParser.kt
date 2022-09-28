@@ -1,5 +1,6 @@
 package com.angcyo.canvas.graphics
 
+import android.graphics.Paint
 import com.angcyo.canvas.data.ItemDataBean
 import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
@@ -32,6 +33,8 @@ class LoveGraphicsParser : PathGraphicsParser() {
             item.addDataPath(dataPath)
 
             item.drawable = createPathDrawable(item)
+
+            initDataMode(bean, item.paint)
             return item
         }
         return super.parse(bean)

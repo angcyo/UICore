@@ -19,7 +19,6 @@ import com.google.zxing.BarcodeFormat
  * @since 2022/09/22
  */
 class CodeGraphicsParser : IGraphicsParser {
-
     override fun parse(bean: ItemDataBean): DataItem? {
         if (!bean.text.isNullOrEmpty()) {
             if (bean.mtype == CanvasConstant.DATA_TYPE_QRCODE) {
@@ -43,6 +42,9 @@ class CodeGraphicsParser : IGraphicsParser {
         wrapBitmap(item, bitmap)
         bean.width = bitmap.width.toMm()
         bean.height = bitmap.height.toMm()
+
+        bean._dataMode = CanvasConstant.DATA_MODE_BLACK_WHITE
+
         return item
     }
 

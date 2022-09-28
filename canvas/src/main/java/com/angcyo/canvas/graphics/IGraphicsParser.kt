@@ -2,8 +2,10 @@ package com.angcyo.canvas.graphics
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Paint
 import com.angcyo.canvas.data.ItemDataBean
 import com.angcyo.canvas.items.data.DataItem
+import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
@@ -34,6 +36,15 @@ interface IGraphicsParser {
             rect.set(0f, 0f, width.toFloat(), height.toFloat())
             drawBitmap(bitmap, null, rect, null)
             rect.release()
+        }
+    }
+
+    /**简单的初始化一下数据模式*/
+    fun initDataMode(bean: ItemDataBean, paint: Paint) {
+        bean._dataMode = if (paint.style == Paint.Style.STROKE) {
+            CanvasConstant.DATA_MODE_GCODE
+        } else {
+            CanvasConstant.DATA_MODE_BLACK_WHITE
         }
     }
 

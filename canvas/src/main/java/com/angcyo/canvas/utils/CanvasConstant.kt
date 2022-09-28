@@ -84,23 +84,25 @@ object CanvasConstant {
 
     //region ---数据处理模式---
 
-    /**数据模式, 版画*/
-    const val DATA_MODE_PRINT = 4
-
-    /**数数据模式, 黑白*/
+    /**数数据模式, 黑白, 发送线段数据*/
     const val DATA_MODE_BLACK_WHITE = 1
 
-    /**数据模式, 抖动*/
+    /**数据模式, 抖动, 发送抖动数据*/
     const val DATA_MODE_DITHERING = 5
+
+    /**数据模式, GCode, 发送GCode数据*/
+    const val DATA_MODE_GCODE = 6
+
+    //
+
+    /**数据模式, 版画*/
+    const val DATA_MODE_PRINT = 4
 
     /**数据模式, 灰度*/
     const val DATA_MODE_GREY = 3
 
     /**数据模式, 印章*/
     const val DATA_MODE_SEAL = 2
-
-    /**数据模式, GCode*/
-    const val DATA_MODE_GCODE = 6
 
     //endregion ---数据处理模式---
 

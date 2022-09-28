@@ -34,6 +34,10 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
 
     //</editor-fold desc="临时变量">
 
+    init {
+        _name = "Data"
+    }
+
     //<editor-fold desc="核心回调">
 
     override fun render(canvas: Canvas) {

@@ -12,7 +12,9 @@ import com.angcyo.canvas.core.*
 import com.angcyo.canvas.core.component.*
 import com.angcyo.canvas.core.renderer.*
 import com.angcyo.canvas.data.CanvasDataBean
+import com.angcyo.canvas.data.ItemDataBean
 import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
+import com.angcyo.canvas.graphics.GraphicsHelper
 import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
@@ -700,6 +702,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         addItemRenderer(itemList, strategy)
     }
 
+    /**[selected] 是否要群组选择[list]*/
     fun addItemRenderer(list: List<BaseItemRenderer<*>>, strategy: Strategy) {
         if (getCanvasViewBox().isCanvasInit()) {
             list.forEach { item ->
@@ -778,6 +781,46 @@ class CanvasDelegate(val view: View) : ICanvasView {
                 }
             })
         }
+    }
+
+    /**可见/不可见一组item*/
+    fun visibleItemRenderer(list: List<BaseItemRenderer<*>>, visible: Boolean, strategy: Strategy) {
+        val last = list.lastOrNull()
+        list.forEach { item ->
+            item.setVisible(visible, if (item == last) strategy else Strategy.preview)
+        }
+
+        refresh()
+
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    visibleItemRenderer(list, !visible, Strategy.undo)
+                }
+
+                override fun runRedo() {
+                    visibleItemRenderer(list, visible, Strategy.redo)
+                }
+            })
+        }
+    }
+
+    /**复制一组item*/
+    fun copyItemRenderer(list: List<BaseItemRenderer<*>>, strategy: Strategy) {
+        val copyDataList = mutableListOf<ItemDataBean>()
+        list.forEach { item ->
+            if (item is DataItemRenderer) {
+                item.dataItem?.dataBean?.let {
+                    copyDataList.add(it.copyBean(true))
+                }
+            }
+        }
+
+        if (copyDataList.isEmpty()) {
+            return
+        }
+
+        GraphicsHelper.renderItemDataBeanList(this, copyDataList, strategy)
     }
 
     /**选中item[BaseItemRenderer]*/
@@ -883,6 +926,18 @@ class CanvasDelegate(val view: View) : ICanvasView {
      * [SelectGroupRenderer]*/
     fun getSelectedRenderer(): BaseItemRenderer<*>? {
         return controlHandler.selectedItemRender
+    }
+
+    /**获取所有选中的单元素*/
+    fun getSelectedRendererList(): List<BaseItemRenderer<*>> {
+        val selectedRenderer = getSelectedRenderer()
+        val result = mutableListOf<BaseItemRenderer<*>>()
+        if (selectedRenderer is SelectGroupRenderer) {
+            result.addAll(selectedRenderer.selectItemList)
+        } else if (selectedRenderer != null) {
+            result.add(selectedRenderer)
+        }
+        return result
     }
 
     /**显示一个限制框, 并且移动画布到最佳可视位置*/

@@ -11,6 +11,7 @@ import com.angcyo.canvas.data.toPaintStyleInt
 import com.angcyo.canvas.graphics.GraphicsHelper
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.canvas.utils.CanvasConstant
 
 /**
  * [com.angcyo.canvas.data.ItemDataBean]
@@ -23,6 +24,28 @@ open class DataItem(val dataBean: ItemDataBean) : BaseItem() {
      * 通过改变此对象, 呈现出不同的可视图画
      * 可绘制的对象*/
     var drawable: Drawable? = null
+
+    init {
+        itemLayerName = dataBean.name ?: when (dataBean.mtype) {
+            CanvasConstant.DATA_TYPE_BITMAP -> "Bitmap"
+            CanvasConstant.DATA_TYPE_TEXT -> "Text"
+            CanvasConstant.DATA_TYPE_QRCODE -> "QRCode"
+            CanvasConstant.DATA_TYPE_BARCODE -> "BarCode"
+            CanvasConstant.DATA_TYPE_RECT -> "Rect"
+            CanvasConstant.DATA_TYPE_OVAL -> "Oval"
+            CanvasConstant.DATA_TYPE_LINE -> "Line"
+            CanvasConstant.DATA_TYPE_PEN -> "Pen"
+            CanvasConstant.DATA_TYPE_BRUSH -> "Brush"
+            CanvasConstant.DATA_TYPE_SVG -> "Svg"
+            CanvasConstant.DATA_TYPE_POLYGON -> "Polygon"
+            CanvasConstant.DATA_TYPE_PENTAGRAM -> "Pentagram"
+            CanvasConstant.DATA_TYPE_LOVE -> "Love"
+            CanvasConstant.DATA_TYPE_SINGLE_WORD -> "SingleWord"
+            CanvasConstant.DATA_TYPE_GCODE -> "GCode"
+            CanvasConstant.DATA_TYPE_PATH -> "Path"
+            else -> "Unknown"
+        }
+    }
 
     override fun getItemScaleX(renderer: BaseItemRenderer<*>): Float {
         val width = mmUnit.convertValueToPixel(dataBean.width)

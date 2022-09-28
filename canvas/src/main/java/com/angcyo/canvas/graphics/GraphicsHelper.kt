@@ -1,5 +1,6 @@
 package com.angcyo.canvas.graphics
 
+import androidx.annotation.AnyThread
 import androidx.annotation.MainThread
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
@@ -101,6 +102,8 @@ object GraphicsHelper {
         }
     }
 
+    //region ---ItemDataBean解析---
+
     /**开始解析
      * 更具[bean]解析出一个可以用来渲染的[BaseItem]
      * */
@@ -127,6 +130,7 @@ object GraphicsHelper {
      * [assignLocation] 是否需要分配一个位置
      * */
     @CallPoint
+    @AnyThread
     fun renderItemDataBean(
         canvasView: ICanvasView,
         bean: ItemDataBean,
@@ -153,6 +157,39 @@ object GraphicsHelper {
         return renderer
     }
 
+    /**渲染一组数据*/
+    @CallPoint
+    @AnyThread
+    fun renderItemDataBeanList(
+        canvasView: ICanvasView,
+        beanList: List<ItemDataBean>,
+        strategy: Strategy
+    ): List<DataItemRenderer> {
+        val result = mutableListOf<DataItemRenderer>()
+        beanList.forEach { bean ->
+            val item = parseItemFrom(bean)
+            item?.let {
+                val renderer = DataItemRenderer(canvasView)
+                renderer.setRendererRenderItem(item)
+                result.add(renderer)
+
+                //更新坐标
+                doMain {
+                    updateRendererProperty(renderer, bean)
+                }
+            }
+        }
+        if (result.isNotEmpty()) {
+            doMain {
+                (canvasView as? CanvasDelegate)?.apply {
+                    addItemRenderer(result, strategy)
+                    selectGroupRenderer.selectedRendererList(result, Strategy.preview)
+                }
+            }
+        }
+        return result
+    }
+
     /**添加一个元素用来渲染指定的数据
      * [renderItemDataBean] 此方法的缩短写法*/
     @CallPoint
@@ -175,7 +212,7 @@ object GraphicsHelper {
         updateRendererProperty(renderer, item.dataBean)
     }
 
-    //---
+    //endregion ---ItemDataBean解析---
 
     /**根据[bean]提供的参数, 更新[renderer]相关属性*/
     @MainThread
@@ -196,9 +233,11 @@ object GraphicsHelper {
         }
     }
 
+    //endregion ---ItemDataBean解析---
+
     // ---
-/*
-    */
+    /*
+        */
     /**转换一个[path]*//*
     fun transformPath(renderer: DataItemRenderer, path: Path, result: Path): Path {
         val matrix = Matrix()

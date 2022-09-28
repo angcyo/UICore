@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.widget.LinearLayout
 import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
+import com.angcyo.canvas.graphics.GraphicsHelper
 import com.angcyo.canvas.items.PictureTextItem.Companion.TEXT_STYLE_BOLD
 import com.angcyo.canvas.items.PictureTextItem.Companion.TEXT_STYLE_DELETE_LINE
 import com.angcyo.canvas.items.PictureTextItem.Companion.TEXT_STYLE_ITALIC
@@ -53,6 +54,15 @@ data class ItemDataBean(
 
     //region ---公共属性---
 
+    /**数据id*/
+    var id: Int = -1,
+
+    /**数据唯一标识符*/
+    var uuid: String? = null,
+
+    /**图层代表图标, 如果有base64图片*/
+    var icon: String? = null,
+
     /**数据类型, 线条类型的长度放在[width]属性中
      * [com.angcyo.canvas.utils.CanvasConstant.DATA_TYPE_TEXT]
      * [com.angcyo.canvas.utils.CanvasConstant.DATA_TYPE_RECT]
@@ -60,6 +70,9 @@ data class ItemDataBean(
      * [com.angcyo.canvas.utils.CanvasConstant.DATA_TYPE_LINE]
      * */
     var mtype: Int = -1,
+
+    /**图层名称, 如果不指定, 则通过[mtype]类型获取*/
+    var name: String? = null,
 
     /**填充颜色, 形状的颜色*/
     var fill: String? = null,
@@ -225,6 +238,17 @@ data class ItemDataBean(
     var gcodeDirection: Int = 0,
 
     //endregion ---图片数据---
+
+    //region ---私有属性---
+
+    /**数据处理的模式
+     * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_BLACK_WHITE]
+     * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_GCODE]
+     * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_DITHERING]
+     * */
+    var _dataMode: Int? = null,
+
+    //endregion ---私有属性---
 ) {
 
     companion object {
@@ -258,6 +282,17 @@ data class ItemDataBean(
         val width = bounds.width()
         val height = bounds.height()
         updateScale(width, height)
+    }
+
+    /**复制元素
+     * [offset] 是否开启偏移, 会在原数据的基础上+上偏移量*/
+    fun copyBean(offset: Boolean = false): ItemDataBean {
+        val newBean = copy()
+        if (offset) {
+            newBean.left += GraphicsHelper.POSITION_STEP
+            newBean.top += GraphicsHelper.POSITION_STEP
+        }
+        return newBean
     }
 }
 

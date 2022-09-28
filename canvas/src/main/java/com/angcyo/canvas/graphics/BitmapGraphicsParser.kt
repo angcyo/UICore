@@ -26,11 +26,12 @@ class BitmapGraphicsParser : IGraphicsParser {
                 }
                 if (bean.imageFilter == CanvasConstant.DATA_MODE_GCODE) {
                     //图片转成了GCode
-                    if (bean.src.isNullOrEmpty()) {
+                    val gcode = bean.data ?: bean.src
+                    if (gcode.isNullOrEmpty()) {
                         //bean.src gcode数据
                         return null
                     } else {
-                        val gcodeDrawable = GCodeHelper.parseGCode(bean.src) ?: return null
+                        val gcodeDrawable = GCodeHelper.parseGCode(gcode) ?: return null
                         val item = DataBitmapItem(bean)
                         item.originBitmap = originBitmap
                         item.gCodeDrawable = gcodeDrawable
@@ -42,6 +43,9 @@ class BitmapGraphicsParser : IGraphicsParser {
                             gcodeDrawable.setBounds(0, 0, width, height)
                             gcodeDrawable.draw(this)
                         }
+
+                        bean._dataMode = CanvasConstant.DATA_MODE_GCODE
+
                         return item
                     }
                 } else {
@@ -52,6 +56,13 @@ class BitmapGraphicsParser : IGraphicsParser {
 
                     val bitmap = item.modifyBitmap ?: item.originBitmap ?: return null
                     wrapBitmap(item, bitmap)
+
+                    bean._dataMode = if (bean.imageFilter == CanvasConstant.DATA_MODE_DITHERING) {
+                        CanvasConstant.DATA_MODE_DITHERING
+                    } else {
+                        CanvasConstant.DATA_MODE_BLACK_WHITE
+                    }
+
                     return item
                 }
             } catch (e: Exception) {

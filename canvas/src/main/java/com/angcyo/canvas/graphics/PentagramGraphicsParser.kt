@@ -30,6 +30,7 @@ class PentagramGraphicsParser : PathGraphicsParser() {
             item.addDataPath(dataPath)
 
             item.drawable = createPathDrawable(item)
+            initDataMode(bean, item.paint)
             return item
         }
         return super.parse(bean)

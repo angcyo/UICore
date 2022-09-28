@@ -63,8 +63,8 @@ class DragCallbackHelper : ItemTouchHelper.Callback() {
         }
 
         /**卸载*/
-        fun uninstall(dragCallbackHelper: DragCallbackHelper) {
-            dragCallbackHelper.detachFromRecyclerView()
+        fun uninstall(dragCallbackHelper: DragCallbackHelper?) {
+            dragCallbackHelper?.detachFromRecyclerView()
         }
     }
 

@@ -1,5 +1,6 @@
 package com.angcyo.canvas.graphics
 
+import android.graphics.Paint
 import android.graphics.Path
 import com.angcyo.canvas.data.ItemDataBean
 import com.angcyo.canvas.data.toPixel
@@ -36,6 +37,9 @@ class OvalGraphicsParser : PathGraphicsParser() {
             item.addDataPath(dataPath)
 
             item.drawable = createPathDrawable(item)
+
+            initDataMode(bean, item.paint)
+
             return item
         }
         return super.parse(bean)
