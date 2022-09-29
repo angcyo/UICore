@@ -211,15 +211,15 @@ data class ItemDataBean(
 
     /**黑白阈值*/
     @Implementation
-    var blackThreshold: Float = 240f,
+    var blackThreshold: Float = DEFAULT_THRESHOLD_SPACE,
 
     /**印章阈值*/
     @Implementation
-    var sealThreshold: Float = 240f,
+    var sealThreshold: Float = DEFAULT_THRESHOLD_SPACE,
 
     /**版画阈值*/
     @Implementation
-    var printsThreshold: Float = 240f,
+    var printsThreshold: Float = DEFAULT_THRESHOLD_SPACE,
 
     /**是否反色*/
     @Implementation
@@ -254,6 +254,12 @@ data class ItemDataBean(
     companion object {
         /**毫米单位计算*/
         val mmUnit = MmValueUnit()
+
+        /**默认的GCode线距*/
+        const val DEFAULT_THRESHOLD_SPACE = 240f
+
+        /**默认的GCode线距*/
+        const val DEFAULT_LINE_SPACE = 5.0f
     }
 
     /**设置渲染的位置*/

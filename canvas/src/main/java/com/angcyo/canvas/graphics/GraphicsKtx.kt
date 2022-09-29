@@ -21,11 +21,15 @@ import com.angcyo.library.ex.toBase64Data
 //region ---图/文---
 
 /**添加一个[bitmap]数据渲染*/
-fun CanvasDelegate.addBitmapRender(bitmap: Bitmap?): DataItemRenderer? {
+fun CanvasDelegate.addBitmapRender(
+    bitmap: Bitmap?,
+    action: ItemDataBean.() -> Unit = {}
+): DataItemRenderer? {
     bitmap ?: return null
     val bean = ItemDataBean()
     bean.mtype = CanvasConstant.DATA_TYPE_BITMAP
     bean.imageOriginal = bitmap.toBase64Data()
+    bean.action()
     return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
 

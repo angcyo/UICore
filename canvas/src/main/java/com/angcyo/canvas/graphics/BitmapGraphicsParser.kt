@@ -35,6 +35,7 @@ class BitmapGraphicsParser : IGraphicsParser {
                         val item = DataBitmapItem(bean)
                         item.originBitmap = originBitmap
                         item.gCodeDrawable = gcodeDrawable
+                        item.modifyBitmap = null
 
                         val bound = gcodeDrawable.gCodeBound
                         val width = bound.width().toInt()
@@ -53,6 +54,7 @@ class BitmapGraphicsParser : IGraphicsParser {
                     val item = DataBitmapItem(bean)
                     item.originBitmap = originBitmap
                     item.modifyBitmap = bean.src?.toBitmapOfBase64()
+                    item.gCodeDrawable = null
 
                     val bitmap = item.modifyBitmap ?: item.originBitmap ?: return null
                     wrapBitmap(item, bitmap)

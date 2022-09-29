@@ -67,8 +67,8 @@ class BoundsOperateHandler {
 
             val minSize = 1f
 
-            if (toWidth.abs() < minSize || toHeight.abs() < minSize) {
-                //不允许设置小于1毫米
+            if (toWidth < minSize || toHeight < minSize) {
+                //不允许设置小于1毫米, 同时不支持反向拖动
                 return false
             }
 

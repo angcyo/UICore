@@ -8,12 +8,14 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.items.*
+import com.angcyo.canvas.items.data.DataBitmapItem
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.DrawableItemRenderer
 import com.angcyo.canvas.items.renderer.PictureItemRenderer
 import com.angcyo.canvas.items.renderer.PictureTextItemRenderer
 import com.angcyo.gcode.GCodeDrawable
+import com.angcyo.library.ex.rotate
 import com.angcyo.library.ex.toBitmap
 import com.pixplicity.sharp.SharpDrawable
 
@@ -35,11 +37,21 @@ fun BaseItemRenderer<*>.isLineShape(): Boolean {
     return false
 }
 
-/**获取一个用于雕刻的图片数据*/
+/**获取一个用于雕刻的图片数据,
+ * 请注意, 这个图片是原始数据,
+ * 可能需要再次缩放处理后发给机器*/
 fun BaseItemRenderer<*>.getEngraveBitmap(): Bitmap? {
     val item = getRendererRenderItem()
-    if (item is PictureBitmapItem) {
-        return item.modifyBitmap ?: item.originBitmap
+    val originBitmap = if (item is PictureBitmapItem) {
+        item.modifyBitmap ?: item.originBitmap
+    } else if (item is DataBitmapItem) {
+        item.modifyBitmap ?: item.originBitmap
+    } else {
+        null
+    }
+    if (originBitmap != null) {
+        //这里要处理旋转
+        return originBitmap.rotate(rotate)
     }
     return preview()?.toBitmap()
 }

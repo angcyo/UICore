@@ -31,8 +31,12 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
         const val KEY_CRASH_MESSAGE = "crash_message"
         const val KEY_CRASH_TIME = "crash_time"
 
-        fun init(context: Context) {
-            DslCrashHandler().install(context)
+        /**是否自动获取启动的[Intent]*/
+        var OBTAIN_LAUNCH_INTENT: Boolean = isDebug()
+
+        /**初始化*/
+        fun init(context: Context, obtainLaunchIntent: Boolean = OBTAIN_LAUNCH_INTENT) {
+            DslCrashHandler().install(context, obtainLaunchIntent)
         }
 
         /**清空崩溃标识*/
@@ -96,12 +100,12 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
     var _applicationContext: Context? = null
     var _defaultUncaughtExceptionHandler: Thread.UncaughtExceptionHandler? = null
 
-    fun install(context: Context) {
+    fun install(context: Context, obtainLaunchIntent: Boolean) {
         _applicationContext = context.applicationContext
         _defaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler(this)
 
-        if (crashLaunchIntent == null) {
+        if (crashLaunchIntent == null && obtainLaunchIntent) {
             crashLaunchIntent =
                 context.packageManager.getLaunchIntentForPackage(context.packageName)
         }

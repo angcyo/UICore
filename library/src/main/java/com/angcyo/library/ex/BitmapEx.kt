@@ -277,7 +277,7 @@ fun Bitmap.rotate(degrees: Float = 0f): Bitmap = if (degrees != 0f) {
         matrix,
         false
     )
-    if (rotatedBitmap != rotatedBitmap) {
+    if (rotatedBitmap != this) {
         // 有时候 createBitmap会复用对象
         recycle()
     }
