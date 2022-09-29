@@ -14,8 +14,8 @@ dependencies {
     api project(allModule.drawable)
 
     //https://mvnrepository.com/artifact/androidx.fragment
-    api "androidx.fragment:fragment:1.5.2"
-    api "androidx.fragment:fragment-ktx:1.5.2"
+    api "androidx.fragment:fragment:1.5.3"
+    api "androidx.fragment:fragment-ktx:1.5.3"
 
     //https://mvnrepository.com/artifact/androidx.appcompat/appcompat
     //api "androidx.appcompat:appcompat:1.5.1"
@@ -23,6 +23,9 @@ dependencies {
     //https://mvnrepository.com/artifact/androidx.activity/
     api "androidx.activity:activity:1.5.1"
     api "androidx.activity:activity-ktx:1.5.1"
+
+    // https://mvnrepository.com/artifact/androidx.cardview/cardview
+    api 'androidx.cardview:cardview:1.0.0'
 
     //https://mvnrepository.com/artifact/androidx.recyclerview/recyclerview
     api 'androidx.recyclerview:recyclerview:1.2.1'
