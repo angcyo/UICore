@@ -109,13 +109,14 @@ data class HandleBean(
      * [com.angcyo.acc2.action.Action]*/
     var actionList: List<String>? = null,
 
-    /**[handleClsList]参数存储池*/
+    /**[handleClsList]参数存储池, 自定义读取的参数池*/
     var handleClsParams: Map<String, Any>? = null,
 
     /**直接接管[com.angcyo.acc2.bean.HandleBean]的处理*/
     var handleClsList: List<String>? = null,
 
-    //实例化后的类
+    /**[handleClsList] 实例化后的类
+     * [com.angcyo.acc2.parse.HandleParse.parse]*/
     @Transient var _handleObjList: List<IHandleDynamic>? = null,
 
     /**

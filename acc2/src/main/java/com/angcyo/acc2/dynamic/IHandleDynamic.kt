@@ -22,6 +22,10 @@ import com.angcyo.acc2.parse.HandleResult
 @Keep
 interface IHandleDynamic {
 
+    /**
+     * [originList] 最原始的节点集合
+     * [handleNodeList] [handleBean]处理过后的节点集合
+     * */
     fun handle(
         control: AccControl,
         controlContext: ControlContext,

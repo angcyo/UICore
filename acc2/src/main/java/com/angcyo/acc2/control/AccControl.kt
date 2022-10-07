@@ -107,10 +107,15 @@ class AccControl : Runnable {
         fun initAllHandleCls(control: AccControl?, taskBean: TaskBean) {
             taskBean.apply {
                 actionList?.forEach { actionBean ->
-                    actionBean.check?.handle?.forEach { handleBean ->
-                        initHandleDynamic(control, handleBean)
-                    }
+                    initActionDynamic(control, actionBean)
                 }
+            }
+        }
+
+        /**[IHandleDynamic]*/
+        fun initActionDynamic(control: AccControl?, actionBean: ActionBean) {
+            actionBean.check?.handle?.forEach { handleBean ->
+                initHandleDynamic(control, handleBean)
             }
         }
 
