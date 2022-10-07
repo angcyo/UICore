@@ -19,15 +19,21 @@ import com.angcyo.acc2.parse.HandleResult
 @Keep
 interface IHandleActionDynamic {
 
-    fun runAction(control: AccControl, nodeList: List<AccessibilityNodeInfoCompat>?, action: String): HandleResult {
+    fun runActionCmd(
+        control: AccControl,
+        nodeList: List<AccessibilityNodeInfoCompat>?,
+        action: String
+    ): HandleResult {
         return handleResult { }
     }
 
-    fun runAction(control: AccControl,
-                  controlContext: ControlContext,
-                  nodeList: List<AccessibilityNodeInfoCompat>?,
-                  action: String): HandleResult {
-        return runAction(control, nodeList, action)
+    fun runActionCmd(
+        control: AccControl,
+        controlContext: ControlContext,
+        nodeList: List<AccessibilityNodeInfoCompat>?,
+        action: String
+    ): HandleResult {
+        return runActionCmd(control, nodeList, action)
     }
 
 }

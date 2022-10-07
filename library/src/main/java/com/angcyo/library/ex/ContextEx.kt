@@ -395,8 +395,8 @@ fun Context.processName(): String? {
     return null
 }
 
-/**振动提示[milliseconds]振动时长
- * android.Manifest.permission.VIBRATE*/
+/**振动提示[milliseconds]振动时长, 震动.
+ * [android.Manifest.permission.VIBRATE]*/
 @SuppressLint("MissingPermission")
 fun Context.vibrate(milliseconds: Long = 50) {
     val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator

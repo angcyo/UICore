@@ -41,7 +41,7 @@ class ClassAction : BaseAction() {
             }
 
             return if (obj is IHandleActionDynamic) {
-                obj.runAction(control, controlContext, nodeList, action).apply {
+                obj.runActionCmd(control, controlContext, nodeList, action).apply {
                     control.log("[ClassAction][$action]返回:$success")
                 }
             } else {

@@ -11,6 +11,7 @@ import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_STOP
 import com.angcyo.acc2.core.BaseAccService
 import com.angcyo.acc2.core.ControlException
 import com.angcyo.acc2.core.ControlInterruptException
+import com.angcyo.acc2.dynamic.IActionDynamic
 import com.angcyo.acc2.dynamic.IHandleDynamic
 import com.angcyo.acc2.dynamic.IInputProvider
 import com.angcyo.acc2.dynamic.ITaskDynamic
@@ -104,9 +105,15 @@ class AccControl : Runnable {
         }
 
         /**一次性创建所有[com.angcyo.acc2.dynamic.IHandleDynamic]*/
-        fun initAllHandleCls(control: AccControl?, taskBean: TaskBean) {
+        fun initAllActionAndHandleCls(control: AccControl?, taskBean: TaskBean) {
             taskBean.apply {
                 actionList?.forEach { actionBean ->
+                    initActionDynamic(control, actionBean)
+                }
+                backActionList?.forEach { actionBean ->
+                    initActionDynamic(control, actionBean)
+                }
+                intervalList?.forEach { actionBean ->
                     initActionDynamic(control, actionBean)
                 }
             }
@@ -114,7 +121,77 @@ class AccControl : Runnable {
 
         /**[IHandleDynamic]*/
         fun initActionDynamic(control: AccControl?, actionBean: ActionBean) {
-            actionBean.check?.handle?.forEach { handleBean ->
+            //dynamic
+            val clsList = actionBean.actionClsList
+            if (clsList.isNullOrEmpty()) {
+                actionBean._actionObjList = null
+            } else {
+                if (actionBean._actionObjList == null || actionBean._actionObjList.size() != clsList.size()) {
+                    val ojbList = mutableListOf<IActionDynamic>()
+                    clsList.forEach {
+                        newInstance(it, IActionDynamic::class.java)?.let { obj ->
+                            ojbList.add(obj)
+                        }
+                    }
+
+                    if (ojbList.isNotEmpty()) {
+                        actionBean._actionObjList = ojbList
+
+                        ojbList.forEach { obj ->
+                            control?.controlListenerList?.forEach {
+                                it.onCreateDynamicObj(obj)
+                            }
+                            control?._taskBean?._listenerObjList?.forEach {
+                                it.onCreateDynamicObj(obj)
+                            }
+                        }
+                    }
+                }
+            }
+
+            //handle
+            actionBean.check?.let { checkBean ->
+                initHandleDynamic(control, checkBean)
+            }
+            actionBean.beforeCheck?.let { checkBean ->
+                initHandleDynamic(control, checkBean)
+            }
+            actionBean.afterCheck?.let { checkBean ->
+                initHandleDynamic(control, checkBean)
+            }
+            //loop
+            actionBean.loop?.handle?.forEach { handleBean ->
+                initHandleDynamic(control, handleBean)
+            }
+            actionBean.loop?.exit?.forEach { handleBean ->
+                initHandleDynamic(control, handleBean)
+            }
+
+            //
+            actionBean.before?.let { initActionDynamic(control, it) }
+            actionBean.after?.let { initActionDynamic(control, it) }
+            actionBean.leave?.let { initActionDynamic(control, it) }
+            actionBean.lose?.let { initActionDynamic(control, it) }
+            actionBean.interval?.let { initActionDynamic(control, it) }
+        }
+
+        fun initHandleDynamic(control: AccControl?, checkBean: CheckBean) {
+            checkBean.other?.forEach { handleBean ->
+                initHandleDynamic(control, handleBean)
+            }
+            checkBean.handle?.forEach { handleBean ->
+                initHandleDynamic(control, handleBean)
+            }
+            checkBean.fail?.forEach { handleBean ->
+                initHandleDynamic(control, handleBean)
+            }
+            checkBean.success?.forEach { handleBean ->
+                initHandleDynamic(control, handleBean)
+            }
+            checkBean.limitRun?.forEach { handleBean ->
+                initHandleDynamic(control, handleBean)
+            }
+            checkBean.limitTime?.forEach { handleBean ->
                 initHandleDynamic(control, handleBean)
             }
         }

@@ -1238,7 +1238,7 @@ class AccSchedule(val accControl: AccControl) {
         val rootNodeList = findParse.findRootNode(windowBean)
 
         if (isPrimaryAction) {
-            val haveWindow = !rootNodeList.isNullOrEmpty()
+            val haveWindow = rootNodeList.isNotEmpty()
             _isLeaveWindow = !haveWindow
 
             accControl.controlListenerList.forEach {
@@ -1271,7 +1271,20 @@ class AccSchedule(val accControl: AccControl) {
             }
         }
 
-        if (actionCheckBean == null) {
+        val objList = actionBean._actionObjList
+        if (!objList.isNullOrEmpty()) {
+            //直接接管ActionBean的执行
+            for (obj in objList) {
+                obj.runAction(
+                    this,
+                    controlContext,
+                    actionBean,
+                    otherActionList,
+                    isPrimaryAction,
+                    handleActionResult
+                )
+            }
+        } else if (actionCheckBean == null) {
             //未指定check, 直接操作根元素
             handleParse.parse(controlContext, rootNodeList, handleList).copyTo(handleActionResult)
 
@@ -1376,8 +1389,9 @@ class AccSchedule(val accControl: AccControl) {
 
                             //如果这个时候, 丢失了窗口节点
                             val nodeList = findParse.findRootNode(null)
-                            if (nodeList.isNullOrEmpty() ||
-                                (nodeList.size() == 1 && nodeList.firstOrNull()?.childCount ?: 0 <= 0)
+                            if (nodeList.isEmpty() ||
+                                (nodeList.size() == 1 &&
+                                        ((nodeList.firstOrNull()?.childCount ?: 0) <= 0))
                             ) {
                                 //leave
                                 _isLeaveWindow = true

@@ -46,7 +46,7 @@ fun LoopBean.isLoopValid(accParse: AccParse): Boolean {
     if (success != null) {
         val count = accParse.textParse.parse(success).firstOrNull()
         val numList = count.getIntList()
-        if (numList.isEmpty() || (numList.size() == 1 && numList.firstOrNull() ?: 0 < 0)) {
+        if (numList.isEmpty() || (numList.size() == 1 && (numList.firstOrNull() ?: 0) < 0)) {
             //小于0的数, 则无效
             return false
         }
@@ -55,7 +55,7 @@ fun LoopBean.isLoopValid(accParse: AccParse): Boolean {
     if (error != null) {
         val count = accParse.textParse.parse(error).firstOrNull()
         val numList = count.getIntList()
-        if (numList.isEmpty() || (numList.size() == 1 && numList.firstOrNull() ?: 0 < 0)) {
+        if (numList.isEmpty() || (numList.size() == 1 && (numList.firstOrNull() ?: 0) < 0)) {
             //小于0的数, 则无效
             return false
         }

@@ -1,5 +1,7 @@
 package com.angcyo.acc2.bean
 
+import com.angcyo.acc2.dynamic.IActionDynamic
+
 /**
  *
  * Email:angcyo@126.com
@@ -166,5 +168,15 @@ data class ActionBean(
 
     /**循环控制
      * 如果不配置, 则会执行下一个[ActionBean]*/
-    var loop: LoopBean? = null
+    var loop: LoopBean? = null,
+
+    //---dynamic---
+
+    /**通过代码运行[com.angcyo.acc2.bean.ActionBean]*/
+    var actionClsList: List<String>? = null,
+
+    /**[actionClsList] 实例化后的类
+     * [com.angcyo.acc2.control.AccControl.Companion.initActionDynamic]
+     * */
+    @Transient var _actionObjList: List<IActionDynamic>? = null,
 )

@@ -171,9 +171,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
         val rootNodeList = if (handleBean.rootNode == Action.RESULT) {
             originList
         } else {
-            val actionBean = controlContext.action
-            val windowBean = actionBean?.check?.window ?: actionBean?.window
-            accParse.findParse.rootWindowNode(windowBean)
+            accParse.findParse.rootWindowNode(controlContext.action)
         }
 
         var jumpFind = false

@@ -122,6 +122,8 @@ class FormParse : BaseParse() {
         originList: List<AccessibilityNodeInfoCompat>?,
         handleResult: HandleResult,
     ): FormResultBean? {
+
+        //表单请求的参数
         val params = hashMapOf<String, Any>()
         if (handleResult.success || handleResult.forceSuccess) {
             params[FormBean.KEY_CODE] = 200
@@ -133,6 +135,7 @@ class FormParse : BaseParse() {
 
         var formResultBean: FormResultBean? = null
 
+        //请求表单
         if (formBean.checkSuccess) {
             if (handleResult.success || handleResult.forceSuccess) {
                 formResultBean = request(control, formBean, params)
@@ -141,7 +144,7 @@ class FormParse : BaseParse() {
             formResultBean = request(control, formBean, params)
         }
 
-        //result
+        //result 返回值处理
         formResultBean?.apply {
 
             //wordList

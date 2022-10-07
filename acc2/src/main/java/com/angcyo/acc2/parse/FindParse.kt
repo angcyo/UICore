@@ -3,10 +3,7 @@ package com.angcyo.acc2.parse
 import android.view.accessibility.AccessibilityWindowInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.angcyo.acc2.action.Action
-import com.angcyo.acc2.bean.FindBean
-import com.angcyo.acc2.bean.NodeBean
-import com.angcyo.acc2.bean.WindowBean
-import com.angcyo.acc2.bean.isEmpty
+import com.angcyo.acc2.bean.*
 import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.control.actionLog
 import com.angcyo.acc2.control.log
@@ -545,6 +542,12 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         }
 
         return result
+    }
+
+    /**[rootWindowNode]*/
+    fun rootWindowNode(actionBean: ActionBean?): List<AccessibilityNodeInfoCompat> {
+        val windowBean = actionBean?.check?.window ?: actionBean?.window
+        return findRootNode(windowBean)
     }
 
     /**规则下的默认根节点集合*/
