@@ -172,6 +172,9 @@ data class ActionBean(
 
     //---dynamic---
 
+    /**[actionClsList]参数存储池, 自定义读取的参数池*/
+    var actionClsParams: Map<String, Any>? = null,
+
     /**通过代码运行[com.angcyo.acc2.bean.ActionBean]*/
     var actionClsList: List<String>? = null,
 
