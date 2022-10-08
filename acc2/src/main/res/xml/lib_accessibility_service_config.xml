@@ -2,7 +2,7 @@
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
     android:accessibilityEventTypes="typeAllMask"
     android:accessibilityFeedbackType="feedbackAllMask"
-    android:accessibilityFlags="flagDefault|flagRetrieveInteractiveWindows|flagIncludeNotImportantViews|flagReportViewIds|flagEnableAccessibilityVolume|flagRequestEnhancedWebAccessibility|flagRequestFilterKeyEvents|flagRequestFilterKeyEvents|flagRequestShortcutWarningDialogSpokenFeedback"
+    android:accessibilityFlags="flagDefault|flagRetrieveInteractiveWindows|flagIncludeNotImportantViews|flagReportViewIds|flagRequestEnhancedWebAccessibility|flagRequestFilterKeyEvents|flagRequestFilterKeyEvents|flagRequestShortcutWarningDialogSpokenFeedback"
     android:canControlMagnification="true"
     android:canPerformGestures="true"
     android:canRequestEnhancedWebAccessibility="true"
@@ -16,8 +16,8 @@
     android:notificationTimeout="100"
     android:summary="@string/lib_accessibility_summary" />
 
-    <!--flagRequestAccessibilityButton 加入这个flag无障碍设置界面只有快速启动快关-->
-    <!--flagEnableAccessibilityVolume-->
+    <!--flagRequestAccessibilityButton 加入这个flag,无障碍设置界面只有快速启动快关-->
+    <!--flagEnableAccessibilityVolume 加入这个flag,绘制音量控制界面显示无障碍音量控制-->
     <!--flagRequestShortcutWarningDialogSpokenFeedback-->
 
     <!--配置信息-->
