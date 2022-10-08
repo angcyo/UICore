@@ -123,6 +123,9 @@ fun isShowDebug() = getAppBoolean("show_debug") == true
 /** resValue "bool", "is_preview", "true" */
 fun isPreview() = getAppBoolean("is_preview") == true
 
+/** resValue "bool", "is_debug", "true" */
+fun isDebugRes() = getAppBoolean("is_debug") == true
+
 /**库打包成aar之后, [BuildConfig.DEBUG] 是 release*/
 fun isDebug() = BuildConfig.DEBUG || isAppDebug() || isDebugType()
 

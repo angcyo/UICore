@@ -129,6 +129,7 @@ android {
             ext.alwaysUpdateBuildId = false
 
             resValue "bool", "show_debug", "true"
+            resValue "bool", "is_debug", "true"
         }
         pretest {
             //https://developer.android.com/studio/build/build-variants
@@ -138,6 +139,7 @@ android {
             minifyEnabled _minify_enabled
 
             resValue "bool", "show_debug", "true"
+            resValue "bool", "is_debug", "true"
 
             //匹配回退
             matchingFallbacks = ['debug']
@@ -151,6 +153,7 @@ android {
             crunchPngs = true
 
             resValue "bool", "show_debug", "false"
+            resValue "bool", "is_debug", "false"
         }
     }
 
