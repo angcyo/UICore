@@ -4,11 +4,19 @@
     <integer name="lib_animation_duration">240</integer>
     <integer name="lib_animation_delay">360</integer>
 
-    <!--Toast的动画-->
+    <!--Toast的动画, 平移+透明-->
     <style name="LibToastTopAnimation" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/lib_tran_alpha_top_enter</item>
         <!--<item name="android:windowShowAnimation">@anim/lib_tran_alpha_top_enter</item>-->
         <item name="android:windowExitAnimation">@anim/lib_tran_alpha_top_exit</item>
+        <!--<item name="android:windowHideAnimation">@anim/lib_tran_alpha_top_exit</item>-->
+    </style>
+
+    <!--Toast的动画, 平移-->
+    <style name="LibToastTopTranAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/lib_tran_top_enter</item>
+        <!--<item name="android:windowShowAnimation">@anim/lib_tran_alpha_top_enter</item>-->
+        <item name="android:windowExitAnimation">@anim/lib_tran_top_exit</item>
         <!--<item name="android:windowHideAnimation">@anim/lib_tran_alpha_top_exit</item>-->
     </style>
 

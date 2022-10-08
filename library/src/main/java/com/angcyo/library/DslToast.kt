@@ -360,9 +360,19 @@ data class ToastConfig(
     var fullMargin: Int = 20 * dpi,//全屏模式下, 宽度左右的margin
 
     @StyleRes
-    var toastAnimation: Int = R.style.LibToastTopAnimation, //动画
+    var toastAnimation: Int = R.style.LibToastTopAnimation, //动画, api33 设置透明动画后会闪屏
     var onBindView: (rootView: View) -> Unit = {}
-)
+) {
+    init {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
+            //>=api33
+            if (toastAnimation == R.style.LibToastTopAnimation) {
+                //去掉透明动画, 否则会闪屏
+                toastAnimation = R.style.LibToastTopTranAnimation
+            }
+        }
+    }
+}
 
 private fun Int.windowEnterAnimation(context: Context = app()): Animation? {
     val animTypedArray =
