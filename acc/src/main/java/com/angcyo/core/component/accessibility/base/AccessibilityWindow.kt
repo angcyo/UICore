@@ -38,16 +38,17 @@ object AccessibilityWindow {
 
     var onCatchAction: Action? = {
         doBack {
-            val logWindow =
-                LogWindowAccessibilityInterceptor.logWindow(showToast = true)
-            if (!logWindow.isNullOrEmpty()) {
+            val logWindow = LogWindowAccessibilityInterceptor.logWindow(showToast = true)
+            if (logWindow.isNotEmpty()) {
 
                 val log = logWindow.wrapData()
-                DslFileHelper.write(
+                val logPath = DslFileHelper.write(
                     AccessibilityHelper.logFolderName,
                     "catch.log",
                     log
                 )
+                //直接分享文件
+                logPath?.file()?.shareFile()
 
                 onSaveWindowLog?.invoke(log)
             }
