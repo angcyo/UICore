@@ -7,12 +7,19 @@ import com.angcyo.library.ex.getFileAttachmentName
 
 /**
  *
+ * [com.angcyo.tbs.core.inner.TbsWeb]
+ * [com.angcyo.library.component.Web]
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/01
  */
 object Web {
 
+    /**自定义的UA*/
+    var CUSTOM_UA: String? = null
+
+    /**额外的UA标识*/
     var UA_EXTEND = " angcyo"
 
     /**初始化*/
@@ -58,7 +65,7 @@ object Web {
         webSetting.mediaPlaybackRequiresUserGesture = true//this
 
         //UA设置
-        webSetting.userAgentString = webSetting.userAgentString + UA_EXTEND
+        webSetting.userAgentString = (CUSTOM_UA ?: webSetting.userAgentString) + UA_EXTEND
     }
 
     /**
