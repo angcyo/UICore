@@ -50,11 +50,24 @@ object GraphicsHelper {
         }
     }
 
+    //---位置分配---
+
+    /**最小位置分配, 应该为设备最佳预览范围的左上角
+     * [com.angcyo.engrave.model.FscDeviceModel.initDevice]*/
+    @MM
+    var _minLeft = 0f
+
+    @MM
+    var _minTop = 0f
+
+    /**最后一次分配的坐标*/
     @MM
     var _lastLeft = 0f
 
     @MM
     var _lastTop = 0f
+
+    //
 
     var _lastTopIndex = 0
 
@@ -77,8 +90,8 @@ object GraphicsHelper {
         }
         _lastLeft += POSITION_STEP
         _lastTop += POSITION_STEP
-        bean.left = _lastLeft
-        bean.top = _lastTop
+        bean.left = _minLeft + _lastLeft
+        bean.top = _minTop + _lastTop
 
         //调整可视化的缩放比例
         val visualRect = canvasViewBox.getVisualRect()
