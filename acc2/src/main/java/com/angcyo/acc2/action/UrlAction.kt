@@ -39,7 +39,6 @@ class UrlAction : BaseAction() {
         if (targetUrl.isNullOrEmpty()) {
             control.log("无需要打开的Url[$action]:${success}")
         } else {
-
             packageNameList.firstOrNull()?.let {
                 try {
                     success = control.accService()?.startIntent(true) {
