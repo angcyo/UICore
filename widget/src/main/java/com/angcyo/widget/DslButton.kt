@@ -55,9 +55,6 @@ open class DslButton : AppCompatTextView {
         private const val NO_COLOR = -2
     }
 
-    var buttonGradientStartColor = Color.TRANSPARENT
-    var buttonGradientEndColor = Color.TRANSPARENT
-
     /**正常状态*/
     var normalDrawable: Drawable? = null
     var normalTextColor: Int = Color.WHITE
@@ -473,6 +470,10 @@ open class DslButton : AppCompatTextView {
         defaultValue: IntArray?
     ): IntArray? {
         val colors = typedArray.getString(attrIndex)
+        if (typedArray.hasValue(attrIndex) && colors.isNullOrEmpty()) {
+            //如果有属性, 但是属性值为空, 则表示清空属性
+            return null
+        }
         return if (!colors.isNullOrEmpty()) {
             _fillColor(colors)
         } else if (typedArray.hasValue(startIndex) || typedArray.hasValue(endIndex)) {
@@ -573,24 +574,13 @@ open class DslButton : AppCompatTextView {
             }
         }
 
-        val normalColors = typedArray.getString(R.styleable.DslButton_button_gradient_colors)
-        val bGradientColors = if (!normalColors.isNullOrEmpty()) {
-            _fillColor(normalColors)
-        } else if (typedArray.hasValue(R.styleable.DslButton_button_gradient_start_color) ||
-            typedArray.hasValue(R.styleable.DslButton_button_gradient_end_color)
-        ) {
-            buttonGradientStartColor = typedArray.getColor(
-                R.styleable.DslButton_button_gradient_start_color,
-                buttonGradientStartColor
-            )
-            buttonGradientEndColor = typedArray.getColor(
-                R.styleable.DslButton_button_gradient_end_color,
-                buttonGradientEndColor
-            )
-            intArrayOf(buttonGradientStartColor, buttonGradientEndColor)
-        } else {
+        val bGradientColors = _initGradientColors(
+            typedArray,
+            R.styleable.DslButton_button_gradient_colors,
+            R.styleable.DslButton_button_gradient_start_color,
+            R.styleable.DslButton_button_gradient_end_color,
             normalGradientColors
-        }
+        )
 
         setButtonGradientColors(bGradientColors)
     }

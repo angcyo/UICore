@@ -117,7 +117,7 @@ abstract class BasePickerFragment : BaseDslFragment() {
             dslTransition(_vh.group(R.id.title_wrap_layout)) {
                 transitionDuration = Anim.ANIM_DURATION
                 onCaptureEndValues = { _ ->
-                    _vh.enable(R.id.send_button)
+                    _vh.enable(R.id.send_button, true)
                     _vh.tv(R.id.send_button)?.text = getString(
                         R.string.picker_send_format,
                         "${mediaList.size}/${loaderConfig?.maxSelectorLimit ?: -1}"
