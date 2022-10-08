@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.drawable.Drawable
+import androidx.core.graphics.scale
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.Strategy
@@ -50,8 +51,12 @@ fun BaseItemRenderer<*>.getEngraveBitmap(): Bitmap? {
         null
     }
     if (originBitmap != null) {
-        //这里要处理旋转
-        return originBitmap.rotate(rotate)
+        //这里需要处理缩放和旋转
+        val bounds = getBounds()
+        val width = bounds.width().toInt()
+        val height = bounds.height().toInt()
+        val scaleBitmap = originBitmap.scale(width, height)
+        return scaleBitmap.rotate(rotate)
     }
     return preview()?.toBitmap()
 }
