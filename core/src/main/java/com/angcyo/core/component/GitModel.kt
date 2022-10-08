@@ -1,6 +1,8 @@
 package com.angcyo.core.component
 
+import android.os.Build
 import com.angcyo.core.lifecycle.LifecycleViewModel
+import com.angcyo.core.vmApp
 import com.angcyo.http.base.HttpCallback
 import com.angcyo.http.base.JsonBuilder
 import com.angcyo.http.base.jsonObject
@@ -10,6 +12,7 @@ import com.angcyo.http.rx.observe
 import com.angcyo.http.toApi
 import com.angcyo.http.toBean
 import com.angcyo.library.L
+import com.angcyo.library.ex.nowTimeString
 import com.google.gson.JsonElement
 
 /**
@@ -19,6 +22,12 @@ import com.google.gson.JsonElement
  * https://gitee.com/api/v5/swagger
  *
  * https://docs.github.com/cn/rest
+ *
+ * ---
+ *
+ * Gitee gits
+ *
+ * https://gitee.com/angcyo/dashboard/codes
  *
  * Email:angcyo@126.com
  * @author angcyo
@@ -91,5 +100,27 @@ fun gistBodyBuilder(description: String, filesBuilder: JsonBuilder.() -> Unit): 
 fun JsonBuilder.addGistFile(name: String, content: Any) {
     add(name, jsonObject {
         add("content", content)
+    })
+}
+
+//---
+
+/**将文本推送到Gist
+ * [gistName] Gist列表当中显示的文本
+ * [content] 一段内容
+ * */
+fun pushToGist(content: String, gistName: String = "${nowTimeString()}/${Build.MODEL}/gist") {
+    vmApp<GitModel>().postGist(gistBodyBuilder(gistName) {
+        addGistFile(gistName, content)
+    })
+}
+
+fun pushToGist(
+    gistName: String = "${nowTimeString()}/${Build.MODEL}/gist",
+    contentAction: JsonBuilder.() -> Unit
+) {
+    vmApp<GitModel>().postGist(gistBodyBuilder(gistName) {
+        //addGistFile()
+        contentAction()
     })
 }

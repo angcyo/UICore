@@ -247,12 +247,9 @@ fun File.shareFile(
         share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
     try {
-        context.startActivity(
-            Intent.createChooser(
-                share,
-                "发送给..."
-            ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        )
+        val chooser = Intent.createChooser(share, "发送给...")
+        chooser.baseConfig(context)
+        context.startActivity(chooser)
     } catch (e: Exception) {
         e.printStackTrace()
     }
