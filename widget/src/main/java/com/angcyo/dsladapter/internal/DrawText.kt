@@ -13,7 +13,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
- *
+ * 使用[StaticLayout]进行文本绘制, 支持[SpannableString] 支持换行
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2019/11/06
@@ -44,6 +44,7 @@ class DrawText {
 
     /**相对行间距，相对字体大小，1.5f表示行间距为1.5倍的字体高度。*/
     var spacingMult: Float by MakeLayoutProperty(1f)
+
     /**在基础行距上添加多少*/
     var spacingAdd: Float by MakeLayoutProperty(0f)
     var includePad: Boolean by MakeLayoutProperty(false)
