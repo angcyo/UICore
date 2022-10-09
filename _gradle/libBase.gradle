@@ -73,14 +73,14 @@ android {
         }
         pretest {
             initWith debug
-            //minifyEnabled lib_minify_enabled
-            //useProguard lib_use_proguard
+            minifyEnabled lib_minify_enabled_debug
+            //useProguard lib_minify_enabled_debug
+            matchingFallbacks = ['debug']
         }
         release {
             initWith debug
-            //minifyEnabled _minify_enabled
-            //useProguard _use_proguard
-            //matchingFallbacks = ['release']
+            minifyEnabled lib_minify_enabled
+            //useProguard lib_use_proguard
             debuggable false
         }
     }
