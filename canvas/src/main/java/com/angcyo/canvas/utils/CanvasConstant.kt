@@ -85,13 +85,13 @@ object CanvasConstant {
     //region ---数据处理模式---
 
     /**数数据模式, 黑白, 发送线段数据*/
-    const val DATA_MODE_BLACK_WHITE = 1
+    const val DATA_MODE_BLACK_WHITE = 101
 
     /**数据模式, 抖动, 发送抖动数据*/
-    const val DATA_MODE_DITHERING = 5
+    const val DATA_MODE_DITHERING = 105
 
     /**数据模式, GCode, 发送GCode数据*/
-    const val DATA_MODE_GCODE = 6
+    const val DATA_MODE_GCODE = 106
 
     //
 
