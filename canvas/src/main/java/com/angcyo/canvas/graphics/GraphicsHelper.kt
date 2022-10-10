@@ -156,7 +156,9 @@ object GraphicsHelper {
         if (assignLocation) {
             //更新位置和可视的缩放比例
             assignLocation(canvasView.getCanvasViewBox(), bean)
-            updateRenderItem(renderer, bean)
+            doMain {
+                updateRenderItem(renderer, bean)
+            }
         }
         doMain {
             updateRendererProperty(renderer, bean)
@@ -211,6 +213,7 @@ object GraphicsHelper {
 
     /**更新一个新的渲染[DataItem], 重新渲染数据*/
     @CallPoint
+    @MainThread
     fun updateRenderItem(renderer: DataItemRenderer, bean: ItemDataBean) {
         val item = parseItemFrom(bean) ?: return
         updateRenderItem(renderer, item)
@@ -218,6 +221,7 @@ object GraphicsHelper {
 
     /**更新[renderer]的[DataItem]*/
     @CallPoint
+    @MainThread
     fun updateRenderItem(renderer: DataItemRenderer, item: DataItem) {
         //更新渲染item
         renderer.setRendererRenderItem(item)

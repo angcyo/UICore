@@ -264,7 +264,7 @@ fun Bitmap.save(
     }
 }
 
-/**将图片旋转指定角度
+/**将图片旋转指定角度, 旋转之后的图片没有透明像素了
  * [degrees] 需要旋转的角度[0-360]
  * */
 fun Bitmap.rotate(degrees: Float = 0f): Bitmap = if (degrees != 0f) {
@@ -281,6 +281,7 @@ fun Bitmap.rotate(degrees: Float = 0f): Bitmap = if (degrees != 0f) {
         // 有时候 createBitmap会复用对象
         recycle()
     }
+    rotatedBitmap.setHasAlpha(true)//开启透明像素, 这样在保存成文件时, 旋转后的背景不会是黑色的
     rotatedBitmap
 } else {
     this
