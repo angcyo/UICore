@@ -28,22 +28,6 @@ object CanvasDataHandleOperate {
     /**GCode缓存目录*/
     const val GCODE_CACHE_FILE_FOLDER = "gcode"
 
-    /**GCode数据, 字符串的文本数据*/
-    const val KEY_GCODE = "key_gcode"
-
-    /**SVG数据, List<Path>*/
-    const val KEY_SVG = "key_svg"
-
-    /**数据处理的算法模式
-     * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_PRINT]
-     * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_GCODE]
-     * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_BLACK_WHITE]
-     * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_DITHERING]
-     * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_GREY]
-     * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_SEAL]
-     * */
-    const val KEY_DATA_MODE = "key_data_mode"
-
     fun _defaultGCodeOutputFile() = filePath("GCode", fileName(suffix = ".gcode")).file()
 
     /**将路径 填充/描边 转换为G1代码. 输出的GCode可以直接打印
@@ -310,7 +294,7 @@ object CanvasDataHandleOperate {
         gravity: Int? = null,
         lineSpace: Float = GCodeWriteHandler.GCODE_SPACE_1K,
         gapValue: Float = GCodeWriteHandler.GCODE_SPACE_GAP,
-        threshold: Int = 255,
+        threshold: Int = 255, //255白色不输出GCode
         outputFile: File = _defaultGCodeOutputFile()
     ): File {
         val gCodeWriteHandler = GCodeWriteHandler()

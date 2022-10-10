@@ -95,7 +95,7 @@ fun doMain(check: Boolean = true, action: () -> Unit) {
 /**在子线程回调
  * [check] 是否检查线程情况, 如果已经是子线程, 则不开启新线程, 否则.*/
 fun doBack(check: Boolean = false, action: () -> Unit) {
-    if (!check || isMain()) {
+    if (!check || !isMain()) {
         runRx({ action();true })
     } else {
         action()

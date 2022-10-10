@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
 /**
+ * 连续调用[postValue], 只有最后一次才会收到回调.
+ * 如果想要及时收到回调, 请使用[setValue]
+ *
  * 支持错误信息的[LiveData]
  * Email:angcyo@126.com
  * @author angcyo
