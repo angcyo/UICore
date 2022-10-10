@@ -59,7 +59,7 @@ fun RectF.isOutOf(rect: RectF): Boolean {
     return false
 }
 
-/**[this]矩形是否超出了[rect]范围*/
+/**[this]矩形是否完全超出了[rect]范围, 重合在边上不算*/
 fun RectF.isOverflowOf(rect: RectF): Boolean {
     if (left < rect.left || right > rect.right) {
         return true
