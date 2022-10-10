@@ -177,7 +177,7 @@ open class DslTextSpan : MetricAffectingSpan(), LeadingMarginSpan,
         return if (first) leadingFirst else leadingRest
     }
 
-    override fun onMeasure(widthSize: Int, heightSize: Int) {
+    override fun onMeasureWeightSpan(widthSize: Int, heightSize: Int) {
         if (leadingFirstWeight != undefined_float) {
             leadingFirst = (widthSize * leadingFirstWeight).toInt()
         }

@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
 import com.angcyo.widget.R
+import com.angcyo.widget.base.haveSpan
 import com.angcyo.widget.base.spans
 import com.angcyo.widget.span.IDrawableSpan
 import com.angcyo.widget.span.IWeightSpan
@@ -100,6 +101,11 @@ open class DslSpanTextView : PaintTextView {
         } else {
             type
         }
+        if (text.haveSpan { it is IWeightSpan }) {
+            //需要重新布局, 才会重新计算宽度
+            //com.angcyo.widget.text.DslSpanTextView._measureWeightSpan
+            requestLayout()
+        }
         super.setText(text, bufferType)
     }
 
@@ -168,7 +174,7 @@ open class DslSpanTextView : PaintTextView {
             if (span is IWeightSpan) {
                 val width = widthSize - paddingLeft - paddingRight
                 val height = heightSize - paddingTop - paddingBottom
-                span.onMeasure(width, height)
+                span.onMeasureWeightSpan(width, height)
             }
         }
     }

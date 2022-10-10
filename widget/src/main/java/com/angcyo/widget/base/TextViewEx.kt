@@ -158,6 +158,16 @@ fun TextView.spans(action: (index: Int, span: Any) -> Unit) {
     }
 }
 
+/**判断文本中是否有指定的[Spanned]*/
+fun CharSequence?.haveSpan(predicate: (Any) -> Boolean): Boolean {
+    val text = this
+    if (text is Spanned) {
+        val spans = text.getSpans(0, text.length, Any::class.java)
+        return spans.find(predicate) != null
+    }
+    return false
+}
+
 /**枚举所有[span]*/
 fun TextView.allSpans(): List<Any> {
     val text = text
