@@ -27,6 +27,7 @@ import java.util.*
  * [String]
  * [ByteArray]
  * [Bitmap]
+ * [File]
  * */
 typealias FileTextData = Any
 
@@ -121,15 +122,17 @@ object FileUtils {
                     }
                 } else {
                     when {
-                        length() >= fileMaxSize || !append -> if (data is ByteArray) {
-                            writeBytes(data)
-                        } else {
-                            writeText(data.toString())
+                        //重写文件的内容
+                        length() >= fileMaxSize || !append -> when (data) {
+                            is ByteArray -> writeBytes(data)
+                            is File -> writeBytes(data.readBytes())
+                            else -> writeText(data.toString())
                         }
-                        else -> if (data is ByteArray) {
-                            appendBytes(data)
-                        } else {
-                            appendText(data.toString())
+                        //追加文件的内容
+                        else -> when (data) {
+                            is ByteArray -> appendBytes(data)
+                            is File -> appendBytes(data.readBytes())
+                            else -> appendText(data.toString())
                         }
                     }
                 }
