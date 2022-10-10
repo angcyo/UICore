@@ -410,7 +410,7 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
         marginBottom = margin
     }
 
-    override fun onMeasure(widthSize: Int, heightSize: Int) {
+    override fun onMeasureWeightSpan(widthSize: Int, heightSize: Int) {
         if (spanWeight != undefined_float) {
             spanWidth = (spanWeight * widthSize).toInt()
         }
