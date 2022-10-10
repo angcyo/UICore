@@ -24,7 +24,7 @@ data class RectPointF(
     val rightTop: PointF = PointF(),
     /**旋转后的右下*/
     val rightBottom: PointF = PointF(),
-    /**原始的矩形*/
+    /**原始的矩形, 未旋转*/
     val originRectF: RectF = RectF(),
     /**旋转的角度*/
     val originRotate: Float = 0f,
@@ -76,6 +76,15 @@ fun RectPointF.toPath(result: Path = acquireTempPath()): Path {
     result.transform(matrix)
 
     matrix.release()
+    return result
+}
+
+fun RectPointF.toRect(result: RectF): RectF {
+    val left = minOf(leftTop.x, rightTop.x, rightBottom.x, leftBottom.x)
+    val top = minOf(leftTop.y, rightTop.y, rightBottom.y, leftBottom.y)
+    val right = maxOf(leftTop.x, rightTop.x, rightBottom.x, leftBottom.x)
+    val bottom = maxOf(leftTop.y, rightTop.y, rightBottom.y, leftBottom.y)
+    result.set(left, top, right, bottom)
     return result
 }
 

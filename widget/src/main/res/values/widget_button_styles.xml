@@ -27,7 +27,7 @@
 
     <!--圆角主题渐变底色填充的样式-->
     <style name="LibButtonThemeSolidStyle" parent="LibButtonSolidStyle">
-        <item name="button_gradient_colors">""</item>
+        <item name="button_gradient_colors">@null</item>
         <item name="button_gradient_start_color">@color/colorPrimary</item>
         <item name="button_gradient_end_color">@color/colorPrimaryDark</item>
         <item name="button_radius">@dimen/lib_radius_common</item>

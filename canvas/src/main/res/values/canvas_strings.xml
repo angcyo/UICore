@@ -81,7 +81,8 @@
     <string name="canvas_delete_font">删除字体</string>
 
     <string name="canvas_photo">相册</string>
-    <string name="preview_out_of_range">预览超出范围</string>
+    <string name="out_of_limit">超出最佳范围</string>
+    <string name="out_of_bounds">超出雕刻范围</string>
     <string name="canvas_crop">剪裁</string>
     <string name="canvas_system">系统</string>
     <string name="canvas_custom">自定义</string>
