@@ -38,7 +38,6 @@ object GraphicsHelper {
             _parserList.add(BitmapGraphicsParser())
             _parserList.add(TextGraphicsParser())
             _parserList.add(CodeGraphicsParser())
-            _parserList.add(PathGraphicsParser())
             _parserList.add(LineGraphicsParser())
             _parserList.add(OvalGraphicsParser())
             _parserList.add(RectGraphicsParser())
@@ -47,6 +46,7 @@ object GraphicsHelper {
             _parserList.add(LoveGraphicsParser())
             _parserList.add(SvgGraphicsParser())
             _parserList.add(GCodeGraphicsParser())
+            _parserList.add(PathGraphicsParser())
         }
     }
 

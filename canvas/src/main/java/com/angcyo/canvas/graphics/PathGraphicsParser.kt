@@ -34,8 +34,8 @@ open class PathGraphicsParser : IGraphicsParser {
 
     override fun parse(bean: ItemDataBean): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_SINGLE_WORD /*单线字*/ ||
-            bean.mtype == CanvasConstant.DATA_TYPE_PEN /*钢笔*/ /*||
-            bean.mtype == CanvasConstant.DATA_TYPE_SVG *//*svg*/
+            bean.mtype == CanvasConstant.DATA_TYPE_PEN /*钢笔*/ ||
+            (bean.mtype == CanvasConstant.DATA_TYPE_SVG && bean.data.isNullOrEmpty())/*svg*/
         ) {
             //
             val data = bean.path
