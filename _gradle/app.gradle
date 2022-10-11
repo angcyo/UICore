@@ -22,6 +22,7 @@ def _T_SDK = project.hasProperty("T_SDK") ? project.ext.T_SDK : '31'
 def _V_CODE = project.hasProperty("V_CODE") ? project.ext.V_CODE : '1'
 def _V_NAME = project.hasProperty("V_NAME") ? project.ext.V_NAME : '1.0'
 def application_id = project.hasProperty("application_id") ? project.ext.application_id : 'com.angcyo.app'
+def _namespace = project.hasProperty("namespace") ? project.ext.namespace : application_id
 
 def _minify_enabled_debug = project.hasProperty("minify_enabled_debug") ? (project.ext.minify_enabled_debug == "true") : false
 def _use_proguard_debug = project.hasProperty("use_proguard_debug") ? (project.ext.use_proguard_debug == "true") : false
@@ -29,7 +30,7 @@ def _minify_enabled = project.hasProperty("minify_enabled") ? (project.ext.minif
 def _use_proguard = project.hasProperty("use_proguard") ? (project.ext.use_proguard == "true") : _minify_enabled
 
 println "\n........app.gradle........"
-println "工程名->" + project.name + " 包名->" + application_id + " ->" + _V_NAME + "($_V_CODE)"
+println "工程名->" + project.name + " 包名->" + application_id + " 命名空间->" + _namespace + " 版本->" + _V_NAME + "($_V_CODE)"
 println "C_SDK:" + _C_SDK + " M_SDK:" + _M_SDK + " T_SDK:" + _T_SDK + " minify_enabled:" + _minify_enabled + " use_proguard:" + _use_proguard
 println "........app.gradle........end"
 
@@ -39,7 +40,7 @@ println "........app.gradle........end"
 //println rootProject
 
 android {
-
+    namespace "$_namespace" //gradle7.5+
     compileSdkVersion Integer.parseInt(_C_SDK)
     //buildToolsVersion rootProject.B_TOOLS
     defaultConfig {
@@ -78,6 +79,10 @@ android {
                 arguments = ["objectbox.incremental": "true"]
             }
         }
+
+        //变种降级策略
+        //https://developer.android.com/studio/build/build-variants?hl=zh-cn#resolve_matching_errors
+        //missingDimensionStrategy 'flavor'
     }
 //    sourceSets {
 //        main {
@@ -142,6 +147,7 @@ android {
             resValue "bool", "is_debug", "true"
 
             //匹配回退
+            //https://developer.android.com/studio/build/build-variants?hl=zh-cn#resolve_matching_errors
             matchingFallbacks = ['debug']
         }
         release {
