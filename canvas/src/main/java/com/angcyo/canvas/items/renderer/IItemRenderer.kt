@@ -32,17 +32,17 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     /**设置一个渲染项*/
     fun setRendererRenderItem(item: T?)
 
-    /**旋转后的坐标
+    /**相对于坐标系0,0位置, 旋转后的坐标
      * [getBounds]
      * [com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
     fun getRotateBounds(): RectF
 
-    /**旋转后的坐标
+    /**相对于视图左上角, 旋转后的坐标
      * [getRenderBounds]
      * [com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
     fun getRenderRotateBounds(): RectF
 
-    /**旋转后的坐标
+    /**相对于视图左上角, 旋转后的坐标
      * [getVisualBounds]
      * [com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
     fun getVisualRotateBounds(): RectF

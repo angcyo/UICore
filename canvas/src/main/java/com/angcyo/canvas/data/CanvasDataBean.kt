@@ -9,18 +9,24 @@ import com.angcyo.library.annotation.MM
 data class CanvasDataBean(
     /**画布的宽高*/
     @MM
-    val width: Float = 0f,
+    var width: Float = 0f,
     @MM
-    val height: Float = 0f,
+    var height: Float = 0f,
 
     /**预览的base64图片*/
-    val preview_img: String? = null,
+    var preview_img: String? = null,
 
     /**item list 的所有数据
      * [com.angcyo.canvas.data.ItemDataBean]
      * */
-    val data: String? = null,
+    var data: String? = null,
 
     /**工程名*/
-    val projectName: String? = null
+    var file_name: String? = null,
+
+    /**工程创建时间, 13位毫秒*/
+    var create_time: Long = -1,
+
+    /**工程创建时间, 13位毫秒*/
+    var update_time: Long = -1,
 )

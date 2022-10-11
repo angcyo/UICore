@@ -180,9 +180,11 @@ object CanvasDataHandleOperate {
         bounds: RectF,
         rotate: Float,
         outputFile: File = _defaultGCodeOutputFile(),
+        isFirst: Boolean = true,
+        isFinish: Boolean = true,
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
-        pathStep: Float = 1f
+        pathStep: Float = 1f,
     ): File {
         val newPathList = mutableListOf<Path>()
 
@@ -236,8 +238,8 @@ object CanvasDataHandleOperate {
                 newPathList,
                 mmValueUnit,
                 writer,
-                true,
-                true,
+                isFirst,
+                isFinish,
                 offsetLeft,
                 offsetTop,
                 pathStep
@@ -295,7 +297,9 @@ object CanvasDataHandleOperate {
         lineSpace: Float = GCodeWriteHandler.GCODE_SPACE_1K,
         gapValue: Float = GCodeWriteHandler.GCODE_SPACE_GAP,
         threshold: Int = 255, //255白色不输出GCode
-        outputFile: File = _defaultGCodeOutputFile()
+        outputFile: File = _defaultGCodeOutputFile(),
+        isFirst: Boolean = true,
+        isFinish: Boolean = true,
     ): File {
         val gCodeWriteHandler = GCodeWriteHandler()
         gCodeWriteHandler.gapValue = gapValue
@@ -327,7 +331,9 @@ object CanvasDataHandleOperate {
             //最后的坐标
             var lastLineRef = 0
 
-            gCodeWriteHandler.writeFirst(writer, mmValueUnit)
+            if (isFirst) {
+                gCodeWriteHandler.writeFirst(writer, mmValueUnit)
+            }
 
             if (scanGravity == Gravity.LEFT || scanGravity == Gravity.RIGHT) {
                 //垂直扫描
@@ -444,7 +450,10 @@ object CanvasDataHandleOperate {
                     }
                 }
             }
-            gCodeWriteHandler.writeFinish(writer)
+
+            if (isFinish) {
+                gCodeWriteHandler.writeFinish(writer)
+            }
         }
         return outputFile
     }

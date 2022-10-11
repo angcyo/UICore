@@ -928,6 +928,16 @@ class CanvasDelegate(val view: View) : ICanvasView {
         return controlHandler.selectedItemRender
     }
 
+    /**数据渲染开始的坐标位置, 用来实现线段数据合并时需要的偏移量*/
+    fun getSelectedStartBounds(): RectF {
+        val selectedRenderer = getSelectedRenderer()
+        return if (selectedRenderer == null) {
+            RectF(0f, 0f, 0f, 0f)
+        } else {
+            RectF(selectedRenderer.getRotateBounds())
+        }
+    }
+
     /**获取所有选中的单元素*/
     fun getSelectedRendererList(): List<BaseItemRenderer<*>> {
         val selectedRenderer = getSelectedRenderer()
