@@ -156,6 +156,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         progressBgDrawable = typedArray.getDrawable(R.styleable.DslProgressBar_progress_bg_drawable)
         progressSecondDrawable =
             typedArray.getDrawable(R.styleable.DslProgressBar_progress_second_drawable)
+        //进度条轨道
         progressTrackDrawable =
             typedArray.getDrawable(R.styleable.DslProgressBar_progress_track_drawable)
 
@@ -208,7 +209,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             setSecondGradientColors("${getColor(R.color.lib_progress_second_bg_color)},${getColor(R.color.lib_progress_second_bg_color)}")
         }
 
-        //进度轨道Drawable
+        //进度条轨道Drawable
         if ((progressTrackDrawable is ColorDrawable || progressTrackDrawable == null) &&
             typedArray.hasValue(R.styleable.DslProgressBar_progress_track_gradient_colors)
         ) {
@@ -224,7 +225,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
             setTrackGradientColors(colors)
         } else if (progressTrackDrawable == null) {
-            setTrackGradientColors("${getColor(R.color.colorPrimaryDark)},${getColor(R.color.colorPrimary)}")
+            setTrackGradientColors("${getColor(R.color.colorPrimary)},${getColor(R.color.colorPrimaryDark)}")
         }
         //----end
 
