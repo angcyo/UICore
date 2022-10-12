@@ -21,6 +21,14 @@ class BubbleView(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+        if (widthMode == MeasureSpec.EXACTLY) {
+            //指定了宽度
+            val widthSize = MeasureSpec.getSize(widthMeasureSpec)
+            bubbleDrawable {
+                bubbleMinWidth = widthSize
+            }
+        }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
