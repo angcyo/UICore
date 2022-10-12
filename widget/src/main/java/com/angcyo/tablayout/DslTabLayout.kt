@@ -42,6 +42,9 @@ open class DslTabLayout(
     /**item是否等宽*/
     var itemIsEquWidth = false
 
+    /**当子Item数量大于等于指定数量时,开启等宽,此属性优先级最高, 负数不开启*/
+    var itemEquWidthCount = -1
+
     /**智能判断Item是否等宽.
      * 如果所有子项, 未撑满tab时, 则开启等宽模式.此属性会覆盖[itemIsEquWidth]*/
     var itemAutoEquWidth = false
@@ -195,11 +198,12 @@ open class DslTabLayout(
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DslTabLayout)
         itemIsEquWidth =
             typedArray.getBoolean(R.styleable.DslTabLayout_tab_item_is_equ_width, itemIsEquWidth)
-        itemAutoEquWidth =
-            typedArray.getBoolean(
-                R.styleable.DslTabLayout_tab_item_auto_equ_width,
-                itemAutoEquWidth
-            )
+        itemEquWidthCount =
+            typedArray.getInt(R.styleable.DslTabLayout_tab_item_equ_width_count, itemEquWidthCount)
+        itemAutoEquWidth = typedArray.getBoolean(
+            R.styleable.DslTabLayout_tab_item_auto_equ_width,
+            itemAutoEquWidth
+        )
         itemWidth =
             typedArray.getDimensionPixelOffset(R.styleable.DslTabLayout_tab_item_width, itemWidth)
         itemDefaultHeight = typedArray.getDimensionPixelOffset(
@@ -684,6 +688,10 @@ open class DslTabLayout(
             itemIsEquWidth = childMaxWidth <= widthSize
         }
 
+        if (itemEquWidthCount >= 0) {
+            itemIsEquWidth = visibleChildCount >= itemEquWidthCount
+        }
+
         //等宽时, child宽度的测量模式
         val childEquWidthSpec = if (itemIsEquWidth) {
             exactlyMeasure(
@@ -940,6 +948,10 @@ open class DslTabLayout(
             }
 
             itemIsEquWidth = childMaxHeight <= heightSize
+        }
+
+        if (itemEquWidthCount >= 0) {
+            itemIsEquWidth = visibleChildCount >= itemEquWidthCount
         }
 
         //等宽时, child高度的测量模式
