@@ -152,15 +152,13 @@ object GraphicsHelper {
     ): DataItemRenderer? {
         val item = parseItemFrom(bean) ?: return null
         val renderer = DataItemRenderer(canvasView)
-        renderer.setRendererRenderItem(item)
-        if (assignLocation) {
-            //更新位置和可视的缩放比例
-            assignLocation(canvasView.getCanvasViewBox(), bean)
-            doMain {
+        doMain {
+            renderer.setRendererRenderItem(item)
+            if (assignLocation) {
+                //更新位置和可视的缩放比例
+                assignLocation(canvasView.getCanvasViewBox(), bean)
                 updateRenderItem(renderer, bean)
             }
-        }
-        doMain {
             updateRendererProperty(renderer, bean)
             (canvasView as? CanvasDelegate)?.apply {
                 addItemRenderer(renderer, Strategy.normal)
