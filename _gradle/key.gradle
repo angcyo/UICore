@@ -120,9 +120,18 @@ if (rootProject.hasProperty("key_file")) {
         key_file = props['key.file']
         password = props['password']
 
+        if (key_file != null) {
+            def absolute_path = props['absolute_path']
+            if (absolute_path == null || absolute_path == true) {
+                //使用绝对路径
+                key_file = file(key_file).absolutePath
+            }
+        }
+
         //println("key_file:" + key_file)
         //key_file = keyConfigFile.getParent() + "/" + key_file
         //println("key_file2:" + key_file)
+        println("签名配置:${props} -> ${key_file}")
     } else {
         println("未声明key_file属性, 将采用默认签名进行.")
     }
