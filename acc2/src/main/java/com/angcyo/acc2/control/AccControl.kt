@@ -37,7 +37,8 @@ class AccControl : Runnable {
 
         //开始
         const val CONTROL_STATE_NORMAL = 0
-        const val CONTROL_STATE_RUNNING = 1
+        const val CONTROL_STATE_START = 1
+        const val CONTROL_STATE_RUNNING = 2
         const val CONTROL_STATE_PAUSE = 3
 
         //结束
@@ -285,8 +286,8 @@ class AccControl : Runnable {
         lastError = null
 
         accSchedule.startSchedule()
+        updateControlState(CONTROL_STATE_START)
         _startThread()
-        updateControlState(CONTROL_STATE_RUNNING)
 
         _taskBean?.let {
             controlListenerList.forEach {
@@ -458,6 +459,7 @@ class AccControl : Runnable {
         _stopThread()
         _controlThread = pool.submit(this)
         _intervalThread = pool.submit {
+            updateControlState(CONTROL_STATE_RUNNING)
             while (isControlStart) {
                 try {
                     if (_controlState == CONTROL_STATE_RUNNING) {
