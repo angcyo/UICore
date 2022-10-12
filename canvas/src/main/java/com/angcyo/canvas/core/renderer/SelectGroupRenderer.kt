@@ -1,10 +1,6 @@
 package com.angcyo.canvas.core.renderer
 
-import android.graphics.Canvas
-import android.graphics.Matrix
-import android.graphics.Paint
-import android.graphics.PointF
-import android.graphics.RectF
+import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import androidx.core.graphics.drawable.toDrawable
@@ -20,23 +16,10 @@ import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
-import com.angcyo.drawable.isGravityBottom
-import com.angcyo.drawable.isGravityCenter
-import com.angcyo.drawable.isGravityCenterHorizontal
-import com.angcyo.drawable.isGravityCenterVertical
-import com.angcyo.drawable.isGravityLeft
-import com.angcyo.drawable.isGravityRight
-import com.angcyo.drawable.isGravityTop
+import com.angcyo.drawable.*
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
-import com.angcyo.library.ex._color
-import com.angcyo.library.ex.adjustFlipRect
-import com.angcyo.library.ex.alpha
-import com.angcyo.library.ex.c
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.emptyRectF
-import com.angcyo.library.ex.have
-import com.angcyo.library.ex.size
+import com.angcyo.library.ex.*
 import kotlin.collections.set
 import kotlin.math.absoluteValue
 import kotlin.math.max
@@ -216,7 +199,8 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
                 } else {
                     canvasDelegate.boundsOperateHandler.changeBoundsItemList(
                         selectItemList,
-                        selectItemList.map { itemBoundsMap[it]!! },
+                        selectItemList.filter { itemBoundsMap[it] != null }
+                            .map { itemBoundsMap[it]!! },
                         originBounds,
                         getBounds(),
                         Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)

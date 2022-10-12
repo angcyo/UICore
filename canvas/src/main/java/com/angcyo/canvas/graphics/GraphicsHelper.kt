@@ -206,8 +206,14 @@ object GraphicsHelper {
     /**添加一个元素用来渲染指定的数据
      * [renderItemDataBean] 此方法的缩短写法*/
     @CallPoint
-    fun addRenderItemDataBean(canvasView: ICanvasView, bean: ItemDataBean) =
-        renderItemDataBean(canvasView, bean, true, true)
+    @AnyThread
+    fun addRenderItemDataBean(canvasView: ICanvasView?, bean: ItemDataBean?): DataItemRenderer? {
+        return if (bean == null || canvasView == null) {
+            null
+        } else {
+            renderItemDataBean(canvasView, bean, true, true)
+        }
+    }
 
     /**更新一个新的渲染[DataItem], 重新渲染数据*/
     @CallPoint

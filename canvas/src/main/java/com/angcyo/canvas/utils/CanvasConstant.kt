@@ -142,6 +142,16 @@ object CanvasConstant {
         }
 
     //endregion ---Canvas设置项---
+
+    //region ---支持的文件类型---
+
+    /**创作支持的数据类型*/
+    const val GCODE_EXT = ".gcode"
+
+    const val SVG_EXT = ".svg"
+
+    //endregion ---支持的文件类型---
+
 }
 
 fun Int.toDataTypeStr() = when (this) {

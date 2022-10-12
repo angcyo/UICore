@@ -204,6 +204,13 @@ fun Activity.showDebugInfoView(config: ActivityDebugInfoConfig) {
 
             textView.text = buildString {
                 appendLine(packageName)
+
+                //
+                activityInfo()?.let {
+                    appendLine("/${it.taskAffinity}")
+                }
+
+                //
                 appendLine(this@showDebugInfoView.javaClass.name)
                 (this@showDebugInfoView as? FragmentActivity)?.supportFragmentManager?.logAllFragment(
                     this,

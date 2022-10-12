@@ -339,6 +339,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         if (dslAdapterStatusItem.itemState == status) {
             return
         }
+        dslAdapterStatusItem.itemDslAdapter = this
         dslAdapterStatusItem.itemState = status
         dslAdapterStatusItem.itemChanging = true
     }
@@ -394,6 +395,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         if (dslLoadMoreItem.itemStateEnable && dslLoadMoreItem.itemState == status) {
             return
         }
+        dslLoadMoreItem.itemDslAdapter = this
         dslLoadMoreItem.itemState = status
         if (notify) {
             notifyItemChanged(dslLoadMoreItem, payload)

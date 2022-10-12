@@ -66,7 +66,7 @@ fun CharSequence.copy(context: Context = app(), throwable: Boolean = false): Boo
     } catch (e: Exception) {
         e.printStackTrace()
         if (throwable) {
-            throw  e
+            throw e
         }
         return false
     }
@@ -496,14 +496,23 @@ fun String?.isTextMimeType(): Boolean {
     return this?.startsWith("text", true) ?: false
 }
 
+/**是否是图片类型*/
+fun String?.isImageType(): Boolean {
+    val lc = this?.lowercase() ?: return false
+    if (lc.mimeType()?.startsWith("image", true) == true) {
+        return true
+    }
+    return lc.endsWith(".jpg") || lc.endsWith(".jpeg") || lc.endsWith(".png") || lc.endsWith(".webp")
+}
+
 /**是否是字体
  * https://developer.android.com/guide/topics/resources/font-resource?hl=zh-cn
  * */
 fun String?.isFontType(): Boolean {
-    if (mimeType()?.startsWith("font", true) == true) {
+    val lc = this?.lowercase() ?: return false
+    if (lc.mimeType()?.startsWith("font", true) == true) {
         return true
     }
-    val lc = this?.lowercase() ?: return false
     return lc.endsWith(".ttf") || lc.endsWith(".otf") || lc.endsWith(".ttc")
 }
 

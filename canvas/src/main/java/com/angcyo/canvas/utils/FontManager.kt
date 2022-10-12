@@ -16,6 +16,9 @@ import java.io.File
  */
 object FontManager {
 
+    /**文件路径转字体对象*/
+    fun String.toTypeface() = Typeface.createFromFile(file())
+
     /**默认的字体列表*/
     val DEFAULT_TYPEFACE_LIST = mutableListOf<TypefaceInfo>().apply {
         //系统默认字体

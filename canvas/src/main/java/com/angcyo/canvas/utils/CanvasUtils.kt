@@ -11,8 +11,8 @@ import com.angcyo.gcode.GCodeDrawable
 import com.angcyo.gcode.GCodeHelper
 import com.angcyo.library.app
 import com.angcyo.library.ex.*
-import com.angcyo.library.unit.MmValueUnit
 import com.angcyo.svg.Svg
+import com.angcyo.svg.Svg.loadSvgPathDrawable
 import com.pixplicity.sharp.SharpDrawable
 import kotlin.math.max
 
@@ -172,9 +172,16 @@ fun CanvasDelegate.engraveMode(enable: Boolean = true) {
     refresh()
 }
 
-/**扩展张*/
+/**扩展*/
 fun GCodeHelper.parseGCode(gCodeText: String?): GCodeDrawable? =
     parseGCode(gCodeText, createPaint(Color.BLACK))
+
+/**扩展*/
+fun parseSvg(svgText: String?): SharpDrawable? = if (svgText.isNullOrEmpty()) {
+    null
+} else {
+    loadSvgPathDrawable(svgText, -1, null, createPaint(Color.BLACK), 0, 0)
+}
 
 //</editor-fold desc="Other">
 

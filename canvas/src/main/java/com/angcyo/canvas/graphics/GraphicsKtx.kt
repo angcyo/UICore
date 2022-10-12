@@ -20,28 +20,38 @@ import com.angcyo.library.ex.toBase64Data
 
 //region ---图/文---
 
+fun Bitmap?.toBitmapItemData(action: ItemDataBean.() -> Unit = {}): ItemDataBean? {
+    this ?: return null
+    val bean = ItemDataBean()
+    bean.mtype = CanvasConstant.DATA_TYPE_BITMAP
+    bean.imageOriginal = toBase64Data()
+    bean.action()
+    return bean
+}
+
 /**添加一个[bitmap]数据渲染*/
 fun CanvasDelegate.addBitmapRender(
     bitmap: Bitmap?,
     action: ItemDataBean.() -> Unit = {}
 ): DataItemRenderer? {
     bitmap ?: return null
-    val bean = ItemDataBean()
-    bean.mtype = CanvasConstant.DATA_TYPE_BITMAP
-    bean.imageOriginal = bitmap.toBase64Data()
+    val bean = bitmap.toBitmapItemData(action) ?: return null
     bean.action()
     return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
 
-/**添加一个[text]数据渲染*/
-fun CanvasDelegate.addTextRender(text: CharSequence?): DataItemRenderer? {
-    text ?: return null
+fun CharSequence?.toTextItemData(): ItemDataBean? {
+    this ?: return null
     val bean = ItemDataBean()
     bean.mtype = CanvasConstant.DATA_TYPE_TEXT
-    bean.text = "$text"
+    bean.text = "$this"
     bean.paintStyle = Paint.Style.FILL.toPaintStyleInt()
-    return GraphicsHelper.addRenderItemDataBean(this, bean)
+    return bean
 }
+
+/**添加一个[text]数据渲染*/
+fun CanvasDelegate.addTextRender(text: CharSequence?) =
+    GraphicsHelper.addRenderItemDataBean(this, text.toTextItemData())
 
 /**添加一个二维码数据渲染*/
 fun CanvasDelegate.addQRTextRender(text: CharSequence?): DataItemRenderer? {
@@ -166,24 +176,30 @@ fun CanvasDelegate.addLoveRender(
 
 //region ---矢量---
 
-/**添加一个SVG渲染*/
-fun CanvasDelegate.addSvgRender(svg: String?): DataItemRenderer? {
-    svg ?: return null
+fun String?.toSvgItemData(): ItemDataBean? {
+    this ?: return null
     val bean = ItemDataBean()
     bean.mtype = CanvasConstant.DATA_TYPE_SVG
-    bean.data = svg
+    bean.data = this
     bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
-    return GraphicsHelper.addRenderItemDataBean(this, bean)
+    return bean
+}
+
+/**添加一个SVG渲染*/
+fun CanvasDelegate.addSvgRender(svg: String?) =
+    GraphicsHelper.addRenderItemDataBean(this, svg.toSvgItemData())
+
+fun String?.toGCodeItemData(): ItemDataBean? {
+    this ?: return null
+    val bean = ItemDataBean()
+    bean.mtype = CanvasConstant.DATA_TYPE_GCODE
+    bean.data = this
+    bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
+    return bean
 }
 
 /**添加一个GCode渲染*/
-fun CanvasDelegate.addGCodeRender(gcode: String?): DataItemRenderer? {
-    gcode ?: return null
-    val bean = ItemDataBean()
-    bean.mtype = CanvasConstant.DATA_TYPE_GCODE
-    bean.data = gcode
-    bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
-    return GraphicsHelper.addRenderItemDataBean(this, bean)
-}
+fun CanvasDelegate.addGCodeRender(gcode: String?) =
+    GraphicsHelper.addRenderItemDataBean(this, gcode.toGCodeItemData())
 
 //endregion ---矢量---

@@ -27,6 +27,7 @@ import com.angcyo.activity.JumpActivity
 import com.angcyo.base.RevertWindowTransitionListener
 import com.angcyo.base.dslAHelper
 import com.angcyo.fragment.*
+import com.angcyo.http.rx.doMain
 import com.angcyo.library.L
 import com.angcyo.library.component.queryActivities
 import com.angcyo.library.ex.havePermission
@@ -317,9 +318,23 @@ class DslAHelper(val context: Context) {
 
         if (finishSelf && context is Activity) {
             if (finishWithFinish) {
-                context.finish()
+                try {
+                    context.finish()
+                } catch (e: Exception) {
+                    //did not call finish() prior to onResume() completing
+                    doMain {
+                        context.finish()
+                    }
+                }
             } else {
-                context.onBackPressed()
+                try {
+                    context.onBackPressed()
+                } catch (e: Exception) {
+                    //did not call finish() prior to onResume() completing
+                    doMain {
+                        context.finish()
+                    }
+                }
             }
         }
 
