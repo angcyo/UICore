@@ -44,6 +44,23 @@ import kotlin.math.sqrt
  * @date 2019/12/20
  */
 
+/**调试配置信息*/
+data class ActivityDebugInfoConfig(
+    /**是否需要显示调试信息*/
+    var show: Boolean = true,
+    /**调试信息显示的位置*/
+    var gravity: Int = Gravity.BOTTOM,
+    /**调试view的tag*/
+    var tag: String = ActivityDebugInfo.tag,
+    /**延迟显示的时长*/
+    var delay: Long = Anim.ANIM_DURATION
+)
+
+interface IActivityDebugInfo {
+    /**配置回调*/
+    fun configActivityDebugInfo(config: ActivityDebugInfoConfig)
+}
+
 object ActivityDebugInfo {
 
     var tag = "lib_debug_info_view"
@@ -51,23 +68,30 @@ object ActivityDebugInfo {
     /**小圆点的大小dp单位*/
     var DEFAULT_NORMAL_SIZE = 20
 
-    fun install(gravity: Int = Gravity.BOTTOM or Gravity.RIGHT, context: Context = app()) {
+    /**安装Activity调试信息*/
+    fun install(context: Context = app()) {
         val app = context.applicationContext
         if (app is Application) {
-            app.registerActivityLifecycleCallbacks(ActivityListener(gravity))
+            app.registerActivityLifecycleCallbacks(ActivityListener())
         }
     }
 
-    private class ActivityListener(val gravity: Int) : ActivityLifecycleCallbacksAdapter() {
+    /**监听*/
+    private class ActivityListener : ActivityLifecycleCallbacksAdapter() {
 
         override fun onActivityResumed(activity: Activity) {
             super.onActivityResumed(activity)
             show(activity)
         }
 
-        fun show(activity: Activity) {
-            _delay(240L) {
-                activity.showDebugInfoView(true, true, gravity, tag)
+        /**显示*/
+        private fun show(activity: Activity) {
+            val config = ActivityDebugInfoConfig()
+            if (activity is IActivityDebugInfo) {
+                activity.configActivityDebugInfo(config)
+            }
+            _delay(config.delay) {
+                activity.showDebugInfoView(config)
             }
         }
     }
@@ -76,18 +100,18 @@ object ActivityDebugInfo {
 /**
  * 添加一个TextView,用来提示当前的Activity类
  * */
-fun Activity.showDebugInfoView(
-    show: Boolean = true,
-    debug: Boolean = isAppDebug(),
-    gravity: Int = Gravity.BOTTOM,
-    tag: String = "debug_info_view"
-) {
+fun Activity.showDebugInfoView(config: ActivityDebugInfoConfig) {
+
+    val show = config.show
+    val gravity = config.gravity
+    val tag = config.tag
+
     val decorView = window.decorView
     val contentView = window.findViewById<View>(Window.ID_ANDROID_CONTENT)
 
     val debugTextView = decorView.findViewWithTag<TextView>(tag)
 
-    if (debug && show) {
+    if (show) {
         val textView = if (debugTextView == null) {
             val textView = TextView(this)
             textView.tag = tag
@@ -284,7 +308,8 @@ fun Activity.showDebugInfoView(
         }
 
         textView.onDoubleTap {
-            showDebugInfoView(false, debug, gravity, tag)
+            //双击隐藏
+            showDebugInfoView(ActivityDebugInfoConfig(false))
             false
         }
 
@@ -296,7 +321,7 @@ fun Activity.showDebugInfoView(
                     val callback = object : FragmentManager.FragmentLifecycleCallbacks() {
                         override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
                             super.onFragmentResumed(fm, f)
-                            showDebugInfoView(show, debug, gravity, tag)
+                            showDebugInfoView(config)
                         }
                     }
                     supportFragmentManager.registerFragmentLifecycleCallbacks(callback, true)

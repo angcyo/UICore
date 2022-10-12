@@ -21,7 +21,6 @@ import com.angcyo.library.L
 import com.angcyo.library.Screen
 import com.angcyo.library.component._delay
 import com.angcyo.library.ex.Anim
-import com.angcyo.library.ex.isShowDebug
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.utils.resultString
 import com.angcyo.widget.DslViewHolder
@@ -67,7 +66,6 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        onShowDebugInfoView(hasFocus)
     }
 
     override fun onStart() {
@@ -99,14 +97,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         val oldConfig = resources.configuration
         super.onConfigurationChanged(newConfig)
         L.w("onConfigurationChanged↓\nold:$oldConfig\nnew:$newConfig")
-        if (isShowDebug()) {
-            onShowDebugInfoView()
-        }
         Screen.init(this)
-    }
-
-    open fun onShowDebugInfoView(show: Boolean = true) {
-        showDebugInfoView(show)
     }
 
     /**布局设置之后触发*/

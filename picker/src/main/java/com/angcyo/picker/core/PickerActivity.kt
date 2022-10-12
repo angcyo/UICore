@@ -6,15 +6,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import androidx.fragment.app.Fragment
+import com.angcyo.activity.ActivityDebugInfoConfig
 import com.angcyo.activity.BaseAppCompatActivity
-import com.angcyo.activity.showDebugInfoView
+import com.angcyo.activity.IActivityDebugInfo
 import com.angcyo.base.*
 import com.angcyo.component.luban.dslLuban
 import com.angcyo.core.component.dslPermission
 import com.angcyo.dialog.hideLoading
 import com.angcyo.dialog.loading
 import com.angcyo.library.L
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex._drawable
+import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.fileSizeString
+import com.angcyo.library.ex.havePermissions
 import com.angcyo.library.toast
 import com.angcyo.loader.LoaderConfig
 import com.angcyo.picker.R
@@ -26,7 +30,7 @@ import com.angcyo.viewmodel.VMProperty
  * @author angcyo
  * @date 2020/01/30
  */
-class PickerActivity : BaseAppCompatActivity() {
+class PickerActivity : BaseAppCompatActivity(), IActivityDebugInfo {
 
     companion object {
         const val KEY_LOADER_CONFIG = "key_loader_config"
@@ -65,10 +69,6 @@ class PickerActivity : BaseAppCompatActivity() {
             pickerViewModel.selectorMediaList.value?.addAll(config.selectorMediaList)
             checkPermission()
         }
-    }
-
-    override fun onShowDebugInfoView(show: Boolean) {
-        showDebugInfoView(show, isAppDebug(), Gravity.RIGHT or Gravity.BOTTOM)
     }
 
     fun checkPermission() {
@@ -184,5 +184,9 @@ class PickerActivity : BaseAppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun configActivityDebugInfo(config: ActivityDebugInfoConfig) {
+        config.gravity = Gravity.RIGHT or Gravity.BOTTOM
     }
 }

@@ -58,10 +58,6 @@ open class DialogActivity : BaseAppCompatActivity() {
         }
     }
 
-    override fun onShowDebugInfoView(show: Boolean) {
-        //super.onShowDebugInfoView(show)
-    }
-
     override fun finish() {
         super.finish()
         overridePendingTransition(0, 0)

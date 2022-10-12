@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.collection.ArrayMap
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
+import com.angcyo.activity.ActivityDebugInfo
 import com.angcyo.core.component.ComplianceCheck
 import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.HttpConfigDialog
@@ -89,6 +90,10 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
     }
 
     open fun initCoreApplication() {
+        if (isShowDebug()) {
+            ActivityDebugInfo.install(this)
+        }
+
         //语言
         vmApp<LanguageModel>().onCreate(this)
 
