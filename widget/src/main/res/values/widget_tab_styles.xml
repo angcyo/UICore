@@ -64,6 +64,8 @@
         <item name="tab_select_color">@color/text_primary_color</item>
         <!--等宽-->
         <item name="tab_item_is_equ_width">false</item>
+        <!--3个及以上child数量时,才开启等宽-->
+        <item name="tab_item_equ_width_count">3</item>
     </style>
 
 </resources>
