@@ -47,7 +47,10 @@ open class ILayer {
      * [WindowContainer] 支持*/
     var showCancelLayer: Boolean = false
 
-    /**渲染界面*/
+    /**渲染界面, 初始化或者更新时触发
+     * [com.angcyo.ilayer.ILayer.onInitLayer]
+     * [com.angcyo.ilayer.ILayer.update]
+     * */
     var renderLayer: (DslViewHolder.() -> Unit)? = null
 
     /**[ILayer]当前是否追加到了容器[IContainer]*/
