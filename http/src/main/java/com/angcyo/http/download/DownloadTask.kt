@@ -1,6 +1,8 @@
 package com.angcyo.http.download
 
 import com.angcyo.http.DslHttp
+import com.angcyo.library.component.Web
+import com.angcyo.library.ex.uuid
 import okhttp3.*
 import java.io.File
 import java.io.FileOutputStream
@@ -41,6 +43,7 @@ class DownloadTask(
     /**请求参数配置*/
     var requestBuilderConfig: Request.Builder.() -> Unit = {
         header("Accept", "*/*")
+        header("User-Agent", Web.CUSTOM_UA ?: "OkHttp3 ${uuid()} ${Web.UA_EXTEND}")
     }
 
     /**用于取消*/
