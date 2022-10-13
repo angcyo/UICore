@@ -14,6 +14,7 @@ import com.angcyo.library.libCacheFile
  * */
 fun String.download(
     savePath: String? = null,
+    config: DownloadTask.() -> Unit = {},
     action: (task: DownloadTask, error: Throwable?) -> Unit
 ): DownloadTask {
     val name = getFileAttachmentName()
@@ -31,6 +32,7 @@ fun String.download(
             action(task, error)
         }
     })
+    task.config()
     task.download()//开始下载
     return task
 }

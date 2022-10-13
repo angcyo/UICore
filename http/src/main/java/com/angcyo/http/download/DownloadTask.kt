@@ -32,8 +32,16 @@ class DownloadTask(
     /**下载是否完成, 正常/异常都属于完成*/
     var isFinish: Boolean = false
 
+    /**异常的信息*/
+    var error: Exception? = null
+
     /**请求客户端*/
     var okHttpClient: OkHttpClient = DslHttp.client
+
+    /**请求参数配置*/
+    var requestBuilderConfig: Request.Builder.() -> Unit = {
+        header("Accept", "*/*")
+    }
 
     /**用于取消*/
     var call: Call? = null
@@ -43,13 +51,15 @@ class DownloadTask(
         progress = -1
         contentLength = -1
         isFinish = false
-        val request: Request = Request.Builder().url(url).build()
+        error = null
+        val request: Request = Request.Builder().url(url).apply(requestBuilderConfig).build()
         call = okHttpClient.newCall(request)
         call?.enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
                 // 下载失败
                 isFinish = true
+                error = e
                 listener.onDownloadFailed(this@DownloadTask, e)
             }
 
@@ -81,6 +91,7 @@ class DownloadTask(
                     isFinish = true
                     listener.onDownloadSuccess(this@DownloadTask)
                 } catch (e: Exception) {
+                    error = e
                     isFinish = true
                     listener.onDownloadFailed(this@DownloadTask, e)
                 } finally {
