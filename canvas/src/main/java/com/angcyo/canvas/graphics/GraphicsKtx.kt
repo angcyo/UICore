@@ -176,6 +176,7 @@ fun CanvasDelegate.addLoveRender(
 
 //region ---矢量---
 
+/**SVG数据转[ItemDataBean]*/
 fun String?.toSvgItemData(): ItemDataBean? {
     this ?: return null
     val bean = ItemDataBean()
@@ -189,6 +190,7 @@ fun String?.toSvgItemData(): ItemDataBean? {
 fun CanvasDelegate.addSvgRender(svg: String?) =
     GraphicsHelper.addRenderItemDataBean(this, svg.toSvgItemData())
 
+/**GCode数据转[ItemDataBean]*/
 fun String?.toGCodeItemData(): ItemDataBean? {
     this ?: return null
     val bean = ItemDataBean()
