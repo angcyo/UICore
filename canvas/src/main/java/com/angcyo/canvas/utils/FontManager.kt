@@ -16,6 +16,11 @@ import java.io.File
  */
 object FontManager {
 
+    /**默认的字体文件夹名称*/
+    const val DEFAULT_FONT_FOLDER_NAME = "fonts"
+
+    //
+
     /**文件路径转字体对象*/
     fun String.toTypeface() = Typeface.createFromFile(file())
 
@@ -169,9 +174,6 @@ object FontManager {
     //endregion ---在线/推荐字体---
 
     //region ---自定义的字体---
-
-    /**默认的字体文件夹名称*/
-    const val DEFAULT_FONT_FOLDER_NAME = "fonts"
 
     val _customFontList = mutableListOf<TypefaceInfo>()
 
