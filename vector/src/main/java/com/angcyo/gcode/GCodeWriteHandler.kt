@@ -284,7 +284,7 @@ class GCodeWriteHandler {
         } else {
             writer.appendLine("G21")
         }
-        writer.appendLine("G1 F2000")
+        writer.appendLine("G1 F12000")
     }
 
     /**写入G0 或者 G1 指令. 会自动处理[CNC]

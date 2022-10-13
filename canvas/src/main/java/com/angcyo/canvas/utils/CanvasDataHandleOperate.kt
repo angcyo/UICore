@@ -329,7 +329,8 @@ object CanvasDataHandleOperate {
         val mmValueUnit = MmValueUnit()
 
         //转成像素值
-        var lineStep = mmValueUnit.convertValueToPixel(lineSpace).roundToInt()
+        //var lineStep = mmValueUnit.convertValueToPixel(lineSpace).roundToInt()
+        var lineStep = (GCodeWriteHandler.GCODE_SPACE_1K / lineSpace).roundToInt()
         lineStep = max(1, lineStep) //最小为1个像素差距
 
         //反向读取数据, Z形方式
