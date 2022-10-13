@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import android.Manifest
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -62,9 +63,13 @@ fun getAppSignature(
  * 安卓7.0 需要androidx.core.content.FileProvider
  * 安卓8.0 需要请求安装权限 Manifest.permission.REQUEST_INSTALL_PACKAGES
  *
+ * 请主动声明[Manifest.permission.REQUEST_INSTALL_PACKAGES]权限
+ *
  * https://github.com/AnyLifeZLB/DownloadInstaller
  * https://github.com/hgncxzy/InstallApk
  * */
+/*@RequiresApi(Build.VERSION_CODES.M)
+@RequiresPermission(value = Manifest.permission.REQUEST_INSTALL_PACKAGES)*/
 fun installApk(context: Context, file: File?) {
     if (file == null || !file.canRead()) return
     //兼容8.0
