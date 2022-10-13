@@ -84,7 +84,7 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         //日志输出到文件
         DEFAULT_FILE_PRINT_PATH = Constant.LOG_FOLDER_NAME.logFilePath("l.log")
         L.logPrint = this::writeLogToFile
-        L.init(getAppString("app_name") ?: "Log", true) //debug打开日志存储
+        L.init(getAppString("app_name") ?: "Log", isDebug()) //debug打开日志存储
 
         super.initLibApplication()
     }
