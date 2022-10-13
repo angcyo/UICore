@@ -201,8 +201,18 @@ object CanvasDataHandleOperate {
         matrix.setTranslate(-pathBounds.left, -pathBounds.top)
 
         //缩放
-        val scaleX = bounds.width() / pathBounds.width()
-        val scaleY = bounds.height() / pathBounds.height()
+        val pathWidth = pathBounds.width()
+        val pathHeight = pathBounds.height()
+        val scaleX = if (pathWidth == 0f) {
+            1f
+        } else {
+            bounds.width() / pathWidth
+        }
+        val scaleY = if (pathHeight == 0f) {
+            1f
+        } else {
+            bounds.height() / pathHeight
+        }
         matrix.postScale(scaleX, scaleY, 0f, 0f)
 
         //旋转

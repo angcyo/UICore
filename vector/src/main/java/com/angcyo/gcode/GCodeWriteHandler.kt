@@ -277,12 +277,13 @@ class GCodeWriteHandler {
     /**开始的指令*/
     fun writeFirst(writer: Appendable, unit: IValueUnit? = null) {
         //[G20]英寸单位 [G21]毫米单位
+        //[G90]绝对位置 [G91]相对位置
+        writer.appendLine("G90")
         if (unit is InchValueUnit) {
             writer.appendLine("G20")
         } else {
             writer.appendLine("G21")
         }
-        writer.appendLine("G90")
         writer.appendLine("G1 F2000")
     }
 

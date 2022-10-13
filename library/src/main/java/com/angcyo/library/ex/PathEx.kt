@@ -307,15 +307,20 @@ fun List<Path>.computeBounds(bounds: RectF = RectF(), exact: Boolean = true): Re
     if (isEmpty()) {
         return bounds
     }
-    bounds.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MIN_VALUE, Float.MIN_VALUE)
-    val pathRect = RectF()
+    var left: Float? = null
+    var top: Float? = null
+    var right: Float? = null
+    var bottom: Float? = null
+    val pathRect = acquireTempRectF()
     for (path in this) {
         path.computeBounds(pathRect, exact)
-        bounds.left = min(bounds.left, pathRect.left)
-        bounds.top = min(bounds.top, pathRect.top)
-        bounds.right = max(bounds.right, pathRect.right)
-        bounds.bottom = max(bounds.bottom, pathRect.bottom)
+        left = min(left ?: pathRect.left, pathRect.left)
+        top = min(top ?: pathRect.top, pathRect.top)
+        right = max(right ?: pathRect.right, pathRect.right)
+        bottom = max(bottom ?: pathRect.bottom, pathRect.bottom)
     }
+    bounds.set(left ?: 0f, top ?: 0f, right ?: 0f, bottom ?: 0f)
+    pathRect.release()
     return bounds
 }
 
@@ -329,7 +334,9 @@ fun Path.toBitmap(
 ): Bitmap {
     val pathRect = RectF()
     computeBounds(pathRect, true)
-    return bitmapCanvas(pathRect.width().toInt(), pathRect.height().toInt()) {
+    val width = max(1, pathRect.width().toInt())
+    val height = max(1, pathRect.height().toInt())
+    return bitmapCanvas(width, height) {
         withTranslation(pathRect.left, pathRect.top) {
             drawPath(this@toBitmap, paint)
         }

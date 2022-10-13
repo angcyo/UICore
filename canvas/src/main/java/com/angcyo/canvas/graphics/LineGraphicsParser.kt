@@ -29,7 +29,8 @@ class LineGraphicsParser : PathGraphicsParser() {
 
             item.drawable = createPathDrawable(item)
 
-            initDataMode(bean, item.paint)
+            //initDataMode(bean, item.paint)
+            bean._dataMode = CanvasConstant.DATA_MODE_GCODE //强制使用GCode
             return item
         }
         return super.parse(bean)
