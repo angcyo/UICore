@@ -150,6 +150,9 @@ object CanvasConstant {
 
     const val SVG_EXT = ".svg"
 
+    /**文本后缀, 检查文本内容*/
+    const val TXT_EXT = ".txt"
+
     //endregion ---支持的文件类型---
 
 }

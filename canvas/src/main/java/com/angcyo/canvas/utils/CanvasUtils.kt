@@ -7,6 +7,7 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.items.PictureTextItem
+import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.gcode.GCodeDrawable
 import com.angcyo.gcode.GCodeHelper
 import com.angcyo.library.app
@@ -70,6 +71,39 @@ fun createStaticLayout(
     }
     return layout
 }
+
+/**排序规则离左上角越近的优先
+ * 比较它的两个参数的顺序。
+ * 如果两个参数相等，则返回零;
+ * 如果第一个参数小于第二个参数，则返回负数;
+ * 如果第一个参数大于第二个参数，则返回正数;
+ * 从小到大的自然排序
+ * */
+fun List<BaseItemRenderer<*>>.sort(): List<BaseItemRenderer<*>> {
+    return sortedWith { left, right ->
+        val leftBounds = left.getRotateBounds()
+        val rightBounds = right.getRotateBounds()
+
+        if (leftBounds.left < rightBounds.left) {
+            -1
+        } else if (leftBounds.left == rightBounds.left) {
+            if (leftBounds.top < rightBounds.top) {
+                -1
+            } else {
+                1
+            }
+        } else {
+            0
+        }
+    }
+}
+
+/**是否是GCode内容*/
+fun String.isGCodeContent() =
+    have("(G90)|(G91)\\s*(G20)|(G21)") || have("(G20)|(G21)\\s*(G90)|(G91)")
+
+/**是否是GCode内容*/
+fun String.isSvgContent() = have("</svg>")
 
 //</editor-fold desc="canvas">
 
