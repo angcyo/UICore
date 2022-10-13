@@ -3,10 +3,10 @@ package com.angcyo.gcode
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
-import com.angcyo.library.unit.InchValueUnit
-import com.angcyo.library.unit.MmValueUnit
 import com.angcyo.library.ex.mapPoint
 import com.angcyo.library.ex.mapRectF
+import com.angcyo.library.unit.InchValueUnit
+import com.angcyo.library.unit.MmValueUnit
 import java.io.File
 import java.io.OutputStreamWriter
 import kotlin.math.min
@@ -114,7 +114,7 @@ class GCodeAdjust {
         gCodeHandler.parseGCodeLineList(gCodeLineList)
 
         //平移完之后, 写入G0 0 0
-        GCodeWriteHandler().writeFinish(writer)
+        writer.append("G0 X0 Y0")
     }
 
     /**

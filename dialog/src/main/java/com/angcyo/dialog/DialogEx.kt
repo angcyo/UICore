@@ -134,6 +134,7 @@ fun Context.openWidthDialog(config: OpenWithDialogConfig.() -> Unit): Dialog {
 
 /**
  * 多选项, 选择对话框, 底部带 取消按钮, 标题栏不带取消
+ * [com.angcyo.dialog.ItemDialogConfig.addDialogItem]
  * */
 fun Context.itemsDialog(config: ItemDialogConfig.() -> Unit): Dialog {
     return ItemDialogConfig(this).run {

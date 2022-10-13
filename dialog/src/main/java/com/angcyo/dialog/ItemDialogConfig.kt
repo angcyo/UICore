@@ -19,7 +19,16 @@ open class ItemDialogConfig(context: Context? = null) : RecyclerDialogConfig(con
         super.initDialogView(dialog, dialogViewHolder)
     }
 
-    /**添加Item*/
+    /**添加Item
+     * ```
+     * addDialogItem {
+     *    itemText = tx()
+     *    itemLeftDrawable = _drawable(R.drawable.lib_ic_error)
+     *    itemClick = {
+     *    }
+     * }
+     * ```
+     * */
     fun addDialogItem(action: DslDialogTextItem.() -> Unit) {
         _recyclerConfig.addDialogTextItem(action)
     }

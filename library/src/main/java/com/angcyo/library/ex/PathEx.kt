@@ -207,23 +207,29 @@ fun Path.length(): Float {
 
 /**枚举路径上所有的点
  * [step] 枚举的步长
+ *
+ * [contourIndex] 第几段路径
+ * [index] 当前回调次数
+ * [ratio] 路径比例
+ * [posArray] 路径坐标
  * */
 fun Path.eachPath(
     step: Float = 1f,
     posArray: FloatArray = _tempPoints,
-    block: (index: Int, ratio: Float, posArray: FloatArray) -> Unit
+    block: (index: Int, ratio: Float, contourIndex: Int, posArray: FloatArray) -> Unit
 ) {
     val pathMeasure = PathMeasure(this, false)
     var position = 0f
     var length = pathMeasure.length
     var index = 0
+    var contourIndex = 0
 
     //func
     fun _each() {
         while (position <= length) {
             pathMeasure.getPosTan(position, posArray, null)
             val ratio = position / length
-            block(index++, ratio, posArray)
+            block(index++, ratio, contourIndex, posArray)
 
             if (position == length) {
                 break
@@ -240,6 +246,7 @@ fun Path.eachPath(
 
     //下一个轮廓, 如果有
     while (pathMeasure.nextContour()) {
+        contourIndex++
         index = 0
         position = 0f
         length = pathMeasure.length
@@ -413,4 +420,89 @@ fun Path.adjustWidthHeight(newWidth: Float, newHeight: Float, result: Path = Pat
     matrix.release()
 
     return result
+}
+
+/**将[Path]进行转换
+ * [rotateBounds] 需要平移到的left,top
+ * [rotate] path需要旋转的角度
+ * */
+fun Path.transform(rotateBounds: RectF, rotate: Float): Path {
+    val pathBounds = acquireTempRectF()
+    computeBounds(pathBounds, true)
+    val targetPath = Path(this)
+
+    //旋转的支持
+    if (rotate != 0f) {
+        val matrix = Matrix()
+        matrix.postRotate(rotate, rotateBounds.centerX(), rotateBounds.centerY())
+        matrix.mapRect(pathBounds, pathBounds)
+        targetPath.transform(matrix)
+    }
+
+    pathBounds.release()
+    return targetPath
+}
+
+/**将[Path]进行缩放,旋转,并且平移到指定目标
+ * [pathList] 未缩放旋转的原始路径数据
+ * [bounds] 未旋转时的bounds, 用来实现缩放和平移
+ * [rotate] 旋转角度, 配合[bounds]实现平移
+ * */
+fun List<Path>.transform(bounds: RectF, rotate: Float): List<Path> {
+    val newPathList = mutableListOf<Path>()
+
+    val matrix = Matrix()
+    val rotateBounds = acquireTempRectF()//旋转后的Bounds
+    if (rotate != 0f) {
+        matrix.setRotate(rotate, bounds.centerX(), bounds.centerY())
+    }
+    matrix.mapRectF(bounds, rotateBounds)
+
+    //平移到左上角0,0, 然后缩放, 旋转
+    var pathBounds = acquireTempRectF()
+    pathBounds = computeBounds(pathBounds)
+    matrix.reset()
+    matrix.setTranslate(-pathBounds.left, -pathBounds.top)
+
+    //缩放
+    val pathWidth = pathBounds.width()
+    val pathHeight = pathBounds.height()
+    val scaleX = if (pathWidth == 0f) {
+        1f
+    } else {
+        bounds.width() / pathWidth
+    }
+    val scaleY = if (pathHeight == 0f) {
+        1f
+    } else {
+        bounds.height() / pathHeight
+    }
+    matrix.postScale(scaleX, scaleY, 0f, 0f)
+
+    //旋转
+    if (rotate != 0f) {
+        matrix.postRotate(rotate, bounds.width() / 2, bounds.height() / 2)
+    }
+
+    for (path in this) {
+        val newPath = Path(path)
+        newPath.transform(matrix)
+        newPathList.add(newPath)
+    }
+
+    //再次偏移到目标位置中心点重合的位置
+    pathBounds = newPathList.computeBounds(pathBounds)
+    matrix.reset()
+    matrix.setTranslate(
+        rotateBounds.centerX() - pathBounds.centerX(),
+        rotateBounds.centerY() - pathBounds.centerY()
+    )
+    for (path in newPathList) {
+        path.transform(matrix)
+    }
+
+    pathBounds.release()
+    rotateBounds.release()
+
+    return newPathList
 }

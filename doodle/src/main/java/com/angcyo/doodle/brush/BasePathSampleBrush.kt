@@ -62,7 +62,7 @@ abstract class BasePathSampleBrush : BaseBrush() {
             //开始采样
             //L.i(_tempPath.length())
             val step = min(pathSampleStep, manager.doodleDelegate.doodleConfig.paintWidth)
-            _tempPath.eachPath(step) { index, ratio, posArray ->
+            _tempPath.eachPath(step) { index, ratio, contourIndex, posArray ->
                 val width = startWidth + (endWidth - startWidth) * ratio
                 val pathSampleInfo = PathSampleInfo(posArray[0], posArray[1], width)
                 onPathSample(pathSampleInfo)
