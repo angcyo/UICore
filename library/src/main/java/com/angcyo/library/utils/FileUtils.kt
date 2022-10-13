@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import com.angcyo.library.*
 import com.angcyo.library.ex.file
+import com.angcyo.library.utils.FileUtils.writeExternal
 import java.io.File
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -28,6 +29,8 @@ import java.util.*
  * [ByteArray]
  * [Bitmap]
  * [File]
+ *
+ * [com.angcyo.library.utils.FileUtils.writeExternal]
  * */
 typealias FileTextData = Any
 
@@ -49,7 +52,6 @@ object FileUtils {
     fun appRootFolder(context: Context = app()): File? {
         return context.externalMediaDirs?.firstOrNull()
     }*/
-
 
     /**扩展目录下的指定文件夹
      * [/storage/emulated/0/Android/data/包名/files/${schema}/${folder}]*/
@@ -90,14 +92,14 @@ object FileUtils {
         name: String,
         data: FileTextData,
         append: Boolean = true /*false 强制重新写入*/
-    ): String? {
+    ): String {
         // /storage/emulated/0/Android/data/com.angcyo.uicore.demo/files/$type
-        var filePath: String? = null
+        var filePath = ""
 
         try {
-            appRootExternalFolderFile(folder, name).apply {
+            filePath = appRootExternalFolderFile(folder, name).apply {
                 filePath = writeExternal(this, data, append)
-            }
+            }.absolutePath
         } catch (e: Exception) {
             L.e("写入文件失败:$e")
         }
@@ -106,9 +108,16 @@ object FileUtils {
     }
 
     /**[append]=true 根据文件大小智能判断是否要重写
+     * [limitLength] 是否限制大小[com.angcyo.library.utils.FileUtils.fileMaxSize]
+     *
      * @return 文件路径*/
-    fun writeExternal(file: File, data: FileTextData, append: Boolean = true): String? {
-        var filePath: String? = null
+    fun writeExternal(
+        file: File,
+        data: FileTextData,
+        append: Boolean = true,
+        limitLength: Boolean = true
+    ): String {
+        var filePath: String = file.absolutePath
 
         try {
             file.parentFile?.mkdirs()
@@ -123,7 +132,7 @@ object FileUtils {
                 } else {
                     when {
                         //重写文件的内容
-                        length() >= fileMaxSize || !append -> when (data) {
+                        (limitLength && length() >= fileMaxSize) || !append -> when (data) {
                             is ByteArray -> writeBytes(data)
                             is File -> writeBytes(data.readBytes())
                             else -> writeText(data.toString())
@@ -154,6 +163,13 @@ object FileUtils {
         return null
     }
 }
+
+/**写入数据到文件, 默认无大小限制*/
+fun FileTextData.writeToFile(
+    file: File,
+    append: Boolean = false,
+    limitLength: Boolean = false
+): String = writeExternal(file, this, append, limitLength)
 
 /**[UUID]*/
 fun uuid() = UUID.randomUUID().toString()
@@ -199,17 +215,16 @@ fun folderPath(folderName: String): String {
 fun logFileName() = fileNameTime("yyyy-MM-dd", ".log")
 
 /**[append]=true 根据文件大小智能判断是否要重写*/
-fun File.writeText(data: FileTextData?, append: Boolean) {
-    FileUtils.writeExternal(this, data ?: "null", append)
-}
+fun File.writeText(data: FileTextData?, append: Boolean) =
+    writeExternal(this, data ?: "null", append)
 
 fun String?.writeTo(file: File, append: Boolean = true) =
-    FileUtils.writeExternal(file, this ?: "null", append)
+    writeExternal(file, this ?: "null", append)
 
 fun String?.writeTo(filePath: String?, append: Boolean = true): String? {
     val file = filePath?.file()
     if (file != null) {
-        return FileUtils.writeExternal(file, this ?: "null", append)
+        return writeExternal(file, this ?: "null", append)
     }
     return null
 }
