@@ -14,7 +14,7 @@ import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex.havePermission
 import com.angcyo.library.ex.saveToDCIM
 import com.angcyo.library.utils.Constant
-import com.angcyo.library.utils.fileName
+import com.angcyo.library.utils.fileNameTime
 import com.angcyo.library.utils.filePath
 import java.io.File
 
@@ -45,7 +45,7 @@ class DslCameraViewHelper {
         onResult: (File, Exception?) -> Unit
     ) {
         val saveFile =
-            file ?: File(filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".jpg")))
+            file ?: File(filePath(Constant.CAMERA_FOLDER_NAME, fileNameTime(suffix = ".jpg")))
         cameraView?.controller?.run {
 
             if (autoEnableCase && !isImageCaptureEnabled) {
@@ -82,7 +82,7 @@ class DslCameraViewHelper {
         onResult: (File, Exception?) -> Unit
     ): Boolean {
         val saveFile =
-            file ?: File(filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".mp4")))
+            file ?: File(filePath(Constant.CAMERA_FOLDER_NAME, fileNameTime(suffix = ".mp4")))
         if (cameraView?.context?.havePermission(recordPermissionList) == true) {
             cameraView?.controller?.run {
 

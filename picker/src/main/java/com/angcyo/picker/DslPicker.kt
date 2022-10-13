@@ -21,7 +21,7 @@ import com.angcyo.library.ex.takeVideoIntent
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.Constant
-import com.angcyo.library.utils.fileName
+import com.angcyo.library.utils.fileNameTime
 import com.angcyo.library.utils.filePath
 import com.angcyo.loader.LoaderConfig
 import com.angcyo.picker.DslPicker.picker
@@ -87,7 +87,7 @@ object DslPicker {
     fun takePhoto(activity: FragmentActivity?, action: (Uri?) -> Unit) {
         activity?.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) { grant ->
             if (grant) {
-                val filePath = filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".jpeg"))
+                val filePath = filePath(Constant.CAMERA_FOLDER_NAME, fileNameTime(suffix = ".jpeg"))
                 val uri = fileUri(activity, File(filePath))
                 takePhotoIntent(activity, uri)?.run {
                     FragmentBridge.install(activity.supportFragmentManager)
@@ -154,7 +154,7 @@ object DslPicker {
     ) {
         activity?.checkAndRequestPermission(arrayOf(Manifest.permission.CAMERA)) { grant ->
             if (grant) {
-                val filePath = filePath(Constant.CAMERA_FOLDER_NAME, fileName(suffix = ".mp4"))
+                val filePath = filePath(Constant.CAMERA_FOLDER_NAME, fileNameTime(suffix = ".mp4"))
                 val uri = fileUri(activity, File(filePath))
                 takeVideoIntent(activity, uri, videoQuality, maxSize, maxDuration)?.run {
                     FragmentBridge.install(activity.supportFragmentManager)

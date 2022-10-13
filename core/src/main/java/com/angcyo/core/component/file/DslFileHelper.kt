@@ -60,7 +60,7 @@ object DslFileHelper {
     fun ui(name: String = logFileName(), data: String, append: Boolean = true) =
         write(Constant.UI_FOLDER_NAME, name, _wrapData(data), append)
 
-    fun crash(name: String = fileName(suffix = ".log"), data: String, append: Boolean = true) =
+    fun crash(name: String = fileNameTime(suffix = ".log"), data: String, append: Boolean = true) =
         write(Constant.CRASH_FOLDER_NAME, name, _wrapData(data), append)
 
     fun down(name: String = logFileName(), data: String, append: Boolean = true) =

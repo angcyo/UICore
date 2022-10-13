@@ -9,7 +9,7 @@ import com.angcyo.library.L
 import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.Device
-import com.angcyo.library.utils.fileName
+import com.angcyo.library.utils.fileNameTime
 import java.io.BufferedWriter
 import java.io.File
 import java.io.PrintWriter
@@ -69,7 +69,7 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
 
         /**指定某一天的崩溃日志文件*/
         fun currentCrashFile(fileName: String? = null): File {
-            val name = fileName ?: fileName("yyyy-MM-dd", ".log")
+            val name = fileName ?: fileNameTime("yyyy-MM-dd", ".log")
             val folder = currentApplication()?.getExternalFilesDir("crash")
             val file = File(folder, name)
             return file

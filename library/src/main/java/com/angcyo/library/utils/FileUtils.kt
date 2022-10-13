@@ -158,7 +158,9 @@ object FileUtils {
 /**[UUID]*/
 fun uuid() = UUID.randomUUID().toString()
 
-/**随机一个文件名*/
+/**随机一个文件名
+ * [suffix] 后缀,智能追加.
+ * */
 fun fileNameUUID(suffix: String = ""): String {
     if (suffix.isEmpty()) {
         return uuid()
@@ -170,10 +172,17 @@ fun fileNameUUID(suffix: String = ""): String {
     }
 }
 
-/**获取一个时间文件名*/
-fun fileName(pattern: String = "yyyy-MM-dd_HH-mm-ss-SSS", suffix: String = ""): String {
+/**获取一个时间文件名
+ * [suffix] 后缀,智能追加.
+ * */
+fun fileNameTime(pattern: String = "yyyy-MM-dd_HH-mm-ss-SSS", suffix: String = ""): String {
     val dateFormat: DateFormat = SimpleDateFormat(pattern, Locale.CHINA)
-    return dateFormat.format(Date()) + suffix
+    val name = dateFormat.format(Date())
+    return if (suffix.startsWith(".")) {
+        "${name}$suffix"
+    } else {
+        "${name}.$suffix"
+    }
 }
 
 /**获取一个文件路径*/
@@ -187,7 +196,7 @@ fun folderPath(folderName: String): String {
         ?: app().cacheDir.absolutePath
 }
 
-fun logFileName() = fileName("yyyy-MM-dd", ".log")
+fun logFileName() = fileNameTime("yyyy-MM-dd", ".log")
 
 /**[append]=true 根据文件大小智能判断是否要重写*/
 fun File.writeText(data: FileTextData?, append: Boolean) {

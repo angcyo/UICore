@@ -10,7 +10,7 @@ import com.angcyo.library.ex.ext
 import com.angcyo.library.ex.hideSoftInput
 import com.angcyo.library.ex.noExtName
 import com.angcyo.library.toastQQ
-import com.angcyo.library.utils.fileName
+import com.angcyo.library.utils.fileNameTime
 import com.angcyo.library.utils.folderPath
 import java.io.File
 import kotlin.math.max
@@ -88,7 +88,7 @@ open class RecordControl {
                             }
                             recordUI.show(activity, v, event.rawY)
                             record?.stopPlayback()
-                            record?.startRecord(fileName())
+                            record?.startRecord(fileNameTime())
                         }
                     } else {
                         view.isSelected = false

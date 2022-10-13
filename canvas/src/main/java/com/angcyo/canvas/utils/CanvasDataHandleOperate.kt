@@ -6,7 +6,7 @@ import com.angcyo.gcode.GCodeAdjust
 import com.angcyo.gcode.GCodeWriteHandler
 import com.angcyo.library.ex.*
 import com.angcyo.library.unit.MmValueUnit
-import com.angcyo.library.utils.fileName
+import com.angcyo.library.utils.fileNameTime
 import com.angcyo.library.utils.filePath
 import com.angcyo.svg.StylePath
 import com.angcyo.vector.pathStyle
@@ -28,7 +28,7 @@ object CanvasDataHandleOperate {
     /**GCode缓存目录*/
     const val GCODE_CACHE_FILE_FOLDER = "gcode"
 
-    fun _defaultGCodeOutputFile() = filePath("GCode", fileName(suffix = ".gcode")).file()
+    fun _defaultGCodeOutputFile() = filePath("GCode", fileNameTime(suffix = ".gcode")).file()
 
     /**将路径 填充/描边 转换为G1代码. 输出的GCode可以直接打印
      * [path] 需要转换的路径, 缩放后的path, 但是没有旋转
