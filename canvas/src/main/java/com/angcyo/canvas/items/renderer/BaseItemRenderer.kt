@@ -255,7 +255,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         if (isLineShape()) {
             //如果是线段, 放大矩形高度区域
             tempRect.set(rendererBounds)
-            tempRect.inset(0f, -10 * dp)
+            tempRect.inset(0f, -10 * dp / canvasViewBox.getScaleX()) //抵消坐标系的缩放
             rendererBounds = tempRect
         }
 
