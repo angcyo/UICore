@@ -259,6 +259,8 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
      * [initBaseView]*/
     open fun onInitFragment(savedInstanceState: Bundle?) {
         _vh.itemView.isClickable = fragmentConfig.interceptRootTouchEvent
+        //阴影
+        _vh.visible(R.id.lib_title_line_view, fragmentConfig.showTitleLineView)
 
         //内容包裹
         _inflateTo(R.id.lib_content_wrap_layout, contentLayoutId)

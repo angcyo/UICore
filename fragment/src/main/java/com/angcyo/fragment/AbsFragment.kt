@@ -105,6 +105,7 @@ abstract class AbsFragment : Fragment() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        //fragmentConfig.lightStyle()
         super.onCreate(savedInstanceState)
     }
 

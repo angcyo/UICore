@@ -117,9 +117,9 @@ open class FragmentUI {
 /**白底黑字样式
  * [com.angcyo.fragment.AbsFragment.onCreate]前调用*/
 fun FragmentConfig.lightStyle() {
-    titleBarBackgroundDrawable = colorDrawable(R.color.lib_white)
-    titleItemIconColor = "#333333".toColorInt()
+    titleBarBackgroundDrawable = colorDrawable(R.color.lib_light_title_bar_bg)
+    titleItemIconColor = _color(R.color.lib_light_title_icon_color)
     titleItemTextColor = titleItemIconColor
-    titleTextColor = "#070822".toColorInt()
+    titleTextColor = _color(R.color.lib_light_title_text_color)
     titleTextType = Typeface.BOLD
 }

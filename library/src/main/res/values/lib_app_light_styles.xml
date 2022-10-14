@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--白色高亮模式下, 标题栏的背景色-->
+    <color name="lib_light_title_bar_bg">#FFFFFF</color>
+    <color name="lib_light_title_icon_color">#333333</color>
+    <color name="lib_light_title_text_color">#070822</color>
+</resources>

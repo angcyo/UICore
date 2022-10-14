@@ -25,6 +25,9 @@ data class FragmentConfig(
      * [com.angcyo.core.fragment.BaseTitleFragment.onInitFragment]*/
     var interceptRootTouchEvent: Boolean = true,
 
+    /**是否显示标题栏下的阴影*/
+    var showTitleLineView: Boolean = false,
+
     /**标题栏文本大小
      * [com.angcyo.core.fragment.BaseTitleFragment.onInitFragment]*/
     var titleTextSize: Float = getDimen(R.dimen.text_main_size).toFloat(),

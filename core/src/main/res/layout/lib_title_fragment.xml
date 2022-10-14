@@ -58,4 +58,11 @@
         <include layout="@layout/lib_title_layout" />
     </FrameLayout>
 
+    <!--阴影-->
+    <View
+        android:id="@+id/lib_title_line_view"
+        style="@style/LibDialogTitleShadowStyle"
+        android:visibility="gone"
+        app:layout_behavior="com.angcyo.behavior.placeholder.TitleBarBelowBehavior" />
+
 </com.angcyo.widget.layout.RCoordinatorLayout>
