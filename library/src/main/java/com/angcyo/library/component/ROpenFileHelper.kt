@@ -2,6 +2,7 @@ package com.angcyo.library.component
 
 import android.content.Intent
 import com.angcyo.library.L
+import com.angcyo.library.ex.extName
 import com.angcyo.library.ex.lastName
 import com.angcyo.library.ex.saveTo
 import com.angcyo.library.libCacheFile
@@ -18,8 +19,11 @@ object ROpenFileHelper {
      * 会通过Uri, 进行转存文件, 保存到cache目录
      * [Intent.ACTION_VIEW]
      * [Intent.ACTION_SEND]
+     *
+     * [ext] 如果[intent]中未包含扩展名, 则需要补充的扩展名,智能识别.号
      * */
-    fun parseIntent(intent: Intent): String? {
+    fun parseIntent(intent: Intent?, ext: String? = null): String? {
+        intent ?: return null
         val action = intent.action
 
         val data = when (action) {
@@ -34,7 +38,19 @@ object ROpenFileHelper {
         if (data != null) {
             val path = "$data"
             val name = path.lastName()
-            val newPath = libCacheFile(name).absolutePath
+            var extName = name.extName()
+
+            val newPath = if (extName.isEmpty()) {
+                //无扩展名
+                extName = ext ?: intent.type?.lastName() ?: ""
+                if (extName.startsWith(".")) {
+                    libCacheFile("${name}${extName}").absolutePath
+                } else {
+                    libCacheFile("${name}.${extName}").absolutePath
+                }
+            } else {
+                libCacheFile(name).absolutePath
+            }
             data.saveTo(newPath)//转存文件
 
             ///data/user/0/com.angcyo.uicore.demo/cache/documents/ffea464c0cb6e12(2).jpg
