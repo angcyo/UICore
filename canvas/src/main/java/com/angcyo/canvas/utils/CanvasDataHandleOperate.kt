@@ -54,11 +54,13 @@ object CanvasDataHandleOperate {
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
         pathStep: Float = 1f,
+        autoCnc: Boolean = false,
     ): File {
         val newPathList = pathList.transform(bounds, rotate)
         //转换成GCode
         val gCodeHandler = GCodeWriteHandler()
         gCodeHandler.unit = mmUnit
+        gCodeHandler.isAutoCnc = autoCnc
         outputFile.writer().use { writer ->
             gCodeHandler.writer = writer
             gCodeHandler.gapValue = 0f
@@ -84,11 +86,13 @@ object CanvasDataHandleOperate {
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
         pathStep: Float = 1f,
+        autoCnc: Boolean = false,
     ): File {
         val newPathList = pathList.transform(bounds, rotate)
         //转换成GCode
         val gCodeHandler = GCodeWriteHandler()
         gCodeHandler.unit = mmUnit
+        gCodeHandler.isAutoCnc = autoCnc
         outputFile.writer().use { writer ->
             gCodeHandler.writer = writer
             gCodeHandler.gapValue = 0f
