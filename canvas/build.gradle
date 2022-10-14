@@ -16,5 +16,5 @@ dependencies {
     compileOnly 'com.google.zxing:core:3.4.1'
 
     //扭曲支持
-    compileOnly 'com.angcyo:imageProcess:hingin-SNAPSHOT'
+    compileOnly 'com.angcyo:imageProcess:1014'
 }
