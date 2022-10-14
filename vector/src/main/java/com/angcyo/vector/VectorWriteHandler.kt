@@ -13,6 +13,7 @@ import com.angcyo.library.ex.size
 import com.angcyo.library.ex.toBitmap
 import com.angcyo.library.unit.IValueUnit
 import kotlin.math.absoluteValue
+import kotlin.math.max
 
 /**
  * 矢量输出基类,
@@ -43,6 +44,12 @@ abstract class VectorWriteHandler {
         const val PATH_SPACE_2K = 0.05f
         const val PATH_SPACE_4K = 0.025f
 
+        /**路径填充类型, 矩形扫描*/
+        const val PATH_FILL_TYPE_RECT = 1
+
+        /**路径填充类型, 圆形扫描*/
+        const val PATH_FILL_TYPE_CIRCLE = 2
+
         /**距离上一个点, 改变了, 则使用G0*/
         @Flag("数值改变类型")
         private const val VALUE_CHANGED = 1 //改变了
@@ -70,6 +77,9 @@ abstract class VectorWriteHandler {
      * 负数表示关闭Gap判断, 全部使用G1
      * */
     var gapValue: Float = PATH_SPACE_GAP
+
+    /**路径填充类型*/
+    var pathFillType: Int = PATH_FILL_TYPE_RECT
 
     //---
 
@@ -315,28 +325,45 @@ abstract class VectorWriteHandler {
         path.computeBounds(pathBounds, true)
 
         //矩形由上往下扫描, 取与path的交集
-        val lineHeight = pathStep
-        var y = pathBounds.top + lineHeight
-        val endY = pathBounds.bottom
-        val linePath = acquireTempPath()
-        val resultPath = acquireTempPath()
+        val scanStep = pathStep //扫描步长
+
+        var y = pathBounds.top + scanStep
+        var endY = pathBounds.bottom
+
+        val scanPath = acquireTempPath() //扫描形状
+        val resultPath = acquireTempPath() //碰撞结果
+
+        val centerX = pathBounds.centerX()
+        val centerY = pathBounds.centerY()
+
+        if (pathFillType == PATH_FILL_TYPE_CIRCLE) {
+            //使用圆的方式填充, 则y是当前扫描的半径, endY是最大扫描半径
+            y = scanStep
+            endY = max(pathBounds.width(), pathBounds.height()) / 2
+        }
 
         var isFirst = true
         while (y <= endY) {
             //逐行扫描
-            linePath.rewind()
+            scanPath.rewind()
             resultPath.rewind()
 
             //一行
-            linePath.addRect(
-                pathBounds.left,
-                y - lineHeight,
-                pathBounds.right,
-                y,
-                Path.Direction.CW
-            )
+            //这里用CCW出来的就是顺时针
+            if (pathFillType == PATH_FILL_TYPE_CIRCLE) {
+                //圆形碰撞扫描
+                scanPath.addCircle(centerX, centerY, y, Path.Direction.CCW)
+            } else {
+                scanPath.addRect(
+                    pathBounds.left,
+                    y - scanStep,
+                    pathBounds.right,
+                    y,
+                    Path.Direction.CCW //ccw无效?
+                )
+            }
 
-            if (resultPath.op(linePath, path, Path.Op.INTERSECT)) {
+            if (resultPath.op(scanPath, path, Path.Op.INTERSECT)) {
                 //操作成功
                 if (!resultPath.isEmpty) {
                     //有交集数据, 写入GCode数据
@@ -346,7 +373,7 @@ abstract class VectorWriteHandler {
                         false,
                         offsetLeft,
                         offsetTop,
-                        lineHeight,
+                        scanStep,
                     )
                     isFirst = false
                 }
@@ -355,7 +382,15 @@ abstract class VectorWriteHandler {
             if (y == endY) {
                 break
             }
-            y += pathStep + lineHeight
+
+            //
+            y += if (pathFillType == PATH_FILL_TYPE_CIRCLE) {
+                scanStep
+            } else {
+                pathStep + scanStep
+            }
+
+            //
             if (y > endY) {
                 y = endY
             }
@@ -364,7 +399,7 @@ abstract class VectorWriteHandler {
         if (writeLast) {
             onPathEnd()
         }
-        linePath.release()
+        scanPath.release()
         resultPath.release()
         pathBounds.release()
     }
