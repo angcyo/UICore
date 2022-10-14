@@ -8,12 +8,12 @@ import com.angcyo.library.annotation.Private
 import com.angcyo.library.component.pool.acquireTempPath
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
+import com.angcyo.library.ex.c
 import com.angcyo.library.ex.eachPath
 import com.angcyo.library.ex.size
 import com.angcyo.library.ex.toBitmap
 import com.angcyo.library.unit.IValueUnit
 import kotlin.math.absoluteValue
-import kotlin.math.max
 
 /**
  * 矢量输出基类,
@@ -339,7 +339,7 @@ abstract class VectorWriteHandler {
         if (pathFillType == PATH_FILL_TYPE_CIRCLE) {
             //使用圆的方式填充, 则y是当前扫描的半径, endY是最大扫描半径
             y = scanStep
-            endY = max(pathBounds.width(), pathBounds.height()) / 2
+            endY = c(pathBounds.width() / 2, pathBounds.height() / 2).toFloat()
         }
 
         var isFirst = true
