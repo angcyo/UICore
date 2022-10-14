@@ -117,10 +117,11 @@ object GraphicsHelper {
 
     //region ---ItemDataBean解析---
 
-    /**开始解析
+    /**开始解析, 可能会有耗时操作
      * 更具[bean]解析出一个可以用来渲染的[BaseItem]
      * */
     @CallPoint
+    @AnyThread
     fun parseItemFrom(bean: ItemDataBean): DataItem? {
         initParser()
         var result: DataItem? = null
@@ -217,7 +218,6 @@ object GraphicsHelper {
 
     /**更新一个新的渲染[DataItem], 重新渲染数据*/
     @CallPoint
-    @MainThread
     fun updateRenderItem(renderer: DataItemRenderer, bean: ItemDataBean) {
         val item = parseItemFrom(bean) ?: return
         updateRenderItem(renderer, item)
@@ -225,12 +225,14 @@ object GraphicsHelper {
 
     /**更新[renderer]的[DataItem]*/
     @CallPoint
-    @MainThread
+    @AnyThread
     fun updateRenderItem(renderer: DataItemRenderer, item: DataItem) {
-        //更新渲染item
-        renderer.setRendererRenderItem(item)
-        //更新渲染的坐标/旋转信息
-        updateRendererProperty(renderer, item.dataBean)
+        doMain {
+            //更新渲染item
+            renderer.setRendererRenderItem(item)
+            //更新渲染的坐标/旋转信息
+            updateRendererProperty(renderer, item.dataBean)
+        }
     }
 
     //endregion ---ItemDataBean解析---

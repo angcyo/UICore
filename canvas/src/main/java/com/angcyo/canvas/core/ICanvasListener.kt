@@ -2,6 +2,7 @@ package com.angcyo.canvas.core
 
 import android.graphics.Matrix
 import android.graphics.RectF
+import androidx.annotation.AnyThread
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
@@ -13,6 +14,8 @@ import com.angcyo.canvas.items.renderer.IItemRenderer
  * @date 2022/04/02
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
+
+@AnyThread
 interface ICanvasListener : ICanvasTouch {
 
     //<editor-fold desc="绘制相关">

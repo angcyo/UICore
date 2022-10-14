@@ -84,6 +84,7 @@
     <string name="out_of_limit">超出最佳范围</string>
     <string name="out_of_bounds">超出雕刻范围</string>
     <string name="canvas_crop">剪裁</string>
+    <string name="canvas_mesh">扭曲</string>
     <string name="canvas_system">系统</string>
     <string name="canvas_custom">自定义</string>
     <string name="canvas_style">样式</string>

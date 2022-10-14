@@ -198,6 +198,7 @@ data class ItemDataBean(
 
     /**图片滤镜
      * 图片滤镜 'black'(黑白) | 'seal'(印章) | 'gray'(灰度) | 'prints'(版画) | 'Jitter(抖动)' | 'gcode'
+     * imageFilter 图片滤镜 1:黑白 | 2:印章 | 3:灰度 | 4:版画 | 5:抖动 | 6:gcode `2022-9-21`
      * */
     var imageFilter: Int = CanvasConstant.DATA_MODE_GREY,
 
@@ -236,6 +237,22 @@ data class ItemDataBean(
     /**gcode方向 0:0 1:90 2:180 3:270*/
     @Implementation
     var gcodeDirection: Int = 0,
+
+    /**是否扭曲*/
+    var isMesh: Boolean = false,
+
+    /**最小直径, 最大直径*/
+    @MM
+    var minDiameter: Float = 0f,
+
+    @MM
+    var maxDiameter: Float = 0f,
+
+    /**扭曲类型,
+     * "CONE" 圆锥
+     * "BALL" 球体
+     * */
+    var meshShape: String? = null,
 
     //endregion ---图片数据---
 

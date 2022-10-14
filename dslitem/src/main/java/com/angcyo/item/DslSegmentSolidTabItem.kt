@@ -12,6 +12,9 @@ open class DslSegmentSolidTabItem : DslSegmentTabItem() {
     init {
         itemLayoutId = R.layout.dsl_segment_solid_tab_item
 
+        //选项列表
+        itemSegmentList
+
         //回调监听
         itemSelectIndexChangeAction
     }

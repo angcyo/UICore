@@ -8,6 +8,7 @@ import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.parseGCode
 import com.angcyo.gcode.GCodeHelper
 import com.angcyo.library.ex.toBitmapOfBase64
+import com.hingin.rn.image.ImageProcess
 
 /**
  * 图片数据解析器
@@ -56,7 +57,18 @@ class BitmapGraphicsParser : IGraphicsParser {
                     item.modifyBitmap = bean.src?.toBitmapOfBase64()
                     item.gCodeDrawable = null
 
-                    val bitmap = item.modifyBitmap ?: item.originBitmap ?: return null
+                    //扭曲后, 其他算法操作应该在扭曲上的图片操作
+                    if (bean.isMesh) {
+                        item.meshBitmap = ImageProcess.imageMesh(
+                            originBitmap,
+                            bean.minDiameter,
+                            bean.maxDiameter,
+                            bean.meshShape ?: "CONE"
+                        )
+                    }
+
+                    val bitmap =
+                        item.modifyBitmap ?: item.meshBitmap ?: item.originBitmap ?: return null
                     wrapBitmap(item, bitmap)
 
                     bean._dataMode = if (bean.imageFilter == CanvasConstant.DATA_MODE_DITHERING) {

@@ -2,6 +2,7 @@ package com.angcyo.canvas.items.data
 
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
+import androidx.annotation.AnyThread
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.data.ItemDataBean
@@ -63,6 +64,7 @@ open class DataItem(val dataBean: ItemDataBean) : BaseItem() {
     //---方法---
 
     /**重新更新需要渲染的界面数据*/
+    @AnyThread
     fun updateRenderItem(renderer: DataItemRenderer) {
         //更新
         GraphicsHelper.updateRenderItem(renderer, dataBean)
