@@ -54,7 +54,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
     var isDoubleTouch: Boolean = false
 
     /**双击检测*/
-    val doubleGestureDetector = DoubleGestureDetector2 { event ->
+    val doubleGestureDetector = DoubleGestureDetector2(canvasDelegate.view.context) { event ->
         if (canvasDelegate.controlHandler.selectedItemRender == null) {
             if (canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_SCALE)) {
                 isDoubleTouch = true

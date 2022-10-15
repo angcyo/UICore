@@ -2,8 +2,6 @@ package com.angcyo.library.gesture
 
 import android.content.Context
 import android.view.MotionEvent
-import android.view.ViewConfiguration
-import com.angcyo.library.app
 import com.angcyo.library.ex.abs
 
 /**
@@ -11,7 +9,7 @@ import com.angcyo.library.ex.abs
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/05/06
  */
-class DoubleGestureDetector2(context: Context = app(), val action: (event: MotionEvent) -> Unit) {
+class DoubleGestureDetector2(context: Context, val action: (event: MotionEvent) -> Unit) {
 
     /**两次按下, 时长不能超过此值, 毫秒*/
     var doubleTapGap = 360f

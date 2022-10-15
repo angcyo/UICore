@@ -78,7 +78,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     var isTranslated = false
 
     /**双击检测*/
-    val doubleGestureDetector = DoubleGestureDetector2() {
+    val doubleGestureDetector = DoubleGestureDetector2(canvasDelegate.view.context) {
         touchDownInfo?.let {
             val itemRenderer = canvasDelegate.findItemRenderer(it.touchPoint)
             if (itemRenderer != null) {
