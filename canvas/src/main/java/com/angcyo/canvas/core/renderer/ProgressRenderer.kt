@@ -42,7 +42,7 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
 
     //---
 
-    /**直接绘制的边框矩形, 和[borderRenderer]属性互斥
+    /**坐标系中的边框矩形,因为这样当坐标系改变之后重新会计算出绘制的坐标矩形, 和[borderRenderer]属性互斥
      * 这个矩形是可以直接绘制的矩形, 所有如果是坐标系的矩形还需要进行一次转换.
      * [com.angcyo.canvas.core.CanvasViewBox.coordinateSystemRectToViewRect]*/
     var borderRect: RectF? = null
@@ -130,9 +130,10 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
         }
         //直接绘制矩形
         borderRect?.let {
-            drawBorder(canvas, it, borderRectRotate)
+            canvasDelegate.getCanvasViewBox().coordinateSystemRectToViewRect(it, _tempRect)
+            drawBorder(canvas, _tempRect, borderRectRotate)
             if (drawProgressMode && progress >= 0) {
-                drawProgress(canvas, it, borderRectRotate)
+                drawProgress(canvas, _tempRect, borderRectRotate)
             }
         }
     }
