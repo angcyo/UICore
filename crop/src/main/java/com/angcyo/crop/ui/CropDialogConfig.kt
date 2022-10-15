@@ -14,6 +14,7 @@ import com.angcyo.widget.DslViewHolder
  */
 class CropDialogConfig(context: Context? = null) : DslDialogConfig(context) {
 
+    /**布局控制*/
     val cropLayoutHelper = CropLayoutHelper()
 
     /**需要裁剪的图片*/
@@ -28,8 +29,11 @@ class CropDialogConfig(context: Context? = null) : DslDialogConfig(context) {
 
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         super.initDialogView(dialog, dialogViewHolder)
+
+        //
         cropLayoutHelper.initLayout(dialogViewHolder)
 
+        //剪切图片源
         cropBitmap?.let {
             cropLayoutHelper.cropView?.cropDelegate?.updateBitmap(it)
         }

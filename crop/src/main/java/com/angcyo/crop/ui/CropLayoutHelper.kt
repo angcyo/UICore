@@ -8,6 +8,7 @@ import com.angcyo.crop.ui.dslitem.CropIconItem
 import com.angcyo.crop.ui.dslitem.CropRadioItem
 import com.angcyo.dsladapter.drawRight
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.ex._string
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.toColor
 import com.angcyo.widget.DslViewHolder
@@ -35,14 +36,14 @@ class CropLayoutHelper {
             //
             CropIconItem()() {
                 itemIco = R.drawable.crop_rotate_icon
-                itemText = "旋转"
+                itemText = _string(R.string.crop_rotate)
                 itemClick = {
                     cropDelegate?.updateRotate(cropDelegate!!.rotate + 90)
                 }
             }
             CropIconItem()() {
                 itemIco = R.drawable.crop_horizontal_flip_icon
-                itemText = "水平翻转"
+                itemText = _string(R.string.crop_horizontal_flip)
                 itemClick = {
                     itemIsSelected = !itemIsSelected
                     cropDelegate?.flipHorizontal = itemIsSelected
@@ -52,7 +53,7 @@ class CropLayoutHelper {
             }
             CropIconItem()() {
                 itemIco = R.drawable.crop_horizontal_flip_icon
-                itemText = "垂直翻转"
+                itemText = _string(R.string.crop_vertical_flip)
                 itemIcoRotate = 90f
                 val offset = 10 * dpi
                 drawRight(
@@ -72,7 +73,7 @@ class CropLayoutHelper {
             //
             CropRadioItem()() {
                 itemIco = R.drawable.crop_ratio_free_icon
-                itemText = "自由比例"
+                itemText = _string(R.string.crop_ratio_free)
                 itemClick = {
                     if (!itemIsSelected) {
                         itemIsSelected = true
@@ -98,7 +99,7 @@ class CropLayoutHelper {
             //
             CropIconItem()() {
                 itemIco = R.drawable.crop_type_circle_icon
-                itemText = "圆形"
+                itemText = _string(R.string.crop_type_circle)
                 itemClick = {
                     itemIsSelected = !itemIsSelected
                     updateAdapterItem()
