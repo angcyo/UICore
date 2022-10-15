@@ -29,6 +29,7 @@ import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.unit.IValueUnit
+import com.angcyo.library.unit.PixelValueUnit
 import kotlin.math.max
 import kotlin.math.min
 
@@ -191,6 +192,10 @@ class CanvasDelegate(val view: View) : ICanvasView {
         //
         rendererLastList.add(smartAssistantRenderer)
         rendererLastList.add(progressRenderer)
+
+        if (view.isInEditMode) {
+            getCanvasViewBox().valueUnit = PixelValueUnit()
+        }
     }
 
     /**枚举[BaseAxisRenderer]*/
