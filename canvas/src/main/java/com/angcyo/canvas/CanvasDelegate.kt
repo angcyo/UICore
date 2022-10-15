@@ -86,6 +86,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
      * 不处理[Matrix]*/
     val rendererAfterList = mutableSetOf<BaseRenderer>()
 
+    /**最后渲染的渲染器*/
+    val rendererLastList = mutableSetOf<BaseRenderer>()
+
     /**将操作移动到[onSizeChanged]后触发*/
     val pendingTaskList = mutableListOf<Runnable>()
 
@@ -156,7 +159,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
     val itemsRendererList = mutableListOf<BaseItemRenderer<*>>()
 
     /**智能提示组件渲染
-     * [rendererAfterList]*/
+     * [rendererLastList]*/
     var smartAssistantRenderer: SmartAssistantRenderer =
         SmartAssistantRenderer(smartAssistant, this)
 
@@ -166,7 +169,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**限制提示框渲染*/
     var limitRenderer: LimitRenderer = LimitRenderer(this)
 
-    /**预览边框, 雕刻进度渲染*/
+    /**预览边框, 雕刻进度渲染
+     * [rendererLastList]*/
     var progressRenderer = ProgressRenderer(this)
 
     /**多选提示框
@@ -182,9 +186,11 @@ class CanvasDelegate(val view: View) : ICanvasView {
         if (BuildConfig.DEBUG) {
             rendererAfterList.add(CenterRenderer(this))
         }
-        rendererAfterList.add(progressRenderer)
-        rendererAfterList.add(smartAssistantRenderer)
         rendererAfterList.add(selectGroupRenderer)
+
+        //
+        rendererLastList.add(smartAssistantRenderer)
+        rendererLastList.add(progressRenderer)
     }
 
     /**枚举[BaseAxisRenderer]*/
@@ -211,6 +217,10 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
 
         rendererAfterList.forEach {
+            it.block()
+        }
+
+        rendererLastList.forEach {
             it.block()
         }
     }
@@ -491,6 +501,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
                         limitRenderer.render(canvas)
                     }
                 }
+            }
+        }
+
+        //last
+        rendererLastList.forEach {
+            if (it.isVisible()) {
+                it.render(canvas)
             }
         }
     }

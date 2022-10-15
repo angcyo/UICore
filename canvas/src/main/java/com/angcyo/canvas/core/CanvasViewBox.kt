@@ -188,6 +188,14 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         return result
     }
 
+    /**将坐标系中的矩形, 转换成可以直接绘制的矩形*/
+    fun coordinateSystemRectToViewRect(rect: RectF, result: RectF = _tempRect): RectF {
+        result.set(rect)
+        result.offset(getCoordinateSystemX(), getCoordinateSystemY())
+        calcItemVisualBounds(result, result)
+        return result
+    }
+
     /**获取当前坐标系在可视窗口的矩形, 原始坐标保持不变.
      * [contentRect] 缩放平移[matrix]之后的变成的[RectF]
      * */

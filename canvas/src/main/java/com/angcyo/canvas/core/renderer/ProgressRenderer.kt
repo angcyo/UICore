@@ -36,6 +36,21 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
     /**进度文本颜色, 不带透明*/
     var progressTextColor: Int = _color(R.color.canvas_progress_text_color)
 
+    /**边框的颜色*/
+    var borderColor: Int = _color(R.color.canvas_progress_color)
+
+    //---
+
+    /**直接绘制的边框矩形, 和[borderRenderer]属性互斥
+     * 这个矩形是可以直接绘制的矩形, 所有如果是坐标系的矩形还需要进行一次转换.
+     * [com.angcyo.canvas.core.CanvasViewBox.coordinateSystemRectToViewRect]*/
+    var borderRect: RectF? = null
+
+    /**[borderRect]旋转的角度, 和[drawRotateBorder]互斥*/
+    var borderRectRotate: Float? = null
+
+    //---
+
     /**用来绘制进度目标的渲染器*/
     var progressRenderer: BaseItemRenderer<*>? = null
         set(value) {
@@ -85,12 +100,12 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
 
     //---
 
-    val clipPath = Path()
-    val borderPath = Path()
-    val clipMatrix = Matrix()
-    val drawRect = RectF()
-    val tempRect = RectF()
-    val tempRotateRect = RectF()
+    val _clipPath = Path()
+    val _borderPath = Path()
+    val _clipMatrix = Matrix()
+    val _drawRect = RectF()
+    val _tempRect = RectF()
+    val _tempRotateRect = RectF()
 
     override fun render(canvas: Canvas) {
         if (!isVisible()) {
@@ -101,6 +116,7 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
             targetRenderer = canvasDelegate.getSelectedRenderer()
         }*/
 
+        //模式
         progressRenderer?.let {
             if (drawProgressMode && progress >= 0) {
                 _drawProgressMode(canvas, it)
@@ -111,68 +127,37 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
                 _drawBorderMode(canvas, it)
             }
         }
+        //直接绘制矩形
+        borderRect?.let {
+            drawBorder(canvas, it, borderRectRotate)
+            if (drawProgressMode && progress >= 0) {
+                drawProgress(canvas, it, borderRectRotate)
+            }
+        }
     }
+
+    //---
 
     /**绘制边框*/
     fun _drawBorderMode(canvas: Canvas, renderer: BaseItemRenderer<*>) {
         if (drawRotateBorder) {
             val bounds = renderer.getVisualBounds()
-            bounds.rotateToPath(renderer.rotate, result = borderPath)
+            drawBorder(canvas, bounds, renderer.rotate)
         } else {
-            val visualRotateBounds = renderer.getVisualRotateBounds().adjustFlipRect(tempRotateRect)
-            borderPath.rewind()
-            borderPath.addRect(visualRotateBounds, Path.Direction.CW)
+            val visualRotateBounds =
+                renderer.getVisualRotateBounds().adjustFlipRect(_tempRotateRect)
+            drawBorder(canvas, visualRotateBounds)
         }
-
-        paint.shader = null
-        paint.style = Paint.Style.STROKE
-        paint.color = progressTextColor
-        paint.pathEffect = DashPathEffect(intervals, phase)
-        canvas.drawPath(borderPath, paint)
-
-        //动画
-        phase += phaseStep
-        if (phaseStep < 0 && phase < -intervals.sum()) {
-            phase = 0f
-        } else if (phaseStep > 0 && phase > intervals.sum()) {
-            phase = 0f
-        }
-        refresh()
     }
 
     /**绘制进度模式*/
     fun _drawProgressMode(canvas: Canvas, renderer: BaseItemRenderer<*>) {
-        val visualBounds = renderer.getVisualBounds().adjustFlipRect(tempRect)
-        val visualRotateBounds = renderer.getVisualRotateBounds().adjustFlipRect(tempRotateRect)
+        val visualBounds = renderer.getVisualBounds().adjustFlipRect(_tempRect)
         val rotate = renderer.rotate
-        drawRect.set(visualRotateBounds)
-        drawRect.bottom = visualRotateBounds.top + visualRotateBounds.height() * clamp(
-            progress,
-            0,
-            100
-        ) / 100f
-
-        paint.style = Paint.Style.FILL
-        paint.shader = linearVerticalGradientShader(
-            drawRect.top, drawRect.bottom,
-            intArrayOf(Color.TRANSPARENT, progressColor.alphaRatio(0.5f))
-        )
-        paint.pathEffect = null
-
-        //clip
-        clipPath.rewind()
-        clipPath.addRect(visualBounds, Path.Direction.CW)
-        clipMatrix.reset()
-        clipMatrix.setRotate(rotate, visualBounds.centerX(), visualBounds.centerY())
-        clipPath.transform(clipMatrix)
-
-        canvas.withClip(clipPath) {
-            canvas.drawRect(drawRect, paint)
-
-            //绘制进度
-            drawProgressText(canvas, visualRotateBounds)
-        }
+        drawProgress(canvas, visualBounds, rotate)
     }
+
+    //---
 
     /**在[rect]内, 绘制进度文本*/
     fun drawProgressText(canvas: Canvas, rect: RectF) {
@@ -193,4 +178,72 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
             paint
         )
     }
+
+    /**绘制矩形[rect], 支持旋转属性
+     * [rect] 需要绘制的矩形, 不带旋转
+     * [rotate] 需要旋转的角度
+     * */
+    fun drawBorder(canvas: Canvas, rect: RectF, rotate: Float? = null) {
+        if (rotate == null || rotate == 0f) {
+            //不需要转换
+            _borderPath.rewind()
+            _borderPath.addRect(rect, Path.Direction.CW)
+        } else {
+            //需要旋转
+            rect.rotateToPath(rotate, result = _borderPath)
+        }
+
+        //开始绘制
+        paint.shader = null
+        paint.style = Paint.Style.STROKE
+        paint.color = borderColor
+        paint.pathEffect = DashPathEffect(intervals, phase)
+        canvas.drawPath(_borderPath, paint)
+
+        //动画
+        phase += phaseStep
+        if (phaseStep < 0 && phase < -intervals.sum()) {
+            phase = 0f
+        } else if (phaseStep > 0 && phase > intervals.sum()) {
+            phase = 0f
+        }
+        refresh()
+    }
+
+    /**绘制进度文本和clip的rect*/
+    fun drawProgress(canvas: Canvas, rect: RectF, rotate: Float? = null) {
+        _tempRotateRect.set(rect)
+        if (rotate == null || rotate == 0f) {
+            //不需要转换
+        } else {
+            //需要旋转
+            _tempRotateRect.rotate(rotate)
+        }
+        _drawRect.set(_tempRotateRect)
+
+        _drawRect.bottom = _drawRect.top + _drawRect.height() * clamp(
+            progress,
+            0,
+            100
+        ) / 100f
+
+        paint.style = Paint.Style.FILL
+        paint.shader = linearVerticalGradientShader(
+            _drawRect.top, _drawRect.bottom,
+            intArrayOf(Color.TRANSPARENT, progressColor.alphaRatio(0.5f))
+        )
+        paint.pathEffect = null
+
+        //clip
+        _clipPath.rewind()
+        _clipPath.addRect(_tempRotateRect, Path.Direction.CW)
+
+        canvas.withClip(_clipPath) {
+            canvas.drawRect(_drawRect, paint) //进度提示
+
+            //绘制进度
+            drawProgressText(canvas, _tempRotateRect) //进度文本提示
+        }
+    }
+
 }
