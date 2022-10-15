@@ -133,6 +133,11 @@ fun RectF.translate(dx: Float = 0f, dy: Float = 0f): RectF {
     return this
 }
 
+/**转换成[Path]*/
+fun RectF.toPath() = Path().apply {
+    addRect(this@toPath, Path.Direction.CW)
+}
+
 /**旋转一个矩形
  * [degrees] 旋转的角度
  * [pivotX] [pivotY] 旋转的轴点

@@ -1,5 +1,6 @@
 package com.angcyo.canvas.core
 
+import android.animation.ValueAnimator
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
@@ -26,10 +27,10 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     var contentOffsetBottom = 0f
 
     /**最小和最大的缩放比例*/
-    var minScaleX: Float = 0.1f
+    var minScaleX: Float = 0.05f
     var maxScaleX: Float = 10f //5f
 
-    var minScaleY: Float = 0.1f
+    var minScaleY: Float = minScaleX
     var maxScaleY: Float = 10f //5f
 
     /**最小和最大的平移距离*/
@@ -383,14 +384,18 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
     //<editor-fold desc="matrix">
 
+    var _updateAnimator: ValueAnimator? = null
+
     /**重置坐标系*/
     fun updateTo(
         endMatrix: Matrix = Matrix(),
         anim: Boolean = true,
         finish: (isCancel: Boolean) -> Unit = {}
     ) {
+        _updateAnimator?.cancel()
+        _updateAnimator = null
         if (anim) {
-            matrixAnimator(matrix, endMatrix, finish = finish) {
+            _updateAnimator = matrixAnimator(matrix, endMatrix, finish = finish) {
                 adjustScaleOutToLimit(it)
                 refresh(it)
             }

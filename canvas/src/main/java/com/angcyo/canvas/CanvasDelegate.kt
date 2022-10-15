@@ -14,6 +14,7 @@ import com.angcyo.canvas.core.renderer.*
 import com.angcyo.canvas.data.CanvasDataBean
 import com.angcyo.canvas.data.ItemDataBean
 import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
+import com.angcyo.canvas.data.LimitDataInfo
 import com.angcyo.canvas.graphics.GraphicsHelper
 import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
@@ -972,12 +973,22 @@ class CanvasDelegate(val view: View) : ICanvasView {
         return result
     }
 
-    /**显示一个限制框, 并且移动画布到最佳可视位置*/
-    fun showAndLimitBounds(path: Path) {
+    /**添加一个限制框数据*/
+    fun addAndShowLimitBounds(path: Path, block: LimitDataInfo.() -> Unit = {}) {
         val pathBounds = RectF()
         path.computeBounds(pathBounds, true)
-        limitRenderer.updateLimit {
-            addPath(path)
+        limitRenderer.addLimit {
+            add(LimitDataInfo(path, true).apply(block))
+        }
+        showRectBounds(pathBounds)
+    }
+
+    /**显示一个限制框, 并且移动画布到最佳可视位置*/
+    fun showAndResetLimitBounds(path: Path, block: LimitDataInfo.() -> Unit = {}) {
+        val pathBounds = RectF()
+        path.computeBounds(pathBounds, true)
+        limitRenderer.resetLimit {
+            add(LimitDataInfo(path, true).apply(block))
         }
         showRectBounds(pathBounds)
     }

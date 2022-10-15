@@ -1,9 +1,14 @@
 package com.angcyo.canvas.core.renderer
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
 import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.data.LimitDataInfo
 import com.angcyo.canvas.utils.createPaint
-import com.angcyo.library.ex.dp
+import com.angcyo.library.annotation.Private
+import com.angcyo.library.ex.computePathBounds
 
 /**
  * 打印限制提示框渲染
@@ -13,46 +18,63 @@ import com.angcyo.library.ex.dp
  */
 class LimitRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView) {
 
-    /**限制框的宽度*/
-    var limitStrokeWidth = 1 * dp
-
     /**画笔*/
     val paint = createPaint().apply {
         color = Color.RED
         style = Paint.Style.STROKE
     }
 
-    /**限制框*/
-    val limitPath: Path = Path()
-
-    /**用来[InitialPointHandler]恢复显示范围*/
-    var limitBounds: RectF? = null
+    /**需要绘制的数据列表*/
+    val limitList = mutableListOf<LimitDataInfo>()
 
     //坐标系统中的坐标
+    @Private
     val _limitPathBounds: RectF = RectF()
 
     override fun render(canvas: Canvas) {
-        if (!limitPath.isEmpty) {
-            limitPath.computeBounds(_limitPathBounds, true)
-            val scale = canvasViewBox.getScaleX()
-            paint.strokeWidth = limitStrokeWidth / scale //抵消坐标系的缩放
-            canvas.drawPath(limitPath, paint)
-        } else {
-            _limitPathBounds.setEmpty()
+        limitList.forEach {
+            if (it.enableRender) {
+                drawLimitData(canvas, it)
+            }
         }
     }
 
-    /**更新限制框*/
-    fun updateLimit(block: Path.() -> Unit) {
-        limitPath.rewind()
-        limitPath.block()
+    @Private
+    fun drawLimitData(canvas: Canvas, pathInfo: LimitDataInfo) {
+        val path = pathInfo.limitPath
+        if (!path.isEmpty) {
+            path.computeBounds(_limitPathBounds, true)
+            val scale = canvasViewBox.getScaleX()
+            paint.color = pathInfo.limitStrokeColor
+            paint.strokeWidth = pathInfo.limitStrokeWidth / scale //抵消坐标系的缩放
+            canvas.drawPath(path, paint)
+        }
+    }
+
+    /**获取主要的限制Bounds*/
+    fun getPrimaryLimitBounds(): RectF? {
+        val primaryInfo = limitList.find { it.isPrimary }
+        return primaryInfo?.run {
+            limitPath.computePathBounds()
+        }
+    }
+
+    /**重置所有渲染数据*/
+    fun resetLimit(block: MutableList<LimitDataInfo>.() -> Unit) {
+        clear()
+        limitList.block()
+        refresh()
+    }
+
+    /**添加一个渲染数据*/
+    fun addLimit(block: MutableList<LimitDataInfo>.() -> Unit) {
+        limitList.block()
         refresh()
     }
 
     /**清除限制框*/
     fun clear() {
-        limitPath.rewind()
-        _limitPathBounds.setEmpty()
+        limitList.clear()
         refresh()
     }
 }

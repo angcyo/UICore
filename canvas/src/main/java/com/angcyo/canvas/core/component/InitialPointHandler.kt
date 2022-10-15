@@ -4,7 +4,6 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.library.ex.emptyRectF
-import com.angcyo.library.ex.isNoSize
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -34,21 +33,10 @@ class InitialPointHandler : BaseComponent() {
                 if (isTouchDownInInitial) {
                     if (initialPointRect.contains(event.x, event.y)) {
                         var def = true
-                        if (view.limitRenderer.limitBounds != null) {
-                            _tempRect.set(view.limitRenderer.limitBounds!!)
+                        val primaryLimitBounds = view.limitRenderer.getPrimaryLimitBounds()
+                        if (primaryLimitBounds != null) {
+                            _tempRect.set(primaryLimitBounds)
                             def = false
-                        } else {
-                            val path = view.limitRenderer.limitPath
-                            if (path.isEmpty) {
-                                //def
-                            } else {
-                                path.computeBounds(_tempRect, true)
-                                if (_tempRect.isNoSize()) {
-                                    //def
-                                } else {
-                                    def = false
-                                }
-                            }
                         }
                         if (!def) {
                             view.showRectBounds(_tempRect)
