@@ -1,6 +1,7 @@
 package com.angcyo.library.ex
 
 import com.angcyo.library.L
+import com.angcyo.library.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -267,7 +268,13 @@ fun Int.toMillisecond() = this * 1000L
 fun Long.toElapsedTime(
     pattern: IntArray = intArrayOf(-1, 1, 1),
     refill: BooleanArray = booleanArrayOf(true, true, true, true, true),
-    units: Array<String> = arrayOf("毫秒", "秒", "分", "时", "天") /*最大5个计量*/
+    units: Array<String> = arrayOf(
+        _string(R.string.lib_time_ms),
+        _string(R.string.lib_time_s),
+        _string(R.string.lib_time_m),
+        _string(R.string.lib_time_h),
+        _string(R.string.lib_time_d)
+    ) /*最大5个计量*/
 ): String {
 
     fun toH24(h24: Boolean, value: Long): String {
@@ -399,14 +406,14 @@ fun Long.shotTimeString(
     val preYesterday = Date(yesterdayBegin.time - 3600 * 24 * 1000) //前天开始的日期
     dataString = if (!currentTime.before(todayBegin)) {
         if (showToday) {
-            "今天"
+            _string(R.string.lib_time_today)
         } else {
             ""
         }
     } else if (!currentTime.before(yesterdayBegin)) {
-        "昨天"
+        _string(R.string.lib_time_yesterday)
     } else if (!currentTime.before(preYesterday)) {
-        "前天"
+        _string(R.string.lib_time_before_yesterday)
     } else if (isSameWeekDates(currentTime, today)) {
         getWeekOfDate(currentTime)
     } else {

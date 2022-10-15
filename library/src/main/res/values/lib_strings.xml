@@ -7,4 +7,14 @@
     <!--条码字符-->
     <!--https://en.wikipedia.org/wiki/Code_128-->
     <string name="lib_barcode_digits"> !"#$%&amp;'()*+,-./0123456789:;&lt;=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~</string>
+
+    <string name="lib_time_ms">毫秒</string>
+    <string name="lib_time_s">秒</string>
+    <string name="lib_time_m">分</string>
+    <string name="lib_time_h">时</string>
+    <string name="lib_time_d">天</string>
+
+    <string name="lib_time_today">今天</string>
+    <string name="lib_time_yesterday">昨天</string>
+    <string name="lib_time_before_yesterday">前天</string>
 </resources>
