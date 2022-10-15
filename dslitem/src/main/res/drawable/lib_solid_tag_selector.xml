@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape>
+            <corners android:bottomRightRadius="@dimen/lib_radius_common" android:topLeftRadius="@dimen/lib_radius_common" />
+            <stroke android:width="@dimen/lib_line" android:color="@color/colorAccent" />
+        </shape>
+    </item>
+    <item android:state_checked="true">
+        <shape>
+            <corners android:bottomRightRadius="@dimen/lib_radius_common" android:topLeftRadius="@dimen/lib_radius_common" />
+            <stroke android:width="@dimen/lib_line" android:color="@color/colorAccent" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <corners android:bottomRightRadius="@dimen/lib_radius_common" android:topLeftRadius="@dimen/lib_radius_common" />
+            <stroke android:width="@dimen/lib_line" android:color="@color/bg_primary_color" />
+        </shape>
+    </item>
+</selector>
