@@ -29,7 +29,6 @@ def listPath(filePath, depth = 0 /*当前枚举的路径深度, 深度大于maxD
     }
 
     if (filePath.isDirectory()) {
-
         filePath.listFiles()?.each {
             def name = it.getName()
             if (it.isDirectory()) {
@@ -39,7 +38,14 @@ def listPath(filePath, depth = 0 /*当前枚举的路径深度, 深度大于maxD
             } else if (it.isFile()) {
                 def suffix = ".gradle"
                 if (name.endsWith(suffix)) {
-                    allGradle[name.replace(suffix, "")] = it.getAbsolutePath()
+                    def key = name.replace(suffix, "")
+                    if (allGradle[key] == null) {
+                        allGradle[key] = it.getAbsolutePath()
+                    } else {
+                        if (key != "build") {
+                            System.err.println "已设置[allGradle.${key}]脚本->${allGradle[key]}"
+                        }
+                    }
                 }
             }
         }
