@@ -151,7 +151,9 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
     /**长按的自增长步长*/
     var longIncrementStep: Float = 10f
 
-    /**绑定限流*/
+    /**绑定限流, 如果需要实时输入, 请关闭限流
+     * <=0 关闭限流
+     * */
     var bindPendingDelay = DEFAULT_INPUT_DELAY
 
     /**是否激活抖动输入, 关闭之后, 那就相当于普通键盘.
@@ -282,7 +284,11 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                         newValueBuilder.clear()
                     }
                 }
-                mainHandle.postDelayed(_pendingRunnable!!, bindPendingDelay)
+                if (bindPendingDelay > 0) {
+                    mainHandle.postDelayed(_pendingRunnable!!, bindPendingDelay)
+                } else {
+                    _pendingRunnable?.run()
+                }
             }
         }
         keyboardBindTextView?.text = result
