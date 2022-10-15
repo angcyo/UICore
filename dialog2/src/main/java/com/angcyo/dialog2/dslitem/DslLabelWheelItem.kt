@@ -3,10 +3,10 @@ package com.angcyo.dialog2.dslitem
 import android.app.Dialog
 import android.content.Context
 import android.view.View
-import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dialog2.R
 import com.angcyo.dialog2.WheelDialogConfig
 import com.angcyo.dialog2.wheelDialog
+import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.DslBaseLabelItem
 import com.angcyo.item.style.*
 import com.angcyo.library.ex.ResultThrowable
