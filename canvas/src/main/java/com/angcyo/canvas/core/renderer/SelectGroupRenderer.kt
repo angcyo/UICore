@@ -37,7 +37,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     val selectItemList = mutableSetOf<BaseItemRenderer<*>>()
 
     /**选择框的颜色*/
-    var paintColor: Int = _color(R.color.canvas_select)
+    var paintColor: Int = _color(R.color.canvas_select, canvasDelegate.view.context)
 
     val canvasDelegate: CanvasDelegate
         get() = canvasView as CanvasDelegate

@@ -8,12 +8,9 @@ import android.graphics.PointF
 import android.view.View
 import android.widget.TextView
 import androidx.collection.SimpleArrayMap
-import com.angcyo.library.BuildConfig
-import com.angcyo.library.Library
+import com.angcyo.library.*
 import com.angcyo.library.component.RBackground
 import com.angcyo.library.component.ThreadExecutor.onMain
-import com.angcyo.library.getAppBoolean
-import com.angcyo.library.getAppString
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.RUtils
 import com.angcyo.library.utils.protector.EmulatorCheckUtil
@@ -130,7 +127,11 @@ fun isDebugRes() = getAppBoolean("is_debug") == true
 fun isDebug() = BuildConfig.DEBUG || isAppDebug() || isDebugType()
 
 /**[ApplicationInfo.FLAG_DEBUGGABLE]*/
-fun isAppDebug() = RUtils.isAppDebug()
+fun isAppDebug() = if (app().isPlaceholderApplication()) {
+    false
+} else {
+    RUtils.isAppDebug()
+}
 
 fun isRoot() = RUtils.isRoot()
 fun isXposedExistByThrow() = RUtils.isXposedExistByThrow()
@@ -254,6 +255,8 @@ fun Collection<Any?>?.isListEmpty(): Boolean {
 }
 
 fun Collection<*>?.size() = this?.size ?: 0
+fun Array<*>?.size() = this?.size ?: 0
+fun ByteArray?.size() = this?.size ?: 0
 
 /**判断2个列表中的数据是否改变过*/
 fun <T> Collection<T>?.isChange(other: List<T>?): Boolean {

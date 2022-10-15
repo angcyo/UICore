@@ -122,6 +122,9 @@ fun String?.fileSizeString(): String {
     return fileSize().fileSizeString()
 }
 
+/**[Long.fileSizeString]*/
+fun Long.toSizeString(unit: SizeUnit = SizeUnit.Auto): String = fileSizeString(unit)
+
 /**[this] b 字节数量
  * 返回 [xxKB] [xxMB] [xxGB] [xxTB] [xxPB]
  * */

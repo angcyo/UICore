@@ -31,7 +31,9 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
     BaseRenderer(canvasView), ICanvasListener {
 
     /**用来绘制边框*/
-    val paint = createPaint(_color(R.color.canvas_select)).apply {
+    val paint = createPaint(
+        _color(R.color.canvas_select, controlHandler.canvasDelegate.view.context)
+    ).apply {
         //init
         strokeWidth = 1 * dp
     }
@@ -45,7 +47,10 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
     val controlPointPaint = createPaint("#333333".toColor(), Paint.Style.FILL)
 
     /**绘制按下的控制点背景*/
-    val controlTouchPointPaint = createPaint(_color(R.color.transparent50), Paint.Style.FILL)
+    val controlTouchPointPaint = createPaint(
+        _color(R.color.transparent50, controlHandler.canvasDelegate.view.context),
+        Paint.Style.FILL
+    )
 
     /**是否需要绘制控制点*/
     var drawControlPoint: Boolean = true

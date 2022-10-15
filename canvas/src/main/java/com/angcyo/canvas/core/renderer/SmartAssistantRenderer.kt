@@ -20,7 +20,10 @@ import com.angcyo.library.ex.dp
 class SmartAssistantRenderer(val smartAssistant: SmartAssistant, canvasView: ICanvasView) :
     BaseRenderer(canvasView) {
 
-    val paint = createPaint(_color(R.color.canvas_assistant), Paint.Style.FILL)
+    val paint = createPaint(
+        _color(R.color.canvas_assistant, smartAssistant.canvasDelegate.view.context),
+        Paint.Style.FILL
+    )
 
     /**提示线的宽度*/
     var strokeWidth = 1 * dp

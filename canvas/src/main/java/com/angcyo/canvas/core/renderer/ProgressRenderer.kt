@@ -31,13 +31,14 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
         }
 
     /**进度颜色, 不带透明*/
-    var progressColor: Int = _color(R.color.canvas_progress_color)
+    var progressColor: Int = _color(R.color.canvas_progress_color, canvasDelegate.view.context)
 
     /**进度文本颜色, 不带透明*/
-    var progressTextColor: Int = _color(R.color.canvas_progress_text_color)
+    var progressTextColor: Int =
+        _color(R.color.canvas_progress_text_color, canvasDelegate.view.context)
 
     /**边框的颜色*/
-    var borderColor: Int = _color(R.color.canvas_progress_color)
+    var borderColor: Int = _color(R.color.canvas_progress_color, canvasDelegate.view.context)
 
     //---
 

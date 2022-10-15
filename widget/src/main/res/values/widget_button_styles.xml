@@ -23,12 +23,14 @@
     <style name="LibButtonSolidStyle" parent="LibButtonStyle">
         <item name="android:minHeight">@dimen/lib_item_min_height</item>
         <item name="button_radius">@dimen/lib_radius_max</item>
+    </style>
 
-        <!--正常是透明颜色, 按下需要波纹效果-->
-        <!--<item name="button_gradient_colors">""</item>
+    <!--正常是透明颜色, 按下需要波纹效果-->
+    <style name="LibButtonTransparentSolidStyle" parent="LibButtonSolidStyle">
+        <item name="button_gradient_colors">""</item>
         <item name="button_press_solid_color">#01000000</item>
         <item name="button_ripple_color">@color/colorAccent</item>
-        <item name="button_solid_color">@color/transparent</item>-->
+        <item name="button_solid_color">@color/transparent</item>
     </style>
 
     <!--圆角主题渐变底色填充的样式-->
