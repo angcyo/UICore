@@ -9,7 +9,7 @@
     android:clipChildren="true"
     android:elevation="@dimen/lib_elevation"
     android:orientation="vertical"
-    app:r_clip_radius="@dimen/lib_radius_common2"
+    app:r_clip_radius="@dimen/lib_radius_common"
     app:r_clip_to_outline="true"
     app:r_clip_type="CLIP_TYPE_ROUND"
     app:r_max_height="0.5sh"
