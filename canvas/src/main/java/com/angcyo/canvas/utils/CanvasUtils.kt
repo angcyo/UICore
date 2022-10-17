@@ -6,7 +6,10 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import com.angcyo.canvas.CanvasDelegate
-import com.angcyo.canvas.items.PictureTextItem
+import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_BOLD
+import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_DELETE_LINE
+import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_ITALIC
+import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_UNDER_LINE
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.gcode.GCodeDrawable
 import com.angcyo.gcode.GCodeHelper
@@ -110,16 +113,16 @@ fun String.isSvgContent() = have("</svg>")
 //<editor-fold desc="Other">
 
 val Int.isTextBold: Boolean
-    get() = have(PictureTextItem.TEXT_STYLE_BOLD)
+    get() = have(TEXT_STYLE_BOLD)
 
 val Int.isUnderLine: Boolean
-    get() = have(PictureTextItem.TEXT_STYLE_UNDER_LINE)
+    get() = have(TEXT_STYLE_UNDER_LINE)
 
 val Int.isDeleteLine: Boolean
-    get() = have(PictureTextItem.TEXT_STYLE_DELETE_LINE)
+    get() = have(TEXT_STYLE_DELETE_LINE)
 
 val Int.isTextItalic: Boolean
-    get() = have(PictureTextItem.TEXT_STYLE_ITALIC)
+    get() = have(TEXT_STYLE_ITALIC)
 
 fun Layout.getMaxLineWidth(): Float {
     var width = 0f

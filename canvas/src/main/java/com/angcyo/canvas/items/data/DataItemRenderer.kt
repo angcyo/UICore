@@ -1,8 +1,10 @@
 package com.angcyo.canvas.items.data
 
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.RectF
+import androidx.core.graphics.scale
 import androidx.core.graphics.withMatrix
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
@@ -12,10 +14,7 @@ import com.angcyo.canvas.core.component.SmartAssistant
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.component.ScalePictureDrawable
-import com.angcyo.library.ex.adjustFlipRect
-import com.angcyo.library.ex.emptyRectF
-import com.angcyo.library.ex.isFlipHorizontal
-import com.angcyo.library.ex.isFlipVertical
+import com.angcyo.library.ex.*
 
 /**
  * 数据渲染器
@@ -122,6 +121,24 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
         getRendererRenderItem()?.dataBean?.apply {
             angle = rotate
         }
+    }
+
+    override fun getEngraveBitmap(): Bitmap? {
+        val item = getRendererRenderItem()
+        val result = if (item is DataBitmapItem) {
+            item.modifyBitmap ?: item.originBitmap
+        } else {
+            null
+        }
+        if (result != null) {
+            //这里需要处理缩放和旋转
+            val bounds = getBounds()
+            val width = bounds.width().toInt()
+            val height = bounds.height().toInt()
+            val scaleBitmap = result.scale(width, height)
+            return scaleBitmap.rotate(rotate)
+        }
+        return super.getEngraveBitmap()
     }
 
     //</editor-fold desc="核心回调">

@@ -8,7 +8,6 @@ import android.widget.LinearLayout
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.data.*
 import com.angcyo.canvas.graphics.lineTextList
-import com.angcyo.canvas.items.PictureTextItem
 import com.angcyo.canvas.utils.FontManager
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
@@ -22,6 +21,32 @@ import kotlin.math.tan
  * @since 2022/09/22
  */
 class DataTextItem(bean: ItemDataBean) : DataItem(bean) {
+
+    companion object {
+
+        //---
+
+        /**字体样式, 无*/
+        const val TEXT_STYLE_NONE = 0x00
+
+        /**字体样式, 加粗*/
+        const val TEXT_STYLE_BOLD = 0x01
+
+        /**字体样式, 斜体*/
+        const val TEXT_STYLE_ITALIC = 0x02
+
+        /**字体样式, 下划线*/
+        const val TEXT_STYLE_UNDER_LINE = 0x04
+
+        /**字体样式, 删除线*/
+        const val TEXT_STYLE_DELETE_LINE = 0x08
+
+        //---
+
+        /**斜体的倾斜角度*/
+        const val ITALIC_SKEW = -0.25f
+    }
+
 
     //region ---属性---
 
@@ -48,7 +73,7 @@ class DataTextItem(bean: ItemDataBean) : DataItem(bean) {
             //下划线
             it.isUnderlineText = dataBean.underline
             it.isFakeBoldText = dataBean.isBold()
-            it.textSkewX = if (dataBean.isItalic()) PictureTextItem.ITALIC_SKEW else 0f
+            it.textSkewX = if (dataBean.isItalic()) ITALIC_SKEW else 0f
             //it.typeface = item.textTypeface
 
             it.textAlign = dataBean.textAlign.toPaintAlign()

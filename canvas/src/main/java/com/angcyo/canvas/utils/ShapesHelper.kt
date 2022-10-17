@@ -3,7 +3,7 @@ package com.angcyo.canvas.utils
 import android.graphics.Path
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
-import com.angcyo.canvas.items.PictureShapeItem
+import com.angcyo.library.annotation.MM
 import com.angcyo.library.ex.toRadians
 import kotlin.math.cos
 import kotlin.math.min
@@ -19,11 +19,19 @@ import kotlin.math.sin
 
 object ShapesHelper {
 
+    /**默认的形状宽度, cm单位*/
+    @MM
+    const val SHAPE_DEFAULT_WIDTH = 10f
+
+    /**默认的形状高度, cm单位*/
+    @MM
+    const val SHAPE_DEFAULT_HEIGHT = 10f
+
     val defaultWidth: Float
-        get() = mmUnit.convertValueToPixel(PictureShapeItem.SHAPE_DEFAULT_WIDTH)
+        get() = mmUnit.convertValueToPixel(SHAPE_DEFAULT_WIDTH)
 
     val defaultHeight: Float
-        get() = mmUnit.convertValueToPixel(PictureShapeItem.SHAPE_DEFAULT_HEIGHT)
+        get() = mmUnit.convertValueToPixel(SHAPE_DEFAULT_HEIGHT)
 
     /**多边形的Path*/
     fun polygonPath(

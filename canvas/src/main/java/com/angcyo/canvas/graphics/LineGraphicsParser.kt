@@ -30,6 +30,12 @@ class LineGraphicsParser : PathGraphicsParser() {
             item.drawable = createPathDrawable(item)
 
             //initDataMode(bean, item.paint)
+            /*bean._dataMode = if (item.paint.style == Paint.Style.STROKE) {
+                //线条描边, 使用黑白画
+                CanvasConstant.DATA_MODE_BLACK_WHITE
+            } else {
+                CanvasConstant.DATA_MODE_GCODE
+            }*/
             bean._dataMode = CanvasConstant.DATA_MODE_GCODE //强制使用GCode
             return item
         }

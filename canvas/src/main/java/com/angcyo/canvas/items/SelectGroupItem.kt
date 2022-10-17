@@ -1,6 +1,4 @@
-package com.angcyo.canvas.core.renderer
-
-import com.angcyo.canvas.items.BaseItem
+package com.angcyo.canvas.items
 
 /**
  * [com.angcyo.canvas.core.renderer.SelectGroupRenderer]

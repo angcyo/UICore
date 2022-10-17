@@ -12,6 +12,7 @@ import com.angcyo.canvas.core.BoundsOperateHandler
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.core.renderer.BaseRenderer
+import com.angcyo.canvas.graphics.IEngraveProvider
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.isLineShape
@@ -31,7 +32,7 @@ import com.angcyo.library.isInEditMode
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
 abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
-    BaseRenderer(canvasView), IItemRenderer<T> {
+    BaseRenderer(canvasView), IItemRenderer<T>, IEngraveProvider {
 
     //<editor-fold desc="属性">
 
@@ -212,6 +213,8 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
             }
         }
     }
+
+    override fun getEngraveBitmap(): Bitmap? = preview()?.toBitmap()
 
     fun getRotateMatrix(rotateCenterX: Float, rotateCenterY: Float): Matrix {
         _rotateMatrix.reset()

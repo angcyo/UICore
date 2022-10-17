@@ -5,11 +5,11 @@ import android.graphics.RectF
 import android.widget.LinearLayout
 import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
 import com.angcyo.canvas.graphics.GraphicsHelper
-import com.angcyo.canvas.items.PictureTextItem.Companion.TEXT_STYLE_BOLD
-import com.angcyo.canvas.items.PictureTextItem.Companion.TEXT_STYLE_DELETE_LINE
-import com.angcyo.canvas.items.PictureTextItem.Companion.TEXT_STYLE_ITALIC
-import com.angcyo.canvas.items.PictureTextItem.Companion.TEXT_STYLE_NONE
-import com.angcyo.canvas.items.PictureTextItem.Companion.TEXT_STYLE_UNDER_LINE
+import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_BOLD
+import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_DELETE_LINE
+import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_ITALIC
+import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_NONE
+import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_UNDER_LINE
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.annotation.Implementation
 import com.angcyo.library.annotation.MM
@@ -212,15 +212,15 @@ data class ItemDataBean(
 
     /**黑白阈值*/
     @Implementation
-    var blackThreshold: Float = DEFAULT_THRESHOLD_SPACE,
+    var blackThreshold: Float = DEFAULT_THRESHOLD,
 
     /**印章阈值*/
     @Implementation
-    var sealThreshold: Float = DEFAULT_THRESHOLD_SPACE,
+    var sealThreshold: Float = DEFAULT_THRESHOLD,
 
     /**版画阈值*/
     @Implementation
-    var printsThreshold: Float = DEFAULT_THRESHOLD_SPACE,
+    var printsThreshold: Float = DEFAULT_THRESHOLD,
 
     /**是否反色*/
     @Implementation
@@ -272,8 +272,8 @@ data class ItemDataBean(
         /**毫米单位计算*/
         val mmUnit = MmValueUnit()
 
-        /**默认的GCode线距*/
-        const val DEFAULT_THRESHOLD_SPACE = 240f
+        /**默认的阈值*/
+        const val DEFAULT_THRESHOLD = 240f
 
         /**默认的GCode线距*/
         const val DEFAULT_LINE_SPACE = 5.0f

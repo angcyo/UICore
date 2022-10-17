@@ -14,6 +14,7 @@ import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.OffsetItemData
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
+import com.angcyo.canvas.items.SelectGroupItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.drawable.*
