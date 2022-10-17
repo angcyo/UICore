@@ -7,6 +7,7 @@ import android.graphics.Typeface
 import android.widget.LinearLayout
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.data.*
+import com.angcyo.canvas.graphics.TextGraphicsParser
 import com.angcyo.canvas.graphics.lineTextList
 import com.angcyo.canvas.utils.FontManager
 import com.angcyo.library.annotation.Pixel
@@ -371,6 +372,31 @@ class DataTextItem(bean: ItemDataBean) : DataItem(bean) {
             updateRenderItem(renderer)
         }) {
             dataBean.orientation = new
+            updateRenderItem(renderer)
+        }
+    }
+
+    /**更新文本*/
+    fun updateText(
+        text: String?,
+        type: Int,
+        renderer: DataItemRenderer,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val oldText = dataBean.text
+        val oldType = dataBean.mtype
+        if (oldText == text && oldType == type) {
+            return
+        }
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.text = oldText
+            dataBean.mtype = oldType
+            TextGraphicsParser().updateRotateOffset(this)
+            updateRenderItem(renderer)
+        }) {
+            dataBean.text = text
+            dataBean.mtype = type
+            TextGraphicsParser().updateRotateOffset(this)
             updateRenderItem(renderer)
         }
     }

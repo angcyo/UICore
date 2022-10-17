@@ -281,10 +281,11 @@ data class ItemDataBean(
 
     /**设置渲染的位置*/
     fun updateToRenderBounds(@Pixel bounds: RectF): RectF {
-        val l = mmUnit.convertValueToPixel(left)
-        val t = mmUnit.convertValueToPixel(top)
-        val w = mmUnit.convertValueToPixel(width)
-        val h = mmUnit.convertValueToPixel(height)
+        val valueUnit = mmUnit
+        val l = valueUnit.convertValueToPixel(left)
+        val t = valueUnit.convertValueToPixel(top)
+        val w = valueUnit.convertValueToPixel(width)
+        val h = valueUnit.convertValueToPixel(height)
         bounds.set(l, t, l + w * scaleX, t + h * scaleY)
         return bounds
     }
@@ -293,14 +294,16 @@ data class ItemDataBean(
      * [w] 界面上显示的大小, 像素
      * [h] 界面上显示的大小, 像素*/
     fun updateScale(@Pixel w: Float, @Pixel h: Float) {
-        scaleX = (mmUnit.convertPixelToValue(w) / width).ensure()
-        scaleY = (mmUnit.convertPixelToValue(h) / height).ensure()
+        val valueUnit = mmUnit
+        scaleX = (valueUnit.convertPixelToValue(w) / width).ensure()
+        scaleY = (valueUnit.convertPixelToValue(h) / height).ensure()
     }
 
     /**更新坐标, 缩放比例数据*/
     fun updateByBounds(@Pixel bounds: RectF) {
-        left = mmUnit.convertPixelToValue(bounds.left)
-        top = mmUnit.convertPixelToValue(bounds.top)
+        val valueUnit = mmUnit
+        left = valueUnit.convertPixelToValue(bounds.left)
+        top = valueUnit.convertPixelToValue(bounds.top)
 
         val width = bounds.width()
         val height = bounds.height()

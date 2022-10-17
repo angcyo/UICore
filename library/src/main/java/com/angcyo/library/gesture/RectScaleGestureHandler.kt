@@ -326,8 +326,10 @@ class RectScaleGestureHandler {
         }
 
         /**更新矩形使用指定的宽高
+         * [target] 目标矩形, 未旋转的状态
+         * [result] 返回值存储
          * [newWidth] [newHeight] 指定的调整宽高值
-         * [anchorX] [anchorY] 旋转后的锚点
+         * [anchorX] [anchorY] 旋转后的锚点坐标
          * */
         fun rectUpdateTo(
             target: RectF,
@@ -345,6 +347,30 @@ class RectScaleGestureHandler {
             val scaleX = (newWidth / target.width()).ensure()
             val scaleY = (newHeight / target.height()).ensure()
             rectScaleTo(target, result, scaleX, scaleY, rotate, anchorX, anchorY)
+        }
+
+        /**计算一个矩形, 改变宽高后, 保持旋转后的左上角不变, 应该偏移的距离
+         * [target] 目标矩形, 未旋转的状态
+         * 返回 [dx] [dy]
+         */
+        fun calcRectUpdateOffset(
+            target: RectF,
+            newWidth: Float,
+            newHeight: Float,
+            rotate: Float
+        ): PointF {
+            val newRect = acquireTempRectF()
+            val newRotateRect = acquireTempRectF()
+            newRect.set(target.left, target.top, target.left + newWidth, target.top + newHeight)
+            newRect.rotate(rotate, target.centerX(), target.centerY(), newRotateRect)
+
+            //
+            val result = PointF()
+            result.x = newRotateRect.centerX() - newRect.centerX()
+            result.y = newRotateRect.centerY() - newRect.centerY()
+            newRect.release()
+            newRotateRect.release()
+            return result
         }
     }
 

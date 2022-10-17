@@ -11,9 +11,14 @@ import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataTextItem
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.library.annotation.MM
+import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.bezier
 import com.angcyo.library.ex.computePathBounds
 import com.angcyo.library.ex.textBounds
+import com.angcyo.library.gesture.RectScaleGestureHandler
 
 /**
  * 文本数据解析器
@@ -25,29 +30,73 @@ class TextGraphicsParser : IGraphicsParser {
     override fun parse(bean: ItemDataBean): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_TEXT && !bean.text.isNullOrEmpty()) {
             val item = DataTextItem(bean)
-            item.updatePaint()
-
-            val drawText = bean.text!!
-            //createStaticLayout(drawText, paint)
-            val textWidth = item.calcTextWidth(drawText)
-            val textHeight = item.calcTextHeight(drawText)
-
-            val width = textWidth.toInt()
-            val height = textHeight.toInt()
-
-            item.drawable = wrapScalePictureDrawable(width, height) {
-                drawNormalText(this, item)
-                //drawPathText(this, item, textWidth, textHeight)
-            }
-
-            bean.width = textWidth.toMm()
-            bean.height = textHeight.toMm()
-
-            initDataMode(bean, item.textPaint)
-
+            updateText(item)
             return item
         }
         return super.parse(bean)
+    }
+
+    /**更新文本内容, 重新绘制信息*/
+    fun updateText(item: DataTextItem) {
+        val bean = item.dataBean
+        item.updatePaint()
+
+        val drawText = bean.text ?: ""
+        //createStaticLayout(drawText, paint)
+        val textWidth = item.calcTextWidth(drawText)
+        val textHeight = item.calcTextHeight(drawText)
+
+        @Pixel
+        val width = textWidth.toInt()
+
+        @Pixel
+        val height = textHeight.toInt()
+
+        item.drawable = wrapScalePictureDrawable(width, height) {
+            drawNormalText(this, item)
+            //drawPathText(this, item, textWidth, textHeight)
+        }
+
+        @MM
+        val newWidth = textWidth.toMm()
+        val newHeight = textHeight.toMm()
+
+        bean.width = newWidth
+        bean.height = newHeight
+
+        initDataMode(bean, item.textPaint)
+    }
+
+    /**更新旋转偏移, 通常在改变宽高/文本之后需要调用,
+     * 确保编辑后, 左上角锚点不变*/
+    fun updateRotateOffset(item: DataTextItem) {
+        val bean = item.dataBean
+        val drawText = bean.text ?: ""
+        //createStaticLayout(drawText, paint)
+        val textWidth = item.calcTextWidth(drawText)
+        val textHeight = item.calcTextHeight(drawText)
+
+        //当有旋转角度的情况下, 修改了文本的宽高, 则保持可视化时左上角坐标不变
+        @Pixel
+        val rect = acquireTempRectF()
+        rect.left = bean.left
+        rect.top = bean.top
+        rect.right = bean.left + bean.width
+        rect.bottom = bean.top + bean.height
+        bean.updateToRenderBounds(rect)
+
+        //计算偏移
+        val offsetPoint = RectScaleGestureHandler.calcRectUpdateOffset(
+            rect,
+            textWidth * bean.scaleX,
+            textHeight * bean.scaleX,
+            bean.angle
+        )
+        //核心
+        bean.left = bean.left + offsetPoint.x.toMm()
+        bean.top = bean.top + offsetPoint.y.toMm()
+
+        rect.release()
     }
 
     //
