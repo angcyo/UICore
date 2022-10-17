@@ -78,7 +78,7 @@ open class DataPathItem(bean: ItemDataBean) : DataItem(bean) {
     fun addDataPath(pathList: List<Path>): List<Path> {
         //需要缩放到的目标宽高
         val renderBounds = acquireTempRectF()
-        dataBean.setRenderBounds(renderBounds)
+        dataBean.updateToRenderBounds(renderBounds)
         val targetWidth = renderBounds.width()
         val targetHeight = renderBounds.height()
 

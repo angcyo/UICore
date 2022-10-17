@@ -49,25 +49,21 @@ fun CharSequence?.toTextItemData(): ItemDataBean? {
     return bean
 }
 
-/**添加一个[text]数据渲染*/
-fun CanvasDelegate.addTextRender(text: CharSequence?) =
-    GraphicsHelper.addRenderItemDataBean(this, text.toTextItemData())
-
-/**添加一个二维码数据渲染*/
-fun CanvasDelegate.addQRTextRender(text: CharSequence?): DataItemRenderer? {
+/**添加一个[text]数据渲染
+ *
+ * [CanvasConstant.DATA_TYPE_TEXT]
+ * [CanvasConstant.DATA_TYPE_BARCODE]
+ * [CanvasConstant.DATA_TYPE_QRCODE]
+ * */
+fun CanvasDelegate.addTextRender(
+    text: CharSequence?,
+    type: Int = CanvasConstant.DATA_TYPE_TEXT
+): DataItemRenderer? {
     text ?: return null
     val bean = ItemDataBean()
-    bean.mtype = CanvasConstant.DATA_TYPE_QRCODE
+    bean.mtype = type
     bean.text = "$text"
-    return GraphicsHelper.addRenderItemDataBean(this, bean)
-}
-
-/**添加一个条形码数据渲染*/
-fun CanvasDelegate.addBarTextRender(text: CharSequence?): DataItemRenderer? {
-    text ?: return null
-    val bean = ItemDataBean()
-    bean.mtype = CanvasConstant.DATA_TYPE_BARCODE
-    bean.text = "$text"
+    bean.paintStyle = Paint.Style.FILL.toPaintStyleInt()
     return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
 

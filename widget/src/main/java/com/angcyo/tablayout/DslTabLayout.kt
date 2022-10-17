@@ -42,6 +42,9 @@ open class DslTabLayout(
     /**item是否等宽*/
     var itemIsEquWidth = false
 
+    /**item是否支持选择, 只限制点击事件, 不限制滚动事件*/
+    var itemEnableSelector = true
+
     /**当子Item数量大于等于指定数量时,开启等宽,此属性优先级最高, 负数不开启*/
     var itemEquWidthCount = -1
 
@@ -1440,29 +1443,48 @@ open class DslTabLayout(
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        var intercept = false
         if (needScroll) {
             if (ev.actionMasked == MotionEvent.ACTION_DOWN) {
                 _overScroller.abortAnimation()
                 _scrollAnimator.cancel()
             }
-            return super.onInterceptTouchEvent(ev) || _gestureDetector.onTouchEvent(ev)
+            if (isEnabled) {
+                intercept = super.onInterceptTouchEvent(ev) || _gestureDetector.onTouchEvent(ev)
+            }
+        } else {
+            if (isEnabled) {
+                intercept = super.onInterceptTouchEvent(ev)
+            }
         }
-        return super.onInterceptTouchEvent(ev)
+        return if (isEnabled) {
+            if (itemEnableSelector) {
+                intercept
+            } else {
+                true
+            }
+        } else {
+            false
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (needScroll) {
-            _gestureDetector.onTouchEvent(event)
-            if (event.actionMasked == MotionEvent.ACTION_CANCEL ||
-                event.actionMasked == MotionEvent.ACTION_UP
-            ) {
-                parent.requestDisallowInterceptTouchEvent(false)
-            } else if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-                _overScroller.abortAnimation()
+        if (isEnabled) {
+            if (needScroll) {
+                _gestureDetector.onTouchEvent(event)
+                if (event.actionMasked == MotionEvent.ACTION_CANCEL ||
+                    event.actionMasked == MotionEvent.ACTION_UP
+                ) {
+                    parent.requestDisallowInterceptTouchEvent(false)
+                } else if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                    _overScroller.abortAnimation()
+                }
+                return true
+            } else {
+                return (isEnabled && super.onTouchEvent(event))
             }
-            return true
         } else {
-            return super.onTouchEvent(event)
+            return false
         }
     }
 

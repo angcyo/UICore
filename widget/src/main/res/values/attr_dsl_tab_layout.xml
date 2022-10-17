@@ -202,6 +202,7 @@
         <attr name="tab_border_item_background_width_offset" format="dimension" />
         <attr name="tab_border_keep_item_radius" format="boolean" />
         <attr name="tab_border_item_background_solid_color" format="color" />
+        <attr name="tab_border_item_background_solid_disable_color" format="color" />
         <attr name="tab_border_item_background_gradient_start_color" format="color" />
         <attr name="tab_border_item_background_gradient_end_color" format="color" />
         <!--end...-->

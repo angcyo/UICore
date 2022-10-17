@@ -280,7 +280,7 @@ data class ItemDataBean(
     }
 
     /**设置渲染的位置*/
-    fun setRenderBounds(@Pixel bounds: RectF): RectF {
+    fun updateToRenderBounds(@Pixel bounds: RectF): RectF {
         val l = mmUnit.convertValueToPixel(left)
         val t = mmUnit.convertValueToPixel(top)
         val w = mmUnit.convertValueToPixel(width)

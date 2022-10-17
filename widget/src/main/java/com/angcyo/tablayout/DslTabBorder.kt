@@ -39,6 +39,11 @@ open class DslTabBorder : DslGradientDrawable() {
     /**强制指定选中item的背景颜色*/
     var borderItemBackgroundSolidColor: Int? = null
 
+    /**当item不可选中时的背景绘制颜色
+     * [com.angcyo.tablayout.DslTabLayout.itemEnableSelector]
+     * [borderItemBackgroundSolidColor]*/
+    var borderItemBackgroundSolidDisableColor: Int? = null
+
     /**强制指定选中item的背景渐变颜色*/
     var borderItemBackgroundGradientColors: IntArray? = null
 
@@ -89,6 +94,12 @@ open class DslTabBorder : DslGradientDrawable() {
             borderItemBackgroundSolidColor = typedArray.getColor(
                 R.styleable.DslTabLayout_tab_border_item_background_solid_color,
                 gradientStrokeColor
+            )
+        }
+        if (typedArray.hasValue(R.styleable.DslTabLayout_tab_border_item_background_solid_disable_color)) {
+            borderItemBackgroundSolidColor = typedArray.getColor(
+                R.styleable.DslTabLayout_tab_border_item_background_solid_disable_color,
+                borderItemBackgroundSolidColor ?: gradientStrokeColor
             )
         }
 
@@ -173,6 +184,12 @@ open class DslTabBorder : DslGradientDrawable() {
 
                 gradientSolidColor =
                     borderItemBackgroundSolidColor ?: this@DslTabBorder.gradientStrokeColor
+                if (!tabLayout.itemEnableSelector) {
+                    if (borderItemBackgroundSolidDisableColor != null) {
+                        gradientSolidColor = borderItemBackgroundSolidDisableColor!!
+                    }
+                }
+
                 gradientColors = borderItemBackgroundGradientColors
 
                 if ((isFirst && isLast) || borderKeepItemRadius) {
