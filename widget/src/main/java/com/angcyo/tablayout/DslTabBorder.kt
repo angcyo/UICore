@@ -97,7 +97,7 @@ open class DslTabBorder : DslGradientDrawable() {
             )
         }
         if (typedArray.hasValue(R.styleable.DslTabLayout_tab_border_item_background_solid_disable_color)) {
-            borderItemBackgroundSolidColor = typedArray.getColor(
+            borderItemBackgroundSolidDisableColor = typedArray.getColor(
                 R.styleable.DslTabLayout_tab_border_item_background_solid_disable_color,
                 borderItemBackgroundSolidColor ?: gradientStrokeColor
             )
