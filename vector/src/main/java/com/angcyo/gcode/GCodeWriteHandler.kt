@@ -29,6 +29,12 @@ class GCodeWriteHandler : VectorWriteHandler() {
         if (isAutoCnc) {
             writer?.appendLine("M04 S255")
         }
+    }
+
+    override fun onFirstPoint(x: Float, y: Float) {
+        if (!isAutoCnc) {
+            closeCnc()
+        }
         writer?.appendLine("G0 X${x} Y${y}")
     }
 
@@ -55,7 +61,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
             if (isAutoCnc) {
                 //no op
             } else {
-                writer?.appendLine("S0 M5")//S电压控制 M5关闭主轴
+                writer?.appendLine("M05 S0")//S电压控制 M5关闭主轴
             }
             isClosedCnc = true
         }

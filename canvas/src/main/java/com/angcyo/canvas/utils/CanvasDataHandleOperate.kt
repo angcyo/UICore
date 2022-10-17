@@ -5,6 +5,7 @@ import android.view.Gravity
 import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
 import com.angcyo.gcode.GCodeAdjust
 import com.angcyo.gcode.GCodeWriteHandler
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.fileNameTime
 import com.angcyo.library.utils.filePath
@@ -63,7 +64,7 @@ object CanvasDataHandleOperate {
         gCodeHandler.isAutoCnc = autoCnc
         outputFile.writer().use { writer ->
             gCodeHandler.writer = writer
-            gCodeHandler.gapValue = 0f
+            gCodeHandler.gapValue = VectorWriteHandler.PATH_SPACE_GAP_MIN
             gCodeHandler.pathStrokeToVector(
                 newPathList,
                 writeFirst,
@@ -95,7 +96,7 @@ object CanvasDataHandleOperate {
         gCodeHandler.isAutoCnc = autoCnc
         outputFile.writer().use { writer ->
             gCodeHandler.writer = writer
-            gCodeHandler.gapValue = 0f
+            gCodeHandler.gapValue = VectorWriteHandler.PATH_SPACE_GAP_MIN
             gCodeHandler.pathFillToVector(
                 newPathList,
                 writeFirst,
@@ -156,14 +157,20 @@ object CanvasDataHandleOperate {
     fun bitmapToGCode(
         bitmap: Bitmap,
         gravity: Int? = null,
-        gapValue: Float = VectorWriteHandler.PATH_SPACE_GAP,
+        @Pixel
+        gapValue: Float = 1.4f,//这里的gap用像素单位, 内部会转成mm单位
         threshold: Int = 255, //255白色不输出GCode
         outputFile: File = _defaultGCodeOutputFile(),
         isFirst: Boolean = true,
         isFinish: Boolean = true,
-    ): File {
+        autoCnc: Boolean = false,
+        ): File {
         val gCodeWriteHandler = GCodeWriteHandler()
-        gCodeWriteHandler.gapValue = gapValue
+        //像素单位转成mm单位
+        val mmValueUnit = mmUnit
+        gCodeWriteHandler.unit = mmValueUnit
+        gCodeWriteHandler.isAutoCnc = autoCnc
+        gCodeWriteHandler.gapValue = mmValueUnit.convertPixelToValue(gapValue)
 
         val width = bitmap.width
         val height = bitmap.height
@@ -176,11 +183,7 @@ object CanvasDataHandleOperate {
             Gravity.TOP
         }
 
-        //像素单位转成mm单位
-        val mmValueUnit = mmUnit
-        gCodeWriteHandler.unit = mmValueUnit
-
-        val lineStep = 1
+        val lineStep = 1 //像素点
 
         //反向读取数据, Z形方式
         var isReverseDirection = false
@@ -343,7 +346,7 @@ object CanvasDataHandleOperate {
         //svgWriteHandler.unit = mmUnit
         outputFile.writer().use { writer ->
             svgWriteHandler.writer = writer
-            svgWriteHandler.gapValue = 0f
+            svgWriteHandler.gapValue = VectorWriteHandler.PATH_SPACE_GAP_MIN
             svgWriteHandler.pathStrokeToVector(
                 newPathList,
                 writeFirst,
@@ -373,7 +376,7 @@ object CanvasDataHandleOperate {
         //svgWriteHandler.unit = mmUnit
         outputFile.writer().use { writer ->
             svgWriteHandler.writer = writer
-            svgWriteHandler.gapValue = 0f
+            svgWriteHandler.gapValue = VectorWriteHandler.PATH_SPACE_GAP_MIN
             svgWriteHandler.pathFillToVector(
                 newPathList,
                 writeFirst,

@@ -39,6 +39,9 @@ abstract class VectorWriteHandler {
          * */
         const val PATH_SPACE_GAP = 0.15f
 
+        /**不推荐直接关闭GAP, 因为浮点运算会有一定的误差*/
+        const val PATH_SPACE_GAP_MIN = 0.000_001f
+
         /**Path的采样率,采样率越高, 间隙越小, 越清晰*/
         const val PATH_SPACE_1K = 0.1f
         const val PATH_SPACE_2K = 0.05f
