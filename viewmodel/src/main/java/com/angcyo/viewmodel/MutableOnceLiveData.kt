@@ -1,7 +1,9 @@
 package com.angcyo.viewmodel
 
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import com.angcyo.lifecycle.onStateChanged
 
 /**
  * 用来做数据通知, 不做数据存储
@@ -33,9 +35,16 @@ class MutableOnceLiveData<T>(value: T? = null) : MutableErrorLiveData<T>(value) 
 
     override fun observe(owner: LifecycleOwner, observer: Observer<in T?>) {
         super.observe(owner, observer)
-        if (value != null && hasActiveObservers()) {
-            //清空数据
-            postValue(null)
+        owner.lifecycle.onStateChanged { _, event, _ ->
+            if (event >= Lifecycle.Event.ON_RESUME) {
+                if (value != null && hasActiveObservers()) {
+                    //清空数据
+                    postValue(null)
+                }
+                true
+            } else {
+                false
+            }
         }
     }
 

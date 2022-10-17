@@ -24,28 +24,35 @@ fun Lifecycle.on(
     action: () -> Boolean
 ): LifecycleEventObserver {
     return onStateChanged(forever) { source, en, observer ->
+        var remove = false
         if (en == event || event == Lifecycle.Event.ON_ANY) {
-            if (action()) {
+            remove = action()
+            if (remove) {
                 removeObserver(observer)
             }
         }
+        remove
     }
 }
 
-fun Lifecycle.onDestroy(forever: Boolean = false, action: () -> Boolean) =
-    on(Lifecycle.Event.ON_DESTROY, forever, action)
+/**监听生命周期回调, 并且支持自动移除*/
+fun Lifecycle.onCreate(forever: Boolean = false, action: () -> Boolean) =
+    on(Lifecycle.Event.ON_CREATE, forever, action)
+
+fun Lifecycle.onStart(forever: Boolean = false, action: () -> Boolean) =
+    on(Lifecycle.Event.ON_START, forever, action)
+
+fun Lifecycle.onResume(forever: Boolean = false, action: () -> Boolean) =
+    on(Lifecycle.Event.ON_RESUME, forever, action)
 
 fun Lifecycle.onPause(forever: Boolean = false, action: () -> Boolean) =
     on(Lifecycle.Event.ON_PAUSE, forever, action)
 
-fun Lifecycle.onCreate(forever: Boolean = false, action: () -> Boolean) =
-    on(Lifecycle.Event.ON_CREATE, forever, action)
-
 fun Lifecycle.onStop(forever: Boolean = false, action: () -> Boolean) =
     on(Lifecycle.Event.ON_STOP, forever, action)
 
-fun Lifecycle.onStart(forever: Boolean = false, action: () -> Boolean) =
-    on(Lifecycle.Event.ON_START, forever, action)
+fun Lifecycle.onDestroy(forever: Boolean = false, action: () -> Boolean) =
+    on(Lifecycle.Event.ON_DESTROY, forever, action)
 
 fun Lifecycle.onAny(forever: Boolean = false, action: () -> Boolean) =
     on(Lifecycle.Event.ON_ANY, forever, action)
@@ -53,12 +60,12 @@ fun Lifecycle.onAny(forever: Boolean = false, action: () -> Boolean) =
 /**监听生命周期改变*/
 fun Lifecycle.onStateChanged(
     forever: Boolean = false,
-    action: (source: LifecycleOwner, event: Lifecycle.Event, observer: LifecycleObserver) -> Unit
+    action: (source: LifecycleOwner, event: Lifecycle.Event, observer: LifecycleObserver) -> Boolean
 ): LifecycleEventObserver {
     val observer = object : LifecycleEventObserver {
         override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-            action(source, event, this)
-            if (!forever && event == Lifecycle.Event.ON_DESTROY) {
+            var remove = action(source, event, this)
+            if (remove && !forever && event == Lifecycle.Event.ON_DESTROY) {
                 //销毁之后, 自动移除
                 removeObserver(this)
             }
