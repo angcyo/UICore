@@ -1,7 +1,9 @@
 package com.angcyo.library.utils
 
+import android.Manifest
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.Environment
 import com.angcyo.library.*
 import com.angcyo.library.ex.file
 import com.angcyo.library.utils.FileUtils.writeExternal
@@ -240,4 +242,21 @@ fun String.logFilePath(name: String = logFileName()): String {
  * */
 fun appFolderPath(folder: String = "", context: Context = app()): String {
     return FileUtils.appRootExternalFolder(folder, context).absolutePath
+}
+
+/**
+ * SD卡路径,
+ * /storage/emulated/0
+ * /storage/emulated/0/test
+ * [Environment.getExternalStorageState]
+ * [Environment.MEDIA_MOUNTED]
+ *
+ * [Manifest.permission.WRITE_EXTERNAL_STORAGE]
+ * */
+fun sdFolderPath(folder: String = "", mk: Boolean = true): String {
+    val folderFile = File(Environment.getExternalStorageDirectory().absolutePath, folder)
+    if (mk) {
+        folderFile.mkdirs()
+    }
+    return folderFile.absolutePath
 }

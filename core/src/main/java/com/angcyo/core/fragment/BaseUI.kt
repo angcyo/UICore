@@ -70,7 +70,6 @@ open class FragmentUI {
         fragmentConfig: FragmentConfig,
         savedInstanceState: Bundle?
     ) {
-
     }
 
     open fun onFragmentCreateAfter(

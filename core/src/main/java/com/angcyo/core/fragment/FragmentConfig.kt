@@ -21,6 +21,9 @@ import com.angcyo.library.ex.getDimen
  */
 data class FragmentConfig(
 
+    /**是否使用白色标题栏*/
+    var isLightStyle: Boolean = false,
+
     /**拦截RootView的事件, 防止事件穿透到底下的Fragment
      * [com.angcyo.core.fragment.BaseTitleFragment.onInitFragment]*/
     var interceptRootTouchEvent: Boolean = true,

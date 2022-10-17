@@ -130,6 +130,9 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         fragmentUI?.fragmentCreateBefore?.invoke(this, fragmentConfig, savedInstanceState)
+        if (fragmentConfig.isLightStyle) {
+            fragmentConfig.lightStyle()
+        }
         super.onCreate(savedInstanceState)
         fragmentUI?.fragmentCreateAfter?.invoke(this, fragmentConfig, savedInstanceState)
     }

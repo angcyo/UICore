@@ -252,7 +252,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     var onCancelListener: ((dialog: Dialog) -> Unit)? = null
 
     open fun neutralButton(
-        text: CharSequence? = neutralButtonText,
+        text: CharSequence? = neutralButtonText ?: _string(R.string.dialog_neutral),
         listener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit
     ) {
         neutralButtonText = text
@@ -260,7 +260,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     }
 
     open fun negativeButton(
-        text: CharSequence? = negativeButtonText,
+        text: CharSequence? = negativeButtonText ?: _string(R.string.dialog_negative),
         listener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit
     ) {
         negativeButtonText = text
@@ -268,7 +268,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     }
 
     open fun positiveButton(
-        text: CharSequence? = positiveButtonText,
+        text: CharSequence? = positiveButtonText ?: _string(R.string.dialog_positive),
         listener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit
     ) {
         positiveButtonText = text

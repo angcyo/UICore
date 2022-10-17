@@ -10,6 +10,7 @@ import com.angcyo.library.model.Page
 import com.angcyo.library.model.singlePage
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.reflect.KClass
 
 /**
  *数据更新Dsl配置项
@@ -340,6 +341,17 @@ fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEnd(
     loadDataEndIndex(itemClass, dataList, error, page) { data, _ ->
         initItem(data)
     }
+}
+
+@UpdateByDiff
+fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEndIndex(
+    itemClass: KClass<Item>,
+    dataList: List<Bean>?,
+    error: Throwable?,
+    page: Page,
+    initItem: Item.(data: Bean, index: Int) -> Unit = { _, _ -> }
+) {
+    loadDataEndIndex(itemClass.java, dataList, error, page, initItem)
 }
 
 @UpdateByDiff

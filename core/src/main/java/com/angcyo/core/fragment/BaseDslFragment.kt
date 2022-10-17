@@ -14,6 +14,7 @@ import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.library.L
 import com.angcyo.library.model.Page
 import com.angcyo.widget.recycler.noItemChangeAnim
+import kotlin.reflect.KClass
 
 /**
  *
@@ -36,6 +37,7 @@ open class BaseDslFragment : BaseTitleFragment() {
             L.e("注意:访问目标[_adapter]不存在!")
         }
 
+    /**[initBaseView]*/
     override fun onInitFragment(savedInstanceState: Bundle?) {
         super.onInitFragment(savedInstanceState)
 
@@ -59,7 +61,8 @@ open class BaseDslFragment : BaseTitleFragment() {
         }
     }
 
-    /**初始化布局*/
+    /**初始化布局
+     * [onInitFragment]*/
     open fun onInitDslLayout(recyclerView: RecyclerView, dslAdapter: DslAdapter) {
         recyclerView.noItemChangeAnim()
         baseDslItemDecoration?.attachToRecyclerView(recyclerView)
@@ -153,6 +156,15 @@ open class BaseDslFragment : BaseTitleFragment() {
         }
     }
 
+    fun <Item : DslAdapterItem, Bean> loadDataEnd(
+        itemClass: KClass<Item>,
+        dataList: List<Bean>?,
+        error: Throwable? = null,
+        initItem: Item.(data: Bean) -> Unit = {}
+    ) {
+        loadDataEnd(itemClass.java, dataList, error, initItem)
+    }
+
     fun <Item : DslAdapterItem, Bean> loadDataEndIndex(
         itemClass: Class<Item>,
         dataList: List<Bean>?,
@@ -163,6 +175,15 @@ open class BaseDslFragment : BaseTitleFragment() {
         _adapter.loadDataEndIndex(itemClass, dataList, error, page) { data, index ->
             initItem(data, index)
         }
+    }
+
+    fun <Item : DslAdapterItem, Bean> loadDataEndIndex(
+        itemClass: KClass<Item>,
+        dataList: List<Bean>?,
+        error: Throwable? = null,
+        initItem: Item.(data: Bean, index: Int) -> Unit = { _, _ -> }
+    ) {
+        loadDataEndIndex(itemClass.java, dataList, error, initItem)
     }
 
     /**简单的加载多类型的item*/

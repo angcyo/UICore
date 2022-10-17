@@ -37,8 +37,10 @@ class DslCrop {
 
     /**在tab 剪切中, 允许的手势*/
     var tabRatioGestures: Int = UCropActivity.SCALE
+
     /**在tab 旋转中, 允许的手势*/
     var tabRotateGestures: Int = UCropActivity.ALL
+
     /**在tab 缩放中, 允许的手势*/
     var tabScaleGestures: Int = UCropActivity.SCALE
 
@@ -56,7 +58,7 @@ class DslCrop {
     var onResult: (resultCode: Int, cropUri: Uri, data: Intent?) -> Unit = { _, _, _ -> }
 
     fun doIt(fragment: Fragment) {
-        doIt(fragment.context!!, fragment.parentFragmentManager)
+        doIt(fragment.requireContext(), fragment.parentFragmentManager)
     }
 
     fun doIt(context: Context, fragmentManager: FragmentManager) {

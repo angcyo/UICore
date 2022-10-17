@@ -189,10 +189,10 @@ object FontManager {
             }
 
             //旧版本字体目录
-            val oldFontFolder = File(app().getExternalFilesDir("laserpecker"), "font")
+            /*val oldFontFolder = File(app().getExternalFilesDir("laserpecker"), "font")
             oldFontFolder.eachFile { file ->
                 _addFont(_customFontList, file)?.isCustom = true
-            }
+            }*/
         }
         return _customFontList
     }
