@@ -51,7 +51,7 @@ open class ILayer {
      * [com.angcyo.ilayer.ILayer.onInitLayer]
      * [com.angcyo.ilayer.ILayer.update]
      * */
-    var renderLayer: (DslViewHolder.() -> Unit)? = null
+    var renderLayer: (DslViewHolder.(payloads: List<Any>?) -> Unit)? = null
 
     /**[ILayer]当前是否追加到了容器[IContainer]*/
     val isLayerAttach: Boolean
@@ -102,7 +102,7 @@ open class ILayer {
     /**生命周期2*/
     open fun onInitLayer(viewHolder: DslViewHolder, params: LayerParams) {
         L.d(this.simpleHash())
-        renderLayer?.invoke(viewHolder)
+        renderLayer?.invoke(viewHolder, null)
     }
 
     /**生命周期3
@@ -131,9 +131,9 @@ open class ILayer {
     }
 
     /**更新[ILayer], 如果已经添加*/
-    fun update() {
+    fun update(payloads: List<Any>? = null) {
         _rootView?.apply {
-            renderLayer?.invoke(dslViewHolder())
+            renderLayer?.invoke(dslViewHolder(), payloads)
         }
     }
 
