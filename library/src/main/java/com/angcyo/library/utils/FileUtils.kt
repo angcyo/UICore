@@ -2,10 +2,15 @@ package com.angcyo.library.utils
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Build
 import android.os.Environment
+import android.provider.Settings
 import com.angcyo.library.*
 import com.angcyo.library.ex.file
+import com.angcyo.library.ex.havePermission
 import com.angcyo.library.utils.FileUtils.writeExternal
 import java.io.File
 import java.text.DateFormat
@@ -244,6 +249,25 @@ fun appFolderPath(folder: String = "", context: Context = app()): String {
     return FileUtils.appRootExternalFolder(folder, context).absolutePath
 }
 
+//region ---SD卡---
+
+/**SD卡的权限
+ * android 11+ 使用 [android.os.Environment.isExternalStorageManager] 判断权限
+ * */
+fun sdCardPermission() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+    listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE)
+} else {
+    listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+}
+
+/**判断是否有sd卡的写入权限*/
+fun haveSdCardPermission(context: Context = app()) =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        Environment.isExternalStorageManager()
+    } else {
+        context.havePermission(sdCardPermission())
+    }
+
 /**
  * SD卡路径,
  * /storage/emulated/0
@@ -252,6 +276,8 @@ fun appFolderPath(folder: String = "", context: Context = app()): String {
  * [Environment.MEDIA_MOUNTED]
  *
  * [Manifest.permission.WRITE_EXTERNAL_STORAGE]
+ *
+ * [Environment.getExternalStorageDirectory]
  * */
 fun sdFolderPath(folder: String = "", mk: Boolean = true): String {
     val folderFile = File(Environment.getExternalStorageDirectory().absolutePath, folder)
@@ -260,3 +286,5 @@ fun sdFolderPath(folder: String = "", mk: Boolean = true): String {
     }
     return folderFile.absolutePath
 }
+
+//endregion ---SD卡---

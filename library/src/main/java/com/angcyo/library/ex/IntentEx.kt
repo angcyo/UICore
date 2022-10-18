@@ -145,6 +145,25 @@ fun Intent.fillFrom(other: Intent?, flag: Int = 255): Intent {
     return this
 }
 
+/**跳转应用设置页面*/
+fun Context.toApplicationSettings(packageName: String = getPackageName()) {
+    try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val intent = Intent()
+            intent.action = Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
+            val uri: Uri = Uri.fromParts("package", this.packageName, null)
+            intent.data = uri
+            startActivity(intent)
+        } else {
+            val intent = Intent(Settings.ACTION_APPLICATION_SETTINGS)
+            intent.data = Uri.parse("package:$packageName")
+            startActivity(intent)
+        }
+    } catch (e: Throwable) {
+        e.printStackTrace()
+    }
+}
+
 /**跳转应用详情页面*/
 fun Context.toApplicationDetailsSettings(packageName: String = getPackageName()) {
     try {

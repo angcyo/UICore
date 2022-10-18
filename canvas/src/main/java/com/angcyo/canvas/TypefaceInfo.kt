@@ -18,4 +18,19 @@ data class TypefaceInfo(
     var isRepeat: Boolean = false,
     /**是否是自定义的字体, 自定义的字体支持删除操作*/
     var isCustom: Boolean = false,
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as TypefaceInfo
+
+        if (name != other.name) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
+}

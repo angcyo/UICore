@@ -2,8 +2,11 @@ package com.angcyo.base
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import android.view.View
 import android.view.Window
 import android.view.WindowInsetsController
@@ -13,12 +16,12 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
 import com.angcyo.DslAHelper
 import com.angcyo.activity.BaseAppCompatActivity
-import com.angcyo.fragment.AbsLifecycleFragment
-import com.angcyo.fragment.FragmentBridge
-import com.angcyo.fragment.R
+import com.angcyo.fragment.*
 import com.angcyo.layout.FragmentSwipeBackLayout
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.havePermissions
+import com.angcyo.library.utils.haveSdCardPermission
+import com.angcyo.library.utils.sdCardPermission
 
 /**
  *
@@ -330,6 +333,29 @@ fun FragmentActivity.checkAndRequestPermission(
             startRequestPermissions(permissions) { permissions, grantResults ->
                 onPermissionGranted(havePermissions(*permissions))
             }
+        }
+    }
+}
+
+/**请求SD卡权限*/
+fun Context.requestSdCardPermission(result: (granted: Boolean) -> Unit) {
+    if (haveSdCardPermission(this)) {
+        result(true)
+        return
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        val uri = Uri.parse("package:${packageName}")
+        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
+        if (this is FragmentActivity) {
+            requestActivityResult(supportFragmentManager, intent) { resultCode, data ->
+                result(haveSdCardPermission(this))
+            }
+        } else {
+            startActivity(intent)
+        }
+    } else {
+        requestPermissions(sdCardPermission()) {
+            result(it)
         }
     }
 }

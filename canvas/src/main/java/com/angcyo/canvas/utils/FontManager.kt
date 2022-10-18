@@ -3,7 +3,7 @@ package com.angcyo.canvas.utils
 import android.graphics.Typeface
 import android.net.Uri
 import com.angcyo.canvas.TypefaceInfo
-import com.angcyo.library.app
+import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.filePath
 import com.angcyo.library.utils.folderPath
@@ -18,6 +18,9 @@ object FontManager {
 
     /**默认的字体文件夹名称*/
     const val DEFAULT_FONT_FOLDER_NAME = "fonts"
+
+    /**自定义字体的其他文件夹路径*/
+    val customFontFolderList = mutableListOf<String>()
 
     //
 
@@ -46,8 +49,12 @@ object FontManager {
             if (file.name.isFontType()) {
                 val typeface = Typeface.createFromFile(file)
                 val typefaceInfo = TypefaceInfo(file.name.noExtName(), typeface, file.absolutePath)
-                list.add(typefaceInfo)
-                typefaceInfo
+                if (!list.contains(typefaceInfo)) {
+                    list.add(typefaceInfo)
+                    typefaceInfo
+                } else {
+                    null
+                }
             } else {
                 null
             }
@@ -184,17 +191,34 @@ object FontManager {
             val fontFolder = folderPath(DEFAULT_FONT_FOLDER_NAME)
 
             //自定义的字体
-            fontFolder.file().eachFile { file ->
-                _addFont(_customFontList, file)?.isCustom = true
+            loadCustomFont(fontFolder)
+            customFontFolderList.forEach {
+                loadCustomFont(it)
             }
-
-            //旧版本字体目录
-            /*val oldFontFolder = File(app().getExternalFilesDir("laserpecker"), "font")
-            oldFontFolder.eachFile { file ->
-                _addFont(_customFontList, file)?.isCustom = true
-            }*/
         }
         return _customFontList
+    }
+
+    /**备份内部字体到指定目录
+     * [targetFolder] 目标文件夹*/
+    fun backupFontTo(targetFolder: String) {
+        for (typeInfo in _customFontList) {
+            typeInfo.filePath?.let { path ->
+                if (path.startsWith(targetFolder)) {
+                    L.w("忽略备份文件:${path}")
+                } else {
+                    val targetFile = File(targetFolder, path.fileName()!!)
+                    //val mk = targetFile.parentFile?.mkdirs()
+                    path.copyFileTo(targetFile, true)
+                }
+            }
+        }
+    }
+
+    fun loadCustomFont(folder: String) {
+        folder.file().eachFile { file ->
+            _addFont(_customFontList, file)?.isCustom = true
+        }
     }
 
     /**删除自定义的字体, 从硬盘上删除*/
