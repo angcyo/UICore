@@ -15,7 +15,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
     /**是否关闭了CNC, 如果关闭了CNC所有G操作都变成G0操作*/
     var isClosedCnc = false
 
-    override fun onPathStart(x: Float, y: Float) {
+    override fun onPathStart() {
         //[G20]英寸单位 [G21]毫米单位
         //[G90]绝对位置 [G91]相对位置
         writer?.appendLine("G90")
@@ -31,13 +31,6 @@ class GCodeWriteHandler : VectorWriteHandler() {
         }
     }
 
-    override fun onFirstPoint(x: Float, y: Float) {
-        if (!isAutoCnc) {
-            closeCnc()
-        }
-        writer?.appendLine("G0 X${x} Y${y}")
-    }
-
     override fun onPathEnd() {
         super.onPathEnd()
         closeCnc()
@@ -45,6 +38,13 @@ class GCodeWriteHandler : VectorWriteHandler() {
             writer?.appendLine("S0 M5")
         }
         writer?.append("G0 X0 Y0")
+    }
+
+    override fun onNewPoint(x: Float, y: Float) {
+        if (!isAutoCnc) {
+            closeCnc()
+        }
+        writer?.appendLine("G0 X${x} Y${y}")
     }
 
     override fun onLineToPoint(x: Float, y: Float) {

@@ -10,7 +10,6 @@ import com.angcyo.library.ex.*
 import com.angcyo.library.utils.fileNameTime
 import com.angcyo.library.utils.filePath
 import com.angcyo.svg.SvgWriteHandler
-import com.angcyo.vector.VectorWriteHandler
 import java.io.File
 import kotlin.math.max
 
@@ -64,7 +63,6 @@ object CanvasDataHandleOperate {
         gCodeHandler.isAutoCnc = autoCnc
         outputFile.writer().use { writer ->
             gCodeHandler.writer = writer
-            gCodeHandler.gapValue = VectorWriteHandler.PATH_SPACE_GAP_MIN
             gCodeHandler.pathStrokeToVector(
                 newPathList,
                 writeFirst,
@@ -96,7 +94,6 @@ object CanvasDataHandleOperate {
         gCodeHandler.isAutoCnc = autoCnc
         outputFile.writer().use { writer ->
             gCodeHandler.writer = writer
-            gCodeHandler.gapValue = VectorWriteHandler.PATH_SPACE_GAP_MIN
             gCodeHandler.pathFillToVector(
                 newPathList,
                 writeFirst,
@@ -164,13 +161,14 @@ object CanvasDataHandleOperate {
         isFirst: Boolean = true,
         isFinish: Boolean = true,
         autoCnc: Boolean = false,
-        ): File {
+    ): File {
         val gCodeWriteHandler = GCodeWriteHandler()
         //像素单位转成mm单位
         val mmValueUnit = mmUnit
         gCodeWriteHandler.unit = mmValueUnit
         gCodeWriteHandler.isAutoCnc = autoCnc
         gCodeWriteHandler.gapValue = mmValueUnit.convertPixelToValue(gapValue)
+        gCodeWriteHandler.gapMaxValue = gCodeWriteHandler.gapValue * 2
 
         val width = bitmap.width
         val height = bitmap.height
@@ -197,7 +195,7 @@ object CanvasDataHandleOperate {
             var lastLineRef = 0
 
             if (isFirst) {
-                gCodeWriteHandler.onPathStart(0f, 0f)
+                gCodeWriteHandler.onPathStart()
             }
 
             if (scanGravity == Gravity.LEFT || scanGravity == Gravity.RIGHT) {
@@ -236,7 +234,7 @@ object CanvasDataHandleOperate {
                             lastGCodeLineRef = lastLineRef //有数据的列
                         }
                     }
-                    gCodeWriteHandler.checkLastPoint()
+                    gCodeWriteHandler.clearLastPoint()
 
                     //rtl
                     if (lastGCodeLineRef == lastLineRef) {
@@ -293,7 +291,7 @@ object CanvasDataHandleOperate {
                             lastGCodeLineRef = lastLineRef //有数据的行
                         }
                     }
-                    gCodeWriteHandler.checkLastPoint()
+                    gCodeWriteHandler.clearLastPoint()
 
                     //rtl
                     if (lastGCodeLineRef == lastLineRef) {
@@ -346,7 +344,8 @@ object CanvasDataHandleOperate {
         //svgWriteHandler.unit = mmUnit
         outputFile.writer().use { writer ->
             svgWriteHandler.writer = writer
-            svgWriteHandler.gapValue = VectorWriteHandler.PATH_SPACE_GAP_MIN
+            svgWriteHandler.gapValue = 1f
+            svgWriteHandler.gapMaxValue = 1f
             svgWriteHandler.pathStrokeToVector(
                 newPathList,
                 writeFirst,
@@ -376,7 +375,8 @@ object CanvasDataHandleOperate {
         //svgWriteHandler.unit = mmUnit
         outputFile.writer().use { writer ->
             svgWriteHandler.writer = writer
-            svgWriteHandler.gapValue = VectorWriteHandler.PATH_SPACE_GAP_MIN
+            svgWriteHandler.gapValue = 1f
+            svgWriteHandler.gapMaxValue = 1f
             svgWriteHandler.pathFillToVector(
                 newPathList,
                 writeFirst,

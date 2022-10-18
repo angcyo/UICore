@@ -4,6 +4,7 @@ import android.graphics.Path
 import android.os.Debug
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Flag
+import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Private
 import com.angcyo.library.component.pool.acquireTempPath
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -37,10 +38,12 @@ abstract class VectorWriteHandler {
          * 0.5mm.
          * 1K:0.1 2K:0.05 4K:0.025f
          * */
+        @MM
         const val PATH_SPACE_GAP = 0.15f
 
         /**不推荐直接关闭GAP, 因为浮点运算会有一定的误差*/
-        const val PATH_SPACE_GAP_MIN = 0.000_001f
+        @MM
+        const val PATH_SPACE_GAP_MIN = 0.01f
 
         /**Path的采样率,采样率越高, 间隙越小, 越清晰*/
         const val PATH_SPACE_1K = 0.1f
@@ -53,17 +56,20 @@ abstract class VectorWriteHandler {
         /**路径填充类型, 圆形扫描*/
         const val PATH_FILL_TYPE_CIRCLE = 2
 
-        /**距离上一个点, 改变了, 则使用G0*/
-        @Flag("数值改变类型")
-        private const val VALUE_CHANGED = 1 //改变了
+        //---
 
-        /**和上一个点一致, 忽略*/
-        @Flag("数值改变类型")
-        private const val VALUE_SAME = 2 //一致
+        /**是一个重新开始的, 那么之前的数据需要G1先连接, 然后G0到新的点*/
+        @Flag("点位类型")
+        private const val POINT_TYPE_NEW = 1
 
-        /**和上一个点在gap范围内, 则使用G1*/
-        @Flag("数值改变类型")
-        private const val VALUE_SAME_GAP = 3 //在GAP范围内, 一致
+        /**当前的点和上个点是一样的, 则抹除上一次的最后点信息*/
+        @Flag("点位类型")
+        private const val POINT_TYPE_SAME = 2
+
+        /**当和上一个点不一样, 但是又在可允许的范围内时, 则把之前的数据G1连起来,
+         * 并且替换最后一个点为第一个点,而不是擦除所有点位信息*/
+        @Flag("点位类型")
+        private const val POINT_TYPE_GAP = 3
     }
 
     //---
@@ -81,6 +87,16 @@ abstract class VectorWriteHandler {
      * */
     var gapValue: Float = PATH_SPACE_GAP
 
+    /**当距离上一个点距离大于这个值时,
+     * 则连接之前的最后一个点,并且抹除点位信息.
+     *
+     * 类似于2点之间的间隙
+     * */
+    var gapMaxValue: Float = PATH_SPACE_GAP * 2
+
+    /**多少度误差之内, 视为同一个点*/
+    var angleGapValue: Float = 0.5f
+
     /**路径填充类型*/
     var pathFillType: Int = PATH_FILL_TYPE_RECT
 
@@ -90,102 +106,31 @@ abstract class VectorWriteHandler {
     val isCloseGap: Boolean
         get() = gapValue <= 0f
 
-    //存值
-    val _xList = mutableListOf<Float>()
-    val _yList = mutableListOf<Float>()
+    /**记录*/
+    val _pointList = mutableListOf<VectorPoint>()
 
-    //---
-
-    //相同方向的值, 是否改变了, 不一致. 此时可能需要G0操作
-    @Private
-    fun _valueChangedType(list: List<Float>, newValue: Float): Int {
-        if (list.isEmpty()) {
-            return VALUE_CHANGED
-        }
-        val lastValue = list.last()
-        return _valueChangedType(lastValue, newValue)
-    }
-
-    /**相同方向的值, 是否改变了, 不一致. 此时可能需要G0操作*/
-    @Private
-    fun _valueChangedType(oldValue: Float, newValue: Float): Int {
-        if (oldValue == newValue) {
-            return VALUE_SAME
-        }
-        if (isCloseGap) {
-            return VALUE_SAME_GAP
-        }
-        if ((oldValue - newValue).absoluteValue <= gapValue) {
-            return VALUE_SAME_GAP
-        }
-        //需要G0 / M
-        return VALUE_CHANGED
-    }
-
-    //add value, 并且只留2个值
-    @Private
-    fun _resetLast(list: MutableList<Float>, value: Float) {
-        if (list.size >= 2) {
-            list.removeLast()
-        }
-        list.add(value)
-    }
-
-    /**判断G1的线的角度是否相同, 相同角度也视为是相同的线*/
-    @Private
-    fun _isSameAngle(newX: Float, newY: Float): Boolean {
-        if (_xList.size() > 1 && _yList.size() > 1) {
-            val a1 = VectorHelper.angle(
-                _xList.first(),
-                _yList.first(),
-                _xList.last(),
-                _yList.last()
-            )
-            val a2 = VectorHelper.angle(
-                _xList.last(),
-                _yList.last(),
-                newX,
-                newY
-            )
-            return (a2 - a1).absoluteValue < 0.01
-        } else {
-            return false
-        }
-    }
-
-    //---
-
-    fun reset() {
-        _xList.clear()
-        _yList.clear()
-    }
+    //region ---Core回调---
 
     /**[Path]的起点
      * GCode 数据的一些初始化配置
      * Svg 数据的M操作
      * */
-    open fun onPathStart(x: Float, y: Float) {
+    open fun onPathStart() {
 
     }
 
     /**[Path]的终点*/
     open fun onPathEnd() {
-        //_xList.lastOrNull()
-        //_yList.lastOrNull()
-        checkLastPoint()
+        clearLastPoint()
     }
 
-    /**[Path]中每一段路径的起点
-     * GCode
+    /**
+     * 产生的一个新点, 则应该先把之前的数据G1, 然后新数据G0
+     * GCode G0
      * SVG M
      * */
-    open fun onFirstPoint(x: Float, y: Float) {
-
-    }
-
-    /**产生的一个新点, 则应该先把之前的数据G1, 然后新数据G0*/
     open fun onNewPoint(x: Float, y: Float) {
-        checkLastPoint()
+
     }
 
     /**需要连接到点
@@ -195,18 +140,112 @@ abstract class VectorWriteHandler {
 
     }
 
-    /**检查上一次是否还有点没有处理*/
-    fun checkLastPoint() {
-        if (_xList.isNotEmpty() && _yList.isNotEmpty()) {
+    //endregion ---Core回调---
+
+    //region ---Core---
+
+    /**清理上一次最后的点, 通常在遇到新的点时调用*/
+    fun clearLastPoint() {
+        if (_pointList.size() > 1) {
             //如果有旧数据
-            val lastX = _xList.last()
-            val lastY = _yList.last()
-            onLineToPoint(lastX, lastY)
-            reset()//重置集合
+            val last = _pointList.last()
+            onLineToPoint(last.x, last.y)
+        }
+        _pointList.clear()//重置集合
+    }
+
+    /**连接到最后一个点, 并且将最后一个点设置为第一个点*/
+    fun lineLastPoint() {
+        if (_pointList.isNotEmpty()) {
+            //如果有旧数据
+            val last = _pointList.last()
+            onLineToPoint(last.x, last.y)
+            _pointList.clear()
+            _pointList.add(last)
         }
     }
 
-    //region ---Core---
+    //add value, 并且只留2个值
+    @Private
+    fun _resetLastPoint(point: VectorPoint) {
+        if (_pointList.size >= 2) {
+            _pointList.removeLast()
+        }
+        _pointList.add(point)
+    }
+
+    /**计算角度偏移*/
+    fun _angleDiff(newX: Float, newY: Float): Float {
+        return if (_pointList.size() > 1) {
+            val first = _pointList.first()
+            val last = _pointList.last()
+            val a1 = VectorHelper.angle(first.x, first.y, last.x, last.y)
+            val a2 = VectorHelper.angle(last.x, last.y, newX, newY)
+            return (a2 - a1).absoluteValue
+        } else {
+            -1f
+        }
+    }
+
+    /**判断当前的点, 和之前的点是否是同一角度*/
+    @Private
+    fun _isSameAngle(newX: Float, newY: Float): Boolean {
+        return if (_pointList.size() > 1) {
+            _angleDiff(newX, newY) < angleGapValue
+        } else {
+            false
+        }
+    }
+
+    /**计算当前的点, 和上一个点的类型*/
+    fun _valueChangedType(x: Float, y: Float): Int {
+        val last = _pointList.lastOrNull() ?: return POINT_TYPE_NEW //之前没有点, 那当前的点肯定是最新的
+        //val first = _pointList.first()
+        if (_pointList.size() == 1) {
+            //之前只有1个点
+            return _valueChangedType(last, x, y)
+        } else {
+            //之前已经有多个点
+            //val firstType = _valueChangedType(first, x, y) //第一个点的类型
+            val lastType = _valueChangedType(last, x, y) //最后一个点的类型
+
+            if (lastType == POINT_TYPE_GAP) {
+                if (_isSameAngle(x, y)) {
+                    //如果角度一致, 那视为相同的点
+                    return POINT_TYPE_SAME
+                }
+            } else if (lastType == POINT_TYPE_SAME) {
+                if (!_isSameAngle(x, y)) {
+                    //如果视为相同的点,但是角度不一致, 则之前的点需要G1过去
+                    return POINT_TYPE_GAP
+                }
+            }
+            return lastType
+        }
+    }
+
+    fun _valueChangedType(point: VectorPoint, x: Float, y: Float): Int {
+        val c = c(point.x, point.y, x, y).toFloat()
+        if (((point.x - x).absoluteValue > gapMaxValue || (point.y - y).absoluteValue > gapMaxValue) && c > gapMaxValue) {
+            //2点之间间隙太大, 则视为新的点
+            return POINT_TYPE_NEW
+        }
+        if (point.x == x || point.y == y) {
+            //在一根线上
+            return POINT_TYPE_SAME
+        }
+        if (isCloseGap) {
+            //关闭了gap, 则直接G1之前的点, 否则可能是一样的值, 直接忽略
+            return POINT_TYPE_GAP
+        }
+        if (c < gapValue) {
+            return POINT_TYPE_SAME
+        }
+        return POINT_TYPE_GAP
+    }
+
+    /**创建一个新的点*/
+    fun generatePoint(x: Float, y: Float): VectorPoint = VectorPoint(x, y, _valueChangedType(x, y))
 
     /**
      * 追加一个点, 如果这个点和上一点属于相同类型的点, 则不追加,
@@ -220,54 +259,18 @@ abstract class VectorWriteHandler {
      * [x] [y] 非像素值, 真实值
      * */
     fun writePoint(x: Float, y: Float) {
-        if (_xList.isEmpty() && _yList.isEmpty()) {
-            onFirstPoint(x, y)
-        } else {
-            val xChangedType = _valueChangedType(_xList, x)
-            val yChangedType = _valueChangedType(_yList, y)
+        val point = generatePoint(x, y)
 
-            //G1
-            var newPoint = false
-
-            if (xChangedType == VALUE_CHANGED || yChangedType == VALUE_CHANGED) {
-                //很大的跨度点
-                newPoint = true
+        when (point.pointType) {
+            POINT_TYPE_NEW -> {
+                clearLastPoint()
+                onNewPoint(x, y)
             }
-
-            if (xChangedType == VALUE_SAME && yChangedType == VALUE_SAME_GAP) {
-                //可能是竖线, 判断之前是否是横线, 如果是则G1
-                if (_yList.size() >= 2 && _yList.first() == _yList.last()) {
-                    newPoint = true
-                }
-            } else if (yChangedType == VALUE_SAME && xChangedType == VALUE_SAME_GAP) {
-                //可能是横线, 判断之前是否是竖线, 如果是则G1
-                if (_xList.size() >= 2 && _xList.first() == _xList.last()) {
-                    newPoint = true
-                }
-            } else if (xChangedType == VALUE_SAME_GAP && yChangedType == VALUE_SAME_GAP) {
-                //斜向
-                if (_isSameAngle(x, y)) {
-                    //角度相同
-                } else {
-                    newPoint = true
-                }
-            }
-
-            if (newPoint) {
-                //G1, 上一次的点需要先被G1连接
-                if (_xList.size() > 1 && _yList.size() > 1) {
-                    onNewPoint(x, y)
-                }
-            }
-
-            if (xChangedType == VALUE_CHANGED || yChangedType == VALUE_CHANGED) {
-                //此时G0
-                onFirstPoint(x, y)
-            }
+            POINT_TYPE_GAP -> lineLastPoint()
+            /*POINT_TYPE_SAME, else -> _resetLastPoint(point)*/
         }
 
-        _resetLast(_xList, x)
-        _resetLast(_yList, y)
+        _resetLastPoint(point)
     }
 
     //endregion ---Core---
@@ -298,17 +301,13 @@ abstract class VectorWriteHandler {
 
             if (index == 0 && contourIndex == 0) {
                 if (writeFirst) {
-                    onPathStart(x, y)
+                    onPathStart()
                 }
-            }
-            if (index == 0) {
-                //path 可能有多段
-                onNewPoint(x, y)
             }
 
             writePoint(x, y)
         }
-        checkLastPoint()
+        clearLastPoint()
         if (writeLast) {
             onPathEnd()
         }
@@ -398,7 +397,7 @@ abstract class VectorWriteHandler {
                 y = endY
             }
         }
-        checkLastPoint()
+        clearLastPoint()
         if (writeLast) {
             onPathEnd()
         }
@@ -436,7 +435,7 @@ abstract class VectorWriteHandler {
 
             isFirst = false
         }
-        checkLastPoint()
+        clearLastPoint()
         if (writeLast) {
             onPathEnd()
         }
@@ -471,12 +470,25 @@ abstract class VectorWriteHandler {
 
             isFirst = false
         }
-        checkLastPoint()
+        clearLastPoint()
         if (writeLast) {
             onPathEnd()
         }
     }
 
     //endregion ---Path---
+
+    /**矢量点位信息*/
+    data class VectorPoint(
+        /**坐标值, 输入的是啥单位就是啥单位*/
+        val x: Float,
+        val y: Float,
+        /**当前这个点, 和上一个点的类型
+         * [com.angcyo.vector.VectorWriteHandler.POINT_TYPE_NEW]
+         * [com.angcyo.vector.VectorWriteHandler.POINT_TYPE_SAME]
+         * [com.angcyo.vector.VectorWriteHandler.POINT_TYPE_GAP]
+         * */
+        val pointType: Int
+    )
 
 }

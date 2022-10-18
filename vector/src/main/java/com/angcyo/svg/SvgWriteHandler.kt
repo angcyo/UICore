@@ -11,8 +11,17 @@ import com.angcyo.vector.VectorWriteHandler
  */
 class SvgWriteHandler : VectorWriteHandler() {
 
-    override fun onFirstPoint(x: Float, y: Float) {
-        //super.onFirstPoint(x, y)
+    override fun onPathStart() {
+        super.onPathStart()
+        //viewBox ?
+    }
+
+    override fun onPathEnd() {
+        super.onPathEnd()
+        //closeSvg() //need?
+    }
+
+    override fun onNewPoint(x: Float, y: Float) {
         writer?.append("M${x} $y")
     }
 
@@ -21,10 +30,6 @@ class SvgWriteHandler : VectorWriteHandler() {
         writer?.append("L${x} $y")
     }
 
-    override fun onPathEnd() {
-        super.onPathEnd()
-        //closeSvg() //need?
-    }
 
     /**关闭路径*/
     fun closeSvg() {
