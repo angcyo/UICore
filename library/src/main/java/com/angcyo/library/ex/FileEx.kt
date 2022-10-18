@@ -242,12 +242,17 @@ fun File.shareFile(
         return false
     }
 
-    val share = Intent(Intent.ACTION_SEND)
-    share.putExtra(Intent.EXTRA_STREAM, fileUri(context, this, fileProvider))
-    share.type = name.mimeType() ?: "*/*" //此处可发送多种文件
-    share.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    val fileUri = fileUri(context, this, fileProvider)
+    val mimeType = name.mimeType() ?: "*/*"
+    val share = Intent(Intent.ACTION_SEND)//Intent.ACTION_SEND_MULTIPLE
+    share.putExtra(Intent.EXTRA_STREAM, fileUri) //此处可发送多种文件
+    share.type = mimeType
+    /*val share = Intent(Intent.ACTION_VIEW)
+    share.setDataAndType(fileUri, mimeType)*/
+    share.baseConfig(context)
     if (fileProvider) {
         share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        share.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
     }
     try {
         val chooser = Intent.createChooser(share, "发送给...")

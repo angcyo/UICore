@@ -121,6 +121,15 @@
         <intent>
             <action android:name="android.intent.action.VIEW" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SEND_MULTIPLE" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+        </intent>
     </queries>
 
 </manifest>
