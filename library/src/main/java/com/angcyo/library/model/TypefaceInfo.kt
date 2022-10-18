@@ -1,4 +1,4 @@
-package com.angcyo.canvas
+package com.angcyo.library.model
 
 import android.graphics.Typeface
 

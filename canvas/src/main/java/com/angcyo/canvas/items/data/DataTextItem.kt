@@ -9,8 +9,8 @@ import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.data.*
 import com.angcyo.canvas.graphics.TextGraphicsParser
 import com.angcyo.canvas.graphics.lineTextList
-import com.angcyo.canvas.utils.FontManager
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.FontManager
 import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 import kotlin.math.max
