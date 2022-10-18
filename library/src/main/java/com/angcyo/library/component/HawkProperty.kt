@@ -1,5 +1,6 @@
 package com.angcyo.library.component
 
+import androidx.annotation.Keep
 import com.angcyo.library.ex.hawkGet
 import com.angcyo.library.ex.hawkPut
 import com.orhanobut.hawk.Hawk
@@ -16,6 +17,8 @@ import kotlin.reflect.KProperty
 
 /**自动同步保存至[Hawk]
  * [HawkListProperty]*/
+
+@Keep
 class HawkProperty<T>(
     /*默认值*/
     val def: String? = null
@@ -32,6 +35,8 @@ class HawkProperty<T>(
 /**
  * var Z_MODEL: Int by HawkPropertyValue<Any, Int>(-1)
  * */
+
+@Keep
 class HawkPropertyValue<T, Value>(
     /*默认值*/
     val def: Value

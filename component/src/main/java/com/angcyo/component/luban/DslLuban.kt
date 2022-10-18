@@ -6,6 +6,7 @@ import com.angcyo.coroutine.launchGlobal
 import com.angcyo.library.L
 import com.angcyo.library.LTime
 import com.angcyo.library.app
+import com.angcyo.library.component.LibHawkKeys
 import com.angcyo.library.ex.bitmapSize
 import com.angcyo.library.ex.fileSize
 import com.angcyo.library.ex.save
@@ -40,7 +41,7 @@ class DslLuban {
     var targetMediaList = mutableListOf<LoaderMedia>()
 
     /**忽略大小小于这个数值的文件[k]*/
-    var leastCompressSize = 200
+    var leastCompressSize = LibHawkKeys.minKeepSize
 
     /**是否要保留透明像素, 否则透明像素会变成黑色*/
     var enableAlpha = true
@@ -167,7 +168,10 @@ class DslLuban {
  *
  * @return 同步返回压缩后的图片路径
  * */
-fun String.luban(keepMinSize: Int = 200, actions: DslLuban.() -> Unit = {}): String {
+fun String.luban(
+    keepMinSize: Int = LibHawkKeys.minKeepSize,
+    actions: DslLuban.() -> Unit = {}
+): String {
     val path = this
     val result = dslLuban {
         async = false //是否异步

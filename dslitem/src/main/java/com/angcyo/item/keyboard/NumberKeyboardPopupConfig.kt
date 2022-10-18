@@ -139,7 +139,10 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         }
     }
 
-    /**键盘输入样式, 用来控制需要显示那些按键*/
+    /**键盘输入样式, 用来控制需要显示那些按键
+     * [STYLE_DECIMAL]
+     * [STYLE_INCREMENT]
+     * */
     var keyboardStyle: Int = 0xff
 
     /**自动绑定输入的控件*/

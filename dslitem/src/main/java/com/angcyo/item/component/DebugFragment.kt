@@ -14,6 +14,7 @@ import com.angcyo.core.fragment.BaseDslFragment
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.bindItem
 import com.angcyo.dsladapter.drawBottom
+import com.angcyo.item.DslPropertyNumberItem
 import com.angcyo.item.DslPropertySwitchItem
 import com.angcyo.item.style.itemDes
 import com.angcyo.item.style.itemLabel
@@ -141,6 +142,7 @@ class DebugFragment : BaseDslFragment() {
                 if (!debugAction.key.isNullOrEmpty()) {
                     //有key
                     if (debugAction.type == Boolean::class.java) {
+                        //开关控制
                         DslPropertySwitchItem()() {
                             itemLabel = debugAction.label
                             itemDes = debugAction.des
@@ -151,6 +153,20 @@ class DebugFragment : BaseDslFragment() {
                                 debugAction.key.hawkPut(it)
 
                                 debugAction.action?.invoke(this@DebugFragment, it)
+                            }
+                        }
+                    } else if (debugAction.type == Int::class.java) {
+                        //数字输入
+                        DslPropertyNumberItem()() {
+                            itemLabel = debugAction.label
+                            itemDes = debugAction.des
+                            initItem()
+
+                            itemPropertyNumber =
+                                debugAction.key.hawkGetInt((debugAction.defValue as? Int) ?: -1)
+                            observeItemChange {
+                                debugAction.key.hawkPut(itemPropertyNumber)
+                                debugAction.action?.invoke(this@DebugFragment, itemPropertyNumber)
                             }
                         }
                     }
@@ -178,25 +194,3 @@ class DebugFragment : BaseDslFragment() {
         drawBottom()
     }
 }
-
-/**调试入口点*/
-data class DebugAction(
-    /**按钮的名字*/
-    var name: String = "",
-    /**日志的路径, 如果设置了则会直接显示对应的日志内容
-     * 设置了[action]会覆盖默认的点击行为*/
-    var logPath: String? = null,
-    /**按钮的点击回调, 或者属性item的回调*/
-    var action: ((DebugFragment, value: Any?) -> Unit)? = null,
-
-    //Hawk开关属性控制
-    /**显示的属性标签*/
-    var label: CharSequence? = null,
-    /**属性描述内容*/
-    var des: CharSequence? = null,
-    /**属性类型, 暂且只支持bool类型*/
-    var type: Class<*> = Boolean::class.java,
-    /**存储的key, 有这个值时, 才会激活属性item*/
-    var key: String? = null,
-
-    )

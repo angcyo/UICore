@@ -140,6 +140,14 @@ fun String?.hawkGetBoolean(def: Boolean = false): Boolean {
     return result
 }
 
+fun String?.hawkGetInt(def: Int = -1): Int {
+    var result: Int = def
+    this?.let {
+        result = Hawk.get(it, def)
+    }
+    return result
+}
+
 fun String?.hawkDelete(): Boolean {
     return this?.run {
         Hawk.delete(this)
