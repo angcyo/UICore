@@ -2,7 +2,7 @@ package com.angcyo.canvas.utils
 
 import android.graphics.Path
 import com.angcyo.canvas.LinePath
-import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
+import com.angcyo.canvas.data.ItemDataBean.Companion.MM_UNIT
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.ex.toRadians
 import kotlin.math.cos
@@ -28,10 +28,10 @@ object ShapesHelper {
     const val SHAPE_DEFAULT_HEIGHT = 10f
 
     val defaultWidth: Float
-        get() = mmUnit.convertValueToPixel(SHAPE_DEFAULT_WIDTH)
+        get() = MM_UNIT.convertValueToPixel(SHAPE_DEFAULT_WIDTH)
 
     val defaultHeight: Float
-        get() = mmUnit.convertValueToPixel(SHAPE_DEFAULT_HEIGHT)
+        get() = MM_UNIT.convertValueToPixel(SHAPE_DEFAULT_HEIGHT)
 
     /**多边形的Path*/
     fun polygonPath(

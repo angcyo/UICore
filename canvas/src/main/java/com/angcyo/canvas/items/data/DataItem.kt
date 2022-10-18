@@ -6,7 +6,7 @@ import androidx.annotation.AnyThread
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.data.ItemDataBean
-import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
+import com.angcyo.canvas.data.ItemDataBean.Companion.MM_UNIT
 import com.angcyo.canvas.data.toPaintStyle
 import com.angcyo.canvas.data.toPaintStyleInt
 import com.angcyo.canvas.graphics.GraphicsHelper
@@ -49,12 +49,12 @@ open class DataItem(val dataBean: ItemDataBean) : BaseItem() {
     }
 
     override fun getItemScaleX(renderer: BaseItemRenderer<*>): Float {
-        val width = mmUnit.convertValueToPixel(dataBean.width)
+        val width = MM_UNIT.convertValueToPixel(dataBean.width)
         return renderer.getBounds().width() / width
     }
 
     override fun getItemScaleY(renderer: BaseItemRenderer<*>): Float {
-        val height = mmUnit.convertValueToPixel(dataBean.height)
+        val height = MM_UNIT.convertValueToPixel(dataBean.height)
         return renderer.getBounds().height() / height
     }
 

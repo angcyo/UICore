@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.data.ItemDataBean
-import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
+import com.angcyo.canvas.data.ItemDataBean.Companion.MM_UNIT
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.gcode.GCodeDrawable
 import com.angcyo.library.annotation.Pixel
@@ -123,8 +123,8 @@ class DataBitmapItem(bean: ItemDataBean) : DataItem(bean) {
 
             dataBean.isMesh = true
             dataBean.meshShape = meshShale
-            dataBean.minDiameter = mmUnit.convertPixelToValue(minDiameter)
-            dataBean.maxDiameter = mmUnit.convertPixelToValue(maxDiameter)
+            dataBean.minDiameter = MM_UNIT.convertPixelToValue(minDiameter)
+            dataBean.maxDiameter = MM_UNIT.convertPixelToValue(maxDiameter)
 
             updateRenderItem(renderer)
         }

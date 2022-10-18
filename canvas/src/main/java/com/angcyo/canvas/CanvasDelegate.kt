@@ -13,7 +13,7 @@ import com.angcyo.canvas.core.component.*
 import com.angcyo.canvas.core.renderer.*
 import com.angcyo.canvas.data.CanvasDataBean
 import com.angcyo.canvas.data.ItemDataBean
-import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
+import com.angcyo.canvas.data.ItemDataBean.Companion.MM_UNIT
 import com.angcyo.canvas.data.LimitDataInfo
 import com.angcyo.canvas.graphics.GraphicsHelper
 import com.angcyo.canvas.items.data.DataItemRenderer
@@ -622,8 +622,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**获取画布上的元素数据*/
     fun getCanvasDataBean(): CanvasDataBean {
         val bitmap = getBitmap()
-        val width = mmUnit.convertPixelToValue(bitmap.width.toFloat())
-        val height = mmUnit.convertPixelToValue(bitmap.height.toFloat())
+        val width = MM_UNIT.convertPixelToValue(bitmap.width.toFloat())
+        val height = MM_UNIT.convertPixelToValue(bitmap.height.toFloat())
 
         val data = jsonArray {
             itemsRendererList.forEach {

@@ -2,7 +2,7 @@ package com.angcyo.canvas.utils
 
 import android.graphics.*
 import android.view.Gravity
-import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
+import com.angcyo.canvas.data.ItemDataBean.Companion.MM_UNIT
 import com.angcyo.gcode.GCodeAdjust
 import com.angcyo.gcode.GCodeWriteHandler
 import com.angcyo.library.annotation.Pixel
@@ -59,7 +59,7 @@ object CanvasDataHandleOperate {
         val newPathList = pathList.transform(bounds, rotate)
         //转换成GCode
         val gCodeHandler = GCodeWriteHandler()
-        gCodeHandler.unit = mmUnit
+        gCodeHandler.unit = MM_UNIT
         gCodeHandler.isAutoCnc = autoCnc
         outputFile.writer().use { writer ->
             gCodeHandler.writer = writer
@@ -90,7 +90,7 @@ object CanvasDataHandleOperate {
         val newPathList = pathList.transform(bounds, rotate)
         //转换成GCode
         val gCodeHandler = GCodeWriteHandler()
-        gCodeHandler.unit = mmUnit
+        gCodeHandler.unit = MM_UNIT
         gCodeHandler.isAutoCnc = autoCnc
         outputFile.writer().use { writer ->
             gCodeHandler.writer = writer
@@ -155,7 +155,7 @@ object CanvasDataHandleOperate {
         bitmap: Bitmap,
         gravity: Int? = null,
         @Pixel
-        gapValue: Float = 1.4f,//这里的gap用像素单位, 内部会转成mm单位
+        gapValue: Float = 1f,//这里的gap用像素单位, 内部会转成mm单位
         threshold: Int = 255, //255白色不输出GCode
         outputFile: File = _defaultGCodeOutputFile(),
         isFirst: Boolean = true,
@@ -164,11 +164,11 @@ object CanvasDataHandleOperate {
     ): File {
         val gCodeWriteHandler = GCodeWriteHandler()
         //像素单位转成mm单位
-        val mmValueUnit = mmUnit
+        val mmValueUnit = MM_UNIT
         gCodeWriteHandler.unit = mmValueUnit
         gCodeWriteHandler.isAutoCnc = autoCnc
         gCodeWriteHandler.gapValue = mmValueUnit.convertPixelToValue(gapValue)
-        gCodeWriteHandler.gapMaxValue = gCodeWriteHandler.gapValue * 2
+        gCodeWriteHandler.gapMaxValue = gCodeWriteHandler.gapValue
 
         val width = bitmap.width
         val height = bitmap.height
@@ -313,7 +313,7 @@ object CanvasDataHandleOperate {
                     }
                 }
             }
-
+            gCodeWriteHandler.clearLastPoint()
             if (isFinish) {
                 gCodeWriteHandler.onPathEnd()
             }

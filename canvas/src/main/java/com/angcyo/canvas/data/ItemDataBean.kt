@@ -3,7 +3,7 @@ package com.angcyo.canvas.data
 import android.graphics.Paint
 import android.graphics.RectF
 import android.widget.LinearLayout
-import com.angcyo.canvas.data.ItemDataBean.Companion.mmUnit
+import com.angcyo.canvas.data.ItemDataBean.Companion.MM_UNIT
 import com.angcyo.canvas.graphics.GraphicsHelper
 import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_BOLD
 import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_DELETE_LINE
@@ -269,8 +269,9 @@ data class ItemDataBean(
 ) {
 
     companion object {
+
         /**毫米单位计算*/
-        val mmUnit = MmValueUnit()
+        val MM_UNIT = MmValueUnit()
 
         /**默认的阈值*/
         const val DEFAULT_THRESHOLD = 240f
@@ -281,7 +282,7 @@ data class ItemDataBean(
 
     /**设置渲染的位置*/
     fun updateToRenderBounds(@Pixel bounds: RectF): RectF {
-        val valueUnit = mmUnit
+        val valueUnit = MM_UNIT
         val l = valueUnit.convertValueToPixel(left)
         val t = valueUnit.convertValueToPixel(top)
         val w = valueUnit.convertValueToPixel(width)
@@ -294,14 +295,14 @@ data class ItemDataBean(
      * [w] 界面上显示的大小, 像素
      * [h] 界面上显示的大小, 像素*/
     fun updateScale(@Pixel w: Float, @Pixel h: Float) {
-        val valueUnit = mmUnit
+        val valueUnit = MM_UNIT
         scaleX = (valueUnit.convertPixelToValue(w) / width).ensure()
         scaleY = (valueUnit.convertPixelToValue(h) / height).ensure()
     }
 
     /**更新坐标, 缩放比例数据*/
     fun updateByBounds(@Pixel bounds: RectF) {
-        val valueUnit = mmUnit
+        val valueUnit = MM_UNIT
         left = valueUnit.convertPixelToValue(bounds.left)
         top = valueUnit.convertPixelToValue(bounds.top)
 
@@ -391,10 +392,10 @@ fun ItemDataBean.isBold() = fontWeight == "bold"
 fun ItemDataBean.isItalic() = fontStyle == "italic"
 
 /**毫米转像素*/
-fun Float?.toPixel() = mmUnit.convertValueToPixel(this ?: 0f)
+fun Float?.toPixel() = MM_UNIT.convertValueToPixel(this ?: 0f)
 
 /**MmValueUnit*/
 fun Int.toMm() = toFloat().toMm()
 
 /**像素转毫米*/
-fun Float?.toMm() = mmUnit.convertPixelToValue(this ?: 0f)
+fun Float?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0f)
