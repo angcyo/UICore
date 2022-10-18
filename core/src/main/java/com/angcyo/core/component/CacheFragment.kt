@@ -4,10 +4,11 @@ import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.core.component.model.CacheModel
 import com.angcyo.core.dslitem.DslCacheModelItem
+import com.angcyo.core.dslitem.DslCacheSumItem
 import com.angcyo.core.fragment.BaseDslFragment
 import com.angcyo.core.vmApp
 import com.angcyo.dsladapter.DslAdapter
-import com.angcyo.dsladapter.updateItem
+import com.angcyo.dsladapter.updateAllItemBy
 
 /**
  * 缓存管理的界面
@@ -29,7 +30,13 @@ class CacheFragment : BaseDslFragment() {
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
 
-        loadDataEnd(DslCacheModelItem::class, cacheModel.cacheInfoListData.value) { bean ->
+        val cacheInfoList = cacheModel.cacheInfoListData.value
+        if (!cacheInfoList.isNullOrEmpty()) {
+            _adapter.changeHeaderItems {
+                it.add(DslCacheSumItem())
+            }
+        }
+        loadDataEnd(DslCacheModelItem::class, cacheInfoList) { bean ->
             itemCacheInfo = bean
         }
     }
@@ -39,8 +46,8 @@ class CacheFragment : BaseDslFragment() {
 
         cacheModel.cacheSizeOnceData.observe { cacheInfo ->
             cacheInfo?.let {
-                _adapter.updateItem {
-                    it is DslCacheModelItem && it.itemCacheInfo == cacheInfo
+                _adapter.updateAllItemBy {
+                    it is DslCacheSumItem || (it is DslCacheModelItem && it.itemCacheInfo == cacheInfo)
                 }
             }
         }

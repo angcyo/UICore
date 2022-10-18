@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/lib_ldpi">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/lib_xhdpi"
+        tools:minHeight="200dp">
+
+        <com.angcyo.widget.text.DslTextView
+            android:id="@+id/lib_text_view"
+            style="@style/LibMainTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/lib_hdpi"
+            app:layout_constraintBottom_toTopOf="@id/lib_progress_bar"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="angcyo" />
+
+        <com.angcyo.widget.progress.DslProgressBar
+            android:id="@+id/lib_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:progress_bg_gradient_colors="@color/bg_sub_color" />
+
+        <com.angcyo.widget.text.DslTextView
+            android:id="@+id/lib_tip_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/lib_white"
+            app:layout_constraintBottom_toBottomOf="@id/lib_progress_bar"
+            app:layout_constraintLeft_toLeftOf="@id/lib_progress_bar"
+            app:layout_constraintRight_toRightOf="@id/lib_progress_bar"
+            app:layout_constraintTop_toTopOf="@id/lib_progress_bar"
+            tools:text="20G/128G" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

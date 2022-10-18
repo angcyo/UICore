@@ -18,6 +18,9 @@ class CacheModel : LifecycleViewModel() {
     /**缓存信息集合*/
     val cacheInfoListData = vmData(mutableListOf<CacheInfo>())
 
+    /**缓存总大小数据*/
+    val cacheSumData = vmData(-1L)
+
     /**缓存大小计算通知*/
     val cacheSizeOnceData = vmDataOnce<CacheInfo>()
 
@@ -42,6 +45,7 @@ class CacheModel : LifecycleViewModel() {
         //清理数据
         cache._size = -1
         cache._cacheFileList.clear()
+        _computeSumSize()
         doMain {
             cacheSizeOnceData.setValue(cache)
         }
@@ -51,6 +55,12 @@ class CacheModel : LifecycleViewModel() {
     /**清理缓存*/
     fun clearCache(cache: CacheInfo) {
         _clearCache(cache)
+    }
+
+    /**计算缓存总大小*/
+    fun _computeSumSize() {
+        val size = cacheInfoListData.value?.sumOf { it._size } ?: -1L
+        cacheSumData.postValue(size)
     }
 
     /**协程内计算大小*/
@@ -67,6 +77,7 @@ class CacheModel : LifecycleViewModel() {
                             cacheInfo._size = 0
                         }
                     }
+                    _computeSumSize()
                     withMain {
                         cacheSizeOnceData.setValue(cacheInfo)
                     }
@@ -79,12 +90,14 @@ class CacheModel : LifecycleViewModel() {
     fun _clearCache(cacheInfo: CacheInfo) {
         launchLifecycle {
             withBlock {
+                val deleteList = mutableListOf<String>()
                 cacheInfo._cacheFileList.forEach {
                     try {
                         val file = it.file()
                         val length = file.length()
                         file.delete()
                         cacheInfo._size -= length
+                        deleteList.add(it)
                         withMain {
                             cacheSizeOnceData.setValue(cacheInfo)
                         }
@@ -92,8 +105,10 @@ class CacheModel : LifecycleViewModel() {
                         e.printStackTrace()
                     }
                 }
+                //清空文件, 但是不清空大小, 这样可以从来检查是否有删除失败的文件
+                cacheInfo._cacheFileList.removeAll(deleteList)
             }
-            cacheInfo._cacheFileList.clear()//清空文件, 但是不清空大小, 这样可以从来检查是否有删除失败的文件
+            _computeSumSize()
             withMain {
                 cacheSizeOnceData.setValue(cacheInfo)
             }
