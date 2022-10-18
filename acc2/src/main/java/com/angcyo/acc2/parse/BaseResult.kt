@@ -8,8 +8,12 @@ package com.angcyo.acc2.parse
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 open class BaseResult {
+
     /**是否处理成功*/
     var success: Boolean = false
+
+    /**失败或者成功的原因描述*/
+    var reason: String? = null
 
     /**将自己的值, 赋值给[target]*/
     open fun copyTo(target: BaseResult) {

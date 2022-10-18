@@ -40,9 +40,11 @@ open class EachClickHandleDynamic : IHandleDynamic {
             //需要点击的文本不为空
             var haveFail = false
             text.forEach {
-                it?.split(Action.ARG_SPLIT_SPACE)?.forEach { nodeText ->
+                for (nodeText in it?.split(Action.ARG_SPLIT_SPACE) ?: emptyList()) {
+                    if (nodeText.trim().isEmpty()) {
+                        continue
+                    }
                     //开始查找文本对应的节点, 并且点击
-
                     val findBean = handleBean.findList?.firstOrNull() ?: FindBean()
                     findBean.textList = listOf("^${nodeText}$")
 
@@ -81,5 +83,7 @@ open class EachClickHandleDynamic : IHandleDynamic {
             success = !haveFail
         }
     }
-
 }
+
+/**123456->1 2 3 4 5 6*/
+fun String.toEachClickText() = split("").joinToString(Action.ARG_SPLIT_SPACE).trim()

@@ -1284,6 +1284,20 @@ class AccSchedule(val accControl: AccControl) {
                     handleActionResult
                 )
             }
+
+            if (handleActionResult.forceSuccess) {
+                //直接成功
+                val reason = handleActionResult.reason ?: "强制成功处理:${objList}"
+                accParse.accControl.log(reason)
+                handleActionResult.success = true
+                accControl.finish(reason)
+            } else if (handleActionResult.forceFail) {
+                //直接失败
+                val reason = handleActionResult.reason ?: "强制失败处理:${objList}"
+                accParse.accControl.log(reason)
+                handleActionResult.success = false
+                accControl.error(ControlException(reason))
+            }
         } else if (actionCheckBean == null) {
             //未指定check, 直接操作根元素
             handleParse.parse(controlContext, rootNodeList, handleList).copyTo(handleActionResult)
