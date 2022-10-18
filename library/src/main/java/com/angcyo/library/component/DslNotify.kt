@@ -19,6 +19,7 @@ import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
 import androidx.media.session.MediaButtonReceiver
+import com.angcyo.library.R
 import com.angcyo.library.app
 import com.angcyo.library.ex.baseConfig
 import com.angcyo.library.ex.have
@@ -54,8 +55,8 @@ class DslNotify {
 
         val _notifyIds: MutableList<Int> = mutableListOf()
 
-        /**默认的通知图标*/
-        var DEFAULT_NOTIFY_ICON: Int = android.R.mipmap.sym_def_app_icon
+        /**默认的通知图标 */
+        var DEFAULT_NOTIFY_ICON: Int = R.drawable.lib_notify_icon
 
         /**默认通知栏大图的大小, px, 请手动乘以 dpi*/
         var DEFAULT_NOTIFY_LARGE_ICON_SIZE = 40
@@ -454,10 +455,14 @@ class DslNotify {
     /**必须的最小成员变量,一般建议在24dp×24dp, 支持svg, 但是色彩会丢失, 系统会自动使用colorFilter
      * png 可以支持彩色(需要高版本支持api29单色效果测试通过)
      * Android 5.0 SVG显示有系统背景
+     *
+     * android 13 pixel 6 透明背景彩色png/svg测试通过(彩色会变成白色)
      * */
     var notifySmallIcon: Int = DEFAULT_NOTIFY_ICON
 
-    /**通知栏图标的强调色, 在下拉后的图标和默认label会使用此颜色*/
+    /**通知栏图标的强调色, 在下拉后的图标和默认label会使用此颜色
+     * android 13 pixel 6 图片的背景色
+     * */
     var notifyColor: Int = NotificationCompat.COLOR_DEFAULT
 
     /**通知栏, 右边的大图, 不支持SVG?*/
@@ -590,6 +595,8 @@ class DslNotify {
         val builder = NotificationCompat.Builder(context, channelId!!)
         builder.run {
             setSmallIcon(notifySmallIcon)
+            color = notifyColor
+
             notifyLargeIcon?.run { setLargeIcon(this) }
 
             notifyTitle?.run { setContentTitle(this) }
@@ -607,7 +614,6 @@ class DslNotify {
 
             setVisibility(notifyVisibility)
             setNumber(notifyNumber)
-            color = notifyColor
 
             //PRIORITY_HIGH 就会有横幅通知, 并且会自动消失
             priority = notifyPriority
