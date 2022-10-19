@@ -557,12 +557,14 @@ class CanvasDelegate(val view: View) : ICanvasView {
         var bottom: Float? = null
 
         itemsRendererList.forEach {
-            val bounds = it.getRotateBounds().adjustFlipRect(acquireTempRectF())
-            left = min(left ?: bounds.left, bounds.left)
-            top = min(top ?: bounds.top, bounds.top)
-            right = max(right ?: bounds.right, bounds.right)
-            bottom = max(bottom ?: bounds.bottom, bounds.bottom)
-            bounds.release()
+            if (it.isVisible()) {
+                val bounds = it.getRotateBounds().adjustFlipRect(acquireTempRectF())
+                left = min(left ?: bounds.left, bounds.left)
+                top = min(top ?: bounds.top, bounds.top)
+                right = max(right ?: bounds.right, bounds.right)
+                bottom = max(bottom ?: bounds.bottom, bounds.bottom)
+                bounds.release()
+            }
         }
 
         left = left ?: 0f
