@@ -457,6 +457,7 @@ class DslNotify {
      * Android 5.0 SVG显示有系统背景
      *
      * android 13 pixel 6 透明背景彩色png/svg测试通过(彩色会变成白色)
+     * 因为系统会上色成白色, 所以如果不是透明的背景, 全部会变成白色
      * */
     var notifySmallIcon: Int = DEFAULT_NOTIFY_ICON
 
