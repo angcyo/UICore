@@ -41,6 +41,7 @@ class StateLayoutManager {
         group?.doOnPreDraw {
             if (info.clipAnim) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    rootView?.cancelAnimator()
                     rootView?.clipBoundsAnimatorFromLeft()
                 }
             }
@@ -61,6 +62,7 @@ class StateLayoutManager {
                 updateStateLayout(it, info)
                 if (info.updateAnim) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        it.cancelAnimator()
                         it.clipBoundsAnimatorFromLeft()
                     }
                 }
