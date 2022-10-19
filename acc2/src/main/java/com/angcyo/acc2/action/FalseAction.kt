@@ -7,7 +7,7 @@ import com.angcyo.acc2.parse.HandleResult
 import com.angcyo.acc2.parse.arg
 
 /**
- *
+ * 强制当前的[ActionBean]执行失败, 会再次进入执行, 通常在[otherList]中使用效果最佳
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/02/01
