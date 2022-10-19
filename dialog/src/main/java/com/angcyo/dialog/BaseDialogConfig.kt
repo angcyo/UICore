@@ -26,6 +26,9 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
     /**消息体 左边的图标*/
     var dialogMessageLeftIco: Drawable? = null
 
+    /**消息体的 文本的对齐方式, 默认使用xml中的定义*/
+    var dialogMessageGravity: Int? = null
+
     init {
         positiveButtonText = _string(R.string.dialog_positive)
         negativeButtonText = _string(R.string.dialog_negative)
@@ -56,6 +59,10 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
         dialogViewHolder.tv(R.id.dialog_message_view)?.apply {
             visibility = if (dialogMessage == null) View.GONE else View.VISIBLE
             text = dialogMessage
+
+            dialogMessageGravity?.let {
+                gravity = it
+            }
 
             //ico
             dialogMessageLeftIco?.let { setLeftIco(it) }
