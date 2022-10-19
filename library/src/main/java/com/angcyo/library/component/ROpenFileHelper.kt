@@ -21,6 +21,8 @@ object ROpenFileHelper {
      * [Intent.ACTION_SEND]
      *
      * [ext] 如果[intent]中未包含扩展名, 则需要补充的扩展名,智能识别.号
+     *
+     * @return 返回转存后的文件路径
      * */
     fun parseIntent(intent: Intent?, ext: String? = null): String? {
         intent ?: return null

@@ -37,6 +37,12 @@ class CanvasUndoManager(val canvasView: ICanvasView) {
         canvasView.dispatchCanvasUndoChanged()
     }
 
+    /**清空所有栈*/
+    fun clear() {
+        undoStack.clear()
+        clearRedo()
+    }
+
     /**执行撤销*/
     fun undo() {
         if (undoStack.isNotEmpty()) {

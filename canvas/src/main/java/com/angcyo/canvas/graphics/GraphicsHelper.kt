@@ -149,7 +149,8 @@ object GraphicsHelper {
         canvasView: ICanvasView,
         bean: ItemDataBean,
         selected: Boolean,
-        assignLocation: Boolean = false
+        assignLocation: Boolean = false,
+        strategy: Strategy = Strategy.normal
     ): DataItemRenderer? {
         val item = parseItemFrom(bean) ?: return null
         val renderer = DataItemRenderer(canvasView)
@@ -162,7 +163,7 @@ object GraphicsHelper {
             }
             updateRendererProperty(renderer, bean)
             (canvasView as? CanvasDelegate)?.apply {
-                addItemRenderer(renderer, Strategy.normal)
+                addItemRenderer(renderer, strategy)
                 if (selected) {
                     selectedItem(renderer)
                 }

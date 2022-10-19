@@ -13,7 +13,11 @@ data class CanvasDataBean(
     @MM
     var height: Float = 0f,
 
-    /**预览的base64图片*/
+    /**预览的base64图片
+     * (data:image/xxx;base64,xxx) 带协议头
+     *
+     * Canvas: trying to draw too large(141018708bytes) bitmap.
+     * */
     var preview_img: String? = null,
 
     /**item list 的所有数据

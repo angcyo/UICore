@@ -192,7 +192,7 @@ data class ItemDataBean(
     /** 原图数据 (data:image/xxx;base64,xxx) */
     var imageOriginal: String? = null,
 
-    /**滤镜后显示图 string
+    /**滤镜后显示图 string, 带协议头
      * [data] gcode数据*/
     var src: String? = null,
 

@@ -25,6 +25,7 @@ import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.http.base.json
 import com.angcyo.http.base.jsonArray
 import com.angcyo.http.base.toJson
+import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
@@ -545,40 +546,67 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     //<editor-fold desc="操作方法">
 
-    /**
-     * [itemOrigin] 是否使用最左上角的元素当做原点, 否则就是0,0位置为左上角原点
-     * */
-    fun getBitmap(itemOrigin: Boolean = false): Bitmap {
+    /** [itemOrigin] 是否使用最左上角的元素当做原点, 否则就是0,0位置为左上角原点 */
+    fun getBitmap(itemOrigin: Boolean = true, outWidth: Int = -1, outHeight: Int = -1): Bitmap {
         //val contentWidth = getCanvasViewBox().getContentWidth()
         //val contentHeight = getCanvasViewBox().getContentHeight()
 
-        var left = if (itemOrigin) Float.MAX_VALUE else 0f
-        var top = if (itemOrigin) Float.MAX_VALUE else 0f
-        var right = 0f
-        var bottom = 0f
+        var left: Float? = if (itemOrigin) null else 0f
+        var top: Float? = if (itemOrigin) null else 0f
+        var right: Float? = null
+        var bottom: Float? = null
 
         itemsRendererList.forEach {
             val bounds = it.getRotateBounds().adjustFlipRect(acquireTempRectF())
-            left = min(left, bounds.left)
-            top = min(top, bounds.top)
-            right = max(right, bounds.right)
-            bottom = max(bottom, bounds.bottom)
+            left = min(left ?: bounds.left, bounds.left)
+            top = min(top ?: bounds.top, bounds.top)
+            right = max(right ?: bounds.right, bounds.right)
+            bottom = max(bottom ?: bounds.bottom, bounds.bottom)
             bounds.release()
         }
 
-        return getBitmap(left, top, (right - left).toInt(), (bottom - top).toInt())
+        left = left ?: 0f
+        top = top ?: 0f
+        right = right ?: 1f
+        bottom = bottom ?: 1f
+
+        return getBitmap(
+            left!!,
+            top!!,
+            (right!! - left!!).toInt(),
+            (bottom!! - top!!).toInt(),
+            outWidth,
+            outHeight
+        )
     }
 
     /**获取指定坐标对应的图片*/
-    fun getBitmap(rect: RectF): Bitmap {
-        return getBitmap(rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
+    fun getBitmap(rect: RectF, outWidth: Int = -1, outHeight: Int = -1): Bitmap {
+        return getBitmap(
+            rect.left,
+            rect.top,
+            rect.width().toInt(),
+            rect.height().toInt(),
+            outWidth,
+            outHeight
+        )
     }
 
-    /**获取视图中指定坐标宽度的图片
+    /**获取视图中指定坐标宽度的图片, 获取画布那个区域的图片
      * [left] [top] 左上角的像素坐标
-     * [width] [height] 需要获取的像素高度*/
+     * [width] [height] 需要获取的像素高度
+     *
+     * [outWidth] [outHeight] 输出的图片宽高, 用来实现压缩 -1表示不缩放, 有一个-2表示等比缩放
+     * */
     @UiThread
-    fun getBitmap(left: Float, top: Float, width: Int, height: Int): Bitmap {
+    fun getBitmap(
+        left: Float,
+        top: Float,
+        width: Int,
+        height: Int,
+        outWidth: Int = -1,
+        outHeight: Int = -1
+    ): Bitmap {
         val canvasViewBox = getCanvasViewBox()
 
         val oldBoxRect = emptyRectF()
@@ -587,10 +615,29 @@ class CanvasDelegate(val view: View) : ICanvasView {
         //更新坐标系为0,0
         canvasViewBox.contentRect.set(0f, 0f, width.toFloat(), height.toFloat())
 
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val bitmapWidth = if (outWidth > 0) outWidth else width
+        val bitmapHeight = if (outHeight > 0) outHeight else height
+        val bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
 
+        var scaleMatrix: Matrix? = null
+        if (outWidth > 0 && outHeight > 0) {
+            //都指定了宽高, 则规定比例缩放
+            scaleMatrix = acquireTempMatrix()
+            scaleMatrix.setScale(outWidth * 1f / width, outHeight * 1f / height)
+        } else if (outWidth > 0) {
+            //高度等比
+            scaleMatrix = acquireTempMatrix()
+            val scale = outWidth * 1f / width
+            scaleMatrix.setScale(scale, scale)
+        } else if (outHeight > 0) {
+            scaleMatrix = acquireTempMatrix()
+            val scale = outHeight * 1f / height
+            scaleMatrix.setScale(scale, scale)
+        }
+
         val oldRenderRect = emptyRectF()
+        canvas.setMatrix(scaleMatrix)
         canvas.withTranslation(-left, -top) {
             itemsRendererList.forEach { renderer ->
                 if (renderer.isVisible()) {
@@ -612,6 +659,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                 }
             }
         }
+        scaleMatrix?.release()
 
         //恢复
         canvasViewBox.contentRect.set(oldBoxRect)
@@ -620,8 +668,12 @@ class CanvasDelegate(val view: View) : ICanvasView {
     }
 
     /**获取画布上的元素数据*/
-    fun getCanvasDataBean(): CanvasDataBean {
-        val bitmap = getBitmap()
+    fun getCanvasDataBean(
+        file_name: String? = null,
+        outWidth: Int = -1,
+        outHeight: Int = -1
+    ): CanvasDataBean {
+        val bitmap = getBitmap(true, outWidth, outHeight)
         val width = MM_UNIT.convertPixelToValue(bitmap.width.toFloat())
         val height = MM_UNIT.convertPixelToValue(bitmap.height.toFloat())
 
@@ -638,7 +690,15 @@ class CanvasDelegate(val view: View) : ICanvasView {
                 }
             }
         }.toString()
-        return CanvasDataBean(width, height, bitmap.toBase64Data(), data)
+        return CanvasDataBean(
+            width,
+            height,
+            bitmap.toBase64Data(),
+            data,
+            file_name,
+            nowTime(),
+            nowTime()
+        )
     }
 
     /**通过[uuid], 获取对应的[BaseItemRenderer]*/
@@ -780,6 +840,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
     }
 
     fun removeItemRenderer(list: List<BaseItemRenderer<*>>, strategy: Strategy) {
+        if (list.isEmpty()) {
+            return
+        }
         itemsRendererList.removeAll(list)
         list.forEach { item ->
             item.onRemoveRenderer()
