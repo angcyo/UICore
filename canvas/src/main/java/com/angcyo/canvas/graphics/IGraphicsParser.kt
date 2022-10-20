@@ -34,7 +34,7 @@ interface IGraphicsParser {
         item.drawable = wrapScalePictureDrawable(bitmap.width, bitmap.height) {
             val rect = acquireTempRectF()
             rect.set(0f, 0f, width.toFloat(), height.toFloat())
-            drawBitmap(bitmap, null, rect, null)
+            drawBitmap(bitmap, null, rect, Paint(Paint.ANTI_ALIAS_FLAG))
             rect.release()
         }
     }

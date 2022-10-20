@@ -55,7 +55,7 @@ data class ItemDataBean(
     //region ---公共属性---
 
     /**数据id*/
-    var id: Int = -1,
+    var id: Long = -1,
 
     /**数据唯一标识符*/
     var uuid: String? = null,

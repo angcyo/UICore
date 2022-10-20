@@ -40,8 +40,13 @@ class CodeGraphicsParser : IGraphicsParser {
     fun handleBitmap(bean: ItemDataBean, bitmap: Bitmap): DataItem {
         val item = DataItem(bean)
         wrapBitmap(item, bitmap)
-        bean.width = bitmap.width.toMm()
-        bean.height = bitmap.height.toMm()
+
+        if (bean.width <= 0) {
+            bean.width = bitmap.width.toMm()
+        }
+        if (bean.height <= 0) {
+            bean.height = bitmap.height.toMm()
+        }
 
         bean._dataMode = CanvasConstant.DATA_MODE_BLACK_WHITE
 

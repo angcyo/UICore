@@ -52,6 +52,8 @@ class CropDelegate(val view: View) {
     /**图片显示矩阵*/
     val _bitmapMatrix: Matrix = Matrix()
 
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
     //region ---property---
 
     val viewWidth: Int
@@ -215,7 +217,7 @@ class CropDelegate(val view: View) {
                     it.width / 2f,
                     it.height / 2f
                 ) {
-                    canvas.drawBitmap(it, 0f, 0f, null)
+                    canvas.drawBitmap(it, 0f, 0f, paint)
                 }
             }
         }
