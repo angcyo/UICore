@@ -384,7 +384,7 @@ fun Bitmap.eachColorChannel(
 
 /**将图片转灰度
  * [alphaBgColor] 透明像素时的替换颜色*/
-fun Bitmap.grayHandle(alphaBgColor: Int = Color.TRANSPARENT): Bitmap {
+fun Bitmap.toGrayHandle(alphaBgColor: Int = Color.TRANSPARENT): Bitmap {
     val width = width
     val height = height
     val result = Bitmap.createBitmap(width, height, config)
@@ -412,7 +412,7 @@ fun Bitmap.grayHandle(alphaBgColor: Int = Color.TRANSPARENT): Bitmap {
 
 /**将图片转灰度, 并且返回一张没有透明像素的图片
  * [alphaBgColor] 透明像素时的替换颜色*/
-fun Bitmap.grayHandleAlpha(alphaBgColor: Int = Color.TRANSPARENT): Array<Bitmap> {
+fun Bitmap.toGrayHandleAlpha(alphaBgColor: Int = Color.TRANSPARENT): Array<Bitmap> {
     val width = width
     val height = height
 
@@ -449,7 +449,7 @@ fun Bitmap.grayHandleAlpha(alphaBgColor: Int = Color.TRANSPARENT): Array<Bitmap>
  * [threshold] 阈值, [0~255] [黑色~白色] 大于这个值的都是白色
  * [invert] 反色, 是否要将黑白颜色颠倒
  * [alphaBgColor] 透明像素时的替换颜色*/
-fun Bitmap.blackWhiteHandle(
+fun Bitmap.toBlackWhiteHandle(
     threshold: Int = 120,
     invert: Boolean = false,
     alphaBgColor: Int = Color.TRANSPARENT
@@ -502,7 +502,7 @@ fun Bitmap.blackWhiteHandle(
 }
 
 /**额外返回一张没有透明背景的图片*/
-fun Bitmap.blackWhiteHandleAlpha(
+fun Bitmap.toBlackWhiteHandleAlpha(
     threshold: Int = 120,
     invert: Boolean = false,
     alphaBgColor: Int = Color.TRANSPARENT
