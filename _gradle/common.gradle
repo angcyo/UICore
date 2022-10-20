@@ -12,7 +12,7 @@ static def isMac() {
 
 /**判断是否是Windows系统*/
 static def isWindows() {
-    //Mac OS X
+    //Windows
     def os = System.getProperty("os.name").toLowerCase()
     return os.contains("windows")
 }
