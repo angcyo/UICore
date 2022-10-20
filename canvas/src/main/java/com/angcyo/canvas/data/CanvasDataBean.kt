@@ -13,9 +13,6 @@ data class CanvasDataBean(
     @MM
     var height: Float = 0f,
 
-    /**数据内容版本*/
-    var version: Int = 1,
-
     /**预览的base64图片
      * (data:image/xxx;base64,xxx) 带协议头
      *
@@ -36,4 +33,7 @@ data class CanvasDataBean(
 
     /**工程创建时间, 13位毫秒*/
     var update_time: Long = -1,
+
+    /**数据内容版本*/
+    var version: Int = 1,
 )

@@ -20,19 +20,28 @@ import kotlin.math.max
  */
 object CanvasDataHandleOperate {
 
-    /**雕刻缓存文件的文件夹*/
-    const val ENGRAVE_CACHE_FILE_FOLDER = "engrave"
-
-    /**GCode/Svg矢量缓存目录*/
-    const val VECTOR_CACHE_FILE_FOLDER = "vector"
-
     //---
 
+    /**gcode文件输出*/
     fun _defaultGCodeOutputFile() =
-        filePath(VECTOR_CACHE_FILE_FOLDER, fileNameTime(suffix = ".gcode")).file()
+        filePath(
+            CanvasConstant.VECTOR_FILE_FOLDER,
+            fileNameTime(suffix = CanvasConstant.GCODE_EXT)
+        ).file()
 
+    /**svg文件输出*/
     fun _defaultSvgOutputFile() =
-        filePath(VECTOR_CACHE_FILE_FOLDER, fileNameTime(suffix = ".svg")).file()
+        filePath(
+            CanvasConstant.VECTOR_FILE_FOLDER,
+            fileNameTime(suffix = CanvasConstant.SVG_EXT)
+        ).file()
+
+    /**工程文件输出*/
+    fun _defaultProjectOutputFile(name: String) =
+        filePath(
+            CanvasConstant.PROJECT_FILE_FOLDER,
+            name.ensureName(CanvasConstant.PROJECT_EXT)
+        ).file()
 
     //---
 

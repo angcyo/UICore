@@ -158,6 +158,19 @@ object CanvasConstant {
 
     //endregion ---支持的文件类型---
 
+    //region ---目录分配---
+
+    /**雕刻缓存文件的文件夹*/
+    const val ENGRAVE_FILE_FOLDER = "engrave"
+
+    /**GCode/Svg矢量缓存目录*/
+    const val VECTOR_FILE_FOLDER = "vector"
+
+    /**工程文件存储目录*/
+    const val PROJECT_FILE_FOLDER = "project"
+
+    //endregion ---目录分配---
+
 }
 
 fun Int.toDataTypeStr() = when (this) {
