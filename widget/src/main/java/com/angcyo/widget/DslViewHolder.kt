@@ -45,6 +45,9 @@ open class DslViewHolder(
     /**是否绑定过界面, 用来标识是否是首次创建布局*/
     var isBindView: Boolean = false
 
+    /**自定义的一些Flag*/
+    var flag: Int = 0
+
     /**
      * 清理缓存
      */
