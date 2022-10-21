@@ -3,6 +3,7 @@
     <string name="dialog_positive">Confirm</string>
     <string name="dialog_negative">Cancel</string>
     <string name="dialog_neutral">Neutrality</string>
+    <string name="dialog_continue">Continue</string>
     <string name="dialog_input_hint">Please input...</string>
 
     <string name="dialog_color_picker">Select color...</string>
