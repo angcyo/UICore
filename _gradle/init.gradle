@@ -3,9 +3,10 @@
 //org.apache.groovy.json.internal.LazyMap
 //new groovy.json.JsonSlurper().parse(file('./AccAuto/src/main/assets/admin.json'))
 
+//新版本依旧使用buildscript加入第三方插件
 /*buildscript {
     dependencies {
-        classpath("io.objectbox:objectbox-gradle-plugin:3.2.1")
+        classpath("io.objectbox:objectbox-gradle-plugin:3.3.1")
     }
 }
 
