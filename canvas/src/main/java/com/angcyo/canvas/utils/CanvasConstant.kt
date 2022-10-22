@@ -29,6 +29,10 @@ object CanvasConstant {
 
     //region ---数据类型---
 
+    /**数据类型, 真实数据
+     * 则[data]中存储的是直接可以发送给机器的数据*/
+    const val DATA_TYPE_RAW = 0
+
     /**数据类型, 图片数据*/
     const val DATA_TYPE_BITMAP = 10010
 

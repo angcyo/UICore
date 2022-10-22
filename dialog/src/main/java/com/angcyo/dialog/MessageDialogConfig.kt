@@ -27,7 +27,7 @@ open class MessageDialogConfig(context: Context? = null) : BaseDialogConfig(cont
         dialogWidth = -1
         dialogMessageGravity = Gravity.CENTER
         //消息弹窗, 默认只显示[positiveButtonText]按钮
-        negativeButtonText = null
+        negativeButtonText = null //cancel
         neutralButtonText = null
     }
 

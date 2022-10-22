@@ -198,7 +198,7 @@ fun fileNameUUID(suffix: String = ""): String {
 fun fileNameTime(pattern: String = "yyyy-MM-dd_HH-mm-ss-SSS", suffix: String = ""): String {
     val dateFormat: DateFormat = SimpleDateFormat(pattern, Locale.CHINA)
     val name = dateFormat.format(Date())
-    return if (suffix.startsWith(".")) {
+    return if (suffix.isEmpty() || suffix.startsWith(".")) {
         "${name}$suffix"
     } else {
         "${name}.$suffix"

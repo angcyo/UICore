@@ -40,8 +40,17 @@ data class CanvasProjectBean(
     var version: Int = 1,
 )
 
+/**
+ * 支持[com.angcyo.canvas.data.CanvasProjectItemBean]
+ * 支持[com.angcyo.canvas.data.CanvasProjectBean]
+ * */
+typealias CanvasOpenDataType = Any
+
 /**json字符串转换成[CanvasProjectBean]*/
 fun String.toCanvasProjectBean() = fromJson<CanvasProjectBean>()
+
+/**json字符串转换成[CanvasProjectItemBean]*/
+fun String.toCanvasProjectItemBean() = fromJson<CanvasProjectItemBean>()
 
 /**json字符串转换成[List<CanvasProjectItemBean>]*/
 fun String.toCanvasProjectItemList() =

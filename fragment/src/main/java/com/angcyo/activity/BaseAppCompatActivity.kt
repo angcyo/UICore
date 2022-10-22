@@ -258,7 +258,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         return result
     }
 
-    /**快速观察[LiveData]一次, 确保不收到null数据*/
+    /**快速观察[LiveData]一次, 确保不收到null数据为止*/
     fun <T> LiveData<T>.observeOnce(action: (data: T?) -> Unit): Observer<T> {
         var result: Observer<T>? = null
         observe(this@BaseAppCompatActivity, Observer<T> {

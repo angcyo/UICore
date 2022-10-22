@@ -182,6 +182,8 @@ object RBackground {
      * 将本应用置顶到最前端, 将应用前台显示
      * 当本应用位于后台时，则将它切换到最前端
      *
+     * Missing permissions required by ActivityManager.moveTaskToFront: android.permission.REORDER_TASKS
+     * [android.Manifest.permission.REORDER_TASKS]
      * @param context
      */
     fun moveAppToFront(context: Context = app()) {
@@ -250,3 +252,7 @@ abstract class OnBackgroundObserver {
     open fun onActivityLifecycleChanged(activity: Activity, state: String) {
     }
 }
+
+/**[Context]*/
+val lastContext: Context
+    get() = RBackground.lastActivityRef?.get() ?: app()
