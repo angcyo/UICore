@@ -14,6 +14,7 @@ import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.canvas.data.toPaintStyle
 import com.angcyo.canvas.data.toPaintStyleInt
+import com.angcyo.canvas.data.toTypeNameString
 import com.angcyo.canvas.graphics.GraphicsHelper
 import com.angcyo.canvas.graphics.IEngraveProvider
 import com.angcyo.canvas.items.BaseItem
@@ -38,25 +39,7 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
     var drawable: Drawable? = null
 
     init {
-        itemLayerName = dataBean.name ?: when (dataBean.mtype) {
-            CanvasConstant.DATA_TYPE_BITMAP -> "Bitmap"
-            CanvasConstant.DATA_TYPE_TEXT -> "Text"
-            CanvasConstant.DATA_TYPE_QRCODE -> "QRCode"
-            CanvasConstant.DATA_TYPE_BARCODE -> "BarCode"
-            CanvasConstant.DATA_TYPE_RECT -> "Rect"
-            CanvasConstant.DATA_TYPE_OVAL -> "Oval"
-            CanvasConstant.DATA_TYPE_LINE -> "Line"
-            CanvasConstant.DATA_TYPE_PEN -> "Pen"
-            CanvasConstant.DATA_TYPE_BRUSH -> "Brush"
-            CanvasConstant.DATA_TYPE_SVG -> "Svg"
-            CanvasConstant.DATA_TYPE_POLYGON -> "Polygon"
-            CanvasConstant.DATA_TYPE_PENTAGRAM -> "Pentagram"
-            CanvasConstant.DATA_TYPE_LOVE -> "Love"
-            CanvasConstant.DATA_TYPE_SINGLE_WORD -> "SingleWord"
-            CanvasConstant.DATA_TYPE_GCODE -> "GCode"
-            CanvasConstant.DATA_TYPE_PATH -> "Path"
-            else -> "Unknown"
-        }
+        itemLayerName = dataBean.name ?: dataBean.mtype.toTypeNameString()
     }
 
     override fun getItemScaleX(renderer: BaseItemRenderer<*>): Float {

@@ -424,3 +424,26 @@ fun Int.toMm() = toFloat().toMm()
 
 /**像素转毫米*/
 fun Float?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0f)
+
+//--
+
+/**[com.angcyo.canvas.data.CanvasProjectItemBean.mtype]类型转成字符串*/
+fun Int.toTypeNameString() = when (this) {
+    CanvasConstant.DATA_TYPE_BITMAP -> "Bitmap"
+    CanvasConstant.DATA_TYPE_TEXT -> "Text"
+    CanvasConstant.DATA_TYPE_QRCODE -> "QRCode"
+    CanvasConstant.DATA_TYPE_BARCODE -> "BarCode"
+    CanvasConstant.DATA_TYPE_RECT -> "Rect"
+    CanvasConstant.DATA_TYPE_OVAL -> "Oval"
+    CanvasConstant.DATA_TYPE_LINE -> "Line"
+    CanvasConstant.DATA_TYPE_PEN -> "Pen"
+    CanvasConstant.DATA_TYPE_BRUSH -> "Brush"
+    CanvasConstant.DATA_TYPE_SVG -> "Svg"
+    CanvasConstant.DATA_TYPE_POLYGON -> "Polygon"
+    CanvasConstant.DATA_TYPE_PENTAGRAM -> "Pentagram"
+    CanvasConstant.DATA_TYPE_LOVE -> "Love"
+    CanvasConstant.DATA_TYPE_SINGLE_WORD -> "SingleWord"
+    CanvasConstant.DATA_TYPE_GCODE -> "GCode"
+    CanvasConstant.DATA_TYPE_PATH -> "Path"
+    else -> "Unknown"
+}

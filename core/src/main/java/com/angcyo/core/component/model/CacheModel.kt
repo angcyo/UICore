@@ -7,6 +7,7 @@ import com.angcyo.http.rx.doMain
 import com.angcyo.library.ex.file
 import com.angcyo.viewmodel.vmData
 import com.angcyo.viewmodel.vmDataOnce
+import java.lang.Long.max
 
 /**
  * 缓存管理
@@ -59,7 +60,7 @@ class CacheModel : LifecycleViewModel() {
 
     /**计算缓存总大小*/
     fun _computeSumSize() {
-        val size = cacheInfoListData.value?.sumOf { it._size } ?: -1L
+        val size = cacheInfoListData.value?.sumOf { max(it._size, 0) } ?: -1L
         cacheSumData.postValue(size)
     }
 

@@ -46,11 +46,16 @@ class BatchHandle<T>(
         error = null
         index = 0
 
-        next()
+        _next()
     }
 
     /**调用此方法, 继续循环处理*/
     fun next() {
+        index++
+        _next()
+    }
+
+    private fun _next() {
         if (isFinish) {
             return
         }
@@ -66,7 +71,6 @@ class BatchHandle<T>(
         } else {
             val data = dataPool.getOrNull(index)
             if (data == null) {
-                index++
                 next()
             } else {
                 try {
