@@ -1,12 +1,14 @@
 package com.angcyo.canvas.data
 
+import com.angcyo.http.base.fromJson
+import com.angcyo.http.base.listType
 import com.angcyo.library.annotation.MM
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/21
  */
-data class CanvasDataBean(
+data class CanvasProjectBean(
     /**画布的宽高*/
     @MM
     var width: Float = 0f,
@@ -21,7 +23,7 @@ data class CanvasDataBean(
     var preview_img: String? = null,
 
     /**item list 的所有数据
-     * [com.angcyo.canvas.data.ItemDataBean]
+     * [com.angcyo.canvas.data.CanvasProjectItemBean]
      * */
     var data: String? = null,
 
@@ -37,3 +39,10 @@ data class CanvasDataBean(
     /**数据内容版本*/
     var version: Int = 1,
 )
+
+/**json字符串转换成[CanvasProjectBean]*/
+fun String.toCanvasProjectBean() = fromJson<CanvasProjectBean>()
+
+/**json字符串转换成[List<CanvasProjectItemBean>]*/
+fun String.toCanvasProjectItemList() =
+    fromJson<List<CanvasProjectItemBean>>(listType(CanvasProjectItemBean::class.java))

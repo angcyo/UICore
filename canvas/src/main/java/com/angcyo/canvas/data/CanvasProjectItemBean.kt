@@ -3,8 +3,9 @@ package com.angcyo.canvas.data
 import android.graphics.Paint
 import android.graphics.RectF
 import android.widget.LinearLayout
-import com.angcyo.canvas.data.ItemDataBean.Companion.MM_UNIT
+import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.canvas.graphics.GraphicsHelper
+import com.angcyo.canvas.graphics.PathGraphicsParser
 import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_BOLD
 import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_DELETE_LINE
 import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_ITALIC
@@ -18,13 +19,14 @@ import com.angcyo.library.ex.add
 import com.angcyo.library.ex.ensure
 import com.angcyo.library.ex.have
 import com.angcyo.library.unit.MmValueUnit
+import kotlin.math.max
 
 /**
  * 渲染的数据, 用来保存和恢复. 长度单位统一使用mm, 毫米
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/20
  */
-data class ItemDataBean(
+data class CanvasProjectItemBean(
 
     //region ---bounds---
 
@@ -258,11 +260,14 @@ data class ItemDataBean(
 
     //region ---私有属性---
 
-    /**数据处理的模式
+    /**数据处理的模式, 处理成机器需要的数据
      * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_BLACK_WHITE]
      * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_GCODE]
      * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_DITHERING]
+     *
+     * [com.angcyo.canvas.graphics.IGraphicsParser.initDataMode]
      * */
+    @Transient
     var _dataMode: Int? = null,
 
     //endregion ---私有属性---
@@ -280,14 +285,22 @@ data class ItemDataBean(
         const val DEFAULT_LINE_SPACE = 5.0f
     }
 
-    /**设置渲染的位置*/
+    /**设置渲染的位置
+     * [bounds] 返回值*/
     fun updateToRenderBounds(@Pixel bounds: RectF): RectF {
         val valueUnit = MM_UNIT
         val l = valueUnit.convertValueToPixel(left)
         val t = valueUnit.convertValueToPixel(top)
-        val w = valueUnit.convertValueToPixel(width)
-        val h = valueUnit.convertValueToPixel(height)
-        bounds.set(l, t, l + w * scaleX, t + h * scaleY)
+        var w = valueUnit.convertValueToPixel(width)
+        var h = valueUnit.convertValueToPixel(height)
+
+        //限制大小
+        w = max(PathGraphicsParser.MIN_PATH_SIZE, w)
+        h = max(PathGraphicsParser.MIN_PATH_SIZE, h)
+
+        val sx = if (scaleX == 0f) 1f else scaleX
+        val sy = if (scaleY == 0f) 1f else scaleY
+        bounds.set(l, t, l + w * sx, t + h * sy)
         return bounds
     }
 
@@ -296,8 +309,12 @@ data class ItemDataBean(
      * [h] 界面上显示的大小, 像素*/
     fun updateScale(@Pixel w: Float, @Pixel h: Float) {
         val valueUnit = MM_UNIT
-        scaleX = (valueUnit.convertPixelToValue(w) / width).ensure()
-        scaleY = (valueUnit.convertPixelToValue(h) / height).ensure()
+        if (w != 0f && width != 0f) {
+            scaleX = (valueUnit.convertPixelToValue(w) / width).ensure()
+        }
+        if (h != 0f && height != 0f) {
+            scaleY = (valueUnit.convertPixelToValue(h) / height).ensure()
+        }
     }
 
     /**更新坐标, 缩放比例数据*/
@@ -313,7 +330,7 @@ data class ItemDataBean(
 
     /**复制元素
      * [offset] 是否开启偏移, 会在原数据的基础上+上偏移量*/
-    fun copyBean(offset: Boolean = false): ItemDataBean {
+    fun copyBean(offset: Boolean = false): CanvasProjectItemBean {
         val newBean = copy()
         if (offset) {
             newBean.left += GraphicsHelper.POSITION_STEP
@@ -360,7 +377,7 @@ fun Int?.toPaintStyle(): Paint.Style = when (this) {
 //---
 
 /**文本演示*/
-fun ItemDataBean.textStyle(): Int {
+fun CanvasProjectItemBean.textStyle(): Int {
     var result = TEXT_STYLE_NONE
     if (isBold()) {
         result = result.add(TEXT_STYLE_BOLD)
@@ -378,7 +395,7 @@ fun ItemDataBean.textStyle(): Int {
 }
 
 /**设置文本样式*/
-fun ItemDataBean.setTextStyle(style: Int) {
+fun CanvasProjectItemBean.setTextStyle(style: Int) {
     fontWeight = if (style.have(TEXT_STYLE_BOLD)) "bold" else null
     fontStyle = if (style.have(TEXT_STYLE_ITALIC)) "italic" else null
     underline = style.have(TEXT_STYLE_UNDER_LINE)
@@ -386,10 +403,10 @@ fun ItemDataBean.setTextStyle(style: Int) {
 }
 
 /**是否加粗*/
-fun ItemDataBean.isBold() = fontWeight == "bold"
+fun CanvasProjectItemBean.isBold() = fontWeight == "bold"
 
 /**是否斜体*/
-fun ItemDataBean.isItalic() = fontStyle == "italic"
+fun CanvasProjectItemBean.isItalic() = fontStyle == "italic"
 
 /**毫米转像素*/
 fun Float?.toPixel() = MM_UNIT.convertValueToPixel(this ?: 0f)

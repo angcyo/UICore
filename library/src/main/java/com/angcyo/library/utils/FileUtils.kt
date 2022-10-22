@@ -2,12 +2,9 @@ package com.angcyo.library.utils
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.provider.Settings
 import com.angcyo.library.*
 import com.angcyo.library.ex.file
 import com.angcyo.library.ex.havePermission
@@ -195,7 +192,7 @@ fun fileNameUUID(suffix: String = ""): String {
     }
 }
 
-/**获取一个时间文件名
+/**获取一个时间文件名, 文件名不能包含空格, 否则adb pull的时候会失败
  * [suffix] 后缀,智能追加.
  * */
 fun fileNameTime(pattern: String = "yyyy-MM-dd_HH-mm-ss-SSS", suffix: String = ""): String {

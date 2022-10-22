@@ -3,7 +3,7 @@ package com.angcyo.canvas.graphics
 import android.graphics.Bitmap
 import android.graphics.Paint
 import com.angcyo.canvas.CanvasDelegate
-import com.angcyo.canvas.data.ItemDataBean
+import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.data.toPaintStyleInt
 import com.angcyo.canvas.items.data.DataItemRenderer
@@ -20,9 +20,9 @@ import com.angcyo.library.ex.toBase64Data
 
 //region ---图/文---
 
-fun Bitmap?.toBitmapItemData(action: ItemDataBean.() -> Unit = {}): ItemDataBean? {
+fun Bitmap?.toBitmapItemData(action: CanvasProjectItemBean.() -> Unit = {}): CanvasProjectItemBean? {
     this ?: return null
-    val bean = ItemDataBean()
+    val bean = CanvasProjectItemBean()
     bean.mtype = CanvasConstant.DATA_TYPE_BITMAP
     bean.imageOriginal = toBase64Data()
     bean.action()
@@ -32,7 +32,7 @@ fun Bitmap?.toBitmapItemData(action: ItemDataBean.() -> Unit = {}): ItemDataBean
 /**添加一个[bitmap]数据渲染*/
 fun CanvasDelegate.addBitmapRender(
     bitmap: Bitmap?,
-    action: ItemDataBean.() -> Unit = {}
+    action: CanvasProjectItemBean.() -> Unit = {}
 ): DataItemRenderer? {
     bitmap ?: return null
     val bean = bitmap.toBitmapItemData(action) ?: return null
@@ -40,9 +40,9 @@ fun CanvasDelegate.addBitmapRender(
     return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
 
-fun CharSequence?.toTextItemData(): ItemDataBean? {
+fun CharSequence?.toTextItemData(): CanvasProjectItemBean? {
     this ?: return null
-    val bean = ItemDataBean()
+    val bean = CanvasProjectItemBean()
     bean.mtype = CanvasConstant.DATA_TYPE_TEXT
     bean.text = "$this"
     bean.paintStyle = Paint.Style.FILL.toPaintStyleInt()
@@ -60,7 +60,7 @@ fun CanvasDelegate.addTextRender(
     type: Int = CanvasConstant.DATA_TYPE_TEXT
 ): DataItemRenderer? {
     text ?: return null
-    val bean = ItemDataBean()
+    val bean = CanvasProjectItemBean()
     bean.mtype = type
     bean.text = "$text"
     bean.paintStyle = Paint.Style.FILL.toPaintStyleInt()
@@ -75,7 +75,7 @@ fun CanvasDelegate.addTextRender(
  * [length] 线的长度
  * */
 fun CanvasDelegate.addLineRender(@Pixel length: Float = ShapesHelper.defaultWidth): DataItemRenderer? {
-    val bean = ItemDataBean()
+    val bean = CanvasProjectItemBean()
     bean.mtype = CanvasConstant.DATA_TYPE_LINE
     bean.width = length.toMm()
     return GraphicsHelper.addRenderItemDataBean(this, bean)
@@ -86,7 +86,7 @@ fun CanvasDelegate.addOvalRender(
     @Pixel width: Float = ShapesHelper.defaultWidth,
     @Pixel height: Float = ShapesHelper.defaultHeight
 ): DataItemRenderer? {
-    val bean = ItemDataBean()
+    val bean = CanvasProjectItemBean()
     bean.mtype = CanvasConstant.DATA_TYPE_OVAL
     bean.width = width.toMm()
     bean.height = height.toMm()
@@ -103,7 +103,7 @@ fun CanvasDelegate.addRectRender(
     @Pixel width: Float = ShapesHelper.defaultWidth,
     @Pixel height: Float = ShapesHelper.defaultHeight
 ): DataItemRenderer? {
-    val bean = ItemDataBean()
+    val bean = CanvasProjectItemBean()
     bean.mtype = CanvasConstant.DATA_TYPE_RECT
     bean.width = width.toMm()
     bean.height = height.toMm()
@@ -116,12 +116,12 @@ fun CanvasDelegate.addRectRender(
 }
 
 /**添加一个多边形, 支持任意边数
- * [com.angcyo.canvas.data.ItemDataBean.side]*/
+ * [com.angcyo.canvas.data.CanvasProjectItemBean.side]*/
 fun CanvasDelegate.addPolygonRender(
     @Pixel width: Float = ShapesHelper.defaultWidth,
     @Pixel height: Float = ShapesHelper.defaultHeight
 ): DataItemRenderer? {
-    val bean = ItemDataBean()
+    val bean = CanvasProjectItemBean()
     bean.mtype = CanvasConstant.DATA_TYPE_POLYGON
     bean.width = width.toMm()
     bean.height = height.toMm()
@@ -134,14 +134,14 @@ fun CanvasDelegate.addPolygonRender(
 }
 
 /**添加一个星星, 支持任意边数, 和深度
- * [com.angcyo.canvas.data.ItemDataBean.side]
- * [com.angcyo.canvas.data.ItemDataBean.depth]
+ * [com.angcyo.canvas.data.CanvasProjectItemBean.side]
+ * [com.angcyo.canvas.data.CanvasProjectItemBean.depth]
  * */
 fun CanvasDelegate.addPentagramRender(
     @Pixel width: Float = ShapesHelper.defaultWidth,
     @Pixel height: Float = ShapesHelper.defaultHeight
 ): DataItemRenderer? {
-    val bean = ItemDataBean()
+    val bean = CanvasProjectItemBean()
     bean.mtype = CanvasConstant.DATA_TYPE_PENTAGRAM
     bean.width = width.toMm()
     bean.height = height.toMm()
@@ -160,7 +160,7 @@ fun CanvasDelegate.addLoveRender(
     @Pixel width: Float = ShapesHelper.defaultWidth,
     @Pixel height: Float = ShapesHelper.defaultHeight
 ): DataItemRenderer? {
-    val bean = ItemDataBean()
+    val bean = CanvasProjectItemBean()
     bean.mtype = CanvasConstant.DATA_TYPE_LOVE
     bean.width = width.toMm()
     bean.height = height.toMm()
@@ -172,10 +172,10 @@ fun CanvasDelegate.addLoveRender(
 
 //region ---矢量---
 
-/**SVG数据转[ItemDataBean]*/
-fun String?.toSvgItemData(): ItemDataBean? {
+/**SVG数据转[CanvasProjectItemBean]*/
+fun String?.toSvgItemData(): CanvasProjectItemBean? {
     this ?: return null
-    val bean = ItemDataBean()
+    val bean = CanvasProjectItemBean()
     bean.mtype = CanvasConstant.DATA_TYPE_SVG
     bean.data = this
     bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
@@ -186,10 +186,10 @@ fun String?.toSvgItemData(): ItemDataBean? {
 fun CanvasDelegate.addSvgRender(svg: String?) =
     GraphicsHelper.addRenderItemDataBean(this, svg.toSvgItemData())
 
-/**GCode数据转[ItemDataBean]*/
-fun String?.toGCodeItemData(): ItemDataBean? {
+/**GCode数据转[CanvasProjectItemBean]*/
+fun String?.toGCodeItemData(): CanvasProjectItemBean? {
     this ?: return null
-    val bean = ItemDataBean()
+    val bean = CanvasProjectItemBean()
     bean.mtype = CanvasConstant.DATA_TYPE_GCODE
     bean.data = this
     bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()

@@ -5,7 +5,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.widget.LinearLayout
-import com.angcyo.canvas.data.ItemDataBean
+import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
@@ -27,7 +27,7 @@ import com.angcyo.library.gesture.RectScaleGestureHandler
  */
 class TextGraphicsParser : IGraphicsParser {
 
-    override fun parse(bean: ItemDataBean): DataItem? {
+    override fun parse(bean: CanvasProjectItemBean): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_TEXT && !bean.text.isNullOrEmpty()) {
             val item = DataTextItem(bean)
             updateText(item)

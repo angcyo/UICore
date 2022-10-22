@@ -21,7 +21,7 @@ import kotlin.math.tan
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/22
  */
-class DataTextItem(bean: ItemDataBean) : DataItem(bean) {
+class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
 
     companion object {
 

@@ -7,7 +7,6 @@ import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.Reason
-import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.BoundsOperateHandler
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
@@ -214,8 +213,6 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         }
     }
 
-    override fun getEngraveBitmap(): Bitmap? = preview()?.toBitmap()
-
     fun getRotateMatrix(rotateCenterX: Float, rotateCenterY: Float): Matrix {
         _rotateMatrix.reset()
         _rotateMatrix.postRotate(rotate, rotateCenterX, rotateCenterY)
@@ -413,142 +410,15 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     //</editor-fold desc="控制方法">
 
-    //<editor-fold desc="绘制相关方法">
+    //<editor-fold desc="IEngraveProvider">
 
-    /**当渲染的[drawable]改变后, 调用此方法, 更新bounds*/
-    fun updateDrawableBounds(
-        oldWidth: Float = getRendererRenderItem()?.itemWidth ?: 0f,
-        oldHeight: Float = getRendererRenderItem()?.itemHeight ?: 0f
-    ) {
-        /*getRendererRenderItem()?.let { item ->
-            var isUpdate = false
+    override fun getEngraveBitmap(): Bitmap? = preview()?.toBitmap()
 
-            val bounds = getBounds()
+    override fun getEngraveRenderer(): IItemRenderer<*>? = this
 
-            val width = bounds.width()
-            val height = bounds.height()
+    override fun getEngraveBounds(): RectF = getBounds()
 
-            val newWith = item.itemWidth
-            val newHeight = item.itemHeight
+    override fun getEngraveRotateBounds(): RectF = getRotateBounds()
 
-            if (bounds.isNoSize() || oldWidth == 0f || oldHeight == 0f) {
-                //首次更新bounds
-                if (width != newWith || height != newHeight) {
-                    isUpdate = true
-                    updateBounds(newWith, newHeight, getBoundsScaleAnchor())
-                }
-            } else {
-                //再次更新bounds
-                val scaleWidth = width / oldWidth
-                val scaleHeight = height / oldHeight
-                if (scaleWidth == 1f && scaleHeight == 1f) {
-                    if ((width >= height && newWith >= newHeight) || (width < height && newWith < newHeight)) {
-                        //方向一致, 比如一致的宽图, 一致的长图
-
-                        //限制目标大小到原来的大小
-                        limitMaxWidthHeight(newWith, newHeight, oldWidth, oldHeight).apply {
-                            isUpdate = true
-                            updateBounds(this[0], this[1], getBoundsScaleAnchor())
-                        }
-                    } else {
-                        //方向不一致, 使用新的宽高
-                        isUpdate = true
-                        updateBounds(newWith, newHeight, getBoundsScaleAnchor())
-                    }
-                } else {
-                    //重新缩放当前的大小,达到和原来的缩放效果一致性
-                    if ((width >= height && newWith >= newHeight) || (width < height && newWith < newHeight)) {
-                        //方向一致, 比如一致的宽图, 一致的长图
-                        isUpdate = true
-                        updateBounds(
-                            newWith * scaleWidth,
-                            newHeight * scaleHeight,
-                            getBoundsScaleAnchor()
-                        )
-                    } else {
-                        //方向不一致
-                        isUpdate = true
-                        updateBounds(
-                            newWith * scaleHeight,
-                            newHeight * scaleWidth,
-                            getBoundsScaleAnchor()
-                        )
-                    }
-                }
-            }
-
-            //未被更新
-            if (!isUpdate) {
-                canvasView.dispatchItemRenderUpdate(this)
-                refresh()
-            }
-        }*/
-    }
-
-
-    /**更新画笔绘制文本时的对齐方式*/
-    open fun updatePaintAlign(align: Paint.Align, strategy: Strategy = Strategy.normal) {
-        /*val oldValue = paint.textAlign
-        if (oldValue == align) {
-            return
-        }
-        paint.textAlign = align
-        requestRendererItemUpdate()
-
-        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
-            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
-                override fun runUndo() {
-                    updatePaintAlign(oldValue ?: Paint.Align.LEFT, Strategy.undo)
-                }
-
-                override fun runRedo() {
-                    updatePaintAlign(align, Strategy.redo)
-                }
-            })
-        }*/
-    }
-
-    /**更新笔的颜色*/
-    open fun updatePaintColor(color: Int, strategy: Strategy = Strategy.normal) {
-        /*val oldValue = paint.color
-        if (oldValue == color) {
-            return
-        }
-        paint.color = color
-
-        //更新需要绘制的元素
-        requestRendererItemUpdate()
-
-        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
-            canvasViewBox.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
-                override fun runUndo() {
-                    updatePaintColor(oldValue, Strategy.undo)
-                }
-
-                override fun runRedo() {
-                    updatePaintColor(color, Strategy.redo)
-                }
-            })
-        }*/
-    }
-
-
-    /**重写此方法, 更新需要渲染的元素.
-     * 比如: 画笔颜色改变, 需要重绘文本; 图片更新; Drawable更新等
-     * [fromItem] 之前的item, 如果有
-     * */
-    open fun requestRendererItemUpdate(fromItem: BaseItem? = null) {
-        /*getRendererRenderItem()?.let { item ->
-            val oldWidth = fromItem?.itemWidth ?: item.itemWidth
-            val oldHeight = fromItem?.itemHeight ?: item.itemHeight
-            item.updateItem(paint)
-            updateDrawableBounds(oldWidth, oldHeight)
-        }
-
-        //刷新
-        refresh()
-        canvasView.dispatchItemRenderUpdate(this)*/
-    }
-
-    //</editor-fold desc="绘制相关方法">
+    //</editor-fold desc="IEngraveProvider">
 }

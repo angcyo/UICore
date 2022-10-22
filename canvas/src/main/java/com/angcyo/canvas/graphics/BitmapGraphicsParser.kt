@@ -1,6 +1,6 @@
 package com.angcyo.canvas.graphics
 
-import com.angcyo.canvas.data.ItemDataBean
+import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.items.data.DataBitmapItem
 import com.angcyo.canvas.items.data.DataItem
@@ -17,7 +17,7 @@ import com.hingin.rn.image.ImageProcess
  */
 class BitmapGraphicsParser : IGraphicsParser {
 
-    override fun parse(bean: ItemDataBean): DataItem? {
+    override fun parse(bean: CanvasProjectItemBean): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_BITMAP && !bean.imageOriginal.isNullOrEmpty()) {
             try {
                 val originBitmap = bean.imageOriginal?.toBitmapOfBase64()

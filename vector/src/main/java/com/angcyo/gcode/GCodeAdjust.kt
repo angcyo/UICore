@@ -3,6 +3,7 @@ package com.angcyo.gcode
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.mapPoint
 import com.angcyo.library.ex.mapRectF
 import com.angcyo.library.unit.InchValueUnit
@@ -28,10 +29,11 @@ class GCodeAdjust {
 
     /**GCode数据坐标调整, 先缩放旋转,再偏移
      * [gCode]
-     * [bounds] 未旋转时的bounds
+     * [bounds] 未旋转时的bounds, 像素坐标
      * */
     fun gCodeAdjust(
         gCode: String,
+        @Pixel
         bounds: RectF,
         rotate: Float,
         outputFile: File

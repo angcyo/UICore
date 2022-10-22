@@ -3,8 +3,8 @@ package com.angcyo.canvas.items.data
 import android.graphics.Bitmap
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.renderer.ICanvasStep
-import com.angcyo.canvas.data.ItemDataBean
-import com.angcyo.canvas.data.ItemDataBean.Companion.MM_UNIT
+import com.angcyo.canvas.data.CanvasProjectItemBean
+import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.gcode.GCodeDrawable
 import com.angcyo.library.annotation.Pixel
@@ -15,7 +15,7 @@ import com.angcyo.library.annotation.Pixel
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/21
  */
-class DataBitmapItem(bean: ItemDataBean) : DataItem(bean) {
+class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
 
     //region ---属性---
 

@@ -3,7 +3,7 @@ package com.angcyo.canvas.graphics
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
-import com.angcyo.canvas.data.ItemDataBean
+import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.component.ScalePictureDrawable
@@ -19,7 +19,7 @@ import com.angcyo.library.ex.withPicture
 interface IGraphicsParser {
 
     /**解析数据*/
-    fun parse(bean: ItemDataBean): DataItem? = null
+    fun parse(bean: CanvasProjectItemBean): DataItem? = null
 
     //---
 
@@ -40,7 +40,7 @@ interface IGraphicsParser {
     }
 
     /**简单的初始化一下数据模式*/
-    fun initDataMode(bean: ItemDataBean, paint: Paint) {
+    fun initDataMode(bean: CanvasProjectItemBean, paint: Paint) {
         bean._dataMode = if (paint.style == Paint.Style.STROKE) {
             CanvasConstant.DATA_MODE_GCODE
         } else {

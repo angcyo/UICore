@@ -1,6 +1,6 @@
 package com.angcyo.canvas.graphics
 
-import com.angcyo.canvas.data.ItemDataBean
+import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataPathItem
@@ -14,7 +14,7 @@ import com.angcyo.svg.Svg
  */
 class SvgGraphicsParser : PathGraphicsParser() {
 
-    override fun parse(bean: ItemDataBean): DataItem? {
+    override fun parse(bean: CanvasProjectItemBean): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_SVG) {
             val data = bean.data
             if (!data.isNullOrEmpty()) {

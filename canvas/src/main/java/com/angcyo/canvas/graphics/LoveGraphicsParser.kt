@@ -1,7 +1,6 @@
 package com.angcyo.canvas.graphics
 
-import android.graphics.Paint
-import com.angcyo.canvas.data.ItemDataBean
+import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataShapeItem
@@ -16,7 +15,7 @@ import com.pixplicity.sharp.Sharp
  */
 class LoveGraphicsParser : PathGraphicsParser() {
 
-    override fun parse(bean: ItemDataBean): DataItem? {
+    override fun parse(bean: CanvasProjectItemBean): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_LOVE) {
             val item = DataShapeItem(bean)
             item.updatePaint()

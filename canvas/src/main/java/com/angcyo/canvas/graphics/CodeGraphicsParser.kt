@@ -1,7 +1,7 @@
 package com.angcyo.canvas.graphics
 
 import android.graphics.Bitmap
-import com.angcyo.canvas.data.ItemDataBean
+import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.utils.CanvasConstant
@@ -19,7 +19,7 @@ import com.google.zxing.BarcodeFormat
  * @since 2022/09/22
  */
 class CodeGraphicsParser : IGraphicsParser {
-    override fun parse(bean: ItemDataBean): DataItem? {
+    override fun parse(bean: CanvasProjectItemBean): DataItem? {
         if (!bean.text.isNullOrEmpty()) {
             if (bean.mtype == CanvasConstant.DATA_TYPE_QRCODE) {
                 bean.text?.createQRCode()?.let { bitmap ->
@@ -37,7 +37,7 @@ class CodeGraphicsParser : IGraphicsParser {
     }
 
     /**处理图片*/
-    fun handleBitmap(bean: ItemDataBean, bitmap: Bitmap): DataItem {
+    fun handleBitmap(bean: CanvasProjectItemBean, bitmap: Bitmap): DataItem {
         val item = DataItem(bean)
         wrapBitmap(item, bitmap)
 

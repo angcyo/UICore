@@ -1,7 +1,7 @@
 package com.angcyo.canvas.graphics
 
 import com.angcyo.canvas.LinePath
-import com.angcyo.canvas.data.ItemDataBean
+import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataShapeItem
@@ -14,7 +14,7 @@ import com.angcyo.canvas.utils.CanvasConstant
  */
 class LineGraphicsParser : PathGraphicsParser() {
 
-    override fun parse(bean: ItemDataBean): DataItem? {
+    override fun parse(bean: CanvasProjectItemBean): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_LINE) {
             val item = DataShapeItem(bean)
             item.updatePaint()

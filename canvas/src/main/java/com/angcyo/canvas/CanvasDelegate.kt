@@ -11,9 +11,9 @@ import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.core.*
 import com.angcyo.canvas.core.component.*
 import com.angcyo.canvas.core.renderer.*
-import com.angcyo.canvas.data.CanvasDataBean
-import com.angcyo.canvas.data.ItemDataBean
-import com.angcyo.canvas.data.ItemDataBean.Companion.MM_UNIT
+import com.angcyo.canvas.data.CanvasProjectBean
+import com.angcyo.canvas.data.CanvasProjectItemBean
+import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.canvas.data.LimitDataInfo
 import com.angcyo.canvas.graphics.GraphicsHelper
 import com.angcyo.canvas.items.data.DataItemRenderer
@@ -674,7 +674,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         file_name: String? = null,
         outWidth: Int = -1,
         outHeight: Int = -1
-    ): CanvasDataBean {
+    ): CanvasProjectBean {
         val bitmap = getBitmap(true, outWidth, outHeight)
         val width = MM_UNIT.convertPixelToValue(bitmap.width.toFloat())
         val height = MM_UNIT.convertPixelToValue(bitmap.height.toFloat())
@@ -692,7 +692,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                 }
             }
         }.toString()
-        return CanvasDataBean(
+        return CanvasProjectBean(
             width,
             height,
             bitmap.toBase64Data(),
@@ -895,7 +895,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     /**复制一组item*/
     fun copyItemRenderer(list: List<BaseItemRenderer<*>>, strategy: Strategy) {
-        val copyDataList = mutableListOf<ItemDataBean>()
+        val copyDataList = mutableListOf<CanvasProjectItemBean>()
         list.forEach { item ->
             if (item is DataItemRenderer) {
                 item.dataItem?.dataBean?.let {

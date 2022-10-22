@@ -19,7 +19,7 @@ import com.angcyo.library.ex.*
 /**
  * 数据渲染器
  *
- * [com.angcyo.canvas.data.ItemDataBean]
+ * [com.angcyo.canvas.data.CanvasProjectItemBean]
  *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/21
@@ -123,6 +123,12 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
         }
     }
 
+    //<editor-fold desc="IEngraveProvider">
+
+    /**
+     * [com.angcyo.canvas.items.data.DataItem.getEngraveBitmap]
+     * [com.angcyo.canvas.items.data.DataItemRenderer.getEngraveBitmap]
+     * */
     override fun getEngraveBitmap(): Bitmap? {
         val item = getRendererRenderItem()
         val result = if (item is DataBitmapItem) {
@@ -140,6 +146,10 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
         }
         return super.getEngraveBitmap()
     }
+
+    override fun getEngraveDataItem(): DataItem? = dataItem
+
+    //</editor-fold desc="IEngraveProvider">
 
     //</editor-fold desc="核心回调">
 

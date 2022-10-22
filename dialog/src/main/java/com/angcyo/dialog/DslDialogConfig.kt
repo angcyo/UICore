@@ -474,6 +474,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
         }
     }
 
+    /**[com.angcyo.dialog.DslDialogConfig.showAndConfigDialog]*/
     open fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         //背景替换
         if (contentBgDrawable is UndefinedDrawable) {

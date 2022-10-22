@@ -7,7 +7,7 @@ import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.data.ItemDataBean
+import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.graphics.PathGraphicsParser.Companion.MIN_PATH_SIZE
 import com.angcyo.canvas.items.BaseItem
@@ -23,7 +23,7 @@ import com.angcyo.library.annotation.MM
 import com.angcyo.library.ex.abs
 
 /**
- * 用来解析[ItemDataBean]
+ * 用来解析[CanvasProjectItemBean]
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/21
  */
@@ -78,7 +78,7 @@ object GraphicsHelper {
     const val POSITION_CUT = 30f
 
     /**分配一个位置, 和智能调整缩放*/
-    fun assignLocation(canvasViewBox: CanvasViewBox, bean: ItemDataBean) {
+    fun assignLocation(canvasViewBox: CanvasViewBox, bean: CanvasProjectItemBean) {
         if (_lastLeft > POSITION_CUT) {
             //换行
             _lastLeft = 0f
@@ -102,16 +102,18 @@ object GraphicsHelper {
             val width = bean.width.toPixel()
             val height = bean.height.toPixel()
 
-            val targetWidth: Float
-            val targetHeight: Float
+            if (width > 0 && height > 0) {
+                val targetWidth: Float
+                val targetHeight: Float
 
-            limitMaxWidthHeight(width, height, maxWidth, maxHeight).apply {
-                targetWidth = this[0]
-                targetHeight = this[1]
+                limitMaxWidthHeight(width, height, maxWidth, maxHeight).apply {
+                    targetWidth = this[0]
+                    targetHeight = this[1]
+                }
+
+                bean.scaleX = targetWidth / width
+                bean.scaleY = targetHeight / height
             }
-
-            bean.scaleX = targetWidth / width
-            bean.scaleY = targetHeight / height
         }
     }
 
@@ -122,7 +124,7 @@ object GraphicsHelper {
      * */
     @CallPoint
     @AnyThread
-    fun parseItemFrom(bean: ItemDataBean): DataItem? {
+    fun parseRenderItemFrom(bean: CanvasProjectItemBean): DataItem? {
         initParser()
         var result: DataItem? = null
         for (parser in _parserList) {
@@ -147,19 +149,18 @@ object GraphicsHelper {
     @AnyThread
     fun renderItemDataBean(
         canvasView: ICanvasView,
-        bean: ItemDataBean,
+        bean: CanvasProjectItemBean,
         selected: Boolean,
         assignLocation: Boolean = false,
         strategy: Strategy = Strategy.normal
     ): DataItemRenderer? {
-        val item = parseItemFrom(bean) ?: return null
+        val item = parseRenderItemFrom(bean) ?: return null
         val renderer = DataItemRenderer(canvasView)
         doMain {
             renderer.setRendererRenderItem(item)
             if (assignLocation) {
                 //更新位置和可视的缩放比例
                 assignLocation(canvasView.getCanvasViewBox(), bean)
-                updateRenderItem(renderer, bean)
             }
             updateRendererProperty(renderer, bean)
             (canvasView as? CanvasDelegate)?.apply {
@@ -177,12 +178,12 @@ object GraphicsHelper {
     @AnyThread
     fun renderItemDataBeanList(
         canvasView: ICanvasView,
-        beanList: List<ItemDataBean>,
+        beanList: List<CanvasProjectItemBean>,
         strategy: Strategy
     ): List<DataItemRenderer> {
         val result = mutableListOf<DataItemRenderer>()
         beanList.forEach { bean ->
-            val item = parseItemFrom(bean)
+            val item = parseRenderItemFrom(bean)
             item?.let {
                 val renderer = DataItemRenderer(canvasView)
                 renderer.setRendererRenderItem(item)
@@ -209,7 +210,10 @@ object GraphicsHelper {
      * [renderItemDataBean] 此方法的缩短写法*/
     @CallPoint
     @AnyThread
-    fun addRenderItemDataBean(canvasView: ICanvasView?, bean: ItemDataBean?): DataItemRenderer? {
+    fun addRenderItemDataBean(
+        canvasView: ICanvasView?,
+        bean: CanvasProjectItemBean?
+    ): DataItemRenderer? {
         return if (bean == null || canvasView == null) {
             null
         } else {
@@ -219,8 +223,8 @@ object GraphicsHelper {
 
     /**更新一个新的渲染[DataItem], 重新渲染数据*/
     @CallPoint
-    fun updateRenderItem(renderer: DataItemRenderer, bean: ItemDataBean) {
-        val item = parseItemFrom(bean) ?: return
+    fun updateRenderItem(renderer: DataItemRenderer, bean: CanvasProjectItemBean) {
+        val item = parseRenderItemFrom(bean) ?: return
         updateRenderItem(renderer, item)
     }
 
@@ -240,7 +244,7 @@ object GraphicsHelper {
 
     /**根据[bean]提供的参数, 更新[renderer]相关属性*/
     @MainThread
-    fun updateRendererProperty(renderer: BaseItemRenderer<*>, bean: ItemDataBean) {
+    fun updateRendererProperty(renderer: BaseItemRenderer<*>, bean: CanvasProjectItemBean) {
         //可见性
         renderer._visible = bean.isVisible
 

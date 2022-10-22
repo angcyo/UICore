@@ -3,7 +3,7 @@ package com.angcyo.canvas.graphics
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.LinePath
-import com.angcyo.canvas.data.ItemDataBean
+import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataPathItem
@@ -32,7 +32,7 @@ open class PathGraphicsParser : IGraphicsParser {
         const val MIN_PATH_SIZE = 1f
     }
 
-    override fun parse(bean: ItemDataBean): DataItem? {
+    override fun parse(bean: CanvasProjectItemBean): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_SINGLE_WORD /*单线字*/ ||
             bean.mtype == CanvasConstant.DATA_TYPE_PEN /*钢笔*/ ||
             (bean.mtype == CanvasConstant.DATA_TYPE_SVG && bean.data.isNullOrEmpty())/*svg*/

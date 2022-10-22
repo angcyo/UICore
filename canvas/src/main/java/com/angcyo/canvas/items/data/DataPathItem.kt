@@ -6,8 +6,8 @@ import android.graphics.Paint
 import android.graphics.Path
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.Reason
-import com.angcyo.canvas.data.ItemDataBean
-import com.angcyo.canvas.data.ItemDataBean.Companion.MM_UNIT
+import com.angcyo.canvas.data.CanvasProjectItemBean
+import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.canvas.data.toPaintStyle
 import com.angcyo.library.annotation.Implementation
 import com.angcyo.library.component.pool.acquireTempMatrix
@@ -22,7 +22,7 @@ import com.angcyo.library.ex.toColor
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/23
  */
-open class DataPathItem(bean: ItemDataBean) : DataItem(bean) {
+open class DataPathItem(bean: CanvasProjectItemBean) : DataItem(bean) {
 
     //region ---属性---
 
