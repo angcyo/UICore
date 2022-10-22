@@ -187,6 +187,14 @@ data class CanvasProjectItemBean(
      * */
     var path: String? = null,
 
+    /**虚线线宽*/
+    @MM
+    var dashWidth: Float = 1f,
+
+    /**虚线线距*/
+    @MM
+    var dashGap: Float = 1f,
+
     //endregion ---SVG path数据---
 
     //region ---图片数据---

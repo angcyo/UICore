@@ -1,9 +1,12 @@
 package com.angcyo.canvas.graphics
 
+import android.graphics.DashPathEffect
 import android.graphics.Paint
+import android.graphics.PathEffect
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.data.CanvasProjectItemBean
+import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataPathItem
@@ -108,7 +111,7 @@ open class PathGraphicsParser : IGraphicsParser {
                     val linePaint = Paint(paint)
                     linePaint.style = Paint.Style.STROKE //线只能使用此模式¬
                     if (paint.style == Paint.Style.STROKE) {
-                        linePaint.pathEffect = item.lineStrokeEffect //虚线
+                        linePaint.pathEffect = createDashPathEffect(item.dataBean) //虚线
                     } else {
                         linePaint.pathEffect = null //实线
                     }
@@ -125,4 +128,10 @@ open class PathGraphicsParser : IGraphicsParser {
         return drawable
     }
 
+    /**创建一个虚线效果*/
+    fun createDashPathEffect(itemDataBean: CanvasProjectItemBean): PathEffect {
+        val dashWidth = MM_UNIT.convertValueToPixel(itemDataBean.dashWidth)
+        val dashGap = MM_UNIT.convertValueToPixel(itemDataBean.dashGap)
+        return DashPathEffect(floatArrayOf(dashWidth, dashGap), 0f)
+    }
 }

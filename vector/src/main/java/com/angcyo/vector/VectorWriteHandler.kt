@@ -80,7 +80,9 @@ abstract class VectorWriteHandler {
     /**单位转换器, 如果不设置则[Path]的值, 1:1输出*/
     var unit: IValueUnit? = null
 
-    /**非像素值, 真实值. 间隔太长, 就会使用G0移动到过
+    /**真实值, 可以是像素, 也可以是mm
+     *
+     * 间隔太长, 就会使用G0移动到过
      * 当2个点之间的距离小于此值时, 视为同一个点
      *
      * 负数表示关闭Gap判断, 全部使用G1

@@ -15,6 +15,13 @@ class GCodeWriteHandler : VectorWriteHandler() {
     /**是否关闭了CNC, 如果关闭了CNC所有G操作都变成G0操作*/
     var isClosedCnc = false
 
+    /**追加的点位信息是否是像素
+     *
+     * 采样的时候用像素, 但是写入的时候用mm单位
+     * 通常在图片转GCode的时候使用
+     * */
+    var isPixelValue = false
+
     override fun onPathStart() {
         //[G20]英寸单位 [G21]毫米单位
         //[G90]绝对位置 [G91]相对位置
@@ -44,12 +51,26 @@ class GCodeWriteHandler : VectorWriteHandler() {
         if (!isAutoCnc) {
             closeCnc()
         }
-        writer?.appendLine("G0 X${x} Y${y}")
+
+        var xValue = x
+        var yValue = y
+        if (isPixelValue && unit != null) {
+            xValue = unit?.convertPixelToValue(x) ?: x
+            yValue = unit?.convertPixelToValue(y) ?: y
+        }
+        writer?.appendLine("G0 X${xValue} Y${yValue}")
     }
 
     override fun onLineToPoint(x: Float, y: Float) {
         openCnc()
-        writer?.appendLine("G1 X${x} Y${y}")
+
+        var xValue = x
+        var yValue = y
+        if (isPixelValue && unit != null) {
+            xValue = unit?.convertPixelToValue(x) ?: x
+            yValue = unit?.convertPixelToValue(y) ?: y
+        }
+        writer?.appendLine("G1 X${xValue} Y${yValue}")
     }
 
     //region ---core---

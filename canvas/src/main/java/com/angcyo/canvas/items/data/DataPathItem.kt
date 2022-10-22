@@ -1,15 +1,12 @@
 package com.angcyo.canvas.items.data
 
 import android.graphics.Color
-import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Path
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.canvas.data.toPaintStyle
-import com.angcyo.library.annotation.Implementation
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
@@ -34,14 +31,6 @@ open class DataPathItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         strokeCap = Paint.Cap.ROUND
     }
 
-    /**线段描边时, 用虚线绘制.
-     * 因为要数据存储, 所以这个功能待定
-     *
-     * 指定了多少长度的实线之后再画多少长度的空白.
-     * */
-    @Implementation
-    var lineStrokeEffect: DashPathEffect
-
     /**数据路径列表, 最原始的路径数据*/
     val dataPathList = mutableListOf<Path>()
 
@@ -49,11 +38,6 @@ open class DataPathItem(bean: CanvasProjectItemBean) : DataItem(bean) {
     val drawPathList = mutableListOf<Path>()
 
     //endregion ---属性---
-
-    init {
-        val unit = MM_UNIT.convertValueToPixel(1f)//1mm间隔
-        lineStrokeEffect = DashPathEffect(floatArrayOf(unit, unit), 0f)
-    }
 
     //region ---方法---
 

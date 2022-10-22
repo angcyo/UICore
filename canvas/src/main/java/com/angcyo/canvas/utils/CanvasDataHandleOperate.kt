@@ -1,12 +1,15 @@
 package com.angcyo.canvas.utils
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Path
+import android.graphics.RectF
 import android.view.Gravity
 import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.gcode.GCodeAdjust
 import com.angcyo.gcode.GCodeWriteHandler
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
+import com.angcyo.library.libCacheFile
 import com.angcyo.library.utils.fileNameTime
 import com.angcyo.library.utils.filePath
 import com.angcyo.svg.SvgWriteHandler
@@ -159,26 +162,27 @@ object CanvasDataHandleOperate {
      * [Gravity.TOP]:水平从上开始左右右左扫描 [Gravity.BOTTOM]:
      *
      * [threshold] 当色值>=此值时, 忽略数据 255白色 [0~255]
-     * [lineSpace] 每一行之间的间隙, 毫米单位. (像素采样分辨率, 间隔多少个像素扫描) //1K:0.1 2K:0.05 4K:0.025f
-     *             如果是文本信息, 建议使用 4K: [GCodeWriteHandler.GCODE_SPACE_4K]
+     *
+     * 采样的时候, 使用像素单位, 但是写入文件的时候转换成mm单位
      * */
     fun bitmapToGCode(
         bitmap: Bitmap,
         gravity: Int? = null,
         @Pixel
-        gapValue: Float = 1f,//这里的gap用像素单位, 内部会转成mm单位
+        gapValue: Float = 1f,//这里的gap用像素单位, 表示采样间隙
         threshold: Int = 255, //255白色不输出GCode
-        outputFile: File = _defaultGCodeOutputFile(),
+        outputFile: File = libCacheFile(),
         isFirst: Boolean = true,
         isFinish: Boolean = true,
-        autoCnc: Boolean = false,
+        autoCnc: Boolean = false
     ): File {
         val gCodeWriteHandler = GCodeWriteHandler()
         //像素单位转成mm单位
         val mmValueUnit = MM_UNIT
+        gCodeWriteHandler.isPixelValue = true
         gCodeWriteHandler.unit = mmValueUnit
         gCodeWriteHandler.isAutoCnc = autoCnc
-        gCodeWriteHandler.gapValue = mmValueUnit.convertPixelToValue(gapValue)
+        gCodeWriteHandler.gapValue = gapValue
         gCodeWriteHandler.gapMaxValue = gCodeWriteHandler.gapValue
 
         val width = bitmap.width
@@ -192,7 +196,7 @@ object CanvasDataHandleOperate {
             Gravity.TOP
         }
 
-        val lineStep = 1 //像素点
+        val pixelStep = gapValue.toInt()//1 * dpi //横纵像素采样率
 
         //反向读取数据, Z形方式
         var isReverseDirection = false
@@ -218,17 +222,17 @@ object CanvasDataHandleOperate {
                 if (scanGravity == Gravity.LEFT) {
                     xFrom = 0
                     xTo = width - 1
-                    xStep = lineStep
+                    xStep = pixelStep
                 } else {
                     xFrom = width - 1
                     xTo = 0
-                    xStep = -lineStep
+                    xStep = -pixelStep
                 }
 
                 var currentX = xFrom
                 while (true) {//列
-                    lastLineRef = currentX + 1
-                    for (y in 0 until height) {//行
+                    lastLineRef = currentX + pixelStep
+                    for (y in 0 until height step pixelStep) {//行
                         //rtl
                         val lineY = if (isReverseDirection) {
                             (height - 1 - y)
@@ -239,14 +243,17 @@ object CanvasDataHandleOperate {
                         val value: Int = data[index].toHexInt()
                         if (value < threshold) {
                             //有效的像素
-                            val yValue = mmValueUnit.convertPixelToValue(lineY.toFloat())
-                            val xValue = mmValueUnit.convertPixelToValue(lastLineRef.toFloat())
+                            /*val yValue = mmValueUnit.convertPixelToValue(lineY.toFloat())
+                            val xValue = mmValueUnit.convertPixelToValue(lastLineRef.toFloat())*/
+
+                            val yValue = lineY.toFloat()
+                            val xValue = lastLineRef.toFloat()
+
                             gCodeWriteHandler.writePoint(xValue, yValue)
                             lastGCodeLineRef = lastLineRef //有数据的列
                         }
                     }
                     gCodeWriteHandler.clearLastPoint()
-
                     //rtl
                     if (lastGCodeLineRef == lastLineRef) {
                         //这一行有GCode数据
@@ -275,17 +282,17 @@ object CanvasDataHandleOperate {
                 if (scanGravity == Gravity.TOP) {
                     yFrom = 0
                     yTo = height - 1
-                    yStep = lineStep
+                    yStep = pixelStep
                 } else {
                     yFrom = height - 1
                     yTo = 0
-                    yStep = -lineStep
+                    yStep = -pixelStep
                 }
 
                 var currentY = yFrom
                 while (true) {//行
-                    lastLineRef = currentY + 1
-                    for (x in 0 until width) {//列
+                    lastLineRef = currentY + pixelStep
+                    for (x in 0 until width step pixelStep) {//列
                         //rtl
                         val lineX = if (isReverseDirection) {
                             (width - 1 - x)
@@ -296,8 +303,12 @@ object CanvasDataHandleOperate {
                         val value: Int = data[index].toHexInt()
                         if (value < threshold) {
                             //有效的像素
-                            val xValue = mmValueUnit.convertPixelToValue(lineX.toFloat())
-                            val yValue = mmValueUnit.convertPixelToValue(lastLineRef.toFloat())
+                            /*val xValue = mmValueUnit.convertPixelToValue(lineX.toFloat())
+                            val yValue = mmValueUnit.convertPixelToValue(lastLineRef.toFloat())*/
+
+                            val xValue = lineX.toFloat()
+                            val yValue = lastLineRef.toFloat()
+
                             gCodeWriteHandler.writePoint(xValue, yValue)
                             lastGCodeLineRef = lastLineRef //有数据的行
                         }
