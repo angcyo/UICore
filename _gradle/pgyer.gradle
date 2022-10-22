@@ -155,6 +155,8 @@ _pgyerUpload.doFirst {
             if (data == null) {
                 System.err.println "上传${path}失败:" + map.message
             } else {
+                uploadFileSucceed(path)//记录
+
                 def url = pgyerConfig.pgyer + data.buildShortcutUrl
                 System.err.println "蒲公英安装地址${path}->" + url
 

@@ -45,8 +45,10 @@ static def error(Object msg) {
     System.err.println msg
 }
 
-/**查找apk文件路径
- * [https://docs.groovy-lang.org/latest/html/groovy-jdk/java/io/File.html]*/
+/**查找apk文件路径,
+ * [https://docs.groovy-lang.org/latest/html/groovy-jdk/java/io/File.html]
+ * [folderPath] 指定要查找的路径
+ * */
 def findApkFile(String folderPath = null) {
     def path
     if (folderPath == null || folderPath.isEmpty()) {
@@ -80,7 +82,8 @@ def findApkFile(String folderPath = null) {
                 if (isUpload && files.length > 1) {
                     System.out.println '已上传,跳过文件:' + name
                 } else {
-                    isUploadFile.append("${line}\n")
+                    //主动调用[uploadFileSucceed]记录
+                    //isUploadFile.append("${line}\n")
                     if (result == null) {
                         result = it.absolutePath
                     } else {
@@ -92,6 +95,34 @@ def findApkFile(String folderPath = null) {
     }
 
     return result
+}
+
+/**上传文件成功, 写入到文件, 记录一下
+ * [filePath] 上传成功的文件路径
+ * [folderPath] 日志文件所在的路径
+ * */
+def uploadFileSucceed(String filePath, String folderPath = null) {
+    def targetFile = file(filePath)
+    if (!targetFile.exists()) {
+        System.err.println("文件不存在,无法记录:${filePath}")
+        return
+    }
+
+    def path
+    if (folderPath == null || folderPath.isEmpty()) {
+        path = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
+    } else {
+        path = folderPath
+    }
+
+    def isUploadFile = new File(path, ".upload") //文件是否已经上传过
+    if (!isUploadFile.exists()) {
+        isUploadFile.createNewFile()
+    }
+
+    def name = targetFile.getName()
+    def line = "${name}/${targetFile.lastModified()}"
+    isUploadFile.append("${line}\n")
 }
 
 /**根据文件名, 获取png目录的logo图片
@@ -143,7 +174,6 @@ def copyFile(String from, String toPath) {
     }
 }
 
-
 //导出
 ext {
     isMac = this.&isMac
@@ -156,6 +186,7 @@ ext {
     formatTime = this.&formatTime
     error = this.&error
     findApkFile = this.&findApkFile
+    uploadFileSucceed = this.&uploadFileSucceed
     copyFile = this.&copyFile
     getLogoPath = this.&getLogoPath
 }
