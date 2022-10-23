@@ -20,8 +20,8 @@ import com.angcyo.fragment.*
 import com.angcyo.layout.FragmentSwipeBackLayout
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.havePermissions
-import com.angcyo.library.utils.haveSdCardPermission
-import com.angcyo.library.utils.sdCardPermission
+import com.angcyo.library.utils.storage.haveSdCardPermission
+import com.angcyo.library.utils.storage.sdCardPermission
 
 /**
  *
