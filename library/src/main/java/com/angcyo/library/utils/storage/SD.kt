@@ -4,9 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.os.Build
 import android.os.Environment
-import com.angcyo.library.L
 import com.angcyo.library.app
-import com.angcyo.library.ex.file
 import com.angcyo.library.ex.havePermission
 import java.io.File
 
@@ -15,6 +13,10 @@ import java.io.File
  * SD卡, 存储管理
  *
  * [com.angcyo.base.Activity.requestSdCardPermission]
+ *
+ * [https://developer.android.com/about/versions/11/privacy/storage?hl=zh-cn]
+ * [https://developer.android.com/training/data-storage/shared/media?hl=zh-cn]
+ * [https://developer.android.com/training/data-storage/app-specific?hl=zh-cn#query-free-space]
  *
  * Email:angcyo@126.com
  * @author angcyo
