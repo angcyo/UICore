@@ -78,17 +78,31 @@ fun sdDocumentFolderPath(folder: String = "", mk: Boolean = true): String {
  * android 11+ 使用 [android.os.Environment.isExternalStorageManager] 判断权限
  * [com.angcyo.base.ActivityExKt.requestSdCardPermission]
  * */
-fun sdCardPermission() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-    listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE)
+fun sdCardPermission() =
+    listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+
+/**管理SD卡的权限
+ * android 11+ 使用 [android.os.Environment.isExternalStorageManager] 判断权限
+ * [com.angcyo.base.ActivityExKt.requestSdCardPermission]
+ * */
+fun sdCardManagePermission() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+    listOf(
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.MANAGE_EXTERNAL_STORAGE
+    )
 } else {
-    listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    sdCardPermission()
 }
 
 /**判断是否有sd卡的写入权限
  *
  * [com.angcyo.base.ActivityExKt.requestSdCardPermission]
  * */
-fun haveSdCardPermission(context: Context = app()) =
+fun haveSdCardPermission(context: Context = app()) = context.havePermission(sdCardPermission())
+
+/**是否有sd卡的管理权限*/
+fun haveSdCardManagePermission(context: Context = app()) =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         Environment.isExternalStorageManager()
     } else {

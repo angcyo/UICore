@@ -20,6 +20,7 @@ import com.angcyo.fragment.*
 import com.angcyo.layout.FragmentSwipeBackLayout
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.havePermissions
+import com.angcyo.library.utils.storage.haveSdCardManagePermission
 import com.angcyo.library.utils.storage.haveSdCardPermission
 import com.angcyo.library.utils.storage.sdCardPermission
 
@@ -343,12 +344,23 @@ fun Context.requestSdCardPermission(result: (granted: Boolean) -> Unit) {
         result(true)
         return
     }
+    requestPermissions(sdCardPermission()) {
+        result(it)
+    }
+}
+
+/**请求SD卡管理权限*/
+fun Context.requestSdCardManagePermission(result: (granted: Boolean) -> Unit) {
+    if (haveSdCardManagePermission(this)) {
+        result(true)
+        return
+    }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         val uri = Uri.parse("package:${packageName}")
         val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
         if (this is FragmentActivity) {
             requestActivityResult(supportFragmentManager, intent) { resultCode, data ->
-                result(haveSdCardPermission(this))
+                result(haveSdCardManagePermission(this))
             }
         } else {
             startActivity(intent)
