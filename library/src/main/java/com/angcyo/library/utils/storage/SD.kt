@@ -32,16 +32,36 @@ object SD {
     }*/
 }
 
-fun sdDocuments(): File = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-    ///storage/emulated/0/Documents
-    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-} else {
-    ///storage/emulated/0/Download
-    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+/**
+ * 下载目录, Android11+不需要权限就可以访问
+ * /storage/emulated/0/Download
+ * */
+fun sdDownloads(): File {
+    val directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+    return if (directory.exists()) {
+        directory
+    } else {
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+    }
 }
 
 /**
- * /storage/emulated/0/Documents 公共目录, 不需要权限
+ * 下载目录, Android11+不需要权限就可以访问
+ * /storage/emulated/0/Documents
+ * */
+fun sdDocuments(): File = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    val directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+    if (directory.exists()) {
+        directory
+    } else {
+        sdDownloads()
+    }
+} else {
+    sdDownloads()
+}
+
+/**
+ * /storage/emulated/0/Documents 公共目录, Android11+不需要权限
  * */
 fun sdDocumentFolderPath(folder: String = "", mk: Boolean = true): String {
     val directory = sdDocuments()
@@ -56,6 +76,7 @@ fun sdDocumentFolderPath(folder: String = "", mk: Boolean = true): String {
 
 /**SD卡的权限
  * android 11+ 使用 [android.os.Environment.isExternalStorageManager] 判断权限
+ * [com.angcyo.base.ActivityExKt.requestSdCardPermission]
  * */
 fun sdCardPermission() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
     listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE)
@@ -63,7 +84,10 @@ fun sdCardPermission() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
     listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 }
 
-/**判断是否有sd卡的写入权限*/
+/**判断是否有sd卡的写入权限
+ *
+ * [com.angcyo.base.ActivityExKt.requestSdCardPermission]
+ * */
 fun haveSdCardPermission(context: Context = app()) =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         Environment.isExternalStorageManager()
