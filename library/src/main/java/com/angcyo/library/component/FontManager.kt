@@ -7,7 +7,6 @@ import androidx.annotation.RequiresApi
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import com.angcyo.library.model.TypefaceInfo
-import com.angcyo.library.utils.filePath
 import com.angcyo.library.utils.folderPath
 import java.io.File
 
@@ -21,7 +20,10 @@ object FontManager {
     /**默认的字体文件夹名称*/
     const val DEFAULT_FONT_FOLDER_NAME = "fonts"
 
-    /**自定义字体的其他文件夹路径*/
+    /**默认的导入字体文件夹路径, 全路径*/
+    var defaultCustomFontFolder: String = folderPath(DEFAULT_FONT_FOLDER_NAME)
+
+    /**自定义字体的其他加载文件夹路径*/
     val customFontFolderList = mutableListOf<String>()
 
     //
@@ -121,10 +123,10 @@ object FontManager {
                 val file = File(path!!)
 
                 val typeface = Typeface.createFromFile(file)
-                file.copyTo(filePath(DEFAULT_FONT_FOLDER_NAME, file.name))
+                val targetFile = file.copyTo(File(defaultCustomFontFolder, file.name))
 
                 val typefaceInfo =
-                    TypefaceInfo(file.name.noExtName(), typeface, file.absolutePath)
+                    TypefaceInfo(file.name.noExtName(), typeface, targetFile.absolutePath)
                 typefaceInfo.isCustom = true
                 val find = fontList.find { it.name == typefaceInfo.name }
                 if (find == null) {
@@ -191,10 +193,8 @@ object FontManager {
     fun getCustomFontList(): List<TypefaceInfo> {
         if (_customFontList.isEmpty()) {
             //字体文件夹
-            val fontFolder = folderPath(DEFAULT_FONT_FOLDER_NAME)
-
             //自定义的字体
-            loadCustomFont(fontFolder)
+            loadCustomFont(defaultCustomFontFolder)
             customFontFolderList.forEach {
                 loadCustomFont(it)
             }

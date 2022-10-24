@@ -78,9 +78,7 @@ fun File.md5(): String? {
     return getFileMD5()?.toHexString()
 }
 
-fun File.copyTo(path: String, overwrite: Boolean = true) {
-    copyTo(File(path), overwrite)
-}
+fun File.copyTo(path: String, overwrite: Boolean = true) = copyTo(File(path), overwrite)
 
 fun String.file(): File = File(this)
 
