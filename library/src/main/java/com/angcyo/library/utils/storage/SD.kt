@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.os.Build
 import android.os.Environment
+import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.ex.havePermission
 import java.io.File
@@ -61,13 +62,29 @@ fun sdDocuments(): File = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKA
 }
 
 /**
- * /storage/emulated/0/Documents 公共目录, Android11+不需要权限
+ * /storage/emulated/0/Documents 公共目录,
  * */
 fun sdDocumentFolderPath(folder: String = "", mk: Boolean = true): String {
     val directory = sdDocuments()
     val folderFile = File(directory.absolutePath, folder)
     if (mk) {
-        folderFile.mkdirs()
+        if (!folderFile.mkdirs()) {
+            L.w("创建文件夹失败:${folderFile.absolutePath}")
+        }
+    }
+    return folderFile.absolutePath
+}
+
+/**
+ * /storage/emulated/0/Documents 公共目录,
+ * */
+fun sdDownloadFolderPath(folder: String = "", mk: Boolean = true): String {
+    val directory = sdDownloads()
+    val folderFile = File(directory.absolutePath, folder)
+    if (mk) {
+        if (!folderFile.mkdirs()) {
+            L.w("创建文件夹失败:${folderFile.absolutePath}")
+        }
     }
     return folderFile.absolutePath
 }
