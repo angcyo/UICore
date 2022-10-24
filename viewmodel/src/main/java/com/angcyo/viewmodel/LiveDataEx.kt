@@ -38,6 +38,7 @@ fun <T> LiveData<T>.observeForever(
 
 /**快速观察[LiveData]
  * [autoClear] 收到数据后, 是否要情况数据
+ * [allowBackward] 是否允许数据倒灌, 接收到旧数据
  * */
 fun <T> LiveData<T>.observe(
     owner: LifecycleOwner,
@@ -134,6 +135,13 @@ fun <T> vmData(data: T) = MutableErrorLiveData(data)
 fun <T> vmDataNull(data: T? = null) = MutableErrorLiveData(data)
 
 fun <T> vmHoldDataNull(data: T? = null) = MutableHoldLiveData(data)
+
+
+/**更新自己
+ * [updateValue]*/
+fun <T> MutableLiveData<T>.updateThis() {
+    updateValue(value)
+}
 
 /**[MutableLiveData]在主线程更新值*/
 fun <T> MutableLiveData<T>.updateValue(value: T?) {

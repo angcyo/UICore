@@ -282,23 +282,35 @@ data class CanvasProjectItemBean(
     /**GCode/黑白数据的行数*/
     var lines: Int = -1,
 
-    var printPower: Int = 100,
-    var printDepth: Int = 5,
-    var printCount: Int = 1,
+    /**[com.angcyo.objectbox.laser.pecker.entity.EngraveConfigEntity]*/
+
+    //激光类型
+    var printType: Byte? = null,
+    //加速级别
+    var printPrecision: Int? = null,
+    var printPower: Int? = null,
+    var printDepth: Int? = null,
+    var printCount: Int? = null,
 
     //endregion ---雕刻参数---
 
     //region ---私有属性---
 
-    /**数据处理的模式, 处理成机器需要的数据
+    /**数据处理的模式, 处理成机器需要的数据. 通常情况下和雕刻图层一致
      * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_BLACK_WHITE]
      * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_GCODE]
      * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_DITHERING]
      *
      * [com.angcyo.canvas.graphics.IGraphicsParser.initDataMode]
+     *
+     * [com.angcyo.engrave.data.EngraveLayerInfo]
      * */
     @Transient
     var _dataMode: Int? = null,
+
+    /**是否生成一张缓存的图片
+     * [com.angcyo.canvas.items.data.DataItem._cacheBitmap]*/
+    var _cacheBitmap: Boolean? = null,
 
     //endregion ---私有属性---
 ) {

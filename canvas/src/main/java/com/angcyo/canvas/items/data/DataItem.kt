@@ -6,8 +6,6 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import androidx.annotation.AnyThread
 import androidx.core.graphics.scale
-import androidx.core.graphics.withRotation
-import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.data.CanvasProjectItemBean
@@ -20,11 +18,10 @@ import com.angcyo.canvas.graphics.IEngraveProvider
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
-import com.angcyo.canvas.utils.CanvasConstant
-import com.angcyo.library.component.ScalePictureDrawable
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
+import com.angcyo.library.ex.bitmapCanvas
 import com.angcyo.library.ex.rotate
-import com.angcyo.library.ex.toBitmap
-import com.angcyo.library.ex.withPicture
 
 /**
  * [com.angcyo.canvas.data.CanvasProjectItemBean]
@@ -32,6 +29,9 @@ import com.angcyo.library.ex.withPicture
  * @since 2022/09/21
  */
 open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveProvider {
+
+    /**自动雕刻模式下, [drawable]有些时候会draw不出图片, 所以这里使用[Bitmap]对象存储一遍*/
+    var _cacheBitmap: Bitmap? = null
 
     /**
      * 通过改变此对象, 呈现出不同的可视图画
@@ -121,12 +121,9 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
             val width = rotateBounds.width()
             val height = rotateBounds.height()
 
-            val result = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
+            /*val result = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
                 withRotation(rotate, width / 2, height / 2) {
-                    withTranslation(
-                        width / 2 - renderWidth / 2,
-                        height / 2 - renderHeight / 2
-                    ) {
+                    withTranslation( width / 2 - renderWidth / 2, height / 2 - renderHeight / 2 ) {
                         drawable.setBounds(
                             renderBounds.left.toInt(),
                             renderBounds.top.toInt(),
@@ -138,6 +135,29 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
                 }
             })
             return result.toBitmap()
+            */
+
+            val cacheBitmap = _cacheBitmap
+            val result = bitmapCanvas(width.toInt(), height.toInt()) {
+                rotate(rotate, width / 2, height / 2)
+                translate(width / 2 - renderWidth / 2, height / 2 - renderHeight / 2)
+                if (cacheBitmap == null) {
+                    //无缓存图
+                    drawable.setBounds(
+                        renderBounds.left.toInt(),
+                        renderBounds.top.toInt(),
+                        renderBounds.right.toInt(),
+                        renderBounds.bottom.toInt()
+                    )
+                    drawable.draw(this)
+                } else {
+                    val rect = acquireTempRectF()
+                    rect.set(0f, 0f, cacheBitmap.width.toFloat(), cacheBitmap.height.toFloat())
+                    drawBitmap(cacheBitmap, null, rect, Paint(Paint.ANTI_ALIAS_FLAG))
+                    rect.release()
+                }
+            }
+            return result
         }
         return null
     }
