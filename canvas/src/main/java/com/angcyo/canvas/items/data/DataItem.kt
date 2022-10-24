@@ -18,9 +18,11 @@ import com.angcyo.canvas.graphics.IEngraveProvider
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.bitmapCanvas
+import com.angcyo.library.ex.have
 import com.angcyo.library.ex.rotate
 
 /**
@@ -53,7 +55,17 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
     }
 
     /**当渲染的bounds改变时, 是否需要刷新[updateRenderItem]*/
-    open fun needUpdateOfBoundsChanged(reason: Reason): Boolean = false
+    open fun needUpdateOfBoundsChanged(reason: Reason): Boolean {
+        if (this is DataPathItem) {
+            return reason.reason == Reason.REASON_USER && reason.flag.have(Reason.REASON_FLAG_BOUNDS)
+        }
+        if (this is DataBitmapItem) {
+            if (dataBean.imageFilter == CanvasConstant.DATA_MODE_GCODE) {
+                return reason.reason == Reason.REASON_USER && reason.flag.have(Reason.REASON_FLAG_BOUNDS)
+            }
+        }
+        return false
+    }
 
     //---方法---
 

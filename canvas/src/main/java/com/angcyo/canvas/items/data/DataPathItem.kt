@@ -4,14 +4,12 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import com.angcyo.canvas.LinePath
-import com.angcyo.canvas.Reason
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toPaintStyle
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.computeBounds
-import com.angcyo.library.ex.have
 import com.angcyo.library.ex.toColor
 
 /**
@@ -40,10 +38,6 @@ open class DataPathItem(bean: CanvasProjectItemBean) : DataItem(bean) {
     //endregion ---属性---
 
     //region ---方法---
-
-    override fun needUpdateOfBoundsChanged(reason: Reason): Boolean {
-        return reason.reason == Reason.REASON_USER && reason.flag.have(Reason.REASON_FLAG_BOUNDS)
-    }
 
     /**更新画笔属性*/
     fun updatePaint() {

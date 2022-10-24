@@ -7,6 +7,7 @@ import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.parseGCode
 import com.angcyo.gcode.GCodeHelper
+import com.angcyo.library.L
 import com.angcyo.library.ex.toBitmapOfBase64
 import com.hingin.rn.image.ImageProcess
 
@@ -30,6 +31,7 @@ class BitmapGraphicsParser : IGraphicsParser {
                     val gcode = bean.data ?: bean.src
                     if (gcode.isNullOrEmpty()) {
                         //bean.src gcode数据
+                        L.w("GCode数据为空, 无法渲染...")
                         return null
                     } else {
                         val gcodeDrawable = GCodeHelper.parseGCode(gcode) ?: return null

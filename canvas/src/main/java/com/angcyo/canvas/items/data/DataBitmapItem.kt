@@ -1,6 +1,7 @@
 package com.angcyo.canvas.items.data
 
 import android.graphics.Bitmap
+import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.data.CanvasProjectItemBean
@@ -8,6 +9,7 @@ import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.gcode.GCodeDrawable
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.ex.have
 
 /**
  * 图片数据item

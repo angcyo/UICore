@@ -37,6 +37,19 @@ fun RectF.isSizeChanged(other: RectF): Boolean {
     return width() != other.width() || height() != other.height()
 }
 
+/**设置矩形的宽高
+ * [withCenter] 是否保持中点不变*/
+fun RectF.setWidthHeight(width: Float, height: Float, withCenter: Boolean = false): RectF {
+    val oldWidth = width()
+    val oldHeight = height()
+    right = left + width
+    bottom = top + height
+    if (withCenter) {
+        offset((oldWidth - width) / 2, (oldHeight - height) / 2)
+    }
+    return this
+}
+
 /**矩形没有大小*/
 fun RectF.isNoSize() = width() == 0f || height() == 0f
 
