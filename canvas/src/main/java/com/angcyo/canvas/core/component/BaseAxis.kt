@@ -1,9 +1,9 @@
 package com.angcyo.canvas.core.component
 
 import com.angcyo.canvas.core.CanvasViewBox
-import com.angcyo.library.unit.InchValueUnit
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.floor
+import com.angcyo.library.unit.InchValueUnit
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -58,14 +58,23 @@ abstract class BaseAxis : BaseComponent() {
      * */
     fun getAxisLineType(canvasViewBox: CanvasViewBox, index: Int, scale: Float): Int {
         var result = LINE_TYPE_NONE
-        val loseStep = 0.25f
+        val loseStep = 0.25f //这个值, 控制主线的绘制间隔
 
         if (scale < 1f) {
             //坐标系缩放后
             val step = ((1 - scale) / loseStep).floor().toInt() + 1
             if (index % (10 * step) == 0) {
                 //主要刻度
-                result = LINE_TYPE_PROTRUDE or LINE_TYPE_DRAW_LABEL or LINE_TYPE_DRAW_GRID
+                val lScale = 1f / scale
+                if (lScale >= 10) {
+                    if (index % (20 * step) == 0) {
+                        result = LINE_TYPE_PROTRUDE or LINE_TYPE_DRAW_LABEL or LINE_TYPE_DRAW_GRID
+                    } else {
+                        result = LINE_TYPE_SECONDARY or LINE_TYPE_DRAW_GRID
+                    }
+                } else {
+                    result = LINE_TYPE_PROTRUDE or LINE_TYPE_DRAW_LABEL or LINE_TYPE_DRAW_GRID
+                }
                 return result
             }
             if (index % (5 * step) == 0) {
