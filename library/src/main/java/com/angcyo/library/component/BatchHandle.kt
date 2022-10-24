@@ -12,9 +12,9 @@ class BatchHandle<T>(
     /**需要处理的数据*/
     val dataPool: List<T>,
     /**处理方法*/
-    val onHandle: T.(BatchHandle<T>) -> Unit,
+    val onHandle: BatchHandle<T>.(T) -> Unit,
     /**结束的回调*/
-    val onFinish: (BatchHandle<T>) -> Unit
+    val onFinish: BatchHandle<T>.() -> Unit
 ) {
 
     /**最大数据处理数*/
@@ -74,7 +74,7 @@ class BatchHandle<T>(
                 next()
             } else {
                 try {
-                    data.onHandle(this)
+                    this.onHandle(data)
                 } catch (e: Exception) {
                     e.printStackTrace()
                     error = e
@@ -98,8 +98,8 @@ class BatchHandle<T>(
  * */
 @DSL
 fun <T> List<T>.batchHandle(
-    onHandle: T.(BatchHandle<T>) -> Unit,
-    onFinish: (BatchHandle<T>) -> Unit
+    onHandle: BatchHandle<T>.(T) -> Unit,
+    onFinish: BatchHandle<T>.() -> Unit
 ) = BatchHandle(this, onHandle, onFinish).apply {
     start()
 }
