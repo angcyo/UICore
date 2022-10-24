@@ -89,7 +89,10 @@ data class CanvasProjectItemBean(
      * */
     var paintStyle: Int = 0,
 
-    /**原始的数据, 如svg文件内容, gcode文件内容*/
+    /**原始的数据, 如svg文件内容, gcode文件内容
+     * [CanvasConstant.DATA_TYPE_RAW] 真实数据的类型
+     * [Charsets.ISO_8859_1]
+     * */
     var data: String? = null,
 
     /**是否可见*/
@@ -266,6 +269,25 @@ data class CanvasProjectItemBean(
 
     //endregion ---图片数据---
 
+    //region ---雕刻参数---
+
+    /**
+     * [CanvasConstant.DATA_TYPE_RAW] 真实数据的雕刻类型, 发给机器的数据类型
+     * [com.angcyo.bluetooth.fsc.laserpacker.command.DataCmd.ENGRAVE_TYPE_BITMAP_PATH]
+     * [com.angcyo.bluetooth.fsc.laserpacker.command.DataCmd.ENGRAVE_TYPE_GCODE]
+     * [com.angcyo.bluetooth.fsc.laserpacker.command.DataCmd.ENGRAVE_TYPE_BITMAP_DITHERING]
+     * */
+    var engraveType: Int = 0x10,
+
+    /**GCode/黑白数据的行数*/
+    var lines: Int = -1,
+
+    var printPower: Int = 100,
+    var printDepth: Int = 5,
+    var printCount: Int = 1,
+
+    //endregion ---雕刻参数---
+
     //region ---私有属性---
 
     /**数据处理的模式, 处理成机器需要的数据
@@ -287,7 +309,7 @@ data class CanvasProjectItemBean(
         val MM_UNIT = MmValueUnit()
 
         /**默认的阈值*/
-        const val DEFAULT_THRESHOLD = 240f
+        const val DEFAULT_THRESHOLD = 128f
 
         /**默认的GCode线距*/
         const val DEFAULT_LINE_SPACE = 5.0f
