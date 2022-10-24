@@ -76,7 +76,7 @@ fun sdDocumentFolderPath(folder: String = "", mk: Boolean = true): String {
 }
 
 /**
- * /storage/emulated/0/Documents 公共目录,
+ * /storage/emulated/0/Documents 公共目录, 谁创建的谁访问
  * */
 fun sdDownloadFolderPath(folder: String = "", mk: Boolean = true): String {
     val directory = sdDownloads()
