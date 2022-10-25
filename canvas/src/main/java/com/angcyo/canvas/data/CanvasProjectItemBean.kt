@@ -18,6 +18,7 @@ import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.add
 import com.angcyo.library.ex.ensure
 import com.angcyo.library.ex.have
+import com.angcyo.library.ex.toBitmapOfBase64
 import com.angcyo.library.unit.MmValueUnit
 import kotlin.math.max
 
@@ -480,4 +481,15 @@ fun Int.toTypeNameString() = when (this) {
     CanvasConstant.DATA_TYPE_GCODE -> "GCode"
     CanvasConstant.DATA_TYPE_PATH -> "Path"
     else -> "Unknown"
+}
+
+//
+
+/**使用原始图片, 更新bean内的宽高*/
+fun CanvasProjectItemBean.updateWidthHeightByOriginImage() {
+    val originBitmap = imageOriginal?.toBitmapOfBase64()
+    originBitmap?.let {
+        width = it.width.toMm()
+        height = it.height.toMm()
+    }
 }

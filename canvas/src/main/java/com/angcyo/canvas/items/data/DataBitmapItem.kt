@@ -1,15 +1,14 @@
 package com.angcyo.canvas.items.data
 
 import android.graphics.Bitmap
-import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
+import com.angcyo.canvas.data.updateWidthHeightByOriginImage
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.gcode.GCodeDrawable
 import com.angcyo.library.annotation.Pixel
-import com.angcyo.library.ex.have
 
 /**
  * 图片数据item
@@ -80,6 +79,46 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
             dataBean.src = newSrc
             dataBean.imageFilter = newImageFilter
 
+            updateRenderItem(renderer)
+        }
+    }
+
+    fun updateBitmapOriginal(
+        origin: String?,
+        filter: String?,
+        imageFilter: Int,
+        renderer: DataItemRenderer,
+        @Pixel width: Float, //更新到的可视宽度
+        @Pixel height: Float, //更新到的可视高度
+        strategy: Strategy = Strategy.normal
+    ) {
+        val oldImageFilter = dataBean.imageFilter
+        val oldOrigin = dataBean.imageOriginal
+        val oldSrc = dataBean.src
+        val oldWidth = renderer.getBounds().width()
+        val oldHeight = renderer.getBounds().height()
+
+        val newOrigin = origin
+        val newSrc = filter
+        val newImageFilter = imageFilter
+
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.imageOriginal = oldOrigin
+            dataBean.src = oldSrc
+            dataBean.imageFilter = oldImageFilter
+
+            //bounds
+            dataBean.updateWidthHeightByOriginImage()
+            dataBean.updateScale(oldWidth, oldHeight)
+            updateRenderItem(renderer)
+        }) {
+            dataBean.imageOriginal = newOrigin
+            dataBean.src = newSrc
+            dataBean.imageFilter = newImageFilter
+
+            //bounds
+            dataBean.updateWidthHeightByOriginImage()
+            dataBean.updateScale(width, height)
             updateRenderItem(renderer)
         }
     }
@@ -175,8 +214,8 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         src: String?,
         mode: Int,
         renderer: DataItemRenderer,
-        @Pixel width: Float, //更新到的宽度
-        @Pixel height: Float, //更新到的高度
+        @Pixel width: Float, //更新到的可视宽度
+        @Pixel height: Float, //更新到的可视高度
         strategy: Strategy = Strategy.normal
     ) {
         val oldMode = dataBean.imageFilter

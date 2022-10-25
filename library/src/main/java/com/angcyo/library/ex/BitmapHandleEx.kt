@@ -219,13 +219,24 @@ fun ByteArray.toChannelBitmap(width: Int, height: Int, channelType: Int = Color.
 }
 
 /**
- * 逐行扫描 清除边界空白
+ * 逐行扫描 清除边界空白, 裁边之前建议黑白画处理
  *
+ * @param bwThreshold //黑白画处理, 去掉杂质的干扰黑色, 负数关闭黑白画处理
  * @param margin 边距留多少个像素
- * @param color 需要移除的边界颜色值
+ * @param colors 需要移除的边界颜色值集合
  * @return 清除边界后的Bitmap
  */
-fun Bitmap.trimEdgeColor(color: Int = Color.TRANSPARENT, margin: Int = 0): Bitmap {
+fun Bitmap.trimEdgeColor(
+    bwThreshold: Int = 200,
+    colors: List<Int> = listOf(Color.TRANSPARENT, Color.WHITE),
+    margin: Int = 0
+): Bitmap {
+    val scanPixelBitmap = if (bwThreshold >= 0) {
+        toBlackWhiteHandle(bwThreshold)
+    } else {
+        this
+    }
+
     var blank = margin
 
     val height = height
@@ -240,10 +251,10 @@ fun Bitmap.trimEdgeColor(color: Int = Color.TRANSPARENT, margin: Int = 0): Bitma
 
     //top
     for (y in 0 until height) {
-        getPixels(widthPixels, 0, width, 0, y, width, 1)
+        scanPixelBitmap.getPixels(widthPixels, 0, width, 0, y, width, 1)
         isStop = false
         for (pix in widthPixels) {
-            if (pix != color) {
+            if (!colors.contains(pix)) {
                 top = y
                 isStop = true
                 break
@@ -256,10 +267,10 @@ fun Bitmap.trimEdgeColor(color: Int = Color.TRANSPARENT, margin: Int = 0): Bitma
 
     //bottom
     for (y in height - 1 downTo 0) {
-        getPixels(widthPixels, 0, width, 0, y, width, 1)
+        scanPixelBitmap.getPixels(widthPixels, 0, width, 0, y, width, 1)
         isStop = false
         for (pix in widthPixels) {
-            if (pix != color) {
+            if (!colors.contains(pix)) {
                 bottom = y
                 isStop = true
                 break
@@ -273,10 +284,10 @@ fun Bitmap.trimEdgeColor(color: Int = Color.TRANSPARENT, margin: Int = 0): Bitma
     //left
     widthPixels = IntArray(height)
     for (x in 0 until width) {
-        getPixels(widthPixels, 0, 1, x, 0, 1, height)
+        scanPixelBitmap.getPixels(widthPixels, 0, 1, x, 0, 1, height)
         isStop = false
         for (pix in widthPixels) {
-            if (pix != color) {
+            if (!colors.contains(pix)) {
                 left = x
                 isStop = true
                 break
@@ -288,10 +299,10 @@ fun Bitmap.trimEdgeColor(color: Int = Color.TRANSPARENT, margin: Int = 0): Bitma
     }
     //right
     for (x in width - 1 downTo 1) {
-        getPixels(widthPixels, 0, 1, x, 0, 1, height)
+        scanPixelBitmap.getPixels(widthPixels, 0, 1, x, 0, 1, height)
         isStop = false
         for (pix in widthPixels) {
-            if (pix != color) {
+            if (!colors.contains(pix)) {
                 right = x
                 isStop = true
                 break

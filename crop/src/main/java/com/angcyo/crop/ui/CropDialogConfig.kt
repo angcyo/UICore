@@ -12,10 +12,10 @@ import com.angcyo.widget.DslViewHolder
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/08/22
  */
-class CropDialogConfig(context: Context? = null) : DslDialogConfig(context) {
+class CropDialogConfig(context: Context? = null) : DslDialogConfig(context), ICropProvide {
 
     /**布局控制*/
-    val cropLayoutHelper = CropLayoutHelper()
+    val cropLayoutHelper = CropLayoutHelper(this)
 
     /**需要裁剪的图片*/
     var cropBitmap: Bitmap? = null
@@ -54,6 +54,8 @@ class CropDialogConfig(context: Context? = null) : DslDialogConfig(context) {
         super.onDialogCancel(dialog, dialogViewHolder)
         onCropResultAction(null)
     }
+
+    override fun getOriginCropBitmap(): Bitmap? = cropBitmap
 
 }
 

@@ -23,8 +23,12 @@ class BitmapGraphicsParser : IGraphicsParser {
             try {
                 val originBitmap = bean.imageOriginal?.toBitmapOfBase64()
                 originBitmap?.let {
-                    bean.width = originBitmap.width.toMm()
-                    bean.height = originBitmap.height.toMm()
+                    if (bean.width <= 0) {
+                        bean.width = it.width.toMm()
+                    }
+                    if (bean.height <= 0) {
+                        bean.height = it.height.toMm()
+                    }
                 }
                 if (bean.imageFilter == CanvasConstant.DATA_MODE_GCODE) {
                     //图片转成了GCode
