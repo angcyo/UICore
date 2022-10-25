@@ -56,6 +56,8 @@ fun String.toHexString(): String? = toByteArray(Charsets.UTF_8).toHexString()
 
 /**格式化十六进制, 两个字符之间加:号
  * 00A8 -> 00:A8
+ *
+ * [" $0"]2个字符之间加空格
  * */
 fun String.beautifyHex(fm: String = ":$0") = replace("(?<=[0-9A-F]{2})[0-9A-F]{2}".toRegex(), fm)
 

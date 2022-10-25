@@ -17,4 +17,7 @@
     <string name="lib_time_today">今天</string>
     <string name="lib_time_yesterday">昨天</string>
     <string name="lib_time_before_yesterday">前天</string>
+
+    <string name="lib_input_hint">请输入...</string>
+
 </resources>

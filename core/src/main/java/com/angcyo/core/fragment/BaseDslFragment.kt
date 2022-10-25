@@ -11,7 +11,6 @@ import com.angcyo.dsladapter.data.loadDataEndIndex
 import com.angcyo.dsladapter.data.resetRender
 import com.angcyo.dsladapter.data.updateAdapter
 import com.angcyo.dsladapter.item.IFragmentItem
-import com.angcyo.library.L
 import com.angcyo.library.model.Page
 import com.angcyo.widget.recycler.noItemChangeAnim
 import kotlin.reflect.KClass
@@ -33,9 +32,7 @@ open class BaseDslFragment : BaseTitleFragment() {
 
     /**实时获取[DslAdapter]*/
     val _adapter: DslAdapter
-        get() = (_recycler.adapter as? DslAdapter) ?: DslAdapter().apply {
-            L.e("注意:访问目标[_adapter]不存在!")
-        }
+        get() = (_recycler.adapter as? DslAdapter) ?: PlaceholderDslAdapter()
 
     /**[initBaseView]*/
     override fun onInitFragment(savedInstanceState: Bundle?) {

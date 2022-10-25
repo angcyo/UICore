@@ -121,8 +121,11 @@ fun ByteArray.toHexString(hasSpace: Boolean = true) = joinToString("") {
  * [length] 需要输出多少个字符, 不足前面补充0*/
 fun Byte.toHexString(length: Int = 2, padChar: Char = '0') = toHexInt().toHexString(length, padChar)
 
-/**2个十六进制字符表示1个字节 8位
- * [length] 十六进制字符串的长度, 除以2 就表示字节的大小*/
+/**整型转成十六进制字符串
+ * 2个十六进制字符表示1个字节 8位
+ * [length] 十六进制字符串的长度, 除以2 就表示字节的大小
+ * [padChar] 需要补齐的字符
+ * */
 fun Int.toHexString(length: Int = 2, padChar: Char = '0') =
     toString(16).padStart(length, padChar).uppercase(Locale.ROOT)
 

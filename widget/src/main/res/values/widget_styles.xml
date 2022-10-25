@@ -59,4 +59,24 @@
         <item name="seek_enable_halo">true</item>
         <item name="progress_bg_gradient_colors">@color/bg_sub_color</item>
     </style>
+
+    <!--多行输入框标准样式-->
+    <style name="LibEditStyle" parent="LibBodyTextStyle">
+        <item name="android:singleLine">false</item>
+        <item name="android:maxLines">5</item>
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:imeActionLabel">Ok</item>
+        <item name="android:hint">@string/lib_input_hint</item>
+        <item name="android:drawablePadding">@dimen/lib_hdpi</item>
+        <item name="android:paddingTop">@dimen/lib_hdpi</item>
+        <item name="android:paddingBottom">@dimen/lib_hdpi</item>
+        <item name="android:paddingLeft">@dimen/lib_hdpi</item>
+        <item name="android:paddingRight">@dimen/lib_hdpi</item>
+        <item name="android:gravity">top</item>
+        <item name="android:background">@null</item>
+
+        <item name="r_hide_soft_input_on_lost_focus">true</item>
+        <item name="r_focus_drawable">@drawable/lib_bottom_focus_shape</item>
+        <item name="r_no_focus_drawable">@drawable/lib_bottom_no_focus_shape</item>
+    </style>
 </resources>
