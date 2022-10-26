@@ -1,13 +1,9 @@
 package com.angcyo.library.utils
 
-import android.Manifest
 import android.content.Context
 import android.graphics.Bitmap
-import android.os.Build
-import android.os.Environment
 import com.angcyo.library.*
 import com.angcyo.library.ex.file
-import com.angcyo.library.ex.havePermission
 import com.angcyo.library.utils.FileUtils.writeExternal
 import java.io.File
 import java.text.DateFormat
@@ -231,11 +227,6 @@ fun String?.writeTo(filePath: String?, append: Boolean = true): String? {
         return writeExternal(file, this ?: "null", append)
     }
     return null
-}
-
-/**获取文件夹全路径*/
-fun String.logFilePath(name: String = logFileName()): String {
-    return FileUtils.appRootExternalFolderFile(this, name).absolutePath
 }
 
 /**

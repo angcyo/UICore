@@ -17,9 +17,9 @@ import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.*
 import com.angcyo.library.libFolderPath
 import com.angcyo.library.toast
-import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.Device
-import com.angcyo.library.utils.logFilePath
+import com.angcyo.library.utils.LogFile
+import com.angcyo.library.utils.toLogFilePath
 import com.angcyo.library.utils.writeTo
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.progress.DslProgressBar
@@ -40,8 +40,7 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
         const val SPLIT = "/"
 
         fun saveDeviceInfo(context: Context = app()) {
-            deviceInfo(context).toString()
-                .writeTo(Constant.LOG_FOLDER_NAME.logFilePath("device.log"), false)
+            deviceInfo(context).toString().writeTo(LogFile.device.toLogFilePath(), false)
         }
 
         fun deviceInfo(context: Context = app(), config: DslSpan.() -> Unit = {}) = span {
@@ -89,15 +88,59 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             //屏幕信息
             Device.screenInfo(context, this._builder)
 
-            appendln()
             //机型信息
+            appendln()
             Device.deviceInfoLess(this._builder)
 
-            appendln()
             //网络信息
+            appendln()
             append(Trackers.getInstance().networkStateTracker.activeNetworkState.toString())
 
+            //sd
+            appendln()
+            appendln()
+            _statFsInfo(this, context)
+
             config(this)
+        }
+
+        /**SD空间信息
+         * @return 剩余空间比例[0~100]*/
+        fun _statFsInfo(appendable: Appendable, context: Context = app()): Int {
+            //SD空间信息
+            val statFs = StatFs(
+                context.getExternalFilesDir("")?.absolutePath ?: context.filesDir.absolutePath
+            )
+            val usedBytes = statFs.totalBytes - statFs.availableBytes
+            val progress = (usedBytes * 1f / statFs.totalBytes * 100).toInt()
+
+            appendable.apply {
+                append(usedBytes.fileSizeString())
+                append("/")
+                append(statFs.totalBytes.fileSizeString())
+                append(" ")
+                append("$progress")
+                append("%")
+
+                //内存信息
+                append(" (")
+                append(Device.getAvailableMemory().fileSizeString())
+                append(" /")
+                append(Device.getTotalMemory().fileSizeString())
+                append(")")
+
+                //内存信息2
+                val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                append(" (${manager.memoryClass}MB")
+                append("/${manager.largeMemoryClass}MB)")
+
+                //内存信息3
+                append(" (${Runtime.getRuntime().freeMemory().fileSizeString()}")
+                append(" /${Runtime.getRuntime().totalMemory().fileSizeString()}")
+                append(" /${Runtime.getRuntime().maxMemory().fileSizeString()})")
+            }
+
+            return progress
         }
     }
 
@@ -130,39 +173,8 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             onConfigDeviceInfo(this)
         }
 
-        //SD空间信息
-        val statFs = StatFs(
-            itemHolder.context.getExternalFilesDir("")?.absolutePath
-                ?: itemHolder.context.filesDir.absolutePath
-        )
-        val usedBytes = statFs.totalBytes - statFs.availableBytes
-        val progress = (usedBytes * 1f / statFs.totalBytes * 100).toInt()
-        itemHolder.v<DslProgressBar>(R.id.lib_progress_bar)?.setProgress(progress)
         itemHolder.tv(R.id.lib_tip_view)?.text = span {
-            append(usedBytes.fileSizeString())
-            append("/")
-            append(statFs.totalBytes.fileSizeString())
-            append(" ")
-            append("$progress")
-            append("%")
-
-            //内存信息
-            append(" (")
-            append(Device.getAvailableMemory().fileSizeString())
-            append(" /")
-            append(Device.getTotalMemory().fileSizeString())
-            append(")")
-
-            //内存信息2
-            val manager =
-                itemHolder.context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-            append(" (${manager.memoryClass}MB")
-            append("/${manager.largeMemoryClass}MB)")
-
-            //内存信息3
-            append(" (${Runtime.getRuntime().freeMemory().fileSizeString()}")
-            append(" /${Runtime.getRuntime().totalMemory().fileSizeString()}")
-            append(" /${Runtime.getRuntime().maxMemory().fileSizeString()})")
+            itemHolder.v<DslProgressBar>(R.id.lib_progress_bar)?.setProgress(_statFsInfo(this))
         }
 
         itemHolder.clickItem {

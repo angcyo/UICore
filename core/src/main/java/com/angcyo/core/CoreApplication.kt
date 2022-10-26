@@ -12,6 +12,7 @@ import com.angcyo.core.component.HttpConfigDialog
 import com.angcyo.core.component.StateModel
 import com.angcyo.core.component.interceptor.LogFileInterceptor
 import com.angcyo.core.component.model.LanguageModel
+import com.angcyo.core.dslitem.DslLastDeviceInfoItem
 import com.angcyo.http.DslHttp
 import com.angcyo.http.addInterceptorEx
 import com.angcyo.http.interceptor.LogInterceptor
@@ -23,8 +24,8 @@ import com.angcyo.library.LibApplication
 import com.angcyo.library.annotation.CallComplianceAfter
 import com.angcyo.library.ex.*
 import com.angcyo.library.getAppString
-import com.angcyo.library.utils.Constant
-import com.angcyo.library.utils.logFilePath
+import com.angcyo.library.utils.LogFile
+import com.angcyo.library.utils.toLogFilePath
 import com.angcyo.library.utils.writeTo
 import com.angcyo.widget.edit.BaseEditDelegate
 import me.jessyan.progressmanager.ProgressManager
@@ -83,7 +84,7 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
     /**[onCreate]*/
     override fun initLibApplication() {
         //日志输出到文件
-        DEFAULT_FILE_PRINT_PATH = Constant.LOG_FOLDER_NAME.logFilePath("l.log")
+        DEFAULT_FILE_PRINT_PATH = LogFile.l.toLogFilePath()
         L.logPrint = this::writeLogToFile
         L.init(getAppString("app_name") ?: "Log", isDebug()) //debug打开日志存储
 
@@ -96,6 +97,9 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         if (isShowDebug()) {
             ActivityDebugInfo.install(this)
         }
+
+        //device
+        DslLastDeviceInfoItem.saveDeviceInfo(this)
 
         //语言
         vmApp<LanguageModel>().onCreate(this)

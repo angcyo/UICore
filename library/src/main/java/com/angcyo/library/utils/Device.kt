@@ -285,7 +285,7 @@ object Device {
         // 硬件制造商/品牌名称/型号/产品名称
         // OnePlus/OnePlus/ONEPLUS A6000/OnePlus6
         // [Build.MODEL] 最终用户可见的名称
-        builder.append("API${Build.VERSION.SDK_INT}/${Build.MANUFACTURER}/${Build.BRAND}/${Build.MODEL}/${Build.PRODUCT}")
+        builder.append("API ${Build.VERSION.SDK_INT}/${Build.MANUFACTURER}/${Build.BRAND}/${Build.MODEL}/${Build.PRODUCT}")
         if (abi) {
             builder.appendln()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

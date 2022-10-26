@@ -16,8 +16,8 @@ import com.angcyo.library.ex.decode
 import com.angcyo.library.ex.loadUrl
 import com.angcyo.library.ex.nowTimeString
 import com.angcyo.library.model.AppBean
-import com.angcyo.library.utils.Constant
-import com.angcyo.library.utils.logFilePath
+import com.angcyo.library.utils.LogFile
+import com.angcyo.library.utils.toLogFilePath
 import com.angcyo.library.utils.writeTo
 
 /**
@@ -200,10 +200,7 @@ open class WrapWebView(context: Context, attributeSet: AttributeSet? = null) :
 
     /**写入web log*/
     open fun appendWebLog(log: String) {
-        "${nowTimeString()} $log \n".writeTo(
-            Constant.LOG_FOLDER_NAME.logFilePath("webview.log"),
-            true
-        )
+        "${nowTimeString()} $log \n".writeTo(LogFile.webview.toLogFilePath(), true)
     }
 
     /**加载url*/
