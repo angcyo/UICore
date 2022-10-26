@@ -99,4 +99,11 @@
     <string name="canvas_depth">深度</string>
     <string name="canvas_corner">圆角</string>
 
+    <string name="invert_title">反色说明</string>
+    <string name="invert_des">1.先按照正常流程测试雕刻材料\n2.看雕刻效果深浅（与材料色对比）\n3.判断是否勾选反色</string>
+    <string name="invert_criterion">判断依据</string>
+    <string name="invert_not_recommend">不推荐反色</string>
+    <string name="invert_not_recommend_criterion">雕刻色比材料色深</string>
+    <string name="invert_recommend">推荐反色</string>
+    <string name="invert_recommend_criterion">雕刻色比材料色浅</string>
 </resources>
