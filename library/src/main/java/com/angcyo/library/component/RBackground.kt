@@ -253,6 +253,10 @@ abstract class OnBackgroundObserver {
     }
 }
 
+/**[Activity]*/
+val lastActivity: Activity?
+    get() = RBackground.lastActivityRef?.get()
+
 /**[Context]*/
 val lastContext: Context
-    get() = RBackground.lastActivityRef?.get() ?: app()
+    get() = lastActivity ?: app()

@@ -4,7 +4,6 @@ import android.graphics.*
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withScale
 import androidx.core.graphics.withTranslation
-import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.canvas.Reason
@@ -14,13 +13,14 @@ import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.component.ControlHandler
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
+import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.canvasDecimal
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.canvas.utils.createTextPaint
+import com.angcyo.library.component.DrawText
 import com.angcyo.library.ex.*
 import com.angcyo.library.unit.convertPixelToValueUnit
-import com.angcyo.library.unit.unitDecimal
 
 /**
  * 选中[IItemsRenderer]后, 用来绘制控制按钮的渲染器
@@ -39,7 +39,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
     }
 
     /**用来绘制选中元素的宽高*/
-    val sizePaint = createTextPaint(Color.GRAY).apply {
+    val sizePaint = createTextPaint(Color.WHITE).apply {
         textSize = 9 * dp
     }
 
@@ -101,7 +101,11 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
         }
     }
 
+    /**文本的绘制范围*/
     val _textBounds = emptyRectF()
+
+    /**文本背景的绘制范围*/
+    val _textBgBounds = emptyRectF()
     val _tempPoint: PointF = PointF()
 
     override fun render(canvas: Canvas) {
@@ -117,7 +121,13 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
                 canvas.withTranslation(-paint.strokeWidth / 2, -paint.strokeWidth / 2) {
                     canvas.drawRect(visualBounds, paint)
                 }
-                drawFrameText(canvas, visualBounds, it.getRenderRotateBounds(), rotate)
+                drawFrameText(
+                    canvas,
+                    visualBounds,
+                    it.getRenderBounds(),
+                    it.getRenderRotateBounds(),
+                    rotate
+                )
                 if (controlHandler.touchControlPoint is RotateControlPoint) {
                     //绘制旋转的角度
                     drawRotateText(canvas, visualBounds, rotate)
@@ -131,6 +141,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
         }
     }
 
+    /**镜像翻转*/
     fun Canvas.withTextScale(rotate: Float, textBounds: RectF, block: Canvas.() -> Unit) {
         if (rotate >= -90 && rotate <= 90) {
             block()
@@ -188,14 +199,66 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
     fun drawFrameText(
         canvas: Canvas,
         visualBounds: RectF,
+        renderBounds: RectF,
         renderRotateBounds: RectF,
         rotate: Float
     ) {
-        //绘制宽高文本
-        val widthUnit = canvasViewBox.valueUnit.convertPixelToValueUnit(renderRotateBounds.width())
-        val heightUnit =
-            canvasViewBox.valueUnit.convertPixelToValueUnit(renderRotateBounds.height())
+        if (!isTouchHold) {
+            //没有按下时, 不显示
+            return
+        }
+        //背景需要插入的大小
+        val bgInset = controlHandler.sizeOffset
+        //背景需要平移的距离
+        val bgOffset = controlHandler.sizeOffset * 2
+        val controlPoint = controlHandler.touchControlPoint
 
+        val valueUnit = canvasViewBox.valueUnit
+        val frameText: String = when (controlPoint) {
+            is ScaleControlPoint -> {
+                //需要绘制宽高
+                val widthUnit = valueUnit.convertPixelToValueUnit(renderBounds.width())
+                val heightUnit = valueUnit.convertPixelToValueUnit(renderBounds.height())
+                "W: $widthUnit\nH: $heightUnit"
+            }
+            is RotateControlPoint -> {
+                //需要绘制角度
+                "R: ${rotate.canvasDecimal()}°"
+            }
+            else -> {
+                //绘制坐标
+                _tempPoint.set(renderRotateBounds.left, renderRotateBounds.top)
+                val point = _tempPoint
+                val value = canvasViewBox.calcDistanceValueWithOrigin(point)
+                val xUnit = valueUnit.formattedValueUnit(value.x)
+                val yUnit = valueUnit.formattedValueUnit(value.y)
+                "X: $xUnit\nY: $yUnit"
+            }
+        }
+
+        DrawText().apply {
+            textPaint = sizePaint
+            drawText = frameText
+            val layout = makeLayout()
+
+            val textLeft = visualBounds.centerX() - layout.width / 2
+            val textTop = visualBounds.top - bgOffset - bgInset - layout.height
+            _textBounds.set(textLeft, textTop, textLeft + layout.width, textTop + layout.height)
+
+            _textBgBounds.set(_textBounds)
+            _textBgBounds.inset(-bgInset * 2, -bgInset)
+            canvas.drawRoundRect(_textBgBounds, 4 * dp, 4 * dp, controlPointPaint)
+
+            //处理镜像缩放
+            canvas.withTextScale(rotate, _textBounds) {
+                //偏移到文本位置
+                canvas.withTranslation(_textBounds.left, _textBounds.top) {
+                    onDraw(canvas)
+                }
+            }
+        }
+
+        /*
         //绘制宽度
         var textWidth = sizePaint.textWidth(widthUnit)
         _textBounds.set(
@@ -258,7 +321,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
                     sizePaint
                 )
             }
-        }
+        }*/
     }
 
     /**绘制控制四个角*/

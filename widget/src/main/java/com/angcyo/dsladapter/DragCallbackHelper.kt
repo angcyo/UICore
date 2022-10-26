@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import android.text.TextUtils
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.angcyo.dsladapter.internal.DrawText
+import com.angcyo.library.component.DrawText
 import com.angcyo.library.ex.textHeight
 import java.util.*
 
@@ -294,11 +294,11 @@ class DragCallbackHelper : ItemTouchHelper.Callback() {
                 itemView.left.toFloat()
             } else {
                 //向左滑动删除
-                (itemView.right - _drawText._paint.measureText(swipeTipText.toString()))
+                (itemView.right - _drawText.textPaint.measureText(swipeTipText.toString()))
             }
 
             val y: Float =
-                itemView.top + itemView.measuredHeight / 2 - _drawText._paint.textHeight() / 2
+                itemView.top + itemView.measuredHeight / 2 - _drawText.textPaint.textHeight() / 2
 
             canvas.save()
             canvas.translate(x, y)

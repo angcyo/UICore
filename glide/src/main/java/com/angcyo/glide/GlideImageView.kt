@@ -5,8 +5,8 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
-import com.angcyo.dsladapter.internal.DrawText
 import com.angcyo.library.L
+import com.angcyo.library.component.DrawText
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.widget.image.DslImageView
 import com.bumptech.glide.load.resource.gif.GifDrawable
