@@ -1,6 +1,7 @@
 package com.angcyo.crop.ui
 
 import android.graphics.Bitmap
+import androidx.lifecycle.LifecycleOwner
 
 /**
  * 数据提供器
@@ -11,5 +12,7 @@ interface ICropProvide {
 
     /**获取需要裁剪的图片*/
     fun getOriginCropBitmap(): Bitmap?
+
+    fun getCropLifecycleOwner(): LifecycleOwner?
 
 }

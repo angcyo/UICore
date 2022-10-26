@@ -3,6 +3,7 @@ package com.angcyo.crop.ui
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Bitmap
+import androidx.lifecycle.LifecycleOwner
 import com.angcyo.crop.R
 import com.angcyo.dialog.DslDialogConfig
 import com.angcyo.dialog.configBottomDialog
@@ -55,7 +56,11 @@ class CropDialogConfig(context: Context? = null) : DslDialogConfig(context), ICr
         onCropResultAction(null)
     }
 
+    //---ICropProvide---
+
     override fun getOriginCropBitmap(): Bitmap? = cropBitmap
+
+    override fun getCropLifecycleOwner(): LifecycleOwner? = dialogContext as? LifecycleOwner
 
 }
 
