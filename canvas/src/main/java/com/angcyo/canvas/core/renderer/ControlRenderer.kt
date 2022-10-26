@@ -247,7 +247,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
 
             _textBgBounds.set(_textBounds)
             _textBgBounds.inset(-bgInset * 2, -bgInset)
-            canvas.drawRoundRect(_textBgBounds, 4 * dp, 4 * dp, controlPointPaint)
+            canvas.drawRoundRect(_textBgBounds, 4 * dp, 4 * dp, controlTouchPointPaint)
 
             //处理镜像缩放
             canvas.withTextScale(rotate, _textBounds) {
