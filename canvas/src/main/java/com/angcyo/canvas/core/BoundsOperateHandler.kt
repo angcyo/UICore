@@ -299,13 +299,13 @@ class BoundsOperateHandler {
         val undoOffsetList = mutableListOf<OffsetItemData>()
 
         offsetList.forEach { item ->
-            undoOffsetList.add(OffsetItemData(item.item, -item.dx, -item.dy))
+            undoOffsetList.add(OffsetItemData(item.renderer, -item.dx, -item.dy))
         }
 
         val step = object : ICanvasStep {
             override fun runUndo() {
                 undoOffsetList.forEach { item ->
-                    item.item.changeBoundsAction(
+                    item.renderer.changeBoundsAction(
                         Reason(
                             Reason.REASON_CODE,
                             false,
@@ -320,7 +320,7 @@ class BoundsOperateHandler {
 
             override fun runRedo() {
                 offsetList.forEach { item ->
-                    item.item.changeBoundsAction(
+                    item.renderer.changeBoundsAction(
                         Reason(
                             Reason.REASON_CODE,
                             false,

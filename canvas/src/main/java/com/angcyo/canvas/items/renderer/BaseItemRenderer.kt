@@ -2,11 +2,13 @@ package com.angcyo.canvas.items.renderer
 
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import android.view.Gravity
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.Reason
+import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.BoundsOperateHandler
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
@@ -422,4 +424,34 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     override fun getEngraveRotateBounds(): RectF = getRotateBounds()
 
     //</editor-fold desc="IEngraveProvider">
+
+    //<editor-fold desc="Api">
+
+    /**在[bounds]内对齐*/
+    open fun alignInBounds(
+        bounds: RectF,
+        align: Int = Gravity.CENTER,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val itemBounds = getBounds()
+        val dx = when (align) {
+            Gravity.CENTER -> bounds.centerX() - itemBounds.centerX()
+            else -> 0f
+        }
+        val dy = when (align) {
+            Gravity.CENTER -> bounds.centerY() - itemBounds.centerY()
+            else -> 0f
+        }
+        canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            val unDx = -dx
+            val unDy = -dy
+            translateBy(unDx, unDy)
+        }) {
+            translateBy(dx, dy)
+        }
+    }
+
+    //</editor-fold desc="Api">
+
+
 }

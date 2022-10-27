@@ -43,6 +43,7 @@
     <string name="canvas_align_horizontal">水平居中</string>
     <string name="canvas_align_right">右对齐</string>
     <string name="canvas_align_center">居中</string>
+    <string name="canvas_bounds_center">设备居中</string>
     <string name="canvas_align_top">顶对齐</string>
     <string name="canvas_align_vertical">垂直居中</string>
     <string name="canvas_align_bottom">底对齐</string>

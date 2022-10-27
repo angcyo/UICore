@@ -8,7 +8,7 @@ import com.angcyo.canvas.items.renderer.BaseItemRenderer
  * @since 2022/06/07
  */
 data class OffsetItemData(
-    val item: BaseItemRenderer<*>,
+    val renderer: BaseItemRenderer<*>,
     val dx: Float,
     val dy: Float,
 )
