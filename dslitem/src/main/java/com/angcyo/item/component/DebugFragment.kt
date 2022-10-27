@@ -14,7 +14,8 @@ import com.angcyo.core.fragment.BaseDslFragment
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.bindItem
 import com.angcyo.dsladapter.drawBottom
-import com.angcyo.item.DslPropertyNumberItem
+import com.angcyo.item.DslPropertyFloatItem
+import com.angcyo.item.DslPropertyIntItem
 import com.angcyo.item.DslPropertySwitchItem
 import com.angcyo.item.style.itemDes
 import com.angcyo.item.style.itemLabel
@@ -157,13 +158,28 @@ class DebugFragment : BaseDslFragment() {
                         }
                     } else if (debugAction.type == Int::class.java) {
                         //数字输入
-                        DslPropertyNumberItem()() {
+                        DslPropertyIntItem()() {
                             itemLabel = debugAction.label
                             itemDes = debugAction.des
                             initItem()
 
                             itemPropertyNumber =
                                 debugAction.key.hawkGetInt((debugAction.defValue as? Int) ?: -1)
+                            observeItemChange {
+                                debugAction.key.hawkPut(itemPropertyNumber)
+                                debugAction.action?.invoke(this@DebugFragment, itemPropertyNumber)
+                            }
+                        }
+                    } else if (debugAction.type == Float::class.java) {
+                        //浮点输入
+                        DslPropertyFloatItem()() {
+                            itemLabel = debugAction.label
+                            itemDes = debugAction.des
+                            initItem()
+
+                            itemPropertyNumber = debugAction.key.hawkGetFloat(
+                                (debugAction.defValue as? Float) ?: -1f
+                            )
                             observeItemChange {
                                 debugAction.key.hawkPut(itemPropertyNumber)
                                 debugAction.action?.invoke(this@DebugFragment, itemPropertyNumber)

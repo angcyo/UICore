@@ -141,7 +141,15 @@ fun String?.hawkGetBoolean(def: Boolean = false): Boolean {
 }
 
 fun String?.hawkGetInt(def: Int = -1): Int {
-    var result: Int = def
+    var result = def
+    this?.let {
+        result = Hawk.get(it, def)
+    }
+    return result
+}
+
+fun String?.hawkGetFloat(def: Float = -1f): Float {
+    var result = def
     this?.let {
         result = Hawk.get(it, def)
     }

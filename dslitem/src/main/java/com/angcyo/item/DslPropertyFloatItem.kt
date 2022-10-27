@@ -2,7 +2,6 @@ package com.angcyo.item
 
 import android.widget.TextView
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.item.keyboard.NumberKeyboardPopupConfig.Companion.STYLE_DECIMAL
 import com.angcyo.item.keyboard.keyboardNumberWindow
 import com.angcyo.widget.DslViewHolder
 
@@ -12,14 +11,10 @@ import com.angcyo.widget.DslViewHolder
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022-10-18
  */
-open class DslPropertyNumberItem : DslBasePropertyItem() {
+open class DslPropertyFloatItem : BasePropertyNumberItem() {
 
     /**属性数值*/
-    var itemPropertyNumber: Int? = null
-
-    init {
-        itemLayoutId = R.layout.dsl_property_number_item
-    }
+    var itemPropertyNumber: Float? = null
 
     override fun onItemBind(
         itemHolder: DslViewHolder,
@@ -35,9 +30,8 @@ open class DslPropertyNumberItem : DslBasePropertyItem() {
             it.context.keyboardNumberWindow(it) {
                 keyboardBindTextView = it as? TextView
                 bindPendingDelay = -1 //关闭限流输入
-                removeKeyboardStyle(STYLE_DECIMAL)
                 onNumberResultAction = { number ->
-                    itemPropertyNumber = number.toInt()
+                    itemPropertyNumber = number
                     itemChanging = true
                 }
             }

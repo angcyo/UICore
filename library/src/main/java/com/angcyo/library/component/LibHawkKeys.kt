@@ -1,6 +1,7 @@
 package com.angcyo.library.component
 
 import androidx.annotation.Keep
+import com.angcyo.library.annotation.MM
 
 /**
  * 内部库中的一些持久化数据
@@ -15,5 +16,9 @@ object LibHawkKeys {
      * 压缩时, 最小的压缩像素大小 [kb]
      * */
     var minKeepSize: Int by HawkPropertyValue<Any, Int>(400)
+
+    /**为滑台重复图片间距。单位mm,保留一位小数。*/
+    @MM
+    var lastSlipSpace: Float by HawkPropertyValue<Any, Float>(10.8f)
 
 }
