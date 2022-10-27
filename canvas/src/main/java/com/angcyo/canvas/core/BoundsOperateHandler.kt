@@ -9,10 +9,12 @@ import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
+import com.angcyo.library.gesture.RectScaleGestureHandler
 import java.lang.Math.tan
 
 /**
@@ -91,18 +93,20 @@ class BoundsOperateHandler {
 
     /**批量旋转[BaseItemRenderer]*/
     fun rotateItemList(
-        list: Iterable<BaseItemRenderer<*>>,
+        rendererList: Iterable<BaseItemRenderer<*>>,
         degrees: Float, //需要旋转多少度. by
         pivotX: Float,
         pivotY: Float,
         reason: Reason
     ) {
         val tempRect = acquireTempRectF()
-        list.forEach { item ->
-            tempRect.set(item.getBounds())
+        rendererList.forEach { renderer ->
+            tempRect.set(renderer.getBounds())
             tempRect.rotate(degrees, pivotX, pivotY)
-            item.rotate += degrees
-            item.changeBoundsAction(reason) {
+            val oldRotate = renderer.rotate
+            renderer.rotate += degrees
+            renderer.itemRotateChanged(oldRotate, IItemRenderer.ROTATE_FLAG_NORMAL)
+            renderer.changeBoundsAction(reason) {
                 offset(tempRect.centerX() - centerX(), tempRect.centerY() - centerY())
             }
         }
@@ -126,37 +130,50 @@ class BoundsOperateHandler {
     /**批量平移/缩放[BaseItemRenderer] */
     fun changeBoundsItemList(
         list: Iterable<BaseItemRenderer<*>>,
-        oldBounds: RectF,
-        newBounds: RectF,
+        groupOldBounds: RectF,
+        groupNewBounds: RectF,
+        groupAnchor: PointF,
+        groupRotate: Float,
         reason: Reason
     ) {
         val boundsList = list.map { it.getBounds() }
-        changeBoundsItemList(list, boundsList, oldBounds, newBounds, reason)
+        changeBoundsItemList(
+            list,
+            boundsList,
+            groupOldBounds,
+            groupNewBounds,
+            groupAnchor,
+            groupRotate,
+            reason
+        )
     }
 
     /**
      * 批量平移/缩放 [BaseItemRenderer]
-     * [itemList] 需要批量平移的item
+     * [itemList] 需要批量操作的item
      * [itemBoundsList] item的原始bounds
-     * [oldBounds] [newBounds] group的变化bounds
+     * [groupOldBounds] [groupNewBounds] group的变化bounds
+     * [groupAnchor] 缩放的锚点, 旋转后的点
      *
      * [com.angcyo.canvas.core.renderer.SelectGroupRenderer]
      * */
     fun changeBoundsItemList(
         itemList: Iterable<BaseItemRenderer<*>>,
         itemBoundsList: List<RectF>,
-        oldBounds: RectF,
-        newBounds: RectF,
+        groupOldBounds: RectF,//不带旋转
+        groupNewBounds: RectF, //不带旋转
+        groupAnchor: PointF,
+        groupRotate: Float,
         reason: Reason
     ) {
 
         //平移量
-        val offsetLeft: Float = newBounds.left - oldBounds.left
-        val offsetTop: Float = newBounds.top - oldBounds.top
+        val offsetLeft: Float = groupNewBounds.left - groupOldBounds.left
+        val offsetTop: Float = groupNewBounds.top - groupOldBounds.top
 
         //缩放比
-        val scaleX = (newBounds.width() / oldBounds.width()).ensure()
-        val scaleY = (newBounds.height() / oldBounds.height()).ensure()
+        val scaleX = (groupNewBounds.width() / groupOldBounds.width()).ensure()
+        var scaleY = (groupNewBounds.height() / groupOldBounds.height()).ensure()
 
         if (offsetLeft == 0f && offsetTop == 0f && scaleX == 1f && scaleY == 1f) {
             return
@@ -164,28 +181,34 @@ class BoundsOperateHandler {
 
         itemList.forEachIndexed { index, renderer ->
             val itemOriginBounds = itemBoundsList[index]
-
-            val centerX = itemOriginBounds.centerX()
-            val centerY = itemOriginBounds.centerY()
-
-            val cdx = centerX - oldBounds.left
-            val cdy = centerY - oldBounds.top
-
-            val newCenterX = oldBounds.left + cdx * scaleX
-            val newCenterY = oldBounds.top + cdy * scaleY
-
-            val offsetCenterX = newCenterX - centerX
-            val offsetCenterY = newCenterY - centerY
-
             val itemNewBounds = acquireTempRectF()
-            itemNewBounds.set(itemOriginBounds)
+
+            /*RectScaleGestureHandler.rectScaleTo(
+                itemOriginBounds,
+                itemNewBounds,
+                scaleX,
+                scaleY,
+                renderer.rotate,
+                anchor.x,
+                anchor.y,
+            )*/
+
+            RectScaleGestureHandler.rectScaleToWithGroup(
+                itemOriginBounds,
+                itemNewBounds,
+                scaleX,
+                scaleY,
+                groupAnchor.x,
+                groupAnchor.y,
+                groupRotate,
+                groupOldBounds,
+                offsetLeft,
+                offsetTop
+            )
 
             if (renderer.isLineShape()) {
-                itemNewBounds.scale(scaleX, 1f, centerX, centerY)
-            } else {
-                itemNewBounds.scale(scaleX, scaleY, centerX, centerY)
+                itemNewBounds.bottom = itemNewBounds.top + itemOriginBounds.height()
             }
-            itemNewBounds.offset(offsetLeft + offsetCenterX, offsetTop + offsetCenterY)
 
             renderer.changeBoundsAction(reason) {
                 set(itemNewBounds)

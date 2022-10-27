@@ -1,5 +1,6 @@
 package com.angcyo.canvas.core.component.control
 
+import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.canvas.CanvasDelegate
@@ -75,7 +76,7 @@ class ScaleControlPoint : ControlPoint() {
                         if (end) {
                             addChangeBoundsUndoAction(canvasDelegate, itemRenderer)
                         }
-                        //itemRenderer.onScaleControlFinish(this@ScaleControlPoint, rect, end)
+                        itemRenderer.onScaleControlFinish(this@ScaleControlPoint, rect, end)
                     }
                     initializeAnchorWithRotate(bounds, itemRenderer.rotate, bounds.left, bounds.top)
                     onTouchDown(point.x, point.y)
@@ -106,6 +107,10 @@ class ScaleControlPoint : ControlPoint() {
             val item = itemRenderer
             val originBounds = RectF(rectScaleGestureHandler.targetRect)
             val newBounds = RectF(itemRenderer.getBounds())
+            val anchor = PointF().apply {
+                set(itemRenderer.getBoundsScaleAnchor())
+            }
+            val rotate = itemRenderer.rotate
 
             override fun runUndo() {
                 if (item is SelectGroupRenderer) {
@@ -113,6 +118,8 @@ class ScaleControlPoint : ControlPoint() {
                         itemList,
                         newBounds,
                         originBounds,
+                        anchor,
+                        rotate,
                         Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
                     )
                     if (canvasDelegate.getSelectedRenderer() == item) {
@@ -131,6 +138,8 @@ class ScaleControlPoint : ControlPoint() {
                         itemList,
                         originBounds,
                         newBounds,
+                        anchor,
+                        rotate,
                         Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
                     )
                     if (canvasDelegate.getSelectedRenderer() == item) {

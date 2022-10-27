@@ -307,15 +307,16 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     /**开始拖拽缩放*/
     open fun onScaleControlStart(controlPoint: ScaleControlPoint) {
-
+        L.i("拖动调整矩形开始:${getBounds()}")
     }
 
     /**拖拽缩放结束*/
     open fun onScaleControlFinish(controlPoint: ScaleControlPoint, rect: RectF, end: Boolean) {
-        L.i("拖动调整矩形:w:${rect.width()} h:${rect.height()} $rect $end")
+        L.i("拖动调整矩形完成:w:${rect.width()} h:${rect.height()} $rect $end")
+        /*//因为需要undo, 所以这里不能调整bounds
         changeBoundsAction {
             set(rect)
-        }
+        }*/
     }
 
     //</editor-fold desc="scale control">

@@ -282,7 +282,7 @@ class RectScaleGestureHandler {
             val centerX = target.centerX()
             val centerY = target.centerY()
 
-            //缩放的锚点, 一定要是未旋转的
+            //缩放的锚点, 一定要是未旋转的, 所以需要反向旋转一下
             matrix.reset()
             matrix.setRotate(rotate, centerX, centerY)
             matrix.invert(matrix)
@@ -312,6 +312,82 @@ class RectScaleGestureHandler {
             //后平移
             matrix.reset()
             matrix.setTranslate(centerDx, centerDy)
+            matrix.mapRect(result)
+
+            if (isFlipH) {
+                result.flipHorizontal(true)
+            }
+            if (isFlipV) {
+                result.flipVertical(true)
+            }
+
+            temp.release()
+            matrix.release()
+        }
+
+        /**
+         * 通过与锚点缩放距离进行偏移量的计算
+         * [rectScaleTo]
+         *
+         * [groupRotate] group当前旋转的角度
+         * [groupOldBounds] group未缩放时的bounds
+         * [groupOffsetLeft] [groupOffsetTop] 额外需要偏移的距离
+         * */
+        fun rectScaleToWithGroup(
+            target: RectF,
+            result: RectF,
+            scaleX: Float,
+            scaleY: Float,
+            anchorX: Float,
+            anchorY: Float,
+            groupRotate: Float,
+            groupOldBounds: RectF,
+            groupOffsetLeft: Float = 0f,
+            groupOffsetTop: Float = 0f,
+        ) {
+            val isFlipH = target.width() * scaleX < 0
+            val isFlipV = target.height() * scaleY < 0
+
+            val matrix = acquireTempMatrix()
+            val temp = acquireTempRectF()
+
+            val centerX = target.centerX()
+            val centerY = target.centerY()
+
+            val groupOldCenterX = groupOldBounds.centerX()
+            val groupOldCenterY = groupOldBounds.centerY()
+
+            //直接在目标中心, 进行缩放
+            matrix.reset()
+            matrix.setScale(scaleX, scaleY, centerX, centerY)
+            result.set(target)
+            matrix.mapRect(result)
+
+            //然后计算需要偏移的量
+            //缩放的锚点, 一定要是未旋转的, 所以需要反向旋转一下
+            matrix.reset()
+            matrix.setRotate(groupRotate, groupOldCenterX, groupOldCenterY)
+            matrix.invert(matrix)
+            val invertAnchor = acquireTempPointF()
+            invertAnchor.set(anchorX, anchorY)
+            matrix.mapPoint(invertAnchor)//反向旋转的锚点
+
+            //将中点按照锚点进行缩放
+            val centerPoint = acquireTempPointF()
+            centerPoint.set(centerX, centerY)
+            matrix.reset()
+            matrix.setScale(scaleX, scaleY, invertAnchor.x, invertAnchor.y)
+            matrix.mapPoint(centerPoint)//此时的中点, 只进行了缩放, 不带旋转
+
+            val centerDx = centerPoint.x - centerX
+            val centerDy = centerPoint.y - centerY
+
+            invertAnchor.release()
+            centerPoint.release()
+
+            //后平移
+            matrix.reset()
+            matrix.setTranslate(centerDx + groupOffsetLeft, centerDy + groupOffsetTop)
             matrix.mapRect(result)
 
             if (isFlipH) {

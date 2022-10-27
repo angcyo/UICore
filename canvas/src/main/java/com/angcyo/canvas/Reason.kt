@@ -1,5 +1,12 @@
 package com.angcyo.canvas
 
+import com.angcyo.canvas.Reason.Companion.REASON_CODE
+import com.angcyo.canvas.Reason.Companion.REASON_FLAG_BOUNDS
+import com.angcyo.canvas.Reason.Companion.REASON_FLAG_ROTATE
+import com.angcyo.canvas.Reason.Companion.REASON_FLAG_TRANSLATE
+import com.angcyo.canvas.Reason.Companion.REASON_USER
+import com.angcyo.library.annotation.Implementation
+
 /**
  * 更新数据的原因描述
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -30,6 +37,10 @@ data class Reason(
         /**代码操作*/
         const val REASON_CODE = 2
 
+        /**需要预览操作*/
+        @Implementation
+        const val REASON_PREVIEW = 3
+
         //flag
 
         /**改变item的宽高*/
@@ -48,5 +59,8 @@ data class Reason(
 
         val code: Reason
             get() = Reason(REASON_CODE)
+
+        val preview: Reason
+            get() = Reason(REASON_PREVIEW)
     }
 }

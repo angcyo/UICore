@@ -14,14 +14,16 @@ import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.OffsetItemData
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
+import com.angcyo.canvas.data.RendererBounds
 import com.angcyo.canvas.items.SelectGroupItem
+import com.angcyo.canvas.items.data.DataItem
+import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.drawable.*
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
-import kotlin.collections.set
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
@@ -187,23 +189,34 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         if (selectItemList.isEmpty()) {
             return
         }
-
+        val renderers = selectItemList.toList()
         if (reason.reason == Reason.REASON_USER) {
             if (reason.flag.have(Reason.REASON_FLAG_TRANSLATE) || reason.flag.have(Reason.REASON_FLAG_BOUNDS)) {
-                if (itemBoundsMap.isEmpty()) {
+                if (groupTouchDownItemBoundsList.isEmpty()) {
+                    //如果不是手势调整的Bounds
                     canvasDelegate.boundsOperateHandler.changeBoundsItemList(
-                        selectItemList,
+                        renderers,
                         oldBounds,
                         getBounds(),
+                        getBoundsScaleAnchor(),
+                        rotate,
                         Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
                     )
                 } else {
+                    //如果是手势调整的Bounds
+                    val itemOriginBoundsList = mutableListOf<RectF>()
+                    for (render in renderers) {
+                        groupTouchDownItemBoundsList.find { it.renderer == render }?.let {
+                            itemOriginBoundsList.add(it.bounds)
+                        }
+                    }
                     canvasDelegate.boundsOperateHandler.changeBoundsItemList(
-                        selectItemList,
-                        selectItemList.filter { itemBoundsMap[it] != null }
-                            .map { itemBoundsMap[it]!! },
-                        originBounds,
+                        renderers,
+                        itemOriginBoundsList,
+                        groupTouchDownBounds,
                         getBounds(),
+                        getBoundsScaleAnchor(),
+                        rotate,
                         Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
                     )
                 }
@@ -212,32 +225,36 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     }
 
     /**按下时, 最开始的Bounds*/
-    val originBounds = acquireTempRectF()
+    val groupTouchDownBounds = acquireTempRectF()
 
     /**按下时, 选中元素开始的Bounds*/
-    val itemBoundsMap = hashMapOf<BaseItemRenderer<*>, RectF>()
+    val groupTouchDownItemBoundsList = mutableListOf<RendererBounds>()
 
     override fun onScaleControlStart(controlPoint: ScaleControlPoint) {
+        super.onScaleControlStart(controlPoint)
         //记录开始时所有item的bounds
-        originBounds.set(getBounds())
-        itemBoundsMap.values.forEach {
-            it.release()
-        }
-        itemBoundsMap.clear()
+        groupTouchDownBounds.set(getBounds())
+        groupTouchDownItemBoundsList.clear()
         selectItemList.forEach {
-            val rect = acquireTempRectF()
-            rect.set(it.getBounds())
-            itemBoundsMap[it] = rect
+            groupTouchDownItemBoundsList.add(RendererBounds(it))
         }
     }
 
     override fun onScaleControlFinish(controlPoint: ScaleControlPoint, rect: RectF, end: Boolean) {
         super.onScaleControlFinish(controlPoint, rect, end)
         if (end) {
-            itemBoundsMap.values.forEach {
-                it.release()
+            for (render in selectItemList) {
+                if (render is DataItemRenderer) {
+                    val renderItem = render.rendererItem
+                    if (renderItem is DataItem && renderItem.needUpdateOfBoundsChanged(
+                            Reason(Reason.REASON_USER, false, Reason.REASON_FLAG_BOUNDS)
+                        )
+                    ) {
+                        renderItem.updateRenderItem(render)
+                    }
+                }
             }
-            itemBoundsMap.clear()
+            groupTouchDownItemBoundsList.clear()
         }
     }
 

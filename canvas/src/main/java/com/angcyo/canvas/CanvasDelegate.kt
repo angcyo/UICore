@@ -1174,12 +1174,19 @@ class CanvasDelegate(val view: View) : ICanvasView {
         if (itemRenderer is SelectGroupRenderer) {
             val itemList = mutableListOf<BaseItemRenderer<*>>()
             itemList.addAll(itemRenderer.selectItemList)
+
+            val anchor = PointF().apply {
+                set(itemRenderer.getBoundsScaleAnchor())
+            }
+            val rotate = itemRenderer.rotate
             step = object : ICanvasStep {
                 override fun runUndo() {
                     boundsOperateHandler.changeBoundsItemList(
                         itemList,
                         newBounds,
                         oldBounds,
+                        anchor,
+                        rotate,
                         Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_ROTATE)
                     )
                     if (getSelectedRenderer() == itemRenderer) {
@@ -1192,6 +1199,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
                         itemList,
                         oldBounds,
                         newBounds,
+                        anchor,
+                        rotate,
                         Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_ROTATE)
                     )
                     if (getSelectedRenderer() == itemRenderer) {
