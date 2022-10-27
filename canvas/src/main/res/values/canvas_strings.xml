@@ -90,6 +90,9 @@
     <string name="canvas_custom">自定义</string>
     <string name="canvas_style">样式</string>
     <string name="canvas_align">对齐</string>
+    <string name="canvas_flat">均分</string>
+    <string name="canvas_flat_horizontal">水平均分</string>
+    <string name="canvas_flat_vertical">垂直均分</string>
 
     <string name="canvas_font_size">字号</string>
     <string name="canvas_word_spacing">字间距</string>

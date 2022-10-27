@@ -3,6 +3,7 @@ package com.angcyo.canvas.core.renderer
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.view.Gravity
+import android.widget.LinearLayout
 import androidx.core.graphics.drawable.toDrawable
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
@@ -548,5 +549,61 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
             offsetList,
             strategy
         )
+    }
+
+    /**水平分布/垂直分布*/
+    fun updateFlat(flat: Int, strategy: Strategy = Strategy.normal) {
+        val list = selectItemList
+        val count = list.size()
+        if (count <= 2) {
+            return
+        }
+
+        val sortList = selectItemList.toMutableList()
+        //先排序
+        if (flat == LinearLayout.VERTICAL) {
+            sortList.sortBy { it.getBounds().centerY() }
+        } else if (flat == LinearLayout.HORIZONTAL) {
+            sortList.sortBy { it.getBounds().centerX() }
+        } else {
+            return
+        }
+
+        val first = sortList.first()
+        val last = sortList.last()
+
+        val firstX = first.getBounds().centerX()
+        val firstY = first.getBounds().centerY()
+        //步长
+        val step = when (flat) {
+            LinearLayout.HORIZONTAL -> last.getBounds().centerX() - firstX
+            LinearLayout.VERTICAL -> last.getBounds().centerY() - firstY
+            else -> 0f
+        } / (count - 1)
+
+        val offsetList = mutableListOf<OffsetItemData>()
+        sortList.forEachIndexed { index, renderer ->
+            if (renderer != first && renderer != last) {
+                when (flat) {
+                    LinearLayout.VERTICAL -> {
+                        val dy = firstY + (step * index) - renderer.getBounds().centerY()
+                        offsetList.add(OffsetItemData(renderer, 0f, dy))
+                    }
+                    LinearLayout.HORIZONTAL -> {
+                        val dx = firstX + (step * index) - renderer.getBounds().centerX()
+                        offsetList.add(OffsetItemData(renderer, dx, 0f))
+                    }
+                }
+            }
+        }
+
+        if (offsetList.isNotEmpty()) {
+            canvasDelegate.boundsOperateHandler.offsetItemList(
+                canvasDelegate,
+                this,
+                offsetList,
+                strategy
+            )
+        }
     }
 }
