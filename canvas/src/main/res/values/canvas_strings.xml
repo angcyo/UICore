@@ -73,7 +73,7 @@
     <string name="canvas_backward">下移一层</string>
     <string name="canvas_front">置为顶层</string>
     <string name="canvas_back">置为底层</string>
-    <string name="canvas_sort">排序</string>
+    <string name="canvas_sort">排列</string>
 
     <string name="canvas_import_font">导入</string>
     <string name="canvas_invalid_font">无效的字体</string>
