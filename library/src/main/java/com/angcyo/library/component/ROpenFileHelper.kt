@@ -2,6 +2,7 @@ package com.angcyo.library.component
 
 import android.content.Intent
 import com.angcyo.library.L
+import com.angcyo.library.ex.decode
 import com.angcyo.library.ex.extName
 import com.angcyo.library.ex.lastName
 import com.angcyo.library.ex.saveTo
@@ -39,7 +40,10 @@ object ROpenFileHelper {
 
         if (data != null) {
             val path = "$data"
-            val name = path.lastName()
+
+            //%E9%87%91%E9%97%A8%E5%A4%A7%E6%A1%A5-GCODE.dxf
+            //decode->金门大桥-GCODE.dxf
+            val name = path.lastName().decode()
             var extName = name.extName()
 
             val newPath = if (extName.isEmpty()) {
