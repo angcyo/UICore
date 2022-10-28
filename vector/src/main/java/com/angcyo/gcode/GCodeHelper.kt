@@ -8,9 +8,7 @@ import androidx.annotation.WorkerThread
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.app
-import com.angcyo.library.ex.ceil
-import com.angcyo.library.ex.dotDegrees
-import com.angcyo.library.ex.emptyRectF
+import com.angcyo.library.ex.*
 import com.angcyo.library.unit.InchValueUnit
 import com.angcyo.library.unit.MmValueUnit
 import com.angcyo.vector.VectorHelper
@@ -164,7 +162,17 @@ object GCodeHelper {
             comment = line.substring(commentIndex + 1, line.length)
         }
 
-        val cmdStringList = cmdString.split(' ')
+        var cmdStringList = cmdString.split(' ')//G1  X81.3282 Y52.9104;有空格隔开的指令
+        if (cmdStringList.size() <= 1) {
+            if (cmdString.contains("X") ||
+                cmdString.contains("y") ||
+                cmdString.contains("I") ||
+                cmdString.contains("J")
+            ) {
+                val regex = "[A-z][-]?[\\d.]*\\d+"
+                cmdStringList = cmdString.patternList(regex)//G1X83.4949Y-8.0145;无空格隔开的指令
+            }
+        }
         val lineFirstCmd: String = cmdStringList.firstOrNull() ?: ""
         cmdStringList.forEach { cmd ->
             if (cmd.isNotEmpty()) {
