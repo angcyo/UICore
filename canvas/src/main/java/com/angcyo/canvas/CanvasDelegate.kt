@@ -899,7 +899,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         list.forEach { item ->
             if (item is DataItemRenderer) {
                 item.dataItem?.dataBean?.let {
-                    copyDataList.add(it.copyBean(true))
+                    copyDataList.add(it.copyBean())
                 }
             }
         }
