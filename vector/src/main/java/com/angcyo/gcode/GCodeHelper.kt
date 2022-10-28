@@ -9,6 +9,7 @@ import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.app
 import com.angcyo.library.ex.*
+import com.angcyo.library.model.PointD
 import com.angcyo.library.unit.InchValueUnit
 import com.angcyo.library.unit.MmValueUnit
 import com.angcyo.vector.VectorHelper
@@ -45,7 +46,7 @@ import com.angcyo.vector.VectorHelper
 object GCodeHelper {
 
     //坐标单位对应的像素比例 (厘米, 英寸)
-    private var _lastRatio = 1f
+    private var _lastRatio = 1.0
 
     /**修正GCode残缺指令
      * [1.6004 Y17.2065 I45.0088 J0.] -> [G2 X0 Y17.2065 I45.0088 J0.]
@@ -62,7 +63,7 @@ object GCodeHelper {
         //1英寸等于多少像素, 1英寸=2.54厘米=25.4毫米
         val inPixel = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, 1f, dm) //537.882
 
-        val config = GCodeParseConfig(text, mmPixel, inPixel)
+        val config = GCodeParseConfig(text, mmPixel.toDouble(), inPixel.toDouble())
         return config
     }
 
@@ -106,8 +107,8 @@ object GCodeHelper {
         gCodeHandler.reset()
         val mm = MmValueUnit()
         val inch = InchValueUnit()
-        val mmValue = mm.convertValueToPixel(1f)
-        val inchValue = inch.convertValueToPixel(1f)
+        val mmValue = mm.convertValueToPixel(1.0)
+        val inchValue = inch.convertValueToPixel(1.0)
         val config = GCodeParseConfig(gCode, mmValue, inchValue)
         val gCodeLineList = parseGCodeLineList(config)
         return gCodeHandler.parseGCodeBound(gCodeLineList)
@@ -144,7 +145,7 @@ object GCodeHelper {
     }
 
     /**[GCodeLineData]*/
-    fun _parseGCodeLine(line: String, mmRatio: Float, inRatio: Float): GCodeLineData {
+    fun _parseGCodeLine(line: String, mmRatio: Double, inRatio: Double): GCodeLineData {
         val cmdList = mutableListOf<GCodeCmd>()
 
         var ratio = _lastRatio
@@ -201,7 +202,7 @@ object GCodeHelper {
                 }
 
                 //转成数字后, 字符前面的0会丢失
-                val number = numberBuilder.toString().toFloatOrNull() ?: 0f
+                val number = numberBuilder.toString().toDoubleOrNull() ?: 0.0
                 val gCodeCmd = if (lineFirstCmd.isGCodeMoveDirective()) {
                     GCodeCmd(cmd, cmdStr, number, ratio, ratio * number)
                 } else {
@@ -261,13 +262,13 @@ object GCodeHelper {
 
     /**计算绘制圆弧后的结束点坐标*/
     private fun calcArcEndPoint(
-        x: Float,
-        y: Float,
-        i: Float,
-        j: Float,
-        lastX: Float,
-        lastY: Float
-    ): PointF {
+        x: Double,
+        y: Double,
+        i: Double,
+        j: Double,
+        lastX: Double,
+        lastY: Double
+    ): PointD {
         val circleX = lastX + i
         val circleY = lastY + j
         val r = VectorHelper.spacing(circleX, circleY, lastX, lastY)
@@ -287,31 +288,31 @@ object GCodeHelper {
         private var _isMoveTo = false
 
         //上一次xy的数据
-        private var _lastX = 0f
-        private var _lastY = 0f
+        private var _lastX = 0.0
+        private var _lastY = 0.0
 
         //上一次xy的数据, 未[transformPoint]
-        private var _lastOriginX = 0f
-        private var _lastOriginY = 0f
+        private var _lastOriginX = 0.0
+        private var _lastOriginY = 0.0
 
         //临时存储[transformPoint]后的变量
-        val _tempXYPoint = PointF()
-        val _tempIJPoint = PointF()
+        val _tempXYPoint = PointD()
+        val _tempIJPoint = PointD()
 
         /**坐标点的转换*/
-        var transformPoint: ((GCodeLineData, point: PointF) -> Unit)? = null
+        var transformPoint: ((GCodeLineData, point: PointD) -> Unit)? = null
 
         /**重写G指令*/
-        var overrideGCommand: ((firstCmd: GCodeCmd, xy: PointF, ij: PointF?) -> Unit)? = null
+        var overrideGCommand: ((firstCmd: GCodeCmd, xy: PointD, ij: PointD?) -> Unit)? = null
 
         /**重写其他非G指令*/
         var overrideCommand: ((line: GCodeLineData) -> Unit)? = null
 
         fun reset() {
-            _lastX = 0f
-            _lastY = 0f
-            _lastOriginX = 0f
-            _lastOriginY = 0f
+            _lastX = 0.0
+            _lastY = 0.0
+            _lastOriginX = 0.0
+            _lastOriginY = 0.0
             _isAbsolutePosition = true
             _isMoveTo = true
             path.rewind()
@@ -437,16 +438,16 @@ object GCodeHelper {
 
                     when (number) {
                         0 -> { //G0
-                            toPath.moveTo(x, y)
+                            toPath.moveTo(x.toFloat(), y.toFloat())
                             _onMoveTo(x, y)
                             overrideGCommand?.invoke(firstCmd, _tempXYPoint, null)
                         }
                         1 -> { //G1
                             if (isSpindleOn && _isMoveTo) {
-                                toPath.lineTo(x, y)
+                                toPath.lineTo(x.toFloat(), y.toFloat())
                                 setLastLocation(x, y)
                             } else {
-                                toPath.moveTo(x, y)
+                                toPath.moveTo(x.toFloat(), y.toFloat())
                                 _onMoveTo(x, y)
                             }
                             overrideGCommand?.invoke(firstCmd, _tempXYPoint, null)
@@ -484,7 +485,12 @@ object GCodeHelper {
 
                                 //圆弧的矩形范围
                                 val arcRect = emptyRectF()
-                                arcRect.set(circleX - r, circleY - r, circleX + r, circleY + r)
+                                arcRect.set(
+                                    (circleX - r).toFloat(),
+                                    (circleY - r).toFloat(),
+                                    (circleX + r).toFloat(),
+                                    (circleY + r).toFloat()
+                                )
 
                                 //圆弧的角度
                                 val lastPointAngle =
@@ -514,17 +520,17 @@ object GCodeHelper {
                                     sweepAngle = 360 - sweepAngle
                                 }
 
-                                toPath.addArc(arcRect, startAngle, sweepAngle)
+                                toPath.addArc(arcRect, startAngle.toFloat(), sweepAngle.toFloat())
                                 dotDegrees(r, newPointAngle, circleX, circleY).apply {
                                     transformPoint(line, this.x, this.y, _tempXYPoint)
                                     val endX = _tempXYPoint.x
                                     val endY = _tempXYPoint.y
 
-                                    toPath.moveTo(endX, endY)
+                                    toPath.moveTo(endX.toFloat(), endY.toFloat())
                                     _onMoveTo(endX, endY)
                                 }
                             } else {
-                                toPath.moveTo(x, y)
+                                toPath.moveTo(x.toFloat(), y.toFloat())
                                 _onMoveTo(x, y)
                             }
                         }
@@ -544,18 +550,18 @@ object GCodeHelper {
             return false
         }
 
-        fun _onMoveTo(x: Float, y: Float) {
+        fun _onMoveTo(x: Double, y: Double) {
             _isMoveTo = true
             setLastLocation(x, y)
         }
 
-        fun setLastLocation(x: Float, y: Float) {
+        fun setLastLocation(x: Double, y: Double) {
             _lastX = x
             _lastY = y
         }
 
         /**转换点坐标*/
-        fun transformPoint(line: GCodeLineData, x: Float, y: Float, point: PointF) {
+        fun transformPoint(line: GCodeLineData, x: Double, y: Double, point: PointD) {
             _lastOriginX = x
             _lastOriginY = y
             point.set(x, y)

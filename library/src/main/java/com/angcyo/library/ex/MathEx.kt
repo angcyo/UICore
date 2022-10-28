@@ -7,6 +7,7 @@ import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
+import com.angcyo.library.model.PointD
 import java.util.*
 import kotlin.math.*
 
@@ -19,14 +20,20 @@ import kotlin.math.*
 
 /**计算两点之间的距离*/
 fun distance(point1: PointF, point2: PointF): Double {
-    return c(point1.x, point1.y, point2.x, point2.y)
+    return c(point1.x.toDouble(), point1.y.toDouble(), point2.x.toDouble(), point2.y.toDouble())
 }
 
 /**勾股定理 C边的长度*/
-fun c(x1: Float, y1: Float, x2: Float, y2: Float): Double {
+fun c(x1: Double, y1: Double, x2: Double, y2: Double): Double {
     val a = (x2 - x1).absoluteValue
     val b = (y2 - y1).absoluteValue
     return c(a, b)
+}
+
+fun c(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+    val a = (x2 - x1).absoluteValue
+    val b = (y2 - y1).absoluteValue
+    return c(a, b).toFloat()
 }
 
 /**勾股定律*/
@@ -44,11 +51,24 @@ fun c(a: Double, b: Double): Double {
  * [pivotX] [pivotY] 圆心坐标
  * [dotRadians]*/
 fun dotDegrees(
+    radius: Double,
+    degrees: Double,
+    pivotX: Double,
+    pivotY: Double,
+    result: PointD = PointD()
+): PointD {
+    val x = pivotX + radius * cos(degrees * Math.PI / 180)
+    val y = pivotY + radius * sin(degrees * Math.PI / 180)
+    result.set(x, y)
+    return result
+}
+
+fun dotDegrees(
     radius: Float,
     degrees: Float,
     pivotX: Float,
     pivotY: Float,
-    result: PointF = acquireTempPointF()
+    result: PointF = PointF()
 ): PointF {
     val x = pivotX + radius * cos(degrees * Math.PI / 180)
     val y = pivotY + radius * sin(degrees * Math.PI / 180)
@@ -262,6 +282,15 @@ fun Matrix.mapPoint(point: PointF, result: PointF): PointF {
     mapPoints(_tempPoints, _tempPoints)
     result.x = _tempPoints[0]
     result.y = _tempPoints[1]
+    return result
+}
+
+fun Matrix.mapPoint(point: PointD, result: PointD): PointD {
+    _tempPoints[0] = point.x.toFloat()
+    _tempPoints[1] = point.y.toFloat()
+    mapPoints(_tempPoints, _tempPoints)
+    result.x = _tempPoints[0].toDouble()
+    result.y = _tempPoints[1].toDouble()
     return result
 }
 

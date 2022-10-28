@@ -8,13 +8,13 @@ package com.angcyo.library.unit
 class PixelValueUnit : IValueUnit {
 
     /**10个像素为1个刻度距离*/
-    override fun getGraduatedScaleGap(): Float = convertValueToPixel(1f) * 10
+    override fun getGraduatedScaleGap(): Double = convertValueToPixel(1.0) * 10
 
     override fun getGraduatedLabel(index: Int): String = "${(index * 10f).toInt()}"
 
-    override fun convertValueToPixel(value: Float): Float = 1f
+    override fun convertValueToPixel(value: Double): Double = 1.0
 
-    override fun formattedValueUnit(value: Float): String = "${value.toInt()}${getUnit()}"
+    override fun formattedValueUnit(value: Double): String = "${value.toInt()}${getUnit()}"
 
     override fun getUnit(): String = "px"
 }

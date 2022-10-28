@@ -676,8 +676,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
         outHeight: Int = -1
     ): CanvasProjectBean {
         val bitmap = getBitmap(true, outWidth, outHeight)
-        val width = MM_UNIT.convertPixelToValue(bitmap.width.toFloat())
-        val height = MM_UNIT.convertPixelToValue(bitmap.height.toFloat())
+        val width = MM_UNIT.convertPixelToValue(bitmap.width.toDouble())
+        val height = MM_UNIT.convertPixelToValue(bitmap.height.toDouble())
 
         val data = jsonArray {
             itemsRendererList.forEach {

@@ -2,13 +2,13 @@ package com.angcyo.drawable
 
 import android.graphics.Canvas
 import android.graphics.Path
-import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.drawable.base.AbsDslDrawable
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.dotDegrees
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.linearGradientShader
+import com.angcyo.library.model.PointD
 import kotlin.math.min
 
 /**
@@ -41,8 +41,8 @@ class BubbleDrawable : AbsDslDrawable() {
         val width = drawRect.width()
         val height = drawRect.height()
         val size = min(width, height)
-        val bubbleRadius = size / 2f
-        val radio = 1.2f
+        val bubbleRadius = size / 2.0f
+        val radio = 1.2
         bubbleRect.set(
             drawRectF.centerX() - bubbleRadius,
             drawRectF.centerY() - bubbleRadius,
@@ -51,8 +51,13 @@ class BubbleDrawable : AbsDslDrawable() {
         )
 
         var degrees = leftStartAngle
-        val p1 =
-            dotDegrees(bubbleRadius, degrees, bubbleRect.centerX(), bubbleRect.centerY(), PointF())
+        val p1 = dotDegrees(
+            bubbleRadius.toDouble(),
+            degrees.toDouble(),
+            bubbleRect.centerX().toDouble(),
+            bubbleRect.centerY().toDouble(),
+            PointD()
+        )
 
         val startX = drawRectF.centerX()
         val startY = drawRectF.bottom
@@ -63,12 +68,12 @@ class BubbleDrawable : AbsDslDrawable() {
         degrees = (leftStartAngle + 90) / 2
         val c1 = dotDegrees(
             bubbleRadius * radio,
-            degrees,
-            bubbleRect.centerX(),
-            bubbleRect.centerY(),
-            PointF()
+            degrees.toDouble(),
+            bubbleRect.centerX().toDouble(),
+            bubbleRect.centerY().toDouble(),
+            PointD()
         )
-        bubblePath.quadTo(c1.x, c1.y, p1.x, p1.y)
+        bubblePath.quadTo(c1.x.toFloat(), c1.y.toFloat(), p1.x.toFloat(), p1.y.toFloat())
 
         //圆弧到右边
         bubblePath.arcTo(bubbleRect, leftStartAngle, 360 - (leftStartAngle - rightEndAngle))
@@ -77,12 +82,12 @@ class BubbleDrawable : AbsDslDrawable() {
         degrees = (90 + rightEndAngle) / 2
         val c2 = dotDegrees(
             bubbleRadius * radio,
-            degrees,
-            bubbleRect.centerX(),
-            bubbleRect.centerY(),
-            PointF()
+            degrees.toDouble(),
+            bubbleRect.centerX().toDouble(),
+            bubbleRect.centerY().toDouble(),
+            PointD()
         )
-        bubblePath.quadTo(c2.x, c2.y, startX, startY)
+        bubblePath.quadTo(c2.x.toFloat(), c2.y.toFloat(), startX, startY)
         bubblePath.close()
     }
 

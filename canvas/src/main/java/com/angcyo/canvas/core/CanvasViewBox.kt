@@ -116,10 +116,10 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     fun calcDistanceValueWithOrigin(point: PointF, result: PointF = _tempPoint): PointF {
         val pixelPoint = calcDistancePixelWithOrigin(point)
 
-        val xValue = valueUnit.convertPixelToValue(pixelPoint.x)
-        val yValue = valueUnit.convertPixelToValue(pixelPoint.y)
+        val xValue = valueUnit.convertPixelToValue(pixelPoint.x.toDouble())
+        val yValue = valueUnit.convertPixelToValue(pixelPoint.y.toDouble())
 
-        result.set(xValue, yValue)
+        result.set(xValue.toFloat(), yValue.toFloat())
         return result
     }
 

@@ -164,8 +164,8 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
 
             dataBean.isMesh = true
             dataBean.meshShape = meshShale
-            dataBean.minDiameter = MM_UNIT.convertPixelToValue(minDiameter)
-            dataBean.maxDiameter = MM_UNIT.convertPixelToValue(maxDiameter)
+            dataBean.minDiameter = MM_UNIT.convertPixelToValue(minDiameter).toFloat()
+            dataBean.maxDiameter = MM_UNIT.convertPixelToValue(maxDiameter).toFloat()
 
             updateRenderItem(renderer)
         }

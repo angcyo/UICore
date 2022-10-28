@@ -353,18 +353,18 @@ data class CanvasProjectItemBean(
     fun updateScale(@Pixel w: Float, @Pixel h: Float) {
         val valueUnit = MM_UNIT
         if (w != 0f && width != 0f) {
-            scaleX = (valueUnit.convertPixelToValue(w) / width).ensure()
+            scaleX = (valueUnit.convertPixelToValue(w).toFloat() / width).ensure()
         }
         if (h != 0f && height != 0f) {
-            scaleY = (valueUnit.convertPixelToValue(h) / height).ensure()
+            scaleY = (valueUnit.convertPixelToValue(h).toFloat() / height).ensure()
         }
     }
 
     /**更新坐标, 缩放比例数据*/
     fun updateByBounds(@Pixel bounds: RectF) {
         val valueUnit = MM_UNIT
-        left = valueUnit.convertPixelToValue(bounds.left)
-        top = valueUnit.convertPixelToValue(bounds.top)
+        left = valueUnit.convertPixelToValue(bounds.left).toFloat()
+        top = valueUnit.convertPixelToValue(bounds.top).toFloat()
 
         val width = bounds.width()
         val height = bounds.height()
@@ -458,7 +458,7 @@ fun Float?.toPixel() = MM_UNIT.convertValueToPixel(this ?: 0f)
 fun Int.toMm() = toFloat().toMm()
 
 /**像素转毫米*/
-fun Float?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0f)
+fun Float?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0f).toFloat()
 
 //--
 

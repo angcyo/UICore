@@ -1,11 +1,11 @@
 package com.angcyo.gcode
 
 import android.graphics.Matrix
-import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.mapPoint
 import com.angcyo.library.ex.mapRectF
+import com.angcyo.library.model.PointD
 import com.angcyo.library.unit.InchValueUnit
 import com.angcyo.library.unit.MmValueUnit
 import java.io.File
@@ -24,8 +24,8 @@ class GCodeAdjust {
     val mm = MmValueUnit()
     val inch = InchValueUnit()
 
-    val mmValue = mm.convertValueToPixel(1f)
-    val inchValue = inch.convertValueToPixel(1f)
+    val mmValue = mm.convertValueToPixel(1.0)
+    val inchValue = inch.convertValueToPixel(1.0)
 
     /**GCode数据坐标调整, 先缩放旋转,再偏移
      * [gCode]
@@ -126,13 +126,13 @@ class GCodeAdjust {
     private fun overrideGCommand(
         writer: OutputStreamWriter,
         firstCmd: GCodeCmd,
-        xy: PointF,
-        ij: PointF?
+        xy: PointD,
+        ij: PointD?
     ) {
         //像素值, 转换成mm/in
 
-        var x = xy.x
-        var y = xy.y
+        var x = xy.x + 0.0
+        var y = xy.y + 0.0
 
         if (firstCmd.ratio == inchValue) {
             //inch单位
@@ -146,8 +146,8 @@ class GCodeAdjust {
         if (ij == null) {
             writer.appendLine("${firstCmd.code} X$x Y$y")
         } else {
-            var i = ij.x
-            var j = ij.y
+            var i = ij.x + 0.0
+            var j = ij.y + 0.0
 
             if (firstCmd.ratio == inchValue) {
                 //inch单位

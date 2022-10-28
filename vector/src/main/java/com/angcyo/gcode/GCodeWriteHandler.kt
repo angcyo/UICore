@@ -47,7 +47,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
         writer?.append("G0 X0 Y0")
     }
 
-    override fun onNewPoint(x: Float, y: Float) {
+    override fun onNewPoint(x: Double, y: Double) {
         if (!isAutoCnc) {
             closeCnc()
         }
@@ -61,7 +61,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
         writer?.appendLine("G0 X${xValue} Y${yValue}")
     }
 
-    override fun onLineToPoint(x: Float, y: Float) {
+    override fun onLineToPoint(x: Double, y: Double) {
         openCnc()
 
         var xValue = x

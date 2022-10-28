@@ -246,8 +246,8 @@ object CanvasDataHandleOperate {
                             /*val yValue = mmValueUnit.convertPixelToValue(lineY.toFloat())
                             val xValue = mmValueUnit.convertPixelToValue(lastLineRef.toFloat())*/
 
-                            val yValue = lineY.toFloat()
-                            val xValue = lastLineRef.toFloat()
+                            val yValue = lineY.toDouble()
+                            val xValue = lastLineRef.toDouble()
 
                             gCodeWriteHandler.writePoint(xValue, yValue)
                             lastGCodeLineRef = lastLineRef //有数据的列
@@ -306,8 +306,8 @@ object CanvasDataHandleOperate {
                             /*val xValue = mmValueUnit.convertPixelToValue(lineX.toFloat())
                             val yValue = mmValueUnit.convertPixelToValue(lastLineRef.toFloat())*/
 
-                            val xValue = lineX.toFloat()
-                            val yValue = lastLineRef.toFloat()
+                            val xValue = lineX.toDouble()
+                            val yValue = lastLineRef.toDouble()
 
                             gCodeWriteHandler.writePoint(xValue, yValue)
                             lastGCodeLineRef = lastLineRef //有数据的行

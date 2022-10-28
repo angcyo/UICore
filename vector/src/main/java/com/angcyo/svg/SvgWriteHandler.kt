@@ -21,11 +21,11 @@ class SvgWriteHandler : VectorWriteHandler() {
         //closeSvg() //need?
     }
 
-    override fun onNewPoint(x: Float, y: Float) {
+    override fun onNewPoint(x: Double, y: Double) {
         writer?.append("M${x} $y")
     }
 
-    override fun onLineToPoint(x: Float, y: Float) {
+    override fun onLineToPoint(x: Double, y: Double) {
         //super.onLineToPoint(x, y)
         writer?.append("L${x} $y")
     }

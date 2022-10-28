@@ -166,6 +166,10 @@ fun Float.canvasDecimal(digit: Int = 2, fadedUp: Boolean = true): String {
     return this.toDouble().decimal(digit, fadedUp)
 }
 
+fun Double.canvasDecimal(digit: Int = 2, fadedUp: Boolean = true): String {
+    return decimal(digit, fadedUp)
+}
+
 /**机器雕刻的色彩数据可视化*/
 fun ByteArray.toEngraveBitmap(width: Int, height: Int): Bitmap {
     val channelBitmap =

@@ -11,9 +11,9 @@ import com.angcyo.library.annotation.MM
 data class CanvasProjectBean(
     /**画布的宽高*/
     @MM
-    var width: Float = 0f,
+    var width: Double = 0.0,
     @MM
-    var height: Float = 0f,
+    var height: Double = 0.0,
 
     /**预览的base64图片
      * (data:image/xxx;base64,xxx) 带协议头

@@ -17,12 +17,12 @@ import com.angcyo.library.isPlaceholderApplication
 class PointValueUnit : IValueUnit {
 
     /**10个像素为1个刻度距离*/
-    override fun getGraduatedScaleGap(): Float = convertValueToPixel(1f) * 10
+    override fun getGraduatedScaleGap(): Double = convertValueToPixel(1.0) * 10
 
     override fun getGraduatedLabel(index: Int): String = "$index"
 
     /**[TypedValue.COMPLEX_UNIT_PT]*/
-    override fun convertValueToPixel(value: Float): Float {
+    override fun convertValueToPixel(value: Double): Double {
         val app = app()
         if (app.isPlaceholderApplication()) {
             return value
@@ -32,10 +32,10 @@ class PointValueUnit : IValueUnit {
         //1英寸等于多少像素, 1英寸=2.54厘米=25.4毫米      //537.882
         //1pt = 7.4705834px
         //1 * dm.densityDpi / 72 = 7.0277777px
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, value, dm)
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, value.toFloat(), dm).toDouble()
     }
 
-    override fun formattedValueUnit(value: Float): String = "${value.unitDecimal(2)}${getUnit()}"
+    override fun formattedValueUnit(value: Double): String = "${value.unitDecimal(2)}${getUnit()}"
 
     override fun getUnit(): String = "pt"
 }

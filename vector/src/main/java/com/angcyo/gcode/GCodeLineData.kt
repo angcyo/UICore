@@ -27,16 +27,16 @@ fun GCodeLineData.haveXYZ(): Boolean {
     return cmdList.find { it.cmd.startsWith("X") || it.cmd.startsWith("Y") || it.cmd.startsWith("Z") } != null
 }
 
-fun GCodeLineData.getGCodeX(): Float? {
+fun GCodeLineData.getGCodeX(): Double? {
     return getGCodePixel("X")
 }
 
-fun GCodeLineData.getGCodeY(): Float? {
+fun GCodeLineData.getGCodeY(): Double? {
     return getGCodePixel("Y")
 }
 
 /**获取指令对应的像素值*/
-fun GCodeLineData.getGCodePixel(cmd: String): Float? {
+fun GCodeLineData.getGCodePixel(cmd: String): Double? {
     return getGCodeCmd(cmd)?.pixel
 }
 

@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PointF
 import com.angcyo.library.ex.abs
+import com.angcyo.library.model.PointD
 import com.angcyo.svg.StylePath
 import com.pixplicity.sharp.Sharp
 import kotlin.math.atan2
@@ -29,13 +30,23 @@ object VectorHelper {
     }
 
     /**获取2个点之间的距离, 勾股定律*/
+    fun spacing(x1: Double, y1: Double, x2: Double, y2: Double): Double {
+        val x = x2 - x1
+        val y = y2 - y1
+        return sqrt(x * x + y * y)
+    }
+
     fun spacing(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-        val x: Float = x2 - x1
-        val y: Float = y2 - y1
-        return sqrt((x * x + y * y).toDouble()).toFloat()
+        val x = x2 - x1
+        val y = y2 - y1
+        return sqrt(x * x + y * y)
     }
 
     fun spacing(p1: PointF, p2: PointF): Float {
+        return spacing(p1.x, p1.y, p2.x, p2.y)
+    }
+
+    fun spacing(p1: PointD, p2: PointD): Double {
         return spacing(p1.x, p1.y, p2.x, p2.y)
     }
 
@@ -48,9 +59,8 @@ object VectorHelper {
      * [90~180]   点2 在第三象限
      * [0~90]     点2 在第四象限
      * */
-    fun angle(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-        val degrees = 180.0 / Math.PI * atan2((y2 - y1), (x2 - x1))
-        return degrees.toFloat()
+    fun angle(x1: Double, y1: Double, x2: Double, y2: Double): Double {
+        return 180.0 / Math.PI * atan2((y2 - y1), (x2 - x1))
     }
 
     /*fun angle(y1: Float, x1: Float, y2: Float, x2: Float): Float {
@@ -62,7 +72,7 @@ object VectorHelper {
 
     /**视图坐标系中的角度
      * [0~360°]*/
-    fun angle2(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+    fun angle2(x1: Double, y1: Double, x2: Double, y2: Double): Double {
         val degrees = angle(x1, y1, x2, y2)
         if (degrees < 0) {
             return 360 + degrees
@@ -70,8 +80,8 @@ object VectorHelper {
         return degrees
     }
 
-    fun angle(p1: PointF, p2: PointF): Float {
-        return angle(p1.x, p1.y, p2.x, p2.y)
+    fun angle(p1: PointF, p2: PointF): Double {
+        return angle(p1.x.toDouble(), p1.y.toDouble(), p2.x.toDouble(), p2.y.toDouble())
     }
 
     /**判断2个点是否是想要横向平移

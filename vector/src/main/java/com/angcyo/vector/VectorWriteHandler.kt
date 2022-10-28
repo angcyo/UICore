@@ -131,14 +131,14 @@ abstract class VectorWriteHandler {
      * GCode G0
      * SVG M
      * */
-    open fun onNewPoint(x: Float, y: Float) {
+    open fun onNewPoint(x: Double, y: Double) {
 
     }
 
     /**需要连接到点
      * GCode 用G1
      * SVG 用L*/
-    open fun onLineToPoint(x: Float, y: Float) {
+    open fun onLineToPoint(x: Double, y: Double) {
 
     }
 
@@ -177,7 +177,7 @@ abstract class VectorWriteHandler {
     }
 
     /**计算角度偏移*/
-    fun _angleDiff(newX: Float, newY: Float): Float {
+    fun _angleDiff(newX: Double, newY: Double): Double {
         return if (_pointList.size() > 1) {
             val first = _pointList.first()
             val last = _pointList.last()
@@ -185,13 +185,13 @@ abstract class VectorWriteHandler {
             val a2 = VectorHelper.angle(last.x, last.y, newX, newY)
             return (a2 - a1).absoluteValue
         } else {
-            -1f
+            -1.0
         }
     }
 
     /**判断当前的点, 和之前的点是否是同一角度*/
     @Private
-    fun _isSameAngle(newX: Float, newY: Float): Boolean {
+    fun _isSameAngle(newX: Double, newY: Double): Boolean {
         return if (_pointList.size() > 1) {
             _angleDiff(newX, newY) < angleGapValue
         } else {
@@ -200,7 +200,7 @@ abstract class VectorWriteHandler {
     }
 
     /**计算当前的点, 和上一个点的类型*/
-    fun _valueChangedType(x: Float, y: Float): Int {
+    fun _valueChangedType(x: Double, y: Double): Int {
         val last = _pointList.lastOrNull() ?: return POINT_TYPE_NEW //之前没有点, 那当前的点肯定是最新的
         //val first = _pointList.first()
         if (_pointList.size() == 1) {
@@ -226,7 +226,7 @@ abstract class VectorWriteHandler {
         }
     }
 
-    fun _valueChangedType(point: VectorPoint, x: Float, y: Float): Int {
+    fun _valueChangedType(point: VectorPoint, x: Double, y: Double): Int {
         val c = c(point.x, point.y, x, y).toFloat()
         if (((point.x - x).absoluteValue > gapMaxValue || (point.y - y).absoluteValue > gapMaxValue) && c > gapMaxValue) {
             //2点之间间隙太大, 则视为新的点
@@ -247,7 +247,8 @@ abstract class VectorWriteHandler {
     }
 
     /**创建一个新的点*/
-    fun generatePoint(x: Float, y: Float): VectorPoint = VectorPoint(x, y, _valueChangedType(x, y))
+    fun generatePoint(x: Double, y: Double): VectorPoint =
+        VectorPoint(x, y, _valueChangedType(x, y))
 
     /**
      * 追加一个点, 如果这个点和上一点属于相同类型的点, 则不追加,
@@ -260,7 +261,7 @@ abstract class VectorWriteHandler {
      *
      * [x] [y] 非像素值, 真实值
      * */
-    fun writePoint(x: Float, y: Float) {
+    fun writePoint(x: Double, y: Double) {
         val point = generatePoint(x, y)
 
         when (point.pointType) {
@@ -294,8 +295,8 @@ abstract class VectorWriteHandler {
         pathStep: Float = 1f
     ) {
         path.eachPath(pathStep) { index, ratio, contourIndex, posArray ->
-            val xPixel = posArray[0] + offsetLeft
-            val yPixel = posArray[1] + offsetTop
+            val xPixel = posArray[0] + offsetLeft + 0.0
+            val yPixel = posArray[1] + offsetTop + 0.0
 
             //像素转成mm/inch
             val x = unit?.convertPixelToValue(xPixel) ?: xPixel
@@ -483,8 +484,8 @@ abstract class VectorWriteHandler {
     /**矢量点位信息*/
     data class VectorPoint(
         /**坐标值, 输入的是啥单位就是啥单位*/
-        val x: Float,
-        val y: Float,
+        val x: Double,
+        val y: Double,
         /**当前这个点, 和上一个点的类型
          * [com.angcyo.vector.VectorWriteHandler.POINT_TYPE_NEW]
          * [com.angcyo.vector.VectorWriteHandler.POINT_TYPE_SAME]
