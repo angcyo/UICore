@@ -58,7 +58,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
             xValue = unit?.convertPixelToValue(x) ?: x
             yValue = unit?.convertPixelToValue(y) ?: y
         }
-        writer?.appendLine("G0 X${xValue} Y${yValue}")
+        writer?.appendLine("G0 X${xValue.toFloat()} Y${yValue.toFloat()}")
     }
 
     override fun onLineToPoint(x: Double, y: Double) {
@@ -70,7 +70,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
             xValue = unit?.convertPixelToValue(x) ?: x
             yValue = unit?.convertPixelToValue(y) ?: y
         }
-        writer?.appendLine("G1 X${xValue} Y${yValue}")
+        writer?.appendLine("G1 X${xValue.toFloat()} Y${yValue.toFloat()}")
     }
 
     //region ---core---

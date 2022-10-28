@@ -91,7 +91,12 @@ class GCodeAdjust {
      * [left] 需要平移到的x坐标像素
      * [top] 需要平移到的y坐标像素
      * */
-    fun gCodeTranslation(gCode: String, left: Float, top: Float, writer: OutputStreamWriter) {
+    fun gCodeTranslation(
+        gCode: String,
+        @Pixel left: Float,
+        @Pixel top: Float,
+        writer: OutputStreamWriter
+    ) {
         gCodeHandler.reset()
         val config = GCodeParseConfig(gCode, mmValue, inchValue)
         val gCodeLineList = GCodeHelper.parseGCodeLineList(config)
@@ -99,10 +104,14 @@ class GCodeAdjust {
 
         val gCodeBounds = gCodeHandler.gCodeBounds
         //偏移
+        @Pixel
         val offsetLeft = left - min(0f, gCodeBounds.left)
+
+        @Pixel
         val offsetTop = top - min(0f, gCodeBounds.top)
 
         gCodeHandler.transformPoint = { gCodeLineData, pointF ->
+            //这里还是像素单位, 但是override的时候, 统一转成对应单位
             pointF.x += offsetLeft
             pointF.y += offsetTop
         }
@@ -144,7 +153,7 @@ class GCodeAdjust {
         }
 
         if (ij == null) {
-            writer.appendLine("${firstCmd.code} X$x Y$y")
+            writer.appendLine("${firstCmd.code} X${x.toFloat()} Y${y.toFloat()}")
         } else {
             var i = ij.x + 0.0
             var j = ij.y + 0.0
@@ -162,8 +171,8 @@ class GCodeAdjust {
             writer.append("${firstCmd.code} ")
             //writer.append("X${x.decimal(4)} Y${y.decimal(4)} ")
             //writer.appendLine("I${i.decimal(4)} J${j.decimal(4)}")
-            writer.append("X${x} Y${y} ")
-            writer.appendLine("I${i} J${j}")
+            writer.append("X${x.toFloat()} Y${y.toFloat()} ")
+            writer.appendLine("I${i.toFloat()} J${j.toFloat()}")
         }
     }
 
