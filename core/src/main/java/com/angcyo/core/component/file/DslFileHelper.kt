@@ -139,7 +139,7 @@ fun FileTextData?.writeToCache(
  * [log] 是否还需要输出到控制台
  * [log/log.log]
  * [com.angcyo.library.utils.Constant.LOG_FOLDER_NAME]*/
-fun String.writeToLog(name: String = "log.log", log: Boolean = true): String {
+fun String.writeToLog(name: String = LogFile.log, log: Boolean = true): String {
     wrapLog().writeTo(Constant.LOG_FOLDER_NAME, name)
     if (log) {
         L.e(this)
@@ -152,7 +152,7 @@ fun String.writeToLog(name: String = "log.log", log: Boolean = true): String {
  * [log/error.log]
  * */
 fun String.writeErrorLog(log: Boolean = true): String {
-    writeToLog("error.log", log)
+    writeToLog(LogFile.error, log)
     return this
 }
 
@@ -161,6 +161,6 @@ fun String.writeErrorLog(log: Boolean = true): String {
  * [log/http.log]
  * */
 fun String.writeHttpLog(log: Boolean = true): String {
-    writeToLog("http.log", log)
+    writeToLog(LogFile.http, log)
     return this
 }

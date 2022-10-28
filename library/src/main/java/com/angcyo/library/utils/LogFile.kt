@@ -27,6 +27,15 @@ object LogFile {
 
     /**蓝牙日志*/
     const val ble = "ble.log"
+
+    /**日志*/
+    const val log = "log.log"
+
+    /**错误日志*/
+    const val error = "error.log"
+
+    /**http日志*/
+    const val http = "http.log"
 }
 
 /**log文件名转全路径*/

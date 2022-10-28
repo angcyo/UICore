@@ -25,9 +25,7 @@ import com.angcyo.library.Library
 import com.angcyo.library.ex.*
 import com.angcyo.library.libFolderPath
 import com.angcyo.library.toast
-import com.angcyo.library.utils.Constant
-import com.angcyo.library.utils.FileUtils
-import com.angcyo.library.utils.logFileName
+import com.angcyo.library.utils.*
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.base.resetChild
 
@@ -69,13 +67,13 @@ class DebugFragment : BaseDslFragment() {
             }))
 
             //单独的日志
-            add(DebugAction("l.log", CoreApplication.DEFAULT_FILE_PRINT_PATH))
+            add(DebugAction(LogFile.l, CoreApplication.DEFAULT_FILE_PRINT_PATH))
             add(DebugAction("crash.log", DslCrashHandler.KEY_CRASH_FILE.hawkGet()))
             add(DebugAction("http-date.log", appFilePath(logFileName(), Constant.HTTP_FOLDER_NAME)))
             //log/目录下的日志
-            add(DebugAction("log.log", appFilePath("log.log", Constant.LOG_FOLDER_NAME)))
-            add(DebugAction("http.log", appFilePath("http.log", Constant.LOG_FOLDER_NAME)))
-            add(DebugAction("error.log", appFilePath("error.log", Constant.LOG_FOLDER_NAME)))
+            add(DebugAction(LogFile.log, LogFile.log.toLogFilePath()))
+            add(DebugAction(LogFile.http, LogFile.http.toLogFilePath()))
+            add(DebugAction(LogFile.error, LogFile.error.toLogFilePath()))
         }
 
         /**
