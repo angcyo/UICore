@@ -149,16 +149,32 @@ object CanvasConstant {
 
     //region ---支持的文件类型---
 
-    /**创作支持的数据类型*/
+    /**创作支持的数据类型
+     * [com.angcyo.gcode.GCodeHelper.parseGCode]
+     * */
     const val GCODE_EXT = ".gcode"
 
+    /**SVG文件
+     * [com.angcyo.svg.Svg]
+     * */
     const val SVG_EXT = ".svg"
 
-    /**文本后缀, 检查文本内容*/
+    /**文本后缀, 检查文本内容
+     * [String.isGCodeContent]
+     * [String.isSvgContent]
+     * */
     const val TXT_EXT = ".txt"
 
-    /**工程文件后缀*/
+    /**工程文件后缀
+     * [String.toCanvasProjectBean]
+     * [com.angcyo.canvas.data.CanvasProjectBean]
+     * */
     const val PROJECT_EXT = ".lp"
+
+    /**
+     * dxf文件后缀
+     * [com.angcyo.kabeja.library.Dxf]*/
+    const val DXF_EXT = ".dxf"
 
     //endregion ---支持的文件类型---
 
