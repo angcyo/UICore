@@ -141,8 +141,8 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         onLimitHeightScaleAction = { scaleY ->
             clamp(
                 scaleY,
-                minSize / targetRect.width(),
-                cropDelegate._bestRect.height() / targetRect.width()
+                minSize / targetRect.height(),
+                cropDelegate._bestRect.height() / targetRect.height()
             )
         }
 

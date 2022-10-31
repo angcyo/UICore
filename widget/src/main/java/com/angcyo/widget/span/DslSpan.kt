@@ -291,13 +291,13 @@ data class DslSpanConfig(
     /**下标 [SubscriptSpan]*/
     var isSubscript: Boolean = false,
 
-    /**缩放x轴 [ScaleXSpan]*/
+    /**缩放x轴 [ScaleXSpan], >0 激活*/
     var scaleX: Float = -1f,
 
     /**[StyleSpan] [android.graphics.Typeface.NORMAL] [BOLD] [ITALIC] [BOLD_ITALIC]*/
     var style: Int = undefined_int,
 
-    /**缩放字体撒小 [RelativeSizeSpan]*/
+    /**缩放字体大小比例 [RelativeSizeSpan], >0 激活*/
     var relativeSizeScale: Float = -1f,
 
     /**[AbsoluteSizeSpan]*/

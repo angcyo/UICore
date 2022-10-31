@@ -60,6 +60,7 @@ open class DoodleIconItem : DslAdapterItem() {
             append(itemText)
             append(itemTextSuperscript) {
                 isSuperscript = true
+                relativeSizeScale = 0.6f
             }
         }
     }
