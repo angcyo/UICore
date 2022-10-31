@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.view.GravityCompat
 import com.angcyo.library.ex.inflate
 import com.angcyo.library.ex.size
@@ -104,10 +105,18 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
                     -1
                 )
             val layoutCount =
-                array.getResourceId(R.styleable.FlowLayoutDelegate_r_flow_preview_item_count, 3)
+                array.getInt(R.styleable.FlowLayoutDelegate_r_flow_preview_item_count, 3)
             if (layoutId != -1) {
                 for (i in 0 until layoutCount) {
-                    view.inflate(layoutId, true)
+                    view.inflate(layoutId, true).let {
+                        if (it is TextView) {
+                            if (it.text.isNullOrEmpty()) {
+                                it.text = "Item $i"
+                            } else {
+                                it.text = "${it.text}/$i"
+                            }
+                        }
+                    }
                 }
             }
         }
