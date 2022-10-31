@@ -109,8 +109,8 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         cropDelegate.refresh()
     }
 
-    /**是否激活剪切框自由拖动模式
-     * 未激活时,剪切框改变后会自动缩放至撑满屏幕
+    /**是否激活剪切框自由拖动模式, 剪切框拖动模式下, 图片固定不变.
+     * 未激活时,剪切框改变后图片会自动缩放至撑满屏幕
      * */
     var enableClipMoveMode: Boolean = false
 

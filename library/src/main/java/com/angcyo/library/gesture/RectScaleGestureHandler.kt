@@ -804,8 +804,8 @@ class RectScaleGestureHandler {
         //保持比例
         if (keepRatio) {
             val scale = max(scaleX, scaleY)
-            scaleX = scale
-            scaleY = scale
+            scaleX = onLimitWidthScaleAction(scale)
+            scaleY = onLimitHeightScaleAction(scale)
         }
 
         //handle
@@ -905,7 +905,7 @@ class RectScaleGestureHandler {
         //限制检查
         _handleScaleAndFlip(_pendingRect, scaleX, scaleY)
         if (onRectScaleLimitAction(_pendingRect)) {
-            //限制了
+            //限制了, 则不改变大小, 忽略本次操作
         } else {
             //没有限制
             changedRect.set(_pendingRect)
