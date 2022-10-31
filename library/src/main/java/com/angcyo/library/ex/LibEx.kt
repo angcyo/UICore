@@ -124,7 +124,7 @@ fun isPreview() = getAppBoolean("is_preview") == true
 fun isDebugRes() = getAppBoolean("is_debug") == true
 
 /**库打包成aar之后, [BuildConfig.DEBUG] 是 release*/
-fun isDebug() = BuildConfig.DEBUG || isAppDebug() || isDebugType()
+fun isDebug() = BuildConfig.DEBUG || isShowDebug() || isAppDebug() || isDebugType()
 
 /**[ApplicationInfo.FLAG_DEBUGGABLE]*/
 fun isAppDebug() = if (app().isPlaceholderApplication()) {

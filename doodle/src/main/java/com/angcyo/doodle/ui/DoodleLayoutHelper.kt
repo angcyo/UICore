@@ -23,6 +23,7 @@ import com.angcyo.library._screenWidth
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.interceptParentTouchEvent
+import com.angcyo.library.ex.isDebug
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.resetDslItem
 import com.angcyo.widget.progress.DslProgressBar
@@ -90,23 +91,25 @@ class DoodleLayoutHelper {
                     }
                 }
             }
-            DoodleIconItem()() {
-                itemIco = R.drawable.doodle_palette
-                itemText = _string(R.string.doodle_color)
-                itemClick = {
-                    itemIsSelected = true
-                    updateAdapterItem()
+            if (isDebug()) {
+                DoodleIconItem()() {
+                    itemIco = R.drawable.doodle_palette
+                    itemText = _string(R.string.doodle_color)
+                    itemClick = {
+                        itemIsSelected = true
+                        updateAdapterItem()
 
-                    val doodleConfig = doodleView?.doodleDelegate?.doodleConfig
-                    viewHolder.context.singleColorPickerDialog {
-                        initialColor = doodleConfig?.paintColor ?: Color.BLACK
-                        onDismissListener = {
-                            itemIsSelected = false
-                            updateAdapterItem()
-                        }
-                        colorPickerResultAction = { dialog, color ->
-                            doodleConfig?.paintColor = color
-                            false
+                        val doodleConfig = doodleView?.doodleDelegate?.doodleConfig
+                        viewHolder.context.singleColorPickerDialog {
+                            initialColor = doodleConfig?.paintColor ?: Color.BLACK
+                            onDismissListener = {
+                                itemIsSelected = false
+                                updateAdapterItem()
+                            }
+                            colorPickerResultAction = { dialog, color ->
+                                doodleConfig?.paintColor = color
+                                false
+                            }
                         }
                     }
                 }
