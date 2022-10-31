@@ -15,18 +15,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.angcyo.base.show
 import com.angcyo.core.activity.BaseCoreAppCompatActivity
+import com.angcyo.core.component.DslCrashHandler
+import com.angcyo.core.component.fileViewDialog
+import com.angcyo.dialog.normalDialog
 import com.angcyo.fragment.AbsLifecycleFragment
 import com.angcyo.iview.IView
 import com.angcyo.library.app
 import com.angcyo.library.component.toAppDetail
-import com.angcyo.library.ex.baseConfig
-import com.angcyo.library.ex.find
-import com.angcyo.library.ex.isRelease
-import com.angcyo.library.ex.visible
+import com.angcyo.library.ex.*
 import com.angcyo.library.utils.RUtils
 import com.angcyo.widget.DslButton
 import com.angcyo.widget.DslGroupHelper
 import com.angcyo.widget.image.DslImageView
+import com.angcyo.widget.span.span
 import com.angcyo.widget.text.DslTextView
 import ezy.assist.compat.RomUtil
 
@@ -49,6 +50,48 @@ fun Fragment.checkCrash() {
             act.showCrashDialog()
         }
     }
+}
+
+/**崩溃对话框, 带复制/查看/分享功能*/
+fun Context.checkShowCrashDialog() {
+    BaseCoreAppCompatActivity.haveLastCrash =
+        DslCrashHandler.checkCrash(true) { filePath, message, crashTime ->
+            val file = filePath?.file()
+            file?.readText()?.copy(this)
+
+            normalDialog {
+                canceledOnTouchOutside = false
+                dialogTitle = "发生了什么^_^"
+                dialogMessage = span {
+                    append(crashTime) {
+                        foregroundColor = _color(R.color.colorAccent)
+                    }
+                    appendln()
+                    append(message)
+                }
+                /*positiveButton("粘贴给开发?") { _, _ ->
+                    RUtils.chatQQ(this@checkShowCrashDialog)
+                }
+                negativeButton("加入QQ群?") { _, _ ->
+                    RUtils.joinQQGroup(this@checkShowCrashDialog)
+                }
+                neutralButton("分享文件?") { _, _ ->
+                    file?.shareFile(this@checkShowCrashDialog)
+                }*/
+                negativeButton("无视") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                positiveButton("分享") { _, _ ->
+                    file?.shareFile(this@checkShowCrashDialog)
+                }
+                onDialogInitListener = { _, dialogViewHolder ->
+                    dialogViewHolder.click(R.id.dialog_message_view) {
+                        //file?.open(this@checkShowCrashDialog)
+                        file?.let { fileViewDialog(it.absolutePath) }
+                    }
+                }
+            }
+        }
 }
 
 /**

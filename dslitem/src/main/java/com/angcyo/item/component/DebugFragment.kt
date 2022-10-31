@@ -43,15 +43,9 @@ class DebugFragment : BaseDslFragment() {
             add(DebugAction("debug ${if (isDebug()) "√" else "×"}", action = { fragment, value ->
                 Library.isDebugTypeVal = !Library.isDebugTypeVal
             }))
-            /*add(DebugAction().apply {
-                key = "key_debug_type"
-                label = "Debug环境"
-                des = "强制开启调试环境?"
-                action = { debugFragment, value ->
-                    Library.isDebugTypeVal = value as Boolean
-                    debugFragment._adapter.updateAllItem()
-                }
-            })*/
+            add(DebugAction("模拟崩溃", action = { debugFragment, value ->
+                throw IllegalStateException("模拟崩溃测试:${nowTimeString()}")
+            }))
 
             add(DebugAction("浏览目录", action = { fragment, value ->
                 fragment.dslFHelper {
@@ -112,7 +106,9 @@ class DebugFragment : BaseDslFragment() {
                                     val file = logPath?.file()
                                     if (file.isFile()) {
                                         //日志文件存在, 直接显示日志内容
-                                        fContext().fileViewDialog(logPath)
+                                        fContext().fileViewDialog(logPath) {
+                                            readReversed = true
+                                        }
                                     } else if (file.isFolder()) {
                                         //文件目录浏览
                                         dslFHelper {

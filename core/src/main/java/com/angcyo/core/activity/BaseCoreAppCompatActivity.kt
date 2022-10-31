@@ -1,19 +1,16 @@
 package com.angcyo.core.activity
 
-import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.core.R
+import com.angcyo.core.checkShowCrashDialog
 import com.angcyo.core.component.ComplianceCheck
-import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.StateModel
 import com.angcyo.core.component.model.LanguageModel
 import com.angcyo.core.vmApp
-import com.angcyo.dialog.normalDialog
 import com.angcyo.library.ex.*
 import com.angcyo.library.toastQQ
-import com.angcyo.widget.span.span
 
 /**
  * back提示
@@ -100,45 +97,4 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
     }
 
     //</editor-fold desc="双击Back回调">
-}
-
-/**崩溃对话框, 带复制/查看/分享功能*/
-fun Context.checkShowCrashDialog() {
-    BaseCoreAppCompatActivity.haveLastCrash =
-        DslCrashHandler.checkCrash(true) { filePath, message, crashTime ->
-            val file = filePath?.file()
-            file?.readText()?.copy(this)
-
-            normalDialog {
-                canceledOnTouchOutside = false
-                dialogTitle = "发生了什么^_^"
-                dialogMessage = span {
-                    append(crashTime) {
-                        foregroundColor = _color(R.color.colorAccent)
-                    }
-                    appendln()
-                    append(message)
-                }
-                /*positiveButton("粘贴给开发?") { _, _ ->
-                    RUtils.chatQQ(this@checkShowCrashDialog)
-                }
-                negativeButton("加入QQ群?") { _, _ ->
-                    RUtils.joinQQGroup(this@checkShowCrashDialog)
-                }
-                neutralButton("分享文件?") { _, _ ->
-                    file?.shareFile(this@checkShowCrashDialog)
-                }*/
-                negativeButton("无视") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                positiveButton("分享") { _, _ ->
-                    file?.shareFile(this@checkShowCrashDialog)
-                }
-                onDialogInitListener = { _, dialogViewHolder ->
-                    dialogViewHolder.click(R.id.dialog_message_view) {
-                        file?.open(this@checkShowCrashDialog)
-                    }
-                }
-            }
-        }
 }

@@ -23,8 +23,8 @@ class FileViewDialogConfig(context: Context? = null) : BaseDialogConfig(context)
     /**读取文件的行数*/
     var readFileLines: Int = 500
 
-    /**反向读取文件*/
-    var readReversed: Boolean = true
+    /**反向读取文件, 倒序读取文件内容*/
+    var readReversed: Boolean = false
 
     init {
         dialogLayoutId = R.layout.lib_dialog_file_view_layout

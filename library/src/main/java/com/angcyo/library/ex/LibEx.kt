@@ -108,7 +108,7 @@ fun isAndroidPlatform() = "Dalvik" == System.getProperty("java.vm.name")
 //1.8
 fun javaVersion() = System.getProperty("java.specification.version", "unknown")
 
-fun isRelease(): Boolean = "release".equals(BuildConfig.BUILD_TYPE, true)
+fun isRelease(): Boolean = "release".equals(BuildConfig.BUILD_TYPE, true) && !isAppDebug()
 
 fun isDebugType() = Library.isDebugTypeVal || "debug".equals(BuildConfig.BUILD_TYPE, true)
 
