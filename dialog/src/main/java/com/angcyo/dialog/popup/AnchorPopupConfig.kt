@@ -29,13 +29,17 @@ open class AnchorPopupConfig : PopupConfig() {
     /**三角形距离左右边距最小值*/
     var triangleMinMargin: Int = 0
 
+    /**是否要调整三角形和内容布局的顺序*/
+    var adjustTriangleOrder = true
+
     init {
         animationStyle = R.style.LibActionPopupAnimation
         autoOffset = true
         autoOffsetCenterInAnchor = true
         autoOffsetCenterInScreen = false
         background = ColorDrawable(Color.TRANSPARENT)
-        yoff = 4 * dpi
+        //yoff = 4 * dpi
+        offsetY = 4 * dpi
     }
 
     override fun initLayout(window: TargetWindow, viewHolder: DslViewHolder) {
@@ -50,15 +54,19 @@ open class AnchorPopupConfig : PopupConfig() {
 
             if (isAnchorInTopArea(view)) {
                 //目标在屏幕的上半区
-                viewHolder.group(R.id.lib_triangle_wrap_layout)
-                    ?.adjustOrder(R.id.lib_triangle_view, R.id.lib_triangle_content_layout)
+                if (adjustTriangleOrder) {
+                    viewHolder.group(R.id.lib_triangle_wrap_layout)
+                        ?.adjustOrder(R.id.lib_triangle_view, R.id.lib_triangle_content_layout)
+                }
                 viewHolder.view(R.id.lib_triangle_view)?.rotation = 180f
             } else {
                 //目标在屏幕的下半区
 
-                //调整三角形的顺序和旋转角度
-                viewHolder.group(R.id.lib_triangle_wrap_layout)
-                    ?.adjustOrder(R.id.lib_triangle_content_layout, R.id.lib_triangle_view)
+                if (adjustTriangleOrder) {
+                    //调整三角形的顺序和旋转角度
+                    viewHolder.group(R.id.lib_triangle_wrap_layout)
+                        ?.adjustOrder(R.id.lib_triangle_content_layout, R.id.lib_triangle_view)
+                }
                 viewHolder.view(R.id.lib_triangle_view)?.rotation = 0f
             }
 

@@ -102,7 +102,9 @@ open class PopupConfig {
     var autoOffset: Boolean = false
         set(value) {
             field = value
-            gravity = Gravity.LEFT // 默认左下角对齐
+            if (value) {
+                gravity = Gravity.LEFT // 默认在锚点目标的左下角对齐显示
+            }
         }
 
     /**自动设置offset, 到达屏幕横向居中的状态,
@@ -260,7 +262,7 @@ open class PopupConfig {
             val popupViewHolder = DslViewHolder(view!!)
             view.setDslViewHolder(popupViewHolder)
             initPopupWindow(window, popupViewHolder)
-            initLayout(window, popupViewHolder)
+            initLayout(window, popupViewHolder)//init 配置位置
 
             onInitLayout(window, popupViewHolder)
 
@@ -312,7 +314,12 @@ open class PopupConfig {
 
     open fun isAnchorInTopArea(anchor: View): Boolean {
         val rect = anchor.getViewRect()
-        return rect.centerY() < _screenHeight / 4
+        val s2 = _screenHeight / 2
+        val s4 = _screenHeight / 4
+        if (rect.bottom < s2) {
+            return true
+        }
+        return rect.centerY() < s4
     }
 
     open fun isAnchorInLeftArea(anchor: View): Boolean = !isAnchorInRightArea(anchor)

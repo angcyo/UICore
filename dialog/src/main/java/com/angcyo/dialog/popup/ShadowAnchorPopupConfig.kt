@@ -22,7 +22,9 @@ open class ShadowAnchorPopupConfig : AnchorPopupConfig() {
         popupLayoutId = R.layout.lib_popup_shadow_anchor_layout
         triangleMinMargin = 22 * dpi
         minHorizontalOffset = 0
-        yoff = 2 * dpi
+        //yoff = 2 * dpi
+        offsetY = 2 * dpi
+        adjustTriangleOrder = false//内容直接覆盖三角形, 所以不需要调整顺序
     }
 
     override fun initLayout(window: TargetWindow, viewHolder: DslViewHolder) {
