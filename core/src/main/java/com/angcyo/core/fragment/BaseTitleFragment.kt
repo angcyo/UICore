@@ -1,5 +1,6 @@
 package com.angcyo.core.fragment
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.Lifecycle
 import com.angcyo.DslAHelper
 import com.angcyo.base.getAllValidityFragment
+import com.angcyo.base.lightStatusBar
 import com.angcyo.behavior.HideTitleBarBehavior
 import com.angcyo.behavior.placeholder.TitleBarPlaceholderBehavior
 import com.angcyo.behavior.refresh.IRefreshBehavior
@@ -120,9 +122,10 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         }
 
     init {
-        /**Fragment根布局*/
+        //Fragment根布局
         fragmentLayoutId = R.layout.lib_title_fragment
 
+        //默认标题
         fragmentTitle = this.javaClass.simpleName
     }
 
@@ -130,8 +133,16 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         fragmentUI?.fragmentCreateBefore?.invoke(this, fragmentConfig, savedInstanceState)
-        if (fragmentConfig.isLightStyle) {
-            fragmentConfig.lightStyle()
+        val lightStyle = fragmentConfig.isLightStyle
+        if (lightStyle != null) {
+            if (lightStyle) {
+                fragmentConfig.lightStyle()
+            }
+            fContext().let {
+                if (it is Activity) {
+                    it.lightStatusBar(lightStyle)
+                }
+            }
         }
         super.onCreate(savedInstanceState)
         fragmentUI?.fragmentCreateAfter?.invoke(this, fragmentConfig, savedInstanceState)

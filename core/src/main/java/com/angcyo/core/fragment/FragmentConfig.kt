@@ -21,8 +21,10 @@ import com.angcyo.library.ex.getDimen
  */
 data class FragmentConfig(
 
-    /**是否使用白色标题栏*/
-    var isLightStyle: Boolean = false,
+    /**是否使用白色标题栏
+     * [null] 不接管操作
+     * */
+    var isLightStyle: Boolean? = null,
 
     /**拦截RootView的事件, 防止事件穿透到底下的Fragment
      * [com.angcyo.core.fragment.BaseTitleFragment.onInitFragment]*/
