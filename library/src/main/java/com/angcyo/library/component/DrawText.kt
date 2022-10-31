@@ -6,6 +6,7 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.view.ViewGroup
+import com.angcyo.library.ex.ceil
 import kotlin.math.max
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -77,7 +78,7 @@ class DrawText {
                 maxWidth = max(layout.getLineWidth(line), maxWidth)
             }
             //wrap_content 重新计算宽度
-            _textLayout = _makeLayout(maxWidth.toInt())
+            _textLayout = _makeLayout(maxWidth.ceil().toInt())
         }
 
         return _textLayout!!
