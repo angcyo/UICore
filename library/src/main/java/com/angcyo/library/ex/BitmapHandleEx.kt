@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.widget.LinearLayout
 import kotlin.math.max
 import kotlin.math.min
 
@@ -11,6 +12,25 @@ import kotlin.math.min
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/10/24
  */
+
+/**彩色颜色对应的灰度值, [0~255]*/
+fun Int.toGrayInt(): Int {
+    val color = this
+    val r = Color.red(color)
+    val g = Color.green(color)
+    val b = Color.blue(color)
+
+    var value = (r + g + b) / 3
+    value = max(0, min(value, 255)) //限制0~255
+    return value
+}
+
+/**彩色转成灰度颜色*/
+fun Int.toGrayColorInt(): Int {
+    val value = toGrayInt()
+    val a = Color.alpha(this)
+    return Color.argb(a, value, value, value)
+}
 
 /**将图片转灰度
  * [alphaBgColor] 透明像素时的替换颜色*/
@@ -27,13 +47,7 @@ fun Bitmap.toGrayHandle(alphaBgColor: Int = Color.TRANSPARENT): Bitmap {
                 //透明颜色
                 result.setPixel(x, y, alphaBgColor)
             } else {
-                val r = Color.red(color)
-                val g = Color.green(color)
-                val b = Color.blue(color)
-
-                var value = (r + g + b) / 3
-                value = max(0, min(value, 255)) //限制0~255
-                result.setPixel(x, y, Color.rgb(value, value, value))
+                result.setPixel(x, y, color.toGrayColorInt())
             }
         }
     }
@@ -323,3 +337,55 @@ fun Bitmap.trimEdgeColor(
     //
     return Bitmap.createBitmap(this, left, top, right - left, bottom - top)
 }
+
+//---
+
+/**枚举图片上的每个像素点
+ *
+ * [orientation] 枚举的方向
+ *     [LinearLayout.HORIZONTAL] 横向枚举, 从上往下, 从左到右
+ *     [LinearLayout.VERTICAL] 纵向枚举, 从左往右, 从上到下
+ * */
+fun Bitmap.eachPixel(
+    orientation: Int = LinearLayout.HORIZONTAL,
+    action: (x: Int, y: Int, color: Int) -> Unit = { _, _, _ -> }
+) {
+    val width = width
+    val height = height
+
+    if (orientation == LinearLayout.VERTICAL) {
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                val color = getPixel(x, y)
+                action(x, y, color)
+            }
+        }
+    } else {
+        for (y in 0 until height) {
+            for (x in 0 until width) {
+                val color = getPixel(x, y)
+                action(x, y, color)
+            }
+        }
+    }
+}
+
+
+/**枚举通道颜色
+ * [channelType] 通道类型 [Color.RED] [Color.GREEN] [Color.BLUE]*/
+fun Bitmap.eachColorChannel(
+    channelType: Int = Color.RED,
+    action: (wIndex: Int, hIndex: Int, color: Int) -> Unit = { _, _, _ -> }
+) {
+    eachPixel { x, y, color ->
+        val channelColor = when (channelType) {
+            Color.RED -> Color.red(color)
+            Color.GREEN -> Color.green(color)
+            Color.BLUE -> Color.blue(color)
+            Color.TRANSPARENT -> Color.alpha(color)
+            else -> 0xFF
+        }
+        action(x, y, channelColor)
+    }
+}
+

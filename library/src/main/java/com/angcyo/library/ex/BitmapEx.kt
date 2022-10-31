@@ -358,30 +358,6 @@ fun Bitmap.colorChannel(
     return result
 }
 
-/**枚举通道颜色
- * [channelType] 通道类型 [Color.RED] [Color.GREEN] [Color.BLUE]*/
-fun Bitmap.eachColorChannel(
-    channelType: Int = Color.RED,
-    action: (wIndex: Int, hIndex: Int, color: Int) -> Unit = { _, _, _ -> }
-) {
-    val width = width
-    val height = height
-
-    for (y in 0 until height) {
-        for (x in 0 until width) {
-            val color = getPixel(x, y)
-            val channelColor = when (channelType) {
-                Color.RED -> Color.red(color)
-                Color.GREEN -> Color.green(color)
-                Color.BLUE -> Color.blue(color)
-                Color.TRANSPARENT -> Color.alpha(color)
-                else -> 0xFF
-            }
-            action(x, y, channelColor)
-        }
-    }
-}
-
 /**[Canvas]*/
 fun bitmapCanvas(
     width: Int,
