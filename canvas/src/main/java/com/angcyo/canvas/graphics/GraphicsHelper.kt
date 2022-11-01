@@ -74,18 +74,24 @@ object GraphicsHelper {
     @MM
     const val POSITION_STEP = 5f
 
+    //当位置增加到此值时, 进行换行
+
+    /**[com.angcyo.engrave.EngraveProductLayoutHelper.bindCanvasView]*/
     @MM
-    const val POSITION_CUT = 30f
+    var POSITION_CUT_LEFT = 30f
+
+    @MM
+    var POSITION_CUT_TOP = 30f * 5
 
     /**分配一个位置, 和智能调整缩放*/
     fun assignLocation(canvasViewBox: CanvasViewBox, bean: CanvasProjectItemBean) {
-        if (_lastLeft > POSITION_CUT) {
+        if (_lastLeft > POSITION_CUT_LEFT) {
             //换行
             _lastLeft = 0f
             _lastTopIndex++
             _lastTop = POSITION_STEP * _lastTopIndex
         }
-        if (_lastTop > POSITION_CUT) {
+        if (_lastTop > POSITION_CUT_TOP) {
             _lastTopIndex = 0
         }
         _lastLeft += POSITION_STEP
