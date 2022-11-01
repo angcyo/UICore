@@ -276,7 +276,11 @@ fun enableComponent(componentClass: Class<*>, enable: Boolean = true, content: C
 /**防止自定义[View]中, 使用[Library.application]崩溃的问题*/
 fun View.attachInEditMode() {
     if (isInEditMode) {
-        Library.application = context.applicationContext
+        try {
+            Library.application = context.applicationContext
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
 
