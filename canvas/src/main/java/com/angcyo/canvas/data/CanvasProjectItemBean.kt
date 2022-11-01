@@ -252,6 +252,10 @@ data class CanvasProjectItemBean(
     @Implementation
     var gcodeDirection: Int = 0,
 
+    /**gcode是否需要轮廓*/
+    @Implementation
+    var gcodeOutline: Boolean = true,
+
     /**是否扭曲*/
     var isMesh: Boolean = false,
 
