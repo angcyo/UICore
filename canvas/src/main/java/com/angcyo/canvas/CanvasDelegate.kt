@@ -1043,7 +1043,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         val pathBounds = RectF()
         path.computeBounds(pathBounds, true)
         limitRenderer.addLimit {
-            add(LimitDataInfo(path, true).apply(block))
+            add(LimitDataInfo(path, false).apply(block))
         }
         showRectBounds(pathBounds)
     }
