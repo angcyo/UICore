@@ -12,7 +12,7 @@ open class MutableHoldLiveData<T>(value: T? = null) : MutableLiveData<T>(value) 
     /**之前的值*/
     var beforeValue: T? = null
 
-    override fun setValue(value: T) {
+    override fun setValue(value: T?) {
         //保存之前的值
         beforeValue = getValue()
         super.setValue(value)

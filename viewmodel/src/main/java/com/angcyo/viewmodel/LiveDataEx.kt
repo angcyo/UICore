@@ -136,7 +136,6 @@ fun <T> vmDataNull(data: T? = null) = MutableErrorLiveData(data)
 
 fun <T> vmHoldDataNull(data: T? = null) = MutableHoldLiveData(data)
 
-
 /**更新自己
  * [updateValue]*/
 fun <T> MutableLiveData<T>.updateThis() {
