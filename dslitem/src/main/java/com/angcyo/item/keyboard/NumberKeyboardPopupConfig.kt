@@ -27,6 +27,25 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
 
     companion object {
 
+        //---
+
+        /**退格*/
+        const val CONTROL_BACKSPACE = "-0"
+
+        /**自增*/
+        const val CONTROL_INCREMENT = "+1"
+
+        /**自减*/
+        const val CONTROL_DECREMENT = "-1"
+
+        /**快速自增*/
+        const val CONTROL_FAST_INCREMENT = "++1"
+
+        /**快速自减*/
+        const val CONTROL_FAST_DECREMENT = "--1"
+
+        //---
+
         /**需要点输入, 小数输入*/
         const val STYLE_DECIMAL = 0x01
 
@@ -51,7 +70,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                 newValueBuild.toString()
             }
             when (op) {
-                "-0" -> {
+                CONTROL_BACKSPACE -> {
                     //退格操作
                     if (newValueBuild.isNotEmpty()) {
                         newValueBuild.deleteCharAt(newValueBuild.lastIndex)
@@ -61,25 +80,25 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                         newValueBuild.append(oldValue.substring(0, oldValue.lastIndex))
                     }
                 }
-                "-1" -> {
+                CONTROL_DECREMENT -> {
                     //自减
                     newValueBuild.clear()
                     newValueBuild.append(oldValue?.toFloatOrNull()?.run { "${this - step}" }
                         ?: "${-step}")
                 }
-                "+1" -> {
+                CONTROL_INCREMENT -> {
                     //自增
                     newValueBuild.clear()
                     newValueBuild.append(oldValue?.toFloatOrNull()?.run { "${this + step}" }
                         ?: "$step")
                 }
-                "--1" -> {
+                CONTROL_FAST_DECREMENT -> {
                     //长按自减
                     newValueBuild.clear()
                     newValueBuild.append(oldValue?.toFloatOrNull()?.run { "${this - longStep}" }
                         ?: "${-step}")
                 }
-                "++1" -> {
+                CONTROL_FAST_INCREMENT -> {
                     //长按自增
                     newValueBuild.clear()
                     newValueBuild.append(oldValue?.toFloatOrNull()?.run { "${this + longStep}" }
@@ -103,11 +122,11 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         }
 
         /**是否是控制输入[number]*/
-        fun isControlInputNumber(number: String): Boolean = number == "-0" ||
-                number == "-1" ||
-                number == "--1" ||
-                number == "+1" ||
-                number == "++1" ||
+        fun isControlInputNumber(number: String): Boolean = number == CONTROL_BACKSPACE ||
+                number == CONTROL_DECREMENT ||
+                number == CONTROL_FAST_DECREMENT ||
+                number == CONTROL_INCREMENT ||
+                number == CONTROL_FAST_INCREMENT ||
                 number == "."
     }
 
@@ -234,7 +253,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
     fun createNumberImageItem(window: TargetWindow): DslAdapterItem =
         KeyboardNumberImageItem().apply {
             itemClick = {
-                if (onClickNumberAction("-0")) {
+                if (onClickNumberAction(CONTROL_BACKSPACE)) {
                     if (window is PopupWindow) {
                         window.dismiss()
                     }
@@ -247,9 +266,9 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         KeyboardNumberIncrementItem().apply {
             itemIncrementAction = { plus, longPress ->
                 val value = if (longPress) {
-                    if (plus) "++1" else "--1"
+                    if (plus) CONTROL_FAST_INCREMENT else CONTROL_FAST_DECREMENT
                 } else {
-                    if (plus) "+1" else "-1"
+                    if (plus) CONTROL_INCREMENT else CONTROL_DECREMENT
                 }
                 if (onClickNumberAction(value)) {
                     if (window is PopupWindow) {
@@ -290,7 +309,12 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                 if (bindPendingDelay > 0) {
                     mainHandle.postDelayed(_pendingRunnable!!, bindPendingDelay)
                 } else {
-                    _pendingRunnable?.run()
+                    if (value == CONTROL_BACKSPACE) {
+                        //退格操作, 强制限流
+                        mainHandle.postDelayed(_pendingRunnable!!, DEFAULT_INPUT_DELAY)
+                    } else {
+                        _pendingRunnable?.run()
+                    }
                 }
             }
         }
