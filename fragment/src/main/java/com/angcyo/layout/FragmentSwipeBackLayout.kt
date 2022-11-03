@@ -372,7 +372,17 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
         //super.onLayout(changed, left, top, right, bottom)
         for (i in childCount - 2 until childCount) {
             getChildOrNull(i)?.apply {
-                layout(0, 0, measuredWidth, measuredHeight)
+                val lp = layoutParams
+                if (lp is MarginLayoutParams) {
+                    layout(
+                        lp.leftMargin,
+                        lp.topMargin,
+                        measuredWidth - lp.rightMargin,
+                        measuredHeight - lp.bottomMargin
+                    )
+                } else {
+                    layout(0, 0, measuredWidth, measuredHeight)
+                }
             }
         }
 
