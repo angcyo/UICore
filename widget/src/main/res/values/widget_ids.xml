@@ -25,4 +25,7 @@
 
     <!--隐藏item中的线-->
     <item name="lib_item_line_view" type="id" />
+
+    <!--保存view的enable状态-->
+    <item name="lib_tag_enable" type="id" />
 </resources>

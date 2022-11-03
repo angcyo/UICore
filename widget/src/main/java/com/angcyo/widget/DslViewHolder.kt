@@ -366,7 +366,7 @@ open class DslViewHolder(
 
     fun enable(
         @IdRes resId: Int,
-        enable: Boolean = true,
+        enable: Boolean? = true,
         recursive: Boolean = true
     ): DslViewHolder {
         val view = v<View>(resId)
@@ -374,20 +374,38 @@ open class DslViewHolder(
         return this
     }
 
-    fun enable(view: View?, enable: Boolean, recursive: Boolean = true) {
+    /**[enable] 为null时, 表示恢复之前的状态*/
+    fun enable(view: View?, enable: Boolean?, recursive: Boolean = true) {
         if (view == null) {
             return
         }
+        val _enable = if (enable == null) {
+            //恢复状态
+            val oldEnable = view.getTag(R.id.lib_tag_enable)
+            if (oldEnable is Boolean) {
+                oldEnable
+            } else {
+                return
+            }
+        } else {
+            enable
+        }
         if (view is ViewGroup && recursive) {
             for (i in 0 until view.childCount) {
-                enable(view.getChildAt(i), enable, recursive)
+                enable(view.getChildAt(i), _enable, recursive)
             }
         }
-        if (view.isEnabled != enable) {
-            view.isEnabled = enable
+        if (view.isEnabled != _enable) {
+            view.setTag(R.id.lib_tag_enable, view.isEnabled)//保存状态
+            view.isEnabled = _enable
         }
         if (view is EditText) {
-            view.clearFocus()
+            if (view.isEnabled) {
+                view.clearFocus()
+                //view.requestFocus() //need?
+            } else {
+                view.clearFocus()
+            }
         }
     }
 
