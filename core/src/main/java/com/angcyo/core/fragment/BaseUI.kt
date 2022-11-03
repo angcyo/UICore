@@ -121,4 +121,5 @@ fun FragmentConfig.lightStyle() {
     titleItemTextColor = titleItemIconColor
     titleTextColor = _color(R.color.lib_light_title_text_color)
     titleTextType = Typeface.BOLD
+    isLightStyle = true //白色底标题栏
 }

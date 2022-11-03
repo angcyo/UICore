@@ -64,7 +64,7 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
     /**回退栈调度者*/
     var backPressedDispatcherOwner: OnBackPressedDispatcherOwner? = null
 
-    /**事件通知*/
+    /**生命周期事件通知*/
     var onIViewEvent: ((iView: IView, event: Lifecycle.Event) -> Unit)? = null
 
     //----
