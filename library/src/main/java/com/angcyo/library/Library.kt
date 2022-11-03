@@ -233,7 +233,7 @@ val _screenHeight: Int get() = app().getScreenHeight()
 val _statusBarHeight: Int get() = app().getStatusBarHeight()
 val _navBarHeight: Int get() = app().getNavBarHeight()
 
-/**获取当前设备的刷新帧率*/
+/**获取当前设备的刷新帧率[60] [90] [120]*/
 val _refreshRate: Float
     get() {
         val windowManager = app().getSystemService(Context.WINDOW_SERVICE) as WindowManager

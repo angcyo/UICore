@@ -6,6 +6,7 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.createPaint
+import com.angcyo.library._refreshRateRatio
 import com.angcyo.library.ex.*
 
 /**
@@ -203,7 +204,7 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
         canvas.drawPath(_borderPath, paint)
 
         //动画
-        phase += phaseStep
+        phase += phaseStep / _refreshRateRatio
         if (phaseStep < 0 && phase < -intervals.sum()) {
             phase = 0f
         } else if (phaseStep > 0 && phase > intervals.sum()) {
