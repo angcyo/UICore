@@ -18,6 +18,7 @@ import com.angcyo.DslAHelper
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.fragment.*
 import com.angcyo.layout.FragmentSwipeBackLayout
+import com.angcyo.library.ex._color
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.havePermissions
 import com.angcyo.library.utils.storage.haveSdCardManagePermission
@@ -136,18 +137,17 @@ fun Window.lightStatusBar(light: Boolean = true) {
                 systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
         }
     }
-
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M &&
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-    ) {
-        this.findViewById<FragmentSwipeBackLayout>(R.id.fragment_container)?.apply {
-            setDimStatusBar(light)
-        }
-    }
 }
 
 fun Activity.lightNavigationBar(light: Boolean = true) {
     window.lightNavigationBar(light)
+}
+
+/**变暗状态栏,画出来的背景颜色*/
+fun Activity.dimStatusBar(dim: Boolean, color: Int = _color(R.color.lib_status_bar_dim)) {
+    findViewById<FragmentSwipeBackLayout>(R.id.fragment_container)?.apply {
+        setDimStatusBar(dim, color)
+    }
 }
 
 /**是否为白色导航栏*/
