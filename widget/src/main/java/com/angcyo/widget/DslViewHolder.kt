@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.angcyo.library.L
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.base.ThrottleClickListener
+import com.angcyo.widget.base.ThrottleClickListener.Companion.DEFAULT_THROTTLE_INTERVAL
 import java.lang.ref.WeakReference
 
 /**
@@ -117,7 +118,7 @@ open class DslViewHolder(
     /**节流点击事件*/
     fun throttleClick(
         @IdRes id: Int,
-        throttleInterval: Long = ThrottleClickListener.DEFAULT_THROTTLE_INTERVAL,
+        throttleInterval: Long = DEFAULT_THROTTLE_INTERVAL,
         action: (View) -> Unit
     ) {
         click(id, ThrottleClickListener(throttleInterval = throttleInterval, action = action))
@@ -126,7 +127,7 @@ open class DslViewHolder(
     /**节流点击一组事件*/
     fun throttleClick(
         @IdRes vararg ids: Int,
-        throttleInterval: Long = ThrottleClickListener.DEFAULT_THROTTLE_INTERVAL,
+        throttleInterval: Long = DEFAULT_THROTTLE_INTERVAL,
         action: (View) -> Unit
     ) {
         val listener = ThrottleClickListener(throttleInterval = throttleInterval, action = action)
@@ -145,6 +146,13 @@ open class DslViewHolder(
 
     fun throttleClickItem(action: (View) -> Unit) {
         click(itemView, ThrottleClickListener(action = action))
+    }
+
+    fun throttleClickItem(
+        throttleInterval: Long = DEFAULT_THROTTLE_INTERVAL,
+        action: (View) -> Unit
+    ) {
+        click(itemView, ThrottleClickListener(throttleInterval, action = action))
     }
 
     fun throttleClickItem(vararg ids: Int, action: (View) -> Unit) {
