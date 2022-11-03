@@ -144,7 +144,7 @@ fun Activity.lightNavigationBar(light: Boolean = true) {
 }
 
 /**变暗状态栏,画出来的背景颜色*/
-fun Activity.dimStatusBar(dim: Boolean, color: Int = _color(R.color.lib_status_bar_dim)) {
+fun Activity.dimStatusBar(dim: Boolean = true, color: Int = _color(R.color.lib_status_bar_dim)) {
     findViewById<FragmentSwipeBackLayout>(R.id.fragment_container)?.apply {
         setDimStatusBar(dim, color)
     }
