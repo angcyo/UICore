@@ -144,7 +144,10 @@ fun Int.toByteArray(length: Int): ByteArray {
 }
 
 /**将字节数组,按照对应的位转成Int类型
- * [com.angcyo.library.ex.HexExKt.toByteArray]*/
+ * [com.angcyo.library.ex.HexExKt.toByteArray]
+ * [kotlin.ByteArray.toHexInt]
+ * [kotlin.ByteArray.toByteInt]
+ * */
 fun ByteArray.toByteInt(): Int {
     var result = 0
     for (index in 0 until size) {
@@ -162,6 +165,8 @@ fun Byte.toHexInt() = toInt() and 0xFF
 /**
  * 将字节数组[-86, -69]转换成对应的整型数字[43707]
  * FFFF -> 65535
+ * [kotlin.ByteArray.toHexInt]
+ * [kotlin.ByteArray.toByteInt]
  * */
 fun ByteArray.toHexInt() = toHexString(false).toHexInt()
 
