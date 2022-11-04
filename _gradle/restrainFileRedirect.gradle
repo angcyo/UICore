@@ -3,6 +3,9 @@
  * A problem was found with the configuration of task ':app:createPretestApkListingFileRedirect' (type 'ListingFileRedirectTask').
  * - In plugin 'com.android.internal.version-check' type 'com.android.build.gradle.internal.tasks.ListingFileRedirectTask' property 'listingFile'
  *   specifies file 'E:\AndroidProjects\shiyu\app\build\outputs\apk\pretest\output-metadata.json' which doesn't exist.
+ *
+ * 在app级别的build.gradle文件中加入
+ * apply from: "$gradleHost/master/restrainFileRedirect.gradle"
  * */
 android {
     if (gradle.gradleVersion.charAt(0) >= '7') {
