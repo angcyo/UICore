@@ -10,6 +10,16 @@ def output = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
 
 android {
 
+//    https://developer.android.com/studio/build/build-variants
+//    variantFilter { variant ->
+//        def names = variant.flavors*.name
+//        // To check for a certain build type, use variant.buildType.name == "<buildType>"
+//        if (names.contains("minApi21") && names.contains("demo")) {
+//            // Gradle ignores any variants that satisfy the conditions above.
+//            setIgnore(true)
+//        }
+//    }
+
     /*Gradle3.0 以下的方法*/
 //    getApplicationVariants().all { variant ->
 //        variant.outputs.each { output ->
