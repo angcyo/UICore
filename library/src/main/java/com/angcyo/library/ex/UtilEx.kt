@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import android.Manifest
 import android.content.Context
 import android.net.wifi.WifiManager
 import com.angcyo.library.app
@@ -34,17 +35,21 @@ fun <T> MutableList<T>.append(element: T, maxSize: Int = 10) {
  */
 fun getWifiIP(): String? {
     return try {
-        val wifiManager =
-            app().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        val wifiInfo = wifiManager.connectionInfo
-        val ipAddress = wifiInfo.ipAddress
-        //ipAddress 为0时, 有可能wifi被禁用, 或者未连接. 也有可能是正在连接
-        //<unknown ssid>
-        String.format(
-            Locale.getDefault(), "%d.%d.%d.%d",
-            ipAddress and 0xff, ipAddress shr 8 and 0xff,
-            ipAddress shr 16 and 0xff, ipAddress shr 24 and 0xff
-        )
+        val context = app().applicationContext
+        if (context.havePermissions(Manifest.permission.ACCESS_WIFI_STATE)) {
+            val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            val wifiInfo = wifiManager.connectionInfo
+            val ipAddress = wifiInfo.ipAddress
+            //ipAddress 为0时, 有可能wifi被禁用, 或者未连接. 也有可能是正在连接
+            //<unknown ssid>
+            String.format(
+                Locale.getDefault(), "%d.%d.%d.%d",
+                ipAddress and 0xff, ipAddress shr 8 and 0xff,
+                ipAddress shr 16 and 0xff, ipAddress shr 24 and 0xff
+            )
+        } else {
+            null
+        }
     } catch (ex: Exception) {
         //Log.e(TAG, ex.getMessage());
         null

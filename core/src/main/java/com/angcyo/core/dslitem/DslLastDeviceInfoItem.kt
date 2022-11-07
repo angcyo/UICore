@@ -39,16 +39,26 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
     companion object {
         const val SPLIT = "/"
 
-        fun saveDeviceInfo(context: Context = app()) {
-            deviceInfo(context).toString().writeTo(LogFile.device.toLogFilePath(), false)
+        fun saveDeviceInfo(context: Context = app(), isCompliance: Boolean = false) {
+            deviceInfo(context, isCompliance).toString()
+                .writeTo(LogFile.device.toLogFilePath(), false)
         }
 
-        fun deviceInfo(context: Context = app(), config: DslSpan.() -> Unit = {}) = span {
+        /**[isCompliance] 是否合规了*/
+        fun deviceInfo(
+            context: Context = app(),
+            isCompliance: Boolean = true,
+            config: DslSpan.() -> Unit = {}
+        ) = span {
             val api = HttpConfigDialog.appBaseUrl //getAppString("base_api")
             if (api.isNotEmpty()) {
-                appendln(api)
+                appendLine(api)
             }
-            append(getWifiIP()).append(SPLIT).append(getMobileIP())
+            if (isCompliance) {
+                append(getWifiIP()).append(SPLIT).append(getMobileIP())
+            } else {
+                append(getWifiIP())
+            }
 
             //gmt
             appendln()
@@ -74,10 +84,12 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
 
             appendln()
             //id
-            append("${Device.androidId}/${Device.serial}") {
-                foregroundColor = getColor(R.color.colorPrimary)
+            if (isCompliance) {
+                append("${Device.androidId}/${Device.serial}") {
+                    foregroundColor = getColor(R.color.colorPrimary)
+                }
+                appendln()
             }
-            appendln()
             append(Device.deviceId) {
                 foregroundColor = getColor(R.color.colorPrimaryDark)
             }

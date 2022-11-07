@@ -145,6 +145,9 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
     /**合规后的初始化*/
     @CallComplianceAfter
     open fun onComplianceAfter() {
+        //device, 需要合规
+        DslLastDeviceInfoItem.saveDeviceInfo(this, true)
+
         DslCrashHandler.init(this)
         vmApp<StateModel>().updateState(ComplianceCheck.TYPE_COMPLIANCE_INIT_AFTER, true)
     }
