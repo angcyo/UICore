@@ -262,7 +262,7 @@ object GraphicsHelper {
             bean.updateToRenderBounds(this)
             if (renderer.isLineShape() && height().abs() < MIN_PATH_SIZE) {
                 //如果是线条, 则高度强制使用1像素
-                bottom = top + MIN_PATH_SIZE.toFloat()
+                bottom = top + MIN_PATH_SIZE
             }
         }
     }

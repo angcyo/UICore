@@ -84,8 +84,8 @@ open class PathGraphicsParser : IGraphicsParser {
         pathList.computeBounds(pathBounds, true)
 
         //绘制缩放后的path, 至少需要1像素
-        val shapeWidth = max(MIN_PATH_SIZE.toFloat(), pathBounds.width()).toInt()
-        val shapeHeight = max(MIN_PATH_SIZE.toFloat(), pathBounds.height()).toInt()
+        val shapeWidth = max(MIN_PATH_SIZE, pathBounds.width()).toInt()
+        val shapeHeight = max(MIN_PATH_SIZE, pathBounds.height()).toInt()
 
         var cacheBitmap: Bitmap? = null
         var cacheCanvas: Canvas? = null
