@@ -1287,7 +1287,9 @@ open class DslAdapterItem : LifecycleOwner {
             val old = field
             field = value
             if (old != value) {
+                itemSelectMutexFromItem = this
                 onSetItemSelected(value)
+                itemSelectMutexFromItem = null
             }
         }
 
@@ -1300,15 +1302,21 @@ open class DslAdapterItem : LifecycleOwner {
         it.className() == this.className()
     }
 
+    /**互斥选择触发时, 是由那个[DslAdapterItem]产生的*/
+    var itemSelectMutexFromItem: DslAdapterItem? = null
+
     /**选中状态改变回调*/
     @UpdateByNotify
     open fun onSetItemSelected(select: Boolean) {
         if (select && itemSingleSelectMutex) {
+            val fromItem = this
             itemDslAdapter?.eachItem { index, dslAdapterItem ->
                 if (dslAdapterItem != this && itemIsSelectMutexAction(dslAdapterItem)) {
                     //互斥操作
+                    dslAdapterItem.itemSelectMutexFromItem = fromItem
                     dslAdapterItem.itemIsSelected = false
                     dslAdapterItem.updateAdapterItem()
+                    dslAdapterItem.itemSelectMutexFromItem = null //清空
                 }
             }
         }
