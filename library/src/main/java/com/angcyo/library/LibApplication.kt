@@ -61,6 +61,7 @@ open class LibApplication : Application(), LifecycleOwner {
 
     open fun initLibApplication() {
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
 
         if (isMainProgress()) {
             onCreateMain()
