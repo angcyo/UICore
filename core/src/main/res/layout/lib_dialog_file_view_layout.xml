@@ -65,15 +65,18 @@
         android:scrollbars="vertical"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lib_title_view">
+        app:layout_constraintTop_toBottomOf="@id/lib_title_view"
+        app:layout_constraintVertical_bias="0">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/lib_text_view"
             style="@style/LibBodyTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="top"
             android:padding="@dimen/lib_xhdpi"
-            android:textIsSelectable="true" />
+            android:textIsSelectable="true"
+            tools:text="angcyo angcyo angcyo" />
 
     </androidx.core.widget.NestedScrollView>
 
