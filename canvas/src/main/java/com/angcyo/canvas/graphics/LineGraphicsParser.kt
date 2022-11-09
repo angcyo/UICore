@@ -27,7 +27,7 @@ class LineGraphicsParser : PathGraphicsParser() {
             linePath.lineTo(lineLength, 0f)
             item.addDataPath(linePath)
 
-            item.drawable = createPathDrawable(item)
+            item.drawable = createPathDrawable(item) ?: return null
 
             //initDataMode(bean, item.paint)
             /*bean._dataMode = if (item.paint.style == Paint.Style.STROKE) {

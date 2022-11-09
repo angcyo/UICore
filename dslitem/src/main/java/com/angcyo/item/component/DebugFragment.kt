@@ -107,7 +107,8 @@ class DebugFragment : BaseDslFragment() {
                                     if (file.isFile()) {
                                         //日志文件存在, 直接显示日志内容
                                         fContext().fileViewDialog(logPath) {
-                                            readReversed = true
+                                            //1mb 时反向读取文件
+                                            readReversed = (file?.length() ?: 0) > 1 * 1024 * 1024
                                         }
                                     } else if (file.isFolder()) {
                                         //文件目录浏览

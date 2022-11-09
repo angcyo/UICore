@@ -65,7 +65,7 @@ open class PathGraphicsParser : IGraphicsParser {
 
                 //
                 item.addDataPath(path)
-                item.drawable = createPathDrawable(item)
+                item.drawable = createPathDrawable(item) ?: return null
 
                 initDataMode(bean, item.paint)
 
@@ -76,12 +76,15 @@ open class PathGraphicsParser : IGraphicsParser {
     }
 
     /**创建绘制矢量的[Drawable] */
-    open fun createPathDrawable(item: DataPathItem): Drawable {
+    open fun createPathDrawable(item: DataPathItem): Drawable? {
         val paint = item.paint
-        val pathList = item.drawPathList
+        val drawPathList = item.drawPathList
+        if (drawPathList.isEmpty()) {
+            return null
+        }
 
         val pathBounds = acquireTempRectF()
-        pathList.computeBounds(pathBounds, true)
+        drawPathList.computeBounds(pathBounds, true)
 
         //绘制缩放后的path, 至少需要1像素
         val shapeWidth = max(MIN_PATH_SIZE, pathBounds.width()).toInt()
@@ -109,7 +112,7 @@ open class PathGraphicsParser : IGraphicsParser {
             val scaleY = drawHeight / shapeHeight
             scale(scaleX, scaleY, shapeWidth / 2f, shapeHeight / 2f)
 
-            pathList.forEach { path ->
+            drawPathList.forEach { path ->
                 //线段的描边用虚线处理处理
                 if (path is LinePath) {
                     val linePaint = Paint(paint)

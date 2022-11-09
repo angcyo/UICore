@@ -29,7 +29,7 @@ class PentagramGraphicsParser : PathGraphicsParser() {
             //
             item.addDataPath(dataPath)
 
-            item.drawable = createPathDrawable(item)
+            item.drawable = createPathDrawable(item) ?: return null
             initDataMode(bean, item.paint)
             return item
         }

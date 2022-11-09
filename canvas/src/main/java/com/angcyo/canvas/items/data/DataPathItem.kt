@@ -6,6 +6,7 @@ import android.graphics.Path
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toPaintStyle
+import com.angcyo.library.L
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
@@ -55,8 +56,8 @@ open class DataPathItem(bean: CanvasProjectItemBean) : DataItem(bean) {
     }
 
     /**添加一个数据路径, 同时添加一个可以绘制的路径, 返回可绘制路径*/
-    fun addDataPath(path: Path): Path {
-        return addDataPath(listOf(path)).last()
+    fun addDataPath(path: Path): Path? {
+        return addDataPath(listOf(path)).lastOrNull()
     }
 
     /**添加一组数据路径, 同时添加一组可以绘制的路径, 返回可绘制路径*/
@@ -103,6 +104,7 @@ open class DataPathItem(bean: CanvasProjectItemBean) : DataItem(bean) {
                 newPathList.add(newPath)
             } else {
                 //没有宽度的路径直接忽略
+                L.w("无效的宽度, 忽略path...")
             }
         }
 

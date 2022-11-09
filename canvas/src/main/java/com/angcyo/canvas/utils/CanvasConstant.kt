@@ -42,7 +42,7 @@ object CanvasConstant {
     /**数据类型, 二维码*/
     const val DATA_TYPE_QRCODE = 10015
 
-    /**数据类型, 条形维码*/
+    /**数据类型, 条形码*/
     const val DATA_TYPE_BARCODE = 10016
 
     /**数据类型, 矩形*/

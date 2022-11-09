@@ -35,7 +35,7 @@ class OvalGraphicsParser : PathGraphicsParser() {
             dataPath.addOval(0f, 0f, dataWidth, dataHeight, Path.Direction.CW)
             item.addDataPath(dataPath)
 
-            item.drawable = createPathDrawable(item)
+            item.drawable = createPathDrawable(item) ?: return null
 
             initDataMode(bean, item.paint)
 
