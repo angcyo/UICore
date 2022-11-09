@@ -23,12 +23,7 @@ interface IEngraveProvider {
     /**[com.angcyo.canvas.data.CanvasProjectItemBean]解析到内存中的数据*/
     fun getEngraveDataItem(): DataItem? = null
 
-    /**获取用于直接雕刻的图片, 返回的图片应该已经进行了缩放和旋转
-     *
-     * 获取一个用于雕刻的图片数据,
-     * 请注意, 这个图片是原始数据,
-     * 可能需要再次缩放处理后发给机器
-     * */
+    /**获取用于直接雕刻的图片, 返回的图片应该已经进行了缩放和旋转 */
     fun getEngraveBitmap(): Bitmap?
 
     /**数据在创作上的绘制范围, 不包含旋转*/
