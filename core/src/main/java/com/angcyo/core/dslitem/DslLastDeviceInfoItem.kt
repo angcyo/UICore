@@ -39,8 +39,14 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
     companion object {
         const val SPLIT = "/"
 
-        fun saveDeviceInfo(context: Context = app(), isCompliance: Boolean = false) {
-            deviceInfo(context, isCompliance).toString()
+        /**保存设备信息到日志
+         * [com.angcyo.library.utils.LogFile.device]*/
+        fun saveDeviceInfo(
+            context: Context = app(),
+            isCompliance: Boolean = false,
+            config: DslSpan.() -> Unit = {}
+        ) {
+            deviceInfo(context, isCompliance, config).toString()
                 .writeTo(LogFile.device.toLogFilePath(), false)
         }
 
