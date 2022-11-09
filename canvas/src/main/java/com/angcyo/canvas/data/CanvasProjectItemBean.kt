@@ -317,6 +317,9 @@ data class CanvasProjectItemBean(
      * [com.angcyo.canvas.items.data.DataItem._cacheBitmap]*/
     var _cacheBitmap: Boolean? = null,
 
+    /**是否处于调试模式下*/
+    var _debug: Boolean? = null
+
     //endregion ---私有属性---
 ) {
 

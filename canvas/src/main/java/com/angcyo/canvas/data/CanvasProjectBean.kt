@@ -38,6 +38,11 @@ data class CanvasProjectBean(
 
     /**数据内容版本*/
     var version: Int = 1,
+
+    //---
+
+    /**是否处于调试模式下*/
+    var _debug: Boolean? = null
 )
 
 /**
