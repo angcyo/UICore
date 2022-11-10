@@ -10,9 +10,11 @@ import com.angcyo.core.component.ComplianceCheck
 import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.HttpConfigDialog
 import com.angcyo.core.component.StateModel
+import com.angcyo.core.component.file.writeErrorLog
 import com.angcyo.core.component.interceptor.LogFileInterceptor
 import com.angcyo.core.component.model.LanguageModel
 import com.angcyo.core.dslitem.DslLastDeviceInfoItem
+import com.angcyo.coroutine.CoroutineErrorHandler
 import com.angcyo.http.DslHttp
 import com.angcyo.http.addInterceptorEx
 import com.angcyo.http.interceptor.LogInterceptor
@@ -104,7 +106,15 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         //语言
         vmApp<LanguageModel>().onCreate(this)
 
-        Rx.init()
+        //rx error
+        Rx.init { exception ->
+            exception.string().writeErrorLog(false)
+        }
+
+        //coroutine error
+        CoroutineErrorHandler.globalCoroutineExceptionHandler = { context, exception ->
+            exception.string().writeErrorLog(false)
+        }
 
         DslHttp.config {
             onGetBaseUrl = {

@@ -20,12 +20,22 @@ import kotlin.coroutines.CoroutineContext
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 open class CoroutineErrorHandler(
-    val action: (exception: Throwable) -> Unit = {
-        L.e("协程内发生异常->\n${it.stackTraceToString()}")
-        it.printStackTrace()
+    val action: (context: CoroutineContext, exception: Throwable) -> Unit = { context, exception ->
+        L.e("协程内发生异常->\n${exception.stackTraceToString()}")
+        exception.printStackTrace()
+
+        //back
+        globalCoroutineExceptionHandler?.invoke(context, exception)
     }
 ) : AbstractCoroutineContextElement(CoroutineExceptionHandler), CoroutineExceptionHandler {
+
+    companion object {
+        /**全局的协程异常处理*/
+        var globalCoroutineExceptionHandler: ((context: CoroutineContext, exception: Throwable) -> Unit)? =
+            null
+    }
+
     override fun handleException(context: CoroutineContext, exception: Throwable) {
-        action(exception)
+        action(context, exception)
     }
 }

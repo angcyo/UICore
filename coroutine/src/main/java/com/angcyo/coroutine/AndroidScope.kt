@@ -4,7 +4,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.angcyo.library.L
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -20,7 +23,7 @@ open class AndroidScope(
 ) : CoroutineScope, LifecycleEventObserver {
 
     /**协程异常处理*/
-    val exceptionHandler = CoroutineExceptionHandler { context, throwable ->
+    val exceptionHandler = CoroutineErrorHandler { context, throwable ->
         onHandleException(context, throwable)
     }
 

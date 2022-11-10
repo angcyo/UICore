@@ -42,9 +42,11 @@ import io.reactivex.schedulers.Schedulers
 
 object Rx {
 
+    /**Rx异常单次通知*/
     val rxErrorHandlerOnceList = mutableListOf<Consumer<Throwable>>()
 
-    fun init() {
+    /**初始化*/
+    fun init(block: (Throwable) -> Unit = {}) {
         if (!RxJavaPlugins.isLockdown()) {
             RxJavaPlugins.setErrorHandler { error ->
                 toastQQ(error.message)
@@ -59,6 +61,9 @@ object Rx {
                         rxErrorHandlerOnceList.clear()
                     }
                 }
+
+                //back
+                block(error)
             }
         }
     }
