@@ -22,6 +22,7 @@ import androidx.lifecycle.LifecycleRegistry
 import com.angcyo.base.dslAHelper
 import com.angcyo.dialog.activity.DialogActivity
 import com.angcyo.drawable.isGravityCenterVertical
+import com.angcyo.library.IActivityProvider
 import com.angcyo.library.L
 import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex.*
@@ -42,7 +43,7 @@ import java.io.Serializable
  * android.view.ViewRootImpl#setView(android.view.View, android.view.WindowManager.LayoutParams, android.view.View, int)
  * */
 open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
-    LifecycleOwner, Serializable {
+    LifecycleOwner, Serializable, IActivityProvider {
 
     companion object {
         /** Dialog -> AppCompatDialog -> AlertDialog */
@@ -674,6 +675,9 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
     }
 
     //</editor-fold desc="Lifecycle支持">
+
+    /**用来实现异步加载弹窗*/
+    override fun getActivityContext(): Context? = dialogContext
 }
 
 fun Dialog.dialogViewHolder(): DslViewHolder = DslViewHolder(window!!.decorView)

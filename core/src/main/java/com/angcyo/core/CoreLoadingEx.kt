@@ -11,6 +11,7 @@ import com.angcyo.coroutine.withBlock
 import com.angcyo.dialog.hideLoading
 import com.angcyo.dialog.loading2
 import com.angcyo.drawable.loading.TGStrokeLoadingDrawable
+import com.angcyo.library.IActivityProvider
 import com.angcyo.library.L
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.setBgDrawable
@@ -25,17 +26,33 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 /**异步加载, 带loading dialog*/
 fun <T> LifecycleOwner.loadingAsyncTg(block: () -> T?, action: (T?) -> Unit) {
-    val context = this
-    if (context is ActivityResultCaller) {
-        context.tgStrokeLoading { cancel, loadEnd ->
+    when (val context = this) {
+        is ActivityResultCaller -> context.tgStrokeLoading { cancel, loadEnd ->
             context.launchLifecycle {
                 val result = withBlock { block() }
                 action(result)
                 loadEnd(result, null)
             }
         }
-    } else {
-        L.w("context is not ActivityResultCaller!")
+        else -> {
+            var activity: Context? = null
+            if (context is Context) {
+                activity = context
+            } else if (context is IActivityProvider) {
+                activity = context.getActivityContext()
+            }
+            if (activity == null) {
+                L.w("context is not ActivityResultCaller!")
+            } else {
+                activity.tgStrokeLoading2 { cancel, loadEnd ->
+                    context.launchLifecycle {
+                        val result = withBlock { block() }
+                        action(result)
+                        loadEnd(result, null)
+                    }
+                }
+            }
+        }
     }
 }
 
