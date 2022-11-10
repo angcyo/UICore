@@ -88,8 +88,8 @@ class TextGraphicsParser : IGraphicsParser {
         //计算偏移
         val offsetPoint = RectScaleGestureHandler.calcRectUpdateOffset(
             rect,
-            textWidth * bean.scaleX,
-            textHeight * bean.scaleX,
+            textWidth * (bean.scaleX ?: 1f),
+            textHeight * (bean.scaleX ?: 1f),
             bean.angle
         )
         //核心

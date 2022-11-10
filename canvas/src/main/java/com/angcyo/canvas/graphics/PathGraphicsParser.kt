@@ -92,7 +92,7 @@ open class PathGraphicsParser : IGraphicsParser {
 
         var cacheBitmap: Bitmap? = null
         var cacheCanvas: Canvas? = null
-        if (item.dataBean._cacheBitmap == true) {
+        if (item.dataBean._enableCacheBitmap == true) {
             cacheBitmap = Bitmap.createBitmap(shapeWidth, shapeHeight, Bitmap.Config.ARGB_8888)
             cacheCanvas = Canvas(cacheBitmap)
         }

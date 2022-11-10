@@ -47,6 +47,7 @@ object GraphicsHelper {
             _parserList.add(SvgGraphicsParser())
             _parserList.add(GCodeGraphicsParser())
             _parserList.add(PathGraphicsParser())
+            _parserList.add(RawGraphicsParser())
         }
     }
 

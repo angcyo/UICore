@@ -38,7 +38,10 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
 
     /**
      * 通过改变此对象, 呈现出不同的可视图画
-     * 可绘制的对象, 此对象不带旋转和缩放*/
+     * 可绘制的对象, 此对象不带旋转和缩放
+     * 此对象为[null], 则不应该渲染在界面上?
+     * [com.angcyo.canvas.graphics.GraphicsHelper.renderItemDataBean]
+     * */
     var drawable: Drawable? = null
 
     init {

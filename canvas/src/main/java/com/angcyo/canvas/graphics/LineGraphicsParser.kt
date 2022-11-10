@@ -20,6 +20,7 @@ class LineGraphicsParser : PathGraphicsParser() {
             item.updatePaint()
 
             val lineLength = bean.width.toPixel()
+            bean.height = 0f//去掉高度属性, 防止自动雕刻时渲染异常
 
             //path
             val linePath = LinePath()

@@ -49,9 +49,9 @@ data class CanvasProjectItemBean(
     var angle: Float = 0f,
 
     /**数据绘制时的缩放比例*/
-    var scaleX: Float = 1f,
+    var scaleX: Float? = null,
 
-    var scaleY: Float = 1f,
+    var scaleY: Float? = null,
 
     //endregion ---bounds---
 
@@ -88,7 +88,7 @@ data class CanvasProjectItemBean(
      * 1 [Paint.Style.STROKE]
      * 2 [Paint.Style.FILL_AND_STROKE]
      * */
-    var paintStyle: Int = 0,
+    var paintStyle: Int = Paint.Style.FILL.toPaintStyleInt(),
 
     /**原始的数据, 如svg文件内容, gcode文件内容
      * [CanvasConstant.DATA_TYPE_RAW] 真实数据的类型
@@ -315,7 +315,7 @@ data class CanvasProjectItemBean(
 
     /**是否生成一张缓存的图片
      * [com.angcyo.canvas.items.data.DataItem._cacheBitmap]*/
-    var _cacheBitmap: Boolean? = null,
+    var _enableCacheBitmap: Boolean? = null,
 
     /**是否处于调试模式下*/
     var _debug: Boolean? = null
@@ -348,8 +348,8 @@ data class CanvasProjectItemBean(
         w = max(PathGraphicsParser.MIN_PATH_SIZE, w)
         h = max(PathGraphicsParser.MIN_PATH_SIZE, h)
 
-        val sx = if (scaleX == 0f) 1f else scaleX
-        val sy = if (scaleY == 0f) 1f else scaleY
+        val sx = scaleX ?: 1f
+        val sy = scaleY ?: 1f
         bounds.set(l, t, l + w * sx, t + h * sy)
         return bounds
     }
@@ -487,6 +487,7 @@ fun Int.toTypeNameString() = when (this) {
     CanvasConstant.DATA_TYPE_SINGLE_WORD -> "SingleWord"
     CanvasConstant.DATA_TYPE_GCODE -> "GCode"
     CanvasConstant.DATA_TYPE_PATH -> "Path"
+    CanvasConstant.DATA_TYPE_RAW -> "Raw"
     else -> "Unknown"
 }
 

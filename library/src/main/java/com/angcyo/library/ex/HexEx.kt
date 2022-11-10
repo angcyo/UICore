@@ -2,6 +2,7 @@ package com.angcyo.library.ex
 
 import com.angcyo.library.L
 import java.util.*
+import kotlin.math.absoluteValue
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -121,13 +122,13 @@ fun ByteArray.toHexString(hasSpace: Boolean = true) = joinToString("") {
  * [length] 需要输出多少个字符, 不足前面补充0*/
 fun Byte.toHexString(length: Int = 2, padChar: Char = '0') = toHexInt().toHexString(length, padChar)
 
-/**整型转成十六进制字符串
+/**整型转成十六进制字符串, (负数转16进制会出事)
  * 2个十六进制字符表示1个字节 8位
  * [length] 十六进制字符串的长度, 除以2 就表示字节的大小
  * [padChar] 需要补齐的字符
  * */
 fun Int.toHexString(length: Int = 2, padChar: Char = '0') =
-    toString(16).padStart(length, padChar).uppercase(Locale.ROOT)
+    absoluteValue.toString(16).padStart(length, padChar).uppercase(Locale.ROOT)
 
 /**[ByteArray]
  * [length] 需要多少个字节, 1个字节8位. 不够前面补0
