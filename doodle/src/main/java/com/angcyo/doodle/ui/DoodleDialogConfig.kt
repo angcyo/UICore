@@ -3,6 +3,7 @@ package com.angcyo.doodle.ui
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Bitmap
+import com.angcyo.core.loadingAsyncTg
 import com.angcyo.dialog.DslDialogConfig
 import com.angcyo.dialog.configBottomDialog
 import com.angcyo.doodle.R
@@ -57,11 +58,15 @@ class DoodleDialogConfig(context: Context? = null) : DslDialogConfig(context) {
         dialogViewHolder.click(R.id.confirm_button) {
             doodleLayoutHelper.doodleView?.doodleDelegate?.apply {
                 doodleLayerManager.backgroundLayer = null//不要背景
-                val bitmap = getPreviewBitmap().trimEdgeColor()
-                onDoodleResultAction(bitmap)
 
-                //
-                dialog.dismiss()
+                //async
+                loadingAsyncTg({
+                    getPreviewBitmap().trimEdgeColor()
+                }) { bitmap ->
+                    onDoodleResultAction(bitmap!!)
+                    //
+                    dialog.dismiss()
+                }
             }
         }
 
