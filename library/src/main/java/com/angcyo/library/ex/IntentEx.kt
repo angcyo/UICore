@@ -176,11 +176,14 @@ fun Context.toApplicationDetailsSettings(packageName: String = getPackageName())
 }
 
 /**打开程序, 启动应用.
- * 如果需要在后台启动App, 请使用[Application]的上下文*/
+ * 如果需要在后台启动App, 请使用[Application]的上下文
+ *
+ * [flags] [Intent.FLAG_ACTIVITY_SINGLE_TOP]
+ * */
 fun Context.openApp(
     packageName: String? = this.packageName,
     className: String? = null,
-    flags: Int = Intent.FLAG_ACTIVITY_SINGLE_TOP,
+    flags: Int = 0,
     config: Intent.() -> Unit = {}
 ): Intent? {
     if (packageName.isNullOrBlank()) {

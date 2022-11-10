@@ -928,7 +928,7 @@ fun BaseAccessibilityInterceptor.interceptorMode(vararg filterPackage: String) {
 /**打开指定app*/
 fun BaseAccessibilityInterceptor.openApp(
     packageName: String? = lastService?.packageName,
-    flags: Int = Intent.FLAG_ACTIVITY_SINGLE_TOP
+    flags: Int = 0
 ) {
     lastService?.openApp(packageName, flags = flags)
 }
