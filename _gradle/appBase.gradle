@@ -12,6 +12,7 @@ android {
         resValue "string", "user_name", userName()
         resValue "string", "schema", schema
         resValue "bool", "show_debug", "false"
+        resValue "string", "local_ip", getLocalIp()
 
         buildConfigField "String", "USER_NAME", '"' + userName() + '"'
         buildConfigField "String", "BUILD_TIME", '"' + build_time + '"'
