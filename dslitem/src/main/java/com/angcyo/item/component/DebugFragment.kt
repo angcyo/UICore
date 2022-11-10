@@ -186,7 +186,7 @@ class DebugFragment : BaseDslFragment() {
                             itemDes = debugAction.des
                             initItem()
 
-                            itemEditText = debugAction.key.hawkGet()
+                            itemEditText = debugAction.key.hawkGet("${debugAction.defValue ?: ""}")
                             observeItemChange {
                                 debugAction.key.hawkPut(itemEditText)
                                 debugAction.action?.invoke(this@DebugFragment, itemEditText)
