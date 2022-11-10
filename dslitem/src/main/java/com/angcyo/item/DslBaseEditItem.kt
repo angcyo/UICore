@@ -45,7 +45,7 @@ open class DslBaseEditItem : DslBaseLabelItem(), IEditItem {
 
     override fun onItemViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {
         super.onItemViewRecycled(itemHolder, itemPosition)
-        itemHolder.ev(R.id.lib_edit_view)?.clearListeners()
+        itemHolder.ev(editItemConfig.itemEditTextViewId)?.clearListeners()
     }
 
     override fun onItemChangeListener(item: DslAdapterItem) {

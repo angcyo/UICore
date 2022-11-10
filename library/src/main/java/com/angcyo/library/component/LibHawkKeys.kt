@@ -21,4 +21,10 @@ object LibHawkKeys {
     @MM
     var lastSlipSpace: Float by HawkPropertyValue<Any, Float>(10.8f)
 
+    /**
+     * 支持的固件范围
+     * resValue "string", "lp_support_firmware", '"650~699 6500~6599 700~799 7000~7999"'
+     * */
+    var lpSupportFirmware: String? by HawkPropertyValue<Any, String?>(null)
+
 }

@@ -66,7 +66,7 @@ open class DslLabelEditItem : DslBaseEditItem() {
                     gone()
                 } else {
                     throttleClickIt {
-                        itemHolder.focus<View>(R.id.lib_edit_view)?.showSoftInput()
+                        itemHolder.focus<View>(editItemConfig.itemEditTextViewId)?.showSoftInput()
                     }
                 }
             } else {

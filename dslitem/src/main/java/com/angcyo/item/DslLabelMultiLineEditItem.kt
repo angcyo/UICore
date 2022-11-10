@@ -38,7 +38,7 @@ open class DslLabelMultiLineEditItem : DslLabelEditItem() {
         )
 
         //输入框
-        itemHolder.ev(R.id.lib_edit_view)?.apply {
+        itemHolder.ev(editItemConfig.itemEditTextViewId)?.apply {
             if (editItemConfig.itemEditTextStyle.editMaxInputLength > 0) {
                 itemHolder.v<TextIndicator>(R.id.lib_text_indicator)
                     ?.setupEditText(this, editItemConfig.itemEditTextStyle.editMaxInputLength)

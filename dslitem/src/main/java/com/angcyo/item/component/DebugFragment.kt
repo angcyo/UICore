@@ -16,11 +16,9 @@ import com.angcyo.dsladapter.bindItem
 import com.angcyo.dsladapter.drawBottom
 import com.angcyo.item.DslPropertyFloatItem
 import com.angcyo.item.DslPropertyIntItem
+import com.angcyo.item.DslPropertyStringItem
 import com.angcyo.item.DslPropertySwitchItem
-import com.angcyo.item.style.itemDes
-import com.angcyo.item.style.itemLabel
-import com.angcyo.item.style.itemSwitchChangedAction
-import com.angcyo.item.style.itemSwitchChecked
+import com.angcyo.item.style.*
 import com.angcyo.library.Library
 import com.angcyo.library.ex.*
 import com.angcyo.library.libFolderPath
@@ -86,6 +84,7 @@ class DebugFragment : BaseDslFragment() {
 
     init {
         fragmentTitle = "调试界面"
+        enableSoftInput = true
     }
 
     override fun initBaseView(savedInstanceState: Bundle?) {
@@ -178,6 +177,19 @@ class DebugFragment : BaseDslFragment() {
                             observeItemChange {
                                 debugAction.key.hawkPut(itemPropertyNumber)
                                 debugAction.action?.invoke(this@DebugFragment, itemPropertyNumber)
+                            }
+                        }
+                    } else {
+                        //文本输入
+                        DslPropertyStringItem()() {
+                            itemLabel = debugAction.label
+                            itemDes = debugAction.des
+                            initItem()
+
+                            itemEditText = debugAction.key.hawkGet()
+                            observeItemChange {
+                                debugAction.key.hawkPut(itemEditText)
+                                debugAction.action?.invoke(this@DebugFragment, itemEditText)
                             }
                         }
                     }
