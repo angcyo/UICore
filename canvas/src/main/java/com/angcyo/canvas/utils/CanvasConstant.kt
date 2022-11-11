@@ -91,17 +91,17 @@ object CanvasConstant {
     /**数数据模式, 黑白, 发送线段数据
      * [com.angcyo.bluetooth.fsc.laserpacker.command.DataCmd.ENGRAVE_TYPE_BITMAP_PATH]
      * */
-    const val DATA_MODE_BLACK_WHITE = 101
+    const val DATA_MODE_BLACK_WHITE = 1
 
     /**数据模式, 抖动, 发送抖动数据
      * [com.angcyo.bluetooth.fsc.laserpacker.command.DataCmd.ENGRAVE_TYPE_BITMAP_DITHERING]
      * */
-    const val DATA_MODE_DITHERING = 105
+    const val DATA_MODE_DITHERING = 5
 
     /**数据模式, GCode, 发送GCode数据
      * [com.angcyo.bluetooth.fsc.laserpacker.command.DataCmd.ENGRAVE_TYPE_GCODE]
      * */
-    const val DATA_MODE_GCODE = 106
+    const val DATA_MODE_GCODE = 6
 
     //
 

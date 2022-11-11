@@ -8,7 +8,12 @@ import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.parseGCode
 import com.angcyo.gcode.GCodeHelper
 import com.angcyo.library.L
+import com.angcyo.library.app
+import com.angcyo.library.ex.deleteSafe
+import com.angcyo.library.ex.toBase64Data
 import com.angcyo.library.ex.toBitmapOfBase64
+import com.angcyo.library.ex.toBlackWhiteHandle
+import com.angcyo.opencv.OpenCV
 import com.hingin.rn.image.ImageProcess
 
 /**
@@ -32,7 +37,26 @@ class BitmapGraphicsParser : IGraphicsParser {
                 }
                 if (bean.imageFilter == CanvasConstant.DATA_MODE_GCODE) {
                     //图片转成了GCode
-                    val gcode = bean.data ?: bean.src
+                    var gcode = bean.data ?: bean.src
+                    if (gcode.isNullOrBlank() && originBitmap != null) {
+                        //自动应用算法
+                        OpenCV.bitmapToGCode(
+                            app(),
+                            originBitmap,
+                            (bean.width / 2).toMm().toDouble(),
+                            lineSpace = bean.gcodeLineSpace.toDouble(),
+                            direction = bean.gcodeDirection,
+                            angle = bean.gcodeAngle.toDouble(),
+                            type = if (bean.gcodeOutline) 1 else 3
+                        ).let {
+                            val gCodeText = it.readText()
+                            it.deleteSafe()
+                            gcode = gCodeText
+                        }
+                        bean.data = gcode
+                    }
+
+                    //
                     if (gcode.isNullOrEmpty()) {
                         //bean.src gcode数据
                         L.w("GCode数据为空, 无法渲染...")
@@ -58,6 +82,35 @@ class BitmapGraphicsParser : IGraphicsParser {
                     }
                 } else {
                     //其他
+                    if (bean.src.isNullOrBlank() && originBitmap != null) {
+                        //只有原图, 没有算法处理后的图片, 则需要主动应用算法处理图片
+                        bean.src = when (bean.imageFilter) {
+                            CanvasConstant.DATA_MODE_BLACK_WHITE -> originBitmap.toBlackWhiteHandle(
+                                bean.blackThreshold.toInt(),
+                                bean.inverse
+                            )
+                            CanvasConstant.DATA_MODE_SEAL -> OpenCV.bitmapToSeal(
+                                app(),
+                                originBitmap,
+                                bean.sealThreshold.toInt()
+                            )
+                            CanvasConstant.DATA_MODE_GREY -> OpenCV.bitmapToGrey(originBitmap)
+                            CanvasConstant.DATA_MODE_PRINT -> OpenCV.bitmapToPrint(
+                                app(),
+                                originBitmap,
+                                bean.printsThreshold.toInt()
+                            )
+                            CanvasConstant.DATA_MODE_DITHERING -> OpenCV.bitmapToDithering(
+                                app(),
+                                originBitmap,
+                                bean.inverse,
+                                bean.contrast.toDouble(),
+                                bean.brightness.toDouble(),
+                            )
+                            else -> null
+                        }?.toBase64Data()
+                    }
+
                     val item = DataBitmapItem(bean)
                     item.originBitmap = originBitmap
                     item.modifyBitmap = bean.src?.toBitmapOfBase64()
