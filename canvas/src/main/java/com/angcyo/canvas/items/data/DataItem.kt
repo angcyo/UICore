@@ -33,7 +33,11 @@ import com.angcyo.library.ex.rotate
 open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveProvider {
 
     /**自动雕刻模式下, [drawable]有些时候会draw不出图片, 所以这里使用[Bitmap]对象存储一遍
-     * 此图片没有缩放和旋转*/
+     * 此图片没有缩放和旋转
+     * 在[DataPathItem]数据模式下, 使用比较多
+     *
+     * [com.angcyo.canvas.graphics.PathGraphicsParser.createPathDrawable]
+     * */
     var _cacheBitmap: Bitmap? = null
 
     /**
