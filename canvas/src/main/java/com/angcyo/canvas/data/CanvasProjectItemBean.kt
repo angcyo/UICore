@@ -174,11 +174,16 @@ data class CanvasProjectItemBean(
     @MM
     var ry: Float = 0f,
 
-    /**多边形的边数 5 [3-50]*/
+    /**星星/多边形的边数 5 [3-50]
+     * [com.angcyo.canvas.graphics.PolygonGraphicsParser]
+     * [com.angcyo.canvas.graphics.PentagramGraphicsParser]
+     * */
     var side: Int = 3,
 
     /**星星的深度 40 [1-100], 深度越大内圈半径越小
      * 固定外圈半径, 那么 内圈半径 = 固定外圈半径 * (1-[depth] / 100)
+     *
+     * [com.angcyo.canvas.graphics.PentagramGraphicsParser]
      * */
     var depth: Int = 40,
 
