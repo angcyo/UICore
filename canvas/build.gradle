@@ -15,6 +15,10 @@ dependencies {
     //无法访问[com.google.zxing.BarcodeFormat]
     compileOnly 'com.google.zxing:core:3.4.1'
 
+    //图片算法那支持
+    compileOnly "com.angcyo:opencv:${opencv_version}"
+
     //扭曲支持
-    compileOnly 'com.angcyo:imageProcess:1014'
+    compileOnly "com.angcyo:imageProcess:${opencv_version}"
+
 }
