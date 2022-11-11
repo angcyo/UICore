@@ -169,19 +169,29 @@ fun Float.eq(other: Float): Boolean =
     java.lang.Float.floatToIntBits(this) == java.lang.Float.floatToIntBits(other)
 
 /**确保当前的浮点对象返回一个有效的值*/
-fun Float.ensure(): Float {
-    if (isFinite()) {
-        return this
+fun Float.ensure(def: Float = 0f): Float {
+    if (isNaN()) {
+        //不是一个数字
+        return def
     }
-    return 0f
+    if (isInfinite()) {
+        //无穷大
+        return def
+    }
+    return this
+}
+
+fun Double.ensure(def: Double = 1.0): Double {
+    if (isNaN()) {
+        //不是一个数字
+        return def
+    }
+    if (isInfinite()) {
+        //无穷大
+        return def
+    }
+    return this
 }
 
 fun Double.eq(other: Double): Boolean =
     java.lang.Double.doubleToLongBits(this) == java.lang.Double.doubleToLongBits(other)
-
-fun Double.ensure(): Double {
-    if (isFinite()) {
-        return this
-    }
-    return 0.0
-}

@@ -3,6 +3,7 @@ package com.angcyo.gcode
 import android.graphics.Matrix
 import android.graphics.RectF
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.ex.ensure
 import com.angcyo.library.ex.mapPoint
 import com.angcyo.library.ex.mapRectF
 import com.angcyo.library.model.PointD
@@ -45,8 +46,8 @@ class GCodeAdjust {
 
         //G Bounds
         val gCodeBounds = gCodeHandler.gCodeBounds
-        val scaleX = bounds.width() / gCodeBounds.width()
-        val scaleY = bounds.height() / gCodeBounds.height()
+        val scaleX = (bounds.width() / gCodeBounds.width()).ensure(1f)
+        val scaleY = (bounds.height() / gCodeBounds.height()).ensure(1f)
 
         //先缩放和旋转
         val matrix = Matrix()
