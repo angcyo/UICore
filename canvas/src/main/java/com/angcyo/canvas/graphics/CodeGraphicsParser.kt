@@ -1,8 +1,10 @@
 package com.angcyo.canvas.graphics
 
 import android.graphics.Bitmap
+import android.graphics.Paint
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toMm
+import com.angcyo.canvas.data.toPaintStyle
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.qrcode.createBarCode
@@ -41,14 +43,19 @@ class CodeGraphicsParser : IGraphicsParser {
         val item = DataItem(bean)
         wrapBitmap(item, bitmap)
 
-        if (bean.width <= 0) {
+        if (bean._width <= 0) {
             bean.width = bitmap.width.toMm()
         }
-        if (bean.height <= 0) {
+        if (bean._height <= 0) {
             bean.height = bitmap.height.toMm()
         }
 
-        bean._dataMode = CanvasConstant.DATA_MODE_BLACK_WHITE
+        if (bean.paintStyle.toPaintStyle() == Paint.Style.STROKE) {
+            //GCode
+            bean._dataMode = CanvasConstant.DATA_MODE_GCODE
+        } else {
+            bean._dataMode = CanvasConstant.DATA_MODE_BLACK_WHITE
+        }
 
         return item
     }

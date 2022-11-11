@@ -1,6 +1,8 @@
 package com.angcyo.canvas.graphics
 
-import android.graphics.*
+import android.graphics.DashPathEffect
+import android.graphics.Paint
+import android.graphics.PathEffect
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.data.CanvasProjectItemBean
@@ -54,10 +56,10 @@ open class PathGraphicsParser : IGraphicsParser {
                 //
                 val pathBounds = acquireTempRectF()
                 path.computePathBounds(pathBounds)
-                if (bean.width == 0f) {
+                if (bean._width == 0f) {
                     bean.width = pathBounds.width().toMm()
                 }
-                if (bean.height == 0f) {
+                if (bean._height == 0f) {
                     bean.height = pathBounds.height().toMm()
                 }
                 //
@@ -90,12 +92,6 @@ open class PathGraphicsParser : IGraphicsParser {
         val shapeWidth = max(MIN_PATH_SIZE, pathBounds.width()).toInt()
         val shapeHeight = max(MIN_PATH_SIZE, pathBounds.height()).toInt()
 
-        var cacheBitmap: Bitmap? = null
-        var cacheCanvas: Canvas? = null
-        if (item.dataBean._enableCacheBitmap == true) {
-            cacheBitmap = Bitmap.createBitmap(shapeWidth, shapeHeight, Bitmap.Config.ARGB_8888)
-            cacheCanvas = Canvas(cacheBitmap)
-        }
         val picture = withPicture(shapeWidth, shapeHeight) {
             val strokeWidth = paint.strokeWidth
 
@@ -123,16 +119,11 @@ open class PathGraphicsParser : IGraphicsParser {
                         linePaint.pathEffect = null //实线
                     }
                     drawPath(path, linePaint)
-                    cacheCanvas?.drawPath(path, linePaint)
                 } else {
                     drawPath(path, paint)
-                    cacheCanvas?.drawPath(path, paint)
                 }
             }
         }
-
-        //cache
-        item._cacheBitmap = cacheBitmap
 
         //draw
         val drawable = ScalePictureDrawable(picture)

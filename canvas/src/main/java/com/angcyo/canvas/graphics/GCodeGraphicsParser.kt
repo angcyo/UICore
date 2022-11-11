@@ -24,10 +24,10 @@ class GCodeGraphicsParser : PathGraphicsParser() {
                 val gCodeDrawable = GCodeHelper.parseGCode(data, item.paint)
                 if (gCodeDrawable != null) {
                     //
-                    if (bean.width == 0f) {
+                    if (bean._width == 0f) {
                         bean.width = gCodeDrawable.gCodeBound.width().toMm()
                     }
-                    if (bean.height == 0f) {
+                    if (bean._height == 0f) {
                         bean.height = gCodeDrawable.gCodeBound.height().toMm()
                     }
                     //

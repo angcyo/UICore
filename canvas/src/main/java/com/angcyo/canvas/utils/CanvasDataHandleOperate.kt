@@ -131,10 +131,12 @@ object CanvasDataHandleOperate {
         @Pixel
         bounds: RectF,
         rotate: Float,
+        isAutoCnc: Boolean,
+        isLast: Boolean,
         outputFile: File = _defaultGCodeOutputFile()
     ): File {
         val gCodeAdjust = GCodeAdjust()
-        gCodeAdjust.gCodeAdjust(gCode, bounds, rotate, outputFile)
+        gCodeAdjust.gCodeAdjust(gCode, bounds, rotate, isAutoCnc, isLast, outputFile)
         return outputFile
     }
 

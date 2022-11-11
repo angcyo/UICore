@@ -141,7 +141,7 @@ object GraphicsHelper {
             }
         }
         if (result != null) {
-            if (bean.width == 0f && bean.height == 0f) {
+            if (bean._width == 0f && bean._height == 0f) {
                 L.e("请注意,添加了一个无大小的[Item].${bean}")
             }
         }

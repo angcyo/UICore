@@ -338,7 +338,7 @@ fun Path.toBitmap(
         strokeWidth = 1f
         style = Paint.Style.STROKE
     }
-): Bitmap {
+): Bitmap? {
     val pathRect = RectF()
     computeBounds(pathRect, true)
     val width = max(1, pathRect.width().toInt())
@@ -357,7 +357,7 @@ fun List<Path>.toBitmap(
         strokeWidth = 1f
         style = Paint.Style.STROKE
     }
-): Bitmap {
+): Bitmap? {
     val pathRect = RectF()
     computeBounds(pathRect, true)
     return bitmapCanvas(pathRect.width().toInt(), pathRect.height().toInt()) {

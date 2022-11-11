@@ -24,10 +24,10 @@ class SvgGraphicsParser : PathGraphicsParser() {
                 val sharpDrawable = Svg.loadSvgPathDrawable(data, -1, null, item.paint, 0, 0)
                 if (sharpDrawable != null) {
                     //
-                    if (bean.width == 0f) {
+                    if (bean._width == 0f) {
                         bean.width = sharpDrawable.pathBounds.width().toMm()
                     }
-                    if (bean.height == 0f) {
+                    if (bean._height == 0f) {
                         bean.height = sharpDrawable.pathBounds.height().toMm()
                     }
                     //

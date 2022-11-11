@@ -20,10 +20,10 @@ class OvalGraphicsParser : PathGraphicsParser() {
             item.updatePaint()
 
             //rx ry 支持
-            if (bean.width == 0f) {
+            if (bean._width == 0f) {
                 bean.width = bean.rx * 2
             }
-            if (bean.height == 0f) {
+            if (bean._height == 0f) {
                 bean.height = bean.ry * 2
             }
 

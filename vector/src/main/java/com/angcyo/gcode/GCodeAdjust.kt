@@ -37,7 +37,9 @@ class GCodeAdjust {
         @Pixel
         bounds: RectF,
         rotate: Float,
-        outputFile: File
+        isAutoCnc: Boolean,
+        isLast: Boolean,
+        outputFile: File,
     ): File {
         gCodeHandler.reset()
         val config = GCodeParseConfig(gCode, mmValue, inchValue)
@@ -84,6 +86,14 @@ class GCodeAdjust {
         val gcode = outputFile.readText()
         outputFile.writer().use { writer ->
             gCodeTranslation(gcode, rotateBounds.left, rotateBounds.top, writer)
+            if (isLast) {
+                //平移完之后, 写入G0 0 0
+                GCodeWriteHandler().apply {
+                    this.writer = writer
+                    this.isAutoCnc = isAutoCnc
+                    onPathEnd()
+                }
+            }
         }
         return outputFile
     }

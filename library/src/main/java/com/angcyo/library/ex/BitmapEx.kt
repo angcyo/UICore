@@ -358,13 +358,21 @@ fun Bitmap.colorChannel(
     return result
 }
 
-/**[Canvas]*/
+/**[Canvas]
+ * Canvas: trying to draw too large(1099123560bytes) bitmap.
+ * */
 fun bitmapCanvas(
     width: Int,
     height: Int,
     config: Bitmap.Config = Bitmap.Config.ARGB_8888,
     action: Canvas.() -> Unit
-): Bitmap {
+): Bitmap? {
+    val size = width * height * 4
+    val max = 100 * 1024 * 1024
+    if (size > max) {
+        L.e("图片过大, 无法分配!")
+        return null
+    }
     val bitmap = Bitmap.createBitmap(width, height, config)
     val canvas = Canvas(bitmap)
     canvas.action()

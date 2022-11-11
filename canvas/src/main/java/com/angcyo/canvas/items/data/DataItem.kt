@@ -19,8 +19,6 @@ import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.CanvasConstant
-import com.angcyo.library.component.pool.acquireTempRectF
-import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.bitmapCanvas
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.rotate
@@ -31,14 +29,6 @@ import com.angcyo.library.ex.rotate
  * @since 2022/09/21
  */
 open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveProvider {
-
-    /**自动雕刻模式下, [drawable]有些时候会draw不出图片, 所以这里使用[Bitmap]对象存储一遍
-     * 此图片没有缩放和旋转
-     * 在[DataPathItem]数据模式下, 使用比较多
-     *
-     * [com.angcyo.canvas.graphics.PathGraphicsParser.createPathDrawable]
-     * */
-    var _cacheBitmap: Bitmap? = null
 
     /**
      * 通过改变此对象, 呈现出不同的可视图画
@@ -53,12 +43,12 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
     }
 
     override fun getItemScaleX(renderer: BaseItemRenderer<*>): Float {
-        val width = MM_UNIT.convertValueToPixel(dataBean.width)
+        val width = MM_UNIT.convertValueToPixel(dataBean._width)
         return renderer.getBounds().width() / width
     }
 
     override fun getItemScaleY(renderer: BaseItemRenderer<*>): Float {
-        val height = MM_UNIT.convertValueToPixel(dataBean.height)
+        val height = MM_UNIT.convertValueToPixel(dataBean._height)
         return renderer.getBounds().height() / height
     }
 
@@ -157,25 +147,16 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
             return result.toBitmap()
             */
 
-            val cacheBitmap = _cacheBitmap
             val result = bitmapCanvas(width.toInt(), height.toInt()) {
                 rotate(rotate, width / 2, height / 2)
                 translate(width / 2 - renderWidth / 2, height / 2 - renderHeight / 2)
-                if (cacheBitmap == null) {
-                    //无缓存图
-                    drawable.setBounds(
-                        renderBounds.left.toInt(),
-                        renderBounds.top.toInt(),
-                        renderBounds.right.toInt(),
-                        renderBounds.bottom.toInt()
-                    )
-                    drawable.draw(this)
-                } else {
-                    val rect = acquireTempRectF()
-                    rect.set(0f, 0f, cacheBitmap.width.toFloat(), cacheBitmap.height.toFloat())
-                    drawBitmap(cacheBitmap, null, rect, Paint(Paint.ANTI_ALIAS_FLAG))
-                    rect.release()
-                }
+                drawable.setBounds(
+                    0,
+                    0,
+                    renderBounds.width().toInt(),
+                    renderBounds.height().toInt()
+                )
+                drawable.draw(this)
             }
             return result
         }

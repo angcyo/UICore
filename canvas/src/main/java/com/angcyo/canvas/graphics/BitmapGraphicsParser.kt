@@ -28,10 +28,10 @@ class BitmapGraphicsParser : IGraphicsParser {
             try {
                 val originBitmap = bean.imageOriginal?.toBitmapOfBase64()
                 originBitmap?.let {
-                    if (bean.width <= 0) {
+                    if (bean._width <= 0) {
                         bean.width = it.width.toMm()
                     }
-                    if (bean.height <= 0) {
+                    if (bean._height <= 0) {
                         bean.height = it.height.toMm()
                     }
                 }
@@ -43,7 +43,7 @@ class BitmapGraphicsParser : IGraphicsParser {
                         OpenCV.bitmapToGCode(
                             app(),
                             originBitmap,
-                            (bean.width / 2).toMm().toDouble(),
+                            (bean._width / 2).toMm().toDouble(),
                             lineSpace = bean.gcodeLineSpace.toDouble(),
                             direction = bean.gcodeDirection,
                             angle = bean.gcodeAngle.toDouble(),

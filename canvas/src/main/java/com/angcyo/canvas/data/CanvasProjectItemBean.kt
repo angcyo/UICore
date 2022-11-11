@@ -40,10 +40,10 @@ data class CanvasProjectItemBean(
 
     /**数据原始的宽高, 线条的长度*/
     @MM
-    var width: Float = 0f,
+    var width: Float? = null,
 
     @MM
-    var height: Float = 0f,
+    var height: Float? = null,
 
     /**旋转的角度*/
     var angle: Float = 0f,
@@ -313,15 +313,23 @@ data class CanvasProjectItemBean(
     @Transient
     var _dataMode: Int? = null,
 
-    /**是否生成一张缓存的图片
-     * [com.angcyo.canvas.items.data.DataItem._cacheBitmap]*/
-    var _enableCacheBitmap: Boolean? = null,
-
     /**是否处于调试模式下*/
     var _debug: Boolean? = null
 
     //endregion ---私有属性---
 ) {
+
+    val _width: Float
+        get() = width ?: 0f
+
+    val _height: Float
+        get() = height ?: 0f
+
+    val _scaleX: Float
+        get() = scaleX ?: 1f
+
+    val _scaleY: Float
+        get() = scaleY ?: 1f
 
     companion object {
 
@@ -341,15 +349,15 @@ data class CanvasProjectItemBean(
         val valueUnit = MM_UNIT
         val l = valueUnit.convertValueToPixel(left)
         val t = valueUnit.convertValueToPixel(top)
-        var w = valueUnit.convertValueToPixel(width)
-        var h = valueUnit.convertValueToPixel(height)
+        var w = valueUnit.convertValueToPixel(_width)
+        var h = valueUnit.convertValueToPixel(_height)
 
         //限制大小
         w = max(PathGraphicsParser.MIN_PATH_SIZE, w)
         h = max(PathGraphicsParser.MIN_PATH_SIZE, h)
 
-        val sx = scaleX ?: 1f
-        val sy = scaleY ?: 1f
+        val sx = _scaleX
+        val sy = _scaleY
         bounds.set(l, t, l + w * sx, t + h * sy)
         return bounds
     }
@@ -359,11 +367,11 @@ data class CanvasProjectItemBean(
      * [h] 界面上显示的大小, 像素*/
     fun updateScale(@Pixel w: Float, @Pixel h: Float) {
         val valueUnit = MM_UNIT
-        if (w != 0f && width != 0f) {
-            scaleX = (valueUnit.convertPixelToValue(w).toFloat() / width).ensure()
+        if (w != 0f && _width != 0f) {
+            scaleX = (valueUnit.convertPixelToValue(w).toFloat() / _width).ensure(1f)
         }
-        if (h != 0f && height != 0f) {
-            scaleY = (valueUnit.convertPixelToValue(h).toFloat() / height).ensure()
+        if (h != 0f && _height != 0f) {
+            scaleY = (valueUnit.convertPixelToValue(h).toFloat() / _height).ensure(1f)
         }
     }
 

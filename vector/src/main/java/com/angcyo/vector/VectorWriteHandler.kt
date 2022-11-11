@@ -425,7 +425,7 @@ abstract class VectorWriteHandler {
         for (path in pathList) {
             if (Debug.isDebuggerConnected()) {
                 val bitmap = path.toBitmap()
-                L.i(bitmap.byteCount)
+                L.i(bitmap?.byteCount)
             }
             pathStrokeToVector(
                 path,
@@ -460,7 +460,7 @@ abstract class VectorWriteHandler {
         for (path in pathList) {
             if (Debug.isDebuggerConnected()) {
                 val bitmap = path.toBitmap()
-                L.i(bitmap.byteCount)
+                L.i(bitmap?.byteCount)
             }
             pathFillToVector(
                 path,

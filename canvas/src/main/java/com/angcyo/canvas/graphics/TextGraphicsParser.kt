@@ -17,6 +17,7 @@ import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.bezier
 import com.angcyo.library.ex.computePathBounds
+import com.angcyo.library.ex.ensure
 import com.angcyo.library.ex.textBounds
 import com.angcyo.library.gesture.RectScaleGestureHandler
 
@@ -30,14 +31,14 @@ class TextGraphicsParser : IGraphicsParser {
     override fun parse(bean: CanvasProjectItemBean): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_TEXT && !bean.text.isNullOrEmpty()) {
             val item = DataTextItem(bean)
-            updateText(item)
+            updateTextDrawable(item)
             return item
         }
         return super.parse(bean)
     }
 
     /**更新文本内容, 重新绘制信息*/
-    fun updateText(item: DataTextItem) {
+    fun updateTextDrawable(item: DataTextItem) {
         val bean = item.dataBean
         item.updatePaint()
 
@@ -61,8 +62,22 @@ class TextGraphicsParser : IGraphicsParser {
         val newWidth = textWidth.toMm()
         val newHeight = textHeight.toMm()
 
-        bean.width = newWidth
-        bean.height = newHeight
+        if (bean.width == null) {
+            bean.width = newWidth
+        } else {
+            if (bean.scaleX == null) {
+                val sx = (bean._width / newWidth).ensure(1f)
+                bean.scaleX = sx
+            }
+        }
+        if (bean.height == null) {
+            bean.height = newHeight
+        } else {
+            if (bean.scaleY == null) {
+                val sy = (bean._height / newHeight).ensure(1f)
+                bean.scaleY = sy
+            }
+        }
 
         initDataMode(bean, item.textPaint)
     }
@@ -81,15 +96,15 @@ class TextGraphicsParser : IGraphicsParser {
         val rect = acquireTempRectF()
         rect.left = bean.left
         rect.top = bean.top
-        rect.right = bean.left + bean.width
-        rect.bottom = bean.top + bean.height
+        rect.right = bean.left + bean._width
+        rect.bottom = bean.top + bean._height
         bean.updateToRenderBounds(rect)
 
         //计算偏移
         val offsetPoint = RectScaleGestureHandler.calcRectUpdateOffset(
             rect,
-            textWidth * (bean.scaleX ?: 1f),
-            textHeight * (bean.scaleX ?: 1f),
+            textWidth * bean._scaleX,
+            textHeight * bean._scaleX,
             bean.angle
         )
         //核心
