@@ -1,5 +1,6 @@
 package com.angcyo.svg
 
+import com.angcyo.library.unit.MmValueUnit
 import com.angcyo.vector.VectorWriteHandler
 
 /**
@@ -10,6 +11,11 @@ import com.angcyo.vector.VectorWriteHandler
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
 class SvgWriteHandler : VectorWriteHandler() {
+
+    init {
+        //使用mm单位
+        unit = MmValueUnit()
+    }
 
     override fun onPathStart() {
         super.onPathStart()
