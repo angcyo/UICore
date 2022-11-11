@@ -5,6 +5,7 @@ import com.angcyo.coroutine.withBlock
 import com.angcyo.coroutine.withMain
 import com.angcyo.http.rx.doMain
 import com.angcyo.library.ex.file
+import com.angcyo.library.ex.nowTime
 import com.angcyo.viewmodel.vmData
 import com.angcyo.viewmodel.vmDataOnce
 import java.lang.Long.max
@@ -16,6 +17,11 @@ import java.lang.Long.max
  */
 class CacheModel : LifecycleViewModel() {
 
+    companion object {
+        /**数据通知频率, 1s通知一次*/
+        var NOTIFY_FREQUENCY = 1000
+    }
+
     /**缓存信息集合*/
     val cacheInfoListData = vmData(mutableListOf<CacheInfo>())
 
@@ -24,6 +30,8 @@ class CacheModel : LifecycleViewModel() {
 
     /**缓存大小计算通知*/
     val cacheSizeOnceData = vmDataOnce<CacheInfo>()
+
+    //region---操作方法---
 
     /**添加一个缓存信息*/
     fun addCacheInfo(info: CacheInfo) {
@@ -58,6 +66,10 @@ class CacheModel : LifecycleViewModel() {
         _clearCache(cache)
     }
 
+    //endregion---操作方法---
+
+    //region---内部方法---
+
     /**计算缓存总大小*/
     fun _computeSumSize() {
         val size = cacheInfoListData.value?.sumOf { max(it._size, 0) } ?: -1L
@@ -69,6 +81,7 @@ class CacheModel : LifecycleViewModel() {
         launchLifecycle {
             withBlock {
                 //先枚举所有文件, 再访问文件夹
+                var lastNotifyTime = 0L
                 cacheInfo.path.file().walkBottomUp().forEach {
                     if (it.isFile) {
                         cacheInfo._cacheFileList.add(it.absolutePath)
@@ -78,10 +91,18 @@ class CacheModel : LifecycleViewModel() {
                             cacheInfo._size = 0
                         }
                     }
-                    _computeSumSize()
-                    withMain {
-                        cacheSizeOnceData.setValue(cacheInfo)
+                    val nowTime = nowTime()
+                    if (nowTime - lastNotifyTime >= NOTIFY_FREQUENCY) {
+                        _computeSumSize()
+                        withMain {
+                            cacheSizeOnceData.setValue(cacheInfo)
+                        }
+                        lastNotifyTime = nowTime
                     }
+                }
+                _computeSumSize()
+                withMain {
+                    cacheSizeOnceData.setValue(cacheInfo)
                 }
             }
         }
@@ -116,6 +137,7 @@ class CacheModel : LifecycleViewModel() {
         }
     }
 
+    //endregion---内部方法---
 }
 
 data class CacheInfo(
