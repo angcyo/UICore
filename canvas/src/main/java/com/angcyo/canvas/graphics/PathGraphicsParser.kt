@@ -43,38 +43,43 @@ open class PathGraphicsParser : IGraphicsParser {
             //
             val data = bean.path
             if (!data.isNullOrEmpty()) {
-                /*if (data.startsWith("[")) {
-                    //svg数组
-                } else {
-                    //svg对象
-                }*/
-
-                val item = DataPathItem(bean)
-                item.updatePaint()
-                val path = Sharp.loadPath(data)
-
-                //
-                val pathBounds = acquireTempRectF()
-                path.computePathBounds(pathBounds)
-                if (bean._width == 0f) {
-                    bean.width = pathBounds.width().toMm()
-                }
-                if (bean._height == 0f) {
-                    bean.height = pathBounds.height().toMm()
-                }
-                //
-                pathBounds.release()
-
-                //
-                item.addDataPath(path)
-                item.drawable = createPathDrawable(item) ?: return null
-
-                initDataMode(bean, item.paint)
-
-                return item
+                return parsePathItem(bean, data)
             }
         }
         return super.parse(bean)
+    }
+
+    /**svg 纯路径数据, MXXX LXXX*/
+    fun parsePathItem(bean: CanvasProjectItemBean, data: String): DataPathItem? {
+        /*if (data.startsWith("[")) {
+            //svg数组
+        } else {
+            //svg对象
+        }*/
+
+        val item = DataPathItem(bean)
+        item.updatePaint()
+        val path = Sharp.loadPath(data)
+
+        //
+        val pathBounds = acquireTempRectF()
+        path.computePathBounds(pathBounds)
+        if (bean._width == 0f) {
+            bean.width = pathBounds.width().toMm()
+        }
+        if (bean._height == 0f) {
+            bean.height = pathBounds.height().toMm()
+        }
+        //
+        pathBounds.release()
+
+        //
+        item.addDataPath(path)
+        item.drawable = createPathDrawable(item) ?: return null
+
+        initDataMode(bean, item.paint)
+
+        return item
     }
 
     /**创建绘制矢量的[Drawable] */

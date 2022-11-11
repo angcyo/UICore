@@ -5,6 +5,7 @@ import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataPathItem
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.canvas.utils.isSvgContent
 import com.angcyo.svg.Svg
 
 /**
@@ -21,20 +22,26 @@ class SvgGraphicsParser : PathGraphicsParser() {
                 val item = DataPathItem(bean)
                 item.updatePaint()
 
-                val sharpDrawable = Svg.loadSvgPathDrawable(data, -1, null, item.paint, 0, 0)
-                if (sharpDrawable != null) {
-                    //
-                    if (bean._width == 0f) {
-                        bean.width = sharpDrawable.pathBounds.width().toMm()
+                if (data.isSvgContent()) {
+                    //svg标签数据
+                    val sharpDrawable = Svg.loadSvgPathDrawable(data, -1, null, item.paint, 0, 0)
+                    if (sharpDrawable != null) {
+                        //
+                        if (bean._width == 0f) {
+                            bean.width = sharpDrawable.pathBounds.width().toMm()
+                        }
+                        if (bean._height == 0f) {
+                            bean.height = sharpDrawable.pathBounds.height().toMm()
+                        }
+                        //
+                        item.addDataPath(sharpDrawable.pathList)
+                        item.drawable = createPathDrawable(item) ?: return null
+                        initDataMode(bean, item.paint)
+                        return item
                     }
-                    if (bean._height == 0f) {
-                        bean.height = sharpDrawable.pathBounds.height().toMm()
-                    }
-                    //
-                    item.addDataPath(sharpDrawable.pathList)
-                    item.drawable = createPathDrawable(item) ?: return null
-                    initDataMode(bean, item.paint)
-                    return item
+                } else {
+                    //svg纯路径数据
+                    return parsePathItem(bean, data)
                 }
             }
         }
