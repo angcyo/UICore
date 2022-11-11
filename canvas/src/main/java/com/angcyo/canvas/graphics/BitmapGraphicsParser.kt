@@ -130,12 +130,11 @@ class BitmapGraphicsParser : IGraphicsParser {
                         item.modifyBitmap ?: item.meshBitmap ?: item.originBitmap ?: return null
                     wrapBitmap(item, bitmap)
 
-                    bean._dataMode = if (bean.imageFilter == CanvasConstant.DATA_MODE_DITHERING) {
-                        CanvasConstant.DATA_MODE_DITHERING
-                    } else {
-                        CanvasConstant.DATA_MODE_BLACK_WHITE
+                    bean._dataMode = when (bean.imageFilter) {
+                        CanvasConstant.DATA_MODE_DITHERING -> CanvasConstant.DATA_MODE_DITHERING
+                        CanvasConstant.DATA_MODE_GREY -> CanvasConstant.DATA_MODE_GREY //灰度
+                        else -> CanvasConstant.DATA_MODE_BLACK_WHITE
                     }
-
                     return item
                 }
             } catch (e: Exception) {
