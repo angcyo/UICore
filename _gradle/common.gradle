@@ -185,7 +185,8 @@ static def getLocalIp() {
             //println displayName + '/' + it.getName()
 
             displayName = displayName.toLowerCase()
-            if (displayName.contains("VMware".toLowerCase())) {
+            if (displayName.contains("VMware".toLowerCase()) ||
+                    displayName.contains("Virtual".toLowerCase())) {
                 //忽略虚拟ip
             } else {
                 it.getInetAddresses().each {
@@ -198,6 +199,7 @@ static def getLocalIp() {
             }
         }
     }
+    System.err.println("本机ip:" + ip)
     return ip
 }
 
