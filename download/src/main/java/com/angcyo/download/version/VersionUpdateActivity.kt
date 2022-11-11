@@ -36,7 +36,7 @@ import java.net.HttpURLConnection
 open class VersionUpdateActivity : BaseAppCompatActivity() {
 
     companion object {
-        /**忽略更新提示*/
+        /**忽略更新提示, 在显示过一次版本提示后忽略*/
         var isUpdateIgnore = false
     }
 
