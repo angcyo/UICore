@@ -70,11 +70,11 @@ class GCodeAdjust {
             gCodeHandler.transformPoint = { gCodeLineData, pointF ->
                 matrix.mapPoint(pointF, pointF)
             }
-            gCodeHandler.overrideGCommand = { firstCmd, xy, ij ->
-                overrideGCommand(writer, firstCmd, xy, ij)
+            gCodeHandler.overrideGCommand = { line, firstCmd, xy, ij ->
+                overrideGCommand(writer, line, firstCmd, xy, ij)
             }
             gCodeHandler.overrideCommand = { line ->
-                writer.appendLine(line.cmdString)
+                writer.appendLine(line.lineCode)
             }
             gCodeHandler.parseGCodeLineList(gCodeLineList)
         }
@@ -115,17 +115,14 @@ class GCodeAdjust {
             pointF.x += offsetLeft
             pointF.y += offsetTop
         }
-        gCodeHandler.overrideGCommand = { firstCmd, xy, ij ->
-            overrideGCommand(writer, firstCmd, xy, ij)
+        gCodeHandler.overrideGCommand = { line, firstCmd, xy, ij ->
+            overrideGCommand(writer, line, firstCmd, xy, ij)
         }
         gCodeHandler.overrideCommand = { line ->
-            writer.appendLine(line.cmdString)
+            writer.appendLine(line.lineCode)
         }
         //触发
         gCodeHandler.parseGCodeLineList(gCodeLineList)
-
-        //平移完之后, 写入G0 0 0
-        writer.append("G0 X0 Y0")
     }
 
     /**
@@ -134,6 +131,7 @@ class GCodeAdjust {
      * */
     private fun overrideGCommand(
         writer: OutputStreamWriter,
+        line: GCodeLineData,
         firstCmd: GCodeCmd,
         xy: PointD,
         ij: PointD?
@@ -153,7 +151,7 @@ class GCodeAdjust {
         }
 
         if (ij == null) {
-            writer.appendLine("${firstCmd.code} X${x.toFloat()} Y${y.toFloat()}")
+            writer.append("${firstCmd.code} X${x.toFloat()} Y${y.toFloat()}")
         } else {
             var i = ij.x + 0.0
             var j = ij.y + 0.0
@@ -172,8 +170,25 @@ class GCodeAdjust {
             //writer.append("X${x.decimal(4)} Y${y.decimal(4)} ")
             //writer.appendLine("I${i.decimal(4)} J${j.decimal(4)}")
             writer.append("X${x.toFloat()} Y${y.toFloat()} ")
-            writer.appendLine("I${i.toFloat()} J${j.toFloat()}")
+            writer.append("I${i.toFloat()} J${j.toFloat()}")
         }
+
+        //其他指令, 原封不动追加上去
+        line.cmdList.forEach { cmdData ->
+            val cmd = cmdData.cmd
+            if (cmd == "G" ||
+                cmd == "X" ||
+                cmd == "Y" ||
+                cmd == "I" ||
+                cmd == "J"
+            ) {
+                //no op
+            } else {
+                writer.append(" ")//空格隔开, 很关键
+                writer.append(cmdData.code)
+            }
+        }
+        writer.appendLine()
     }
 
 }

@@ -1,5 +1,9 @@
 package com.angcyo.gcode
 
+import com.angcyo.gcode.GCodeHelper.SPINDLE_AUTO
+import com.angcyo.gcode.GCodeHelper.SPINDLE_OFF
+import com.angcyo.gcode.GCodeHelper.SPINDLE_ON
+
 /**
  * GCode 每一行的数据
  * 例如: G0 X-7.050000 Y21.600000
@@ -54,21 +58,25 @@ fun List<GCodeLineData>.lastValidIndex(): Int {
     return -1
 }
 
-/**主轴是否打开*/
-fun GCodeLineData.isSpindleOn(def: Boolean): Boolean {
-    val firstCmd = cmdList.firstOrNull()
-    val firstCmdString = firstCmd?.cmd
-    if (firstCmdString?.startsWith("M") == true) {
-        var isSpindleOn = true //M05指令:主轴关闭, M03:主轴打开
-        val number = firstCmd.number.toInt()
-        when (number) {
-            5 -> isSpindleOn = false
-            3 -> isSpindleOn = true
-            4 -> {
+/**主轴类型
+ *  [SPINDLE_ON]
+ *  [SPINDLE_OFF]
+ *  [SPINDLE_AUTO]
+ *  */
+fun GCodeLineData.spindleType(def: Int): Int {
+    var result = def
+    cmdList.forEach { cmdData ->
+        val cmdString = cmdData.cmd
+        if (cmdString.startsWith("M")) {
+            //M05指令:主轴关闭, M03:主轴打开 M04:自动
+            result = when (cmdData.number.toInt()) {
+                5 -> SPINDLE_OFF
+                3 -> SPINDLE_ON
                 //自动CNC
+                4 -> SPINDLE_AUTO
+                else -> def
             }
         }
-        return isSpindleOn
     }
-    return def
+    return result
 }

@@ -54,6 +54,15 @@ object GCodeHelper {
      * */
     var amendGCodeCmd: Boolean = true
 
+    /**主轴打开*/
+    const val SPINDLE_ON = 3
+
+    /**主轴关闭*/
+    const val SPINDLE_OFF = 5
+
+    /**主轴自动打开/关闭*/
+    const val SPINDLE_AUTO = 4
+
     /**[GCodeParseConfig]*/
     fun gcodeParseConfig(context: Context, text: String): GCodeParseConfig {
         //1毫米等于多少像素
@@ -95,8 +104,11 @@ object GCodeHelper {
         val gCodeLineDataList = mutableListOf<GCodeLineData>()
         _lastRatio = config.mmRatio // 默认使用毫米单位
         config.text.lines().forEach { line ->
-            val gCodeLineData = _parseGCodeLine(line, config.mmRatio, config.inRatio)
-            gCodeLineDataList.add(gCodeLineData)
+            if (line.isNotBlank()) {
+                //不为空
+                val gCodeLineData = _parseGCodeLine(line, config.mmRatio, config.inRatio)
+                gCodeLineDataList.add(gCodeLineData)
+            }
         }
         return gCodeLineDataList
     }
@@ -153,7 +165,7 @@ object GCodeHelper {
         //注释
         var comment: String? = null
 
-        var cmdString: String = line
+        var cmdString: String = line//G00 G17 G40 G21 G54
         val commentIndex = line.indexOf(";")
         if (commentIndex == -1) {
             //无注释
@@ -285,7 +297,7 @@ object GCodeHelper {
 
         //坐标单位是否是绝对位置, 否则就是相对位置, 相对于上一次的位置
         private var _isAbsolutePosition = true
-        private var _isMoveTo = false
+        private var _isMoveTo = true
 
         //上一次xy的数据
         private var _lastX = 0.0
@@ -303,10 +315,14 @@ object GCodeHelper {
         var transformPoint: ((GCodeLineData, point: PointD) -> Unit)? = null
 
         /**重写G指令*/
-        var overrideGCommand: ((firstCmd: GCodeCmd, xy: PointD, ij: PointD?) -> Unit)? = null
+        var overrideGCommand: ((line: GCodeLineData, firstCmd: GCodeCmd, xy: PointD, ij: PointD?) -> Unit)? =
+            null
 
         /**重写其他非G指令*/
         var overrideCommand: ((line: GCodeLineData) -> Unit)? = null
+
+        //M05指令:主轴关闭, M03:主轴打卡 M04自动
+        private var spindleType = SPINDLE_OFF
 
         fun reset() {
             _lastX = 0.0
@@ -319,6 +335,7 @@ object GCodeHelper {
             transformPoint = null
             overrideGCommand = null
             overrideCommand = null
+            spindleType = SPINDLE_OFF
         }
 
         /**入口, 开始解析[GCodeLineData]*/
@@ -370,10 +387,10 @@ object GCodeHelper {
             gCodeBounds.set(minX, minY, maxX, maxY)*/
 
             //解析一行的数据
-            var isSpindleOn = true //M05指令:主轴关闭, M03:主轴打卡
+            spindleType = SPINDLE_OFF
             for (lineData in gCodeLineDataList) {
-                isSpindleOn = lineData.isSpindleOn(isSpindleOn)
-                parseGCodeLine(lineData, isSpindleOn, path)
+                spindleType = lineData.spindleType(spindleType)
+                parseGCodeLine(lineData, path)
             }
 
             path.computeBounds(gCodeBounds, true)
@@ -391,25 +408,24 @@ object GCodeHelper {
 
         /**解析所有GCode数据*/
         fun parseGCodeLineList(gCodeLineList: List<GCodeLineData>) {
-            var isSpindleOn = true //M05指令:主轴关闭, M03:主轴打卡
+            spindleType = SPINDLE_OFF
             gCodeLineList.forEach { line ->
-                isSpindleOn = line.isSpindleOn(isSpindleOn)
-                if (!parseGCodeLine(line, isSpindleOn)) {
+                spindleType = line.spindleType(spindleType)
+                if (!parseGCodeLine(line)) {
                     //其他指令, 原封不动写入
                     overrideCommand?.invoke(line)
                 }
             }
         }
 
-        /**[isSpindleOn] 主轴是否开启; 主轴关闭后, 所有的G指令操作, 都变成Move
-         * 返回值表示是否处理了*/
-        fun parseGCodeLine(
-            line: GCodeLineData,
-            isSpindleOn: Boolean,
-            toPath: Path = path
-        ): Boolean {
+        /**主轴关闭后, 所有的G指令操作, 都变成Move
+         *  返回值表示是否处理了*/
+        fun parseGCodeLine(line: GCodeLineData, toPath: Path = path): Boolean {
             val firstCmd = line.cmdList.firstOrNull()
             val firstCmdString = firstCmd?.cmd
+
+            //主轴状态 主轴关闭后, 所有的G指令操作, 都变成Move
+            var isSpindleOn = spindleType == SPINDLE_ON
 
             if (firstCmdString?.startsWith("G") == true) {
                 //G指令
@@ -438,29 +454,63 @@ object GCodeHelper {
 
                     when (number) {
                         0 -> { //G0
-                            toPath.moveTo(x.toFloat(), y.toFloat())
-                            _onMoveTo(x, y)
-                            overrideGCommand?.invoke(firstCmd, _tempXYPoint, null)
+                            isSpindleOn = if (spindleType == SPINDLE_AUTO) {
+                                false
+                            } else {
+                                isSpindleOn
+                            }
+
+                            if (isSpindleOn) {
+                                toPath.moveTo(x.toFloat(), y.toFloat())
+                                _onMoveTo(x, y)
+                            } else {
+                                //主轴关闭的情况下, G0操作留到下一次G1进行
+                                _isMoveTo = false
+                                setLastLocation(x, y)
+                            }
+                            overrideGCommand?.invoke(line, firstCmd, _tempXYPoint, null)
                         }
                         1 -> { //G1
-                            if (isSpindleOn && _isMoveTo) {
+                            isSpindleOn = if (spindleType == SPINDLE_AUTO) {
+                                true
+                            } else {
+                                isSpindleOn
+                            }
+
+                            if (isSpindleOn) {
+                                if (!_isMoveTo) {
+                                    toPath.moveTo(_lastX.toFloat(), _lastY.toFloat())
+                                    _onMoveTo(_lastX, _lastY)
+                                }
                                 toPath.lineTo(x.toFloat(), y.toFloat())
                                 setLastLocation(x, y)
                             } else {
-                                toPath.moveTo(x.toFloat(), y.toFloat())
-                                _onMoveTo(x, y)
+                                _isMoveTo = false
+                                setLastLocation(x, y)
                             }
-                            overrideGCommand?.invoke(firstCmd, _tempXYPoint, null)
+                            overrideGCommand?.invoke(line, firstCmd, _tempXYPoint, null)
                         }
                         2, 3 -> { //G2 G3, G2是顺时针圆弧移动，G3是逆时针圆弧移动。
                             //x1 y1, x2, y2 经过i j未中心的圆弧
-                            if (isSpindleOn && _isMoveTo) {
+
+                            isSpindleOn = if (spindleType == SPINDLE_AUTO) {
+                                true
+                            } else {
+                                isSpindleOn
+                            }
+
+                            if (isSpindleOn) {
                                 var i = line.getGCodePixel("I") //圆心距离当前位置的x偏移量
                                 var j = line.getGCodePixel("J") //圆心距离当前位置的y偏移量
 
                                 if (i == null || j == null) {
                                     L.w("未找到i,j->${line.cmdString}")
                                     return false
+                                }
+
+                                if (!_isMoveTo) {
+                                    toPath.moveTo(_lastX.toFloat(), _lastY.toFloat())
+                                    _onMoveTo(_lastX, _lastY)
                                 }
 
                                 //之前的圆心
@@ -475,7 +525,7 @@ object GCodeHelper {
                                 j = _tempIJPoint.y - _lastY
                                 _tempIJPoint.set(i, j)
 
-                                overrideGCommand?.invoke(firstCmd, _tempXYPoint, _tempIJPoint)
+                                overrideGCommand?.invoke(line, firstCmd, _tempXYPoint, _tempIJPoint)
 
                                 circleX = _lastX + i
                                 circleY = _lastY + j
@@ -530,8 +580,8 @@ object GCodeHelper {
                                     _onMoveTo(endX, endY)
                                 }
                             } else {
-                                toPath.moveTo(x.toFloat(), y.toFloat())
-                                _onMoveTo(x, y)
+                                _isMoveTo = false
+                                setLastLocation(x, y)
                             }
                         }
                     }
