@@ -224,6 +224,11 @@ fun String.parseTime(pattern: String = "yyyy-MM-dd"): Long {
 /**将毫秒, 拆成 d h m s sss数组*/
 fun Long.toTimes(): LongArray {
 
+    if (this <= 0) {
+        //
+        return longArrayOf(0, 0, 0, 0, 0)
+    }
+
     //剩余多少毫秒
     val ms = this % 1000
 
