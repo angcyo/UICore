@@ -8,6 +8,7 @@ import com.angcyo.viewmodel.vmDataNull
 
 /**
  *
+ * 监听应用程序是否在后台运行
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/12/30

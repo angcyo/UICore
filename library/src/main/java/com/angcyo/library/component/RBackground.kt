@@ -54,6 +54,7 @@ object RBackground {
         }
 
         override fun onActivityStarted(activity: Activity) {
+            lastActivityRef = WeakReference(activity)
             changeItem(activity.hashCode(), activity.javaClass.name, STARTED)
 
             observers.forEach {

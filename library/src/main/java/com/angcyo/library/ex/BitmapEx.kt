@@ -294,19 +294,25 @@ fun ByteArray.toBitmap(): Bitmap {
 /**[rotate]纠正旋转角度*/
 fun File.toBitmap(rotate: Boolean = true) = absolutePath.toBitmap(rotate)
 
-/**将文件路径转换成[Bitmap]对象*/
-fun String.toBitmap(rotate: Boolean = true): Bitmap? {
+/**将文件路径转换成[Bitmap]对象
+ * 读取sd卡的文件, 需要权限
+ * [android.Manifest.permission.READ_EXTERNAL_STORAGE]*/
+fun String.toBitmap(rotate: Boolean = true): Bitmap? = try {
     val file = File(this)
     if (!file.exists()) {
-        return null
-    }
-    return BitmapFactory.decodeFile(this).run {
-        if (rotate) {
-            rotate(file.exifOrientation().toFloat())
-        } else {
-            this
+        null
+    } else {
+        BitmapFactory.decodeFile(this).run {
+            if (rotate) {
+                rotate(file.exifOrientation().toFloat())
+            } else {
+                this
+            }
         }
     }
+} catch (e: Exception) {
+    e.printStackTrace()
+    null
 }
 
 /**获取图片的旋转角度*/
