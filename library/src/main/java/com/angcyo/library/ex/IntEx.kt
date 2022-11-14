@@ -3,6 +3,7 @@ package com.angcyo.library.ex
 import android.os.SystemClock
 import java.math.BigDecimal
 import java.text.DecimalFormat
+import java.text.NumberFormat
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
@@ -207,3 +208,11 @@ fun Double.toLossyFloat(threshold: Double = 0.001): Float = if (this.absoluteVal
 } else {
     this
 }.toFloat()
+
+/**保留小数点多少位*/
+fun Double.formatShow(n: Int = 2): String {
+    val instance = NumberFormat.getInstance()
+    instance.isGroupingUsed = false //设置不使用科学计数器
+    instance.maximumFractionDigits = n //小数点最大位数
+    return instance.format(this)
+}
