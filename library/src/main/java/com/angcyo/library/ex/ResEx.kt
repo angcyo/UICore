@@ -156,7 +156,7 @@ fun _string(@StringRes id: Int): String {
 }
 
 fun _string(@StringRes id: Int, vararg formatArgs: Any): String {
-    return app().resources.getString(id, formatArgs)
+    return app().resources.getString(id, *formatArgs)
 }
 
 fun _stringArray(@ArrayRes id: Int): Array<String> {
