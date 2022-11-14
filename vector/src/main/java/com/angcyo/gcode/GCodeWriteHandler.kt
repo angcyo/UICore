@@ -1,5 +1,6 @@
 package com.angcyo.gcode
 
+import com.angcyo.library.ex.toLossyFloat
 import com.angcyo.library.unit.InchValueUnit
 import com.angcyo.vector.VectorWriteHandler
 
@@ -59,7 +60,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
             xValue = unit?.convertPixelToValue(x) ?: x
             yValue = unit?.convertPixelToValue(y) ?: y
         }
-        writer?.appendLine("G0 X${xValue.toFloat()} Y${yValue.toFloat()}")
+        writer?.appendLine("G0 X${xValue.toLossyFloat()} Y${yValue.toLossyFloat()}")
     }
 
     override fun onLineToPoint(x: Double, y: Double) {
@@ -71,7 +72,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
             xValue = unit?.convertPixelToValue(x) ?: x
             yValue = unit?.convertPixelToValue(y) ?: y
         }
-        writer?.appendLine("G1 X${xValue.toFloat()} Y${yValue.toFloat()}")
+        writer?.appendLine("G1 X${xValue.toLossyFloat()} Y${yValue.toLossyFloat()}")
     }
 
     //region ---core---

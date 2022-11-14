@@ -3,6 +3,7 @@ package com.angcyo.library.ex
 import android.os.SystemClock
 import java.math.BigDecimal
 import java.text.DecimalFormat
+import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
 
@@ -195,3 +196,14 @@ fun Double.ensure(def: Double = 1.0): Double {
 
 fun Double.eq(other: Double): Boolean =
     java.lang.Double.doubleToLongBits(this) == java.lang.Double.doubleToLongBits(other)
+
+/**有损转成[Float]类型
+ * 0.00001 -> 1.0E-5
+ * 0.0001 -> 1.0E-4
+ * 0.001 -> 0.001
+ * */
+fun Double.toLossyFloat(threshold: Double = 0.001): Float = if (this.absoluteValue <= threshold) {
+    0.0
+} else {
+    this
+}.toFloat()
