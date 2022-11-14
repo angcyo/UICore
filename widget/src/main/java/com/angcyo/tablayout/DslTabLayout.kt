@@ -46,8 +46,12 @@ open class DslTabLayout(
     /**item是否支持选择, 只限制点击事件, 不限制滚动事件*/
     var itemEnableSelector = true
 
-    /**当子Item数量大于等于指定数量时,开启等宽,此属性优先级最高, 负数不开启*/
-    var itemEquWidthCount = -1
+    /**当子Item数量在此范围内时,开启等宽,此属性优先级最高
+     * [~3] 小于等于3个
+     * [3~] 大于等于3个
+     * [3~5] 3<= <=5
+     * */
+    var itemEquWidthCountRange: IntRange? = null
 
     /**智能判断Item是否等宽.
      * 如果所有子项, 未撑满tab时, 则开启等宽模式.此属性会覆盖[itemIsEquWidth]*/
@@ -181,7 +185,7 @@ open class DslTabLayout(
                     "选择:[$fromIndex]->${selectList} reselect:$reselect fromUser:$fromUser".logi()
                 }
 
-                val toIndex = selectList.last()
+                val toIndex = selectList.lastOrNull() ?: -1
                 _animateToItem(fromIndex, toIndex)
 
                 _scrollToTarget(toIndex, tabIndicator.indicatorAnim)
@@ -202,8 +206,28 @@ open class DslTabLayout(
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DslTabLayout)
         itemIsEquWidth =
             typedArray.getBoolean(R.styleable.DslTabLayout_tab_item_is_equ_width, itemIsEquWidth)
-        itemEquWidthCount =
-            typedArray.getInt(R.styleable.DslTabLayout_tab_item_equ_width_count, itemEquWidthCount)
+        val maxEquWidthCount =
+            typedArray.getInt(R.styleable.DslTabLayout_tab_item_equ_width_count, -1)
+        if (maxEquWidthCount >= 0) {
+            itemEquWidthCountRange = IntRange(maxEquWidthCount, Int.MAX_VALUE)
+        }
+        if (typedArray.hasValue(R.styleable.DslTabLayout_tab_item_equ_width_count_range)) {
+            val equWidthCountRangeString =
+                typedArray.getString(R.styleable.DslTabLayout_tab_item_equ_width_count_range)
+            if (equWidthCountRangeString.isNullOrBlank()) {
+                itemEquWidthCountRange = null
+            } else {
+                val rangeList = equWidthCountRangeString.split("~")
+                if (rangeList.size() >= 2) {
+                    val min = rangeList.getOrNull(0)?.toIntOrNull() ?: 0
+                    val max = rangeList.getOrNull(1)?.toIntOrNull() ?: Int.MAX_VALUE
+                    itemEquWidthCountRange = IntRange(min, max)
+                } else {
+                    val min = rangeList.getOrNull(0)?.toIntOrNull() ?: Int.MAX_VALUE
+                    itemEquWidthCountRange = IntRange(min, Int.MAX_VALUE)
+                }
+            }
+        }
         itemAutoEquWidth = typedArray.getBoolean(
             R.styleable.DslTabLayout_tab_item_auto_equ_width,
             itemAutoEquWidth
@@ -345,7 +369,7 @@ open class DslTabLayout(
         configTabLayoutConfig {
             config()
             onSelectIndexChange = { fromIndex, selectIndexList, reselect, fromUser ->
-                action(fromIndex, selectIndexList.first(), reselect, fromUser)
+                action(fromIndex, selectIndexList.firstOrNull() ?: -1, reselect, fromUser)
             }
         }
     }
@@ -696,8 +720,8 @@ open class DslTabLayout(
             itemIsEquWidth = childMaxWidth <= widthSize
         }
 
-        if (itemEquWidthCount >= 0) {
-            itemIsEquWidth = visibleChildCount >= itemEquWidthCount
+        itemEquWidthCountRange?.let {
+            itemIsEquWidth = it.contains(visibleChildCount)
         }
 
         //等宽时, child宽度的测量模式
@@ -958,8 +982,8 @@ open class DslTabLayout(
             itemIsEquWidth = childMaxHeight <= heightSize
         }
 
-        if (itemEquWidthCount >= 0) {
-            itemIsEquWidth = visibleChildCount >= itemEquWidthCount
+        itemEquWidthCountRange?.let {
+            itemIsEquWidth = it.contains(visibleChildCount)
         }
 
         //等宽时, child高度的测量模式
