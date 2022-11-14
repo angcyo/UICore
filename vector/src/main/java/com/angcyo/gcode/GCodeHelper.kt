@@ -48,12 +48,6 @@ object GCodeHelper {
     //坐标单位对应的像素比例 (厘米, 英寸)
     private var _lastRatio = 1.0
 
-    /**修正GCode残缺指令
-     * [1.6004 Y17.2065 I45.0088 J0.] -> [G2 X0 Y17.2065 I45.0088 J0.]
-     * [1.6004 Y17.2065] -> [G1 X0 Y17.2065]
-     * */
-    var amendGCodeCmd: Boolean = true
-
     /**主轴打开*/
     const val SPINDLE_ON = 3
 
@@ -171,14 +165,14 @@ object GCodeHelper {
             //无注释
         } else {
             //有注释
-            cmdString = line.substring(0, commentIndex)
+            cmdString = line.substring(0, commentIndex).uppercase()
             comment = line.substring(commentIndex + 1, line.length)
         }
 
         var cmdStringList = cmdString.split(' ')//G1  X81.3282 Y52.9104;有空格隔开的指令
         if (cmdStringList.size() <= 1) {
             if (cmdString.contains("X") ||
-                cmdString.contains("y") ||
+                cmdString.contains("Y") ||
                 cmdString.contains("I") ||
                 cmdString.contains("J")
             ) {
@@ -227,40 +221,6 @@ object GCodeHelper {
 
         //result
         val resultData = GCodeLineData(line, cmdString, cmdList, comment)
-        if (amendGCodeCmd) {
-            //修正指令
-            val firstCmd = cmdList.firstOrNull()
-            if (firstCmd != null) {
-                if (firstCmd.cmd.isEmpty()) {
-                    var newLine: String? = null
-                    //第一个指令是空的
-                    val x = resultData.getGCodeCmd("X")
-                    val y = resultData.getGCodeCmd("Y")
-                    val i = resultData.getGCodeCmd("I")
-                    val j = resultData.getGCodeCmd("J")
-                    if (i != null || j != null) {
-                        //需要修正G2指令
-                        newLine = buildString {
-                            append("G2 ")
-                            _fillCodeCmd(this, x, 'X')
-                            _fillCodeCmd(this, y, 'Y')
-                            _fillCodeCmd(this, i, 'I')
-                            _fillCodeCmd(this, j, 'J')
-                        }
-                    } else if (x != null || y != null) {
-                        //需要修正G1指令
-                        newLine = buildString {
-                            append("G1 ")
-                            _fillCodeCmd(this, x, 'X')
-                            _fillCodeCmd(this, y, 'Y')
-                        }
-                    }
-                    if (!newLine.isNullOrEmpty()) {
-                        return _parseGCodeLine(newLine, mmRatio, inRatio)
-                    }
-                }
-            }
-        }
         return resultData
     }
 
@@ -299,9 +259,13 @@ object GCodeHelper {
         private var _isAbsolutePosition = true
         private var _isMoveTo = true
 
-        //上一次xy的数据
+        //上一次的xy的数据
         private var _lastX = 0.0
         private var _lastY = 0.0
+
+        //上一次移动到的xy的数据
+        private var _lastMoveX = 0.0
+        private var _lastMoveY = 0.0
 
         //上一次xy的数据, 未[transformPoint]
         private var _lastOriginX = 0.0
@@ -325,8 +289,8 @@ object GCodeHelper {
         private var spindleType = SPINDLE_OFF
 
         fun reset() {
-            _lastX = 0.0
-            _lastY = 0.0
+            _lastMoveX = 0.0
+            _lastMoveY = 0.0
             _lastOriginX = 0.0
             _lastOriginY = 0.0
             _isAbsolutePosition = true
@@ -435,14 +399,18 @@ object GCodeHelper {
                     var x = line.getGCodeX()
                     var y = line.getGCodeY()
 
-                    if (x == null || y == null) {
-                        //L.v("未找到x,y->${line.lineCode}")
+                    if (x == null && y == null) {
+                        //同时为空时
                         return false
                     }
 
+                    //如果某个为空, 则使用上一次的值
+                    x = x ?: _lastX
+                    y = y ?: _lastY
+
                     if (!_isAbsolutePosition) {
-                        x += _lastX
-                        y += _lastY
+                        x += _lastMoveX
+                        y += _lastMoveY
                     }
 
                     val originLastX = _lastOriginX
@@ -479,8 +447,8 @@ object GCodeHelper {
 
                             if (isSpindleOn) {
                                 if (!_isMoveTo) {
-                                    toPath.moveTo(_lastX.toFloat(), _lastY.toFloat())
-                                    _onMoveTo(_lastX, _lastY)
+                                    toPath.moveTo(_lastMoveX.toFloat(), _lastMoveY.toFloat())
+                                    _onMoveTo(_lastMoveX, _lastMoveY)
                                 }
                                 toPath.lineTo(x.toFloat(), y.toFloat())
                                 setLastLocation(x, y)
@@ -509,8 +477,8 @@ object GCodeHelper {
                                 }
 
                                 if (!_isMoveTo) {
-                                    toPath.moveTo(_lastX.toFloat(), _lastY.toFloat())
-                                    _onMoveTo(_lastX, _lastY)
+                                    toPath.moveTo(_lastMoveX.toFloat(), _lastMoveY.toFloat())
+                                    _onMoveTo(_lastMoveX, _lastMoveY)
                                 }
 
                                 //之前的圆心
@@ -521,17 +489,18 @@ object GCodeHelper {
                                 transformPoint?.invoke(line, _tempIJPoint)
 
                                 //将圆心旋转缩放之后, 计算新的i j
-                                i = _tempIJPoint.x - _lastX
-                                j = _tempIJPoint.y - _lastY
+                                i = _tempIJPoint.x - _lastMoveX
+                                j = _tempIJPoint.y - _lastMoveY
                                 _tempIJPoint.set(i, j)
 
                                 overrideGCommand?.invoke(line, firstCmd, _tempXYPoint, _tempIJPoint)
 
-                                circleX = _lastX + i
-                                circleY = _lastY + j
+                                circleX = _lastMoveX + i
+                                circleY = _lastMoveY + j
 
                                 //圆弧的半径
-                                val r = VectorHelper.spacing(circleX, circleY, _lastX, _lastY)
+                                val r =
+                                    VectorHelper.spacing(circleX, circleY, _lastMoveX, _lastMoveY)
 
                                 //圆弧的矩形范围
                                 val arcRect = emptyRectF()
@@ -544,7 +513,7 @@ object GCodeHelper {
 
                                 //圆弧的角度
                                 val lastPointAngle =
-                                    VectorHelper.angle2(circleX, circleY, _lastX, _lastY)
+                                    VectorHelper.angle2(circleX, circleY, _lastMoveX, _lastMoveY)
                                 val newPointAngle =
                                     VectorHelper.angle2(circleX, circleY, x, y)
 
@@ -585,6 +554,10 @@ object GCodeHelper {
                             }
                         }
                     }
+
+                    //last
+                    _lastX = x
+                    _lastY = y
                     return true
                 } else if (number == 90 || number == 91) {
                     //90: 绝对位置, 1: 相对位置
@@ -606,8 +579,8 @@ object GCodeHelper {
         }
 
         fun setLastLocation(x: Double, y: Double) {
-            _lastX = x
-            _lastY = y
+            _lastMoveX = x
+            _lastMoveY = y
         }
 
         /**转换点坐标*/

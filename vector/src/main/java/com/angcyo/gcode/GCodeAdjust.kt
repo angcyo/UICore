@@ -11,7 +11,6 @@ import com.angcyo.library.unit.InchValueUnit
 import com.angcyo.library.unit.MmValueUnit
 import java.io.File
 import java.io.OutputStreamWriter
-import kotlin.math.min
 
 /**
  * GCode数据调整
@@ -116,10 +115,10 @@ class GCodeAdjust {
         val gCodeBounds = gCodeHandler.gCodeBounds
         //偏移
         @Pixel
-        val offsetLeft = left - min(0f, gCodeBounds.left)
+        val offsetLeft = left - gCodeBounds.left
 
         @Pixel
-        val offsetTop = top - min(0f, gCodeBounds.top)
+        val offsetTop = top - gCodeBounds.top
 
         gCodeHandler.transformPoint = { gCodeLineData, pointF ->
             //这里还是像素单位, 但是override的时候, 统一转成对应单位
