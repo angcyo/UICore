@@ -2,6 +2,7 @@ package com.angcyo.http.base
 
 import ikidou.reflect.TypeBuilder
 import java.lang.reflect.Type
+import kotlin.reflect.KClass
 
 /**
  * https://github.com/ikidou/TypeBuilder/
@@ -23,12 +24,19 @@ fun bean(rootClass: Class<*>, typeClass: Class<*>? = null): Type {
     }.build()
 }
 
+fun bean(rootClass: KClass<*>, typeClass: KClass<*>? = null): Type =
+    bean(rootClass.java, typeClass?.java)
+
 /**List<String>*/
 fun type(rootClass: Class<*>, typeClass: Class<*>): Type {
     return bean(rootClass, typeClass)
 }
 
+fun type(rootClass: KClass<*>, typeClass: KClass<*>): Type = type(rootClass.java, typeClass.java)
+
 fun listType(typeClass: Class<*>): Type = type(List::class.java, typeClass)
+
+fun listType(typeClass: KClass<*>): Type = listType(typeClass.java)
 
 /**List<? super String>*/
 fun typeSuper(rootClass: Class<*>, typeClass: Class<*>): Type {
