@@ -152,7 +152,14 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         }
     }
 
-    /**合规后的初始化*/
+    /**合规后的初始化
+     * ```
+     * ComplianceCheck.check {
+     *   //同意合规, 在此弹出合规对话框
+     *   ComplianceCheck.agree()//用户同意之后, 调用此方法
+     * }
+     * ```
+     * */
     @CallComplianceAfter
     open fun onComplianceAfter() {
         //device, 需要合规
