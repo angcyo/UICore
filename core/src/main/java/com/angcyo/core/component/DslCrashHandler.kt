@@ -67,6 +67,9 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
             }
         }
 
+        /**判断是否有崩溃*/
+        fun haveCrash(): Boolean = !KEY_IS_CRASH.hawkGet().isNullOrBlank()
+
         /**指定某一天的崩溃日志文件*/
         fun currentCrashFile(fileName: String? = null): File {
             val name = fileName ?: fileNameTime("yyyy-MM-dd", ".log")

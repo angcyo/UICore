@@ -53,9 +53,9 @@ fun Fragment.checkCrash() {
 }
 
 /**崩溃对话框, 带复制/查看/分享功能*/
-fun Context.checkShowCrashDialog() {
+fun Context.checkShowCrashDialog(clear: Boolean = true) {
     BaseCoreAppCompatActivity.haveLastCrash =
-        DslCrashHandler.checkCrash(true) { filePath, message, crashTime ->
+        DslCrashHandler.checkCrash(clear) { filePath, message, crashTime ->
             val file = filePath?.file()
             file?.readText()?.copy(this)
 
