@@ -366,6 +366,7 @@ fun Bitmap.colorChannel(
 
 /**[Canvas]
  * Canvas: trying to draw too large(1099123560bytes) bitmap.
+ * 174584760
  * */
 fun bitmapCanvas(
     width: Int,
