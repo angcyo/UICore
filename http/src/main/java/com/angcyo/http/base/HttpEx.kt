@@ -11,6 +11,7 @@ import java.io.EOFException
 import java.lang.reflect.Type
 import java.net.URLDecoder
 import java.nio.charset.Charset
+import kotlin.reflect.KClass
 
 /**
  * https://mvnrepository.com/artifact/com.squareup.okhttp3/logging-interceptor/4.9.2
@@ -133,11 +134,17 @@ fun JsonBuilder.addPage(page: Page?) {
 fun httpBeanType(wrapClass: Class<*>, typeClass: Class<*>): Type =
     type(wrapClass, typeClass)
 
+fun httpBeanType(wrapClass: KClass<*>, typeClass: KClass<*>): Type =
+    httpBeanType(wrapClass.java, typeClass.java)
+
 /**
  * HttpBean<List<Bean>>
  * */
 fun httpListBeanType(wrapClass: Class<*>, typeClass: Class<*>): Type =
     type(wrapClass, type(List::class.java, typeClass))
+
+fun httpListBeanType(wrapClass: KClass<*>, typeClass: KClass<*>): Type =
+    httpListBeanType(wrapClass.java, typeClass.java)
 
 /**成功*/
 fun Int.isSuccess() = this in 200..299
