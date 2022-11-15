@@ -139,7 +139,14 @@ _pgyerUpload.doFirst {
 
             println "上传至蒲公英: ${path} -> ${pgyerConfig.pgyer}"
 
-            def response = client.newCall(request).execute()
+            def response = null
+            while (response == null) {
+                try {
+                    response = client.newCall(request).execute()
+                } catch (SocketTimeoutException error) {
+                    System.err.println "蒲公英上传超时, 正在重试..."
+                }
+            }
 
             if (response == null || response.body() == null) {
                 System.err.println "蒲公英上传结果失败"
