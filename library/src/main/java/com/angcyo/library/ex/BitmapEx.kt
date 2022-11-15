@@ -10,6 +10,7 @@ import android.util.Base64
 import androidx.exifinterface.media.ExifInterface
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.component.LibHawkKeys
 import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.Constant.PICTURE_FOLDER_NAME
 import com.angcyo.library.utils.fastBlur
@@ -374,8 +375,8 @@ fun bitmapCanvas(
     config: Bitmap.Config = Bitmap.Config.ARGB_8888,
     action: Canvas.() -> Unit
 ): Bitmap? {
-    val size = width * height * 4
-    val max = 100 * 1024 * 1024
+    val size = width * height
+    val max = LibHawkKeys.maxBitmapCanvasSize
     if (size > max) {
         L.e("图片过大, 无法分配!")
         return null

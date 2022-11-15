@@ -27,4 +27,10 @@ object LibHawkKeys {
      * */
     var lpSupportFirmware: String? by HawkPropertyValue<Any, String?>(null)
 
+    /**允许最大分配的图片大小,
+     * 10mb 10 * 1024 * 1024 => 10,485,760
+     * 64,000,000 61mb
+     * */
+    var maxBitmapCanvasSize: Long by HawkPropertyValue<Any, Long>(10 * 1024 * 1024)
+
 }
