@@ -221,7 +221,8 @@ fun String.parseTime(pattern: String = "yyyy-MM-dd"): Long {
     }
 }
 
-/**将毫秒, 拆成 d h m s sss数组*/
+/**将毫秒, 拆成 d h m s sss数组
+ * 返回[ms, s, m, h, day]*/
 fun Long.toTimes(): LongArray {
 
     if (this <= 0) {
@@ -321,6 +322,7 @@ fun Long.toElapsedTime(
     val times = toTimes()
 
     for (i in times.lastIndex downTo 0) {
+        //d h m s sss
         val value = times[i]
         val h24 = refill.getOrNull(i) ?: false
         val unit = units.getOrNull(i) ?: ":"
