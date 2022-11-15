@@ -10,8 +10,8 @@
             android:exported="true"
             android:launchMode="singleTask"
             android:noHistory="false"
-            android:screenOrientation="unspecified"
-            android:theme="@style/LibDialogActivity" />
+            android:screenOrientation="portrait"
+            android:theme="@style/VersionUpdateActivityTheme" />
     </application>
 
 </manifest>

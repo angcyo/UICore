@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!--版本更新界面的主题-->
+    <style name="VersionUpdateActivityTheme" parent="LibDialogActivity">
+
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:statusBarColor">@color/status_bar_color</item>
+
+        <item name="android:navigationBarColor">@color/navigation_bar_color</item>
+        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">
+            @color/navigation_bar_divider_color
+        </item>
+
+        <!--api31 背景模糊-->
+        <item name="android:windowBlurBehindEnabled" tools:ignore="NewApi">true</item>
+        <!--<item name="android:windowBackgroundBlurRadius"></item>-->
+        <!--<item name="android:windowBlurBehindRadius"></item>-->
+    </style>
+</resources>

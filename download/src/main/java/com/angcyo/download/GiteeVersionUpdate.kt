@@ -14,13 +14,15 @@ import com.angcyo.http.toBean
  */
 
 /**gitee版本更新检查
- * 在[com.angcyo.http.gitee.Gitee.getBASE]目录下存放一个[version.json]即可获取更新信息
+ * 在[com.angcyo.http.gitee.Gitee.BASE]目录下存放一个[versionJson]json文件即可获取更新信息
+ * [version.json]
+ * [debug] 是否强制显示版本更新界面
  * */
 fun Context.giteeVersionUpdate(versionJson: String = "version.json", debug: Boolean = false) {
-    val json = versionJson
-    Gitee.get(json) { data, error ->
+    Gitee.get(versionJson) { data, error ->
         data?.toBean<VersionUpdateBean>(bean(VersionUpdateBean::class.java))?.let {
             versionUpdate(it, debug = debug)
         }
+        error?.printStackTrace()
     }
 }
