@@ -29,6 +29,8 @@ import java.util.concurrent.CountDownLatch
  * }
  * ```
  *
+ * [com.angcyo.http.interceptor.AuthInterceptor]
+ *
  * Email:angcyo@126.com
  *
  * @author angcyo
