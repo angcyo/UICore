@@ -4,6 +4,7 @@ import android.content.Context
 import com.angcyo.download.version.VersionUpdateBean
 import com.angcyo.download.version.versionUpdate
 import com.angcyo.http.base.bean
+import com.angcyo.http.base.listType
 import com.angcyo.http.gitee.Gitee
 import com.angcyo.http.toBean
 
@@ -24,5 +25,20 @@ fun Context.giteeVersionUpdate(versionJson: String = "version.json", debug: Bool
             versionUpdate(it, debug = debug)
         }
         error?.printStackTrace()
+    }
+}
+
+/**版本更新记录*/
+fun giteeVersionChange(
+    changeJson: String = "change.json",
+    action: (list: List<VersionUpdateBean>?, error: Throwable?) -> Unit
+) {
+    Gitee.get(changeJson) { data, error ->
+        data?.toBean<List<VersionUpdateBean>>(listType(VersionUpdateBean::class))?.let {
+            action(it, error)
+        }
+        error?.let {
+            action(null, it)
+        }
     }
 }

@@ -134,7 +134,7 @@ fun String?.isHttpScheme(): Boolean {
     if (this.isNullOrBlank()) {
         return false
     }
-    val case = this.toLowerCase(Locale.getDefault())
+    val case = this.lowercase(Locale.getDefault())
     return case.startsWith("http://") || case.startsWith("https://")
 }
 
@@ -142,7 +142,7 @@ fun String?.isDataScheme(): Boolean {
     if (this.isNullOrBlank()) {
         return false
     }
-    val case = this.toLowerCase(Locale.getDefault())
+    val case = this.lowercase(Locale.getDefault())
     return case.startsWith("data://")
 }
 
