@@ -26,9 +26,29 @@ def macRepo = project.hasProperty('libMacRepo') ? project.property('libMacRepo')
 //Executing tasks: [publishAllPublicationsToMavenRepository] in project E:\AndroidProjects\angcyo\UICoreDemo
 //Executing tasks: [publishReleasePublicationToMavenRepository] in project E:\AndroidProjects\angcyo\UICoreDemo
 
+//不需要发布aar的模块
+ext.noPublishModule = []
+def rootPath = getRootDir()
+def noPublishFile = new File(rootPath, '.nopublish')
+if (noPublishFile.exists()) {
+    noPublishModule = noPublishFile.readLines('UTF8')
+}
+
+if (noPublishModule.size() > 0) {
+    println "不发布以下Module->↓\n" + noPublishModule
+}
+
 afterEvaluate {
     publishing {
-        def ignore = new File(project.projectDir, ".nopublish").exists()
+        def ignore = false
+        if (new File(project.projectDir, ".nopublish").exists()) {
+            ignore = true
+        } else {
+            noPublishModule.each {
+                ignore = ignore || project.name == it
+            }
+        }
+
         if (ignore) {
             System.err.println("忽略Maven构建->" + project.name)
         } else {
@@ -49,19 +69,19 @@ afterEvaluate {
                     artifact sourcesJar
                 }
             }
-        }
 
-        //目标仓库配置
-        repositories {
-            maven {
-                // change to point to your repo, e.g. http://my.org/repo
-                //url = 'E:/AndroidProjects/maven'//"$buildDir/repo"
+            //目标仓库配置
+            repositories {
+                maven {
+                    // change to point to your repo, e.g. http://my.org/repo
+                    //url = 'E:/AndroidProjects/maven'//"$buildDir/repo"
 
-                def os = System.getProperty("os.name").toLowerCase()
-                def path = os.contains("window") ? winRepo : macRepo
-                url = path
+                    def os = System.getProperty("os.name").toLowerCase()
+                    def path = os.contains("window") ? winRepo : macRepo
+                    url = path
 
-                System.err.println(project.name + "->本地Maven路径:${path}")
+                    System.err.println(project.name + "->本地Maven路径:${path}")
+                }
             }
         }
     }

@@ -4,12 +4,13 @@ ext.ignoreModule = []
 
 def rootPath = getRootDir()
 println "includeAllModule.gradle↓\n开始包含项目in->" + rootPath.getAbsolutePath()
-def ignoreFile = new File(rootPath, 'ignore')
+def ignoreFile = new File(rootPath, '.ignore')
 if (ignoreFile.exists()) {
     ignoreModule = ignoreFile.readLines('UTF8')
 }
-println "忽略以下Module->↓\n" + ignoreModule
-
+if (ignoreModule.size() > 0) {
+    println "忽略以下Module->↓\n" + ignoreModule
+}
 listPath(rootPath)
 //includeConfig.each { key, value ->
 //    println "->include " + value + " ::" + key

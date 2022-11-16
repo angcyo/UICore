@@ -71,7 +71,7 @@ def includePath(filePath, parent) {
 
 def writeIgnoreFile() {
     def rootPath = getRootDir()
-    def ignoreFile = new File(rootPath, 'ignore')
+    def ignoreFile = new File(rootPath, '.ignore')
     def ignoreModule = []
     def isNewProject = !ignoreFile.exists() // 是否是新项目
     if (isNewProject) {
