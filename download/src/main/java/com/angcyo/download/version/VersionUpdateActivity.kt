@@ -212,9 +212,7 @@ fun Context.versionUpdate(
 
         if (update) {
             //匹配
-            if (updateBean.versionType >= 0 ||
-                (updateBean.versionType < 0 && isShowDebug())
-            ) {
+            if (updateBean.versionType >= 0 || isShowDebug()) {
                 //type匹配
                 dslAHelper {
                     start(VersionUpdateActivity::class.java) {
@@ -230,7 +228,7 @@ fun Context.versionUpdate(
     return false
 }
 
-/**[com.angcyo.download.version.VersionUpdateActivityKt.versionUpdate]*/
+/**[com.angcyo.download.version.VersionUpdateActivity.versionUpdate]*/
 fun Context.dslVersionUpdate(action: VersionUpdateBean.() -> Unit) {
     val updateBean = VersionUpdateBean().apply(action)
     versionUpdate(updateBean)
