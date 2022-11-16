@@ -180,6 +180,13 @@ class DslAHelper(val context: Context) {
         return intent
     }
 
+    fun start(
+        fragment: KClass<out Fragment>,
+        singTask: Boolean = false,
+        wrapActivity: Class<out Activity> = FragmentWrapActivity::class.java,
+        action: IntentConfig .() -> Unit = {}
+    ): Intent = start(fragment.java, singTask, wrapActivity, action)
+
     /**在指定的容器中, 启动一个[Fragment]
      * [wrapActivity] 需要是[com.angcyo.activity.BaseAppCompatActivity]子类,
      * 或者使用[com.angcyo.DslTargetIntent]解析
