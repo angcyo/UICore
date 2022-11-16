@@ -17,6 +17,8 @@
         android:paddingTop="@dimen/lib_ldpi"
         android:paddingRight="@dimen/lib_xhdpi"
         android:paddingBottom="@dimen/lib_ldpi"
+        app:r_badge_circle_offset_x="5dp"
+        app:r_badge_circle_offset_y="2dp"
         app:r_badge_offset_x="10dp"
         app:r_badge_radius="10dp"
         tools:r_badge_text="99"

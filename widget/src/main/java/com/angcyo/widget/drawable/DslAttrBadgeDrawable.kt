@@ -93,12 +93,12 @@ open class DslAttrBadgeDrawable : DslBadgeDrawable() {
 
         badgeCircleOffsetX = typedArray.getDimensionPixelOffset(
             R.styleable.DslAttrBadgeDrawable_r_badge_circle_offset_x,
-            badgeCircleOffsetX
+            badgeTextOffsetX
         )
 
         badgeCircleOffsetY = typedArray.getDimensionPixelOffset(
             R.styleable.DslAttrBadgeDrawable_r_badge_circle_offset_y,
-            badgeCircleOffsetY
+            badgeTextOffsetY
         )
         typedArray.recycle()
         super.initAttribute(context, attributeSet)

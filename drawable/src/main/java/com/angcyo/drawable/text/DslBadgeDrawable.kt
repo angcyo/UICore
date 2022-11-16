@@ -7,14 +7,11 @@ import android.graphics.Paint
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.Gravity
-import com.angcyo.drawable.*
+import com.angcyo.drawable.DslGravity
+import com.angcyo.drawable.R
 import com.angcyo.drawable.base.DslGradientDrawable
-import com.angcyo.library.ex._color
-import com.angcyo.library.ex._dimen
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.dpi
-import com.angcyo.library.ex.textHeight
-import com.angcyo.library.ex.textWidth
+import com.angcyo.drawable.isGravityCenter
+import com.angcyo.library.ex.*
 import kotlin.math.max
 
 /**
@@ -54,7 +51,8 @@ open class DslBadgeDrawable : DslGradientDrawable() {
     /**圆点状态时的半径大小*/
     var badgeCircleRadius = 4 * dpi
 
-    /**原点状态下, 单独配置的偏移*/
+    /**原点状态下, 单独配置的偏移
+     * 默认等于[badgeTextOffsetX] [badgeTextOffsetY]*/
     var badgeCircleOffsetX: Int = 0
     var badgeCircleOffsetY: Int = 0
 
@@ -119,15 +117,9 @@ open class DslBadgeDrawable : DslGradientDrawable() {
         with(dslGravity) {
             gravity = if (isViewRtl) {
                 when (badgeGravity) {
-                    Gravity.RIGHT -> {
-                        Gravity.LEFT
-                    }
-                    Gravity.LEFT -> {
-                        Gravity.RIGHT
-                    }
-                    else -> {
-                        badgeGravity
-                    }
+                    Gravity.RIGHT -> Gravity.LEFT
+                    Gravity.LEFT -> Gravity.RIGHT
+                    else -> badgeGravity
                 }
             } else {
                 badgeGravity
