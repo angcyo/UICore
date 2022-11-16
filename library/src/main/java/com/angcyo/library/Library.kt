@@ -147,17 +147,21 @@ fun Context.getAppVersionName(): String {
  * @param context the context
  * @return app version code
  */
-fun Context.getAppVersionCode(): Int { // 获取package manager的实例
+fun Context.getAppVersionCode(): Long { // 获取package manager的实例
     val packageManager = packageManager
     // getPackageName()是你当前类的包名，0代表是获取版本信息
-    var code = 1
+    var code = 1L
     val packInfo: PackageInfo
     try {
         packInfo = packageManager.getPackageInfo(
             packageName,
             0
         )
-        code = packInfo.versionCode
+        code = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packInfo.longVersionCode
+        } else {
+            packInfo.versionCode.toLong()
+        }
     } catch (e: PackageManager.NameNotFoundException) {
         e.printStackTrace()
     }
@@ -224,7 +228,7 @@ fun getAppVersionName(): String {
     return app().getAppVersionName()
 }
 
-fun getAppVersionCode(): Int {
+fun getAppVersionCode(): Long {
     return app().getAppVersionCode()
 }
 

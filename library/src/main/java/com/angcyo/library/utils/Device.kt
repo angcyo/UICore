@@ -418,7 +418,7 @@ object Device {
     /**本地APK编译信息*/
     fun buildString(builder: Appendable): Appendable {
         builder.apply {
-            append(getAppVersionName()).append("/").append(getAppVersionCode())
+            append(getAppVersionName()).append("/").append("${getAppVersionCode()}")
             getAppString("user_name")?.let {
                 append(" $it")
             }
