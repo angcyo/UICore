@@ -7,17 +7,21 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.activity.result.ActivityResultCaller
 import androidx.annotation.AnyThread
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.angcyo.dialog.LoadingDialog.dialogPool
 import com.angcyo.library.ex.elseNull
 import com.angcyo.library.toastQQ
+import com.angcyo.library.utils.getLongNum
 import com.angcyo.transition.dslTransition
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
+import com.angcyo.widget.progress.DslProgressBar
 import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -34,6 +38,9 @@ object LoadingDialog {
 }
 
 //<editor-fold desc="隐藏对话框">
+
+/**最后个对话框[Dialog]*/
+fun lastDialog(): Dialog? = dialogPool.lastElement()?.get()
 
 /**隐藏最后一个dialog*/
 @AnyThread
@@ -94,6 +101,21 @@ fun hideLoading(text: CharSequence?) {
             }
             invisible(R.id.lib_loading_view)
             gone(R.id.lib_close_view)
+        }
+    }
+}
+
+/**更新加载进度*/
+fun updateLoadingProgress(progress: String?) {
+    lastDialog()?.window?.decorView?.dslViewHolder()?.apply {
+        post {
+            val view = view(R.id.lib_progress_view)
+            view?.isVisible = progress != null
+            if (view is TextView) {
+                view.text = progress
+            } else if (view is DslProgressBar) {
+                view.setProgress(progress.getLongNum()?.toInt() ?: 0)
+            }
         }
     }
 }

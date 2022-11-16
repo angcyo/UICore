@@ -18,4 +18,16 @@
         android:layout_height="40dp"
         app:arc_color="@color/dialog_accent" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_progress_view"
+        style="@style/LibDesTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/lib_white"
+        android:textSize="@dimen/text_little_size"
+        android:visibility="gone"
+        tools:text="99%"
+        tools:visibility="visible" />
+
 </com.angcyo.widget.layout.RFrameLayout>
