@@ -39,6 +39,7 @@ object MultiFingeredHelper {
 
         @CallPoint
         fun onTouchEvent(ev: MotionEvent) {
+            //L.w("onTouchEvent ${ev.pointerCount}")
             when (ev.actionMasked) {
                 MotionEvent.ACTION_POINTER_DOWN -> {
                     //>1个手指按下时触发
