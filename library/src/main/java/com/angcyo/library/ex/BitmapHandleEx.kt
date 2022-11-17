@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.widget.LinearLayout
+import androidx.annotation.ColorInt
 import kotlin.math.max
 import kotlin.math.min
 
@@ -13,7 +14,8 @@ import kotlin.math.min
  * @since 2022/10/24
  */
 
-/**彩色颜色对应的灰度值, [0~255]*/
+/**彩色颜色对应的灰度值, [0~255]
+ * @return 返回的是灰度值*/
 fun Int.toGrayInt(): Int {
     val color = this
     val r = Color.red(color)
@@ -25,16 +27,18 @@ fun Int.toGrayInt(): Int {
     return value
 }
 
-/**彩色转成灰度颜色*/
+/**彩色转成灰度颜色
+ * @return 返回的是灰度颜色值*/
+@ColorInt
 fun Int.toGrayColorInt(): Int {
     val value = toGrayInt()
-    val a = Color.alpha(this)
-    return Color.argb(a, value, value, value)
+    val alpha = Color.alpha(this)
+    return Color.argb(alpha, value, value, value)
 }
 
 /**将图片转灰度
  * [alphaBgColor] 透明像素时的替换颜色*/
-fun Bitmap.toGrayHandle(alphaBgColor: Int = Color.TRANSPARENT): Bitmap {
+fun Bitmap.toGrayHandle(alphaBgColor: Int = Color.TRANSPARENT, alphaThreshold: Int = 1): Bitmap {
     val width = width
     val height = height
     val result = Bitmap.createBitmap(width, height, config)
@@ -42,8 +46,9 @@ fun Bitmap.toGrayHandle(alphaBgColor: Int = Color.TRANSPARENT): Bitmap {
     for (y in 0 until height) {
         for (x in 0 until width) {
             val color = getPixel(x, y)
+            val alpha = Color.alpha(color)
 
-            if (color == Color.TRANSPARENT) {
+            if (alpha < alphaThreshold) {
                 //透明颜色
                 result.setPixel(x, y, alphaBgColor)
             } else {
@@ -56,7 +61,10 @@ fun Bitmap.toGrayHandle(alphaBgColor: Int = Color.TRANSPARENT): Bitmap {
 
 /**将图片转灰度, 并且返回一张没有透明像素的图片
  * [alphaBgColor] 透明像素时的替换颜色*/
-fun Bitmap.toGrayHandleAlpha(alphaBgColor: Int = Color.TRANSPARENT): Array<Bitmap> {
+fun Bitmap.toGrayHandleAlpha(
+    alphaBgColor: Int = Color.TRANSPARENT,
+    alphaThreshold: Int = 1
+): Array<Bitmap> {
     val width = width
     val height = height
 
@@ -68,8 +76,9 @@ fun Bitmap.toGrayHandleAlpha(alphaBgColor: Int = Color.TRANSPARENT): Array<Bitma
     for (y in 0 until height) {
         for (x in 0 until width) {
             val color = getPixel(x, y)
+            val alpha = Color.alpha(color)
 
-            if (color == Color.TRANSPARENT) {
+            if (alpha < alphaThreshold) {
                 //透明颜色
                 resultBitmap.setPixel(x, y, alphaBgColor)
                 alphaBitmap.setPixel(x, y, Color.WHITE)//默认白色背景
@@ -92,11 +101,16 @@ fun Bitmap.toGrayHandleAlpha(alphaBgColor: Int = Color.TRANSPARENT): Array<Bitma
 /**将图片转黑白
  * [threshold] 阈值, [0~255] [黑色~白色] 大于这个值的都是白色
  * [invert] 反色, 是否要将黑白颜色颠倒
- * [alphaBgColor] 透明像素时的替换颜色*/
+ * [alphaBgColor] 透明像素时的替换颜色
+ * [thresholdChannelColor] 颜色阈值判断的通道支持[Color.RED] [Color.GREEN] [Color.BLUE] [Color.GRAY]
+ * [alphaThreshold] 透明颜色的阈值, 当颜色的透明值小于此值时, 视为透明
+ * */
 fun Bitmap.toBlackWhiteHandle(
     threshold: Int = 128,
     invert: Boolean = false,
-    alphaBgColor: Int = Color.TRANSPARENT
+    thresholdChannelColor: Int = Color.GRAY,
+    alphaBgColor: Int = Color.TRANSPARENT,
+    alphaThreshold: Int = 1,
 ): Bitmap {
     val width = width
     val height = height
@@ -105,8 +119,8 @@ fun Bitmap.toBlackWhiteHandle(
     for (y in 0 until height) {
         for (x in 0 until width) {
             var color = getPixel(x, y)
-
-            if (color == Color.TRANSPARENT) {
+            val alpha = Color.alpha(color)
+            if (alpha < alphaThreshold) {
                 //透明颜色
                 color = alphaBgColor
             }
@@ -115,11 +129,12 @@ fun Bitmap.toBlackWhiteHandle(
                 //依旧是透明
                 result.setPixel(x, y, color)
             } else {
-                val r = Color.red(color)
-                val g = Color.green(color)
-                val b = Color.blue(color)
-
-                var value = (r + g + b) / 3
+                var value = when (thresholdChannelColor) {
+                    Color.RED -> Color.red(color)
+                    Color.GREEN -> Color.green(color)
+                    Color.BLUE -> Color.blue(color)
+                    else -> color.toGrayInt()
+                }
                 value = max(0, min(value, 255)) //限制0~255
 
                 value = if (value >= threshold) {
@@ -138,7 +153,7 @@ fun Bitmap.toBlackWhiteHandle(
                     }
                 }
 
-                result.setPixel(x, y, Color.rgb(value, value, value))
+                result.setPixel(x, y, Color.argb(alpha, value, value, value))
             }
         }
     }
@@ -149,7 +164,8 @@ fun Bitmap.toBlackWhiteHandle(
 fun Bitmap.toBlackWhiteHandleAlpha(
     threshold: Int = 120,
     invert: Boolean = false,
-    alphaBgColor: Int = Color.TRANSPARENT
+    alphaBgColor: Int = Color.TRANSPARENT,
+    alphaThreshold: Int = 1,
 ): Array<Bitmap> {
     val width = width
     val height = height
@@ -163,7 +179,8 @@ fun Bitmap.toBlackWhiteHandleAlpha(
         for (x in 0 until width) {
             var color = getPixel(x, y)
 
-            if (color == Color.TRANSPARENT) {
+            val alpha = Color.alpha(color)
+            if (alpha < alphaThreshold) {
                 //透明颜色
                 color = alphaBgColor
             }
