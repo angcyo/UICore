@@ -124,6 +124,13 @@ object GraphicsHelper {
         }
     }
 
+    /**当界面关闭后, 恢复分配的默认位置*/
+    fun restoreLocation() {
+        _lastLeft = 0f
+        _lastTop = 0f
+        _lastTopIndex = 0
+    }
+
     //region ---ItemDataBean解析---
 
     /**开始解析, 可能会有耗时操作
