@@ -37,6 +37,8 @@ import com.angcyo.widget.span.span
 class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
 
     companion object {
+
+        /**分隔符*/
         const val SPLIT = "/"
 
         /**保存设备信息到日志
@@ -46,8 +48,11 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             isCompliance: Boolean = false,
             config: DslSpan.() -> Unit = {}
         ) {
-            deviceInfo(context, isCompliance, config).toString()
-                .writeTo(LogFile.device.toLogFilePath(), false)
+            deviceInfo(context, isCompliance) {
+                config()
+                appendln()
+                append("<-${nowTimeString()}")
+            }.toString().writeTo(LogFile.device.toLogFilePath(), false)
         }
 
         /**[isCompliance] 是否合规了*/

@@ -420,14 +420,14 @@ object Device {
         builder.apply {
             append(getAppVersionName()).append("/").append("${getAppVersionCode()}")
             getAppString("user_name")?.let {
-                append(" $it")
+                append(" un:$it")
             }
             getAppString("os_name")?.let {
-                append(it)
+                append(" on:${it}")
                 appendLine()
             }
             getAppString("build_time")?.let {
-                append(it)
+                append("bt:${it}")
                 appendLine()
             }
         }
