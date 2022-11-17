@@ -25,7 +25,10 @@ import java.util.concurrent.TimeoutException
  */
 
 class DslCrashHandler : Thread.UncaughtExceptionHandler {
+
     companion object {
+
+        /**keys*/
         const val KEY_IS_CRASH = "is_crash"
         const val KEY_CRASH_FILE = "crash_file"
         const val KEY_CRASH_MESSAGE = "crash_message"
@@ -70,9 +73,12 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
         /**判断是否有崩溃*/
         fun haveCrash(): Boolean = !KEY_IS_CRASH.hawkGet().isNullOrBlank()
 
+        /**崩溃的文件名*/
+        fun currentCrashName() = fileNameTime("yyyy-MM-dd", ".log")
+
         /**指定某一天的崩溃日志文件*/
         fun currentCrashFile(fileName: String? = null): File {
-            val name = fileName ?: fileNameTime("yyyy-MM-dd", ".log")
+            val name = fileName ?: currentCrashName()
             val folder = currentApplication()?.getExternalFilesDir("crash")
             val file = File(folder, name)
             return file
@@ -83,7 +89,7 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
         fun shareCrashLog(fileName: String? = null) {
             if (fileName == null) {
                 //未指定文件名, 则获取最后一次崩溃的文件
-                val file = KEY_CRASH_FILE.hawkGet()?.file() ?: currentCrashFile(fileName)
+                val file = KEY_CRASH_FILE.hawkGet()?.file() ?: currentCrashFile()
                 file.shareFile()
             } else {
                 currentCrashFile(fileName).shareFile()
@@ -124,31 +130,31 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
         KEY_CRASH_TIME.hawkPut(nowTimeString())
 
         DslFileHelper.async = false
-        DslFileHelper.crash(data = buildString {
+        DslFileHelper.crash(currentCrashName(), buildString {
 
             //自定义的头部信息
-            crashHeadMsg?.let { appendln(it) }
+            crashHeadMsg?.let { appendLine(it) }
 
             //apk编译信息
             Device.buildString(this)
-            appendln()
+            appendLine()
 
             //fm日志信息
-            appendln(DslFHelper.fragmentManagerLog)
-            appendln()
+            appendLine(DslFHelper.fragmentManagerLog)
+            appendLine()
 
             //屏幕信息, 设备信息
             _applicationContext?.let {
                 Device.screenInfo(it, this)
-                appendln()
+                appendLine()
                 Device.deviceInfo(it, this)
             }
 
-            appendln()
+            appendLine()
             append(Trackers.getInstance().networkStateTracker.activeNetworkState.toString())
 
             //异常错误信息
-            appendln()
+            appendLine()
             append(_getThrowableInfo(e))
 
             //异常概述
