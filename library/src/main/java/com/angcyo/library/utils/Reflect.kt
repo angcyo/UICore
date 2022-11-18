@@ -96,8 +96,8 @@ fun Any?.getMember(member: String): Any? {
 
 fun makeAccessible(field: Field) {
     if ((!Modifier.isPublic(field.modifiers) ||
-            !Modifier.isPublic(field.declaringClass.modifiers) ||
-            Modifier.isFinal(field.modifiers)) && !field.isAccessible
+                !Modifier.isPublic(field.declaringClass.modifiers) ||
+                Modifier.isFinal(field.modifiers)) && !field.isAccessible
     ) {
         field.isAccessible = true
     }
@@ -414,6 +414,9 @@ fun Any?.fillTo(
  * Number::class.java.isAssignableFrom(Integer::class.java) true
  * */
 fun Class<*>.isSuperClassBy(subclass: Class<*>) = this.isAssignableFrom(subclass)
+
+/**判断当前类是否是[parentClass]的子类*/
+fun Class<*>.isChildClassOf(parentClass: Class<*>) = parentClass.isSuperClassBy(this)
 
 fun Field.isPublic() = Modifier.isPublic(modifiers)
 

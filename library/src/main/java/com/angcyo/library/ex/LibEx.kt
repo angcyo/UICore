@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.pm.ApplicationInfo
 import android.graphics.Point
 import android.graphics.PointF
+import android.os.Build
 import android.view.View
 import android.widget.TextView
 import androidx.collection.SimpleArrayMap
@@ -19,6 +20,7 @@ import java.io.FileWriter
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.Type
 import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
@@ -502,3 +504,14 @@ fun <K, V> SimpleArrayMap<K, V>.each(action: (key: K, value: V?) -> Unit) {
 fun clamp(value: Float, min: Float, max: Float): Float = min(max(value, min), max)
 
 fun clamp(value: Int, min: Int, max: Int): Int = min(max(value, min), max)
+
+/**[java.lang.reflect.Type]*/
+fun Type.toClass(): Class<*>? = if (this is Class<*>) {
+    this
+} else {
+    try {
+        Class.forName(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) typeName else toString())
+    } catch (e: Exception) {
+        null
+    }
+}

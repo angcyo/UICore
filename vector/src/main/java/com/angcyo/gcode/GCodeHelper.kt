@@ -7,6 +7,7 @@ import android.util.TypedValue
 import androidx.annotation.WorkerThread
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.app
 import com.angcyo.library.ex.*
 import com.angcyo.library.model.PointD
@@ -396,8 +397,14 @@ object GCodeHelper {
                 val number = firstCmd.number.toInt()
                 if (number == 0 || number == 1 || number == 2 || number == 3) {
                     //G0 G1 G2 G3
-                    var x = line.getGCodeX()
-                    var y = line.getGCodeY()
+                    @Pixel
+                    val _x = line.getGCodeX()
+
+                    @Pixel
+                    val _y = line.getGCodeY()
+
+                    var x = _x
+                    var y = _y
 
                     if (x == null && y == null) {
                         //同时为空时
@@ -468,7 +475,10 @@ object GCodeHelper {
                             }
 
                             if (isSpindleOn) {
+                                @Pixel
                                 var i = line.getGCodePixel("I") //圆心距离当前位置的x偏移量
+
+                                @Pixel
                                 var j = line.getGCodePixel("J") //圆心距离当前位置的y偏移量
 
                                 if (i == null || j == null) {
@@ -555,9 +565,9 @@ object GCodeHelper {
                         }
                     }
 
-                    //last
-                    _lastX = x
-                    _lastY = y
+                    //last, 这里的xy需要是数据中的, 不能是转换(transform)后的
+                    _lastX = _x ?: _lastX
+                    _lastY = _y ?: _lastY
                     return true
                 } else if (number == 90 || number == 91) {
                     //90: 绝对位置, 1: 相对位置
