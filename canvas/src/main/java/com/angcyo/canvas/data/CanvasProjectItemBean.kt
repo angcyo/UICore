@@ -222,43 +222,33 @@ data class CanvasProjectItemBean(
     var imageFilter: Int = CanvasConstant.DATA_MODE_GREY,
 
     /** 对比度*/
-    @Implementation
     var contrast: Float = 0f,
 
     /**亮度*/
-    @Implementation
     var brightness: Float = 0f,
 
     /**黑白阈值*/
-    @Implementation
     var blackThreshold: Float = DEFAULT_THRESHOLD,
 
     /**印章阈值*/
-    @Implementation
     var sealThreshold: Float = DEFAULT_THRESHOLD,
 
     /**版画阈值*/
-    @Implementation
     var printsThreshold: Float = DEFAULT_THRESHOLD,
 
     /**是否反色*/
-    @Implementation
     var inverse: Boolean = false,
 
     /**gcode线距*/
-    @Implementation
     var gcodeLineSpace: Float = 5f,
 
     /**gcode角度[0-90]*/
-    @Implementation
     var gcodeAngle: Float = 0f,
 
     /**gcode方向 0:0 1:90 2:180 3:270*/
-    @Implementation
     var gcodeDirection: Int = 0,
 
     /**gcode是否需要轮廓*/
-    @Implementation
     var gcodeOutline: Boolean = true,
 
     /**是否扭曲*/
@@ -324,9 +314,11 @@ data class CanvasProjectItemBean(
     //endregion ---私有属性---
 ) {
 
+    @MM
     val _width: Float
         get() = width ?: 0f
 
+    @MM
     val _height: Float
         get() = height ?: 0f
 

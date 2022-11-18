@@ -43,7 +43,7 @@ class BitmapGraphicsParser : IGraphicsParser {
                         OpenCV.bitmapToGCode(
                             app(),
                             originBitmap,
-                            (bean._width / 2).toMm().toDouble(),
+                            (bean._width / 2).toDouble(),
                             lineSpace = bean.gcodeLineSpace.toDouble(),
                             direction = bean.gcodeDirection,
                             angle = bean.gcodeAngle.toDouble(),
