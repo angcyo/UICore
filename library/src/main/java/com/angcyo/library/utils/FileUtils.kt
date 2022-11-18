@@ -3,6 +3,7 @@ package com.angcyo.library.utils
 import android.content.Context
 import android.graphics.Bitmap
 import com.angcyo.library.*
+import com.angcyo.library.component.LibHawkKeys
 import com.angcyo.library.ex.file
 import com.angcyo.library.utils.FileUtils.writeExternal
 import java.io.File
@@ -37,7 +38,8 @@ typealias FileTextData = Any
 object FileUtils {
 
     /**允许写入单个文件的最大大小10mb, 之后会重写*/
-    var fileMaxSize: Long = 10 * 1024 * 1024
+    val fileMaxSize: Long
+        get() = LibHawkKeys.logFileMaxSize
 
     /**所有文件写入的在此根目录下*/
     var rootFolder: String = getAppString("schema") ?: "angcyo"
