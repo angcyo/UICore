@@ -628,6 +628,17 @@ fun String.getSystemProperty() = RUtils.getSystemProperty(this)
  * [positive] 是否只获取正数, 否则会支持负数*/
 fun String?.getLongNum(positive: Boolean = false) = getLongNumList(positive)?.firstOrNull()
 
+fun String?.getLongNumStringList(positive: Boolean = false) = (if (positive)
+    this?.patternList("\\d+") else this?.patternList("[-]?\\d+"))?.run {
+    val result = mutableListOf<String>()
+    for (str in this) {
+        str.toLongOrNull()?.let {
+            result.add(str)
+        }
+    }
+    result
+}
+
 fun String?.getLongNumList(positive: Boolean = false) = (if (positive)
     this?.patternList("\\d+")
 else

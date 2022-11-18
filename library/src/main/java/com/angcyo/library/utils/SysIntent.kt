@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.angcyo.library.app
+import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.*
 import kotlin.random.Random.Default.nextInt
 
@@ -36,6 +37,7 @@ import kotlin.random.Random.Default.nextInt
 data class SystemBatchBean(
     val name: String = "", // 姓名
     val number: String = "", // 号码
+    //---通话记录相关↓
     val callLogType: Int = listOf(1, 2, 3).randomGetOnce()!!, // 通话记录的状态 1:来电 2:去电 3:未接
     val callLogDate: Long = nowTime(), // 通话记录日期
     val callLogDuration: Int = nextInt(10, 160), // 通话记录时长, 秒
@@ -66,7 +68,7 @@ object SysIntent {
      * */
     fun batchAddCallLogs(
         list: List<SystemBatchBean>,
-        context: Context = app()
+        context: Context = lastContext
     ): Array<out ContentProviderResult> {
 
         if (!context.checkPermissions(
@@ -105,7 +107,7 @@ object SysIntent {
      * */
     fun batchAddContacts(
         list: List<SystemBatchBean>,
-        context: Context = app()
+        context: Context = lastContext
     ): Array<out ContentProviderResult> {
 
         if (!context.checkPermissions(
