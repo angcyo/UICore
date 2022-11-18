@@ -6,6 +6,7 @@ import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.ensure
 import com.angcyo.library.ex.mapPoint
 import com.angcyo.library.ex.mapRectF
+import com.angcyo.library.ex.toLossyFloat
 import com.angcyo.library.model.PointD
 import com.angcyo.library.unit.InchValueUnit
 import com.angcyo.library.unit.MmValueUnit
@@ -161,7 +162,7 @@ class GCodeAdjust {
         }
 
         if (ij == null) {
-            writer.append("${firstCmd.code} X${x.toFloat()} Y${y.toFloat()}")
+            writer.append("${firstCmd.code} X${x.toLossyFloat()} Y${y.toLossyFloat()}")
         } else {
             var i = ij.x + 0.0
             var j = ij.y + 0.0
@@ -179,8 +180,8 @@ class GCodeAdjust {
             writer.append("${firstCmd.code} ")
             //writer.append("X${x.decimal(4)} Y${y.decimal(4)} ")
             //writer.appendLine("I${i.decimal(4)} J${j.decimal(4)}")
-            writer.append("X${x.toFloat()} Y${y.toFloat()} ")
-            writer.append("I${i.toFloat()} J${j.toFloat()}")
+            writer.append("X${x.toLossyFloat()} Y${y.toLossyFloat()} ")
+            writer.append("I${i.toLossyFloat()} J${j.toLossyFloat()}")
         }
 
         //其他指令, 原封不动追加上去
