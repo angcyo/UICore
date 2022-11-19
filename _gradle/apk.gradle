@@ -54,17 +54,17 @@ android {
 
             if (variant.buildType.name != "debug") {
                 variant.packageApplicationProvider.get().outputDirectory = new File(apkFolder, variant.name)
-            }
-            variant.outputs.forEach {
-                it.outputFileName = formatApkName(apkFormatName,
-                        _app_name,
-                        variant.versionName,
-                        apk_time,
-                        variant.flavorName,
-                        variant.buildType.name,
-                        variant.signingConfig?.name ?: '',
-                        keyAlias
-                )
+                variant.outputs.forEach {
+                    it.outputFileName = formatApkName(apkFormatName,
+                            _app_name,
+                            variant.versionName,
+                            apk_time,
+                            variant.flavorName,
+                            variant.buildType.name,
+                            variant.signingConfig?.name ?: '',
+                            keyAlias
+                    )
+                }
             }
         }
     } else if (gradleVersion.startsWith("6")) {
@@ -75,17 +75,17 @@ android {
 
             if (variant.buildType.name != "debug") {
                 variant.packageApplicationProvider.get().outputDirectory = new File(apkFolder, variant.name)
-            }
-            variant.outputs.forEach {
-                it.apkData.outputFileName = formatApkName(apkFormatName,
-                        _app_name,
-                        variant.versionName,
-                        apk_time,
-                        variant.flavorName,
-                        variant.buildType.name,
-                        variant.signingConfig?.name ?: '',
-                        keyAlias
-                )
+                variant.outputs.forEach {
+                    it.apkData.outputFileName = formatApkName(apkFormatName,
+                            _app_name,
+                            variant.versionName,
+                            apk_time,
+                            variant.flavorName,
+                            variant.buildType.name,
+                            variant.signingConfig?.name ?: '',
+                            keyAlias
+                    )
+                }
             }
         }
     } else if (gradleVersion.startsWith("5")) {
@@ -96,18 +96,17 @@ android {
 
             if (variant.buildType.name != "debug") {
                 variant.packageApplication.outputDirectory = new File(apkFolder, variant.name)
-            }
-
-            variant.packageApplication.outputScope?.apkDatas?.forEach { apkData ->
-                apkData.outputFileName = formatApkName(apkFormatName,
-                        _app_name,
-                        variant.versionName,
-                        apk_time,
-                        variant.flavorName,
-                        variant.buildType.name,
-                        variant.signingConfig?.name ?: '',
-                        keyAlias
-                )
+                variant.packageApplication.outputScope?.apkDatas?.forEach { apkData ->
+                    apkData.outputFileName = formatApkName(apkFormatName,
+                            _app_name,
+                            variant.versionName,
+                            apk_time,
+                            variant.flavorName,
+                            variant.buildType.name,
+                            variant.signingConfig?.name ?: '',
+                            keyAlias
+                    )
+                }
             }
         }
     } else {
@@ -119,18 +118,17 @@ android {
             if (variant.buildType.name != "debug") {
                 //new File(project.rootDir.absolutePath + "/apk")
                 variant.getPackageApplication().outputDirectory = new File(apkFolder, variant.name)
-            }
-
-            variant.getPackageApplication().outputScope.apkDatas.forEach { apkData ->
-                apkData.outputFileName = formatApkName(apkFormatName,
-                        _app_name,
-                        variant.versionName,
-                        apk_time,
-                        variant.flavorName,
-                        variant.buildType.name,
-                        variant.signingConfig?.name ?: '',
-                        keyAlias
-                )
+                variant.getPackageApplication().outputScope.apkDatas.forEach { apkData ->
+                    apkData.outputFileName = formatApkName(apkFormatName,
+                            _app_name,
+                            variant.versionName,
+                            apk_time,
+                            variant.flavorName,
+                            variant.buildType.name,
+                            variant.signingConfig?.name ?: '',
+                            keyAlias
+                    )
+                }
             }
         }
     }
