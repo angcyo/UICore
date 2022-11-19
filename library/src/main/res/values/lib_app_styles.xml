@@ -5,6 +5,14 @@
     <color name="colorPrimaryDark">#2042d7</color>
     <color name="colorAccent">#4467ff</color>
 
+    <!--api24-->
+    <color name="colorPrimaryVariant">@color/colorPrimary</color>
+    <color name="colorOnPrimary">@color/colorPrimary</color>
+    <!-- Secondary brand color. -->
+    <color name="colorSecondary">@color/colorPrimaryDark</color>
+    <color name="colorSecondaryVariant">@color/colorPrimaryDark</color>
+    <color name="colorOnSecondary">@color/colorPrimaryDark</color>
+
     <!--app功能色配置-->
     <color name="info">#4b7efe</color>
     <color name="success">#44CB5C</color>
