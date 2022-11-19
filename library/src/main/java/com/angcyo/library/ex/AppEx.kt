@@ -63,6 +63,7 @@ fun getAppSignature(
  * 安卓7.0 需要androidx.core.content.FileProvider
  * 安卓8.0 需要请求安装权限 Manifest.permission.REQUEST_INSTALL_PACKAGES
  *
+ * GooglePlay策略
  * 请主动声明[Manifest.permission.REQUEST_INSTALL_PACKAGES]权限
  *
  * https://github.com/AnyLifeZLB/DownloadInstaller
