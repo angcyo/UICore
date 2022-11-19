@@ -7,19 +7,25 @@
  * 在app级别的build.gradle文件中加入
  * apply from: "$gradleHost/master/restrainFileRedirect.gradle"
  * */
-android {
-    if (gradle.gradleVersion.charAt(0) >= '7') {
-        applicationVariants.all { variant ->
-            if (variant.buildType.name != "debug") {
-                /*tasks.whenTaskAdded { task ->
-                    if (task.name.contains("ListingFileRedirect")) {
-                        task.enabled = false
-                    }
-                }*/
-                tasks.findAll { it.name.contains("ListingFileRedirect") }.forEach { task ->
-                    task.enabled = false
-                }
-            }
-        }
+//android {
+//    if (gradle.gradleVersion.charAt(0) >= '7') {
+//        applicationVariants.all { variant ->
+//            if (variant.buildType.name != "debug") {
+//                /*tasks.whenTaskAdded { task ->
+//                    if (task.name.contains("ListingFileRedirect")) {
+//                        task.enabled = false
+//                    }
+//                }*/
+//                tasks.findAll { it.name.contains("ListingFileRedirect") }.forEach { task ->
+//                    task.enabled = false
+//                }
+//            }
+//        }
+//    }
+//}
+
+tasks.whenTaskAdded { task ->
+    if (!name.contains("debug") && name.contains("listingfileredirect")) {
+        task.enabled = false
     }
 }
