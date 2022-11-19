@@ -143,17 +143,14 @@ open class DslImageView : ShapeImageView, IBadgeView {
                 }
                 _dslGravity.gravityRelativeCenter = false
                 _dslGravity.gravity = it.gravity
-                _dslGravity.gravityOffsetX = it.offsetX
-                _dslGravity.gravityOffsetY = it.offsetY
+                _dslGravity.gravityOffsetX = it.offsetX.toFloat()
+                _dslGravity.gravityOffsetY = it.offsetY.toFloat()
                 _dslGravity.applyGravity(
                     overlayDrawable.bounds.width().toFloat(),
                     overlayDrawable.bounds.height().toFloat()
                 ) { _, _ ->
                     canvas.save()
-                    canvas.translate(
-                        _dslGravity._gravityLeft.toFloat(),
-                        _dslGravity._gravityTop.toFloat()
-                    )
+                    canvas.translate(_dslGravity._gravityLeft, _dslGravity._gravityTop)
                     overlayDrawable.draw(canvas)
                     canvas.restore()
                 }

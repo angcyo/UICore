@@ -128,11 +128,11 @@ open class DslBadgeDrawable : DslGradientDrawable() {
             setGravityBounds(bounds)
 
             if (isCircle) {
-                gravityOffsetX = badgeCircleOffsetX
-                gravityOffsetY = badgeCircleOffsetY
+                gravityOffsetX = badgeCircleOffsetX.toFloat()
+                gravityOffsetY = badgeCircleOffsetY.toFloat()
             } else {
-                gravityOffsetX = badgeOffsetX
-                gravityOffsetY = badgeOffsetY
+                gravityOffsetX = badgeOffsetX.toFloat()
+                gravityOffsetY = badgeOffsetY.toFloat()
             }
 
             val textWidth = textPaint.textWidth(badgeText)
@@ -213,16 +213,16 @@ open class DslBadgeDrawable : DslGradientDrawable() {
                     val textDrawX: Float = centerX - textWidth / 2
                     val textDrawY: Float = centerY + textHeight / 2
 
-                    val bgLeft = _gravityLeft
-                    val bgTop = _gravityTop
+                    val bgLeft = _gravityLeft.toInt()
+                    val bgTop = _gravityTop.toInt()
 
                     //绘制背景
                     if (badgeAutoCircle && badgeText?.length == 1) {
                         if (gradientSolidColor != Color.TRANSPARENT) {
                             textPaint.color = gradientSolidColor
                             canvas.drawCircle(
-                                centerX.toFloat(),
-                                centerY.toFloat(),
+                                centerX,
+                                centerY,
                                 max(maxWidth, maxHeight).toFloat() / 2,
                                 textPaint
                             )

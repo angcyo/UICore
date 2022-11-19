@@ -13,10 +13,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.drawable.dslGravity
 import com.angcyo.dsladapter.DslItemDecoration
 import com.angcyo.library.L
+import com.angcyo.library.ex.inflate
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.atMost
 import com.angcyo.widget.base.exactly
-import com.angcyo.library.ex.inflate
 
 /**
  * 支持自绘的分割线
@@ -214,14 +214,14 @@ class DslDrawItemDecoration : DslItemDecoration() {
                 config.drawGravity,
                 width.toFloat(),
                 height.toFloat(),
-                config.drawOffsetX,
-                config.drawOffsetY
+                config.drawOffsetX.toFloat(),
+                config.drawOffsetY.toFloat()
             ) { dslGravity, _, _ ->
                 setBounds(
-                    dslGravity._gravityLeft,
-                    dslGravity._gravityTop,
-                    dslGravity._gravityRight,
-                    dslGravity._gravityBottom
+                    dslGravity._gravityLeft.toInt(),
+                    dslGravity._gravityTop.toInt(),
+                    dslGravity._gravityRight.toInt(),
+                    dslGravity._gravityBottom.toInt()
                 )
                 draw(params.canvas!!)
             }
@@ -261,12 +261,12 @@ class DslDrawItemDecoration : DslItemDecoration() {
                 config.drawGravity,
                 layoutView.measuredWidth.toFloat(),
                 layoutView.measuredHeight.toFloat(),
-                config.drawOffsetX,
-                config.drawOffsetY
+                config.drawOffsetX.toFloat(),
+                config.drawOffsetY.toFloat()
             ) { dslGravity, _, _ ->
                 params.canvas?.apply {
                     save()
-                    translate(dslGravity._gravityLeft.toFloat(), dslGravity._gravityTop.toFloat())
+                    translate(dslGravity._gravityLeft, dslGravity._gravityTop)
                     layoutView.draw(this)
                     restore()
                 }
@@ -289,14 +289,14 @@ class DslDrawItemDecoration : DslItemDecoration() {
                     config.drawGravity,
                     width.toFloat(),
                     height.toFloat(),
-                    config.drawOffsetX,
-                    config.drawOffsetY
+                    config.drawOffsetX.toFloat(),
+                    config.drawOffsetY.toFloat()
                 ) { dslGravity, _, _ ->
                     _tempDrawRect.set(
-                        dslGravity._gravityLeft,
-                        dslGravity._gravityTop,
-                        dslGravity._gravityRight,
-                        dslGravity._gravityBottom
+                        dslGravity._gravityLeft.toInt(),
+                        dslGravity._gravityTop.toInt(),
+                        dslGravity._gravityRight.toInt(),
+                        dslGravity._gravityBottom.toInt()
                     )
                 }
 
