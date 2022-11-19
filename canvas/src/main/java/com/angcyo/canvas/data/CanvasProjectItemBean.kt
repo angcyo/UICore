@@ -12,6 +12,7 @@ import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_ITALIC
 import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_NONE
 import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_UNDER_LINE
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.drawable.dslGravity
 import com.angcyo.library.annotation.Implementation
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
@@ -44,6 +45,24 @@ data class CanvasProjectItemBean(
 
     @MM
     var height: Float? = null,
+
+    /**自动雕刻下的重力属性, 相对于设备最佳范围bounds, 如果设置了此属性
+     * [left] [top] 就是变成offset偏移量
+     * [com.angcyo.bluetooth.fsc.laserpacker.data.LaserPeckerProductInfo.bounds]
+     * [android.view.Gravity.LEFT] 3
+     * [android.view.Gravity.RIGHT] 5
+     * [android.view.Gravity.TOP] 48
+     * [android.view.Gravity.BOTTOM] 80
+     * [android.view.Gravity.CENTER_HORIZONTAL] 1
+     * [android.view.Gravity.CENTER_VERTICAL] 16
+     * [android.view.Gravity.CENTER] 17
+     * 左上: 51
+     * 左下: 83
+     * 右上: 53
+     * 右下: 85
+     * 居中: 17
+     * */
+    var gravity: Int? = null,
 
     /**旋转的角度*/
     var angle: Float = 0f,
@@ -392,6 +411,31 @@ data class CanvasProjectItemBean(
             newBean.top += GraphicsHelper.POSITION_STEP
         }
         return newBean
+    }
+
+    /**使用[gravity]属性, 重新设置[left] [top]值
+     * [bounds] 设备雕刻的最佳范围*/
+    fun resetLocationWithGravity(@Pixel bounds: RectF) {
+        gravity?.let {
+            val valueUnit = MM_UNIT
+            val offsetX = valueUnit.convertValueToPixel(left)
+            val offsetY = valueUnit.convertValueToPixel(top)
+            val width = valueUnit.convertValueToPixel(_width) * _scaleX
+            val height = valueUnit.convertValueToPixel(_height) * _scaleY
+            dslGravity(
+                bounds,
+                it,
+                width,
+                height,
+                offsetX,
+                offsetY,
+                false
+            ) { dslGravity, centerX, centerY ->
+                //修改
+                left = valueUnit.convertPixelToValue(dslGravity._gravityLeft).toFloat()
+                top = valueUnit.convertPixelToValue(dslGravity._gravityTop).toFloat()
+            }
+        }
     }
 }
 
