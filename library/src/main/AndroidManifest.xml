@@ -3,6 +3,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!--获取网络状态, WIFI ip-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <!--https://developer.android.google.cn/training/notify-user/build-notification.html#urgent-message -->

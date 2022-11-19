@@ -1,5 +1,6 @@
 package com.angcyo.library.component.work
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -13,6 +14,8 @@ import androidx.annotation.RequiresApi
 import androidx.core.net.ConnectivityManagerCompat
 import com.angcyo.library.L
 import com.angcyo.library.L.d
+import com.angcyo.library.component.lastContext
+import com.angcyo.library.ex.havePermission
 
 /**
  * A [ConstraintTracker] for monitoring network state.
@@ -49,19 +52,23 @@ class NetworkStateTracker(context: Context, taskExecutor: TaskExecutor) :
     val activeNetworkState: NetworkState
         get() {
             // Use getActiveNetworkInfo() instead of getNetworkInfo(network) because it can detect VPNs.
-            val info = connectivityManager.activeNetworkInfo
-            val isConnected = info != null && info.isConnected
-            val isValidated = isActiveNetworkValidated
-            val isMetered =
-                ConnectivityManagerCompat.isActiveNetworkMetered(connectivityManager)
-            val isNotRoaming = info != null && !info.isRoaming
-            return NetworkState(isConnected, isValidated, isMetered, isNotRoaming)
+            if (lastContext.havePermission(listOf(Manifest.permission.ACCESS_NETWORK_STATE))) {
+                val info = connectivityManager.activeNetworkInfo
+                val isConnected = info != null && info.isConnected
+                val isValidated = isActiveNetworkValidated
+                val isMetered =
+                    ConnectivityManagerCompat.isActiveNetworkMetered(connectivityManager)
+                val isNotRoaming = info != null && !info.isRoaming
+                return NetworkState(isConnected, isValidated, isMetered, isNotRoaming)
+            } else {
+                return NetworkState(false, false, false, false)
+            }
         }
 
     // NET_CAPABILITY_VALIDATED not available until API 23. Used on API 26+.
     private val isActiveNetworkValidated: Boolean
         get() {
-            if (Build.VERSION.SDK_INT < 23) {
+            if (Build.VERSION.SDK_INT < 23 || !lastContext.havePermission(listOf(Manifest.permission.ACCESS_NETWORK_STATE))) {
                 return false // NET_CAPABILITY_VALIDATED not available until API 23. Used on API 26+.
             }
             val network = connectivityManager.activeNetwork
