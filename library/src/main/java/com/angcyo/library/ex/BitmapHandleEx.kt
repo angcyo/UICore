@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.widget.LinearLayout
 import androidx.annotation.ColorInt
+import com.angcyo.library.component.LibHawkKeys
 import kotlin.math.max
 import kotlin.math.min
 
@@ -38,7 +39,10 @@ fun Int.toGrayColorInt(): Int {
 
 /**将图片转灰度
  * [alphaBgColor] 透明像素时的替换颜色*/
-fun Bitmap.toGrayHandle(alphaBgColor: Int = Color.TRANSPARENT, alphaThreshold: Int = 1): Bitmap {
+fun Bitmap.toGrayHandle(
+    alphaBgColor: Int = Color.TRANSPARENT,
+    alphaThreshold: Int = LibHawkKeys.alphaThreshold
+): Bitmap {
     val width = width
     val height = height
     val result = Bitmap.createBitmap(width, height, config)
@@ -63,7 +67,7 @@ fun Bitmap.toGrayHandle(alphaBgColor: Int = Color.TRANSPARENT, alphaThreshold: I
  * [alphaBgColor] 透明像素时的替换颜色*/
 fun Bitmap.toGrayHandleAlpha(
     alphaBgColor: Int = Color.TRANSPARENT,
-    alphaThreshold: Int = 1
+    alphaThreshold: Int = LibHawkKeys.alphaThreshold
 ): Array<Bitmap> {
     val width = width
     val height = height
@@ -110,7 +114,7 @@ fun Bitmap.toBlackWhiteHandle(
     invert: Boolean = false,
     thresholdChannelColor: Int = Color.GRAY,
     alphaBgColor: Int = Color.TRANSPARENT,
-    alphaThreshold: Int = 1,
+    alphaThreshold: Int = LibHawkKeys.alphaThreshold,
 ): Bitmap {
     val width = width
     val height = height
@@ -165,7 +169,7 @@ fun Bitmap.toBlackWhiteHandleAlpha(
     threshold: Int = 120,
     invert: Boolean = false,
     alphaBgColor: Int = Color.TRANSPARENT,
-    alphaThreshold: Int = 1,
+    alphaThreshold: Int = LibHawkKeys.alphaThreshold,
 ): Array<Bitmap> {
     val width = width
     val height = height
