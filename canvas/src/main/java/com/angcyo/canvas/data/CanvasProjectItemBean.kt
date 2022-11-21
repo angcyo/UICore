@@ -414,7 +414,8 @@ data class CanvasProjectItemBean(
     }
 
     /**使用[gravity]属性, 重新设置[left] [top]值
-     * [bounds] 设备雕刻的最佳范围*/
+     * [bounds] 设备雕刻的最佳范围
+     * [com.angcyo.engrave.model.AutoEngraveModel.initLocationWithGravity]*/
     fun resetLocationWithGravity(@Pixel bounds: RectF) {
         gravity?.let {
             val valueUnit = MM_UNIT
