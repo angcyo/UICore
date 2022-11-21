@@ -1,6 +1,7 @@
 package com.angcyo.dialog
 
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dialog.dslitem.DslDialogTextItem
 import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.filter.RemoveItemDecorationFilterAfterInterceptor
@@ -32,6 +33,9 @@ open class RecyclerConfig {
     /**移除收尾分割线*/
     var removeFirstLastItemDecoration: Boolean = true
 
+    /**渲染回调*/
+    var onRenderAction: ((recyclerView: RecyclerView, adapter: DslAdapter) -> Unit)? = null
+
     //适配器
     lateinit var _adapter: DslAdapter
 
@@ -52,8 +56,13 @@ open class RecyclerConfig {
                     }
                 }
                 resetItem(adapterItemList)
-                if (adapterItemList.isEmpty()) {
-                    toEmpty()
+
+                if (onRenderAction == null) {
+                    if (adapterItemList.isEmpty()) {
+                        toEmpty()
+                    }
+                } else {
+                    onRenderAction?.invoke(this@apply, this)
                 }
                 updateNow()
             }

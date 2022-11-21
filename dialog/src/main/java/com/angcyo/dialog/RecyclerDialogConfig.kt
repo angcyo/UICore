@@ -3,6 +3,7 @@ package com.angcyo.dialog
 import android.app.Dialog
 import android.content.Context
 import com.angcyo.dialog.dslitem.DslDialogTextItem
+import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.ItemSelectorHelper
 import com.angcyo.dsladapter.itemIndexPosition
@@ -88,17 +89,10 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
             dialogViewHolder.gone(R.id.dialog_neutral_button)
         }
 
-        _recyclerConfig.adapterSelectorModel = dialogSelectorModel
-        _recyclerConfig.initRecycler(dialog, dialogViewHolder)
-        _recyclerConfig.adapterItemClick = { dslItem, view ->
-            if (dialogResult(_dialog!!, listOf(dslItem), listOf(dslItem.itemIndexPosition()))
-            ) {
-                //拦截
-            } else {
-                _dialog?.dismiss()
-            }
-        }
+        //recycler
+        initRecyclerConfig(dialog, dialogViewHolder)
 
+        //返回按钮
         dialogBottomCancelItem?.apply {
             itemClick = {
                 dialog.cancel()
@@ -109,7 +103,23 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
         }
     }
 
-    //默认的返回按钮
+    /**[androidx.recyclerview.widget.RecyclerView]*/
+    open fun initRecyclerConfig(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+        _recyclerConfig.adapterSelectorModel = dialogSelectorModel
+        _recyclerConfig.initRecycler(dialog, dialogViewHolder)
+        _recyclerConfig.adapterItemClick = { dslItem, view ->
+            if (dialogResult(_dialog!!, listOf(dslItem), listOf(dslItem.itemIndexPosition()))
+            ) {
+                //拦截
+            } else {
+                _dialog?.dismiss()
+            }
+        }
+    }
+
+    //---
+
+    /**默认的返回按钮[DslDialogTextItem]*/
     open fun defaultCancelItem(): DslDialogTextItem {
         return DslDialogTextItem().apply {
             itemTopInsert = 4 * dpi
@@ -131,9 +141,20 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
         }
     }
 
-    /**[DslAdapterItem]
+    //---
+
+    /**调用此方法, 添加[DslAdapterItem]
+     * [DslAdapterItem]
      * [com.angcyo.dialog.RecyclerConfig.addItem]*/
     fun addItem(item: DslAdapterItem) {
         _recyclerConfig.addItem(item)
+    }
+
+    /**直接渲染界面, 此方法需要在[com.angcyo.dialog.RecyclerConfig.initRecycler]之前调用*/
+    fun renderAdapter(action: DslAdapter.() -> Unit) {
+        _recyclerConfig.onRenderAction = { recyclerView, adapter ->
+            adapter._recyclerView = recyclerView
+            adapter.action()
+        }
     }
 }
