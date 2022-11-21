@@ -39,36 +39,40 @@ class DslPermissions {
             fragment?.run { RxPermissions(this) } ?: fragmentActivity?.run { RxPermissions(this) }
 
         rxPermissions?.apply {
-            requestEach(*permissions.toTypedArray())
-                .subscribe(BaseObserver<Permission>().apply {
-                    onObserverEnd = { _, _ ->
+            try {
+                requestEach(*permissions.toTypedArray())
+                    .subscribe(BaseObserver<Permission>().apply {
+                        onObserverEnd = { _, _ ->
 
-                        //所有权限是否给予
-                        var allGranted = true
-                        //是否永久禁用了权限
-                        var foreverDenied = false
-                        val builder = StringBuilder()
+                            //所有权限是否给予
+                            var allGranted = true
+                            //是否永久禁用了权限
+                            var foreverDenied = false
+                            val builder = StringBuilder()
 
-                        builder.appendln().appendln("权限状态-->")
+                            builder.appendln().appendln("权限状态-->")
 
-                        observerDataList.forEachIndexed { index, permission ->
-                            builder.append(index).append("->").append(permission.name)
-                                .append(" ${permission.shouldShowRequestPermissionRationale}") //是否需要重新请求, 如果是false则表示用户永远禁止了权限
-                                .appendln(if (permission.granted) " √" else " ×")
+                            observerDataList.forEachIndexed { index, permission ->
+                                builder.append(index).append("->").append(permission.name)
+                                    .append(" ${permission.shouldShowRequestPermissionRationale}") //是否需要重新请求, 如果是false则表示用户永远禁止了权限
+                                    .appendln(if (permission.granted) " √" else " ×")
 
-                            if (!permission.granted) {
-                                allGranted = false
+                                if (!permission.granted) {
+                                    allGranted = false
+                                }
+                                if (!permission.shouldShowRequestPermissionRationale) {
+                                    foreverDenied = true
+                                }
                             }
-                            if (!permission.shouldShowRequestPermissionRationale) {
-                                foreverDenied = true
-                            }
+
+                            L.w(builder.toString())
+
+                            onPermissionsResult(allGranted, foreverDenied)
                         }
-
-                        L.w(builder.toString())
-
-                        onPermissionsResult(allGranted, foreverDenied)
-                    }
-                })
+                    })
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }
