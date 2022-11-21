@@ -20,7 +20,7 @@
             android:hint="服务器Base地址"
             android:inputType="textWebEmailAddress"
             android:minHeight="@dimen/lib_min_item_height"
-            app:r_draw_left=" Api: "
+            app:r_draw_left=" host: "
             app:r_focus_drawable="@drawable/lib_bottom_focus_shape"
             app:r_no_focus_drawable="@drawable/lib_bottom_no_focus_shape" />
 
