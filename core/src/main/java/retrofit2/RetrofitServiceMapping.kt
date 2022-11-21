@@ -30,8 +30,7 @@ object RetrofitServiceMapping {
      * 映射关系表, key 可以是方法名, 也是部分url字符串
      */
     @JvmField
-    var defaultMap: Map<String, String> =
-        ArrayMap()
+    var defaultMap: Map<String, String> = ArrayMap()
 
     @JvmStatic
     fun init(enableMapping: Boolean, methodMapping: Map<String, String>) {

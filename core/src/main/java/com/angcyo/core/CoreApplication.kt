@@ -119,11 +119,11 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         DslHttp.config {
             onGetBaseUrl = {
                 //优先使用主动配置的, 其次使用默认配置的
-                val getBaseUrl = HttpConfigDialog.customBaseUrl ?: getHostBaseUrl()
-                if (getBaseUrl.endsWith("/")) {
-                    getBaseUrl
+                val baseUrl = HttpConfigDialog.customBaseUrl ?: getHostBaseUrl()
+                if (baseUrl.endsWith("/")) {
+                    baseUrl
                 } else {
-                    "${getBaseUrl}/"
+                    "${baseUrl}/"
                 }
             }
 

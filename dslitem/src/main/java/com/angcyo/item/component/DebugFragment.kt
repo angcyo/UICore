@@ -9,6 +9,7 @@ import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.file.appFilePath
 import com.angcyo.core.component.fileSelector
 import com.angcyo.core.component.fileViewDialog
+import com.angcyo.core.component.httpConfigDialog
 import com.angcyo.core.dslitem.DslLastDeviceInfoItem
 import com.angcyo.core.fragment.BaseDslFragment
 import com.angcyo.dsladapter.DslAdapterItem
@@ -56,6 +57,9 @@ class DebugFragment : BaseDslFragment() {
                         //no op
                     }
                 }
+            }))
+            add(DebugAction("服务器配置", action = { fragment, value ->
+                fragment.fContext().httpConfigDialog()
             }))
 
             //单独的日志

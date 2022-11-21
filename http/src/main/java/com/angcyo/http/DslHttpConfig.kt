@@ -88,7 +88,10 @@ class DslHttpConfig {
         okHttpClient ?: it.build()
     }
 
-    /** baseUrl must end in '/' */
+    /** baseUrl must end in '/'
+     * 可以优先获取自定义的地址 [com.angcyo.core.component.HttpConfigDialog.cCustomBaseUrl]
+     * 其次获取配置的地址 [com.angcyo.core.CoreApplication.getHostBaseUrl]
+     * */
     var onGetBaseUrl: () -> String = { "http://api.angcyo.com/" }
 
     /**调用此方法, 添加自定义的配置*/

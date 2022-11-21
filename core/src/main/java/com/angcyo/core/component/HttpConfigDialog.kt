@@ -37,12 +37,19 @@ import retrofit2.RetrofitServiceMapping.init
  */
 object HttpConfigDialog {
 
+    /**接口映射规则api地址*/
     var MAPPING_URL = "https://www.angcyo.com/api/php/android/c/url_mapping"
+
+    /**关闭映射布局*/
+    var SHOW_MAP_LAYOUT: Boolean = false
 
     /**持久化*/
     const val KEY_CUSTOM_BASE_URL = "key_custom_base_url"
 
-    /**自定义后的url*/
+    /**自定义后的url, 需要主动使用[com.angcyo.http.DslHttpConfig.onGetBaseUrl]
+     * [appCustomUrls]
+     * [com.angcyo.core.component.HttpConfigDialog.showHttpConfig]
+     * */
     var customBaseUrl: String? = null
         get() {
             return if (isDebug()) {
@@ -56,13 +63,17 @@ object HttpConfigDialog {
             field = value
         }
 
-    /**app正式使用的服务器地址*/
+    /**app正式使用的服务器地址
+     * 如果定义了[customBaseUrl]*/
     val appBaseUrl: String
         get() {
             return DslHttp.dslHttpConfig.onGetBaseUrl()
         }
 
-    /**app中配置自定义的其他服务器*/
+    /**app中配置自定义的其他服务器
+     * resValue "string", "custom_urls", '"测试服务器 https://rj.appraise.wayto.com.cn/appraiseApi;正式服务器 https://ruijie.appraise.wayto.com.cn:8043/appraiseApi"'
+     * [com.angcyo.core.CoreApplication.getHostUrls]
+     * */
     val appCustomUrls: List<String>
         get() {
             val result = mutableListOf<String>()
@@ -114,6 +125,8 @@ object HttpConfigDialog {
                 save(null, true)
             }
             onDialogInitListener = { dialog, dialogViewHolder ->
+                dialogViewHolder.visible(R.id.map_box, SHOW_MAP_LAYOUT)
+                dialogViewHolder.visible(R.id.get_list, SHOW_MAP_LAYOUT)
 
                 dialogViewHolder.ev(R.id.host_edit)?.setInputText(baseUrl)
 
