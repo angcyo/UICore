@@ -81,7 +81,7 @@ open class DslAdapterItem : LifecycleOwner {
         /**占满宽度的item*/
         const val FULL_ITEM = -1
 
-        /**节流间隔时长*/
+        /**节流间隔时长, 毫秒*/
         var DEFAULT_THROTTLE_INTERVAL = ThrottleClickListener.DEFAULT_THROTTLE_INTERVAL
     }
 
@@ -308,7 +308,7 @@ open class DslAdapterItem : LifecycleOwner {
 
     var itemLongClick: ((View) -> Boolean)? = null
 
-    /**点击节流间隔时长*/
+    /**点击节流间隔时长, 忽略多少毫秒内的重复点击*/
     var itemClickThrottleInterval: Long = DEFAULT_THROTTLE_INTERVAL
 
     //使用节流方式处理点击事件

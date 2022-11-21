@@ -19,7 +19,7 @@ open class ThrottleClickListener(
 
     companion object {
 
-        //节流间隔时长
+        /**节流间隔时长, 毫秒*/
         var DEFAULT_THROTTLE_INTERVAL = 400L
 
         var _lastThrottleClickTime = 0L
