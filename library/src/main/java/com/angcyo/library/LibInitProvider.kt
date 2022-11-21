@@ -14,7 +14,7 @@ import android.net.Uri
  * @date 2020/04/23
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
-class LibInitProvider : ContentProvider() {
+open class LibInitProvider : ContentProvider() {
 
     companion object {
         @SuppressLint("StaticFieldLeak")
