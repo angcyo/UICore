@@ -417,10 +417,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
         } else {
             0f
         }
-        if (getCanvasViewBox().getCoordinateSystemY() == -1f && getCanvasViewBox().getCoordinateSystemY() == -1f) {
-            getCanvasViewBox().updateCoordinateSystemOriginPoint(l, t)
-        }
-        getCanvasViewBox().updateContentBox(l, t, w.toFloat(), h.toFloat())
+        val canvasViewBox = getCanvasViewBox()
+        canvasViewBox.updateCoordinateSystemOriginPoint(l, t)
+        canvasViewBox.updateContentBox(l, t, w.toFloat(), h.toFloat())
 
         //需要等待[canvasViewBox]测量后
         eachAllRenderer {

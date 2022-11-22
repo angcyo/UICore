@@ -344,7 +344,7 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     //<editor-fold desc="coordinate system">
 
     /**坐标系的原点像素坐标*/
-    val coordinateSystemOriginPoint: PointF = PointF(-1f, -1f)
+    val coordinateSystemOriginPoint: PointF = PointF(0f, 0f)
 
     /**更新坐标系原点*/
     fun updateCoordinateSystemOriginPoint(x: Float, y: Float) {
