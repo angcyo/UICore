@@ -52,6 +52,8 @@ android {
         targetSdkVersion Integer.parseInt(_T_SDK)
         versionCode Integer.parseInt(_V_CODE)
         versionName "$_V_NAME"
+
+        //min sdk 21时, 自动开启 https://developer.android.com/studio/build/multidex
         multiDexEnabled true
 
         //https://developer.android.com/studio/build/shrink-code?hl=zh-cn#groovy
