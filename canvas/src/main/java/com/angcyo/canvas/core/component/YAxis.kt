@@ -14,9 +14,11 @@ class YAxis : BaseAxis() {
 
     override fun getPlusPixelList(canvasViewBox: CanvasViewBox): List<AxisPoint> {
         plusList.clear()
-        var pixel = canvasViewBox.getCoordinateSystemY()
+        val coordinateSystemY = canvasViewBox.getCoordinateSystemY()
+        var pixel = coordinateSystemY
         val factor = canvasViewBox.invertMatrix.getScaleY()
-        val end = (canvasViewBox.getContentHeight() - canvasViewBox.getTranslateY()) * factor
+        val end =
+            (coordinateSystemY + canvasViewBox.getContentHeight() - canvasViewBox.getTranslateY()) * factor
         val step = canvasViewBox.valueUnit.getGraduatedScaleGap().toFloat()
 
         val scaleY = canvasViewBox.getScaleY()
@@ -34,7 +36,8 @@ class YAxis : BaseAxis() {
 
     override fun getMinusPixelList(canvasViewBox: CanvasViewBox): List<AxisPoint> {
         minusList.clear()
-        var pixel = canvasViewBox.getCoordinateSystemY()
+        val coordinateSystemY = canvasViewBox.getCoordinateSystemY()
+        var pixel = coordinateSystemY
         val factor = canvasViewBox.invertMatrix.getScaleY()
         val end = (0 - canvasViewBox.getTranslateY()) * factor
         val step = canvasViewBox.valueUnit.getGraduatedScaleGap().toFloat()
