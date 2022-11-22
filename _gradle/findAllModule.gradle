@@ -1,5 +1,5 @@
 ext.maxDepth = 2
-
+ext.ignoreModule = []
 /**查找所有有效module*/
 rootProject.ext.allModule = [:]
 /**查找所有gradle文件*/
@@ -62,13 +62,36 @@ def includePath(filePath, parent) {
             def path = parent + ":${name}"
 
             //println "->include " + path
-            allModule[name] = path
+            if (!isIgnoreModule(name)) {
+                allModule[name] = path
+                //println "追加1->" + path
+            } else {
+                //println "忽略1->" + path
+            }
 
             //include path
         }
     }
 }
 
+/**当前module是否被忽略了*/
+def isIgnoreModule(module) {
+    if (ignoreModule.size() <= 0) {
+        def rootPath = getRootDir()
+        def ignoreFile = new File(rootPath, '.ignore')
+        if (ignoreFile.exists()) {
+            ignoreModule = ignoreFile.readLines('UTF8')
+        }
+    }
+    def ignore = false
+    ignoreModule.each {
+        ignore = ignore || module == it
+        //println "比较->" + it + " == " + module
+    }
+    return ignore
+}
+
+/**智能写入忽略到文件*/
 def writeIgnoreFile() {
     def rootPath = getRootDir()
     def ignoreFile = new File(rootPath, '.ignore')
