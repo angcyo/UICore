@@ -1,5 +1,7 @@
 package com.angcyo.viewmodel
 
+import androidx.annotation.AnyThread
+import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
@@ -24,6 +26,7 @@ open class MutableErrorLiveData<T>(value: T? = null) : MutableLiveData<T>(value)
 
     //-----
 
+    @MainThread
     override fun setValue(value: T?) {
         lastError = _postlastError
         isSetValue = true
@@ -31,6 +34,7 @@ open class MutableErrorLiveData<T>(value: T? = null) : MutableLiveData<T>(value)
         super.setValue(value)
     }
 
+    @MainThread
     fun setValue(value: T?, error: Throwable?) {
         lastError = error
         _postlastError = null
@@ -40,11 +44,13 @@ open class MutableErrorLiveData<T>(value: T? = null) : MutableLiveData<T>(value)
 
     //-----
 
+    @AnyThread
     override fun postValue(value: T?) {
         _postlastError = null
         super.postValue(value)
     }
 
+    @AnyThread
     fun postValue(value: T?, error: Throwable?) {
         _postlastError = error
         super.postValue(value)

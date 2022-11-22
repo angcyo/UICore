@@ -1,5 +1,6 @@
 package com.angcyo.viewmodel
 
+import androidx.annotation.MainThread
 import androidx.lifecycle.MutableLiveData
 
 /**
@@ -12,6 +13,7 @@ open class MutableHoldLiveData<T>(value: T? = null) : MutableLiveData<T>(value) 
     /**之前的值*/
     var beforeValue: T? = null
 
+    @MainThread
     override fun setValue(value: T?) {
         //保存之前的值
         beforeValue = getValue()

@@ -1,5 +1,6 @@
 package com.angcyo.viewmodel
 
+import androidx.annotation.MainThread
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -19,6 +20,7 @@ class MutableOnceLiveData<T>(value: T? = null) : MutableErrorLiveData<T>(value) 
     var lastValue: T? = null
 
     /**立马清空数据*/
+    @MainThread
     override fun setValue(value: T?) {
         if (getValue() == null && value == null) {
             return
@@ -33,6 +35,7 @@ class MutableOnceLiveData<T>(value: T? = null) : MutableErrorLiveData<T>(value) 
         }
     }
 
+    @MainThread
     override fun observe(owner: LifecycleOwner, observer: Observer<in T?>) {
         super.observe(owner, observer)
         owner.lifecycle.onStateChanged { _, event, _ ->
@@ -48,6 +51,7 @@ class MutableOnceLiveData<T>(value: T? = null) : MutableErrorLiveData<T>(value) 
         }
     }
 
+    @MainThread
     override fun observeForever(observer: Observer<in T?>) {
         super.observeForever(observer)
         if (value != null && hasActiveObservers()) {
