@@ -1,6 +1,7 @@
 package com.angcyo.viewmodel
 
 import android.os.Looper
+import androidx.annotation.MainThread
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,6 +15,7 @@ import androidx.lifecycle.Observer
  */
 
 /**快速观察[LiveData]*/
+@MainThread
 fun <T> LiveData<T>.observeForever(
     allowBackward: Boolean = true,
     action: (data: T?) -> Unit
@@ -40,6 +42,7 @@ fun <T> LiveData<T>.observeForever(
  * [autoClear] 收到数据后, 是否要情况数据
  * [allowBackward] 是否允许数据倒灌, 接收到旧数据
  * */
+@MainThread
 fun <T> LiveData<T>.observe(
     owner: LifecycleOwner,
     autoClear: Boolean = false,
@@ -71,6 +74,7 @@ fun <T> LiveData<T>.observe(
  * [action] 返回值表示是否处理了数据, 如果没有处理, 则不会remove
  * [allowBackward] 是否允许数据倒灌, 接收到旧数据
  * */
+@MainThread
 fun <T> LiveData<T>.observeOnce(
     owner: LifecycleOwner? = null,
     allowBackward: Boolean = true,
