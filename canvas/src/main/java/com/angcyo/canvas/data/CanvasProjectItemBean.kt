@@ -517,6 +517,8 @@ fun Int.toMm() = toFloat().toMm()
 /**像素转毫米*/
 fun Float?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0f).toFloat()
 
+fun Double?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0.0).toFloat()
+
 //--
 
 /**[com.angcyo.canvas.data.CanvasProjectItemBean.mtype]类型转成字符串*/

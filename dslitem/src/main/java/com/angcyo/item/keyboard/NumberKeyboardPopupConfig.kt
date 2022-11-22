@@ -83,25 +83,25 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                 CONTROL_DECREMENT -> {
                     //自减
                     newValueBuild.clear()
-                    newValueBuild.append(oldValue?.toFloatOrNull()?.run { "${this - step}" }
+                    newValueBuild.append(oldValue?.toDoubleOrNull()?.run { "${this - step}" }
                         ?: "${-step}")
                 }
                 CONTROL_INCREMENT -> {
                     //自增
                     newValueBuild.clear()
-                    newValueBuild.append(oldValue?.toFloatOrNull()?.run { "${this + step}" }
+                    newValueBuild.append(oldValue?.toDoubleOrNull()?.run { "${this + step}" }
                         ?: "$step")
                 }
                 CONTROL_FAST_DECREMENT -> {
                     //长按自减
                     newValueBuild.clear()
-                    newValueBuild.append(oldValue?.toFloatOrNull()?.run { "${this - longStep}" }
+                    newValueBuild.append(oldValue?.toDoubleOrNull()?.run { "${this - longStep}" }
                         ?: "${-step}")
                 }
                 CONTROL_FAST_INCREMENT -> {
                     //长按自增
                     newValueBuild.clear()
-                    newValueBuild.append(oldValue?.toFloatOrNull()?.run { "${this + longStep}" }
+                    newValueBuild.append(oldValue?.toDoubleOrNull()?.run { "${this + longStep}" }
                         ?: "$step")
                 }
                 "." -> {
@@ -141,7 +141,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
 
     /**回调此方法, 直接拿到输入后的值
      * 不能覆盖[onClickNumberAction]方法*/
-    var onNumberResultAction: (number: Float) -> Unit = { }
+    var onNumberResultAction: (number: Double) -> Unit = { }
 
     /**格式化文本内容, 比如90°, 则应该返回90*/
     var onFormatTextAction: (value: String) -> String = {
@@ -149,7 +149,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
             //xx. 的情况
             it
         } else {
-            val float = it.toFloatOrNull()
+            val float = it.toDoubleOrNull()
             if (float == null) {
                 "${it.getFloatNum() ?: it}"
             } else {
@@ -278,6 +278,8 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
             }
         }
 
+    var _isBeforeControlInput = false
+
     /**自动绑定
      * [onClickNumberAction]*/
     fun onInputValue(value: String): Boolean {
@@ -285,9 +287,12 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
 
         val defaultValue = onFormatTextAction(keyboardBindTextView?.text?.toString() ?: "")
 
-        if (isControlInputNumber(value) && !enableShakeInput) {
-            newValueBuilder.clear()
-            newValueBuilder.append(defaultValue)
+        if (!enableShakeInput) {
+            if (isControlInputNumber(value) || _isBeforeControlInput) {
+                newValueBuilder.clear()
+                newValueBuilder.append(defaultValue)
+            }
+            _isBeforeControlInput = isControlInputNumber(value)
         }
 
         val result = keyboardInputValueParse(
@@ -298,7 +303,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
             incrementStep,
             longIncrementStep
         ).apply {
-            toFloatOrNull()?.let { toValue ->
+            toDoubleOrNull()?.let { toValue ->
                 _pendingRunnable = Runnable {
                     onNumberResultAction(toValue)
                     if (enableShakeInput) {

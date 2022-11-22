@@ -31,7 +31,7 @@ open class DslPropertyFloatItem : BasePropertyNumberItem() {
                 keyboardBindTextView = it as? TextView
                 bindPendingDelay = -1 //关闭限流输入
                 onNumberResultAction = { number ->
-                    itemPropertyNumber = number
+                    itemPropertyNumber = number.toFloat()
                     itemChanging = true
                 }
             }
