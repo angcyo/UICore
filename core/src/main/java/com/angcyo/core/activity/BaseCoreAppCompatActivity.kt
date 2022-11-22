@@ -9,6 +9,7 @@ import com.angcyo.core.component.ComplianceCheck
 import com.angcyo.core.component.StateModel
 import com.angcyo.core.component.model.LanguageModel
 import com.angcyo.core.vmApp
+import com.angcyo.library.annotation.CallComplianceAfter
 import com.angcyo.library.ex.*
 import com.angcyo.library.toastQQ
 
@@ -27,8 +28,12 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
         var haveLastCrash = false
     }
 
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateAfter(savedInstanceState: Bundle?) {
+        super.onCreateAfter(savedInstanceState)
 
         //Compliance 合规后的初始化
         vmApp<StateModel>().waitState(
@@ -44,17 +49,27 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
         onComplianceCheck(savedInstanceState)
     }
 
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+    }
+
     /**开始合规检查*/
     open fun onComplianceCheck(savedInstanceState: Bundle?) {
-        ComplianceCheck.agree()
+        ComplianceCheck.check {
+            //同意合规
+            ComplianceCheck.agree()
+        }
     }
 
     /**合规后的初始化*/
+    @CallComplianceAfter
     open fun onComplianceCheckAfter(savedInstanceState: Bundle?) {
         checkCrash()
     }
 
-    /**检查是否有崩溃*/
+    /**检查是否有崩溃, 合规之后
+     * [com.angcyo.core.activity.BaseCoreAppCompatActivity.onComplianceCheckAfter]*/
+    @CallComplianceAfter
     open fun checkCrash() {
         if (isDebug()) {
             showCrashDialog()
@@ -73,6 +88,7 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
 
     //<editor-fold desc="双击Back回调">
 
+    /**双击返回时间间隔, 负数不开启*/
     var doubleBackTime = -1
 
     var _backPressedTime = 0L
