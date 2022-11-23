@@ -15,8 +15,7 @@ import com.angcyo.core.fragment.BaseDslFragment
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.bindItem
 import com.angcyo.dsladapter.drawBottom
-import com.angcyo.item.DslPropertyFloatItem
-import com.angcyo.item.DslPropertyIntItem
+import com.angcyo.item.DslPropertyNumberItem
 import com.angcyo.item.DslPropertyStringItem
 import com.angcyo.item.DslPropertySwitchItem
 import com.angcyo.item.style.*
@@ -154,30 +153,26 @@ class DebugFragment : BaseDslFragment() {
                                 debugAction.action?.invoke(this@DebugFragment, it)
                             }
                         }
-                    } else if (debugAction.type == Int::class.java) {
+                    } else if (DslPropertyNumberItem.isNumber(debugAction.type)) {
                         //数字输入
-                        DslPropertyIntItem()() {
+                        DslPropertyNumberItem()() {
                             itemLabel = debugAction.label
                             itemDes = debugAction.des
                             initItem()
 
-                            itemPropertyNumber =
-                                debugAction.key.hawkGetInt((debugAction.defValue as? Int) ?: -1)
-                            observeItemChange {
-                                debugAction.key.hawkPut(itemPropertyNumber)
-                                debugAction.action?.invoke(this@DebugFragment, itemPropertyNumber)
+                            itemPropertyNumber = when {
+                                DslPropertyNumberItem.isInt(debugAction.type) -> debugAction.key.hawkGet(
+                                    (debugAction.defValue as? Int) ?: 0
+                                )
+                                DslPropertyNumberItem.isLong(debugAction.type) -> debugAction.key.hawkGet(
+                                    (debugAction.defValue as? Long) ?: 0L
+                                )
+                                DslPropertyNumberItem.isFloat(debugAction.type) -> debugAction.key.hawkGet(
+                                    (debugAction.defValue as? Float) ?: 0
+                                )
+                                else -> debugAction.defValue as? Number
                             }
-                        }
-                    } else if (debugAction.type == Float::class.java) {
-                        //浮点输入
-                        DslPropertyFloatItem()() {
-                            itemLabel = debugAction.label
-                            itemDes = debugAction.des
-                            initItem()
 
-                            itemPropertyNumber = debugAction.key.hawkGetFloat(
-                                (debugAction.defValue as? Float) ?: -1f
-                            )
                             observeItemChange {
                                 debugAction.key.hawkPut(itemPropertyNumber)
                                 debugAction.action?.invoke(this@DebugFragment, itemPropertyNumber)
