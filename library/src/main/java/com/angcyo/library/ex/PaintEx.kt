@@ -52,7 +52,7 @@ fun Paint.textBounds(text: CharSequence?, result: Rect = Rect(0, 0, 0, 0)): Rect
     if (text == null) {
         return result
     }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    if (Build.VERSION.SDK_INT >= VERSION_CODES.Q) {
         getTextBounds(text, 0, text.length, result)
     } else {
         getTextBounds(text.toString(), 0, text.length, result)
