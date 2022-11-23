@@ -62,10 +62,11 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
     /**延迟多久才显示软键盘*/
     var showSoftInputDelay = DEFAULT_SOFT_INPUT_DELAY
 
-    /**
-     * 是否允许输入为空
-     */
+    /** 是否允许输入为空 */
     var canInputEmpty = true
+
+    /**是否剔除输入文本的首尾空格*/
+    var trimInputText = true
 
     /**
      * 使用英文字符数过滤, 一个汉字等于2个英文, 一个emoji表情等于2个汉字
@@ -111,7 +112,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
     init {
         dialogLayoutId = R.layout.lib_dialog_input_layout
         positiveButtonListener = { dialog, dialogViewHolder ->
-            val result = dialogViewHolder.ev(R.id.edit_text_view).string()
+            val result = dialogViewHolder.ev(R.id.edit_text_view).string(trimInputText)
             if (!canInputEmpty && result.isBlank()) {
                 //空
             } else if (onInputResult.invoke(dialog, result)) {

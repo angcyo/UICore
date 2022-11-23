@@ -150,7 +150,15 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
 
     /**单行文本字符的宽度*/
     fun measureTextWidth(text: String, paint: Paint = textPaint): Float {
-        paint.textBounds(text, _textMeasureBounds)
+        if (dataBean.isCompactText) {
+            if (text.isBlank()) {
+                //空格
+                val textWidth = paint.textWidth(text).toInt()
+                _textMeasureBounds.set(0, 0, textWidth, textWidth)
+            } else {
+                paint.textBounds(text, _textMeasureBounds)
+            }
+        }
         val textWidth = if (dataBean.isCompactText) {
             _textMeasureBounds.width().toFloat()
         } else {
@@ -175,8 +183,16 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
 
     /**单个文本字符的高度*/
     fun measureTextHeight(text: String, paint: Paint = textPaint): Float {
+        if (dataBean.isCompactText) {
+            if (text.isBlank()) {
+                //空格
+                val textWidth = paint.textWidth(text).toInt()
+                _textMeasureBounds.set(0, 0, textWidth, textWidth)
+            } else {
+                paint.textBounds(text, _textMeasureBounds)
+            }
+        }
         return if (dataBean.isCompactText) {
-            paint.textBounds(text, _textMeasureBounds)
             _textMeasureBounds.height().toFloat()
         } else {
             paint.textHeight()
