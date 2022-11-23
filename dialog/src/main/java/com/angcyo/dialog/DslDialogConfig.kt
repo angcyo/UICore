@@ -140,6 +140,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
             if (!value) {
                 canceledOnTouchOutside = false
             }
+            _dialog?.setCancelable(value)
         }
 
     var canceledOnTouchOutside = true
@@ -148,6 +149,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
             if (value) {
                 cancelable = true
             }
+            _dialog?.setCanceledOnTouchOutside(value)
         }
 
     /**对话框标题*/
@@ -155,10 +157,15 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
         set(value) {
             field = value
             _dialogViewHolder?.tv(R.id.dialog_title_view)?.text = value
+            _dialog?.setTitle(value)
         }
 
     /**对话框内容*/
     var dialogMessage: CharSequence? = null
+        set(value) {
+            field = value
+            _dialogViewHolder?.tv(R.id.dialog_message_view)?.text = value
+        }
 
     /**对话框初始化监听*/
     var onDialogInitListener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit =
