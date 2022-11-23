@@ -24,7 +24,6 @@ import com.angcyo.vector.VectorHelper
  * @since 2022/04/12
  */
 
-
 /**
 
 # GCode 常用指令
@@ -95,15 +94,28 @@ object GCodeHelper {
         return gCodeHandler.path
     }
 
+    /**将GCode数据解析成一行一行的数据*/
     fun parseGCodeLineList(config: GCodeParseConfig): List<GCodeLineData> {
         val gCodeLineDataList = mutableListOf<GCodeLineData>()
         _lastRatio = config.mmRatio // 默认使用毫米单位
+
+        var spindleType: Int? = null // M03/M05/M04 激光类型
         config.text.lines().forEach { line ->
             if (line.isNotBlank()) {
                 //不为空
                 val gCodeLineData = _parseGCodeLine(line, config.mmRatio, config.inRatio)
                 gCodeLineDataList.add(gCodeLineData)
+
+                if (spindleType == null) {
+                    //还未找到激光类型指令
+                    spindleType = gCodeLineData.spindleType()
+                }
             }
+        }
+
+        if (spindleType == null) {
+            //全文中未设置M指令, 则使用M04自动激光...
+            gCodeLineDataList.firstOrNull()?.notFoundMCmd = true
         }
         return gCodeLineDataList
     }
@@ -286,8 +298,11 @@ object GCodeHelper {
         /**重写其他非G指令*/
         var overrideCommand: ((line: GCodeLineData) -> Unit)? = null
 
-        //M05指令:主轴关闭, M03:主轴打卡 M04自动
-        private var spindleType = SPINDLE_OFF
+        /**
+         * M05指令:主轴关闭, M03:主轴打卡 M04自动
+         * 自动从文件中提取提取, 如果文件中不包含M03/M05, 则自动使用M04
+         * */
+        private var spindleType: Int? = null
 
         fun reset() {
             _lastMoveX = 0.0
@@ -300,7 +315,16 @@ object GCodeHelper {
             transformPoint = null
             overrideGCommand = null
             overrideCommand = null
-            spindleType = SPINDLE_OFF
+            spindleType = null
+        }
+
+        /**初始化激光类型*/
+        fun _initSpindleType(gCodeLineList: List<GCodeLineData>) {
+            spindleType = if (gCodeLineList.firstOrNull()?.notFoundMCmd == true) {
+                SPINDLE_AUTO
+            } else {
+                SPINDLE_OFF
+            }
         }
 
         /**入口, 开始解析[GCodeLineData]*/
@@ -328,7 +352,7 @@ object GCodeHelper {
         }
 
         /**解析GCode的bounds*/
-        fun parseGCodeBound(gCodeLineDataList: List<GCodeLineData>): RectF {
+        fun parseGCodeBound(gCodeLineList: List<GCodeLineData>): RectF {
             /*var minX = 0f
             var maxX = 0f
 
@@ -352,8 +376,9 @@ object GCodeHelper {
             gCodeBounds.set(minX, minY, maxX, maxY)*/
 
             //解析一行的数据
-            spindleType = SPINDLE_OFF
-            for (lineData in gCodeLineDataList) {
+            _initSpindleType(gCodeLineList)
+
+            for (lineData in gCodeLineList) {
                 spindleType = lineData.spindleType(spindleType)
                 parseGCodeLine(lineData, path)
             }
@@ -373,7 +398,7 @@ object GCodeHelper {
 
         /**解析所有GCode数据*/
         fun parseGCodeLineList(gCodeLineList: List<GCodeLineData>) {
-            spindleType = SPINDLE_OFF
+            _initSpindleType(gCodeLineList)
             gCodeLineList.forEach { line ->
                 spindleType = line.spindleType(spindleType)
                 if (!parseGCodeLine(line)) {
@@ -572,6 +597,8 @@ object GCodeHelper {
                 } else if (number == 90 || number == 91) {
                     //90: 绝对位置, 1: 相对位置
                     _isAbsolutePosition = number == 90
+                } else if (number == 20 || number == 21) {
+                    //20: 英寸单位, 21: 毫米单位
                 } else {
                     L.v("忽略G指令:${line.cmdString}")
                 }

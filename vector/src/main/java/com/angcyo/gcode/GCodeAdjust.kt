@@ -70,6 +70,9 @@ class GCodeAdjust {
         }
 
         outputFile.writer().use { writer ->
+            if (gCodeLineList.firstOrNull()?.notFoundMCmd == true) {
+                writer.appendLine("M04 S255")
+            }
             gCodeHandler.transformPoint = { gCodeLineData, pointF ->
                 matrix.mapPoint(pointF, pointF)
             }
@@ -120,6 +123,10 @@ class GCodeAdjust {
 
         @Pixel
         val offsetTop = top - gCodeBounds.top
+
+        if (gCodeLineList.firstOrNull()?.notFoundMCmd == true) {
+            writer.appendLine("M04 S255")
+        }
 
         gCodeHandler.transformPoint = { gCodeLineData, pointF ->
             //这里还是像素单位, 但是override的时候, 统一转成对应单位

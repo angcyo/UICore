@@ -19,7 +19,11 @@ data class GCodeLineData(
     /**[cmdString]分解的所有指令, 一行中的所有指令*/
     val cmdList: List<GCodeCmd>,
     /**这一行的注释*/
-    val comment: String? = null
+    val comment: String? = null,
+    /**是否全文中没有发现M03/04/05指令, 只在第一行数据中赋值
+     * [com.angcyo.gcode.GCodeHelper.parseGCodeLineList]
+     * */
+    var notFoundMCmd: Boolean = false,
 )
 
 fun GCodeLineData.isGCodeMoveDirective(): Boolean {
@@ -63,7 +67,7 @@ fun List<GCodeLineData>.lastValidIndex(): Int {
  *  [SPINDLE_OFF]
  *  [SPINDLE_AUTO]
  *  */
-fun GCodeLineData.spindleType(def: Int): Int {
+fun GCodeLineData.spindleType(def: Int? = null): Int? {
     var result = def
     cmdList.forEach { cmdData ->
         val cmdString = cmdData.cmd
