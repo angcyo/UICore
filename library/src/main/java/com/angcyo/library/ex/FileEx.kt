@@ -121,6 +121,9 @@ fun String?.fileSizeString(): String {
 }
 
 /**[Long.fileSizeString]*/
+fun Int.toSizeString(unit: SizeUnit = SizeUnit.Auto): String = toLong().toSizeString(unit)
+
+/**[Long.fileSizeString]*/
 fun Long.toSizeString(unit: SizeUnit = SizeUnit.Auto): String = fileSizeString(unit)
 
 /**[this] b 字节数量
