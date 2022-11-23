@@ -108,12 +108,12 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
 
         //rx error
         Rx.init { exception ->
-            exception.string().writeErrorLog(false)
+            exception.string().writeErrorLog(L.NONE)
         }
 
         //coroutine error
         CoroutineErrorHandler.globalCoroutineExceptionHandler = { context, exception ->
-            exception.string().writeErrorLog(false)
+            exception.string().writeErrorLog(L.NONE)
         }
 
         DslHttp.config {

@@ -135,15 +135,13 @@ fun FileTextData?.writeToCache(
     return FileUtils.writeExternal(libCacheFile, this, append)
 }
 
-/**将日志写入到指定的日志文件[log.log], 默认在[log]文件夹下
- * [log] 是否还需要输出到控制台
+/**将日志写入到指定的日志文件[logLevel.log], 默认在[logLevel]文件夹下
+ * [logLevel] 是否还需要输出到控制台
  * [log/log.log]
  * [com.angcyo.library.utils.Constant.LOG_FOLDER_NAME]*/
-fun String.writeToLog(name: String = LogFile.log, log: Boolean = true): String {
+fun String.writeToLog(name: String = LogFile.log, logLevel: Int = L.NONE): String {
     wrapLog().writeTo(Constant.LOG_FOLDER_NAME, name)
-    if (log) {
-        L.e(this)
-    }
+    L.log(logLevel, this)
     return this
 }
 
@@ -151,8 +149,8 @@ fun String.writeToLog(name: String = LogFile.log, log: Boolean = true): String {
  * [log] 是否还需要输出到控制台
  * [log/error.log]
  * */
-fun String.writeErrorLog(log: Boolean = true): String {
-    writeToLog(LogFile.error, log)
+fun String.writeErrorLog(logLevel: Int = L.NONE): String {
+    writeToLog(LogFile.error, logLevel)
     return this
 }
 
@@ -160,7 +158,7 @@ fun String.writeErrorLog(log: Boolean = true): String {
  * [log] 是否还需要输出到控制台
  * [log/http.log]
  * */
-fun String.writeHttpLog(log: Boolean = true): String {
-    writeToLog(LogFile.http, log)
+fun String.writeHttpLog(logLevel: Int = L.NONE): String {
+    writeToLog(LogFile.http, logLevel)
     return this
 }

@@ -25,6 +25,7 @@ object L {
     /**多log消息输出分割*/
     val LOG_SEPARATOR = " "
 
+    const val NONE = 0
     const val VERBOSE = 2
     const val DEBUG = 3
     const val INFO = 4
@@ -138,6 +139,11 @@ object L {
     fun et(tag: String, vararg msg: Any?) {
         _tempTag = tag
         _level = ERROR
+        _log(*msg)
+    }
+
+    fun log(level: Int, vararg msg: Any?) {
+        _level = level
         _log(*msg)
     }
 
