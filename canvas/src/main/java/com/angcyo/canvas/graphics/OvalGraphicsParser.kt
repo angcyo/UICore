@@ -1,6 +1,8 @@
 package com.angcyo.canvas.graphics
 
 import android.graphics.Path
+import android.graphics.RectF
+import android.os.Build
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
@@ -32,12 +34,16 @@ class OvalGraphicsParser : PathGraphicsParser() {
 
             //path
             val dataPath = Path()
-            dataPath.addOval(0f, 0f, dataWidth, dataHeight, Path.Direction.CW)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                dataPath.addOval(0f, 0f, dataWidth, dataHeight, Path.Direction.CW)
+            } else {
+                dataPath.addOval(RectF(0f, 0f, dataWidth, dataHeight), Path.Direction.CW)
+            }
             item.addDataPath(dataPath)
 
             item.drawable = createPathDrawable(item) ?: return null
 
-            initDataMode(bean, item.paint)
+            initDataModeWithPaintStyle(bean, item.paint)
 
             return item
         }

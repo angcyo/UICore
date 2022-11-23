@@ -42,7 +42,7 @@ interface IGraphicsParser {
     }
 
     /**简单的初始化一下数据模式*/
-    fun initDataMode(bean: CanvasProjectItemBean, paint: Paint) {
+    fun initDataModeWithPaintStyle(bean: CanvasProjectItemBean, paint: Paint) {
         bean._dataMode = if (paint.style == Paint.Style.STROKE) {
             CanvasConstant.DATA_MODE_GCODE
         } else {

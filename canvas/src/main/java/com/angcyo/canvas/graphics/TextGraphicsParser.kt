@@ -79,7 +79,7 @@ class TextGraphicsParser : IGraphicsParser {
             }
         }
 
-        initDataMode(bean, item.textPaint)
+        initDataModeWithPaintStyle(bean, item.textPaint)
     }
 
     /**更新旋转偏移, 通常在改变宽高/文本之后需要调用,

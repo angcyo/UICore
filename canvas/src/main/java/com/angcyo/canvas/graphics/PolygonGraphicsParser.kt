@@ -29,7 +29,7 @@ class PolygonGraphicsParser : PathGraphicsParser() {
             item.addDataPath(dataPath)
 
             item.drawable = createPathDrawable(item) ?: return null
-            initDataMode(bean, item.paint)
+            initDataModeWithPaintStyle(bean, item.paint)
             return item
         }
         return super.parse(bean)

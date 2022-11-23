@@ -320,7 +320,7 @@ data class CanvasProjectItemBean(
      * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_GCODE]
      * [com.angcyo.canvas.utils.CanvasConstant.DATA_MODE_DITHERING]
      *
-     * [com.angcyo.canvas.graphics.IGraphicsParser.initDataMode]
+     * [com.angcyo.canvas.graphics.IGraphicsParser.initDataModeWithPaintStyle]
      *
      * [com.angcyo.engrave.data.EngraveLayerInfo]
      * */
