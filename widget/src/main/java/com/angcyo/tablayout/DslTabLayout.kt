@@ -278,7 +278,11 @@ open class DslTabLayout(
                 for (i in 0 until layoutCount) {
                     inflate(layoutId, true).let {
                         if (it is TextView) {
-                            it.text = "Item $i"
+                            if (it.text.isNullOrEmpty()) {
+                                it.text = "Item $i"
+                            } else {
+                                it.text = "${it.text}/$i"
+                            }
                         }
                     }
                 }
@@ -533,7 +537,8 @@ open class DslTabLayout(
                 tabBorder?.draw(canvas)
             }
         }
-        if (drawIndicator && tabIndicator.indicatorStyle > DslTabIndicator.INDICATOR_STYLE_DIVIDE) {
+        if (drawIndicator && tabIndicator.indicatorStyle.have(DslTabIndicator.INDICATOR_STYLE_FOREGROUND)) {
+            //前景显示
             tabIndicator.draw(canvas)
         }
         if (drawBadge) {
@@ -602,7 +607,8 @@ open class DslTabLayout(
         }
 
         //绘制在child的后面
-        if (drawIndicator && tabIndicator.indicatorStyle < DslTabIndicator.INDICATOR_STYLE_DIVIDE) {
+        if (drawIndicator && !tabIndicator.indicatorStyle.have(DslTabIndicator.INDICATOR_STYLE_FOREGROUND)) {
+            //背景绘制
             tabIndicator.draw(canvas)
         }
     }

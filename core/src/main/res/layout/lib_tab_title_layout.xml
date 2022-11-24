@@ -34,12 +34,8 @@
         app:tab_item_is_equ_width="true"
         app:tab_max_scale="1.2"
         app:tab_min_scale="1"
-        app:tab_select_color="@color/text_general_color">
-        <!--预览使用-->
-        <!--<include layout="@layout/lib_tab_text_item_layout" />-->
-        <!--<include layout="@layout/lib_tab_text_item_layout" />-->
-        <!--<include layout="@layout/lib_tab_text_item_layout" />-->
-    </com.angcyo.tablayout.DslTabLayout>
+        app:tab_preview_item_layout_id="@layout/lib_tab_text_item_layout"
+        app:tab_select_color="@color/text_general_color" />
 
     <LinearLayout
         android:id="@+id/lib_left_wrap_layout"
