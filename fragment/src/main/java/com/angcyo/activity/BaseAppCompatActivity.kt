@@ -10,7 +10,6 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.angcyo.DslAHelper
 import com.angcyo.base.*
@@ -23,6 +22,9 @@ import com.angcyo.library.component._delay
 import com.angcyo.library.ex.Anim
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.utils.resultString
+import com.angcyo.viewmodel.watch
+import com.angcyo.viewmodel.watchForever
+import com.angcyo.viewmodel.watchOnce
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -237,43 +239,53 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    //</editor-fold desc="默认回调">
-
-    //<editor-fold desc="高级扩展">
-
-    /**快速观察[LiveData]*/
-    fun <T> LiveData<T>.observe(
-        autoClear: Boolean = false,
-        action: (data: T?) -> Unit
-    ): Observer<T> {
-        val result: Observer<T>
-        observe(this@BaseAppCompatActivity, Observer<T> {
-            action(it)
-            if (it != null && autoClear && this is MutableLiveData) {
-                postValue(null)
+    override fun onDestroy() {
+        super.onDestroy()
+        foreverObserveMap.forEach {
+            try {
+                it.key.removeObserver(it.value as Observer<in Any>)
+            } catch (e: Exception) {
             }
-        }.apply {
-            result = this
-        })
-        return result
+        }
     }
 
-    /**快速观察[LiveData]一次, 确保不收到null数据为止*/
-    fun <T> LiveData<T>.observeOnce(action: (data: T?) -> Unit): Observer<T> {
-        var result: Observer<T>? = null
-        observe(this@BaseAppCompatActivity, Observer<T> {
-            if (it is List<*>) {
-                if (it.isNotEmpty()) {
-                    removeObserver(result!!)
-                }
-            } else if (it != null) {
-                removeObserver(result!!)
-            }
-            action(it)
-        }.apply {
-            result = this
-        })
-        return result!!
+    //</editor-fold desc="默认回调">
+
+    //<editor-fold desc="LiveData扩展">
+
+    /**快速观察[LiveData]
+     * [autoClear] 收到有效数据后, 是否自动清除数据
+     * [allowBackward] 是否允许数据倒灌, 接收到旧数据
+     * */
+    fun <T> LiveData<T>.observe(
+        autoClear: Boolean = false,
+        allowBackward: Boolean = true,
+        action: (data: T?) -> Unit
+    ): Observer<T?> = watch(this@BaseAppCompatActivity, autoClear, allowBackward, action)
+
+    /**快速观察[LiveData]一次, 确保不收到null数据
+     * [action] 返回值表示是否处理了数据, 如果没有处理, 则不会remove
+     * [allowBackward] 是否允许数据倒灌, 接收到旧数据
+     * */
+    fun <T> LiveData<T>.observeOnce(
+        allowBackward: Boolean = true,
+        action: (data: T?) -> Boolean
+    ): Observer<T?> = watchOnce(this@BaseAppCompatActivity, allowBackward, action)
+
+    val foreverObserveMap = hashMapOf<LiveData<*>, Observer<*>>()
+
+    /**永久[LiveData], 直到手动移除观察者
+     * [autoClear] 收到有效数据后, 是否自动清除数据
+     * [allowBackward] 是否允许数据倒灌, 接收到旧数据
+     * */
+    fun <T> LiveData<T>.observeForever(
+        autoClear: Boolean = false,
+        allowBackward: Boolean = true,
+        action: (data: T?) -> Unit
+    ): Observer<T?> {
+        val result: Observer<T?> = watchForever(autoClear, allowBackward, action)
+        foreverObserveMap[this] = result
+        return result
     }
 
     //</editor-fold>

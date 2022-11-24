@@ -1,9 +1,7 @@
 package com.angcyo.lifecycle
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
+import androidx.annotation.MainThread
+import androidx.lifecycle.*
 
 /**
  * [androidx.lifecycle.LifecycleObserver]
@@ -15,6 +13,8 @@ import androidx.lifecycle.LifecycleOwner
  * @date 2020/07/15
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+
+//<editor-fold desc="Lifecycle">
 
 /**生命周期快速监听
  * [action] 返回true, 表示调用完之后移除观察*/
@@ -75,7 +75,9 @@ fun Lifecycle.onStateChanged(
     return observer
 }
 
-/*-----------------------------------LifecycleOwner------------------------------------*/
+//</editor-fold desc="Lifecycle">
+
+//<editor-fold desc="LifecycleOwner">
 
 fun LifecycleOwner.on(
     event: Lifecycle.Event,
@@ -102,3 +104,5 @@ fun LifecycleOwner.onStart(forever: Boolean = false, action: () -> Boolean) =
 
 fun LifecycleOwner.onAny(forever: Boolean = false, action: () -> Boolean) =
     on(Lifecycle.Event.ON_ANY, forever, action)
+
+//</editor-fold desc="LifecycleOwner">

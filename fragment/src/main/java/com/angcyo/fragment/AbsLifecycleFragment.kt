@@ -11,7 +11,6 @@ import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.angcyo.base.checkBackPressedDispatcher
 import com.angcyo.base.getAllResumedFragment
@@ -21,6 +20,9 @@ import com.angcyo.library.L
 import com.angcyo.library.L.i
 import com.angcyo.library.ex.hash
 import com.angcyo.library.ex.hideSoftInput
+import com.angcyo.viewmodel.watch
+import com.angcyo.viewmodel.watchForever
+import com.angcyo.viewmodel.watchOnce
 
 /**
  * Created by angcyo on 2018/12/03 23:17
@@ -91,7 +93,10 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment, OnBackPressedDis
     override fun onDestroy() {
         super.onDestroy()
         foreverObserveMap.forEach {
-            it.key.removeObserver(it.value as Observer<in Any>)
+            try {
+                it.key.removeObserver(it.value as Observer<in Any>)
+            } catch (e: Exception) {
+            }
         }
         onFragmentSetResult()
     }
@@ -194,7 +199,7 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment, OnBackPressedDis
 
     //</editor-fold>
 
-    //<editor-fold desc="高级扩展">
+    //<editor-fold desc="LiveData扩展">
 
     /**快速观察[LiveData]
      * [autoClear] 收到有效数据后, 是否自动清除数据
@@ -204,88 +209,29 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment, OnBackPressedDis
         autoClear: Boolean = false,
         allowBackward: Boolean = true,
         action: (data: T?) -> Unit
-    ): Observer<T> {
-        val result: Observer<T>
-        var isFirst = value != null
-        observe(this@AbsLifecycleFragment, Observer<T> {
-            if (allowBackward) {
-                action(it)
-            } else {
-                //不允许数据倒灌
-                if (!isFirst) {
-                    action(it)
-                }
-                isFirst = false
-            }
-            if (it != null && autoClear && this is MutableLiveData) {
-                postValue(null)
-            }
-        }.apply {
-            result = this
-        })
-        return result
-    }
+    ): Observer<T?> = watch(this@AbsLifecycleFragment, autoClear, allowBackward, action)
 
     /**快速观察[LiveData]一次, 确保不收到null数据
      * [action] 返回值表示是否处理了数据, 如果没有处理, 则不会remove
+     * [allowBackward] 是否允许数据倒灌, 接收到旧数据
      * */
     fun <T> LiveData<T>.observeOnce(
         allowBackward: Boolean = true,
         action: (data: T?) -> Boolean
-    ): Observer<T> {
-        var result: Observer<T>? = null
-        var isFirst = value != null
-        var isNotify = false
-        observe(this@AbsLifecycleFragment, Observer<T> {
-            if (allowBackward) {
-                isNotify = action(it)
-            } else {
-                //不允许数据倒灌
-                if (!isFirst) {
-                    isNotify = action(it)
-                }
-                isFirst = false
-            }
-            if (isNotify) {
-                if (it is List<*>) {
-                    if (it.isNotEmpty()) {
-                        removeObserver(result!!)
-                    }
-                } else if (it != null) {
-                    removeObserver(result!!)
-                }
-            }
-        }.apply {
-            result = this
-        })
-        return result!!
-    }
+    ): Observer<T?> = watchOnce(this@AbsLifecycleFragment, allowBackward, action)
 
     val foreverObserveMap = hashMapOf<LiveData<*>, Observer<*>>()
 
+    /**永久[LiveData], 直到手动移除观察者
+     * [autoClear] 收到有效数据后, 是否自动清除数据
+     * [allowBackward] 是否允许数据倒灌, 接收到旧数据
+     * */
     fun <T> LiveData<T>.observeForever(
         autoClear: Boolean = false,
         allowBackward: Boolean = true,
         action: (data: T?) -> Unit
-    ): Observer<T> {
-        val result: Observer<T>
-        var isFirst = value != null
-        observeForever(Observer<T> {
-            if (allowBackward) {
-                action(it)
-            } else {
-                //不允许数据倒灌
-                if (!isFirst) {
-                    action(it)
-                }
-                isFirst = false
-            }
-            if (it != null && autoClear && this is MutableLiveData) {
-                postValue(null)
-            }
-        }.apply {
-            result = this
-        })
+    ): Observer<T?> {
+        val result: Observer<T?> = watchForever(autoClear, allowBackward, action)
         foreverObserveMap[this] = result
         return result
     }
