@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 
 def haveLibMSdk = project.hasProperty("M_SDK_LIB")
 def C_SDK = 31
-def M_SDK = haveLibMSdk ? project.ext.M_SDK_LIB : '21'
+def M_SDK = haveLibMSdk ? project.ext.M_SDK_LIB : 21
 def T_SDK = 31
 def V_CODE = 1
 def V_NAME = "1.0"
@@ -14,6 +14,8 @@ def lib_minify_enabled_debug = project.hasProperty("lib_minify_enabled_debug") ?
 def lib_use_proguard_debug = project.hasProperty("lib_use_proguard_debug") ? (project.ext.lib_use_proguard_debug == "true") : false
 def lib_minify_enabled = project.hasProperty("lib_minify_enabled") ? (project.ext.lib_minify_enabled == "true") : lib_minify_enabled_debug
 def lib_use_proguard = project.hasProperty("lib_use_proguard") ? (project.ext.lib_use_proguard == "true") : lib_minify_enabled
+
+//println "minSdk:" + M_SDK
 
 //println "kotlin版本:" + _kotlin_version
 //println project.getName()

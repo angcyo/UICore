@@ -1,3 +1,6 @@
+ext {
+    M_SDK_LIB = 19
+}
 apply from: allGradle.libBase
 
 dependencies {
