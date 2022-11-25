@@ -164,6 +164,7 @@ object CanvasDataHandleOperate {
      * [Gravity.TOP]:水平从上开始左右右左扫描 [Gravity.BOTTOM]:
      *
      * [threshold] 当色值>=此值时, 忽略数据 255白色 [0~255]
+     * [isSingleLine] 当前的图片是否是简单的线段, 如果是, 则每一行或者每一列只取一个像素点, 用来处理虚线的斜线
      *
      * 采样的时候, 使用像素单位, 但是写入文件的时候转换成mm单位
      * */
@@ -176,7 +177,8 @@ object CanvasDataHandleOperate {
         outputFile: File = libCacheFile(),
         isFirst: Boolean = true,
         isFinish: Boolean = true,
-        autoCnc: Boolean = false
+        autoCnc: Boolean = false,
+        isSingleLine: Boolean = false,
     ): File {
         val gCodeWriteHandler = GCodeWriteHandler()
         //像素单位转成mm单位
@@ -253,9 +255,15 @@ object CanvasDataHandleOperate {
 
                             gCodeWriteHandler.writePoint(xValue, yValue)
                             lastGCodeLineRef = lastLineRef //有数据的列
+
+                            if (isSingleLine) {
+                                break
+                            }
                         }
                     }
-                    gCodeWriteHandler.clearLastPoint()
+                    if (!isSingleLine) {
+                        gCodeWriteHandler.clearLastPoint()
+                    }
                     //rtl
                     if (lastGCodeLineRef == lastLineRef) {
                         //这一行有GCode数据
@@ -313,9 +321,15 @@ object CanvasDataHandleOperate {
 
                             gCodeWriteHandler.writePoint(xValue, yValue)
                             lastGCodeLineRef = lastLineRef //有数据的行
+
+                            if (isSingleLine) {
+                                break
+                            }
                         }
                     }
-                    gCodeWriteHandler.clearLastPoint()
+                    if (!isSingleLine) {
+                        gCodeWriteHandler.clearLastPoint()
+                    }
 
                     //rtl
                     if (lastGCodeLineRef == lastLineRef) {

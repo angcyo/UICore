@@ -338,7 +338,7 @@ fun Context.getBitmapFromRes(id: Int) = BitmapFactory.decodeResource(resources, 
 fun Context.getBitmapFromAssets(name: String) = BitmapFactory.decodeStream(assets.open(name))
 
 /**色彩通道提取
- * [channelType] 通道类型 [Color.RED] [Color.GREEN] [Color.BLUE]*/
+ * [channelType] 通道类型 [Color.RED] [Color.GREEN] [Color.BLUE] [Color.GRAY]*/
 fun Bitmap.colorChannel(
     channelType: Int = Color.RED,
     convert: (color: Int, channelColor: Int) -> Int = { _, channelColor -> channelColor }
@@ -355,7 +355,7 @@ fun Bitmap.colorChannel(
                 Color.GREEN -> Color.green(color)
                 Color.BLUE -> Color.blue(color)
                 Color.TRANSPARENT -> Color.alpha(color)
-                else -> 0xFF
+                else -> color.toGrayInt()//Color.GRAY
             }
             channelColor = convert(color, channelColor)
             channelColor = max(0, min(channelColor, 0xFF)) //限制0~255
