@@ -40,4 +40,6 @@ object LibHawkKeys {
      * */
     var maxBitmapCanvasSize: Long by HawkPropertyValue<Any, Long>(10 * 1024 * 1024)
 
+    /**是否激活圆弧输出矢量数据*/
+    var enableVectorArc: Boolean by HawkPropertyValue<Any, Boolean>(false)
 }

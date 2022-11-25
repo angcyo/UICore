@@ -9,6 +9,7 @@ import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataShapeItem
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.vector.VectorWriteHandler
 
 /**
  * 椭圆解析器
@@ -36,9 +37,18 @@ class OvalGraphicsParser : PathGraphicsParser() {
             //path
             val dataPath = Path()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                dataPath.addOval(0f, 0f, dataWidth, dataHeight, Path.Direction.CW)
+                dataPath.addOval(
+                    0f,
+                    0f,
+                    dataWidth,
+                    dataHeight,
+                    VectorWriteHandler.DEFAULT_PATH_DIRECTION
+                )
             } else {
-                dataPath.addOval(RectF(0f, 0f, dataWidth, dataHeight), Path.Direction.CW)
+                dataPath.addOval(
+                    RectF(0f, 0f, dataWidth, dataHeight),
+                    VectorWriteHandler.DEFAULT_PATH_DIRECTION
+                )
             }
             item.addDataPath(dataPath)
 

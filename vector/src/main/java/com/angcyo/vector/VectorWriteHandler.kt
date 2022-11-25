@@ -1,11 +1,13 @@
 package com.angcyo.vector
 
 import android.graphics.Path
+import android.os.Build
 import android.os.Debug
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Flag
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Private
+import com.angcyo.library.component.LibHawkKeys
 import com.angcyo.library.component.pool.acquireTempPath
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
@@ -13,6 +15,7 @@ import com.angcyo.library.ex.c
 import com.angcyo.library.ex.eachPath
 import com.angcyo.library.ex.size
 import com.angcyo.library.ex.toBitmap
+import com.angcyo.library.model.PointD
 import com.angcyo.library.unit.IValueUnit
 import kotlin.math.absoluteValue
 
@@ -56,20 +59,30 @@ abstract class VectorWriteHandler {
         /**路径填充类型, 圆形扫描*/
         const val PATH_FILL_TYPE_CIRCLE = 2
 
+        /**添加的路径, 默认的方向
+         * [Path.Direction.CW] 顺时针, X从右开始 Y↓扫描
+         * [Path.Direction.CCW] 逆时针, X从右开始 Y↑扫描
+         * */
+        val DEFAULT_PATH_DIRECTION = Path.Direction.CW
+
         //---
 
         /**是一个重新开始的, 那么之前的数据需要G1先连接, 然后G0到新的点*/
         @Flag("点位类型")
-        private const val POINT_TYPE_NEW = 1
+        internal const val POINT_TYPE_NEW = 1
 
         /**当前的点和上个点是一样的, 则抹除上一次的最后点信息*/
         @Flag("点位类型")
-        private const val POINT_TYPE_SAME = 2
+        internal const val POINT_TYPE_SAME = 2
 
         /**当和上一个点不一样, 但是又在可允许的范围内时, 则把之前的数据G1连起来,
          * 并且替换最后一个点为第一个点,而不是擦除所有点位信息*/
         @Flag("点位类型")
-        private const val POINT_TYPE_GAP = 3
+        internal const val POINT_TYPE_GAP = 3
+
+        /**多个点在圆上*/
+        @Flag("点位类型")
+        internal const val POINT_TYPE_CIRCLE = 4
     }
 
     //---
@@ -136,8 +149,13 @@ abstract class VectorWriteHandler {
     }
 
     /**需要连接到点
-     * GCode 用G1
+     * GCode 用G1, 支持G2
      * SVG 用L*/
+    open fun onLineToPoint(point: VectorPoint) {
+        onLineToPoint(point.x, point.y)
+    }
+
+    @Deprecated("请使用[onLineToPoint]", replaceWith = ReplaceWith("this.onLineToPoint(VectorPoint)"))
     open fun onLineToPoint(x: Double, y: Double) {
 
     }
@@ -151,17 +169,17 @@ abstract class VectorWriteHandler {
         if (_pointList.size() > 1) {
             //如果有旧数据
             val last = _pointList.last()
-            onLineToPoint(last.x, last.y)
+            onLineToPoint(last)
         }
         _pointList.clear()//重置集合
     }
 
     /**连接到最后一个点, 并且将最后一个点设置为第一个点*/
-    fun lineLastPoint() {
+    open fun lineLastPoint(fromPoint: VectorPoint) {
         if (_pointList.isNotEmpty()) {
             //如果有旧数据
             val last = _pointList.last()
-            onLineToPoint(last.x, last.y)
+            onLineToPoint(last)
             _pointList.clear()
             _pointList.add(last)
         }
@@ -208,6 +226,51 @@ abstract class VectorWriteHandler {
             return _valueChangedType(last, x, y)
         } else {
             //之前已经有多个点
+            if (LibHawkKeys.enableVectorArc && _pointList.size() == 2) {
+                //之前有2个点, 现在是第3个点, 则判断3个点是否是在圆上
+                val first = _pointList.first()
+                val x1 = first.x
+                val y1 = first.y
+                val x2 = _pointList[1].x
+                val y2 = _pointList[1].y
+                val cPoint = VectorHelper.centerOfCircle(x1, y1, x2, y2, x, y)
+                if (cPoint == null) {
+                    //不在圆上
+                } else {
+                    //在圆上, 则将圆心坐标写入第一个点的对象中
+                    val circle = first.circle
+                    if (circle == null) {
+                        first.circle = cPoint
+
+                        val a1 = VectorHelper.angle(x2, y2, cPoint.x, cPoint.y)
+                        val a2 = VectorHelper.angle(x, y, cPoint.x, cPoint.y)
+
+                        first.circleDir = if (a2 > a1) {
+                            //角度在变大, 顺时针枚举点位
+                            Path.Direction.CW
+                        } else {
+                            //角度在变小, 逆时针枚举点位
+                            Path.Direction.CCW
+                        }
+                    } else {
+                        //判断和之前是否在同一个圆上
+                        val type = _valueChangedType(
+                            VectorPoint(circle.x, circle.y, POINT_TYPE_CIRCLE),
+                            cPoint.x,
+                            cPoint.y
+                        )
+                        return if (type == POINT_TYPE_SAME || type == POINT_TYPE_GAP) {
+                            //圆心一致, 则
+                            POINT_TYPE_CIRCLE
+                        } else {
+                            //圆心不一致, 则使用新的点
+                            POINT_TYPE_NEW
+                        }
+                    }
+                    return POINT_TYPE_CIRCLE
+                }
+            }
+
             //val firstType = _valueChangedType(first, x, y) //第一个点的类型
             val lastType = _valueChangedType(last, x, y) //最后一个点的类型
 
@@ -269,12 +332,15 @@ abstract class VectorWriteHandler {
                 clearLastPoint()
                 onNewPoint(x, y)
             }
-            POINT_TYPE_GAP -> lineLastPoint()
+            POINT_TYPE_GAP -> lineLastPoint(point)
             /*POINT_TYPE_SAME, else -> _resetLastPoint(point)*/
         }
 
         _resetLastPoint(point)
     }
+
+    /**[writePoint]*/
+    fun appendPoint(x: Double, y: Double) = writePoint(x, y)
 
     //endregion ---Core---
 
@@ -368,7 +434,9 @@ abstract class VectorWriteHandler {
                 )
             }
 
-            if (resultPath.op(scanPath, path, Path.Op.INTERSECT)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
+                resultPath.op(scanPath, path, Path.Op.INTERSECT)
+            ) {
                 //操作成功
                 if (!resultPath.isEmpty) {
                     //有交集数据, 写入GCode数据
@@ -490,8 +558,17 @@ abstract class VectorWriteHandler {
          * [com.angcyo.vector.VectorWriteHandler.POINT_TYPE_NEW]
          * [com.angcyo.vector.VectorWriteHandler.POINT_TYPE_SAME]
          * [com.angcyo.vector.VectorWriteHandler.POINT_TYPE_GAP]
+         * [com.angcyo.vector.VectorWriteHandler.POINT_TYPE_CIRCLE]
          * */
-        val pointType: Int
+        val pointType: Int,
+        /**圆心坐标, 如果有*/
+        var circle: PointD? = null,
+
+        /**圆的方向
+         * `G2` 顺时针画弧 -> Path.Direction.CCW
+         * `G3` 逆时针画弧 -> Path.Direction.CW
+         * */
+        var circleDir: Path.Direction? = null
     )
 
 }

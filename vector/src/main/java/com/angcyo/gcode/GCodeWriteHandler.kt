@@ -1,5 +1,6 @@
 package com.angcyo.gcode
 
+import android.graphics.Path
 import com.angcyo.library.ex.toLossyFloat
 import com.angcyo.library.unit.InchValueUnit
 import com.angcyo.vector.VectorWriteHandler
@@ -61,6 +62,48 @@ class GCodeWriteHandler : VectorWriteHandler() {
             yValue = unit?.convertPixelToValue(y) ?: y
         }
         writer?.appendLine("G0 X${xValue.toLossyFloat()} Y${yValue.toLossyFloat()}")
+    }
+
+    override fun onLineToPoint(point: VectorPoint) {
+        if (point.pointType == POINT_TYPE_CIRCLE) {
+            //原
+            val first = _pointList.firstOrNull()
+            val circle = first?.circle
+            if (first == null || circle == null) {
+                super.onLineToPoint(point)
+            } else {
+                //G2支持
+                openCnc()
+
+                var iValue = circle.x - first.x
+                var jValue = circle.y - first.y
+
+                var xValue = point.x
+                var yValue = point.y
+                if (isPixelValue && unit != null) {
+                    xValue = unit?.convertPixelToValue(point.x) ?: point.x
+                    yValue = unit?.convertPixelToValue(point.y) ?: point.y
+
+                    iValue = (unit?.convertPixelToValue(circle.x)
+                        ?: circle.x) - (unit?.convertPixelToValue(first.x) ?: first.x)
+                    jValue = (unit?.convertPixelToValue(circle.y)
+                        ?: circle.y) - (unit?.convertPixelToValue(first.y) ?: first.y)
+                }
+                //`G2` 顺时针画弧 -> Path.Direction.CCW
+                //`G3` 逆时针画弧 -> Path.Direction.CW
+                writer?.appendLine(buildString {
+                    if (first.circleDir == Path.Direction.CW) {
+                        append("G3 ")
+                    } else {
+                        append("G2 ")
+                    }
+                    append("X${xValue.toLossyFloat()} Y${yValue.toLossyFloat()} ")
+                    append("I${iValue.toLossyFloat()} J${jValue.toLossyFloat()}")
+                })
+            }
+        } else {
+            super.onLineToPoint(point)
+        }
     }
 
     override fun onLineToPoint(x: Double, y: Double) {
