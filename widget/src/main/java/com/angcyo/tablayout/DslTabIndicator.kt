@@ -474,7 +474,7 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
 
         //"绘制$currentIndex:$currentSelectIndex $positionOffset".logi()
 
-        val drawTargetX = getChildTargetX(currentIndex, INDICATOR_GRAVITY_CENTER)
+        val drawTargetX = getChildTargetX(currentIndex)
         val drawWidth = getIndicatorDrawWidth(currentIndex)
         val drawHeight = getIndicatorDrawHeight(currentIndex)
 
@@ -488,10 +488,7 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
         var animExHeight = 0
 
         //end value
-        val nextDrawTargetX = getChildTargetX(
-            _targetIndex,
-            INDICATOR_GRAVITY_CENTER
-        )
+        val nextDrawTargetX = getChildTargetX(_targetIndex)
         val nextDrawWidth = getIndicatorDrawWidth(_targetIndex)
         val nextDrawLeft = nextDrawTargetX - nextDrawWidth / 2 + indicatorXOffset
 
@@ -718,7 +715,7 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
 
         //"绘制$currentIndex:$currentSelectIndex $positionOffset".logi()
 
-        val drawTargetY = getChildTargetY(currentIndex, INDICATOR_GRAVITY_CENTER)
+        val drawTargetY = getChildTargetY(currentIndex)
         val drawWidth = getIndicatorDrawWidth(currentIndex)
         val drawHeight = getIndicatorDrawHeight(currentIndex)
 
@@ -732,10 +729,7 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
         var animExWidth = 0
 
         //end value
-        val nextDrawTargetY = getChildTargetY(
-            _targetIndex,
-            INDICATOR_GRAVITY_CENTER
-        )
+        val nextDrawTargetY = getChildTargetY(_targetIndex)
         val nextDrawHeight = getIndicatorDrawHeight(_targetIndex)
         val nextDrawTop = nextDrawTargetY - nextDrawHeight / 2 + indicatorYOffset
 
