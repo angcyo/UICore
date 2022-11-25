@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import com.angcyo.canvas.LinePath
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toPaintStyle
 import com.angcyo.library.L
@@ -22,14 +23,6 @@ open class DataPathItem(bean: CanvasProjectItemBean) : DataItem(bean) {
 
     //region ---属性---
 
-    /**画笔*/
-    val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        strokeWidth = 1f
-        style = Paint.Style.FILL
-        strokeJoin = Paint.Join.ROUND
-        strokeCap = Paint.Cap.ROUND
-    }
-
     /**数据路径列表, 最原始的路径数据*/
     val dataPathList = mutableListOf<Path>()
 
@@ -41,11 +34,18 @@ open class DataPathItem(bean: CanvasProjectItemBean) : DataItem(bean) {
     //region ---方法---
 
     /**更新画笔属性*/
-    fun updatePaint() {
-        paint.let {
+    fun updatePaint(canvasView: ICanvasView?) {
+        itemPaint.let {
             it.style = dataBean.paintStyle.toPaintStyle()
             //颜色
             it.color = dataBean.fill?.toColor() ?: Color.BLACK
+
+            if (it.style == Paint.Style.STROKE) {
+                val scaleX = canvasView?.getCanvasViewBox()?.getScaleX()//抵消坐标系的缩放
+                if (scaleX != null) {
+                    it.strokeWidth = DEFAULT_PAINT_WIDTH / scaleX
+                }
+            }
         }
     }
 

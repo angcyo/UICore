@@ -1,5 +1,6 @@
 package com.angcyo.canvas.graphics
 
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.items.data.DataItem
@@ -14,14 +15,14 @@ import com.angcyo.gcode.GCodeHelper
  */
 class GCodeGraphicsParser : PathGraphicsParser() {
 
-    override fun parse(bean: CanvasProjectItemBean): DataItem? {
+    override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_GCODE) {
             val data = bean.data
             if (!data.isNullOrEmpty()) {
                 val item = DataPathItem(bean)
-                item.updatePaint()
+                item.updatePaint(canvasView)
 
-                val gCodeDrawable = GCodeHelper.parseGCode(data, item.paint)
+                val gCodeDrawable = GCodeHelper.parseGCode(data, item.itemPaint)
                 if (gCodeDrawable != null) {
                     //
                     if (bean._width == 0f) {
@@ -34,11 +35,11 @@ class GCodeGraphicsParser : PathGraphicsParser() {
                     item.addDataPath(gCodeDrawable.gCodePath)
                     item.drawable = createPathDrawable(item) ?: return null
 
-                    initDataModeWithPaintStyle(bean, item.paint)
+                    initDataModeWithPaintStyle(bean, item.itemPaint)
                     return item
                 }
             }
         }
-        return super.parse(bean)
+        return super.parse(bean, canvasView)
     }
 }

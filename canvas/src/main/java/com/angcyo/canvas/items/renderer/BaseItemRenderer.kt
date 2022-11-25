@@ -182,9 +182,9 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     override fun onCanvasBoxMatrixUpdate(
         canvasView: CanvasDelegate,
         matrix: Matrix,
-        oldValue: Matrix
+        oldMatrix: Matrix
     ) {
-        //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
+        //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldMatrix)
         changeBeforeBounds.set(getBounds())
         itemBoundsChanged(Reason(), changeBeforeBounds)
     }

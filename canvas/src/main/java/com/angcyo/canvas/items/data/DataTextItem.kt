@@ -48,19 +48,6 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         const val ITALIC_SKEW = -0.25f
     }
 
-
-    //region ---属性---
-
-    /**画笔*/
-    val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        strokeWidth = 1f
-        style = Paint.Style.FILL
-        strokeJoin = Paint.Join.ROUND
-        strokeCap = Paint.Cap.ROUND
-    }
-
-    //endregion ---属性---
-
     //region ---方法---
 
     /**更新画笔属性*/
@@ -68,7 +55,7 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         val typefaceInfo =
             FontManager.loadTypefaceInfo(dataBean.fontFamily) ?: FontManager.getSystemFontList()
                 .firstOrNull()
-        textPaint.let {
+        itemPaint.let {
             //删除线
             it.isStrikeThruText = dataBean.linethrough
             //下划线
@@ -84,13 +71,13 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
             it.color = dataBean.textColor?.toColor() ?: Color.BLACK
 
             typefaceInfo?.typeface?.let { typeface ->
-                textPaint.typeface = typeface
+                itemPaint.typeface = typeface
             }
         }
     }
 
     /**计算多行文本的宽度*/
-    fun calcTextWidth(text: String, paint: Paint = textPaint): Float {
+    fun calcTextWidth(text: String, paint: Paint = itemPaint): Float {
         var result = 0f
         val lineTextList = text.lineTextList()
         if (dataBean.orientation == LinearLayout.HORIZONTAL) {
@@ -119,7 +106,7 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
     }
 
     /**计算多行文本的高度*/
-    fun calcTextHeight(text: String, paint: Paint = textPaint): Float {
+    fun calcTextHeight(text: String, paint: Paint = itemPaint): Float {
         var result = 0f
         val lineTextList = text.lineTextList()
         if (dataBean.orientation == LinearLayout.HORIZONTAL) {
@@ -149,7 +136,7 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
     var _skewWidth: Float = 0f
 
     /**单行文本字符的宽度*/
-    fun measureTextWidth(text: String, paint: Paint = textPaint): Float {
+    fun measureTextWidth(text: String, paint: Paint = itemPaint): Float {
         if (dataBean.isCompactText) {
             if (text.isBlank()) {
                 //空格
@@ -182,7 +169,7 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
     }
 
     /**单个文本字符的高度*/
-    fun measureTextHeight(text: String, paint: Paint = textPaint): Float {
+    fun measureTextHeight(text: String, paint: Paint = itemPaint): Float {
         if (dataBean.isCompactText) {
             if (text.isBlank()) {
                 //空格
@@ -200,7 +187,7 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
     }
 
     /**下沉的距离*/
-    fun measureTextDescent(text: String, paint: Paint = textPaint): Float {
+    fun measureTextDescent(text: String, paint: Paint = itemPaint): Float {
         return if (dataBean.isCompactText) {
             paint.textBounds(text).bottom.toFloat()
         } else {

@@ -138,11 +138,11 @@ object GraphicsHelper {
      * */
     @CallPoint
     @AnyThread
-    fun parseRenderItemFrom(bean: CanvasProjectItemBean): DataItem? {
+    fun parseRenderItemFrom(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
         initParser()
         var result: DataItem? = null
         for (parser in _parserList) {
-            result = parser.parse(bean)
+            result = parser.parse(bean, canvasView)
             if (result != null) {
                 break
             }
@@ -168,7 +168,7 @@ object GraphicsHelper {
         assignLocation: Boolean = false,
         strategy: Strategy = Strategy.normal
     ): DataItemRenderer? {
-        val item = parseRenderItemFrom(bean) ?: return null
+        val item = parseRenderItemFrom(bean, canvasView) ?: return null
         val renderer = DataItemRenderer(canvasView)
         doMain {
             renderer.setRendererRenderItem(item)
@@ -197,7 +197,7 @@ object GraphicsHelper {
     ): List<DataItemRenderer> {
         val result = mutableListOf<DataItemRenderer>()
         beanList.forEach { bean ->
-            val item = parseRenderItemFrom(bean)
+            val item = parseRenderItemFrom(bean, canvasView)
             item?.let {
                 val renderer = DataItemRenderer(canvasView)
                 renderer.setRendererRenderItem(item)
@@ -238,7 +238,7 @@ object GraphicsHelper {
     /**更新一个新的渲染[DataItem], 重新渲染数据*/
     @CallPoint
     fun updateRenderItem(renderer: DataItemRenderer, bean: CanvasProjectItemBean) {
-        val item = parseRenderItemFrom(bean) ?: return
+        val item = parseRenderItemFrom(bean, renderer.canvasView) ?: return
         updateRenderItem(renderer, item)
     }
 

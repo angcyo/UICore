@@ -82,7 +82,7 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
     override fun onCanvasBoxMatrixUpdate(
         canvasView: CanvasDelegate,
         matrix: Matrix,
-        oldValue: Matrix
+        oldMatrix: Matrix
     ) {
         canvasViewBox.calcItemRenderBounds(getBounds(), getRenderBounds())
         canvasViewBox.calcItemVisualBounds(getRenderBounds(), getVisualBounds())

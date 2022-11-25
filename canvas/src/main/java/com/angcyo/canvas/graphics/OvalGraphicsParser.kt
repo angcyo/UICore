@@ -3,6 +3,7 @@ package com.angcyo.canvas.graphics
 import android.graphics.Path
 import android.graphics.RectF
 import android.os.Build
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
@@ -16,10 +17,10 @@ import com.angcyo.canvas.utils.CanvasConstant
  */
 class OvalGraphicsParser : PathGraphicsParser() {
 
-    override fun parse(bean: CanvasProjectItemBean): DataItem? {
+    override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_OVAL) {
             val item = DataShapeItem(bean)
-            item.updatePaint()
+            item.updatePaint(canvasView)
 
             //rx ry 支持
             if (bean._width == 0f) {
@@ -43,10 +44,10 @@ class OvalGraphicsParser : PathGraphicsParser() {
 
             item.drawable = createPathDrawable(item) ?: return null
 
-            initDataModeWithPaintStyle(bean, item.paint)
+            initDataModeWithPaintStyle(bean, item.itemPaint)
 
             return item
         }
-        return super.parse(bean)
+        return super.parse(bean, canvasView)
     }
 }

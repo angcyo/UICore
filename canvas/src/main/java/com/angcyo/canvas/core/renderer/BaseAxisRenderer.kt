@@ -44,7 +44,7 @@ abstract class BaseAxisRenderer(canvasView: ICanvasView) : BaseRenderer(canvasVi
     override fun onCanvasBoxMatrixUpdate(
         canvasView: CanvasDelegate,
         matrix: Matrix,
-        oldValue: Matrix
+        oldMatrix: Matrix
     ) {
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
         updateAxisData()

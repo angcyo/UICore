@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.PathEffect
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.LinePath
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.canvas.data.toMm
@@ -35,7 +36,7 @@ open class PathGraphicsParser : IGraphicsParser {
         const val MIN_PATH_SIZE = 1.0f
     }
 
-    override fun parse(bean: CanvasProjectItemBean): DataItem? {
+    override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_SINGLE_WORD /*单线字*/ ||
             bean.mtype == CanvasConstant.DATA_TYPE_PEN /*钢笔*/ ||
             (bean.mtype == CanvasConstant.DATA_TYPE_SVG && bean.data.isNullOrEmpty())/*svg*/
@@ -43,14 +44,18 @@ open class PathGraphicsParser : IGraphicsParser {
             //
             val data = bean.path
             if (!data.isNullOrEmpty()) {
-                return parsePathItem(bean, data)
+                return parsePathItem(bean, data, canvasView)
             }
         }
-        return super.parse(bean)
+        return super.parse(bean, canvasView)
     }
 
     /**svg 纯路径数据, MXXX LXXX*/
-    fun parsePathItem(bean: CanvasProjectItemBean, data: String): DataPathItem? {
+    fun parsePathItem(
+        bean: CanvasProjectItemBean,
+        data: String,
+        canvasView: ICanvasView?
+    ): DataPathItem? {
         /*if (data.startsWith("[")) {
             //svg数组
         } else {
@@ -58,7 +63,7 @@ open class PathGraphicsParser : IGraphicsParser {
         }*/
 
         val item = DataPathItem(bean)
-        item.updatePaint()
+        item.updatePaint(canvasView)
         val path = Sharp.loadPath(data)
 
         //
@@ -77,14 +82,14 @@ open class PathGraphicsParser : IGraphicsParser {
         item.addDataPath(path)
         item.drawable = createPathDrawable(item) ?: return null
 
-        initDataModeWithPaintStyle(bean, item.paint)
+        initDataModeWithPaintStyle(bean, item.itemPaint)
 
         return item
     }
 
     /**创建绘制矢量的[Drawable] */
     open fun createPathDrawable(item: DataPathItem): Drawable? {
-        val paint = item.paint
+        val paint = item.itemPaint
         val drawPathList = item.drawPathList
         if (drawPathList.isEmpty()) {
             return null

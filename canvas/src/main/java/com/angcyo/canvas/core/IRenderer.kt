@@ -49,7 +49,7 @@ interface IRenderer {
      * 当视图改变后的回调
      * 可以用来计算数据, 并缓存
      * [com.angcyo.canvas.CanvasView.canvasMatrixUpdate]*/
-    fun onCanvasBoxMatrixUpdate(canvasView: CanvasDelegate, matrix: Matrix, oldValue: Matrix)
+    fun onCanvasBoxMatrixUpdate(canvasView: CanvasDelegate, matrix: Matrix, oldMatrix: Matrix)
 
     //</editor-fold desc="回调">
 

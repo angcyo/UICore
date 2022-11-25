@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.widget.LinearLayout
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.data.toPixel
@@ -28,13 +29,13 @@ import com.angcyo.library.gesture.RectScaleGestureHandler
  */
 class TextGraphicsParser : IGraphicsParser {
 
-    override fun parse(bean: CanvasProjectItemBean): DataItem? {
+    override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_TEXT && !bean.text.isNullOrEmpty()) {
             val item = DataTextItem(bean)
             updateTextDrawable(item)
             return item
         }
-        return super.parse(bean)
+        return super.parse(bean, canvasView)
     }
 
     /**更新文本内容, 重新绘制信息*/
@@ -79,7 +80,7 @@ class TextGraphicsParser : IGraphicsParser {
             }
         }
 
-        initDataModeWithPaintStyle(bean, item.textPaint)
+        initDataModeWithPaintStyle(bean, item.itemPaint)
     }
 
     /**更新旋转偏移, 通常在改变宽高/文本之后需要调用,
@@ -122,7 +123,7 @@ class TextGraphicsParser : IGraphicsParser {
     /**绘制普通文本*/
     fun drawNormalText(canvas: Canvas, textItem: DataTextItem) {
         val dataBean = textItem.dataBean
-        val paint = textItem.textPaint
+        val paint = textItem.itemPaint
 
         val oldUnderLine = paint.isUnderlineText
         val oldDeleteLine = paint.isStrikeThruText
@@ -252,7 +253,7 @@ class TextGraphicsParser : IGraphicsParser {
     /**绘制路径文本*/
     fun drawPathText(canvas: Canvas, textItem: DataTextItem, textWidth: Float, textHeight: Float) {
         val dataBean = textItem.dataBean
-        val paint = textItem.textPaint
+        val paint = textItem.itemPaint
 
         //createStaticLayout(drawText, paint)
         var width = 0f

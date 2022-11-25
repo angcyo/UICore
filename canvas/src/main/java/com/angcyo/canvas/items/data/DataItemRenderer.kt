@@ -1,13 +1,12 @@
 package com.angcyo.canvas.items.data
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Matrix
-import android.graphics.RectF
+import android.graphics.*
+import android.view.MotionEvent
 import androidx.core.graphics.scale
 import androidx.core.graphics.withMatrix
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
+import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.SmartAssistant
@@ -24,7 +23,8 @@ import com.angcyo.library.ex.*
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/21
  */
-class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(canvasView) {
+class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(canvasView),
+    ICanvasListener {
 
     //<editor-fold desc="临时变量">
 
@@ -35,6 +35,8 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
 
     init {
         _name = "Data"
+
+        canvasView.addCanvasListener(this)
     }
 
     //<editor-fold desc="核心回调">
@@ -93,6 +95,35 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
             return type != SmartAssistant.SMART_TYPE_H
         }
         return super.isSupportSmartAssistant(type)
+    }
+
+    var _touchDownScale = 1f
+    override fun onCanvasTouchEvent(canvasDelegate: CanvasDelegate, event: MotionEvent): Boolean {
+        val actionMasked = event.actionMasked
+        if (actionMasked == MotionEvent.ACTION_DOWN) {
+            _touchDownScale = canvasViewBox.getScaleX()
+        } else if (actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_CANCEL) {
+            if (_touchDownScale != canvasViewBox.getScaleX()) {
+                val renderItem = getRendererRenderItem()
+                renderItem?.dataBean?.apply {
+                    if (renderItem is DataPathItem) {
+                        if (renderItem.itemPaint.style == Paint.Style.STROKE) {
+                            //描边的path, 需要放大边框线, 所以需要重新渲染数据
+                            renderItem.updateRenderItem(this@DataItemRenderer)
+                        }
+                    }
+                }
+            }
+        }
+        return super.onCanvasTouchEvent(canvasDelegate, event)
+    }
+
+    override fun onCanvasBoxMatrixUpdate(
+        canvasView: CanvasDelegate,
+        matrix: Matrix,
+        oldMatrix: Matrix
+    ) {
+        super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldMatrix)
     }
 
     override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {

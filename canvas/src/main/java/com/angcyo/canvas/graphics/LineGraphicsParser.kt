@@ -1,6 +1,7 @@
 package com.angcyo.canvas.graphics
 
 import com.angcyo.canvas.LinePath
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
@@ -14,10 +15,10 @@ import com.angcyo.canvas.utils.CanvasConstant
  */
 class LineGraphicsParser : PathGraphicsParser() {
 
-    override fun parse(bean: CanvasProjectItemBean): DataItem? {
+    override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_LINE) {
             val item = DataShapeItem(bean)
-            item.updatePaint()
+            item.updatePaint(canvasView)
 
             val lineLength = bean.width.toPixel()
             bean.height = 0f//去掉高度属性, 防止自动雕刻时渲染异常
@@ -40,6 +41,6 @@ class LineGraphicsParser : PathGraphicsParser() {
             bean._dataMode = CanvasConstant.DATA_MODE_GCODE //强制使用GCode
             return item
         }
-        return super.parse(bean)
+        return super.parse(bean, canvasView)
     }
 }

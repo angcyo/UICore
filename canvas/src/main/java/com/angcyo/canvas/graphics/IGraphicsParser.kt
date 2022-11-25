@@ -3,9 +3,11 @@ package com.angcyo.canvas.graphics
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
@@ -19,7 +21,8 @@ import com.angcyo.library.ex.withPicture
 interface IGraphicsParser {
 
     /**解析数据*/
-    fun parse(bean: CanvasProjectItemBean): DataItem? = null
+    @CallPoint
+    fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? = null
 
     //---
 

@@ -160,7 +160,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     override fun onCanvasBoxMatrixUpdate(
         canvasView: CanvasDelegate,
         matrix: Matrix,
-        oldValue: Matrix
+        oldMatrix: Matrix
     ) {
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
         updateSelectBounds()

@@ -1,6 +1,5 @@
 package com.angcyo.canvas.items
 
-import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.library.ex.uuid
@@ -40,11 +39,4 @@ abstract class BaseItem : ICanvasItem {
     open fun getItemScaleX(renderer: BaseItemRenderer<*>): Float = 1f
 
     open fun getItemScaleY(renderer: BaseItemRenderer<*>): Float = 1f
-
-    //
-
-    /**当[paint]更新时触发*/
-    open fun updateItem(paint: Paint) {
-
-    }
 }

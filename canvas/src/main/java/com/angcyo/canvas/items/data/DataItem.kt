@@ -30,6 +30,22 @@ import com.angcyo.library.ex.rotate
  */
 open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveProvider {
 
+    companion object {
+
+        /**默认笔的宽度 */
+        const val DEFAULT_PAINT_WIDTH = 1f
+    }
+
+    //region ---属性---
+
+    /**画笔*/
+    val itemPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        strokeWidth = DEFAULT_PAINT_WIDTH
+        style = Paint.Style.FILL
+        strokeJoin = Paint.Join.ROUND
+        strokeCap = Paint.Cap.ROUND
+    }
+
     /**
      * 通过改变此对象, 呈现出不同的可视图画
      * 可绘制的对象, 此对象不带旋转和缩放
@@ -37,6 +53,8 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
      * [com.angcyo.canvas.graphics.GraphicsHelper.renderItemDataBean]
      * */
     var drawable: Drawable? = null
+
+    //endregion ---属性---
 
     init {
         itemLayerName = dataBean.name ?: dataBean.mtype.toTypeNameString()
