@@ -151,7 +151,10 @@ object RNfc {
                 Intent.FLAG_ACTIVITY_SINGLE_TOP
             )
             val pendingIntent = PendingIntent.getActivity(
-                activity, 0, intent, 0
+                activity,
+                0,
+                intent,
+                0.pendingIntentMutableFlag(0)
             )
             enableNfcForegroundDispatch(activity, pendingIntent)
         }

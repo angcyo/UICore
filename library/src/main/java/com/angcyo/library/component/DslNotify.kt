@@ -801,6 +801,11 @@ fun String.openNotificationChannelSetting(context: Context = app()) {
     DslNotify.openNotificationChannelSetting(context, this)
 }
 
+/**
+ * [PendingIntent.FLAG_MUTABLE] 可变
+ *[PendingIntent.FLAG_IMMUTABLE] 不可变
+ * [mutableFlag]
+ * */
 fun Int.pendingIntentMutableFlag(mutableFlag: Int = 33554432): Int {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         //android 12
