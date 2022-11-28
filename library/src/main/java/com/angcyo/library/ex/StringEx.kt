@@ -883,6 +883,10 @@ fun CharSequence.escapeExprSpecialWord(): CharSequence {
 /**确保文件后缀*/
 fun String.ensureName(end: String = ".json") = if (endsWith(end)) this else "$this${end}"
 
+/**确保扩展名是[this],
+ * 如果是.开头, 则直接追加, 否则自动加上.*/
+fun String.ensureExtName() = if (startsWith(".")) this else ".$this"
+
 /**首字母小写*/
 fun CharSequence.lowerFirst(): CharSequence {
     if (length > 0) {
