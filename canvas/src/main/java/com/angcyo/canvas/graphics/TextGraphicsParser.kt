@@ -137,6 +137,9 @@ class TextGraphicsParser : IGraphicsParser {
         var x = 0f
         var y = 0f
 
+        //删除线的宽度
+        val lineWidth = paint.strokeWidth
+
         if (dataBean.orientation == LinearLayout.HORIZONTAL) {
             lineTextList.forEach { lineText ->
                 val lineTextWidth = textItem.calcTextWidth(lineText)
@@ -145,15 +148,15 @@ class TextGraphicsParser : IGraphicsParser {
 
                 val lineHeight = lineTextHeight / 10
                 _deleteLineRect.set(
-                    x,
+                    x + lineWidth / 2,
                     y + lineTextHeight / 2 - lineHeight / 2,
-                    lineTextWidth,
+                    lineTextWidth - lineWidth / 2,
                     y + lineTextHeight / 2 + lineHeight / 2
                 )
                 _underLineRect.set(
-                    x,
+                    x + lineWidth / 2,
                     y + lineTextHeight - lineHeight,
-                    lineTextWidth,
+                    lineTextWidth - lineWidth / 2,
                     y + lineTextHeight
                 )
 
@@ -217,9 +220,9 @@ class TextGraphicsParser : IGraphicsParser {
                     //删除线
                     if (oldDeleteLine) {
                         _deleteLineRect.set(
-                            x,
+                            x + lineWidth / 2,
                             y + charHeight / 2 - lineHeight / 2,
-                            x + charWidth,
+                            x + charWidth - lineWidth / 2,
                             y + charHeight / 2 + lineHeight / 2
                         )
 
@@ -228,9 +231,9 @@ class TextGraphicsParser : IGraphicsParser {
                     //下划线
                     if (oldUnderLine) {
                         _underLineRect.set(
-                            x,
+                            x + lineWidth / 2,
                             y + charHeight - lineHeight,
-                            x + charWidth,
+                            x + charWidth - lineWidth / 2,
                             y + charHeight
                         )
                         canvas.drawRect(_underLineRect, paint)
