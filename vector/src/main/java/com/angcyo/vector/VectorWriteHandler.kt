@@ -242,8 +242,8 @@ abstract class VectorWriteHandler {
                     if (circle == null) {
                         first.circle = cPoint
 
-                        val a1 = VectorHelper.angle(x2, y2, cPoint.x, cPoint.y)
-                        val a2 = VectorHelper.angle(x, y, cPoint.x, cPoint.y)
+                        val a1 = VectorHelper.angle2(x2, y2, cPoint.x, cPoint.y)
+                        val a2 = VectorHelper.angle2(x, y, cPoint.x, cPoint.y)
 
                         first.circleDir = if (a2 > a1) {
                             //角度在变大, 顺时针枚举点位

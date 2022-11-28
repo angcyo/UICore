@@ -26,7 +26,7 @@ class SvgWriteHandler : VectorWriteHandler() {
     }
 
     override fun onNewPoint(x: Double, y: Double) {
-        writer?.append("M${x} $y")
+        writer?.append("M${x} $y ")
     }
 
     override fun onLineToPoint(point: VectorPoint) {
@@ -44,13 +44,15 @@ class SvgWriteHandler : VectorWriteHandler() {
                 val yValue = point.y
 
                 writer?.append(buildString {
-                    val a1 = VectorHelper.angle3(circle.x, circle.y, first.x, first.y)
-                    val a2 = VectorHelper.angle3(circle.x, circle.y, point.x, point.y)
+                    val a1 = VectorHelper.angle2(circle.x, circle.y, first.x, first.y)
+                    val a2 = VectorHelper.angle2(circle.x, circle.y, point.x, point.y)
+
+                    //L.w("a1:${a1} a2:${a2} 1:${first} 2:${point}")
 
                     //弧线的方向，0 表示从起点到终点沿逆时针画弧，1 表示从起点到终点沿顺时针画弧。
                     val sweepFlag = if (first.circleDir == Path.Direction.CW) 1 else 0
 
-                    var a3 = 0
+                    var a3 = 0.0
                     //决定弧线是大于还是小于 180 度, 0 表示小角度弧，1 表示大角度弧
                     val largeArcFlag = if (first.circleDir == Path.Direction.CW) {
                         //顺时针枚举点
@@ -69,7 +71,7 @@ class SvgWriteHandler : VectorWriteHandler() {
                         }
                         if (a3 > 180) 1 else 0
                     }
-                    append("A ${r.toLossyFloat()} ${r.toLossyFloat()} 0 $largeArcFlag $sweepFlag ${xValue.toLossyFloat()} ${yValue.toLossyFloat()}")
+                    append("A ${r.toLossyFloat()} ${r.toLossyFloat()} 0 $largeArcFlag $sweepFlag ${xValue.toLossyFloat()} ${yValue.toLossyFloat()} ")
                 })
             }
         } else {
@@ -79,7 +81,7 @@ class SvgWriteHandler : VectorWriteHandler() {
 
     override fun onLineToPoint(x: Double, y: Double) {
         //super.onLineToPoint(x, y)
-        writer?.append("L${x} $y")
+        writer?.append("L${x} $y ")
     }
 
     /**关闭路径*/

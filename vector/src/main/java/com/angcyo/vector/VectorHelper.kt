@@ -87,7 +87,7 @@ object VectorHelper {
      * @param y
      * @return [0~360]]
      */
-    fun angle3(centerX: Double, centerY: Double, x: Double, y: Double): Int {
+    fun angle3(centerX: Double, centerY: Double, x: Double, y: Double): Double {
         var rotation = 0.0
         val k1 = (centerY - centerY) / (centerX * 2 - centerX)
         val k2 = (y - centerY) / (x - centerX)
@@ -109,10 +109,10 @@ object VectorHelper {
         } else if (x == centerX && y > centerY) {
             rotation = 180.0
         }
-        return rotation.toInt()
+        return rotation
     }
 
-    fun angle3(centerX: Float, centerY: Float, x: Float, y: Float): Int =
+    fun angle3(centerX: Float, centerY: Float, x: Float, y: Float): Double =
         angle3(centerX.toDouble(), centerY.toDouble(), x.toDouble(), y.toDouble())
 
     fun angle(p1: PointF, p2: PointF): Double {
