@@ -14,12 +14,6 @@ import com.angcyo.library.isPlaceholderApplication
  */
 class MmValueUnit : IValueUnit {
 
-    /**获取刻度尺间隔的像素距离*/
-    override fun getGraduatedScaleGap(): Double = convertValueToPixel(1.0)
-
-    /**将刻度索引值转换成多少个刻度单位*/
-    override fun getGraduatedLabel(index: Int): String = "$index"
-
     /**获取每个单位间隔刻度对应的像素大小
      * 将1个单位的值, 转换成屏幕像素点数值
      * [TypedValue.COMPLEX_UNIT_MM]*/

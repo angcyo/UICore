@@ -6,6 +6,7 @@ import androidx.core.graphics.withSave
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.core.component.AxisPoint
 import com.angcyo.canvas.core.component.BaseAxis
 import com.angcyo.canvas.core.component.XAxis
 import com.angcyo.library.ex.have
@@ -55,12 +56,12 @@ class XAxisRenderer(val axis: XAxis, canvasView: ICanvasView) :
             canvas.withTranslation(x = translateX) {
                 plusList.forEachIndexed { index, axisPoint ->
                     val left = axisPoint.pixel * scaleX
-                    drawLineAndLabel(canvas, axisPoint.index, left, bottom, axisPoint.type)
+                    drawLineAndLabel(canvas, axisPoint.index, axisPoint, left, bottom)
                 }
 
                 minusList.forEachIndexed { index, axisPoint ->
                     val left = axisPoint.pixel * scaleX
-                    drawLineAndLabel(canvas, -axisPoint.index, left, bottom, axisPoint.type)
+                    drawLineAndLabel(canvas, -axisPoint.index, axisPoint, left, bottom)
                 }
             }
         }
@@ -86,12 +87,12 @@ class XAxisRenderer(val axis: XAxis, canvasView: ICanvasView) :
     fun drawLineAndLabel(
         canvas: Canvas,
         index: Int,
+        point: AxisPoint,
         left: Float,
-        bottom: Float,
-        axisLineType: Int
+        bottom: Float
     ) {
-        val valueStr = canvasViewBox.valueUnit.getGraduatedLabel(index)
-
+        val valueStr = canvasViewBox.valueUnit.getGraduatedLabel(index, point.gap)
+        val axisLineType = point.type
         when {
             axisLineType.have(BaseAxis.LINE_TYPE_PROTRUDE) -> {
                 val size = axis.lineProtrudeSize

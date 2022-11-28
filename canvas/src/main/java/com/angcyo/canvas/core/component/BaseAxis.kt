@@ -2,8 +2,8 @@ package com.angcyo.canvas.core.component
 
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.floor
 import com.angcyo.library.unit.InchValueUnit
+import com.angcyo.library.unit.PixelValueUnit
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -57,10 +57,29 @@ abstract class BaseAxis : BaseComponent() {
      * [lineSize]
      * */
     fun getAxisLineType(canvasViewBox: CanvasViewBox, index: Int, scale: Float): Int {
-        var result = LINE_TYPE_NONE
-        val loseStep = 0.25f //这个值, 控制主线的绘制间隔
+        var result = LINE_TYPE_NORMAL or LINE_TYPE_DRAW_GRID
+        val step = canvasViewBox.valueUnit.getGraduatedIndexGap()
 
-        if (scale < 1f) {
+        if (index % step == 0) {
+            //每10个点, 绘制一次大刻度
+            result = LINE_TYPE_PROTRUDE or LINE_TYPE_DRAW_LABEL or LINE_TYPE_DRAW_GRID
+        } else if (index % (step / 2) == 0) {
+            //每5个点, 绘制一次中刻度
+            result = LINE_TYPE_SECONDARY or LINE_TYPE_DRAW_GRID
+            if (canvasViewBox.valueUnit is InchValueUnit) {
+                result = result or LINE_TYPE_DRAW_LABEL
+            }
+        } else {
+            if (canvasViewBox.valueUnit is PixelValueUnit) {
+                if (index % (step / 10) == 0) {
+                    //最小绘制10个像素
+                } else {
+                    result = LINE_TYPE_NONE
+                }
+            }
+        }
+
+        /*if (scale < 1f) {
             //坐标系缩放后
             val step = ((1 - scale) / loseStep).floor().toInt() + 1
             if (index % (10 * step) == 0) {
@@ -112,7 +131,7 @@ abstract class BaseAxis : BaseComponent() {
             if (scale >= 5f || (canvasViewBox.valueUnit is InchValueUnit && scale >= 3f)) {
                 result = result or LINE_TYPE_DRAW_LABEL
             }
-        }
+        }*/
 
         return result
     }

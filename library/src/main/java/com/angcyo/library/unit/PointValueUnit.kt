@@ -16,11 +16,6 @@ import com.angcyo.library.isPlaceholderApplication
  */
 class PointValueUnit : IValueUnit {
 
-    /**10个像素为1个刻度距离*/
-    override fun getGraduatedScaleGap(): Double = convertValueToPixel(1.0) * 10
-
-    override fun getGraduatedLabel(index: Int): String = "$index"
-
     /**[TypedValue.COMPLEX_UNIT_PT]*/
     override fun convertValueToPixel(value: Double): Double {
         val app = app()

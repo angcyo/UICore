@@ -14,21 +14,21 @@ class YAxis : BaseAxis() {
 
     override fun getPlusPixelList(canvasViewBox: CanvasViewBox): List<AxisPoint> {
         plusList.clear()
+        val scaleY = canvasViewBox.getScaleY()
         val coordinateSystemY = canvasViewBox.getCoordinateSystemY()
         var pixel = coordinateSystemY
         val factor = canvasViewBox.invertMatrix.getScaleY()
         val end =
             (coordinateSystemY + canvasViewBox.getContentHeight() - canvasViewBox.getTranslateY()) * factor
-        val step = canvasViewBox.valueUnit.getGraduatedScaleGap().toFloat()
+        val step = canvasViewBox.valueUnit.getGraduatedScaleGap(scaleY)
 
-        val scaleY = canvasViewBox.getScaleY()
         var index = 0
         while (pixel < end) {
             val type = getAxisLineType(canvasViewBox, index, scaleY)
             if (type.have(LINE_TYPE_DRAW_GRID)) {
-                plusList.add(AxisPoint(pixel, index, type))
+                plusList.add(AxisPoint(pixel, step, index, type))
             }
-            pixel += step
+            pixel += step.toFloat()
             index++
         }
         return plusList
@@ -36,20 +36,20 @@ class YAxis : BaseAxis() {
 
     override fun getMinusPixelList(canvasViewBox: CanvasViewBox): List<AxisPoint> {
         minusList.clear()
+        val scaleY = canvasViewBox.getScaleY()
         val coordinateSystemY = canvasViewBox.getCoordinateSystemY()
         var pixel = coordinateSystemY
         val factor = canvasViewBox.invertMatrix.getScaleY()
         val end = (0 - canvasViewBox.getTranslateY()) * factor
-        val step = canvasViewBox.valueUnit.getGraduatedScaleGap().toFloat()
+        val step = canvasViewBox.valueUnit.getGraduatedScaleGap(scaleY)
 
-        val scaleY = canvasViewBox.getScaleY()
         var index = 0
         while (pixel > end) {
             val type = getAxisLineType(canvasViewBox, index, scaleY)
             if (type.have(LINE_TYPE_DRAW_GRID)) {
-                minusList.add(AxisPoint(pixel, index, type))
+                minusList.add(AxisPoint(pixel, step, index, type))
             }
-            pixel -= step
+            pixel -= step.toFloat()
             index++
         }
         return minusList
