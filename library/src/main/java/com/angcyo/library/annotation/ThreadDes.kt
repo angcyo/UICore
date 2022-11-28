@@ -10,6 +10,13 @@ package com.angcyo.library.annotation
 @Target(
     AnnotationTarget.PROPERTY,
     AnnotationTarget.FIELD,
-    AnnotationTarget.FUNCTION
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER,
+    AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.ANNOTATION_CLASS,
+    AnnotationTarget.CLASS,
+    AnnotationTarget.VALUE_PARAMETER
 )
 annotation class ThreadDes(val des: String = "" /*简单的描述*/)

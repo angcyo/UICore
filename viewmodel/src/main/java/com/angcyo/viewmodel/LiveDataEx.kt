@@ -1,6 +1,7 @@
 package com.angcyo.viewmodel
 
 import android.os.Looper
+import androidx.annotation.AnyThread
 import androidx.annotation.MainThread
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -180,11 +181,13 @@ fun <T> vmHoldDataNull(data: T? = null) = MutableHoldLiveData(data)
 
 /**更新自己
  * [updateValue]*/
+@AnyThread
 fun <T> MutableLiveData<T>.updateThis() {
     updateValue(value)
 }
 
 /**[MutableLiveData]在主线程更新值*/
+//@AnyThread
 fun <T> MutableLiveData<T>.updateValue(value: T?) {
     if (Looper.getMainLooper() == Looper.myLooper()) {
         this.value = value
@@ -194,6 +197,7 @@ fun <T> MutableLiveData<T>.updateValue(value: T?) {
 }
 
 /**[MutableLiveData]在主线程通知更新值*/
+//@AnyThread
 fun <T> MutableLiveData<T>.notify() {
     if (Looper.getMainLooper() == Looper.myLooper()) {
         this.value = value
@@ -202,6 +206,7 @@ fun <T> MutableLiveData<T>.notify() {
     }
 }
 
+@AnyThread
 fun <T> MutableLiveData<T>.notifyPost() {
     postValue(value)
 }
