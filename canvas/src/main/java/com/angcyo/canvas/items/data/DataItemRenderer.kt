@@ -8,6 +8,7 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.SmartAssistant
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
@@ -41,8 +42,8 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
 
     //<editor-fold desc="核心回调">
 
-    override fun render(canvas: Canvas) {
-        rendererItem?.drawable?.let { drawable ->
+    override fun render(canvas: Canvas, renderParams: RenderParams) {
+        rendererItem?.getDrawable(renderParams)?.let { drawable ->
             val bounds = getRenderBounds()
             //需要处理矩形翻转的情况
             if (drawable is ScalePictureDrawable) {
@@ -160,7 +161,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
      * [com.angcyo.canvas.items.data.DataItem.getEngraveBitmap]
      * [com.angcyo.canvas.items.data.DataItemRenderer.getEngraveBitmap]
      * */
-    override fun getEngraveBitmap(): Bitmap? {
+    override fun getEngraveBitmap(renderParams: RenderParams): Bitmap? {
         val item = getRendererRenderItem()
         val result = if (item is DataBitmapItem) {
             item.modifyBitmap ?: item.originBitmap
@@ -175,7 +176,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
             val scaleBitmap = result.scale(width, height)
             return scaleBitmap.rotate(rotate)
         }
-        return super.getEngraveBitmap()
+        return super.getEngraveBitmap(renderParams)
     }
 
     override fun getEngraveDataItem(): DataItem? = dataItem

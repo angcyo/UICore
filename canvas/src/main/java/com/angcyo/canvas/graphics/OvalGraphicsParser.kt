@@ -21,7 +21,7 @@ class OvalGraphicsParser : PathGraphicsParser() {
     override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_OVAL) {
             val item = DataShapeItem(bean)
-            item.updatePaint(canvasView)
+            item.updatePaint()
 
             //rx ry 支持
             if (bean._width == 0f) {
@@ -52,7 +52,7 @@ class OvalGraphicsParser : PathGraphicsParser() {
             }
             item.addDataPath(dataPath)
 
-            item.drawable = createPathDrawable(item) ?: return null
+            createPathDrawable(item, canvasView) ?: return null
 
             initDataModeWithPaintStyle(bean, item.itemPaint)
 

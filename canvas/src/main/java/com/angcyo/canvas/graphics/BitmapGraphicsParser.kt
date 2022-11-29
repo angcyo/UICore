@@ -72,7 +72,7 @@ class BitmapGraphicsParser : IGraphicsParser {
                         val bound = gcodeDrawable.gCodeBound
                         val width = bound.width().toInt()
                         val height = bound.height().toInt()
-                        item.drawable = wrapScalePictureDrawable(width, height) {
+                        item.renderDrawable = wrapScalePictureDrawable(width, height) {
                             gcodeDrawable.setBounds(0, 0, width, height)
                             gcodeDrawable.draw(this)
                         }

@@ -129,6 +129,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
             }
         }
 
+    /**渲染参数*/
+    var renderParams: RenderParams = RenderParams(true)
+
     //</editor-fold desc="成员变量">
 
     //<editor-fold desc="内部成员">
@@ -445,14 +448,14 @@ class CanvasDelegate(val view: View) : ICanvasView {
     override fun onDraw(canvas: Canvas) {
         eachAxisRender { axis ->
             if (axis.enable && isVisible()) {
-                render(canvas)
+                render(canvas, renderParams)
             }
         }
 
         //前置,不处理matrix
         rendererBeforeList.forEach {
             if (it.isVisible()) {
-                it.render(canvas)
+                it.render(canvas, renderParams)
             }
         }
 
@@ -476,7 +479,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                                 bounds.centerX(),
                                 bounds.centerY()
                             ) {
-                                renderer.render(canvas)
+                                renderer.render(canvas, renderParams)
                             }
                         }
                     }
@@ -486,13 +489,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
         //后置,不处理matrix
         if (controlRenderer.isVisible()) {
-            controlRenderer.render(canvas)
+            controlRenderer.render(canvas, renderParams)
         }
 
         //after
         rendererAfterList.forEach {
             if (it.isVisible()) {
-                it.render(canvas)
+                it.render(canvas, renderParams)
             }
         }
 
@@ -504,7 +507,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                         canvasViewBox.getCoordinateSystemX(),
                         canvasViewBox.getCoordinateSystemY()
                     ) {
-                        limitRenderer.render(canvas)
+                        limitRenderer.render(canvas, renderParams)
                     }
                 }
             }
@@ -513,7 +516,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         //last
         rendererLastList.forEach {
             if (it.isVisible()) {
-                it.render(canvas)
+                it.render(canvas, renderParams)
             }
         }
     }
@@ -653,7 +656,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                         bounds.centerX(),
                         bounds.centerY()
                     ) {
-                        renderer.render(canvas)
+                        renderer.render(canvas, renderParams)
                     }
                     //恢复渲染矩形
                     renderBounds.set(oldRenderRect)

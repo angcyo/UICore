@@ -20,7 +20,7 @@ class GCodeGraphicsParser : PathGraphicsParser() {
             val data = bean.data
             if (!data.isNullOrEmpty()) {
                 val item = DataPathItem(bean)
-                item.updatePaint(canvasView)
+                item.updatePaint()
 
                 val gCodeDrawable = GCodeHelper.parseGCode(data, item.itemPaint)
                 if (gCodeDrawable != null) {
@@ -33,7 +33,7 @@ class GCodeGraphicsParser : PathGraphicsParser() {
                     }
                     //
                     item.addDataPath(gCodeDrawable.gCodePath)
-                    item.drawable = createPathDrawable(item) ?: return null
+                    createPathDrawable(item, canvasView) ?: return null
 
                     initDataModeWithPaintStyle(bean, item.itemPaint)
                     return item

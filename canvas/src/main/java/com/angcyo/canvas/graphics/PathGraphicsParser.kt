@@ -63,7 +63,7 @@ open class PathGraphicsParser : IGraphicsParser {
         }*/
 
         val item = DataPathItem(bean)
-        item.updatePaint(canvasView)
+        item.updatePaint()
         val path = Sharp.loadPath(data)
 
         //
@@ -80,16 +80,34 @@ open class PathGraphicsParser : IGraphicsParser {
 
         //
         item.addDataPath(path)
-        item.drawable = createPathDrawable(item) ?: return null
+        createPathDrawable(item, canvasView) ?: return null
 
         initDataModeWithPaintStyle(bean, item.itemPaint)
 
         return item
     }
 
-    /**创建绘制矢量的[Drawable] */
-    open fun createPathDrawable(item: DataPathItem): Drawable? {
+    /**同时创建
+     * [com.angcyo.canvas.items.data.DataItem.dataDrawable]
+     * [com.angcyo.canvas.items.data.DataItem.renderDrawable]
+     * */
+    open fun createPathDrawable(item: DataPathItem, canvasView: ICanvasView?): Drawable? {
         val paint = item.itemPaint
+        if (canvasView != null && paint.style == Paint.Style.STROKE) {
+            val scaleX = canvasView.getCanvasViewBox().getScaleX()//抵消坐标系的缩放
+            val newPaint = Paint(paint)
+            newPaint.strokeWidth = DataItem.DEFAULT_PAINT_WIDTH / scaleX
+
+            item.dataDrawable = createPathDrawable(item, paint)
+            item.renderDrawable = createPathDrawable(item, newPaint)
+        } else {
+            item.renderDrawable = createPathDrawable(item, paint)
+        }
+        return item.renderDrawable
+    }
+
+    /**创建绘制矢量的[Drawable] */
+    open fun createPathDrawable(item: DataPathItem, paint: Paint): Drawable? {
         val drawPathList = item.drawPathList
         if (drawPathList.isEmpty()) {
             return null

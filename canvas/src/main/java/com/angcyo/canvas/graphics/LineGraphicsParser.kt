@@ -18,7 +18,7 @@ class LineGraphicsParser : PathGraphicsParser() {
     override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_LINE) {
             val item = DataShapeItem(bean)
-            item.updatePaint(canvasView)
+            item.updatePaint()
 
             val lineLength = bean.width.toPixel()
             bean.height = 0f//去掉高度属性, 防止自动雕刻时渲染异常
@@ -29,7 +29,7 @@ class LineGraphicsParser : PathGraphicsParser() {
             linePath.lineTo(lineLength, 0f)
             item.addDataPath(linePath)
 
-            item.drawable = createPathDrawable(item) ?: return null
+            createPathDrawable(item, canvasView) ?: return null
 
             //initDataMode(bean, item.paint)
             /*bean._dataMode = if (item.paint.style == Paint.Style.STROKE) {

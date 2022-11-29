@@ -8,6 +8,7 @@ import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.SmartAssistant
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.ex._color
@@ -28,7 +29,7 @@ class SmartAssistantRenderer(val smartAssistant: SmartAssistant, canvasView: ICa
     /**提示线的宽度*/
     var strokeWidth = 1 * dp
 
-    override fun render(canvas: Canvas) {
+    override fun render(canvas: Canvas, renderParams: RenderParams) {
         val view = canvasView
         if (view is CanvasDelegate) {
             if (!view.isTouchHold) {

@@ -21,7 +21,7 @@ class SvgGraphicsParser : PathGraphicsParser() {
             val data = bean.data
             if (!data.isNullOrEmpty()) {
                 val item = DataPathItem(bean)
-                item.updatePaint(canvasView)
+                item.updatePaint()
 
                 if (data.isSvgContent()) {
                     //svg标签数据
@@ -37,7 +37,7 @@ class SvgGraphicsParser : PathGraphicsParser() {
                         }
                         //
                         item.addDataPath(sharpDrawable.pathList)
-                        item.drawable = createPathDrawable(item) ?: return null
+                        createPathDrawable(item, canvasView) ?: return null
                         initDataModeWithPaintStyle(bean, item.itemPaint)
                         return item
                     }

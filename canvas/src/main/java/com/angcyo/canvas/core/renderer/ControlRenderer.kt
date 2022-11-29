@@ -10,6 +10,7 @@ import com.angcyo.canvas.Reason
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.IRenderer
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.ControlHandler
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
@@ -111,7 +112,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
     /**选中元素的绘制范围*/
     val _itemBounds = emptyRectF()
 
-    override fun render(canvas: Canvas) {
+    override fun render(canvas: Canvas, renderParams: RenderParams) {
         controlHandler.selectedItemRender?.let {
 
             //目标相对于视图左上角的位置

@@ -9,6 +9,7 @@ import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.IRenderer
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.emptyRectF
 import com.angcyo.library.ex.withPicture
@@ -104,7 +105,7 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
         canvasView.refresh()
     }
 
-    override fun preview(): Drawable? {
+    override fun preview(renderParams: RenderParams): Drawable? {
         val renderBounds = getRenderBounds()
         val oldRenderRect = RectF(renderBounds)
 
@@ -114,7 +115,7 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
                 renderBounds.width().toInt(),
                 renderBounds.height().toInt()
             ) {
-                render(this)
+                render(this, renderParams)
             })
         renderBounds.set(oldRenderRect)
         return result

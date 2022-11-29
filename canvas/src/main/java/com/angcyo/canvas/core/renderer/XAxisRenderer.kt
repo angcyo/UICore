@@ -6,6 +6,7 @@ import androidx.core.graphics.withSave
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.AxisPoint
 import com.angcyo.canvas.core.component.BaseAxis
 import com.angcyo.canvas.core.component.XAxis
@@ -35,7 +36,7 @@ class XAxisRenderer(val axis: XAxis, canvasView: ICanvasView) :
         axis.getMinusPixelList(canvasViewBox)
     }
 
-    override fun render(canvas: Canvas) {
+    override fun render(canvas: Canvas, renderParams: RenderParams) {
         val bounds = getRenderBounds()
         val bottom = bounds.bottom
         canvas.drawLine(bounds.left, bottom, bounds.right, bottom, linePaint)

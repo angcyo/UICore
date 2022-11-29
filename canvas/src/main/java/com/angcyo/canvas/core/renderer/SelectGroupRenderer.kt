@@ -9,10 +9,7 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
-import com.angcyo.canvas.core.CanvasEntryPoint
-import com.angcyo.canvas.core.ICanvasListener
-import com.angcyo.canvas.core.IRenderer
-import com.angcyo.canvas.core.OffsetItemData
+import com.angcyo.canvas.core.*
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.data.RendererBounds
@@ -117,7 +114,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         rendererItem = null
     }
 
-    override fun render(canvas: Canvas) {
+    override fun render(canvas: Canvas, renderParams: RenderParams) {
         if (_isStart) {
             paint.style = Paint.Style.FILL
             paint.color = paintColor.alpha(32)
@@ -130,7 +127,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     }
 
     /**预览*/
-    override fun preview(): Drawable? {
+    override fun preview(renderParams: RenderParams): Drawable? {
         val bounds = getRotateBounds()
         return canvasDelegate.getBitmap(bounds).toDrawable(canvasDelegate.view.resources)
     }

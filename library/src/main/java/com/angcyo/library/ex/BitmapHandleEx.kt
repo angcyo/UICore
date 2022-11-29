@@ -110,7 +110,7 @@ fun Bitmap.toGrayHandleAlpha(
  * [alphaThreshold] 透明颜色的阈值, 当颜色的透明值小于此值时, 视为透明
  * */
 fun Bitmap.toBlackWhiteHandle(
-    threshold: Int = 128,
+    threshold: Int = LibHawkKeys.grayThreshold,
     invert: Boolean = false,
     thresholdChannelColor: Int = Color.GRAY,
     alphaBgColor: Int = Color.TRANSPARENT,

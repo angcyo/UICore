@@ -11,6 +11,7 @@ import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.BoundsOperateHandler
 import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.core.renderer.BaseRenderer
 import com.angcyo.canvas.graphics.IEngraveProvider
@@ -189,7 +190,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         itemBoundsChanged(Reason(), changeBeforeBounds)
     }
 
-    override fun preview(): Drawable? {
+    override fun preview(renderParams: RenderParams): Drawable? {
         return rendererItem?.run {
             val renderBounds = getRenderBounds()
             val renderWidth = renderBounds.width()
@@ -206,7 +207,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
                             width / 2 - renderWidth / 2,
                             height / 2 - renderHeight / 2
                         ) {
-                            render(this)
+                            render(this, renderParams)
                         }
                     }
                 })
@@ -415,7 +416,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     //<editor-fold desc="IEngraveProvider">
 
-    override fun getEngraveBitmap(): Bitmap? = preview()?.toBitmap()
+    override fun getEngraveBitmap(renderParams: RenderParams): Bitmap? = preview(renderParams)?.toBitmap()
 
     override fun getEngraveRenderer(): IItemRenderer<*>? = this
 

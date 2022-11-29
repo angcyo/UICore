@@ -16,6 +16,7 @@ import com.angcyo.drawable.dslGravity
 import com.angcyo.library.annotation.Implementation
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.LibHawkKeys
 import com.angcyo.library.ex.add
 import com.angcyo.library.ex.ensure
 import com.angcyo.library.ex.have
@@ -353,7 +354,7 @@ data class CanvasProjectItemBean(
         val MM_UNIT = MmValueUnit()
 
         /**默认的阈值*/
-        const val DEFAULT_THRESHOLD = 128f
+        val DEFAULT_THRESHOLD: Float = LibHawkKeys.grayThreshold.toFloat()
 
         /**默认的GCode线距*/
         const val DEFAULT_LINE_SPACE = 5.0f

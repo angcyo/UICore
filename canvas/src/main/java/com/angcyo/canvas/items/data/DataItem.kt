@@ -8,6 +8,7 @@ import androidx.annotation.AnyThread
 import androidx.core.graphics.scale
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.canvas.data.toPaintStyle
@@ -46,13 +47,18 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
         strokeCap = Paint.Cap.ROUND
     }
 
-    /**
+    /**数据实际的[Drawable], 通常情况下会等于[renderDrawable]
+     * 在绘制描边[Path]时, 为了能在坐标系缩放后同样得到相同的视觉效果.
+     * */
+    var dataDrawable: Drawable? = null
+
+    /**用来渲染在界面上的[Drawable]
      * 通过改变此对象, 呈现出不同的可视图画
      * 可绘制的对象, 此对象不带旋转和缩放
      * 此对象为[null], 则不应该渲染在界面上?
      * [com.angcyo.canvas.graphics.GraphicsHelper.renderItemDataBean]
      * */
-    var drawable: Drawable? = null
+    var renderDrawable: Drawable? = null
 
     //endregion ---属性---
 
@@ -94,6 +100,16 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
 
     //---操作---
 
+    /**获取需要绘制的[Drawable]*/
+    fun getDrawable(renderParams: RenderParams): Drawable? {
+        val drawable = if (renderParams.isFromRenderer) {
+            renderDrawable
+        } else {
+            dataDrawable ?: renderDrawable
+        }
+        return drawable
+    }
+
     /**更新笔的样式*/
     fun updatePaintStyle(
         style: Paint.Style,
@@ -124,7 +140,7 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
      * [com.angcyo.canvas.items.data.DataItem.getEngraveBitmap]
      * [com.angcyo.canvas.items.data.DataItemRenderer.getEngraveBitmap]
      * */
-    override fun getEngraveBitmap(): Bitmap? {
+    override fun getEngraveBitmap(renderParams: RenderParams): Bitmap? {
         val item = this
         val bitmap = if (item is DataBitmapItem) {
             item.modifyBitmap ?: item.originBitmap
@@ -140,7 +156,7 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
             val scaleBitmap = bitmap.scale(width, height)
             return scaleBitmap.rotate(rotate)
         }
-        drawable?.let { drawable ->
+        getDrawable(renderParams)?.let { drawable ->
             val renderBounds = getEngraveBounds()
             val renderWidth = renderBounds.width()
             val renderHeight = renderBounds.height()

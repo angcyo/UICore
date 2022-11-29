@@ -54,7 +54,7 @@ class TextGraphicsParser : IGraphicsParser {
         @Pixel
         val height = textHeight.toInt()
 
-        item.drawable = wrapScalePictureDrawable(width, height) {
+        item.renderDrawable = wrapScalePictureDrawable(width, height) {
             drawNormalText(this, item)
             //drawPathText(this, item, textWidth, textHeight)
         }

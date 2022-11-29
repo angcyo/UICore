@@ -4,6 +4,7 @@ import android.graphics.*
 import androidx.core.graphics.withClip
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library._refreshRateRatio
@@ -109,7 +110,7 @@ class ProgressRenderer(val canvasDelegate: CanvasDelegate) : BaseRenderer(canvas
     val _tempRect = RectF()
     val _tempRotateRect = RectF()
 
-    override fun render(canvas: Canvas) {
+    override fun render(canvas: Canvas, renderParams: RenderParams) {
         if (!isVisible()) {
             return
         }

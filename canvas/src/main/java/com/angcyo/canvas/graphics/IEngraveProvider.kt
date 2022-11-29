@@ -2,6 +2,7 @@ package com.angcyo.canvas.graphics
 
 import android.graphics.Bitmap
 import android.graphics.RectF
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.library.annotation.Pixel
@@ -24,7 +25,7 @@ interface IEngraveProvider {
     fun getEngraveDataItem(): DataItem? = null
 
     /**获取用于直接雕刻的图片, 返回的图片应该已经进行了缩放和旋转 */
-    fun getEngraveBitmap(): Bitmap?
+    fun getEngraveBitmap(renderParams: RenderParams = RenderParams(false)): Bitmap?
 
     /**数据在创作上的绘制范围, 不包含旋转*/
     @Pixel

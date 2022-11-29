@@ -4,6 +4,7 @@ import android.util.TypedValue
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.ceil
 import com.angcyo.library.ex.decimal
+import com.angcyo.library.ex.formatShow
 import kotlin.math.max
 import kotlin.math.nextDown
 import kotlin.math.roundToInt
@@ -78,7 +79,7 @@ interface IValueUnit {
         val graduatedIndexGap = getGraduatedIndexGap()
         if (index % graduatedIndexGap == 0) {
         } else if (index % (graduatedIndexGap / 2) == 0 && this is InchValueUnit) {
-            return (pixel / value).unitDecimal(1, ensureInt = true)
+            return (pixel / value).unitDecimal(1)
         }
         return "${(pixel / value).roundToInt()}"
     }
@@ -124,11 +125,12 @@ interface IValueUnit {
 fun Double.unitDecimal(
     digit: Int = 2,
     fadedUp: Boolean = true,
-    ensureInt: Boolean = false
+    ensureInt: Boolean = true
 ): String {
     if (ensureInt) {
         val int = toInt()
-        if (this == int.toDouble()) {
+        val intD = int.toDouble()
+        if (this == intD || formatShow(digit).toDoubleOrNull() == intD) {
             return "$int"
         }
     }

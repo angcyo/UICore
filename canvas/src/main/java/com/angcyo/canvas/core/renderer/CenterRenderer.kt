@@ -3,7 +3,7 @@ package com.angcyo.canvas.core.renderer
 import android.graphics.Canvas
 import android.graphics.Color
 import com.angcyo.canvas.CanvasDelegate
-import com.angcyo.canvas.CanvasView
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.utils.createPaint
 
 /**
@@ -18,7 +18,7 @@ class CenterRenderer(canvasView: CanvasDelegate) :
         //init
     }
 
-    override fun render(canvas: Canvas) {
+    override fun render(canvas: Canvas, renderParams: RenderParams) {
 
         //绘制坐标轴中心
         paint.color = Color.MAGENTA

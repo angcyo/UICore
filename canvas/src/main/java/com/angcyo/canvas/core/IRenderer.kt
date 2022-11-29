@@ -57,10 +57,10 @@ interface IRenderer {
 
     /**核心渲染方法
      * [com.angcyo.canvas.CanvasView.onDraw]*/
-    fun render(canvas: Canvas)
+    fun render(canvas: Canvas, renderParams: RenderParams)
 
     /**获取用于预览的[Drawable]*/
-    fun preview(): Drawable? {
+    fun preview(renderParams: RenderParams): Drawable? {
         return null
     }
 

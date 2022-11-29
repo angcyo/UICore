@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.data.LimitDataInfo
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.library.annotation.Private
@@ -31,7 +32,7 @@ class LimitRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView) {
     @Private
     val _limitPathBounds: RectF = RectF()
 
-    override fun render(canvas: Canvas) {
+    override fun render(canvas: Canvas, renderParams: RenderParams) {
         limitList.forEach {
             if (it.enableRender) {
                 drawLimitData(canvas, it)

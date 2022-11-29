@@ -19,7 +19,7 @@ class LoveGraphicsParser : PathGraphicsParser() {
     override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_LOVE) {
             val item = DataShapeItem(bean)
-            item.updatePaint(canvasView)
+            item.updatePaint()
 
             val dataWidth = bean.width.toPixel()
             val dataHeight = bean.height.toPixel()
@@ -32,7 +32,7 @@ class LoveGraphicsParser : PathGraphicsParser() {
             //
             item.addDataPath(dataPath)
 
-            item.drawable = createPathDrawable(item) ?: return null
+            createPathDrawable(item, canvasView) ?: return null
 
             initDataModeWithPaintStyle(bean, item.itemPaint)
             return item

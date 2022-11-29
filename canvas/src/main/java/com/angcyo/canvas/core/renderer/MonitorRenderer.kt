@@ -13,6 +13,7 @@ import com.angcyo.canvas.BuildConfig
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.getMaxLineWidth
 import com.angcyo.library.L
@@ -90,7 +91,7 @@ class MonitorRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView), ICanv
     val mmValueUnit = MmValueUnit()
     val inchValueUnit = InchValueUnit()
 
-    override fun render(canvas: Canvas) {
+    override fun render(canvas: Canvas, renderParams: RenderParams) {
         if (_isTouchDown) {
             val text = buildString {
                 if (isShowDebug()) {
