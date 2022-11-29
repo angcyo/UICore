@@ -13,6 +13,9 @@ import androidx.appcompat.widget.PopupMenu
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 
+/**
+ * 通过[MenuConfig] 快速显示一个 [PopupMenu]
+ * */
 fun Context.showPopupMenu(
     anchorView: View?,
     menuRes: Int,
