@@ -60,6 +60,9 @@ class LimitRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView) {
         }
     }
 
+    /**获取主要的限制信息*/
+    fun getPrimaryLimitInfo(): LimitDataInfo? = limitList.find { it.isPrimary }
+
     /**重置所有渲染数据*/
     fun resetLimit(block: MutableList<LimitDataInfo>.() -> Unit) {
         clear()

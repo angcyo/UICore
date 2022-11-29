@@ -26,6 +26,9 @@ data class LimitDataInfo(
     /**是否需要绘制*/
     var enableRender: Boolean = true,
 
+    /**偏移到[limitPath]矩形的顶部*/
+    var offsetRectTop: Boolean = false,
+
     /**需要绘制的边框宽度*/
     var limitStrokeWidth: Float = 1 * dp,
     /**需要绘制的边框颜色*/
