@@ -30,10 +30,10 @@ class ByteArrayReader(val bytes: ByteArray) {
     }
 
     /** 超范围时, 返回-1*/
-    fun readByte(): Byte {
+    fun readByte(def: Byte = -1): Byte {
         val array = read(1)
         if (array.isEmpty()) {
-            return -1
+            return def
         }
         return array.first()
     }
@@ -41,28 +41,28 @@ class ByteArrayReader(val bytes: ByteArray) {
     /**
      * 读取多少个字节表示的int数据
      * 超范围时, 返回-1*/
-    fun readInt(size: Int): Int {
+    fun readInt(size: Int, def: Int = -1): Int {
         val array = read(size)
         if (array.isEmpty()) {
-            return -1
+            return def
         }
         return array.toHexInt()
     }
 
-    fun readByteInt(size: Int): Int {
+    fun readByteInt(size: Int, def: Int = -1): Int {
         val array = read(size)
         if (array.isEmpty()) {
-            return -1
+            return def
         }
         return array.toByteInt()
     }
 
     /**读取多少个字节表示的string数据
      * 超范围时, 返回null*/
-    fun readString(size: Int, charset: Charset = Charsets.UTF_8): String? {
+    fun readString(size: Int, charset: Charset = Charsets.UTF_8, def: String? = null): String? {
         val array = read(size)
         if (array.isEmpty()) {
-            return null
+            return def
         }
         return String(array, charset)
     }
