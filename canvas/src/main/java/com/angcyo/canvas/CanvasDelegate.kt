@@ -1047,7 +1047,10 @@ class CanvasDelegate(val view: View) : ICanvasView {
         limitRenderer.addLimit {
             add(LimitDataInfo(path, false).apply(block))
         }
-        showRectBounds(pathBounds)
+        showRectBounds(
+            pathBounds,
+            offsetRectTop = limitRenderer.limitList.lastOrNull()?.offsetRectTop == true
+        )
     }
 
     /**显示一个限制框, 并且移动画布到最佳可视位置*/
@@ -1057,7 +1060,10 @@ class CanvasDelegate(val view: View) : ICanvasView {
         limitRenderer.resetLimit {
             add(LimitDataInfo(path, true).apply(block))
         }
-        showRectBounds(pathBounds)
+        showRectBounds(
+            pathBounds,
+            offsetRectTop = limitRenderer.limitList.lastOrNull()?.offsetRectTop == true
+        )
     }
 
     /**将画板移动到可以完全显示出[rect]
