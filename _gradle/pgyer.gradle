@@ -126,6 +126,10 @@ _pgyerUpload.doFirst {
                             apkFile)
             )
 
+            def des = getBuildUpdateDescription(apkFile.parent)
+            if (des != null) {
+                paramsConfig["buildUpdateDescription"] = des
+            }
             HashMap<String, String> params = paramsConfig
             for (String key : params.keySet()) {
                 //println("add part key: " + key + " value: " + params.get(key))
@@ -183,6 +187,30 @@ _pgyerUpload.doFirst {
     }
 }
 
+/**获取蒲公英上传版本更新的描述的信息
+ * 在apk同级目录下存放
+ * version.json, 并将描述内容放在json对象的`versionDes` 字段中
+ * */
+def getBuildUpdateDescription(apkPath) {
+    //println "查找路径:" + apkPath
+    def path
+    if (apkPath == null || apkPath.isEmpty()) {
+        path = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
+    } else {
+        path = apkPath
+    }
+    try {
+        def versionFile = new File(path, "version.json")
+        def json = versionFile.getText("utf-8")
+        def map = new com.google.gson.Gson().fromJson(json, Map.class)
+        def versionDes = map["versionDes"]
+        //println versionDes
+        return versionDes
+    } catch (Exception e) {
+        //no op
+        return null
+    }
+}
 
 /**将内容打成二维码图片地址*/
 def requestQrCodeUrl(app_id, app_secret, content, logoPath) {
