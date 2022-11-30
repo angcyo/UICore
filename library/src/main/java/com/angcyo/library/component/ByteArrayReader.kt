@@ -11,15 +11,26 @@ import java.nio.charset.Charset
  */
 class ByteArrayReader(val bytes: ByteArray) {
 
+    /**需要保留最后几个字节*/
+    var keepLastSize: Int = 0
+
     var _index = 0
+
+    val byteSize: Int
+        get() = bytes.size - keepLastSize
 
     fun offset(size: Int) {
         _index += size
     }
 
+    /**确保剩下的字节数大于指定的值*/
+    fun assertLast(length: Int) {
+        assert(_index + length <= bytes.size)
+    }
+
     /**在指针位置读取[size]个字节, 并且自动偏移滞后*/
     fun read(size: Int): ByteArray {
-        if (_index + size > bytes.size) {
+        if (_index + size > byteSize) {
             //超出范围
             return byteArrayOf()
         }

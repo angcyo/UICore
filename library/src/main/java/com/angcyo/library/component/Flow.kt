@@ -92,8 +92,8 @@ class Flow {
                 //异常, 中断处理
                 onErrorAction(it)
                 if (errorInterruptFlow) {
+                    L.w("Flow 被中断:[${_startIndex}/${actionList.size}] ${lastError?.message} ↓")
                     lastError?.printStackTrace()
-                    L.w("Flow 被中断:[${_startIndex}/${actionList.size}] ${lastError?.message}")
                     onEndAction(it)
                 } else {
                     _next()
