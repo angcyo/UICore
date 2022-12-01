@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_reset"
+        android:title="@string/canvas_reset" />
+
+    <item
+        android:id="@+id/menu_best"
+        android:title="@string/canvas_best" />
+
+    <item
+        android:id="@+id/menu_origin"
+        android:title="@string/canvas_origin" />
+
+    <item
+        android:id="@+id/menu_ratio_1"
+        android:title="100%" />
+</menu>

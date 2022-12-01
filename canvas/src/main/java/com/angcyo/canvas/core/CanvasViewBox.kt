@@ -410,6 +410,11 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         updateTo(Matrix().apply(endMatrix), anim)
     }
 
+    fun reset(anim: Boolean = true) {
+        val newMatrix = Matrix()
+        updateTo(newMatrix, anim)
+    }
+
     /**平移视图
      * 正向移动后, 绘制的内容在正向指定的位置绘制
      * */
@@ -421,10 +426,32 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     }
 
     /**直接平移到*/
-    fun translateTo(x: Float? = null, y: Float? = null, anim: Boolean = true) {
+    fun translateTo(x: Float, y: Float, anim: Boolean = true) {
         val newMatrix = Matrix()
-        newMatrix.setTranslate(x ?: getTranslateX(), y ?: getTranslateY())
-        newMatrix.postScale(getScaleX(), getScaleY(), getContentCenterX(), getContentCenterY())
+        newMatrix.setTranslate(x, y)
+        newMatrix.postScale(
+            getScaleX(),
+            getScaleY(),
+            getContentLeft() + x,
+            getContentTop() + y
+        )
+        updateTo(newMatrix, anim)
+    }
+
+    /**直接缩放视图到指定比例*/
+    fun scaleTo(
+        scaleX: Float,
+        scaleY: Float,
+        px: Float = getContentCenterX(),
+        py: Float = getContentCenterY(),
+        anim: Boolean = true
+    ) {
+        val sx = clamp(scaleX, minScaleX, maxScaleX)
+        val sy = clamp(scaleY, minScaleY, maxScaleY)
+
+        val newMatrix = Matrix()
+        newMatrix.setTranslate(matrix.getTranslateX(), matrix.getTranslateY())
+        newMatrix.postScale(sx, sy, px, py)
         updateTo(newMatrix, anim)
     }
 

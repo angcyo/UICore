@@ -13,6 +13,11 @@ import androidx.appcompat.widget.PopupMenu
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 
+fun View?.showPopupMenu(menuRes: Int, action: MenuConfig.() -> Unit): PopupMenu? {
+    this ?: return null
+    return context.showPopupMenu(this, menuRes, action)
+}
+
 /**
  * 通过[MenuConfig] 快速显示一个 [PopupMenu]
  * */

@@ -4,9 +4,13 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import com.angcyo.canvas.CanvasDelegate
+import com.angcyo.canvas.R
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.emptyRectF
+import com.angcyo.library.ex.longFeedback
+import com.angcyo.library.ex.mH
 import com.angcyo.library.ex.nowTime
+import com.angcyo.widget.base.showPopupMenu
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -95,6 +99,21 @@ class InitialPointHandler : BaseComponent() {
 
     /**长按事件*/
     fun onLongPress(delegate: CanvasDelegate): Boolean {
+        val canvasViewBox = delegate.viewBox
+        delegate.view.longFeedback()
+        delegate.view.showPopupMenu(R.menu.initial_menu) {
+            offsetX = canvasViewBox.getContentLeft().toInt()
+            offsetY = -(delegate.view.mH() - canvasViewBox.getContentTop().toInt())
+            menuItemClickAction = {
+                when (it.itemId) {
+                    R.id.menu_reset -> canvasViewBox.reset()
+                    R.id.menu_best -> onClick(delegate)
+                    R.id.menu_ratio_1 -> canvasViewBox.scaleTo(1f, 1f)
+                    R.id.menu_origin -> canvasViewBox.translateTo(0f, 0f)
+                }
+                true
+            }
+        }
         return false
     }
 }

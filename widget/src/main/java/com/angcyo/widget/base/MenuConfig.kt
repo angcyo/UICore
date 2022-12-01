@@ -1,5 +1,6 @@
 package com.angcyo.widget.base
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.Gravity
 import android.view.Menu
@@ -42,7 +43,9 @@ class MenuConfig {
     /**菜单配置*/
     var configMenuAction: (PopupMenu, Menu) -> Unit = { _, _ -> }
 
-    /**菜单点击事件*/
+    /**菜单点击事件
+     * [androidx.appcompat.widget.PopupMenu.OnMenuItemClickListener.onMenuItemClick]
+     * */
     var menuItemClickAction: ((item: MenuItem) -> Boolean)? = null
 
     /**菜单不关闭*/
@@ -50,6 +53,7 @@ class MenuConfig {
 }
 
 /**根据配置信息, 显示[PopupMenu]*/
+@SuppressLint("RestrictedApi")
 fun MenuConfig.show(context: Context): PopupMenu {
     val config = this
     return config.createMenuAction(context).apply {

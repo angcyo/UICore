@@ -10,18 +10,18 @@ import android.graphics.Matrix
  */
 class MatrixEvaluator : TypeEvaluator<Matrix> {
 
-    val mTempStartValues = FloatArray(9)
-    val mTempEndValues = FloatArray(9)
-    val mTempMatrix = Matrix()
+    private val startValues = FloatArray(9)
+    private val endValues = FloatArray(9)
+    private val tempMatrix = Matrix()
 
     override fun evaluate(fraction: Float, startValue: Matrix, endValue: Matrix): Matrix {
-        startValue.getValues(mTempStartValues)
-        endValue.getValues(mTempEndValues)
+        startValue.getValues(startValues)
+        endValue.getValues(endValues)
         for (i in 0..8) {
-            val diff = mTempEndValues[i] - mTempStartValues[i]
-            mTempEndValues[i] = mTempStartValues[i] + fraction * diff
+            val diff = endValues[i] - startValues[i]
+            endValues[i] = startValues[i] + fraction * diff
         }
-        mTempMatrix.setValues(mTempEndValues)
-        return mTempMatrix
+        tempMatrix.setValues(endValues)
+        return tempMatrix
     }
 }

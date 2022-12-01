@@ -111,4 +111,8 @@
     <string name="invert_not_recommend_criterion">雕刻色比材料色深</string>
     <string name="invert_recommend">推荐反色</string>
     <string name="invert_recommend_criterion">雕刻色比材料色浅</string>
+
+    <string name="canvas_origin">原点</string>
+    <string name="canvas_reset">复位</string>
+    <string name="canvas_best">适应</string>
 </resources>
