@@ -42,11 +42,11 @@ object VersionMatcher {
     }
 
     /**当前的版本[version]适配满足配置的规则[min~max]*/
-    fun matches(version: Int, config: String?): Boolean {
+    fun matches(version: Int, config: String?, def: Boolean = true): Boolean {
         val versionRangeList = parseRange(config)
         if (versionRangeList.isEmpty()) {
             //无规则, 则通过
-            return true
+            return def
         }
 
         var targetRange: VersionRange? = null //匹配到的固件版本范围
