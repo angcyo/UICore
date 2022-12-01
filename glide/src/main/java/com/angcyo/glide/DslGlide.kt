@@ -490,6 +490,14 @@ fun dslGlide(imageView: ImageView?, uri: Uri?, action: DslGlide.() -> Unit = {})
     }
 }
 
+/**快速获取一个[Glide]
+ * [com.bumptech.glide.load.model.ModelLoader]
+ * */
+fun <R> ImageView.glide(action: RequestManager.() -> RequestBuilder<R>) {
+    val view = this
+    Glide.with(view).action().into(view)
+}
+
 fun View.clearGlide() {
     clear()
 }

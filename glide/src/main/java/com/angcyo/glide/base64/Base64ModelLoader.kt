@@ -25,7 +25,7 @@ class Base64ModelLoader : ModelLoader<String, ByteBuffer> {
         height: Int,
         options: Options
     ): LoadData<ByteBuffer> {
-        return LoadData<ByteBuffer>(ObjectKey(model), Base64DataFetcher(model))
+        return LoadData(ObjectKey(model), Base64DataFetcher(model))
     }
 
     override fun handles(model: String): Boolean {

@@ -40,8 +40,10 @@ object LibHawkKeys {
     /**允许最大分配的图片大小,
      * 10mb 10 * 1024 * 1024 => 10,485,760
      * 64,000,000 61mb
+     *
+     * pixel 6 max:174 584 760 bytes
      * */
-    var maxBitmapCanvasSize: Long by HawkPropertyValue<Any, Long>(10 * 1024 * 1024)
+    var maxBitmapCanvasSize: Long by HawkPropertyValue<Any, Long>(60 * 1024 * 1024)
 
     /**是否激活圆弧输出矢量数据*/
     var enableVectorArc: Boolean by HawkPropertyValue<Any, Boolean>(false)

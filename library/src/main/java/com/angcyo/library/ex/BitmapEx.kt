@@ -12,10 +12,8 @@ import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.component.LibHawkKeys
 import com.angcyo.library.toastQQ
+import com.angcyo.library.utils.*
 import com.angcyo.library.utils.Constant.PICTURE_FOLDER_NAME
-import com.angcyo.library.utils.fastBlur
-import com.angcyo.library.utils.fileNameUUID
-import com.angcyo.library.utils.filePath
 import java.io.*
 import kotlin.math.max
 import kotlin.math.min
@@ -368,6 +366,7 @@ fun Bitmap.colorChannel(
 /**[Canvas]
  * Canvas: trying to draw too large(1099123560bytes) bitmap.
  * 174584760
+ * 174584760bytes
  * */
 fun bitmapCanvas(
     width: Int,
@@ -375,7 +374,7 @@ fun bitmapCanvas(
     config: Bitmap.Config = Bitmap.Config.ARGB_8888,
     action: Canvas.() -> Unit
 ): Bitmap? {
-    val size = width * height
+    val size = width * height * if (config == Bitmap.Config.ARGB_8888) 4 else 1
     val max = LibHawkKeys.maxBitmapCanvasSize
     if (size > max) {
         L.e("图片过大, 无法分配!")
