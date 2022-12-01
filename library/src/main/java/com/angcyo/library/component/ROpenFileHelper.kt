@@ -4,6 +4,7 @@ import android.content.Intent
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import com.angcyo.library.libCacheFile
+import java.io.File
 
 /**
  * 从第三方应用 打开文件
@@ -21,9 +22,15 @@ object ROpenFileHelper {
      * [ext] 如果[intent]中未包含扩展名, 则需要补充的扩展名,智能识别.号
      *
      * [savePath] 强制指定转存的文件全路径
+     * [folderPath] 单独指定转存的文件目录, 自动补齐文件名
      * @return 返回转存后的文件路径
      * */
-    fun parseIntent(intent: Intent?, ext: String? = null, savePath: String? = null): String? {
+    fun parseIntent(
+        intent: Intent?,
+        ext: String? = null,
+        savePath: String? = null,
+        folderPath: String? = null
+    ): String? {
         intent ?: return null
         val action = intent.action
 
@@ -45,18 +52,25 @@ object ROpenFileHelper {
                 val name = path.lastName().decode()
                 var extName = name.extName()
 
-                val newPath = if (extName.isEmpty()) {
+                val fileName = if (extName.isEmpty()) {
                     //无扩展名
                     extName =
                         ext ?: intent.type?.mimeTypeToExtName() ?: intent.type?.lastName() ?: ""
                     if (extName.startsWith(".")) {
-                        libCacheFile("${name}${extName}").absolutePath
+                        "${name}${extName}"
                     } else {
-                        libCacheFile("${name}.${extName}").absolutePath
+                        "${name}.${extName}"
                     }
                 } else {
-                    libCacheFile(name).absolutePath
+                    name
                 }
+
+                val newPath = if (folderPath == null) {
+                    libCacheFile(fileName)
+                } else {
+                    File(folderPath, fileName)
+                }.absolutePath
+
                 filePath = newPath
             } else {
                 filePath = savePath
