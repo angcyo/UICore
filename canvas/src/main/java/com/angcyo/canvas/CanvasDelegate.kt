@@ -601,6 +601,10 @@ class CanvasDelegate(val view: View) : ICanvasView {
      * [width] [height] 需要获取的像素高度
      *
      * [outWidth] [outHeight] 输出的图片宽高, 用来实现压缩 -1表示不缩放, 有一个-2表示等比缩放
+     *
+     * 当只指定一个宽/高时, 另一个等比缩放
+     * [outWidth] 需要输出预览图宽度, -1表示所有元素的宽度
+     * [outHeight] 需要输出预览图高度, -1表示所有元素的高度
      * */
     @UiThread
     fun getBitmap(
@@ -619,30 +623,38 @@ class CanvasDelegate(val view: View) : ICanvasView {
         //更新坐标系为0,0
         canvasViewBox.contentRect.set(0f, 0f, width.toFloat(), height.toFloat())
 
-        val bitmapWidth = if (outWidth > 0) outWidth else width
-        val bitmapHeight = if (outHeight > 0) outHeight else height
+        val bitmapWidth: Int
+        val bitmapHeight: Int
+
+        if (outWidth < 0 && outHeight < 0) {
+            //元素全尺寸输出
+            bitmapWidth = width
+            bitmapHeight = height
+        } else if (outWidth >= 0 && outHeight == -1) {
+            //高度等比计算
+            bitmapWidth = outWidth
+            bitmapHeight = (outWidth * height * 1f / width).toInt()
+        } else if (outHeight >= 0 && outWidth == -1) {
+            //宽度等比计算
+            bitmapHeight = outHeight
+            bitmapWidth = (width * outHeight * 1f / height).toInt()
+        } else {
+            //宽高都指定了
+            bitmapWidth = outWidth
+            bitmapHeight = outHeight
+        }
+
         val bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
-
-        var scaleMatrix: Matrix? = null
-        if (outWidth > 0 && outHeight > 0) {
-            //都指定了宽高, 则规定比例缩放
-            scaleMatrix = acquireTempMatrix()
-            scaleMatrix.setScale(outWidth * 1f / width, outHeight * 1f / height)
-        } else if (outWidth > 0) {
-            //高度等比
-            scaleMatrix = acquireTempMatrix()
-            val scale = outWidth * 1f / width
-            scaleMatrix.setScale(scale, scale)
-        } else if (outHeight > 0) {
-            scaleMatrix = acquireTempMatrix()
-            val scale = outHeight * 1f / height
-            scaleMatrix.setScale(scale, scale)
-        }
+        val scaleMatrix = acquireTempMatrix()
+        scaleMatrix.setScale(bitmapWidth * 1f / width, bitmapHeight * 1f / height)
 
         val oldRenderRect = emptyRectF()
         canvas.setMatrix(scaleMatrix)
-        canvas.withTranslation(-left, -top) {
+
+        val paintOffset = 1 //向左上多偏移一段笔的粗细
+        canvas.withTranslation(-left + paintOffset, -top + paintOffset) {
+            val renderParams = RenderParams(false)
             itemsRendererList.forEach { renderer ->
                 if (renderer.isVisible()) {
                     //item的旋转, 在此处理
@@ -663,7 +675,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                 }
             }
         }
-        scaleMatrix?.release()
+        scaleMatrix.release()
 
         //恢复
         canvasViewBox.contentRect.set(oldBoxRect)
@@ -671,9 +683,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
         return bitmap
     }
 
-    /**获取画布上的元素数据*/
+    /**获取画布上的元素数据
+     * 当只指定一个宽/高时, 另一个等比缩放
+     * [outWidth] 需要输出预览图宽度, -1表示所有元素的宽度
+     * [outHeight] 需要输出预览图高度, -1表示所有元素的高度
+     * */
     fun getCanvasDataBean(
-        file_name: String? = null,
+        fileName: String? = null,
         outWidth: Int = -1,
         outHeight: Int = -1
     ): CanvasProjectBean {
@@ -699,7 +715,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
             height,
             bitmap.toBase64Data(),
             data,
-            file_name,
+            fileName,
             nowTime(),
             nowTime()
         )

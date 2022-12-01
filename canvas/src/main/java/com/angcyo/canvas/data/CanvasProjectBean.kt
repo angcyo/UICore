@@ -41,6 +41,9 @@ data class CanvasProjectBean(
 
     //---
 
+    /**本地对应的文件路径, 如果有*/
+    var _filePath: String? = null,
+
     /**是否处于调试模式下, 用于debug下方便断点*/
     var _debug: Boolean? = null
 )
