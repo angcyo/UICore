@@ -441,6 +441,13 @@ fun String.lastName(): String {
     return substring(lastIndexOf("/") + 1, length)
 }
 
+/**
+ * mimeType 转成对应的扩展名 txt
+ * [text/plain] -> [txt]
+ * [font/otf] -> [ttf]
+ * */
+fun String?.mimeTypeToExtName() = MimeTypeMap.getSingleton().getExtensionFromMimeType(this)
+
 /**获取url或者文件扩展名 对应的mimeType
  * https://www.iana.org/assignments/media-types/media-types.xhtml
  * */

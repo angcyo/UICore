@@ -2,10 +2,7 @@ package com.angcyo.library.component
 
 import android.content.Intent
 import com.angcyo.library.L
-import com.angcyo.library.ex.decode
-import com.angcyo.library.ex.extName
-import com.angcyo.library.ex.lastName
-import com.angcyo.library.ex.saveTo
+import com.angcyo.library.ex.*
 import com.angcyo.library.libCacheFile
 
 /**
@@ -23,9 +20,10 @@ object ROpenFileHelper {
      *
      * [ext] 如果[intent]中未包含扩展名, 则需要补充的扩展名,智能识别.号
      *
+     * [savePath] 强制指定转存的文件全路径
      * @return 返回转存后的文件路径
      * */
-    fun parseIntent(intent: Intent?, ext: String? = null): String? {
+    fun parseIntent(intent: Intent?, ext: String? = null, savePath: String? = null): String? {
         intent ?: return null
         val action = intent.action
 
@@ -39,30 +37,35 @@ object ROpenFileHelper {
         L.i("解析:$action $data")
 
         if (data != null) {
+            val filePath: String
             val path = "$data"
+            if (savePath == null) {
+                //%E9%87%91%E9%97%A8%E5%A4%A7%E6%A1%A5-GCODE.dxf
+                //decode->金门大桥-GCODE.dxf
+                val name = path.lastName().decode()
+                var extName = name.extName()
 
-            //%E9%87%91%E9%97%A8%E5%A4%A7%E6%A1%A5-GCODE.dxf
-            //decode->金门大桥-GCODE.dxf
-            val name = path.lastName().decode()
-            var extName = name.extName()
-
-            val newPath = if (extName.isEmpty()) {
-                //无扩展名
-                extName = ext ?: intent.type?.lastName() ?: ""
-                if (extName.startsWith(".")) {
-                    libCacheFile("${name}${extName}").absolutePath
+                val newPath = if (extName.isEmpty()) {
+                    //无扩展名
+                    extName =
+                        ext ?: intent.type?.mimeTypeToExtName() ?: intent.type?.lastName() ?: ""
+                    if (extName.startsWith(".")) {
+                        libCacheFile("${name}${extName}").absolutePath
+                    } else {
+                        libCacheFile("${name}.${extName}").absolutePath
+                    }
                 } else {
-                    libCacheFile("${name}.${extName}").absolutePath
+                    libCacheFile(name).absolutePath
                 }
+                filePath = newPath
             } else {
-                libCacheFile(name).absolutePath
+                filePath = savePath
             }
-            data.saveTo(newPath)//转存文件
-
+            data.saveTo(filePath)//转存文件
             ///data/user/0/com.angcyo.uicore.demo/cache/documents/ffea464c0cb6e12(2).jpg
             //->/storage/emulated/0/Android/data/com.angcyo.uicore.demo/cache/ffea464c0cb6e12(2).jpg
-            L.i("转存文件:$path ->$newPath")
-            return newPath
+            L.i("转存文件:$path ->$filePath")
+            return filePath
         }
         return null
     }
