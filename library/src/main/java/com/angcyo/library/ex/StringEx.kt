@@ -693,8 +693,16 @@ fun String?.connectUrl(url: String?): String {
     return "$h/$u"
 }
 
-fun String?.md5(): String? {
-    return this?.toByteArray(Charsets.UTF_8)?.encrypt()?.toHexString()
+/**加密字节数据
+ * [algorithm] 加密算法 MD2/MD5/SHA1/SHA224/SHA256/SHA384/SHA512
+ * */
+fun String?.toMd5(algorithm: String = "MD5") = md5(algorithm)
+
+/**加密字节数据
+ * [algorithm] 加密算法 MD2/MD5/SHA1/SHA224/SHA256/SHA384/SHA512
+ * */
+fun String?.md5(algorithm: String = "MD5"): String? {
+    return this?.toByteArray(Charsets.UTF_8)?.encrypt(algorithm)?.toHexString()
 }
 
 /**字节大小*/

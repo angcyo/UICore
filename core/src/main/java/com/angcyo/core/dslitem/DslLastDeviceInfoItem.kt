@@ -17,10 +17,7 @@ import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.*
 import com.angcyo.library.libFolderPath
 import com.angcyo.library.toast
-import com.angcyo.library.utils.Device
-import com.angcyo.library.utils.LogFile
-import com.angcyo.library.utils.toLogFilePath
-import com.angcyo.library.utils.writeTo
+import com.angcyo.library.utils.*
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.progress.DslProgressBar
 import com.angcyo.widget.recycler.RecyclerBottomLayout
@@ -104,8 +101,12 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             append(Device.deviceId) {
                 foregroundColor = getColor(R.color.colorPrimaryDark)
             }
-
             appendln()
+            append(ID.id) {
+                foregroundColor = getColor(R.color.colorPrimary)
+            }
+            appendln()
+            
             //本地APK编译信息
             Device.buildString(this._builder)
             //屏幕信息
