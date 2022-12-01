@@ -41,7 +41,7 @@ data class CanvasProjectBean(
 
     //---
 
-    /**是否处于调试模式下*/
+    /**是否处于调试模式下, 用于debug下方便断点*/
     var _debug: Boolean? = null
 )
 
