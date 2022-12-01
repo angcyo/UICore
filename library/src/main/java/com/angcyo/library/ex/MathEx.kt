@@ -113,6 +113,23 @@ fun radians(x: Float, y: Float, pivotX: Float, pivotY: Float): Double {
     }
 }
 
+/**保留小数点后几位
+ * [ensureInt] 如果是整数, 优先使用整数*/
+fun Double.decimal(
+    digit: Int,
+    ensureInt: Boolean,
+    fadedUp: Boolean,
+): String {
+    if (ensureInt) {
+        val int = toInt()
+        val intD = int.toDouble()
+        if (this == intD || formatShow(digit).toDoubleOrNull() == intD) {
+            return "$int"
+        }
+    }
+    return decimal(digit, fadedUp)
+}
+
 /**
  * 保留浮点数, 小数点后几位 .x0 -> .x
  * @param digit 需要保留的小数位数
@@ -121,7 +138,7 @@ fun radians(x: Float, y: Float, pivotX: Float, pivotY: Float): Double {
 fun Double.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
     val f = 10f.pow(digit)
     val value = if (isNaN()) {
-        0
+        0.0
     } else if (fadedUp) {
         (this * f).roundToInt()
     } else {
@@ -132,7 +149,27 @@ fun Double.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
 
 /**保留小数点后几位*/
 fun Float.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
-    return this.toDouble().decimal(digit, fadedUp)
+    val f = 10f.pow(digit)
+    val value = if (isNaN()) {
+        0f
+    } else if (fadedUp) {
+        (this * f).roundToInt()
+    } else {
+        (this * f).toInt()
+    } / f
+    return String.format(Locale.US, "%.${digit}f", value)
+}
+
+/**保留小数点后几位*/
+fun Float.decimal(digit: Int, ensureInt: Boolean, fadedUp: Boolean): String {
+    if (ensureInt) {
+        val int = toInt()
+        val intF = int.toFloat()
+        if (this == intF || formatShow(digit).toFloatOrNull() == intF) {
+            return "$int"
+        }
+    }
+    return decimal(digit, fadedUp)
 }
 
 /**向上取整

@@ -166,10 +166,6 @@ fun String?.toBigLongOrNull(): Long? {
     }
 }
 
-/**判断2个浮点数是否相等*/
-fun Float.eq(other: Float): Boolean =
-    java.lang.Float.floatToIntBits(this) == java.lang.Float.floatToIntBits(other)
-
 /**确保当前的浮点对象返回一个有效的值*/
 fun Float.ensure(def: Float = 0f): Float {
     if (isNaN()) {
@@ -195,8 +191,23 @@ fun Double.ensure(def: Double = 1.0): Double {
     return this
 }
 
+/**判断2个浮点数是否相等*/
+fun Float.eq(other: Float): Boolean =
+    java.lang.Float.floatToIntBits(this) == java.lang.Float.floatToIntBits(other)
+
+/**判断2个浮点数是否相等*/
 fun Double.eq(other: Double): Boolean =
     java.lang.Double.doubleToLongBits(this) == java.lang.Double.doubleToLongBits(other)
+
+/**判断2个浮点数是否相等*/
+fun Float.equal2(value: Float): Boolean = toDouble().equal2(value.toDouble())
+
+/**判断2个浮点数是否相等*/
+fun Double.equal2(value: Double): Boolean {
+    val data1 = BigDecimal(this)
+    val data2 = BigDecimal(value)
+    return data1.compareTo(data2) == 0
+}
 
 /**有损转成[Float]类型
  * 0.00001 -> 1.0E-5
@@ -208,6 +219,14 @@ fun Double.toLossyFloat(threshold: Double = 0.001): Float = if (this.absoluteVal
 } else {
     this
 }.toFloat()
+
+/**保留小数点多少位*/
+fun Float.formatShow(n: Int = 2): String {
+    val instance = NumberFormat.getInstance()
+    instance.isGroupingUsed = false //设置不使用科学计数器
+    instance.maximumFractionDigits = n //小数点最大位数
+    return instance.format(this)
+}
 
 /**保留小数点多少位*/
 fun Double.formatShow(n: Int = 2): String {
