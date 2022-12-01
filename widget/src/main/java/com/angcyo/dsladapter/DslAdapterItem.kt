@@ -109,11 +109,22 @@ open class DslAdapterItem : LifecycleOwner {
         }
     }
 
-    /**移除[item]*/
+    /**移除[item], 注意:此方式只是删除了item, 界面并不会刷新.
+     * [removeAdapterItemJust]*/
     @UpdateFlag
     open fun removeAdapterItem() {
         itemDslAdapter?.apply {
             removeItemFromAll(this@DslAdapterItem)
+        }.elseNull {
+            L.w("跳过操作! updateAdapterItem需要[itemDslAdapter],请赋值.")
+        }
+    }
+
+    /**移除[item], 立即刷新界面*/
+    @UpdateByDiff
+    open fun removeAdapterItemJust() {
+        itemDslAdapter?.render {
+            removeAdapterItem()
         }.elseNull {
             L.w("跳过操作! updateAdapterItem需要[itemDslAdapter],请赋值.")
         }
