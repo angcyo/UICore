@@ -283,6 +283,23 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
         positiveButtonListener = listener
     }
 
+    /**需要用户确定, 并且放出取消按钮*/
+    open fun needPositiveButton(
+        text: CharSequence? = positiveButtonText ?: _string(R.string.dialog_positive),
+        listener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit
+    ) {
+        positiveButtonText = text
+        positiveButtonListener = listener
+
+        if (negativeButtonText == null) {
+            negativeButton { dialog, dialogViewHolder ->
+                dialog.dismiss()
+            }
+        }
+    }
+
+    //---
+
     /**
      * https://developer.android.google.cn/reference/android/view/Window.html
      *
