@@ -44,10 +44,10 @@ fun String.toHexByte(): Byte {
 /**
  * 尾部补齐, 或者首部补齐
  * 将十六进制字符串[0123456789ABCDEF]补齐到指定的字节数组长度
- * [padEnd] 往后垫, 否则就是往前垫
+ * [pad] 补齐的方向, 负数:往后补齐, 正数:往前补齐, 0:不补齐
  * */
-fun String.padHexString(length: Int, padEnd: Boolean = true): String {
-    val bytes = toHexByteArray().padHexByteArray(length, padEnd)
+fun String.padHexString(length: Int, pad: Int = -1): String {
+    val bytes = toHexByteArray().padHexByteArray(length, pad)
     return bytes.toHexString(contains(' '))
 }
 
@@ -65,8 +65,11 @@ fun ByteArray.copyTo(
     System.arraycopy(this, fromStartPos, target, targetStartPos, count)
 }
 
-/**剔除字节数据, 或者填满字节数组到指定的长度*/
-fun ByteArray.trimAndPad(length: Int, pad: Boolean = true): ByteArray {
+/**剔除字节数据, 或者填满字节数组到指定的长度
+ * [length] 限定的字节数量
+ * [pad] 补齐的方向, 负数:往后补齐, 正数:往前补齐, 0:不补齐
+ * */
+fun ByteArray.trimAndPad(length: Int, pad: Int = -1): ByteArray {
     return if (size == length) {
         //刚好相等
         this
@@ -76,31 +79,28 @@ fun ByteArray.trimAndPad(length: Int, pad: Boolean = true): ByteArray {
         copyTo(result, count = length)
         result
     } else {
-        if (pad) {
-            //需要垫满
-            padHexByteArray(length, true)
-        } else {
-            //不需要垫满, 直接返回
-            this
-        }
+        padHexByteArray(length, pad)
     }
 }
 
 /**填满字节数组到指定的长度[length], 如果已经超过则忽略
- * [padEnd] 从尾部填满, 否则从头部填满*/
-fun ByteArray.padHexByteArray(length: Int, padEnd: Boolean = true): ByteArray {
+ * [pad] 补齐的方向, 负数:往后补齐, 正数:往前补齐, 0:不补齐
+ * */
+fun ByteArray.padHexByteArray(length: Int, pad: Int = -1): ByteArray {
     val bytes = this
     if (bytes.size >= length) {
         return bytes
     } else {
         val result = ByteArray(length)
         val count = length - bytes.size
-        if (padEnd) {
+        if (pad < 0) {
+            //往后填充
             System.arraycopy(bytes, 0, result, 0, bytes.size)
             for (i in 0 until count) {
                 result[bytes.size + i] = 0
             }
-        } else {
+        } else if (pad > 0) {
+            //往前填充
             System.arraycopy(bytes, 0, result, count, bytes.size)
             for (i in 0 until count) {
                 result[i] = 0

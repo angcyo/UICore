@@ -1,5 +1,6 @@
 package com.angcyo.library.component
 
+import com.angcyo.library.ex.size
 import com.angcyo.library.ex.toByteArray
 import java.io.ByteArrayOutputStream
 import kotlin.math.min
@@ -50,6 +51,27 @@ class ByteArrayWriter(
 
     fun write(string: String) {
         write(string.toByteArray())
+    }
+
+    /**
+     * [length] 限制写入的字节数, 不够前面补0
+     * */
+    fun write(string: String, length: Int) {
+        val byteArray = string.toByteArray()
+        val size = byteArray.size()
+        if (size > length) {
+            //截取
+            val newBytes = byteArray.copyOfRange(0, length)
+            write(newBytes)
+        } else if (size < length) {
+            //补齐
+            for (i in 0 until length - size) {
+                write(0)
+            }
+            write(byteArray)
+        } else {
+            write(byteArray)
+        }
     }
 
     fun write(bytes: ByteArray?) {
