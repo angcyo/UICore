@@ -34,15 +34,20 @@ class SortAfterFilterInterceptor<R : Comparable<R>>(
         }
     }
 
-    override fun intercept(chain: FilterChain): List<DslAdapterItem> {
-        val resultList = chain.requestList.toMutableList()
+    /**直接调用排序方法*/
+    fun sort(list: MutableList<DslAdapterItem>) {
         if (desc) {
             //正序, 从大到小
-            resultList.sortByDescending(selector)
+            list.sortByDescending(selector)
         } else {
             //逆序, 从小到大
-            resultList.sortBy(selector)
+            list.sortBy(selector)
         }
+    }
+
+    override fun intercept(chain: FilterChain): List<DslAdapterItem> {
+        val resultList = chain.requestList.toMutableList()
+        sort(resultList)
         return resultList
     }
 }
