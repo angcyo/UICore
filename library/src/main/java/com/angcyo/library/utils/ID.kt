@@ -41,7 +41,8 @@ object ID {
 
     private var _id: String? = null
     private var deviceName = "/.device.txt"
-    private var pathName: String = getRootPathExternalFirst() + "/.device"
+    private val pathName: String
+        get() = getRootPathExternalFirst() + "/.angcyo/${app().packageName}/.device"
 
     /**设备唯一id*/
     val id: String
@@ -107,11 +108,13 @@ object ID {
      */
     private fun writeTxtToFile(content: String?, filePath: String, fileName: String) {
         try {
-            makeFilePath(filePath, fileName)
-            content ?: return
-            val outputStream = FileOutputStream(filePath + fileName)
-            outputStream.write(content.toByteArray())
-            outputStream.close()
+            if (isHaveSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                makeFilePath(filePath, fileName)
+                content ?: return
+                val outputStream = FileOutputStream(filePath + fileName)
+                outputStream.write(content.toByteArray())
+                outputStream.close()
+            }
         } catch (e: Exception) {
         }
     }
@@ -126,8 +129,8 @@ object ID {
      */
     private fun makeFilePath(filePath: String, fileName: String): File? {
         var file: File? = null
-        makeRootDirectory(filePath)
         try {
+            makeRootDirectory(filePath)
             file = File(filePath + fileName)
             if (!file.exists()) {
                 file.createNewFile()
@@ -144,6 +147,7 @@ object ID {
      * @param filePath
      */
     private fun makeRootDirectory(filePath: String?) {
+        filePath ?: return
         var file: File? = null
         try {
             file = File(filePath)
@@ -314,11 +318,11 @@ object ID {
         return getImeiOrMeId(false)
     }
 
-    private fun isCheckSelfPermission(permission: String): Boolean {
+    private fun isHaveSelfPermission(permission: String): Boolean {
         return (ActivityCompat.checkSelfPermission(
             app(),
             permission
-        ) != PackageManager.PERMISSION_GRANTED)
+        ) == PackageManager.PERMISSION_GRANTED)
     }
 
     private fun getTelephonyManager(): TelephonyManager {
@@ -350,8 +354,8 @@ object ID {
     }
 
     @SuppressLint("MissingPermission")
-    private fun getImeiOrMeId(isImei: Boolean): String? {
-        if (isCheckSelfPermission(Manifest.permission.READ_PHONE_STATE)) {
+    private fun getImeiOrMeId(isImei: Boolean): String {
+        if (!isHaveSelfPermission(Manifest.permission.READ_PHONE_STATE)) {
             return ""
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
