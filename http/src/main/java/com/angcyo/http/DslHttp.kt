@@ -89,6 +89,8 @@ interface Api {
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<ResponseBody>>
 
+    /*------------以下是[PUT]请求-----------------*/
+
     @PUT
     fun put(
         @Url url: String,
