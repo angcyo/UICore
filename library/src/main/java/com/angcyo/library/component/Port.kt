@@ -46,7 +46,9 @@ object Port {
         return port
     }
 
-    /**生成一个可用的端口*/
+    /**生成一个可用的端口
+     * [port] 希望分配的端口, 如果被占用则累加继续申请
+     * */
     fun generatePort(port: Int): Int {
         var result = port
         while (isPortOccupy(result)) {
