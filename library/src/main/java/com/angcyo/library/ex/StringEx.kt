@@ -445,6 +445,8 @@ fun String.lastName(): String {
  * mimeType 转成对应的扩展名 txt
  * [text/plain] -> [txt]
  * [font/otf] -> [ttf]
+ *
+ * https://www.toutiao.com/article/7045075347141886467/
  * */
 fun String?.mimeTypeToExtName() = MimeTypeMap.getSingleton().getExtensionFromMimeType(this)
 
