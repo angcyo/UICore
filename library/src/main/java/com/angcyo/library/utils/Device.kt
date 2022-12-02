@@ -37,6 +37,12 @@ import kotlin.math.sqrt
  */
 object Device {
 
+    /**设备显示的名称: [厂家 型号]
+     * Google Pixel 6
+     * */
+    val deviceName: String
+        get() = "${Build.MANUFACTURER} ${Build.MODEL}"
+
     //https://developer.android.google.cn/training/articles/user-data-ids
     //86756e10cf9a9562
     var androidId: String = ""

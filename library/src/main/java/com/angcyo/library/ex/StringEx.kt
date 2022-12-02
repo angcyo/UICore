@@ -352,7 +352,11 @@ fun String.toBitmapOfBase64(): Bitmap {
 }
 
 fun String.toBase64(): String {
-    return Base64.encodeToString(toByteArray(), Base64.NO_WRAP).replace("\\+", "%2B")
+    return Base64.encodeToString(toByteArray(Charsets.UTF_8), Base64.NO_WRAP).replace("\\+", "%2B")
+}
+
+fun String.fromBase64(): String {
+    return Base64.decode(toByteArray(Charsets.UTF_8), Base64.NO_WRAP).toString(Charsets.UTF_8)
 }
 
 fun String?.toUri(): Uri? {

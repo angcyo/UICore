@@ -688,14 +688,14 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         filterParams: FilterParams = defaultFilterParams!!,
         render: DslAdapter.(headerItems: MutableList<DslAdapterItem>) -> Unit
     ) {
-        val dslAdapter = DslAdapter()
-        dslAdapter.dslDataFilter = null
-        dslAdapter.render(headerItems)
+        val delegateAdapter = DslAdapter()
+        delegateAdapter.dslDataFilter = null
+        delegateAdapter.render(headerItems)
         changeItems(updateState, filterParams) {
             if (reset) {
                 headerItems.clear()
             }
-            headerItems.addAll(dslAdapter.adapterItems)
+            headerItems.addAll(delegateAdapter.adapterItems)
         }
     }
 
@@ -706,14 +706,14 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         filterParams: FilterParams = defaultFilterParams!!,
         render: DslAdapter.(dataItems: MutableList<DslAdapterItem>) -> Unit
     ) {
-        val dslAdapter = DslAdapter()
-        dslAdapter.dslDataFilter = null
-        dslAdapter.render(dataItems)
+        val delegateAdapter = DslAdapter()
+        delegateAdapter.dslDataFilter = null
+        delegateAdapter.render(dataItems)
         changeItems(updateState, filterParams) {
             if (reset) {
                 dataItems.clear()
             }
-            dataItems.addAll(dslAdapter.adapterItems)
+            dataItems.addAll(delegateAdapter.adapterItems)
         }
     }
 
@@ -724,14 +724,14 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         filterParams: FilterParams = defaultFilterParams!!,
         render: DslAdapter.(footerItems: MutableList<DslAdapterItem>) -> Unit
     ) {
-        val dslAdapter = DslAdapter()
-        dslAdapter.dslDataFilter = null
-        dslAdapter.render(footerItems)
+        val delegateAdapter = DslAdapter()
+        delegateAdapter.dslDataFilter = null
+        delegateAdapter.render(footerItems)
         changeItems(updateState, filterParams) {
             if (reset) {
                 footerItems.clear()
             }
-            footerItems.addAll(dslAdapter.adapterItems)
+            footerItems.addAll(delegateAdapter.adapterItems)
         }
     }
 
