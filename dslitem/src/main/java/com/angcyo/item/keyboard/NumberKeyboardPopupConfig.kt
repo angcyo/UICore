@@ -53,7 +53,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         const val STYLE_INCREMENT = 0x02
 
         /**输入延迟*/
-        var DEFAULT_INPUT_DELAY = 800L
+        var DEFAULT_INPUT_DELAY = 2000L
 
         /**键盘输入解析*/
         fun keyboardInputValueParse(
@@ -305,6 +305,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         ).apply {
             toDoubleOrNull()?.let { toValue ->
                 _pendingRunnable = Runnable {
+                    _pendingRunnable = null
                     onNumberResultAction(toValue)
                     if (enableShakeInput) {
                         //清空输入
@@ -334,6 +335,17 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
     fun removeKeyboardStyle(style: Int) {
         keyboardStyle = keyboardStyle.remove(style)
     }
+
+    override fun dismissPopupWindow(popupWindow: PopupWindow) {
+        super.dismissPopupWindow(popupWindow)
+        if (bindPendingDelay > 0) {
+            _pendingRunnable?.let {
+                mainHandle.removeCallbacks(it)
+                it.run()//立即执行
+            }
+        }
+    }
+
 }
 
 /**Dsl*/

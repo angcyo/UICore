@@ -254,8 +254,9 @@ open class PopupConfig {
 
             animationStyle = this@PopupConfig.animationStyle
 
+            //dismiss
             setOnDismissListener {
-                onDismiss(window)
+                dismissPopupWindow(window)
             }
 
             //创建布局和初始化
@@ -307,6 +308,11 @@ open class PopupConfig {
                 onInitLayout(window, it)
             }
         }
+    }
+
+    /**销毁[PopupWindow]时触发的回调*/
+    open fun dismissPopupWindow(popupWindow: PopupWindow) {
+        onDismiss(popupWindow)
     }
 
     //</editor-fold desc="PopupWindow">
