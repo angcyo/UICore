@@ -335,6 +335,15 @@ fun Context.getBitmapFromRes(id: Int) = BitmapFactory.decodeResource(resources, 
 /**从[AssetManager]中获取[Bitmap]对象*/
 fun Context.getBitmapFromAssets(name: String) = BitmapFactory.decodeStream(assets.open(name))
 
+/**获取图片中的所有像素色值*/
+fun Bitmap.getPixels(): IntArray {
+    val w = width
+    val h = height
+    val pix = IntArray(w * h)
+    getPixels(pix, 0, w, 0, 0, w, h)
+    return pix
+}
+
 /**色彩通道提取
  * [channelType] 通道类型 [Color.RED] [Color.GREEN] [Color.BLUE] [Color.GRAY]*/
 fun Bitmap.colorChannel(

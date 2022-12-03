@@ -114,6 +114,7 @@ open class PathGraphicsParser : IGraphicsParser {
         if (drawPathList.isEmpty()) {
             return null
         }
+        val lineShape = item.isLineShape()
 
         val pathBounds = acquireTempRectF()
         drawPathList.computeBounds(pathBounds, true)
@@ -126,8 +127,8 @@ open class PathGraphicsParser : IGraphicsParser {
             val strokeWidth = paint.strokeWidth
 
             //偏移到路径开始的位置
-            val dx = -strokeWidth / 2 - pathBounds.left
-            val dy = -strokeWidth / 2 - pathBounds.top
+            val dx = if (lineShape) -pathBounds.left else -strokeWidth / 2 - pathBounds.left
+            val dy = if (lineShape) -pathBounds.top else -strokeWidth / 2 - pathBounds.top
 
             translate(dx, dy)
 
@@ -135,7 +136,7 @@ open class PathGraphicsParser : IGraphicsParser {
             val drawWidth = shapeWidth - strokeWidth * 2
             val drawHeight = shapeHeight - strokeWidth * 2
             val scaleX = drawWidth / shapeWidth
-            val scaleY = if (item.isLineShape()) {
+            val scaleY = if (lineShape) {
                 1f
             } else {
                 drawHeight / shapeHeight

@@ -2,6 +2,7 @@ package com.angcyo.canvas.items.data
 
 import android.graphics.Color
 import android.graphics.Path
+import android.os.Debug
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toPaintStyle
@@ -36,7 +37,11 @@ open class DataPathItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         itemPaint.let {
             it.style = dataBean.paintStyle.toPaintStyle()
             //颜色
-            it.color = dataBean.fill?.toColor() ?: Color.BLACK
+            if (Debug.isDebuggerConnected()) {
+                it.color = Color.RED
+            } else {
+                it.color = dataBean.fill?.toColor() ?: Color.BLACK
+            }
         }
     }
 

@@ -3,10 +3,12 @@ package com.angcyo.canvas.utils
 import android.graphics.Bitmap
 import android.graphics.Path
 import android.graphics.RectF
+import android.os.Debug
 import android.view.Gravity
 import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.gcode.GCodeAdjust
 import com.angcyo.gcode.GCodeWriteHandler
+import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
 import com.angcyo.library.libCacheFile
@@ -164,7 +166,7 @@ object CanvasDataHandleOperate {
      * [Gravity.TOP]:水平从上开始左右右左扫描 [Gravity.BOTTOM]:
      *
      * [threshold] 当色值>=此值时, 忽略数据 255白色 [0~255]
-     * [isSingleLine] 当前的图片是否是简单的线段, 如果是, 则每一行或者每一列只取一个像素点, 用来处理虚线的斜线
+     * [isSingleLine] 当前的图片是否是简单的线段, 如果是, 则每一行或者每一列只取一个像素点, 用来处理旋转了的虚线,也就是斜线, 非斜线, 会自动关闭此值
      *
      * 采样的时候, 使用像素单位, 但是写入文件的时候转换成mm单位
      * */
@@ -180,6 +182,7 @@ object CanvasDataHandleOperate {
         autoCnc: Boolean = false,
         isSingleLine: Boolean = false,
     ): File {
+
         val gCodeWriteHandler = GCodeWriteHandler()
         //像素单位转成mm单位
         val mmValueUnit = MM_UNIT
@@ -191,6 +194,14 @@ object CanvasDataHandleOperate {
 
         val width = bitmap.width
         val height = bitmap.height
+
+        //是否是斜线
+        val isObliqueLine = isSingleLine && width > 1 && height > 1
+
+        if (Debug.isDebuggerConnected()) {
+            val pixels = bitmap.getPixels()
+            L.i(pixels)
+        }
         val data = bitmap.engraveColorBytes()
 
         val scanGravity = gravity ?: if (width > height) {
@@ -218,7 +229,7 @@ object CanvasDataHandleOperate {
             }
 
             if (scanGravity == Gravity.LEFT || scanGravity == Gravity.RIGHT) {
-                //垂直扫描
+                //从左到右, 垂直扫描
                 val xFrom: Int
                 val xTo: Int
                 val xStep: Int //跳跃的像素
@@ -256,18 +267,19 @@ object CanvasDataHandleOperate {
                             gCodeWriteHandler.writePoint(xValue, yValue)
                             lastGCodeLineRef = lastLineRef //有数据的列
 
-                            if (isSingleLine) {
+                            if (isObliqueLine) {
                                 break
                             }
                         }
                     }
-                    if (!isSingleLine) {
+                    if (!isObliqueLine) {
                         gCodeWriteHandler.clearLastPoint()
-                    }
-                    //rtl
-                    if (lastGCodeLineRef == lastLineRef) {
-                        //这一行有GCode数据
-                        isReverseDirection = !isReverseDirection
+
+                        //rtl
+                        if (lastGCodeLineRef == lastLineRef) {
+                            //这一行有GCode数据
+                            isReverseDirection = !isReverseDirection
+                        }
                     }
 
                     //到底了
@@ -284,7 +296,7 @@ object CanvasDataHandleOperate {
                     }
                 }
             } else {
-                //水平扫描, 第几行. 从0开始
+                //从上到下, 水平扫描, 第几行. 从0开始
                 val yFrom: Int
                 val yTo: Int
                 val yStep: Int //跳跃的像素
@@ -322,19 +334,19 @@ object CanvasDataHandleOperate {
                             gCodeWriteHandler.writePoint(xValue, yValue)
                             lastGCodeLineRef = lastLineRef //有数据的行
 
-                            if (isSingleLine) {
+                            if (isObliqueLine) {
                                 break
                             }
                         }
                     }
-                    if (!isSingleLine) {
+                    if (!isObliqueLine) {
                         gCodeWriteHandler.clearLastPoint()
-                    }
 
-                    //rtl
-                    if (lastGCodeLineRef == lastLineRef) {
-                        //这一行有GCode数据
-                        isReverseDirection = !isReverseDirection
+                        //rtl
+                        if (lastGCodeLineRef == lastLineRef) {
+                            //这一行有GCode数据
+                            isReverseDirection = !isReverseDirection
+                        }
                     }
 
                     //到底了
