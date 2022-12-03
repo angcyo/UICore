@@ -2,7 +2,6 @@ package com.angcyo.canvas.graphics
 
 import android.graphics.RectF
 import androidx.annotation.AnyThread
-import androidx.annotation.MainThread
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
@@ -18,7 +17,7 @@ import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.canvas.utils.limitMaxWidthHeight
-import com.angcyo.http.rx.doMain
+import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.MM
@@ -148,7 +147,7 @@ object GraphicsHelper {
 
     //region ---ItemDataBean解析---
 
-    /**开始解析, 可能会有耗时操作
+    /**开始解析, 可能会有耗时操作, 请在子线程中处理
      * 更具[bean]解析出一个可以用来渲染的[BaseItem]
      * */
     @CallPoint
@@ -185,18 +184,16 @@ object GraphicsHelper {
     ): DataItemRenderer? {
         val item = parseRenderItemFrom(bean, canvasView) ?: return null
         val renderer = DataItemRenderer(canvasView)
-        doMain {
-            renderer.setRendererRenderItem(item)
-            if (assignLocation) {
-                //更新位置和可视的缩放比例
-                assignLocation(canvasView.getCanvasViewBox(), bean)
-            }
-            updateRendererProperty(renderer, bean)
-            (canvasView as? CanvasDelegate)?.apply {
-                addItemRenderer(renderer, strategy)
-                if (selected) {
-                    selectedItem(renderer)
-                }
+        renderer.setRendererRenderItem(item)
+        if (assignLocation) {
+            //更新位置和可视的缩放比例
+            assignLocation(canvasView.getCanvasViewBox(), bean)
+        }
+        updateRendererProperty(renderer, bean)
+        (canvasView as? CanvasDelegate)?.apply {
+            addItemRenderer(renderer, strategy)
+            if (selected) {
+                selectedItem(renderer)
             }
         }
         return renderer
@@ -219,17 +216,13 @@ object GraphicsHelper {
                 result.add(renderer)
 
                 //更新坐标
-                doMain {
-                    updateRendererProperty(renderer, bean)
-                }
+                updateRendererProperty(renderer, bean)
             }
         }
         if (result.isNotEmpty()) {
-            doMain {
-                (canvasView as? CanvasDelegate)?.apply {
-                    addItemRenderer(result, strategy)
-                    selectGroupRenderer.selectedRendererList(result, Strategy.preview)
-                }
+            (canvasView as? CanvasDelegate)?.apply {
+                addItemRenderer(result, strategy)
+                selectGroupRenderer.selectedRendererList(result, Strategy.preview)
             }
         }
         return result
@@ -250,29 +243,32 @@ object GraphicsHelper {
         }
     }
 
-    /**更新一个新的渲染[DataItem], 重新渲染数据*/
+    /**更新一个新的渲染[DataItem], 重新渲染数据.
+     * 在后台线程运行, 提高渲染效率
+     * */
     @CallPoint
+    @AnyThread
     fun updateRenderItem(renderer: DataItemRenderer, bean: CanvasProjectItemBean) {
-        val item = parseRenderItemFrom(bean, renderer.canvasView) ?: return
-        updateRenderItem(renderer, item)
+        doBack(true) {
+            val item = parseRenderItemFrom(bean, renderer.canvasView) ?: return@doBack
+            updateRenderItem(renderer, item)
+        }
     }
 
     /**更新[renderer]的[DataItem]*/
     @CallPoint
     @AnyThread
     fun updateRenderItem(renderer: DataItemRenderer, item: DataItem) {
-        doMain {
-            //更新渲染item
-            renderer.setRendererRenderItem(item)
-            //更新渲染的坐标/旋转信息
-            updateRendererProperty(renderer, item.dataBean)
-        }
+        //更新渲染item
+        renderer.setRendererRenderItem(item)
+        //更新渲染的坐标/旋转信息
+        updateRendererProperty(renderer, item.dataBean)
     }
 
     //endregion ---ItemDataBean解析---
 
     /**根据[bean]提供的参数, 更新[renderer]相关属性*/
-    @MainThread
+    @AnyThread
     fun updateRendererProperty(renderer: BaseItemRenderer<*>, bean: CanvasProjectItemBean) {
         //可见性
         renderer._visible = bean.isVisible
@@ -291,45 +287,4 @@ object GraphicsHelper {
     }
 
     //endregion ---ItemDataBean解析---
-
-    // ---
-    /*
-        */
-    /**转换一个[path]*//*
-    fun transformPath(renderer: DataItemRenderer, path: Path, result: Path): Path {
-        val matrix = Matrix()
-        val pathBounds = path.computePathBounds()
-
-        //平移到左上角0,0, 然后缩放, 旋转
-        matrix.setTranslate(-pathBounds.left, -pathBounds.top)
-
-        //缩放
-        val bounds = renderer.getBounds()
-        matrix.postScale(bounds.width() / itemWidth, bounds.height() / itemHeight, 0f, 0f)
-
-        //旋转到指定角度
-        matrix.postRotate(renderer.rotate, bounds.width() / 2f, bounds.height() / 2f)
-
-        //平移到指定位置
-        matrix.postTranslate(bounds.left, bounds.top)
-
-        //
-        path.transform(matrix, result)
-        return result
-    }
-
-    */
-    /**获取数据变换的矩阵*//*
-    fun getMatrix(renderer: DataItemRenderer): Matrix {
-        val matrix = Matrix()
-        val bounds = renderer.getBounds()
-        //缩放到指定大小
-        matrix.setScale(bounds.width() / itemWidth, bounds.height() / itemHeight, 0f, 0f)
-        //旋转到指定角度
-        matrix.postRotate(renderer.rotate, bounds.width() / 2f, bounds.height() / 2f)
-        //平移到指定位置
-        matrix.postTranslate(bounds.left, bounds.top)
-        return matrix
-    }*/
-
 }
