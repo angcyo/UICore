@@ -41,11 +41,12 @@ object CanvasDataHandleOperate {
             fileNameTime(suffix = CanvasConstant.SVG_EXT)
         ).file()
 
-    /**工程文件输出*/
-    fun _defaultProjectOutputFile(name: String) =
+    /**工程文件输出
+     * [ensureExt] 是否要保证后缀为[CanvasConstant.PROJECT_EXT]*/
+    fun _defaultProjectOutputFile(name: String, ensureExt: Boolean = true) =
         filePath(
             CanvasConstant.PROJECT_FILE_FOLDER,
-            name.ensureName(CanvasConstant.PROJECT_EXT)
+            if (ensureExt) name.ensureName(CanvasConstant.PROJECT_EXT) else name
         ).file()
 
     //---

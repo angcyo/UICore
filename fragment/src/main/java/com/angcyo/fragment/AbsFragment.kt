@@ -165,6 +165,7 @@ abstract class AbsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         baseViewHolder?.clear()
+        baseViewHolder = null
     }
 
     override fun onDestroy() {
