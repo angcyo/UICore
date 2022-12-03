@@ -9,6 +9,7 @@ import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.data.*
 import com.angcyo.canvas.graphics.TextGraphicsParser
 import com.angcyo.canvas.graphics.lineTextList
+import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.FontManager
 import com.angcyo.library.ex.*
@@ -77,6 +78,7 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
     }
 
     /**计算多行文本的宽度*/
+    @Pixel
     fun calcTextWidth(text: String, paint: Paint = itemPaint): Float {
         var result = 0f
         val lineTextList = text.lineTextList()
@@ -359,7 +361,7 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         }
     }
 
-    /**更新文本排列方向*/
+    /**更新文本排列方向, 同时改变宽高*/
     fun updateTextOrientation(
         orientation: Int,
         renderer: DataItemRenderer,
@@ -370,10 +372,25 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         if (old == new) {
             return
         }
+        val drawText = dataBean.text ?: ""
+
+        @MM
+        val oldWidth = dataBean._width
+        val oldHeight = dataBean._height
+
+        dataBean.orientation = new
+        @MM
+        val newWidth = calcTextWidth(drawText).toMm()
+        val newHeight = calcTextHeight(drawText).toMm()
+
         renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.width = oldWidth
+            dataBean.height = oldHeight
             dataBean.orientation = old
             updateRenderItem(renderer)
         }) {
+            dataBean.width = newWidth
+            dataBean.height = newHeight
             dataBean.orientation = new
             updateRenderItem(renderer)
         }
