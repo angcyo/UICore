@@ -1,10 +1,8 @@
 package com.angcyo.canvas.utils
 
-import android.graphics.Path
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.data.DataItem
-import com.angcyo.canvas.items.data.DataPathItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 
 /**
@@ -15,18 +13,11 @@ import com.angcyo.canvas.items.renderer.BaseItemRenderer
 /**当前渲染的是否是[LinePath]*/
 fun BaseItemRenderer<*>.isLineShape() = getRendererRenderItem()?.isLineShape() == true
 
+/**是否是线条类型*/
 fun BaseItem.isLineShape(): Boolean {
     val item = this
     if (item is DataItem) {
         return item.dataBean.mtype == CanvasConstant.DATA_TYPE_LINE
     }
     return false
-}
-
-fun BaseItemRenderer<*>.getPathList(): List<Path>? {
-    val item = getRendererRenderItem()
-    if (item is DataPathItem) {
-        return item.dataPathList
-    }
-    return null
 }

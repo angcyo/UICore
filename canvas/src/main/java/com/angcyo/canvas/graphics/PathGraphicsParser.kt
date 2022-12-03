@@ -12,6 +12,7 @@ import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataPathItem
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -101,6 +102,7 @@ open class PathGraphicsParser : IGraphicsParser {
             item.dataDrawable = createPathDrawable(item, paint)
             item.renderDrawable = createPathDrawable(item, newPaint)
         } else {
+            item.dataDrawable = null
             item.renderDrawable = createPathDrawable(item, paint)
         }
         return item.renderDrawable
@@ -133,7 +135,11 @@ open class PathGraphicsParser : IGraphicsParser {
             val drawWidth = shapeWidth - strokeWidth * 2
             val drawHeight = shapeHeight - strokeWidth * 2
             val scaleX = drawWidth / shapeWidth
-            val scaleY = drawHeight / shapeHeight
+            val scaleY = if (item.isLineShape()) {
+                1f
+            } else {
+                drawHeight / shapeHeight
+            }
             scale(scaleX, scaleY, shapeWidth / 2f, shapeHeight / 2f)
 
             drawPathList.forEach { path ->
