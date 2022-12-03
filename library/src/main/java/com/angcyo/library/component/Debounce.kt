@@ -17,9 +17,9 @@ object Debounce {
     val _mainHandler: Handler by lazy {
         Handler(Looper.getMainLooper())
     }
-    val _funMap = hashMapOf<Int, FuncRunnable>()
+    val _funMap = hashMapOf<String, FuncRunnable>()
 
-    fun reset(key: Int): FuncRunnable {
+    fun reset(key: String): FuncRunnable {
         val result = _funMap[key]?.run {
             _mainHandler.removeCallbacks(this)
             this
@@ -28,15 +28,15 @@ object Debounce {
         return result
     }
 
-    fun remove(key: Int) {
+    fun remove(key: String) {
         _funMap[key]?.run {
             _func = null
-            _hashCode = 0
+            _key = null
             _mainHandler.removeCallbacks(this)
         }
     }
 
-    fun addDo(wait: Long, key: Int, runnable: FuncRunnable) {
+    fun addDo(wait: Long, key: String, runnable: FuncRunnable) {
         _funMap[key] = runnable
         _mainHandler.postDelayed(runnable, wait)
     }
@@ -46,11 +46,11 @@ typealias Function = () -> Unit
 
 class FuncRunnable : Runnable {
     var _func: Function? = null
-    var _hashCode: Int = 0
+    var _key: String? = null
     var _time = nowTime()
     override fun run() {
         _func?.invoke()
-        Debounce.remove(_hashCode)
+        Debounce.remove(_key ?: "")
     }
 }
 
@@ -62,10 +62,10 @@ fun Any._throttle(
     wait: Long = app().resources.getInteger(R.integer.lib_animation_delay).toLong(),
     func: Function
 ) {
-    val hashCode = this.hashCode()
+    val key = this.hashCode().toString()
     val nowTime = nowTime()
-    Debounce.reset(hashCode).apply {
-        this._hashCode = hashCode
+    Debounce.reset(key).apply {
+        this._key = key
         this._func = func
         if (nowTime - _time >= wait) {
             _time = nowTime
@@ -84,10 +84,10 @@ fun Any._debounce(
     wait: Long = app().resources.getInteger(R.integer.lib_animation_delay).toLong(),
     func: Function
 ) {
-    val hashCode = this.hashCode()
-    Debounce.reset(hashCode).apply {
-        this._hashCode = hashCode
+    val key = this.hashCode().toString()
+    Debounce.reset(key).apply {
+        this._key = key
         this._func = func
-        Debounce.addDo(wait, hashCode, this)
+        Debounce.addDo(wait, key, this)
     }
 }

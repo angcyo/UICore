@@ -8,11 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import com.angcyo.coroutine.launchLifecycle
 import com.angcyo.coroutine.withBlock
+import com.angcyo.dialog.LoadingDialog.LOADING_TIMEOUT
 import com.angcyo.dialog.hideLoading
-import com.angcyo.dialog.loading2
+import com.angcyo.dialog.loading
 import com.angcyo.drawable.loading.TGStrokeLoadingDrawable
 import com.angcyo.library.IActivityProvider
 import com.angcyo.library.L
+import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.setBgDrawable
 import com.angcyo.library.ex.toColorInt
@@ -27,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**异步加载, 带loading dialog*/
 fun <T> LifecycleOwner.loadingAsyncTg(block: () -> T?, action: (T?) -> Unit) {
     when (val context = this) {
-        is ActivityResultCaller -> context.tgStrokeLoading { cancel, loadEnd ->
+        is ActivityResultCaller -> context.tgStrokeLoadingCaller { cancel, loadEnd ->
             context.launchLifecycle {
                 val result = withBlock { block() }
                 action(result)
@@ -44,7 +46,7 @@ fun <T> LifecycleOwner.loadingAsyncTg(block: () -> T?, action: (T?) -> Unit) {
             if (activity == null) {
                 L.w("context is not ActivityResultCaller!")
             } else {
-                activity.tgStrokeLoading2 { cancel, loadEnd ->
+                activity.tgStrokeLoading { cancel, loadEnd ->
                     context.launchLifecycle {
                         val result = withBlock { block() }
                         action(result)
@@ -57,9 +59,59 @@ fun <T> LifecycleOwner.loadingAsyncTg(block: () -> T?, action: (T?) -> Unit) {
 }
 
 /**
+ * 当异步执行多久之后, 仍未返回结果时, 则自动显示loading
+ * [timeout] 异步执行超时时长, 毫秒
+ * */
+fun <T> LifecycleOwner.loadingAsyncTgTimeout(
+    block: () -> T?,
+    timeout: Long = LOADING_TIMEOUT,
+    action: (T?) -> Unit = {}
+) {
+    loadingAsyncTimeout(block, { context ->
+        if (context is ActivityResultCaller) {
+            context.tgStrokeLoadingCaller { cancel, loadEnd ->
+                //no op
+            }
+        } else {
+            L.w("context is not ActivityResultCaller!")
+            null
+        }
+    }, timeout, action)
+}
+
+/**
+ * 当异步执行多久之后, 仍未返回结果时, 则自动显示loading
+ * [timeoutAction] 超时时, 需要执行的代码块, 如果返回的是[Dialog]则会自动管理
+ * [timeout] 异步执行超时时长, 毫秒
+ * */
+fun <T> LifecycleOwner.loadingAsyncTimeout(
+    block: () -> T?,
+    timeoutAction: (owner: LifecycleOwner) -> Any?,
+    timeout: Long = LOADING_TIMEOUT,
+    action: (T?) -> Unit = {}
+) {
+    val context = this
+    var dialog: Any? = null
+    val runnable = Runnable {
+        dialog = timeoutAction(context) /*超时执行*/
+    }
+    MainExecutor.handler.postDelayed(runnable, timeout)//延迟显示loading
+    context.launchLifecycle {
+        val result = withBlock { block() /*后台执行*/ }
+        MainExecutor.handler.removeCallbacks(runnable)
+        if (dialog is Dialog) {
+            hideLoading(dialog as Dialog)
+        }
+        action(result) /*前台执行*/
+    }
+}
+
+//---
+
+/**
  * TGStrokeLoadingDrawable 加载样式的loading
  * [cancel] 是否允许被取消*/
-fun ActivityResultCaller.tgStrokeLoading(
+fun ActivityResultCaller.tgStrokeLoadingCaller(
     cancel: Boolean = false,
     showErrorToast: Boolean = false,
     action: (isCancel: AtomicBoolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
@@ -71,7 +123,7 @@ fun ActivityResultCaller.tgStrokeLoading(
             is Context -> this
             else -> null
         } ?: return null
-        activity.tgStrokeLoading2(cancel, showErrorToast, action)
+        activity.tgStrokeLoading(cancel, showErrorToast, action)
     } catch (e: Exception) {
         e.printStackTrace()
         return null
@@ -80,13 +132,13 @@ fun ActivityResultCaller.tgStrokeLoading(
 
 /**扩展的对象不一样
  * [Context]*/
-fun Context.tgStrokeLoading2(
+fun Context.tgStrokeLoading(
     cancel: Boolean = false,
     showErrorToast: Boolean = false,
     action: (isCancel: AtomicBoolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
 ): Dialog? {
     val isCancel = AtomicBoolean(false)
-    val dialog = loading2(layoutId = R.layout.lib_tg_stroke_loading_layout, config = {
+    val dialog = loading(layoutId = R.layout.lib_tg_stroke_loading_layout, config = {
         cancelable = cancel
         onDialogInitListener = { dialog, dialogViewHolder ->
             val loadingDrawable = TGStrokeLoadingDrawable().apply {

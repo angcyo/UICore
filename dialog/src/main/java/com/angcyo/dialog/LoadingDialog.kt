@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.angcyo.dialog.LoadingDialog.dialogPool
+import com.angcyo.dialog.LoadingDialog.removeDialog
 import com.angcyo.library.ex.elseNull
 import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.getLongNum
@@ -34,7 +35,29 @@ import java.util.concurrent.atomic.AtomicBoolean
  */
 
 object LoadingDialog {
+
+    /**超时多久之后, 显示loading对话框, 默认1秒*/
+    const val LOADING_TIMEOUT = 1_000L
+
+    /**对话框的池子*/
     val dialogPool = Stack<WeakReference<Dialog>>()
+
+    /**移除对话框*/
+    fun removeDialog(dialog: Dialog?) {
+        dialog?.let {
+            try {
+                for (element in dialogPool) {
+                    if (element.get() == it) {
+                        try {
+                            dialogPool.remove(element)
+                        } catch (e: Exception) {
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+            }
+        }
+    }
 }
 
 //<editor-fold desc="隐藏对话框">
@@ -51,40 +74,18 @@ fun hideLoading(
     action: DslViewHolder.() -> Unit = {}
 ) {
     if (dialogPool.isNotEmpty()) {
-        dialogPool.pop().get()?.apply {
-            try {
-                if (transition) {
-                    //执行转换
-                    window?.decorView?.apply {
-                        val dialogViewHolder = dslViewHolder()
-
-                        dslTransition(this as ViewGroup) {
-                            onCaptureEndValues = {
-                                dialogViewHolder.action()
-                            }
-                        }
-
-                        dialogViewHolder.postDelay(delay) {
-                            try {
-                                //如果此时的Activity提前结束, 将会崩溃.
-                                dismiss()
-                                onEnd()
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }.elseNull {
-                        dismiss()
-                        onEnd()
-                    }
-                } else {
-                    dismiss()
-                    onEnd()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+        var dialog: Dialog? = null
+        while (true) {
+            val get = dialogPool.pop().get()
+            if (get?.isShowing == true) {
+                dialog = get
+                break
+            }
+            if (dialogPool.isEmpty()) {
+                break
             }
         }
+        hideLoading(dialog, transition, delay, onEnd, action)
     }
 }
 
@@ -101,6 +102,51 @@ fun hideLoading(text: CharSequence?) {
             }
             invisible(R.id.lib_loading_view)
             gone(R.id.lib_close_view)
+        }
+    }
+}
+
+/**隐藏对话框*/
+fun hideLoading(
+    dialog: Dialog?,
+    transition: Boolean = false,
+    delay: Long = 888,
+    onEnd: () -> Unit = {},
+    action: DslViewHolder.() -> Unit = {}
+) {
+    dialog?.apply {
+        try {
+            removeDialog(this)
+            if (transition) {
+                //执行转换
+                window?.decorView?.apply {
+                    val dialogViewHolder = dslViewHolder()
+
+                    dslTransition(this as ViewGroup) {
+                        onCaptureEndValues = {
+                            dialogViewHolder.action()
+                        }
+                    }
+
+                    dialogViewHolder.postDelay(delay) {
+                        try {
+                            //如果此时的Activity提前结束, 将会崩溃.
+                            dismiss()
+                            onEnd()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }.elseNull {
+                    dismiss()
+                    onEnd()
+                }
+            } else {
+                dismiss()
+                onEnd()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
@@ -125,7 +171,7 @@ fun updateLoadingProgress(progress: String?) {
 //<editor-fold desc="中间转菊花的对话框">
 
 /**显示在中间转菊花*/
-fun ActivityResultCaller.loading(
+fun ActivityResultCaller.loadingCaller(
     text: CharSequence? = null,
     @LayoutRes layoutId: Int = R.layout.lib_dialog_flow_loading_layout,
     showCloseView: Boolean = true,
@@ -139,14 +185,14 @@ fun ActivityResultCaller.loading(
             is Context -> this
             else -> null
         } ?: return null
-        activity.loading2(text, layoutId, showCloseView, config, onCancel)
+        activity.loading(text, layoutId, showCloseView, config, onCancel)
     } catch (e: Exception) {
         e.printStackTrace()
         return null
     }
 }
 
-fun Context.loading2(
+fun Context.loading(
     text: CharSequence? = null,
     @LayoutRes layoutId: Int = R.layout.lib_dialog_flow_loading_layout,
     showCloseView: Boolean = true,
@@ -202,12 +248,12 @@ fun Context.loading2(
 //<editor-fold desc="底部弹出显示的loading对话框">
 
 /**在底部显示的加载对话框*/
-fun ActivityResultCaller.loadingBottom(
+fun ActivityResultCaller.loadingBottomCaller(
     text: CharSequence? = "请稍等...",
     showCloseView: Boolean = true,
     onCancel: (dialog: Dialog) -> Unit = {}
 ): Dialog? {
-    return loading(
+    return loadingCaller(
         text,
         R.layout.lib_dialog_bottom_loading_layout,
         showCloseView,
@@ -222,7 +268,7 @@ fun ActivityResultCaller.loadingBottom(
 }
 
 /**快速在[Fragment]显示底部loading, 通常用于包裹一个网络请求*/
-fun ActivityResultCaller.loadLoadingBottom(
+fun ActivityResultCaller.loadLoadingBottomCaller(
     tip: CharSequence? = "请稍等...",
     successTip: CharSequence? = "请求完成!",
     showErrorToast: Boolean = false,
@@ -230,7 +276,7 @@ fun ActivityResultCaller.loadLoadingBottom(
     action: (cancel: AtomicBoolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
 ): Dialog? {
     val isCancel = AtomicBoolean(false)
-    val dialog = loadingBottom(tip, showCloseView) {
+    val dialog = loadingBottomCaller(tip, showCloseView) {
         isCancel.set(true)
         action(isCancel) { _, _ ->
             //no op
@@ -255,12 +301,12 @@ fun ActivityResultCaller.loadLoadingBottom(
 
 
 /**快速在[Fragment]显示loading, 通常用于包裹一个网络请求*/
-fun ActivityResultCaller.loadLoading(
+fun ActivityResultCaller.loadLoadingCaller(
     tip: CharSequence? = null,
     action: (cancel: AtomicBoolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
 ) {
     val isCancel = AtomicBoolean(false)
-    loading(tip) {
+    loadingCaller(tip) {
         isCancel.set(true)
         action(isCancel) { _, _ ->
             //no op
@@ -278,7 +324,7 @@ fun ActivityResultCaller.loadLoading(
 
 //</editor-fold desc="底部弹出显示的loading对话框">
 
-/**快速显示[loading]对话框*/
+/**快速显示[loadingCaller]对话框*/
 data class LoadingConfig(
     var loadingText: CharSequence? = null,
     @LayoutRes
@@ -288,7 +334,7 @@ data class LoadingConfig(
     var onLoadingCancel: (dialog: Dialog) -> Unit = {}
 )
 
-/**快速显示[loading]对话框*/
+/**快速显示[loadingCaller]对话框*/
 fun ActivityResultCaller.dslLoading(
     bottom: Boolean = false,
     action: LoadingConfig.() -> Unit = {}
@@ -302,7 +348,7 @@ fun ActivityResultCaller.dslLoading(
         is Fragment -> activity
         is Activity -> this
         else -> null
-    }?.loading(
+    }?.loadingCaller(
         config.loadingText,
         config.loadingLayoutId,
         config.loadingShowCloseView,

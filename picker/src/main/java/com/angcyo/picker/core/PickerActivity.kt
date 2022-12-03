@@ -13,7 +13,7 @@ import com.angcyo.base.*
 import com.angcyo.component.luban.dslLuban
 import com.angcyo.core.component.dslPermission
 import com.angcyo.dialog.hideLoading
-import com.angcyo.dialog.loading
+import com.angcyo.dialog.loadingCaller
 import com.angcyo.library.L
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.dpi
@@ -129,7 +129,7 @@ class PickerActivity : BaseAppCompatActivity(), IActivityDebugInfo {
                     targetMediaList = pickerViewModel.selectorMediaList.value!!
 
                     onCompressStart = {
-                        loading(layoutId = R.layout.picker_loading_layout, config = {
+                        loadingCaller(layoutId = R.layout.picker_loading_layout, config = {
                             dialogWidth = 80 * dpi
                             dialogHeight = 80 * dpi
 
