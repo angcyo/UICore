@@ -207,13 +207,63 @@ fun Uri?.loadUrl(): String? {
     }
 }
 
+/**从[Uri]中获取对应的显示名称*/
+fun Uri.getDisplayName(context: Context = app()): String? {
+    var result: String? = null
+
+    val contentResolver = context.contentResolver
+    val entityColumns = arrayOf(
+        MediaStore.Files.FileColumns.DATA,
+        MediaStore.Files.FileColumns.DISPLAY_NAME,
+        MediaStore.Files.FileColumns.TITLE
+    )
+    val cursor: Cursor? = contentResolver.query(
+        this,
+        entityColumns,
+        null,
+        null,
+        null
+    )
+
+    if (cursor != null && cursor.moveToFirst()) {
+        cursor.use {
+
+            //1.
+            var index = cursor.getColumnIndex(entityColumns[1])
+            if (index != -1) {
+                val fileName = cursor.getString(index)// G10.dxf /ke.gcode
+                result = fileName
+            }
+
+            //2.
+            if (result.isNullOrBlank()) {
+                index = cursor.getColumnIndex(entityColumns[2])
+                if (index != -1) {
+                    val fileTitle = cursor.getString(index)
+                    result = fileTitle
+                }
+
+                //3.
+                if (result.isNullOrBlank()) {
+                    index = cursor.getColumnIndex(entityColumns[0])
+                    if (index != -1) {
+                        val filePath = cursor.getString(index)// /storage/emulated/0/G10.dxf
+                        result = filePath?.lastName()?.decode()
+                    }
+                }
+            }
+        }
+    }
+    return result
+}
+
+
 /**拍照返回后, 从[Uri]中获取文件路径*/
-@RequiresApi(Build.VERSION_CODES.KITKAT)
 fun Uri.getPathFromUri(): String? {
     var path: String? = null
     try {
         val sdkVersion = Build.VERSION.SDK_INT
-        path = if (sdkVersion >= 19) {
+        path = if (sdkVersion >= Build.VERSION_CODES.KITKAT) {
             getPathFromIntentData()
         } else {
             getRealFilePath()
@@ -281,11 +331,10 @@ fun Uri.getFileName(context: Context = app()): String? {
             uri, null,
             null, null, null
         )
-        if (returnCursor != null) {
+        returnCursor?.use {
             val nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
             returnCursor.moveToFirst()
             filename = returnCursor.getString(nameIndex)
-            returnCursor.close()
         }
     }
     return filename
@@ -317,7 +366,10 @@ fun getDataColumn(
         )
         if (cursor != null && cursor.moveToFirst()) {
             val columnIndex = cursor.getColumnIndexOrThrow(column)
-            return cursor.getString(columnIndex)
+            if (columnIndex != -1) {
+                return cursor.getString(columnIndex)
+            }
+            return null
         }
     } catch (e: java.lang.Exception) {
         e.printStackTrace()
@@ -335,12 +387,12 @@ fun getDataColumn(
  * [Intent.ACTION_OPEN_DOCUMENT]
  * https://blog.csdn.net/xietansheng/article/details/115763279
  */
-@RequiresApi(Build.VERSION_CODES.KITKAT)
 fun Uri.getPathFromIntentData(context: Context = app()): String? {
-    val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
     val uri = this
     // DocumentProvider
-    if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
+        DocumentsContract.isDocumentUri(context, uri)
+    ) {
         // ExternalStorageProvider
         if (uri.isExternalStorageDocument()) {
             val docId = DocumentsContract.getDocumentId(uri)
@@ -491,7 +543,11 @@ fun List<Uri>.deleteAllUri(context: Context = app()): Boolean {
  * */
 fun Uri.delete(context: Context = app()): Boolean {
     val int = try {
-        context.contentResolver.delete(this, null)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            context.contentResolver.delete(this, null)
+        } else {
+            0
+        }
     } catch (e: Exception) {
         e.printStackTrace()
         0
