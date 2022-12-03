@@ -8,7 +8,10 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.internal.http.HttpMethod
+import okio.BufferedSink
+import okio.source
 import java.io.IOException
+import java.io.InputStream
 import java.lang.reflect.Type
 import java.nio.charset.Charset
 
@@ -212,6 +215,25 @@ fun multipartBody(config: MultipartBody.Builder.() -> Unit): MultipartBody {
         //addFormDataPart()
         config()
     }.build()
+}
+
+/**
+ * [okhttp3.RequestBody.Companion.create(java.io.File, okhttp3.MediaType)]
+ * [RequestBody]
+ * */
+fun InputStream.asRequestBody(
+    length: Long,
+    contentType: MediaType? = "application/octet-stream".toMediaTypeOrNull()
+): RequestBody {
+    return object : RequestBody() {
+        override fun contentType() = contentType
+
+        override fun contentLength() = length
+
+        override fun writeTo(sink: BufferedSink) {
+            source().use { source -> sink.writeAll(source) }
+        }
+    }
 }
 
 /**toBean*/

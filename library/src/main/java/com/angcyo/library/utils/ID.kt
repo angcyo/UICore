@@ -292,7 +292,7 @@ object ID {
                 val get = c.getMethod("get", String::class.java)
                 get.invoke(c, "ro.serialno") as String
             }
-        } catch (e: java.lang.Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
             L.e("读取设备序列号异常：$e")
         }

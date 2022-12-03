@@ -1,9 +1,12 @@
 package com.angcyo.http.progress
 
 import com.angcyo.library.L
+import com.angcyo.library.component.MainExecutor
 import me.jessyan.progressmanager.ProgressListener
 import me.jessyan.progressmanager.ProgressManager
 import me.jessyan.progressmanager.body.ProgressInfo
+import me.jessyan.progressmanager.body.ProgressRequestBody
+import okhttp3.RequestBody
 
 /**
  *
@@ -109,5 +112,30 @@ fun String.removeUploadProgress(key: String? = null) {
 /**移除上传进度监听*/
 fun ProgressListener.removeUploadProgress() {
     ProgressManager.getInstance().removeRequestListener(this)
+}
+
+//---
+
+/**监听请求体的上传进度, 返回一个新的请求体
+ * [freq] 通知更新频率*/
+fun RequestBody.toProgressBody(
+    freq: Int = 300,
+    action: (ProgressInfo?, Exception?) -> Unit
+): ProgressRequestBody {
+    val listener = object : ProgressListener {
+        override fun onProgress(progressInfo: ProgressInfo?) {
+            action(progressInfo, null)
+        }
+
+        override fun onError(id: Long, e: Exception?) {
+            action(null, e)
+        }
+    }
+    return ProgressRequestBody(
+        MainExecutor.handler,
+        this,
+        listOf(listener),
+        freq
+    )
 }
 

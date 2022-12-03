@@ -40,6 +40,10 @@ open class LogInterceptor : Interceptor {
 
         private val lastLogUrlTimeMap = hashMapOf<String, Long>()
 
+        /**需要忽略解析body的mimeType
+         * 如果请求体是这种类型, 则不解析*/
+        val ignoreBodyContentType = mutableListOf("application/octet-stream")
+
         /**关闭日志*/
         fun closeLog(close: Boolean = !isDebugType()) = HEADER_LOG to "${!close}"
 
@@ -178,15 +182,19 @@ open class LogInterceptor : Interceptor {
             if (logRequestBody && request.logRequestBody(logRequestBody)) {
                 //打印请求体
                 request.body?.run {
+                    val contentType = contentType()
+
                     val simpleName = javaClass.simpleName
                     if (simpleName.isNotEmpty()) {
                         appendln().append(simpleName)
                     }
-                    appendln().appends("Content-Type:").append(contentType())
+                    appendln().appends("Content-Type:").append(contentType)
                     appendln().appends("Content-Length:").append(contentLength())
                     appendln().appendln("Body:")
 
-                    if (request.headers.hasEncoded()) {
+                    if (ignoreBodyContentType.contains("$contentType")) {
+                        appendln("ignore request body.")
+                    } else if (request.headers.hasEncoded()) {
                         //加密了数据
                         appendln("(encoded body omitted)")
                     } else {
@@ -195,7 +203,7 @@ open class LogInterceptor : Interceptor {
                         if (buffer.isPlaintext()) {
                             appendln(readString())
                         } else {
-                            appendln("binary request body")
+                            appendln("binary request body.")
                         }
                     }
                 } ?: appendln("\nno request body!")
@@ -222,9 +230,12 @@ open class LogInterceptor : Interceptor {
                 var bodyString: String? = "no response body!" //body字符串
 
                 response.body?.run {
+                    val contentType = contentType()
                     bodyLength = contentLength()
 
-                    bodyString = if (!response.promisesBody()) {
+                    bodyString = if (ignoreBodyContentType.contains("$contentType")) {
+                        "ignore response body."
+                    } else if (!response.promisesBody()) {
                         "(no body)"
                     } else if (bodyHasUnknownEncoding(response.headers) || response.headers.hasEncoded()) {
                         //加密了数据

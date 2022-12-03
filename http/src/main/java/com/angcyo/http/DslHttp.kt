@@ -16,6 +16,7 @@ import com.google.gson.JsonObject
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -54,10 +55,30 @@ interface Api {
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<JsonElement>>
 
+    /**直接发送请求体
+     * [RequestBody]*/
+    @POST
+    fun postBody(
+        @Url url: String,
+        @Body body: RequestBody?,
+        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
+    ): Observable<Response<JsonElement>>
+
     @POST
     fun post2Body(
         @Url url: String,
         @Body json: JsonElement? = null,
+        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
+    ): Observable<Response<ResponseBody>>
+
+    /**直接发送请求体
+     * [RequestBody]*/
+    @POST
+    fun postBody2Body(
+        @Url url: String,
+        @Body body: RequestBody?,
         @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<ResponseBody>>
@@ -310,12 +331,21 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
 
     val observable = when (requestConfig.method) {
         POST -> {
-            dslHttp(Api::class.java)?.post(
-                requestConfig.url,
-                requestConfig.body,
-                requestConfig.query,
-                requestConfig.header
-            )
+            if (requestConfig.requestBody == null) {
+                dslHttp(Api::class.java)?.post(
+                    requestConfig.url,
+                    requestConfig.body,
+                    requestConfig.query,
+                    requestConfig.header
+                )
+            } else {
+                dslHttp(Api::class.java)?.postBody(
+                    requestConfig.url,
+                    requestConfig.requestBody,
+                    requestConfig.query,
+                    requestConfig.header
+                )
+            }
         }
         POST_FORM -> {
             dslHttp(Api::class.java)?.postForm(
@@ -395,12 +425,21 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
 
     val observable = when (requestConfig.method) {
         POST -> {
-            dslHttp(Api::class.java)?.post2Body(
-                requestConfig.url,
-                requestConfig.body,
-                requestConfig.query,
-                requestConfig.header
-            )
+            if (requestConfig.requestBody == null) {
+                dslHttp(Api::class.java)?.post2Body(
+                    requestConfig.url,
+                    requestConfig.body,
+                    requestConfig.query,
+                    requestConfig.header
+                )
+            } else {
+                dslHttp(Api::class.java)?.postBody2Body(
+                    requestConfig.url,
+                    requestConfig.requestBody,
+                    requestConfig.query,
+                    requestConfig.header
+                )
+            }
         }
         PUT -> {
             dslHttp(Api::class.java)?.put2Body(
@@ -517,6 +556,17 @@ fun get2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Response
 
 /**快速发送一个[post]请求*/
 fun post2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<ResponseBody>> {
+    return http2Body {
+        method = POST
+        this.config()
+    }
+}
+
+/**快速发送一个[post]请求*/
+fun postBody(
+    body: RequestBody,
+    config: RequestBodyConfig.() -> Unit
+): Observable<Response<ResponseBody>> {
     return http2Body {
         method = POST
         this.config()
@@ -677,6 +727,10 @@ open class BaseRequestConfig {
 
     //body数据, 仅用于post请求. @Body
     var body: JsonElement? = JsonObject()
+
+    /**直接发送请求体
+     * [com.angcyo.http.Api.postBody]*/
+    var requestBody: RequestBody? = null
 
     //url后面拼接的参数列表
     var query: HashMap<String, Any> = hashMapOf()
