@@ -248,7 +248,7 @@ fun Uri.getDisplayName(context: Context = app()): String? {
                     index = cursor.getColumnIndex(entityColumns[0])
                     if (index != -1) {
                         val filePath = cursor.getString(index)// /storage/emulated/0/G10.dxf
-                        result = filePath?.lastName()?.decode()
+                        result = filePath?.decode()?.lastName()
                     }
                 }
             }
