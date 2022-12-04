@@ -7,6 +7,7 @@ import android.text.InputFilter
 import android.text.Spanned
 import android.text.TextPaint
 import android.text.TextUtils
+import android.util.TypedValue
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.widget.TextViewCompat
@@ -268,3 +269,29 @@ var TextView._textColor: Int
         setTextColor(value)
     }
 
+//---
+
+/**使用px单位设置字体大小*/
+fun TextView.setTextSizePx(sizePx: Float) {
+    setTextSize(TypedValue.COMPLEX_UNIT_PX, sizePx)
+}
+
+/**使用dp单位设置字体大小*/
+fun TextView.setTextSizeDp(sizeDp: Float) {
+    setTextSize(TypedValue.COMPLEX_UNIT_DIP, sizeDp)
+}
+
+/**使用pt单位设置字体大小*/
+fun TextView.setTextSizePt(sizePt: Float) {
+    setTextSize(TypedValue.COMPLEX_UNIT_PT, sizePt)
+}
+
+/**使用mm单位设置字体大小*/
+fun TextView.setTextSizeMm(sizeMm: Float) {
+    setTextSize(TypedValue.COMPLEX_UNIT_MM, sizeMm)
+}
+
+/**使用inch单位设置字体大小*/
+fun TextView.setTextSizeInch(sizeInch: Float) {
+    setTextSize(TypedValue.COMPLEX_UNIT_IN, sizeInch)
+}

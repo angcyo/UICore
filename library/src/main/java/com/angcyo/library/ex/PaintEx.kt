@@ -3,8 +3,13 @@ package com.angcyo.library.ex
 import android.graphics.*
 import android.os.Build
 import android.os.Build.VERSION_CODES
+import android.text.Layout
+import android.text.StaticLayout
 import android.text.TextPaint
 import com.angcyo.library.R
+import com.angcyo.library.annotation.Pixel
+import kotlin.math.max
+
 
 /**
  *
@@ -38,15 +43,6 @@ fun Paint.drawTextY(originY: Float): Float {
     return originY - descent()
 }
 
-/**从左上角开始绘制文本, 保证文本左上角对齐点坐标
- * [x] [y] 左上角坐标
- * */
-fun Canvas.drawTextByLT(text: CharSequence, x: Float, y: Float, paint: Paint) {
-    val drawX = x
-    val drawY = y + paint.textHeight() - paint.descent()
-    drawText(text, 0, text.length, drawX, drawY, paint)
-}
-
 /**获取文本的边界, 包含所有文本的最小矩形*/
 fun Paint.textBounds(text: CharSequence?, result: Rect = Rect(0, 0, 0, 0)): Rect {
     if (text == null) {
@@ -77,6 +73,60 @@ fun Paint.textPath(text: String?, result: Path = Path()): Path {
     return result
 }
 
+/**获取一个字体大小, 在指定的宽高中*/
+@Pixel
+fun Paint.findNewTextSize(
+    text: CharSequence?,
+    width: Int = Int.MAX_VALUE,
+    height: Int = Int.MAX_VALUE,
+    minTextSize: Float = 1f,
+    spacingMult: Float = 1f, //Text view line spacing multiplier
+    spacingAdd: Float = 0f     //Text view additional line spacing
+): Float {
+
+    //calc
+    fun getTextHeight(
+        source: CharSequence,
+        paint: TextPaint,
+        width: Int,
+        textSize: Float
+    ): Int {
+        paint.textSize = textSize
+        val layout = StaticLayout(
+            source,
+            paint,
+            width,
+            Layout.Alignment.ALIGN_NORMAL,
+            spacingMult,
+            spacingAdd,
+            true
+        )
+        return layout.height
+    }
+
+    //---
+    val _text = text ?: ""
+    val textPaint = TextPaint(this)
+    var targetTextSize: Float = textPaint.textSize
+    var textHeight = getTextHeight(_text, textPaint, width, targetTextSize)
+    while (textHeight > height && targetTextSize > minTextSize) {
+        targetTextSize = max(targetTextSize - 1, minTextSize)
+        textHeight = getTextHeight(_text, textPaint, width, targetTextSize)
+    }
+    return targetTextSize
+}
+
+//---
+
+/**从左上角开始绘制文本, 保证文本左上角对齐点坐标
+ * [x] [y] 左上角坐标
+ * */
+fun Canvas.drawTextByLT(text: CharSequence, x: Float, y: Float, paint: Paint) {
+    val drawX = x
+    val drawY = y + paint.textHeight() - paint.descent()
+    drawText(text, 0, text.length, drawX, drawY, paint)
+}
+
 /**
  * Convenience for [Canvas.saveLayer] but instead of taking a entire Paint
  * object it takes only the `alpha` parameter.
@@ -101,3 +151,5 @@ fun Canvas.saveLayerAlpha(alpha: Int, left: Float, top: Float, right: Float, bot
         saveLayerAlpha(left, top, right, bottom, alpha, Canvas.ALL_SAVE_FLAG)
     }
 }
+
+

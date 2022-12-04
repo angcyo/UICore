@@ -115,7 +115,7 @@ fun Activity.showDebugInfoView(config: ActivityDebugInfoConfig) {
         val textView = if (debugTextView == null) {
             val textView = TextView(this)
             textView.tag = tag
-            textView.textSize = 9f
+            textView.textSize = 9f //sp
             textView.setTextColor(Color.WHITE)
             val dp2 = 1 * resources.displayMetrics.density
             val padding = dp2.toInt() * 4
