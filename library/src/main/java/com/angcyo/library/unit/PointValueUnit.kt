@@ -16,7 +16,9 @@ import com.angcyo.library.isPlaceholderApplication
  */
 class PointValueUnit : IValueUnit {
 
-    /**[TypedValue.COMPLEX_UNIT_PT]*/
+    /**
+     * 将pt单位转换成px单位
+     * [TypedValue.COMPLEX_UNIT_PT]*/
     override fun convertValueToPixel(value: Double): Double {
         val app = app()
         if (app.isPlaceholderApplication()) {

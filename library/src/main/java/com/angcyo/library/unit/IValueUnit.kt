@@ -4,7 +4,6 @@ import android.util.TypedValue
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.ceil
 import com.angcyo.library.ex.decimal
-import com.angcyo.library.ex.formatShow
 import kotlin.math.max
 import kotlin.math.nextDown
 import kotlin.math.roundToInt
@@ -122,19 +121,20 @@ interface IValueUnit {
 
 /**保留小数点后几位
  * [ensureInt] 如果是整数, 优先使用整数*/
+fun Float.unitDecimal(
+    digit: Int = 2,
+    fadedUp: Boolean = true,
+    ensureInt: Boolean = true
+): String {
+    return decimal(digit, ensureInt, fadedUp)
+}
+
 fun Double.unitDecimal(
     digit: Int = 2,
     fadedUp: Boolean = true,
     ensureInt: Boolean = true
 ): String {
-    if (ensureInt) {
-        val int = toInt()
-        val intD = int.toDouble()
-        if (this == intD || formatShow(digit).toDoubleOrNull() == intD) {
-            return "$int"
-        }
-    }
-    return decimal(digit, fadedUp)
+    return decimal(digit, ensureInt, fadedUp)
 }
 
 fun IValueUnit.convertPixelToValueUnit(pixel: Float?): String =
