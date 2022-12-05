@@ -10,12 +10,10 @@ import com.angcyo.canvas.utils.parseGCode
 import com.angcyo.gcode.GCodeHelper
 import com.angcyo.library.L
 import com.angcyo.library.app
-import com.angcyo.library.ex.deleteSafe
-import com.angcyo.library.ex.toBase64Data
-import com.angcyo.library.ex.toBitmapOfBase64
-import com.angcyo.library.ex.toBlackWhiteHandle
+import com.angcyo.library.ex.*
 import com.angcyo.opencv.OpenCV
 import com.hingin.rn.image.ImageProcess
+import kotlin.io.readText
 
 /**
  * 图片数据解析器
@@ -82,7 +80,7 @@ class BitmapGraphicsParser : IGraphicsParser {
                         return item
                     }
                 } else {
-                    //其他
+                    //其他算法处理后的图片
                     if (bean.src.isNullOrBlank() && originBitmap != null) {
                         //只有原图, 没有算法处理后的图片, 则需要主动应用算法处理图片
                         bean.src = when (bean.imageFilter) {
@@ -114,7 +112,8 @@ class BitmapGraphicsParser : IGraphicsParser {
 
                     val item = DataBitmapItem(bean)
                     item.originBitmap = originBitmap
-                    item.modifyBitmap = bean.src?.toBitmapOfBase64()
+                    item.modifyBitmap =
+                        bean.src?.toBitmapOfBase64()?.flip(bean._flipScaleX, bean._flipScaleY)
                     item.gCodeDrawable = null
 
                     //扭曲后, 其他算法操作应该在扭曲上的图片操作

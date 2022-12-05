@@ -268,22 +268,32 @@ fun Bitmap.save(
  * */
 fun Bitmap.rotate(degrees: Float = 0f): Bitmap = if (degrees != 0f) {
     val matrix = Matrix()
-    matrix.postRotate(degrees)
-    val rotatedBitmap = Bitmap.createBitmap(
-        this,
-        0, 0,
-        width, height,
-        matrix,
-        true
-    )
+    matrix.setRotate(degrees)
+    val rotatedBitmap = Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
     if (rotatedBitmap != this) {
         // 有时候 createBitmap会复用对象
         recycle()
     }
-    rotatedBitmap.setHasAlpha(true)//开启透明像素, 这样在保存成文件时, 旋转后的背景不会是黑色的
+    rotatedBitmap.setHasAlpha(hasAlpha())//开启透明像素, 这样在保存成文件时, 旋转后的背景不会是黑色的
     rotatedBitmap
 } else {
     this
+}
+
+/**水平/垂直翻转图片*/
+fun Bitmap.flip(scaleX: Float, scaleY: Float): Bitmap {
+    if (scaleX == 1f && scaleY == 1f) {
+        return this
+    }
+    val matrix = Matrix()
+    matrix.setScale(scaleX, scaleY, width / 2f, height / 2f)
+    val flipBitmap = Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+    if (flipBitmap != this) {
+        // 有时候 createBitmap会复用对象
+        recycle()
+    }
+    flipBitmap.setHasAlpha(hasAlpha())//开启透明像素, 这样在保存成文件时, 旋转后的背景不会是黑色的
+    return flipBitmap
 }
 
 fun ByteArray.toBitmap(): Bitmap {

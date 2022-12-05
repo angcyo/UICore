@@ -364,6 +364,13 @@ data class CanvasProjectItemBean(
     val _flipY: Boolean
         get() = flipY ?: false
 
+    //翻转其实就是反向缩放
+    val _flipScaleX: Float
+        get() = if (_flipX) -1f else 1f
+
+    val _flipScaleY: Float
+        get() = if (_flipY) -1f else 1f
+
     //---
 
     companion object {
