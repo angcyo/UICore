@@ -73,6 +73,12 @@ data class CanvasProjectItemBean(
 
     var scaleY: Float? = null,
 
+    /**水平翻转*/
+    var flipX: Boolean? = null,
+
+    /**垂直翻转*/
+    var flipY: Boolean? = null,
+
     //endregion ---bounds---
 
     //region ---公共属性---
@@ -342,11 +348,23 @@ data class CanvasProjectItemBean(
     val _height: Float
         get() = height ?: 0f
 
+    //---
+
     val _scaleX: Float
         get() = scaleX ?: 1f
 
     val _scaleY: Float
         get() = scaleY ?: 1f
+
+    //---
+
+    val _flipX: Boolean
+        get() = flipX ?: false
+
+    val _flipY: Boolean
+        get() = flipY ?: false
+
+    //---
 
     companion object {
 
