@@ -9,8 +9,8 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
-import com.angcyo.canvas.core.ItemsOperateHandler
 import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.core.ItemsOperateHandler
 import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.core.renderer.BaseRenderer
@@ -163,10 +163,9 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
      * [changeBoundsAction]*/
     open fun onChangeBoundsAfter(reason: Reason) {
         //getBounds().limitMinWidthHeight(100f, 100f, ADJUST_TYPE_LT)
-        if (reason.flag == Reason.REASON_FLAG_BOUNDS || reason.flag == Reason.REASON_FLAG_ROTATE) {
-            //旋转或者改变宽高后, 需要重新索引
-            getRendererRenderItem()?.engraveIndex = null
-        }
+        /*if (reason.flag == Reason.REASON_FLAG_BOUNDS || reason.flag == Reason.REASON_FLAG_ROTATE) {
+
+        }*/
     }
 
     override fun onUpdateRendererItem(item: T?, oldItem: T?) {
@@ -416,7 +415,8 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     //<editor-fold desc="IEngraveProvider">
 
-    override fun getEngraveBitmap(renderParams: RenderParams): Bitmap? = preview(renderParams)?.toBitmap()
+    override fun getEngraveBitmap(renderParams: RenderParams): Bitmap? =
+        preview(renderParams)?.toBitmap()
 
     override fun getEngraveRenderer(): IItemRenderer<*>? = this
 
