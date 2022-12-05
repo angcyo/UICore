@@ -310,11 +310,25 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         if (old == new) {
             return
         }
+        @MM
+        val oldWidth = dataBean.width
+        val oldHeight = dataBean.height
+        val oldScaleX = dataBean.scaleX
+        val oldScaleY = dataBean.scaleY
         renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
             dataBean.fontSize = old.toMm()
+            dataBean.width = oldWidth
+            dataBean.height = oldHeight
+            dataBean.scaleX = oldScaleX
+            dataBean.scaleY = oldScaleY
             updateRenderItem(renderer)
         }) {
             dataBean.fontSize = new.toMm()
+            //清空宽高, 使用文本自身的宽高
+            dataBean.width = null
+            dataBean.height = null
+            dataBean.scaleX = null
+            dataBean.scaleY = null
             updateRenderItem(renderer)
         }
     }
