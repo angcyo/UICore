@@ -73,9 +73,36 @@ fun Paint.textPath(text: String?, result: Path = Path()): Path {
     return result
 }
 
-/**获取一个字体大小, 在指定的宽高中*/
+/**在指定的高度中, 查找最大的字体大小
+ * 使用[TextPaint]测量高度, 所有传入的[height]应该也是使用[TextPaint]测量出来的*/
 @Pixel
-fun Paint.findNewTextSize(
+fun Paint.findNewTextSize(height: Float, minTextSize: Float = 1f): Float {
+
+    //calc
+    fun getTextHeight(
+        paint: TextPaint,
+        textSize: Float
+    ): Float {
+        paint.textSize = textSize
+        return paint.textHeight()
+    }
+
+    //---
+    val textPaint = TextPaint(this)
+    var targetTextSize: Float = textPaint.textSize
+    var textHeight = getTextHeight(textPaint, targetTextSize)
+    while (textHeight > height && targetTextSize > minTextSize) {
+        targetTextSize = max(targetTextSize - 1, minTextSize)
+        textHeight = getTextHeight(textPaint, targetTextSize)
+    }
+    return targetTextSize
+}
+
+/**获取一个字体大小, 在指定的宽高中
+ * 使用[StaticLayout]测量高度, 所有传入的[width] [height]应该也是使用[StaticLayout]测量出来的
+ * */
+@Pixel
+fun Paint.findNewTextSizeByLayout(
     text: CharSequence?,
     width: Int = Int.MAX_VALUE,
     height: Int = Int.MAX_VALUE,
@@ -112,6 +139,47 @@ fun Paint.findNewTextSize(
     while (textHeight > height && targetTextSize > minTextSize) {
         targetTextSize = max(targetTextSize - 1, minTextSize)
         textHeight = getTextHeight(_text, textPaint, width, targetTextSize)
+    }
+    return targetTextSize
+}
+
+/**获取一个字体大小, 在指定的宽高中
+ * 使用[getTextBounds]测量高度, 所有传入的[height]应该也是使用[getTextBounds]测量出来的
+ *
+ * [android.graphics.Paint.getTextBounds]
+ * */
+@Pixel
+fun Paint.findNewTextSizeByBounds(
+    text: CharSequence?,
+    height: Int = Int.MAX_VALUE,
+    minTextSize: Float = 1f,
+): Float {
+
+    val rect = Rect()
+
+    //calc
+    fun getTextHeight(
+        source: CharSequence,
+        paint: TextPaint,
+        textSize: Float
+    ): Int {
+        paint.textSize = textSize
+        if (Build.VERSION.SDK_INT >= VERSION_CODES.Q) {
+            paint.getTextBounds(source, 0, source.length, rect)
+        } else {
+            paint.getTextBounds(source.toString(), 0, source.length, rect)
+        }
+        return rect.height()
+    }
+
+    //---
+    val _text = text ?: ""
+    val textPaint = TextPaint(this)
+    var targetTextSize: Float = textPaint.textSize
+    var textHeight = getTextHeight(_text, textPaint, targetTextSize)
+    while (textHeight > height && targetTextSize > minTextSize) {
+        targetTextSize = max(targetTextSize - 1, minTextSize)
+        textHeight = getTextHeight(_text, textPaint, targetTextSize)
     }
     return targetTextSize
 }
