@@ -14,7 +14,6 @@ import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.ControlHandler
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
-import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.canvasDecimal
 import com.angcyo.canvas.utils.createPaint
@@ -209,10 +208,6 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
         renderRotateBounds: RectF,
         rotate: Float
     ) {
-        if (!isTouchHold) {
-            //没有按下时, 不显示
-            return
-        }
         //背景需要插入的大小
         val bgInset = controlHandler.sizeOffset
         //背景需要平移的距离
@@ -220,18 +215,8 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
         val controlPoint = controlHandler.touchControlPoint
 
         val valueUnit = canvasViewBox.valueUnit
-        val frameText: String = when (controlPoint) {
-            is ScaleControlPoint -> {
-                //需要绘制宽高
-                val widthUnit = valueUnit.convertPixelToValueUnit(renderBounds.width())
-                val heightUnit = valueUnit.convertPixelToValueUnit(renderBounds.height())
-                "W: $widthUnit\nH: $heightUnit"
-            }
-            is RotateControlPoint -> {
-                //需要绘制角度
-                "R: ${rotate.canvasDecimal()}°"
-            }
-            else -> {
+        val frameText: String? = when {
+            isTouchHold && controlPoint == null -> {
                 //绘制坐标
                 _tempPoint.set(renderRotateBounds.left, renderRotateBounds.top)
                 val point = _tempPoint
@@ -240,6 +225,20 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
                 val yUnit = valueUnit.formattedValueUnit(value.y)
                 "X: $xUnit\nY: $yUnit"
             }
+            controlPoint is RotateControlPoint -> {
+                //需要绘制角度
+                "R: ${rotate.canvasDecimal()}°"
+            }
+            else -> {
+                //没有按下, 或者点击缩放控制时,绘制宽高
+                val widthUnit = valueUnit.convertPixelToValueUnit(renderBounds.width())
+                val heightUnit = valueUnit.convertPixelToValueUnit(renderBounds.height())
+                "W: $widthUnit\nH: $heightUnit"
+            }
+        }
+
+        if (frameText.isNullOrBlank()) {
+            return
         }
 
         DrawText().apply {

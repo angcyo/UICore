@@ -536,7 +536,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     /**刷新界面*/
     override fun refresh() {
-        view.postInvalidateOnAnimation()
+        //view.postInvalidateOnAnimation() //这种方式触发的刷新会更及时
+        view.postInvalidate()
     }
 
     /**长按事件反馈提示*/
