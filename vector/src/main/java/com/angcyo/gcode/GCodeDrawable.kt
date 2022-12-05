@@ -20,7 +20,7 @@ class GCodeDrawable(picture: Picture) : ScalePictureDrawable(picture) {
     var gCodeData: String? = null
 
     /**GCode绘制路径[Path]*/
-    val gCodePath: Path = Path()
+    var gCodePath: Path = Path()
 
     init {
         gCodeBound.set(0f, 0f, minimumWidth.toFloat(), minimumHeight.toFloat())

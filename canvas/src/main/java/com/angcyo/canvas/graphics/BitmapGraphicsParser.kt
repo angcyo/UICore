@@ -62,6 +62,9 @@ class BitmapGraphicsParser : IGraphicsParser {
                         return null
                     } else {
                         val gcodeDrawable = GCodeHelper.parseGCode(gcode) ?: return null
+                        gcodeDrawable.gCodePath =
+                            gcodeDrawable.gCodePath.flip(bean._flipScaleX, bean._flipScaleY)
+
                         val item = DataBitmapItem(bean)
                         item.originBitmap = originBitmap
                         item.gCodeDrawable = gcodeDrawable
@@ -70,7 +73,11 @@ class BitmapGraphicsParser : IGraphicsParser {
                         val bound = gcodeDrawable.gCodeBound
                         val width = bound.width().toInt()
                         val height = bound.height().toInt()
-                        item.renderDrawable = wrapScalePictureDrawable(width, height) {
+                        item.renderDrawable = wrapFlipScalePictureDrawable(
+                            bean._flipX,
+                            bean._flipY,
+                            width, height
+                        ) {
                             gcodeDrawable.setBounds(0, 0, width, height)
                             gcodeDrawable.draw(this)
                         }

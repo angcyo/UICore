@@ -433,12 +433,36 @@ fun Path.transform(rotateBounds: RectF, rotate: Float): Path {
 
     //旋转的支持
     if (rotate != 0f) {
-        val matrix = Matrix()
+        val matrix = acquireTempMatrix()
+        matrix.reset()
         matrix.postRotate(rotate, rotateBounds.centerX(), rotateBounds.centerY())
         matrix.mapRect(pathBounds, pathBounds)
         targetPath.transform(matrix)
+        matrix.release()
     }
 
+    pathBounds.release()
+    return targetPath
+}
+
+
+/**水平/垂直翻转路径*/
+fun Path.flip(scaleX: Float, scaleY: Float): Path {
+    if (scaleX == 1f && scaleY == 1f) {
+        return this
+    }
+    val pathBounds = acquireTempRectF()
+    computeBounds(pathBounds, true)
+    val targetPath = Path(this)
+
+    val matrix = acquireTempMatrix()
+    matrix.reset()
+    //平移到左上角0,0, 然后按照中心点缩放/翻转
+    matrix.setTranslate(-pathBounds.left, -pathBounds.top)
+    matrix.postScale(scaleX, scaleY, pathBounds.width() / 2, pathBounds.height() / 2)
+    targetPath.transform(matrix)
+
+    matrix.release()
     pathBounds.release()
     return targetPath
 }
@@ -451,7 +475,8 @@ fun Path.transform(rotateBounds: RectF, rotate: Float): Path {
 fun List<Path>.transform(bounds: RectF, rotate: Float): List<Path> {
     val newPathList = mutableListOf<Path>()
 
-    val matrix = Matrix()
+    val matrix = acquireTempMatrix()
+    matrix.reset()
     val rotateBounds = acquireTempRectF()//旋转后的Bounds
     if (rotate != 0f) {
         matrix.setRotate(rotate, bounds.centerX(), bounds.centerY())
@@ -501,8 +526,39 @@ fun List<Path>.transform(bounds: RectF, rotate: Float): List<Path> {
         path.transform(matrix)
     }
 
+    //release
     pathBounds.release()
     rotateBounds.release()
+    matrix.release()
+
+    return newPathList
+}
+
+/**水平/垂直翻转路径*/
+fun List<Path>.flip(scaleX: Float, scaleY: Float): List<Path> {
+    if (scaleX == 1f && scaleY == 1f) {
+        return this
+    }
+    val newPathList = mutableListOf<Path>()
+
+    var pathBounds = acquireTempRectF()
+    pathBounds = computeBounds(pathBounds)
+
+    val matrix = acquireTempMatrix()
+    matrix.reset()
+    //平移到左上角0,0, 然后按照中心点缩放/翻转
+    matrix.setTranslate(-pathBounds.left, -pathBounds.top)
+    matrix.postScale(scaleX, scaleY, pathBounds.width() / 2, pathBounds.height() / 2)
+
+    for (path in this) {
+        val newPath = Path(path)
+        newPath.transform(matrix)
+        newPathList.add(newPath)
+    }
+
+    //release
+    matrix.release()
+    pathBounds.release()
 
     return newPathList
 }
