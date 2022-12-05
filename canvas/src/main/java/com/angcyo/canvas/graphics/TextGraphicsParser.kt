@@ -63,6 +63,7 @@ class TextGraphicsParser : IGraphicsParser {
         val newWidth = textWidth.toMm()
         val newHeight = textHeight.toMm()
 
+        //如果未指定宽高, 则使用文本的宽高
         if (bean.width == null) {
             bean.width = newWidth
         } else {
