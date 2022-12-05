@@ -174,7 +174,7 @@ class ItemsOperateHandler {
 
         //缩放比
         val scaleX = (groupNewBounds.width() / groupOldBounds.width()).ensure()
-        var scaleY = (groupNewBounds.height() / groupOldBounds.height()).ensure()
+        val scaleY = (groupNewBounds.height() / groupOldBounds.height()).ensure()
 
         if (offsetLeft == 0f && offsetTop == 0f && scaleX == 1f && scaleY == 1f) {
             return
