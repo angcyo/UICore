@@ -70,7 +70,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         super.onChangeBoundsAfter(reason)
     }
 
-    override fun onItemBoundsChanged(itemRenderer: IRenderer, reason: Reason, oldBounds: RectF) {
+    override fun onRenderItemBoundsChanged(itemRenderer: IRenderer, reason: Reason, oldBounds: RectF) {
         if (selectItemList.contains(itemRenderer)) {
             if (reason.reason == Reason.REASON_USER) {
                 updateSelectBounds()
@@ -78,7 +78,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         }
     }
 
-    override fun onItemVisibleChanged(itemRenderer: IRenderer, visible: Boolean) {
+    override fun onRenderItemVisibleChanged(itemRenderer: IRenderer, visible: Boolean) {
         if (!visible) {
             if (selectItemList.contains(itemRenderer)) {
                 removeSelectedRenderer(itemRenderer)
@@ -170,8 +170,8 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         }*/
     }
 
-    override fun itemRotateChanged(oldRotate: Float, rotateFlag: Int) {
-        super.itemRotateChanged(oldRotate, rotateFlag)
+    override fun renderItemRotateChanged(oldRotate: Float, rotateFlag: Int) {
+        super.renderItemRotateChanged(oldRotate, rotateFlag)
         val degrees = rotate - oldRotate
         canvasDelegate.itemsOperateHandler.rotateItemList(
             selectItemList,
@@ -182,8 +182,8 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         )
     }
 
-    override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
-        super.itemBoundsChanged(reason, oldBounds)
+    override fun renderItemBoundsChanged(reason: Reason, oldBounds: RectF) {
+        super.renderItemBoundsChanged(reason, oldBounds)
         if (selectItemList.isEmpty()) {
             return
         }

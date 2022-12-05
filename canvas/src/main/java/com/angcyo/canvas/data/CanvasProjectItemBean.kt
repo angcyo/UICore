@@ -297,6 +297,14 @@ data class CanvasProjectItemBean(
 
     //region ---雕刻参数---
 
+    /**发给机器的数据索引
+     * 当数据没有改变时, 相同的索引不必重复发送数据给机器
+     * */
+    var index: Int? = null,
+
+    /**数据对应的dpi*/
+    var dpi: Float? = null,
+
     /**
      * [CanvasConstant.DATA_TYPE_RAW] 真实数据的雕刻类型, 发给机器的数据类型
      * [com.angcyo.bluetooth.fsc.laserpacker.command.DataCmd.ENGRAVE_TYPE_BITMAP_PATH]

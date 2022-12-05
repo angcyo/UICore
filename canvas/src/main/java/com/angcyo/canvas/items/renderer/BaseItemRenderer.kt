@@ -93,13 +93,13 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         }
     }
 
-    /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
+    /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.renderItemBoundsChanged]*/
     override fun getRotateBounds(): RectF = _rotateBounds
 
-    /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
+    /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.renderItemBoundsChanged]*/
     override fun getRenderRotateBounds(): RectF = _rotateRenderBounds
 
-    /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
+    /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.renderItemBoundsChanged]*/
     override fun getVisualRotateBounds(): RectF = _visualRotateBounds
 
     override fun changeBoundsAction(reason: Reason, block: RectF.() -> Unit): Boolean {
@@ -132,7 +132,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
                 //append("Anchor->${getBoundsScaleAnchor(changeBeforeBounds)}->${getBoundsScaleAnchor()}")
             }
         )
-        itemBoundsChanged(reason, changeBeforeBounds)
+        renderItemBoundsChanged(reason, changeBeforeBounds)
         //notify
         if (reason.notify) {
             canvasView.dispatchItemBoundsChanged(this, reason, changeBeforeBounds)
@@ -145,7 +145,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     }
 
     /**当渲染的bounds改变后, 需要主动触发此方法, 用来更新主要的bounds和辅助的bounds*/
-    override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
+    override fun renderItemBoundsChanged(reason: Reason, oldBounds: RectF) {
         canvasViewBox.calcItemRenderBounds(getBounds(), getRenderBounds())
         canvasViewBox.calcItemVisualBounds(getRenderBounds(), getVisualBounds())
 
@@ -175,6 +175,10 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         canvasView.dispatchItemRenderUpdate(this)
     }
 
+    override fun renderItemDataChanged() {
+        canvasView.dispatchItemDataChanged(this)
+    }
+
     override fun updateLockScaleRatio(lock: Boolean) {
         isLockScaleRatio = lock
     }
@@ -186,7 +190,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     ) {
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldMatrix)
         changeBeforeBounds.set(getBounds())
-        itemBoundsChanged(Reason(), changeBeforeBounds)
+        renderItemBoundsChanged(Reason(), changeBeforeBounds)
     }
 
     override fun preview(renderParams: RenderParams): Drawable? {
@@ -390,7 +394,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
             rotate += degrees
             rotate %= 360
         }
-        itemRotateChanged(oldRotate, rotateFlag)
+        renderItemRotateChanged(oldRotate, rotateFlag)
         L.i("旋转by->$degrees -> $rotate")
     }
 

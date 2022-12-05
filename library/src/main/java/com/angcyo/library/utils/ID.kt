@@ -293,7 +293,7 @@ object ID {
                 get.invoke(c, "ro.serialno") as String
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            //e.printStackTrace()
             L.e("读取设备序列号异常：$e")
         }
         return serial

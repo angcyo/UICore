@@ -11,10 +11,7 @@ import com.angcyo.library.component.LibHawkKeys
 import com.angcyo.library.component.pool.acquireTempPath
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
-import com.angcyo.library.ex.c
-import com.angcyo.library.ex.eachPath
-import com.angcyo.library.ex.size
-import com.angcyo.library.ex.toBitmap
+import com.angcyo.library.ex.*
 import com.angcyo.library.model.PointD
 import com.angcyo.library.unit.IValueUnit
 import kotlin.math.absoluteValue
@@ -491,7 +488,7 @@ abstract class VectorWriteHandler {
     ) {
         var isFirst = true
         for (path in pathList) {
-            if (Debug.isDebuggerConnected()) {
+            if (isDebuggerConnected()) {
                 val bitmap = path.toBitmap()
                 L.i(bitmap?.byteCount)
             }
@@ -526,7 +523,7 @@ abstract class VectorWriteHandler {
     ) {
         var isFirst = true
         for (path in pathList) {
-            if (Debug.isDebuggerConnected()) {
+            if (isDebuggerConnected()) {
                 val bitmap = path.toBitmap()
                 L.i(bitmap?.byteCount)
             }

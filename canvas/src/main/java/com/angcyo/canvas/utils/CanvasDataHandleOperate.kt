@@ -3,7 +3,6 @@ package com.angcyo.canvas.utils
 import android.graphics.Bitmap
 import android.graphics.Path
 import android.graphics.RectF
-import android.os.Debug
 import android.view.Gravity
 import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.gcode.GCodeAdjust
@@ -199,7 +198,7 @@ object CanvasDataHandleOperate {
         //是否是斜线
         val isObliqueLine = isSingleLine && width > 1 && height > 1
 
-        if (Debug.isDebuggerConnected()) {
+        if (isDebuggerConnected()) {
             val pixels = bitmap.getPixels()
             L.i(pixels)
         }

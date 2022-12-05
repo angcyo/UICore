@@ -311,14 +311,14 @@ class CanvasDelegate(val view: View) : ICanvasView {
     ) {
         super.dispatchItemBoundsChanged(itemRenderer, reason, oldBounds)
         canvasListenerList.forEach {
-            it.onItemBoundsChanged(itemRenderer, reason, oldBounds)
+            it.onRenderItemBoundsChanged(itemRenderer, reason, oldBounds)
         }
     }
 
     override fun dispatchItemVisibleChanged(item: IRenderer, visible: Boolean) {
         super.dispatchItemVisibleChanged(item, visible)
         canvasListenerList.forEach {
-            it.onItemVisibleChanged(item, visible)
+            it.onRenderItemVisibleChanged(item, visible)
         }
         if (!visible) {
             //不可见
@@ -381,7 +381,14 @@ class CanvasDelegate(val view: View) : ICanvasView {
     override fun dispatchItemSortChanged(itemList: List<BaseItemRenderer<*>>) {
         super.dispatchItemSortChanged(itemList)
         canvasListenerList.forEach {
-            it.onItemSortChanged(itemList)
+            it.onRenderItemSortChanged(itemList)
+        }
+    }
+
+    override fun dispatchItemDataChanged(itemRenderer: IItemRenderer<*>) {
+        super.dispatchItemDataChanged(itemRenderer)
+        canvasListenerList.forEach {
+            it.onRenderItemDataChanged(itemRenderer)
         }
     }
 
@@ -1454,6 +1461,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
             }
             //刷新
             refresh()
+        }
+    }
+
+    /**改变所有渲染item的数据*/
+    fun changedRenderItemData() {
+        itemsRendererList.forEach {
+            it.renderItemDataChanged()
         }
     }
 

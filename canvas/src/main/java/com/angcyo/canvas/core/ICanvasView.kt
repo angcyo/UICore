@@ -7,6 +7,7 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.library.unit.IValueUnit
 
 /**
@@ -47,7 +48,7 @@ interface ICanvasView : IComponent {
     fun dispatchCanvasUndoChanged() {}
 
     /**分发渲染器可见性改变
-     * [com.angcyo.canvas.core.ICanvasListener.onItemVisibleChanged]*/
+     * [com.angcyo.canvas.core.ICanvasListener.onRenderItemVisibleChanged]*/
     fun dispatchItemVisibleChanged(item: IRenderer, visible: Boolean) {}
 
     /**分发渲染更新
@@ -60,6 +61,9 @@ interface ICanvasView : IComponent {
     /**当图层的顺序发生了改变
      * [com.angcyo.canvas.CanvasDelegate.arrangeSort]*/
     fun dispatchItemSortChanged(itemList: List<BaseItemRenderer<*>>) {}
+
+    /**当有item的数据发生改变后触发, 此时可以触发数据保存提示*/
+    fun dispatchItemDataChanged(itemRenderer: IItemRenderer<*>) {}
 
     //</editor-fold desc="dispatch">
 

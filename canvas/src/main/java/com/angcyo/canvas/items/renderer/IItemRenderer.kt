@@ -34,17 +34,17 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
 
     /**相对于坐标系0,0位置, 旋转后的坐标
      * [getBounds]
-     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
+     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.renderItemBoundsChanged]*/
     fun getRotateBounds(): RectF
 
     /**相对于视图左上角, 旋转后的坐标
      * [getRenderBounds]
-     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
+     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.renderItemBoundsChanged]*/
     fun getRenderRotateBounds(): RectF
 
     /**相对于视图左上角, 旋转后的坐标
      * [getVisualBounds]
-     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
+     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.renderItemBoundsChanged]*/
     fun getVisualRotateBounds(): RectF
 
     /**当[rendererItem]需要更新时触发, 用来更新渲染器*/
@@ -58,7 +58,7 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
      * 可以在此方法中限制bounds大小
      *
      * [com.angcyo.canvas.core.IRenderer.getBounds]*/
-    fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {}
+    fun renderItemBoundsChanged(reason: Reason, oldBounds: RectF) {}
 
     //</editor-fold desc="bounds">
 
@@ -112,7 +112,13 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     fun rotateBy(degrees: Float, rotateFlag: Int)
 
     /**当元素的旋转属性发生改变时触发*/
-    fun itemRotateChanged(oldRotate: Float, rotateFlag: Int) {}
+    fun renderItemRotateChanged(oldRotate: Float, rotateFlag: Int) {}
+
+    /**当真实的数据发生了改变后, 触发此方法.
+     * 此时可能需要清空数据索引, 以便可以重新发送数据.
+     * 也可以触发数据保存提示
+     * */
+    fun renderItemDataChanged() {}
 
     //</editor-fold desc="控制方法">
 

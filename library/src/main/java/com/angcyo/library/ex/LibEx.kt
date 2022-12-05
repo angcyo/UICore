@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo
 import android.graphics.Point
 import android.graphics.PointF
 import android.os.Build
+import android.os.Debug
 import android.view.View
 import android.widget.TextView
 import androidx.collection.SimpleArrayMap
@@ -370,7 +371,9 @@ fun <T> List<T>.getSafe(index: Int): T? {
     return getOrNull(newIndex)
 }
 
-/**异步代码, 同步执行. 会阻塞当前线程*/
+/**异步代码, 同步执行. 会阻塞当前线程
+ * 请主动调用[java.util.concurrent.CountDownLatch.countDown]
+ * */
 fun <R> sync(count: Int = 1, action: (CountDownLatch, AtomicReference<R>) -> Unit): R? {
     val latch = CountDownLatch(count)
     val result = AtomicReference<R>()
@@ -384,7 +387,9 @@ fun <R> sync(count: Int = 1, action: (CountDownLatch, AtomicReference<R>) -> Uni
     return result.get()
 }
 
-/**无返回值*/
+/**无返回值, 简单的同步方法
+ * 请主动调用[java.util.concurrent.CountDownLatch.countDown]
+ * */
 fun syncSingle(count: Int = 1, action: (CountDownLatch) -> Unit) {
     sync<String>(count) { countDownLatch, _ ->
         action(countDownLatch)
@@ -515,3 +520,7 @@ fun Type.toClass(): Class<*>? = if (this is Class<*>) {
         null
     }
 }
+
+/**是否处于调试模式
+ * [android.os.Debug.isDebuggerConnected]*/
+fun isDebuggerConnected() = Debug.isDebuggerConnected()

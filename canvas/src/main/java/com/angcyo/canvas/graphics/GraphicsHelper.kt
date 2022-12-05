@@ -250,6 +250,7 @@ object GraphicsHelper {
     @AnyThread
     fun updateRenderItem(renderer: DataItemRenderer, bean: CanvasProjectItemBean) {
         doBack(true) {
+            renderer.renderItemDataChanged()
             val item = parseRenderItemFrom(bean, renderer.canvasView) ?: return@doBack
             updateRenderItem(renderer, item)
         }

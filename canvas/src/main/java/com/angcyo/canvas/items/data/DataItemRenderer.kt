@@ -13,6 +13,7 @@ import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.SmartAssistant
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.isLineShape
+import com.angcyo.library.L
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.*
 
@@ -127,8 +128,8 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
         super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldMatrix)
     }
 
-    override fun itemBoundsChanged(reason: Reason, oldBounds: RectF) {
-        super.itemBoundsChanged(reason, oldBounds)
+    override fun renderItemBoundsChanged(reason: Reason, oldBounds: RectF) {
+        super.renderItemBoundsChanged(reason, oldBounds)
 
         val renderItem = getRendererRenderItem()
         renderItem?.dataBean?.apply {
@@ -148,11 +149,21 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
         }
     }
 
-    override fun itemRotateChanged(oldRotate: Float, rotateFlag: Int) {
-        super.itemRotateChanged(oldRotate, rotateFlag)
+    override fun renderItemRotateChanged(oldRotate: Float, rotateFlag: Int) {
+        super.renderItemRotateChanged(oldRotate, rotateFlag)
         getRendererRenderItem()?.dataBean?.apply {
             angle = rotate
         }
+    }
+
+    override fun renderItemDataChanged() {
+        val dataBean = getRendererRenderItem()?.dataBean
+        val index = dataBean?.index
+        dataBean?.index = null
+        if ((index ?: 0) > 0) {
+            L.i("数据改变,清空索引:${index}")
+        }
+        super.renderItemDataChanged()
     }
 
     //<editor-fold desc="IEngraveProvider">

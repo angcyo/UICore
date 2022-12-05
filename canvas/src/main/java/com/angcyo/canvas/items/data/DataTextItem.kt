@@ -422,15 +422,28 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         if (oldText == text && oldType == type) {
             return
         }
+        @MM
+        val oldWidth = dataBean.width
+        val oldHeight = dataBean.height
+        val oldScaleX = dataBean.scaleX
+        val oldScaleY = dataBean.scaleY
         renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
             dataBean.text = oldText
             dataBean.mtype = oldType
             TextGraphicsParser().updateRotateOffset(this)
+            dataBean.width = oldWidth
+            dataBean.height = oldHeight
+            dataBean.scaleX = oldScaleX
+            dataBean.scaleY = oldScaleY
             updateRenderItem(renderer)
         }) {
             dataBean.text = text
             dataBean.mtype = type
             TextGraphicsParser().updateRotateOffset(this)
+            dataBean.width = null
+            dataBean.height = null
+            dataBean.scaleX = null
+            dataBean.scaleY = null
             updateRenderItem(renderer)
         }
     }

@@ -27,12 +27,12 @@ interface IRenderer {
 
     /**获取坐标系中的可绘制坐标, 非视图系的坐标
      * 相对于坐标系原点的像素坐标
-     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]*/
+     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.renderItemBoundsChanged]*/
     fun getRenderBounds(): RectF
 
     /**获取视图系中的坐标
      * 相对于视图左上角的像素坐标
-     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.itemBoundsChanged]
+     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.renderItemBoundsChanged]
      * */
     fun getVisualBounds(): RectF
 
