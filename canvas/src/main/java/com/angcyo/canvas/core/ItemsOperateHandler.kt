@@ -8,6 +8,7 @@ import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.core.renderer.SelectGroupRenderer
+import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.isLineShape
@@ -24,7 +25,7 @@ import java.lang.Math.tan
  * @date 2022/05/15
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class BoundsOperateHandler {
+class ItemsOperateHandler {
 
     companion object {
 
@@ -339,4 +340,84 @@ class BoundsOperateHandler {
         }
         step.runRedo()
     }
+
+    //---
+
+    /**批量水平翻转*/
+    fun toggleFlipX(
+        canvasDelegate: CanvasDelegate,
+        itemList: Iterable<BaseItemRenderer<*>>,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val oldMap = hashMapOf<Int, Boolean?>()
+        val newMap = hashMapOf<Int, Boolean?>()
+
+        //状态存储
+        val list = itemList.toList()
+        for (item in list) {
+            if (item is DataItemRenderer) {
+                item.rendererItem?.dataBean?.apply {
+                    oldMap[item.hashCode()] = flipX
+                    newMap[item.hashCode()] = !_flipX
+                }
+            }
+        }
+
+        //执行
+        canvasDelegate.getCanvasUndoManager().addAndRedo(strategy, {
+            for (item in list) {
+                if (item is DataItemRenderer) {
+                    item.rendererItem?.dataBean?.flipX = oldMap[item.hashCode()]
+                    item.dataItem?.updateRenderItem(item)
+                }
+            }
+        }) {
+            for (item in list) {
+                if (item is DataItemRenderer) {
+                    item.rendererItem?.dataBean?.flipX = newMap[item.hashCode()]
+                    item.dataItem?.updateRenderItem(item)
+                }
+            }
+        }
+    }
+
+    /**批量水平翻转*/
+    fun toggleFlipY(
+        canvasDelegate: CanvasDelegate,
+        itemList: Iterable<BaseItemRenderer<*>>,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val oldMap = hashMapOf<Int, Boolean?>()
+        val newMap = hashMapOf<Int, Boolean?>()
+
+        //状态存储
+        val list = itemList.toList()
+        for (item in list) {
+            if (item is DataItemRenderer) {
+                item.rendererItem?.dataBean?.apply {
+                    oldMap[item.hashCode()] = flipY
+                    newMap[item.hashCode()] = !_flipY
+                }
+            }
+        }
+
+        //执行
+        canvasDelegate.getCanvasUndoManager().addAndRedo(strategy, {
+            for (item in list) {
+                if (item is DataItemRenderer) {
+                    item.rendererItem?.dataBean?.flipY = oldMap[item.hashCode()]
+                    item.dataItem?.updateRenderItem(item)
+                }
+            }
+        }) {
+            for (item in list) {
+                if (item is DataItemRenderer) {
+                    item.rendererItem?.dataBean?.flipY = newMap[item.hashCode()]
+                    item.dataItem?.updateRenderItem(item)
+                }
+            }
+        }
+    }
+
+    //---
 }

@@ -173,7 +173,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     override fun itemRotateChanged(oldRotate: Float, rotateFlag: Int) {
         super.itemRotateChanged(oldRotate, rotateFlag)
         val degrees = rotate - oldRotate
-        canvasDelegate.boundsOperateHandler.rotateItemList(
+        canvasDelegate.itemsOperateHandler.rotateItemList(
             selectItemList,
             degrees,
             getBounds().centerX(),
@@ -192,7 +192,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
             if (reason.flag.have(Reason.REASON_FLAG_TRANSLATE) || reason.flag.have(Reason.REASON_FLAG_BOUNDS)) {
                 if (groupTouchDownItemBoundsList.isEmpty()) {
                     //如果不是手势调整的Bounds
-                    canvasDelegate.boundsOperateHandler.changeBoundsItemList(
+                    canvasDelegate.itemsOperateHandler.changeBoundsItemList(
                         renderers,
                         oldBounds,
                         getBounds(),
@@ -208,7 +208,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
                             itemOriginBoundsList.add(it.bounds)
                         }
                     }
-                    canvasDelegate.boundsOperateHandler.changeBoundsItemList(
+                    canvasDelegate.itemsOperateHandler.changeBoundsItemList(
                         renderers,
                         itemOriginBoundsList,
                         groupTouchDownBounds,
@@ -540,7 +540,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
                 offsetList.add(OffsetItemData(item, dx, dy))
             }
         }
-        canvasDelegate.boundsOperateHandler.offsetItemList(
+        canvasDelegate.itemsOperateHandler.offsetItemList(
             canvasDelegate,
             this,
             offsetList,
@@ -595,7 +595,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         }
 
         if (offsetList.isNotEmpty()) {
-            canvasDelegate.boundsOperateHandler.offsetItemList(
+            canvasDelegate.itemsOperateHandler.offsetItemList(
                 canvasDelegate,
                 this,
                 offsetList,

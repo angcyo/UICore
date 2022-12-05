@@ -9,7 +9,7 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
-import com.angcyo.canvas.core.BoundsOperateHandler
+import com.angcyo.canvas.core.ItemsOperateHandler
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
@@ -156,7 +156,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     /**是否可以改变bound*/
     open fun canChangeBounds(toBounds: RectF): Boolean {
-        return BoundsOperateHandler.canChangeBounds(this, toBounds)
+        return ItemsOperateHandler.canChangeBounds(this, toBounds)
     }
 
     /**Bounds改变后, 触发. 可以再次限制Bounds的大小

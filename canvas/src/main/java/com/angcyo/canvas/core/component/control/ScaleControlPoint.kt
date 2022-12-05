@@ -114,7 +114,7 @@ class ScaleControlPoint : ControlPoint() {
 
             override fun runUndo() {
                 if (item is SelectGroupRenderer) {
-                    canvasDelegate.boundsOperateHandler.changeBoundsItemList(
+                    canvasDelegate.itemsOperateHandler.changeBoundsItemList(
                         itemList,
                         newBounds,
                         originBounds,
@@ -134,7 +134,7 @@ class ScaleControlPoint : ControlPoint() {
 
             override fun runRedo() {
                 if (item is SelectGroupRenderer) {
-                    canvasDelegate.boundsOperateHandler.changeBoundsItemList(
+                    canvasDelegate.itemsOperateHandler.changeBoundsItemList(
                         itemList,
                         originBounds,
                         newBounds,
