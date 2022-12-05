@@ -7,6 +7,7 @@ import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataPathItem
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.isSvgContent
+import com.angcyo.library.ex.flip
 import com.angcyo.svg.Svg
 
 /**
@@ -36,7 +37,9 @@ class SvgGraphicsParser : PathGraphicsParser() {
                             bean.height = sharpDrawable.pathBounds.height().toMm()
                         }
                         //
-                        item.addDataPath(sharpDrawable.pathList)
+                        item.addDataPath(
+                            sharpDrawable.pathList.flip(bean._flipScaleX, bean._flipScaleY)
+                        )
                         createPathDrawable(item, canvasView) ?: return null
                         initDataModeWithPaintStyle(bean, item.itemPaint)
                         return item

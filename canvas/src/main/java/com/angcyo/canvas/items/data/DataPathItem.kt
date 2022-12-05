@@ -72,6 +72,7 @@ open class DataPathItem(bean: CanvasProjectItemBean) : DataItem(bean) {
 
         //计算出缩放的矩阵参数
         val matrix = acquireTempMatrix()
+        matrix.reset()
         val scaleX = if (pathWidth > 1 && targetWidth > 1) {
             targetWidth / pathWidth
         } else {

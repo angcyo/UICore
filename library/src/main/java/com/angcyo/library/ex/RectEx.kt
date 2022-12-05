@@ -417,6 +417,7 @@ fun RectF.trapToRect(
     )
 ): RectF {
     val matrix = acquireTempMatrix()
+    matrix.reset()
     val values = toCornersValues()
     matrix.setRotate(rotate)
     matrix.mapPoints(values)

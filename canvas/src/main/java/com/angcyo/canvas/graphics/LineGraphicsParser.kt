@@ -7,6 +7,7 @@ import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataShapeItem
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.library.ex.flip
 
 /**
  * 线段解析器
@@ -27,7 +28,7 @@ class LineGraphicsParser : PathGraphicsParser() {
             val linePath = LinePath()
             linePath.moveTo(0f, 0f)
             linePath.lineTo(lineLength, 0f)
-            item.addDataPath(linePath)
+            item.addDataPath(linePath.flip(bean._flipScaleX, bean._flipScaleY))
 
             createPathDrawable(item, canvasView) ?: return null
 

@@ -7,6 +7,7 @@ import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataPathItem
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.gcode.GCodeHelper
+import com.angcyo.library.ex.flip
 
 /**
  * GCode解析器
@@ -32,7 +33,9 @@ class GCodeGraphicsParser : PathGraphicsParser() {
                         bean.height = gCodeDrawable.gCodeBound.height().toMm()
                     }
                     //
-                    item.addDataPath(gCodeDrawable.gCodePath)
+                    item.addDataPath(
+                        gCodeDrawable.gCodePath.flip(bean._flipScaleX, bean._flipScaleY)
+                    )
                     createPathDrawable(item, canvasView) ?: return null
 
                     initDataModeWithPaintStyle(bean, item.itemPaint)

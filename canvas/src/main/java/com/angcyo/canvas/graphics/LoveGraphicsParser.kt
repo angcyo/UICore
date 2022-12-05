@@ -7,6 +7,7 @@ import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataShapeItem
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.ex.adjustWidthHeight
+import com.angcyo.library.ex.flip
 import com.pixplicity.sharp.Sharp
 
 /**
@@ -30,7 +31,7 @@ class LoveGraphicsParser : PathGraphicsParser() {
             //path
             val dataPath = lovePath.adjustWidthHeight(dataWidth, dataHeight)
             //
-            item.addDataPath(dataPath)
+            item.addDataPath(dataPath.flip(bean._flipScaleX, bean._flipScaleY))
 
             createPathDrawable(item, canvasView) ?: return null
 

@@ -7,6 +7,7 @@ import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataShapeItem
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.ShapesHelper
+import com.angcyo.library.ex.flip
 
 /**
  * 星星解析器
@@ -28,7 +29,7 @@ class PentagramGraphicsParser : PathGraphicsParser() {
             //path
             val dataPath = ShapesHelper.pentagramPath(side, dataWidth, dataHeight, depth)
             //
-            item.addDataPath(dataPath)
+            item.addDataPath(dataPath.flip(bean._flipScaleX, bean._flipScaleY))
 
             createPathDrawable(item, canvasView) ?: return null
             initDataModeWithPaintStyle(bean, item.itemPaint)

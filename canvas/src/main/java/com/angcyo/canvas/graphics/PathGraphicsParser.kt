@@ -19,6 +19,7 @@ import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.computeBounds
 import com.angcyo.library.ex.computePathBounds
+import com.angcyo.library.ex.flip
 import com.angcyo.library.ex.withPicture
 import com.pixplicity.sharp.Sharp
 import kotlin.math.max
@@ -80,7 +81,7 @@ open class PathGraphicsParser : IGraphicsParser {
         pathBounds.release()
 
         //
-        item.addDataPath(path)
+        item.addDataPath(path.flip(bean._flipScaleX, bean._flipScaleY))
         createPathDrawable(item, canvasView) ?: return null
 
         initDataModeWithPaintStyle(bean, item.itemPaint)
