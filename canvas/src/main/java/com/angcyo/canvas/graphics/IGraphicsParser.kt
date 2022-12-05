@@ -3,6 +3,7 @@ package com.angcyo.canvas.graphics
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import androidx.core.graphics.withScale
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.data.DataItem
@@ -31,6 +32,22 @@ interface IGraphicsParser {
         ScalePictureDrawable(withPicture(width, height) {
             block()
         })
+
+    /**支持翻转属性的[wrapScalePictureDrawable]
+     * [flipX] 是否水平翻转
+     * [flipY] 是否垂直翻转
+     * */
+    fun wrapFlipScalePictureDrawable(
+        flipX: Boolean?,
+        flipY: Boolean?,
+        width: Int,
+        height: Int,
+        block: Canvas.() -> Unit
+    ) = ScalePictureDrawable(withPicture(width, height) {
+        val scaleX = if (flipX == true) -1f else 1f
+        val scaleY = if (flipY == true) -1f else 1f
+        withScale(scaleX, scaleY, width / 2f, height / 2f, block)
+    })
 
     /**包裹一个bitmap对象*/
     fun wrapBitmap(item: DataItem, bitmap: Bitmap) {

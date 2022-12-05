@@ -52,7 +52,9 @@ open class ScalePictureDrawable(picture: Picture) : PictureDrawable(picture) {
     }
 
     protected fun save(canvas: Canvas) {
-        if (alpha == 255 || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && alpha == 255) ||
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP
+        ) {
             canvas.save()
         } else {
             canvas.saveLayerAlpha(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(), alpha)

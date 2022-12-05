@@ -63,7 +63,7 @@ fun CanvasDelegate.addTextRender(
     val bean = CanvasProjectItemBean()
     bean.mtype = type
     bean.text = "$text"
-    bean.charSpacing = 0.2f //默认字间距
+    bean.charSpacing = 0.5f //默认字间距
     bean.lineSpacing = bean.charSpacing //默认行间距
     bean.paintStyle = Paint.Style.FILL.toPaintStyleInt()
     return GraphicsHelper.addRenderItemDataBean(this, bean)

@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="crop_title">裁剪</string>
-    <string name="crop_rotate">旋转</string>
-    <string name="crop_horizontal_flip">水平翻转</string>
-    <string name="crop_vertical_flip">垂直翻转</string>
-    <string name="crop_ratio_free">自由比例</string>
-    <string name="crop_type_circle">圆形</string>
-    <string name="crop_auto_side">自动裁边</string>
+    <string name="crop_title">Crop</string>
+    <string name="crop_rotate">Rotate</string>
+    <string name="crop_horizontal_flip">Flip horizontal</string>
+    <string name="crop_vertical_flip">Flip vertical</string>
+    <string name="crop_ratio_free">Free</string>
+    <string name="crop_type_circle">Circle</string>
+    <string name="crop_auto_side">Auto cut</string>
+
+    <string name="crop_horizontal">Horizontal</string>
+    <string name="crop_vertical">Vertical</string>
 </resources>

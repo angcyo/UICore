@@ -130,6 +130,34 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
         }
     }
 
+    /**水平翻转切换*/
+    fun toggleFlipX(renderer: DataItemRenderer, strategy: Strategy = Strategy.normal) {
+        val old = dataBean.flipX
+        val new = !dataBean._flipX
+
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.flipX = old
+            updateRenderItem(renderer)
+        }) {
+            dataBean.flipX = new
+            updateRenderItem(renderer)
+        }
+    }
+
+    /**垂直翻转切换*/
+    fun toggleFlipY(renderer: DataItemRenderer, strategy: Strategy = Strategy.normal) {
+        val old = dataBean.flipY
+        val new = !dataBean._flipY
+
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.flipY = old
+            updateRenderItem(renderer)
+        }) {
+            dataBean.flipY = new
+            updateRenderItem(renderer)
+        }
+    }
+
     //<editor-fold desc="IEngraveProvider">
 
     override fun getEngraveRenderer(): IItemRenderer<*>? = null

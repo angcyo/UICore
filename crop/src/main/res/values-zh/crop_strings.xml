@@ -7,4 +7,7 @@
     <string name="crop_ratio_free">自由比例</string>
     <string name="crop_type_circle">圆形</string>
     <string name="crop_auto_side">自动裁边</string>
+
+    <string name="crop_horizontal">水平</string>
+    <string name="crop_vertical">垂直</string>
 </resources>
