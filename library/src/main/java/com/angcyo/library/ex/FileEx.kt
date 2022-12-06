@@ -230,6 +230,14 @@ fun File.open(context: Context = app()) {
 //        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //        context.startActivity(intent);
 //    }
+
+/** 分享文件 */
+fun String.shareFile(
+    fileProvider: Boolean = true,
+    toast: Boolean = true,
+    context: Context = app()
+): Boolean = file().shareFile(context, fileProvider, toast)
+
 /** 分享文件 */
 fun File.shareFile(
     context: Context = app(),
