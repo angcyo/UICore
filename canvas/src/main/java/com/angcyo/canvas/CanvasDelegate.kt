@@ -32,6 +32,7 @@ import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.unit.IValueUnit
 import com.angcyo.library.unit.PixelValueUnit
+import java.util.concurrent.CopyOnWriteArraySet
 import kotlin.math.max
 import kotlin.math.min
 
@@ -78,8 +79,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**画布的手势, 用来处理画布的双指平移和捏合缩放*/
     var canvasTouchHandler = CanvasTouchHandler(this)
 
-    /**事件回调*/
-    val canvasListenerList = mutableSetOf<ICanvasListener>()
+    /**事件回调, 支持多线程操作*/
+    val canvasListenerList = CopyOnWriteArraySet<ICanvasListener>()
 
     /**内容绘制之前, 额外的渲染器.
      * 不处理[Matrix]*/
