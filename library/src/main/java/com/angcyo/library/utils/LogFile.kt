@@ -41,3 +41,6 @@ object LogFile {
 /**log文件名转全路径*/
 fun String.toLogFilePath(folder: String = Constant.LOG_FOLDER_NAME) =
     File(appFolderPath(folder), this).absolutePath
+
+/**log文件所在的文件夹*/
+fun logPath() = appFolderPath(Constant.LOG_FOLDER_NAME)
