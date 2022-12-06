@@ -130,6 +130,26 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
         }
     }
 
+    /**更新可见性*/
+    fun updateVisible(
+        visible: Boolean,
+        renderer: DataItemRenderer,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val old = dataBean.isVisible
+        val new = visible
+        if (old == new) {
+            return
+        }
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.isVisible = old
+            updateRenderItem(renderer)
+        }) {
+            dataBean.isVisible = new
+            updateRenderItem(renderer)
+        }
+    }
+
     /**水平翻转切换*/
     fun toggleFlipX(renderer: DataItemRenderer, strategy: Strategy = Strategy.normal) {
         val old = dataBean.flipX

@@ -6,6 +6,7 @@ import androidx.core.graphics.scale
 import androidx.core.graphics.withMatrix
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
+import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.RenderParams
@@ -164,6 +165,11 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
             L.i("数据改变,清空索引:${index}")
         }
         super.renderItemDataChanged()
+    }
+
+    override fun setVisible(visible: Boolean, strategy: Strategy) {
+        super.setVisible(visible, strategy)
+        getRendererRenderItem()?.updateVisible(visible, this, Strategy.preview)
     }
 
     //<editor-fold desc="IEngraveProvider">

@@ -44,7 +44,7 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
     override fun isVisible(): Boolean = _visible
 
     /**设置可见性*/
-    fun setVisible(visible: Boolean, strategy: Strategy = Strategy.normal) {
+    open fun setVisible(visible: Boolean, strategy: Strategy = Strategy.normal) {
         val oldValue = isVisible()
         if (visible == oldValue) {
             return
