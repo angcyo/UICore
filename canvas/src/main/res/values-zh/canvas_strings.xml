@@ -115,4 +115,6 @@
     <string name="canvas_origin">原点</string>
     <string name="canvas_reset">复位</string>
     <string name="canvas_best">适应</string>
+
+    <string name="canvas_item_outof_limit">元素数量超出限制!</string>
 </resources>

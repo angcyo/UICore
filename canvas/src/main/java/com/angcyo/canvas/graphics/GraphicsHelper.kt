@@ -3,6 +3,7 @@ package com.angcyo.canvas.graphics
 import android.graphics.RectF
 import androidx.annotation.AnyThread
 import com.angcyo.canvas.CanvasDelegate
+import com.angcyo.canvas.R
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.CanvasViewBox
@@ -22,7 +23,10 @@ import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.LibHawkKeys
+import com.angcyo.library.ex._string
 import com.angcyo.library.ex.abs
+import com.angcyo.library.toastQQ
 
 /**
  * 用来解析[CanvasProjectItemBean]
@@ -148,7 +152,7 @@ object GraphicsHelper {
     //region ---ItemDataBean解析---
 
     /**开始解析, 可能会有耗时操作, 请在子线程中处理
-     * 更具[bean]解析出一个可以用来渲染的[BaseItem]
+     * 根据[bean]解析出一个可以用来渲染的[BaseItem]
      * */
     @CallPoint
     @AnyThread
@@ -190,10 +194,10 @@ object GraphicsHelper {
             assignLocation(canvasView.getCanvasViewBox(), bean)
         }
         updateRendererProperty(renderer, bean)
-        (canvasView as? CanvasDelegate)?.apply {
-            addItemRenderer(renderer, strategy)
+        if (canvasView is CanvasDelegate) {
+            canvasView.addItemRenderer(renderer, strategy)
             if (selected) {
-                selectedItem(renderer)
+                canvasView.selectedItem(renderer)
             }
         }
         return renderer
@@ -239,6 +243,12 @@ object GraphicsHelper {
         return if (bean == null || canvasView == null) {
             null
         } else {
+            if (canvasView is CanvasDelegate) {
+                if (canvasView.itemRendererCount > LibHawkKeys.canvasRenderMaxCount) {
+                    toastQQ(_string(R.string.canvas_item_outof_limit))
+                    return null
+                }
+            }
             renderItemDataBean(canvasView, bean, true, true)
         }
     }
