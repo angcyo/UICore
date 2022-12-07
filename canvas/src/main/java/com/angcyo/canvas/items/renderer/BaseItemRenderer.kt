@@ -265,11 +265,16 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
             rendererBounds = tempRect
         }
 
-        val result = getRotateMatrix(rendererBounds.centerX(), rendererBounds.centerY()).run {
+        var result = getRotateMatrix(rendererBounds.centerX(), rendererBounds.centerY()).run {
             rotatePath.reset()
             rotatePath.addRect(rendererBounds, Path.Direction.CW)
             rotatePath.transform(this)
-            rotatePath.contains(point.x.toInt(), point.y.toInt())
+            rotatePath.contains(point.x.toInt(), point.y.toInt()) //在坐标15000px左右时, 此方法会实现
+        }
+
+        if (!result) {
+            tempRect.set(point.x, point.y, point.x + 1, point.y + 1)
+            result = containsRect(tempRect) //此时使用1像素的矩形,进行碰撞
         }
 
         tempRect.release()
