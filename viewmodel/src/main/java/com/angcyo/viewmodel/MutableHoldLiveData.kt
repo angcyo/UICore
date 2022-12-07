@@ -13,10 +13,14 @@ open class MutableHoldLiveData<T>(value: T? = null) : MutableLiveData<T>(value) 
     /**之前的值*/
     var beforeValue: T? = null
 
+    /**最近一个非空的值*/
+    var beforeNonValue: T? = null
+
     @MainThread
     override fun setValue(value: T?) {
         //保存之前的值
         beforeValue = getValue()
+        beforeNonValue = beforeValue ?: beforeNonValue //非空的值
         super.setValue(value)
     }
 
