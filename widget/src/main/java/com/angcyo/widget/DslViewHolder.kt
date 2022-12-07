@@ -34,6 +34,12 @@ open class DslViewHolder(
 
     companion object {
         var DEFAULT_INITIAL_CAPACITY = 32
+
+        /**[MotionEvent] 事件类型, 点击*/
+        const val EVENT_TYPE_CLICK = 1
+
+        /**[MotionEvent] 事件类型, 长按*/
+        const val EVENT_TYPE_LONG_PRESS = 2
     }
 
     val context get() = itemView.context
@@ -221,9 +227,13 @@ open class DslViewHolder(
         view?.setOnTouchListener(block)
     }
 
+    /**长按事件识别
+     * [EVENT_TYPE_CLICK]
+     * [EVENT_TYPE_LONG_PRESS]
+     * */
     fun longTouch(
         @IdRes id: Int,
-        block: (view: View, event: MotionEvent, longPress: Boolean?) -> Boolean
+        block: (view: View, event: MotionEvent, eventType: Int?) -> Boolean
     ) {
         longTouch(v<View>(id), block)
     }
@@ -231,31 +241,36 @@ open class DslViewHolder(
     @SuppressLint("ClickableViewAccessibility")
     fun longTouch(
         view: View?,
-        block: (view: View, event: MotionEvent, longPress: Boolean?) -> Boolean
+        block: (view: View, event: MotionEvent, eventType: Int?) -> Boolean
     ) {
-        var isLongPress: Boolean? = null
+        var eventType: Int? = null
         val longRunnable = Runnable {
-            if (isLongPress == null) {
-                isLongPress = true
+            if (eventType == null) {
+                eventType = EVENT_TYPE_LONG_PRESS
             }
         }
         view?.setOnTouchListener { _, event ->
             val actionMasked = event.actionMasked
             when (actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
+                    view.isPressed = true //按下的状态
+                    //长按检测
                     view.postDelayed(longRunnable, ViewConfiguration.getLongPressTimeout().toLong())
                 }
                 MotionEvent.ACTION_MOVE -> Unit
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    if (isLongPress == null) {
-                        isLongPress = false
+                    view.isPressed = false
+                    if (eventType == null) {
+                        eventType = EVENT_TYPE_CLICK
                     }
                     view.removeCallbacks(longRunnable)
                 }
             }
-            val result = block(view, event, isLongPress)
+            //回调
+            val result = block(view, event, eventType)
+            //清空事件
             when (actionMasked) {
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> isLongPress = null
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> eventType = null
             }
             result
         }

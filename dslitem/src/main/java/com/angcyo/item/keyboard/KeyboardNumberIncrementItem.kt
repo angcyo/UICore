@@ -28,15 +28,15 @@ class KeyboardNumberIncrementItem : DslAdapterItem() {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-        itemHolder.longTouch(R.id.minus_increment_view) { view, event, longPress ->
-            longPress?.let {
-                itemIncrementAction(false, it)
+        itemHolder.longTouch(R.id.minus_increment_view) { view, event, eventType ->
+            eventType?.let {
+                itemIncrementAction(false, it == DslViewHolder.EVENT_TYPE_LONG_PRESS)
             }
             true
         }
-        itemHolder.longTouch(R.id.plus_increment_view) { view, event, longPress ->
-            longPress?.let {
-                itemIncrementAction(true, it)
+        itemHolder.longTouch(R.id.plus_increment_view) { view, event, eventType ->
+            eventType?.let {
+                itemIncrementAction(true, it == DslViewHolder.EVENT_TYPE_LONG_PRESS)
             }
             true
         }
