@@ -132,6 +132,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
     override fun renderItemBoundsChanged(reason: Reason, oldBounds: RectF) {
         super.renderItemBoundsChanged(reason, oldBounds)
 
+        var isUpdateItem = false
         val renderItem = getRendererRenderItem()
         renderItem?.dataBean?.apply {
             updateByBounds(getBounds())
@@ -144,8 +145,16 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
                     //
                     if (renderItem.needUpdateOfBoundsChanged(reason)) {
                         renderItem.updateRenderItem(this@DataItemRenderer)
+                        isUpdateItem = true
                     }
                 }
+            }
+        }
+
+        if (!isUpdateItem) {
+            if (reason.flag > 0) {
+                //不管是平移, 旋转, 还是缩放, 发生改变之后, 都需要更新数据
+                renderItemDataChanged()
             }
         }
     }
