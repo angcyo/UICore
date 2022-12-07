@@ -267,7 +267,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
     }
 
     override fun findItemRenderer(touchPoint: PointF): BaseItemRenderer<*>? {
-        val point = getCanvasViewBox().mapCoordinateSystemPoint(touchPoint, acquireTempPointF())
+        val canvasViewBox = getCanvasViewBox()
+        val point = acquireTempPointF()
+        canvasViewBox.mapCoordinateSystemPoint(touchPoint, point)
 
         //多选渲染优先
         val selectedRenderer = getSelectedRenderer()

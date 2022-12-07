@@ -93,9 +93,9 @@ fun Path.contains(x: Int, y: Int, clipRect: RectF? = null): Boolean {
     }
 
     //限制一下矩形区域
-    val rectRegion = acquireTempRegion()
-    rectRegion.setEmpty()
-    rectRegion.set(
+    val clipRegion = acquireTempRegion()
+    clipRegion.setEmpty()
+    clipRegion.set(
         _clipRect.left.toInt(),
         _clipRect.top.toInt(),
         _clipRect.right.toInt(),
@@ -108,12 +108,12 @@ fun Path.contains(x: Int, y: Int, clipRect: RectF? = null): Boolean {
     //碰撞范围
     val pathRegion = acquireTempRegion()
     pathRegion.setEmpty()
-    pathRegion.setPath(this, rectRegion)
+    pathRegion.setPath(this, clipRegion)
 
     //点是否在范围内
     val result = pathRegion.contains(x, y)
 
-    rectRegion.release()
+    clipRegion.release()
     pathRegion.release()
 
     return result
