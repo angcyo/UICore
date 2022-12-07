@@ -68,7 +68,8 @@ fun Int.actionToString(): String {
     }
 }
 
-/**[android.view.MotionEvent.recycle]*/
+/**
+ * 创建一个[MotionEvent]事件, 请主动调用 [android.view.MotionEvent.recycle]方法*/
 fun motionEvent(action: Int = MotionEvent.ACTION_UP, x: Float = 0f, y: Float = 0f): MotionEvent {
     return MotionEvent.obtain(
         nowTime(),
@@ -80,16 +81,19 @@ fun motionEvent(action: Int = MotionEvent.ACTION_UP, x: Float = 0f, y: Float = 0
     )
 }
 
+/**创建一个取消事件*/
+fun cancelEvent() = MotionEvent.obtain(
+    nowTime(),
+    nowTime(),
+    MotionEvent.ACTION_CANCEL,
+    0f,
+    0f,
+    0
+)
+
 /**发送一个取消事件*/
 fun View.sendCancelEvent() {
-    val cancelEvent = MotionEvent.obtain(
-        nowTime(),
-        nowTime(),
-        MotionEvent.ACTION_CANCEL,
-        0f,
-        0f,
-        0
-    )
+    val cancelEvent = cancelEvent()
     dispatchTouchEvent(cancelEvent)
     cancelEvent.recycle()
 }

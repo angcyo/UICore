@@ -18,6 +18,7 @@ import com.angcyo.library.L
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.base.ThrottleClickListener
 import com.angcyo.widget.base.ThrottleClickListener.Companion.DEFAULT_THROTTLE_INTERVAL
+import com.angcyo.widget.base.motionEvent
 import java.lang.ref.WeakReference
 
 /**
@@ -243,36 +244,53 @@ open class DslViewHolder(
         view: View?,
         block: (view: View, event: MotionEvent, eventType: Int?) -> Boolean
     ) {
-        var eventType: Int? = null
-        val longRunnable = Runnable {
-            if (eventType == null) {
-                eventType = EVENT_TYPE_LONG_PRESS
-            }
-        }
-        view?.setOnTouchListener { _, event ->
-            val actionMasked = event.actionMasked
-            when (actionMasked) {
-                MotionEvent.ACTION_DOWN -> {
-                    view.isPressed = true //按下的状态
-                    //长按检测
-                    view.postDelayed(longRunnable, ViewConfiguration.getLongPressTimeout().toLong())
+
+        view?.let {
+            var eventType: Int? = null
+            val longRunnable = Runnable {
+                if (eventType == null) {
+                    eventType = EVENT_TYPE_LONG_PRESS
+
+                    //发送长按事件
+                    val event = motionEvent(MotionEvent.ACTION_MOVE)
+                    block(view, event, eventType)
+                    event.recycle()
                 }
-                MotionEvent.ACTION_MOVE -> Unit
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    view.isPressed = false
-                    if (eventType == null) {
-                        eventType = EVENT_TYPE_CLICK
+            }
+
+            //touch
+            view.setOnTouchListener { _, event ->
+                val actionMasked = event.actionMasked
+                when (actionMasked) {
+                    MotionEvent.ACTION_DOWN -> {
+                        view.isPressed = true //按下的状态
+                        //长按检测
+                        view.postDelayed(
+                            longRunnable,
+                            ViewConfiguration.getLongPressTimeout().toLong()
+                        )
                     }
-                    view.removeCallbacks(longRunnable)
+                    MotionEvent.ACTION_MOVE -> Unit
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                        view.isPressed = false
+                        if (eventType == null) {
+                            eventType = EVENT_TYPE_CLICK
+                        }
+                        view.removeCallbacks(longRunnable)
+                    }
                 }
+                //回调
+                val result =
+                    if (eventType == EVENT_TYPE_LONG_PRESS) true else block(view, event, eventType)
+                //清空事件
+                when (actionMasked) {
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                        block(view, event, eventType)
+                        eventType = null
+                    }
+                }
+                result
             }
-            //回调
-            val result = block(view, event, eventType)
-            //清空事件
-            when (actionMasked) {
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> eventType = null
-            }
-            result
         }
     }
 
