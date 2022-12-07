@@ -7,7 +7,7 @@ package com.angcyo.library.unit
  */
 class PixelValueUnit : IValueUnit {
 
-    override fun convertValueToPixel(value: Double): Double = 1.0
+    override fun convertValueToPixel(value: Double): Double = value
 
     override fun formattedValueUnit(value: Double): String = "${value.toInt()}${getUnit()}"
 
