@@ -348,7 +348,7 @@ object DslToast {
 data class ToastConfig(
     var withActivity: Activity? = null, //附着在Activity上, 不用toast展示
     var removeLastView: Int = 0,//1:移除全部 0:移除最后一个不相同的layoutId -1:不移除
-    var duration: Int = Toast.LENGTH_SHORT,//非0和1, 在activity模式下可以指定任意隐藏时长(毫秒)
+    var duration: Int = Toast.LENGTH_LONG,//非0和1, 在activity模式下可以指定任意隐藏时长(毫秒)
     var text: CharSequence = "",
     @DrawableRes
     var icon: Int = undefined_res,
@@ -465,7 +465,11 @@ fun toastQQ(
     @LayoutRes layoutId: Int = R.layout.lib_toast_qq_layout,
     action: ToastConfig.() -> Unit = {}
 ) {
-    toast(text, context, icon, layoutId, action)
+    toast(text, context, icon, layoutId) {
+        //2022-12-8 最新版qq样式, 非全屏
+        fullScreen = false
+        action()
+    }
 }
 
 /**文本 ico WX布局 简化配置*/

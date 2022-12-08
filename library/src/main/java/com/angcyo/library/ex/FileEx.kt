@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.text.TextUtils
 import android.text.format.Formatter
+import androidx.annotation.AnyThread
 import com.angcyo.library.app
 import com.angcyo.library.toastQQ
 import java.io.*
@@ -232,6 +233,7 @@ fun File.open(context: Context = app()) {
 //    }
 
 /** 分享文件 */
+@AnyThread
 fun String.shareFile(
     fileProvider: Boolean = true,
     toast: Boolean = true,
@@ -239,6 +241,7 @@ fun String.shareFile(
 ): Boolean = file().shareFile(context, fileProvider, toast)
 
 /** 分享文件 */
+@AnyThread
 fun File.shareFile(
     context: Context = app(),
     fileProvider: Boolean = true,
