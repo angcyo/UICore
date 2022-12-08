@@ -126,6 +126,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
                 _itemBounds.inset(dv, dv)//放大元素边界的矩形
                 canvas.drawRect(_itemBounds, paint)
 
+                //绘制控制信息
                 drawFrameText(
                     canvas,
                     visualBounds,
@@ -133,10 +134,10 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
                     it.getRenderRotateBounds(),
                     rotate
                 )
-                if (controlHandler.touchControlPoint is RotateControlPoint) {
+                /*if (controlHandler.touchControlPoint is RotateControlPoint) {
                     //绘制旋转的角度
                     drawRotateText(canvas, visualBounds, rotate)
-                }
+                }*/
             }
 
             if (drawControlPoint) {
