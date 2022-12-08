@@ -388,10 +388,10 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
-    override fun dispatchItemDataChanged(itemRenderer: IItemRenderer<*>) {
-        super.dispatchItemDataChanged(itemRenderer)
+    override fun dispatchItemDataChanged(itemRenderer: IItemRenderer<*>, reason: Reason) {
+        super.dispatchItemDataChanged(itemRenderer, reason)
         canvasListenerList.forEach {
-            it.onRenderItemDataChanged(itemRenderer)
+            it.onRenderItemDataChanged(itemRenderer, reason)
         }
     }
 
@@ -1468,9 +1468,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
     }
 
     /**改变所有渲染item的数据*/
-    fun changedRenderItemData() {
+    fun changedRenderItemData(reason: Reason = Reason(flag = Reason.REASON_FLAG_STYLE)) {
         itemsRendererList.forEach {
-            it.renderItemDataChanged()
+            it.renderItemDataChanged(reason)
         }
     }
 

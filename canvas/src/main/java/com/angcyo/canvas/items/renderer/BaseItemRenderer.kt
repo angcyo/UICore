@@ -110,6 +110,24 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         //dsl
         bounds.block()
 
+        if (reason.flag == Reason.REASON_FLAG_BOUNDS) {
+            if (getBounds().isChanged(changeBeforeBounds)) {
+                //大小/位置有变化
+            } else {
+                //大小没有变化
+                return false
+            }
+        }
+
+        if (reason.flag == Reason.REASON_FLAG_TRANSLATE) {
+            if (getBounds().isTranslationChanged(changeBeforeBounds)) {
+                //位置有变化
+            } else {
+                //位置没有变化
+                return false
+            }
+        }
+
         //check
         if (reason.reason == Reason.REASON_USER && !canChangeBounds(getBounds())) {
             if (!isInEditMode) {
@@ -175,8 +193,8 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         canvasView.dispatchItemRenderUpdate(this)
     }
 
-    override fun renderItemDataChanged() {
-        canvasView.dispatchItemDataChanged(this)
+    override fun renderItemDataChanged(reason: Reason) {
+        canvasView.dispatchItemDataChanged(this, reason)
     }
 
     override fun updateLockScaleRatio(lock: Boolean) {

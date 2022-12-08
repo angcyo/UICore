@@ -29,12 +29,19 @@ fun Rect.set(rect: RectF) {
     set(rect.left.toInt(), rect.top.toInt(), rect.right.toInt(), rect.bottom.toInt())
 }
 
+/**2个矩形是否不一样*/
 fun RectF.isChanged(other: RectF): Boolean {
     return left != other.left || top != other.top || right != other.right || bottom != other.bottom
 }
 
+/**2个矩形的大小是否不一样*/
 fun RectF.isSizeChanged(other: RectF): Boolean {
     return width() != other.width() || height() != other.height()
+}
+
+/**2个矩形的位置是否不一样*/
+fun RectF.isTranslationChanged(other: RectF): Boolean {
+    return left != other.left || top != other.top
 }
 
 /**设置矩形的宽高

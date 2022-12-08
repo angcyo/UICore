@@ -70,7 +70,11 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         super.onChangeBoundsAfter(reason)
     }
 
-    override fun onRenderItemBoundsChanged(itemRenderer: IRenderer, reason: Reason, oldBounds: RectF) {
+    override fun onRenderItemBoundsChanged(
+        itemRenderer: IRenderer,
+        reason: Reason,
+        oldBounds: RectF
+    ) {
         if (selectItemList.contains(itemRenderer)) {
             if (reason.reason == Reason.REASON_USER) {
                 updateSelectBounds()
@@ -244,11 +248,9 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
             for (render in selectItemList) {
                 if (render is DataItemRenderer) {
                     val renderItem = render.rendererItem
-                    if (renderItem is DataItem && renderItem.needUpdateOfBoundsChanged(
-                            Reason(Reason.REASON_USER, false, Reason.REASON_FLAG_BOUNDS)
-                        )
-                    ) {
-                        renderItem.updateRenderItem(render)
+                    val reason = Reason(Reason.REASON_USER, false, Reason.REASON_FLAG_BOUNDS)
+                    if (renderItem is DataItem && renderItem.needUpdateOfBoundsChanged(reason)) {
+                        renderItem.updateRenderItem(render, reason)
                     }
                 }
             }

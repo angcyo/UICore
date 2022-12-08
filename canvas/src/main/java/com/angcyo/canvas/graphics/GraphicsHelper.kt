@@ -258,9 +258,9 @@ object GraphicsHelper {
      * */
     @CallPoint
     @AnyThread
-    fun updateRenderItem(renderer: DataItemRenderer, bean: CanvasProjectItemBean) {
+    fun updateRenderItem(renderer: DataItemRenderer, bean: CanvasProjectItemBean, reason: Reason) {
         doBack(true) {
-            renderer.renderItemDataChanged()
+            renderer.renderItemDataChanged(reason)
             val item = parseRenderItemFrom(bean, renderer.canvasView) ?: return@doBack
             updateRenderItem(renderer, item)
         }

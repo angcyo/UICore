@@ -4,6 +4,7 @@ import com.angcyo.canvas.Reason.Companion.REASON_CODE
 import com.angcyo.canvas.Reason.Companion.REASON_FLAG_BOUNDS
 import com.angcyo.canvas.Reason.Companion.REASON_FLAG_ROTATE
 import com.angcyo.canvas.Reason.Companion.REASON_FLAG_TRANSLATE
+import com.angcyo.canvas.Reason.Companion.REASON_INIT
 import com.angcyo.canvas.Reason.Companion.REASON_USER
 import com.angcyo.library.annotation.Implementation
 
@@ -14,6 +15,7 @@ import com.angcyo.library.annotation.Implementation
  */
 data class Reason(
     /**更新数据的原因
+     * [REASON_INIT]
      * [REASON_USER]
      * [REASON_CODE]
      * */
@@ -29,7 +31,10 @@ data class Reason(
 ) {
     companion object {
 
-        //reason
+        //---reason
+
+        /**初始化操作*/
+        const val REASON_INIT = 0
 
         /**用户主动操作*/
         const val REASON_USER = 1
@@ -41,16 +46,19 @@ data class Reason(
         @Implementation
         const val REASON_PREVIEW = 3
 
-        //flag
+        //---flag
 
         /**改变item的宽高*/
         const val REASON_FLAG_BOUNDS = 0x01
 
         /**改变item的x,y*/
-        const val REASON_FLAG_TRANSLATE = 0x02
+        const val REASON_FLAG_TRANSLATE = REASON_FLAG_BOUNDS shl 1
 
         /**改变item的旋转*/
-        const val REASON_FLAG_ROTATE = 0x04
+        const val REASON_FLAG_ROTATE = REASON_FLAG_TRANSLATE shl 1
+
+        /**改变item的样式, 比如笔的大小/样式/颜色等*/
+        const val REASON_FLAG_STYLE = REASON_FLAG_ROTATE shl 1
 
         //val
 

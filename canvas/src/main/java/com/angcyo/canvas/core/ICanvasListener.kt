@@ -69,7 +69,7 @@ interface ICanvasListener : ICanvasTouch {
     /**当真实的数据发生了改变后, 触发此方法.
      * 此时可能需要清空数据索引, 以便可以重新发送数据.
      * */
-    fun onRenderItemDataChanged(itemRenderer: IItemRenderer<*>) {}
+    fun onRenderItemDataChanged(itemRenderer: IItemRenderer<*>, reason: Reason) {}
 
     //</editor-fold desc="Item相关">
 

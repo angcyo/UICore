@@ -117,8 +117,10 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     /**当真实的数据发生了改变后, 触发此方法.
      * 此时可能需要清空数据索引, 以便可以重新发送数据.
      * 也可以触发数据保存提示
+     *
+     * [reason] 更新的原因
      * */
-    fun renderItemDataChanged() {}
+    fun renderItemDataChanged(reason: Reason) {}
 
     //</editor-fold desc="控制方法">
 

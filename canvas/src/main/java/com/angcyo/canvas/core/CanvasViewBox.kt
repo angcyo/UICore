@@ -348,9 +348,11 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
     /**更新坐标系原点*/
     fun updateCoordinateSystemOriginPoint(x: Float, y: Float) {
-        coordinateSystemOriginPoint.set(x, y)
-        canvasView.dispatchCoordinateSystemOriginChanged(coordinateSystemOriginPoint)
-        canvasView.refresh()
+        if (coordinateSystemOriginPoint.x != x || coordinateSystemOriginPoint.y != y) {
+            coordinateSystemOriginPoint.set(x, y)
+            canvasView.dispatchCoordinateSystemOriginChanged(coordinateSystemOriginPoint)
+            canvasView.refresh()
+        }
     }
 
     /**获取当前视图中心距离坐标系原点的坐标*/

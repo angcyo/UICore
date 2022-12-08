@@ -93,9 +93,12 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
 
     /**重新更新需要渲染的界面数据*/
     @AnyThread
-    fun updateRenderItem(renderer: DataItemRenderer) {
+    fun updateRenderItem(
+        renderer: DataItemRenderer,
+        reason: Reason = Reason(flag = Reason.REASON_FLAG_STYLE)
+    ) {
         //更新
-        GraphicsHelper.updateRenderItem(renderer, dataBean)
+        GraphicsHelper.updateRenderItem(renderer, dataBean, reason)
     }
 
     //---操作---
@@ -143,10 +146,10 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
         }
         renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
             dataBean.isVisible = old
-            updateRenderItem(renderer)
+            updateRenderItem(renderer, Reason())
         }) {
             dataBean.isVisible = new
-            updateRenderItem(renderer)
+            updateRenderItem(renderer, Reason())
         }
     }
 

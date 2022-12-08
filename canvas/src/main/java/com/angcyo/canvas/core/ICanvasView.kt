@@ -63,7 +63,7 @@ interface ICanvasView : IComponent {
     fun dispatchItemSortChanged(itemList: List<BaseItemRenderer<*>>) {}
 
     /**当有item的数据发生改变后触发, 此时可以触发数据保存提示*/
-    fun dispatchItemDataChanged(itemRenderer: IItemRenderer<*>) {}
+    fun dispatchItemDataChanged(itemRenderer: IItemRenderer<*>, reason: Reason) {}
 
     //</editor-fold desc="dispatch">
 

@@ -112,7 +112,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
                     if (renderItem is DataPathItem) {
                         if (renderItem.itemPaint.style == Paint.Style.STROKE) {
                             //描边的path, 需要放大边框线, 所以需要重新渲染数据
-                            renderItem.updateRenderItem(this@DataItemRenderer)
+                            renderItem.updateRenderItem(this@DataItemRenderer, Reason())
                         }
                     }
                 }
@@ -144,7 +144,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
                 if (oldWidth != 0f && oldHeight != 0f) {
                     //
                     if (renderItem.needUpdateOfBoundsChanged(reason)) {
-                        renderItem.updateRenderItem(this@DataItemRenderer)
+                        renderItem.updateRenderItem(this@DataItemRenderer, reason)
                         isUpdateItem = true
                     }
                 }
@@ -154,7 +154,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
         if (!isUpdateItem) {
             if (!oldBounds.isNoSize() && reason.flag > 0) {
                 //不管是平移, 旋转, 还是缩放, 发生改变之后, 都需要更新数据
-                renderItemDataChanged()
+                renderItemDataChanged(reason)
             }
         }
     }
@@ -166,14 +166,16 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
         }
     }
 
-    override fun renderItemDataChanged() {
-        val dataBean = getRendererRenderItem()?.dataBean
-        val index = dataBean?.index
-        dataBean?.index = null
-        if ((index ?: 0) > 0) {
-            L.i("数据改变,清空索引:${index}")
+    override fun renderItemDataChanged(reason: Reason) {
+        if (reason.flag > 0) {
+            val dataBean = getRendererRenderItem()?.dataBean
+            val index = dataBean?.index
+            dataBean?.index = null
+            if ((index ?: 0) > 0) {
+                L.i("数据改变,清空索引:${index}")
+            }
         }
-        super.renderItemDataChanged()
+        super.renderItemDataChanged(reason)
     }
 
     override fun setVisible(visible: Boolean, strategy: Strategy) {
