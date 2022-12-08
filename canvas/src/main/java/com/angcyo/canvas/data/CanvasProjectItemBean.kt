@@ -443,6 +443,8 @@ data class CanvasProjectItemBean(
         if (offset) {
             newBean.left += GraphicsHelper.POSITION_STEP
             newBean.top += GraphicsHelper.POSITION_STEP
+
+            newBean.index = null//清空索引
         }
         return newBean
     }
