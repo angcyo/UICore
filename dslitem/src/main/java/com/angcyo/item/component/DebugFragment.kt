@@ -146,7 +146,12 @@ class DebugFragment : BaseDslFragment() {
                             itemDes = debugAction.des
                             initItem()
 
-                            itemSwitchChecked = debugAction.key.hawkGetBoolean() == true
+                            val defValue = debugAction.defValue
+                            itemSwitchChecked = if (defValue is Boolean) {
+                                debugAction.key.hawkGetBoolean(defValue)
+                            } else {
+                                debugAction.key.hawkGetBoolean()
+                            }
                             itemSwitchChangedAction = {
                                 debugAction.key.hawkPut(it)
 
