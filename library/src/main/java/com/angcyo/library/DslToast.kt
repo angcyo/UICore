@@ -11,6 +11,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.AnyThread
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StyleRes
@@ -35,6 +36,7 @@ object DslToast {
     var LENGTH_LONG_TIME = 4000L
 
     /**android o, api 26 , 通知关闭之后, toast显示不出来 */
+    @AnyThread
     fun show(context: Context = app(), action: ToastConfig.() -> Unit) {
         if (!isMain()) {
             //回到主线程调用
@@ -405,11 +407,13 @@ fun ToastConfig.windowExitAnimation(context: Context = app()): Animation? {
 }
 
 /**全量配置*/
+@AnyThread
 fun toast(action: ToastConfig.() -> Unit) {
     DslToast.show(action = action)
 }
 
 /**文本 ico 布局 简化配置*/
+@AnyThread
 fun toast(
     text: CharSequence?,
     context: Context = app(),
@@ -427,6 +431,7 @@ fun toast(
 }
 
 /**居中正方形提示toast*/
+@AnyThread
 fun tip(
     text: CharSequence?,
     context: Context = app(),
@@ -447,6 +452,7 @@ fun tip(
     }
 }
 
+@AnyThread
 fun tip2(
     text: CharSequence?,
     @DrawableRes icon: Int = R.drawable.lib_ic_succeed,
@@ -458,6 +464,7 @@ fun tip2(
 }
 
 /**文本 ico QQ布局 简化配置*/
+@AnyThread
 fun toastQQ(
     text: CharSequence?,
     context: Context = app(),
@@ -473,6 +480,7 @@ fun toastQQ(
 }
 
 /**文本 ico WX布局 简化配置*/
+@AnyThread
 fun toastWX(
     text: CharSequence?,
     context: Context = app(),
