@@ -152,7 +152,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
         }
 
         if (!isUpdateItem) {
-            if (reason.flag > 0) {
+            if (!oldBounds.isNoSize() && reason.flag > 0) {
                 //不管是平移, 旋转, 还是缩放, 发生改变之后, 都需要更新数据
                 renderItemDataChanged()
             }
