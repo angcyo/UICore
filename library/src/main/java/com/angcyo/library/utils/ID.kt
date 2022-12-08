@@ -135,6 +135,8 @@ object ID {
             if (!file.exists()) {
                 file.createNewFile()
             }
+        } catch (e: IOException) {
+            //no op
         } catch (e: Exception) {
             e.printStackTrace()
         }
