@@ -12,11 +12,11 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.R
 import com.angcyo.item.style.itemText
 import com.angcyo.library.L
-import com.angcyo.library.ex.have
-import com.angcyo.library.ex.remove
+import com.angcyo.library.ex.*
 import com.angcyo.library.utils.getFloatNum
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.appendDslItem
+import com.angcyo.widget.span.span
 
 /**
  * 数字键盘弹窗window, 支持小数/支持+-自增
@@ -230,9 +230,22 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
 
         if (firstOverrideInput) {
             newValueBuilder.clear()
+            _tipClearInput()
         } else if (!enableShakeInput) {
             newValueBuilder.clear()
             newValueBuilder.append(_firstValue)
+        }
+    }
+
+    /**提示当前的输入会清空已存在的内容*/
+    fun _tipClearInput() {
+        keyboardBindTextView?.apply {
+            //采用背景颜色提醒
+            text = span {
+                append(text) {
+                    backgroundColor = _color(R.color.colorAccent).alphaRatio(0.5f)
+                }
+            }
         }
     }
 
@@ -310,6 +323,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                     if (enableShakeInput) {
                         //清空输入
                         newValueBuilder.clear()
+                        _tipClearInput()
                     }
                 }
                 if (bindPendingDelay > 0) {
