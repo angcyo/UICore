@@ -138,6 +138,9 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
     /**切换时是否需要动画的支持*/
     var indicatorAnim = true
 
+    /**在获取锚点view的宽高时, 是否需要忽略对应的padding属性*/
+    var ignoreChildPadding: Boolean = true
+
     init {
         callback = tabLayout
     }
@@ -203,6 +206,11 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
                 indicatorYOffset
             )
         }
+
+        ignoreChildPadding = typedArray.getBoolean(
+            R.styleable.DslTabLayout_tab_indicator_ignore_child_padding,
+            !indicatorStyle.have(INDICATOR_STYLE_CENTER)
+        )
 
         indicatorFlowStep =
             typedArray.getInt(R.styleable.DslTabLayout_tab_indicator_flow_step, indicatorFlowStep)
@@ -353,6 +361,24 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
         }
     }
 
+    open fun getChildTargetPaddingLeft(childView: View): Int =
+        if (ignoreChildPadding) childView.paddingLeft else 0
+
+    open fun getChildTargetPaddingRight(childView: View): Int =
+        if (ignoreChildPadding) childView.paddingRight else 0
+
+    open fun getChildTargetPaddingTop(childView: View): Int =
+        if (ignoreChildPadding) childView.paddingTop else 0
+
+    open fun getChildTargetPaddingBottom(childView: View): Int =
+        if (ignoreChildPadding) childView.paddingBottom else 0
+
+    open fun getChildTargetWidth(childView: View): Int =
+        if (ignoreChildPadding) childView.viewDrawWidth else childView.measuredWidth
+
+    open fun getChildTargetHeight(childView: View): Int =
+        if (ignoreChildPadding) childView.viewDrawHeight else childView.measuredHeight
+
     /**
      * [childview]对应的中心x坐标
      * */
@@ -365,13 +391,19 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
                 when (gravity) {
                     INDICATOR_GRAVITY_START -> childView.left
                     INDICATOR_GRAVITY_END -> childView.right
-                    else -> childView.left + childView.paddingLeft + childView.viewDrawWidth / 2
+                    else -> childView.left + getChildTargetPaddingLeft(childView) + getChildTargetWidth(
+                        childView
+                    ) / 2
                 }
             } else {
                 when (gravity) {
                     INDICATOR_GRAVITY_START -> childView.left + contentChildView.left
                     INDICATOR_GRAVITY_END -> childView.left + contentChildView.right
-                    else -> childView.left + contentChildView.left + contentChildView.paddingLeft + contentChildView.viewDrawWidth / 2
+                    else -> childView.left + contentChildView.left + getChildTargetPaddingLeft(
+                        contentChildView
+                    ) + getChildTargetWidth(
+                        contentChildView
+                    ) / 2
                 }
             }
         }
@@ -388,13 +420,19 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
                 when (gravity) {
                     INDICATOR_GRAVITY_START -> childView.top
                     INDICATOR_GRAVITY_END -> childView.bottom
-                    else -> childView.top + childView.paddingTop + childView.viewDrawHeight / 2
+                    else -> childView.top + getChildTargetPaddingTop(childView) + getChildTargetHeight(
+                        childView
+                    ) / 2
                 }
             } else {
                 when (gravity) {
                     INDICATOR_GRAVITY_START -> childView.top + contentChildView.top
                     INDICATOR_GRAVITY_END -> childView.top + childView.bottom
-                    else -> childView.top + contentChildView.top + contentChildView.paddingTop + contentChildView.viewDrawHeight / 2
+                    else -> childView.top + contentChildView.top + getChildTargetPaddingTop(
+                        contentChildView
+                    ) + getChildTargetHeight(
+                        contentChildView
+                    ) / 2
                 }
             }
         }
@@ -408,8 +446,7 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
         when (indicatorWidth) {
             ViewGroup.LayoutParams.WRAP_CONTENT -> {
                 tabLayout.dslSelector.visibleViewList.getOrNull(index)?.also { childView ->
-                    result =
-                        indicatorContentView(childView)?.viewDrawWidth ?: childView.viewDrawWidth
+                    result = getChildTargetWidth(indicatorContentView(childView) ?: childView)
                 }
             }
             ViewGroup.LayoutParams.MATCH_PARENT -> {
@@ -428,8 +465,7 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
         when (indicatorHeight) {
             ViewGroup.LayoutParams.WRAP_CONTENT -> {
                 tabLayout.dslSelector.visibleViewList.getOrNull(index)?.also { childView ->
-                    result =
-                        indicatorContentView(childView)?.viewDrawHeight ?: childView.viewDrawHeight
+                    result = getChildTargetHeight(indicatorContentView(childView) ?: childView)
                 }
             }
             ViewGroup.LayoutParams.MATCH_PARENT -> {
