@@ -527,14 +527,17 @@ class DslNotify {
      * [VISIBILITY_PUBLIC]在所有界面上都显示内容,
      * [VISIBILITY_PRIVATE]隐藏隐私信息,
      * [VISIBILITY_SECRET]锁屏不展示
-     * https://developer.android.google.cn/training/notify-user/build-notification.html#lockscreenNotification*/
+     * https://developer.android.google.cn/training/notify-user/build-notification.html#lockscreenNotification
+     * */
     var notifyVisibility = VISIBILITY_PUBLIC
 
     /**需要开启[channelShowBadge]后, 长按应用桌面图标, 弹出的菜单会提示消息未读数*/
     var notifyNumber: Int = 1
 
-    /**进度
-     * https://developer.android.google.cn/training/notify-user/build-notification.html#progressbar*/
+    /**进度, 大于等于0时, 激活进度
+     * https://developer.android.google.cn/training/notify-user/build-notification.html#progressbar
+     * [notifyProgressIndeterminate]
+     * */
     var notifyProgress = undefined_int
 
     // When done, update the notification one more time to remove the progress bar
@@ -741,6 +744,12 @@ fun dslNotify(
     }
 }
 
+/**取消通知*/
+fun Int.cancelNotify() = DslNotify.cancelNotify(this)
+
+/**取消通知集合*/
+fun Collection<Int>.cancelNotifyList() = DslNotify.cancelNotifyList(this)
+
 //</editor-fold desc="快速构建">
 
 //<editor-fold desc="通知扩展">
@@ -782,7 +791,9 @@ fun DslNotify.clickActivity(
     }
 }
 
-/**应用程序的通知是否打开了*/
+//---
+
+/**应用程序的通知是否打开了, 通知的总开关*/
 fun isNotificationsEnabled() = NotificationManagerCompat.from(app()).areNotificationsEnabled()
 
 /**通知通道是否激活*/
@@ -794,12 +805,20 @@ fun NotificationChannel?.isEnable(): Boolean {
     }
 }
 
+/**指定的通知通道是否激活*/
 fun String.isChannelEnable() = DslNotify.getNotificationChannel(this).isEnable()
 
 /**打开通知通道设置*/
 fun String.openNotificationChannelSetting(context: Context = app()) {
     DslNotify.openNotificationChannelSetting(context, this)
 }
+
+/**打开通知总开关设置界面*/
+fun openNotificationSetting() {
+    DslIntent.toNotifySetting()
+}
+
+//---
 
 /**
  * [PendingIntent.FLAG_MUTABLE] 可变

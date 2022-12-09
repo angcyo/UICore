@@ -99,31 +99,31 @@ class DslIntent {
             }
         }
 
-        /**打开通知设置界面*/
+        /**打开通知设置界面
+         * https://zhuanlan.zhihu.com/p/407705157*/
         fun toNotifySetting(context: Context = app()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val intent = Intent()
-                intent.action =
-                    "android.settings.APP_NOTIFICATION_SETTINGS"//Settings.ACTION_APP_NOTIFICATION_SETTINGS
-                //intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                intent.data = Uri.fromParts("package", context.packageName, null)
-                intent.putExtra("android.provider.extra.APP_PACKAGE", context.packageName)
-                intent.putExtra("android.provider.extra.CHANNEL_ID", context.applicationInfo.uid)
-                intent.putExtra("app_package", context.packageName)
-                intent.putExtra("app_uid", context.applicationInfo.uid)
-                intent.baseConfig(context)
-                context.startActivity(intent)
-            } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-                val intent = Intent()
-                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                intent.addCategory(Intent.CATEGORY_DEFAULT)
-                intent.data = Uri.parse("package:" + context.packageName)
-                intent.baseConfig(context)
-                context.startActivity(intent)
-            } else {
-                val intent = Intent(Settings.ACTION_SETTINGS)
-                intent.baseConfig(context)
-                context.startActivity(intent)
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val intent = Intent()
+                    intent.action =
+                        Settings.ACTION_APP_NOTIFICATION_SETTINGS//"android.settings.APP_NOTIFICATION_SETTINGS"
+                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                    //intent.data = Uri.fromParts("package", context.packageName, null)
+                    //intent.putExtra("android.provider.extra.APP_PACKAGE", context.packageName)
+                    //intent.putExtra("android.provider.extra.CHANNEL_ID", context.applicationInfo.uid)
+                    //intent.putExtra("app_package", context.packageName)
+                    //intent.putExtra("app_uid", context.applicationInfo.uid)
+                    intent.baseConfig(context)
+                    context.startActivity(intent)
+                } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+                    toAppDetail(context)
+                } else {
+                    val intent = Intent(Settings.ACTION_SETTINGS)
+                    intent.baseConfig(context)
+                    context.startActivity(intent)
+                }
+            } catch (e: Exception) {
+                toAppDetail(context)
             }
         }
 
