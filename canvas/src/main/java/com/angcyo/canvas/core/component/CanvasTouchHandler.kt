@@ -212,11 +212,21 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
             ) {
                 //开始平移
                 _touchType = TOUCH_TYPE_TRANSLATE
-                if (VectorHelper.isHorizontalIntent(_movePointList[0], _movePointList[1])) {
+                //不能用两个点的方向去判断平移意图, 而应该用各个方向的最大移动距离来判断
+                /*if (VectorHelper.isHorizontalIntent(_movePointList[0], _movePointList[1])) {
                     canvasViewBox.translateBy(dx, 0f, false)
                 } else {
                     canvasViewBox.translateBy(0f, dy, false)
+                }*/
+
+                if (dx.abs() > dy.abs()) {
+                    //水平平移意图
+                    canvasViewBox.translateBy(dx, 0f, false)
+                } else {
+                    //垂直平移意图
+                    canvasViewBox.translateBy(0f, dy, false)
                 }
+
                 handle = true
             }
             /*}*/
