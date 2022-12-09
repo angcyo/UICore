@@ -45,7 +45,8 @@ object LibHawkKeys {
      * */
     var maxBitmapCanvasSize: Long by HawkPropertyValue<Any, Long>(60 * 1024 * 1024)
 
-    /**是否激活圆弧输出矢量数据*/
+    /**是否激活圆弧输出矢量数据
+     * [com.angcyo.vector.VectorWriteHandler._valueChangedType]*/
     var enableVectorArc: Boolean by HawkPropertyValue<Any, Boolean>(false)
 
     /**[com.angcyo.canvas.CanvasDelegate]允许添加的最大渲染元素数据*/
