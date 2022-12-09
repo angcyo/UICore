@@ -63,3 +63,17 @@ fun String.beautifyHex(fm: String = ":$0") = replace("(?<=[0-9A-F]{2})[0-9A-F]{2
 
 /**获取字节数组的md5值*/
 fun ByteArray.md5() = encrypt()?.toHexString()
+
+//---
+
+/**取高8位的值,高位*/
+fun Int.high8Bit(): Int = this and 0xff00 shr 8
+
+/**取低8位的值,低位*/
+fun Int.low8Bit(): Int = this and 0x00ff
+
+/**高4位*/
+fun Byte.high4Bit(): Byte = ((this.toInt() and 0xf0) shr 4).toByte()
+
+/**低4位*/
+fun Byte.low4Bit(): Byte = (this.toInt() and 0x0f).toByte()

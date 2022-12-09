@@ -8,4 +8,6 @@
 
     <string name="dialog_color_picker">请选择颜色...</string>
     <string name="dialog_width_picker">请选择粗细...</string>
+
+    <string name="not_prompt_label">Do not prompt</string>
 </resources>

@@ -61,6 +61,20 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/lib_not_prompt_box"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/lib_hdpi"
+        android:paddingVertical="@dimen/lib_hdpi"
+        android:paddingRight="@dimen/lib_hdpi"
+        android:text="@string/not_prompt_label"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/message_wrap_layout"
+        tools:visibility="visible" />
+
     <LinearLayout
         android:id="@+id/dialog_control_layout"
         android:layout_width="match_parent"
@@ -68,7 +82,7 @@
         android:divider="@color/dialog_line"
         android:showDividers="middle"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/message_wrap_layout">
+        app:layout_constraintTop_toBottomOf="@id/lib_not_prompt_box">
 
         <com.angcyo.widget.DslButton
             android:id="@+id/dialog_neutral_button"
@@ -113,6 +127,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/lib_line_px"
         android:background="@color/dialog_line"
-        app:layout_constraintTop_toBottomOf="@id/message_wrap_layout" />
+        app:layout_constraintTop_toBottomOf="@id/lib_not_prompt_box" />
 
 </com.angcyo.widget.layout.RConstraintLayout>

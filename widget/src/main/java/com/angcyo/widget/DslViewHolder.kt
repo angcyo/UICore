@@ -562,7 +562,7 @@ open class DslViewHolder(
         @IdRes resId: Int,
         check: Boolean = true,
         notify: Boolean = true,
-        onCheckedChanged: (buttonView: CompoundButton, isChecked: Boolean) -> Unit
+        onCheckedChanged: (checkView: CompoundButton, isChecked: Boolean) -> Unit
     ): CompoundButton? {
         return v<CompoundButton>(resId)?.apply {
             setOnCheckedChangeListener(onCheckedChanged)

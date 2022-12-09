@@ -21,6 +21,12 @@ open class MessageDialogConfig(context: Context? = null) : BaseDialogConfig(cont
     /**消息大图显示*/
     var dialogMessageLargeDrawable: Drawable? = null
 
+    /**如果设置了此属性, 则会显示不提示*/
+    var dialogNotPromptKey: String? = null
+
+    /**是否不再提示*/
+    var _dialogIsNotPrompt: Boolean = false
+
     init {
         dialogLayoutId = R.layout.lib_dialog_message_layout
         dialogBgDrawable = ColorDrawable(Color.TRANSPARENT)
@@ -37,6 +43,12 @@ open class MessageDialogConfig(context: Context? = null) : BaseDialogConfig(cont
         dialogViewHolder.visible(R.id.dialog_large_image_view, dialogMessageLargeDrawable != null)
         dialogViewHolder.img(R.id.dialog_large_image_view)
             ?.setImageDrawable(dialogMessageLargeDrawable)
+
+        //不再提示
+        dialogViewHolder.visible(R.id.lib_not_prompt_box, !dialogNotPromptKey.isNullOrBlank())
+        dialogViewHolder.check(R.id.lib_not_prompt_box, false) { checkView, isChecked ->
+            _dialogIsNotPrompt = isChecked
+        }
 
         //3个按钮都没有文本, 隐藏底部控制栏
         if (positiveButtonText == null &&
