@@ -922,7 +922,7 @@ open class DslTabLayout(
 
         if (heightMode == MeasureSpec.AT_MOST) {
             //wrap_content 情况下, 重新测量所有子view
-            childHeightSpec = exactlyMeasure(childMaxHeight)
+            childHeightSpec = exactlyMeasure(max(childMaxHeight, suggestedMinimumHeight))
             visibleChildList.forEach { childView ->
                 measureChild(childView)
             }
