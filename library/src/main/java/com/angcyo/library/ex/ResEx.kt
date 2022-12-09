@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.LocaleList
+import android.util.AttributeSet
 import android.view.View
 import android.view.Window
 import androidx.annotation.*
@@ -190,6 +191,8 @@ fun localResources(context: Context, locale: Locale?): Resources {
     } else Resources(context.assets, context.resources.displayMetrics, config)
 }
 
+//---
+
 /**是否是暗黑模式*/
 fun isDarkMode(context: Context = app()): Boolean {
     return when (AppCompatDelegate.getDefaultNightMode()) {
@@ -209,3 +212,25 @@ fun isDarkModeOnSystem(context: Context = app()): Boolean {
         else -> false
     }
 }
+
+//---
+
+/**获取xml中, 定义的系统属性值
+ * ```
+ * android:layout_height="30dp"
+ * android:layout_gravity="center"
+ * ```
+ *
+ * [attribute] layout_gravity
+ * [defValue] 默认值
+ * */
+fun AttributeSet.getAndroidAttrInt(attribute: String, defValue: Int) =
+    getAttributeIntValue("http://schemas.android.com/apk/res/android", attribute, defValue)
+
+/**
+ * ```
+ * app:tab_badge_gravity="center"
+ * ```
+ * */
+fun AttributeSet.getAppAttrInt(attribute: String, defValue: Int) =
+    getAttributeIntValue("http://schemas.android.com/apk/res-auto", attribute, defValue)
