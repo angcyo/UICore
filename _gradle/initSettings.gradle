@@ -6,6 +6,7 @@ if (gradle.gradleVersion.charAt(0) >= '7') {
             gradlePluginPortal()
             google()
             mavenCentral()
+            maven { url 'https://jcenter.bintray.com' }
         }
     }
 
@@ -14,6 +15,7 @@ if (gradle.gradleVersion.charAt(0) >= '7') {
         repositories {
             google()
             //jcenter()
+            maven { url 'https://jcenter.bintray.com' }
 
             //https://mvnrepository.com/
             //https://search.maven.org
@@ -21,9 +23,9 @@ if (gradle.gradleVersion.charAt(0) >= '7') {
 
             //https://maven.aliyun.com/mvn/
             //central仓和jcenter仓的聚合仓
-            maven { url 'https://maven.aliyun.com/repository/public' }
-            maven { url 'https://maven.aliyun.com/repository/google' }
-            maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+            //maven { url 'https://maven.aliyun.com/repository/public' }
+            //maven { url 'https://maven.aliyun.com/repository/google' }
+            //maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
 
             maven { url 'https://jitpack.io' }
             maven { url "https://gitcode.net/angcyo/maven/-/raw/master" }
