@@ -12,6 +12,7 @@ import com.angcyo.core.component.fileViewDialog
 import com.angcyo.core.component.httpConfigDialog
 import com.angcyo.core.dslitem.DslLastDeviceInfoItem
 import com.angcyo.core.fragment.BaseDslFragment
+import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.bindItem
 import com.angcyo.dsladapter.drawBottom
@@ -32,7 +33,7 @@ import com.angcyo.widget.base.resetChild
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/07/14
  */
-class DebugFragment : BaseDslFragment() {
+open class DebugFragment : BaseDslFragment() {
 
     companion object {
 
@@ -93,6 +94,11 @@ class DebugFragment : BaseDslFragment() {
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
 
+        renderActions()
+    }
+
+    /**渲染界面*/
+    open fun renderActions() {
         renderDslAdapter {
             bindItem(R.layout.item_debug_flow_layout) { itemHolder, itemPosition, adapterItem, payloads ->
                 itemHolder.group(R.id.lib_flow_layout)
@@ -137,67 +143,7 @@ class DebugFragment : BaseDslFragment() {
 
             //item
             DEBUG_ACTION_LIST.forEach { debugAction ->
-                if (!debugAction.key.isNullOrEmpty()) {
-                    //有key
-                    if (debugAction.type == Boolean::class.java) {
-                        //开关控制
-                        DslPropertySwitchItem()() {
-                            itemLabel = debugAction.label
-                            itemDes = debugAction.des
-                            initItem()
-
-                            val defValue = debugAction.defValue
-                            itemSwitchChecked = if (defValue is Boolean) {
-                                debugAction.key.hawkGetBoolean(defValue)
-                            } else {
-                                debugAction.key.hawkGetBoolean()
-                            }
-                            itemSwitchChangedAction = {
-                                debugAction.key.hawkPut(it)
-
-                                debugAction.action?.invoke(this@DebugFragment, it)
-                            }
-                        }
-                    } else if (DslPropertyNumberItem.isNumber(debugAction.type)) {
-                        //数字输入
-                        DslPropertyNumberItem()() {
-                            itemLabel = debugAction.label
-                            itemDes = debugAction.des
-                            initItem()
-
-                            itemPropertyNumber = when {
-                                DslPropertyNumberItem.isInt(debugAction.type) -> debugAction.key.hawkGet(
-                                    (debugAction.defValue as? Int) ?: 0
-                                )
-                                DslPropertyNumberItem.isLong(debugAction.type) -> debugAction.key.hawkGet(
-                                    (debugAction.defValue as? Long) ?: 0L
-                                )
-                                DslPropertyNumberItem.isFloat(debugAction.type) -> debugAction.key.hawkGet(
-                                    (debugAction.defValue as? Float) ?: 0
-                                )
-                                else -> debugAction.defValue as? Number
-                            }
-
-                            observeItemChange {
-                                debugAction.key.hawkPut(itemPropertyNumber)
-                                debugAction.action?.invoke(this@DebugFragment, itemPropertyNumber)
-                            }
-                        }
-                    } else {
-                        //文本输入
-                        DslPropertyStringItem()() {
-                            itemLabel = debugAction.label
-                            itemDes = debugAction.des
-                            initItem()
-
-                            itemEditText = debugAction.key.hawkGet("${debugAction.defValue ?: ""}")
-                            observeItemChange {
-                                debugAction.key.hawkPut(itemEditText)
-                                debugAction.action?.invoke(this@DebugFragment, itemEditText)
-                            }
-                        }
-                    }
-                }
+                renderDebugAction(debugAction)
             }
 
             //last
@@ -211,6 +157,71 @@ class DebugFragment : BaseDslFragment() {
                             targetPath =
                                 FileUtils.appRootExternalFolder().absolutePath ?: storageDirectory
                         })
+                    }
+                }
+            }
+        }
+    }
+
+    /**渲染一个[DebugAction]*/
+    fun DslAdapter.renderDebugAction(debugAction: DebugAction) {
+        if (!debugAction.key.isNullOrEmpty()) {
+            //有key
+            if (debugAction.type == Boolean::class.java) {
+                //开关控制
+                DslPropertySwitchItem()() {
+                    itemLabel = debugAction.label
+                    itemDes = debugAction.des
+                    initItem()
+
+                    val defValue = debugAction.defValue
+                    itemSwitchChecked = if (defValue is Boolean) {
+                        debugAction.key.hawkGetBoolean(defValue)
+                    } else {
+                        debugAction.key.hawkGetBoolean()
+                    }
+                    itemSwitchChangedAction = {
+                        debugAction.key.hawkPut(it)
+
+                        debugAction.action?.invoke(this@DebugFragment, it)
+                    }
+                }
+            } else if (DslPropertyNumberItem.isNumber(debugAction.type)) {
+                //数字输入
+                DslPropertyNumberItem()() {
+                    itemLabel = debugAction.label
+                    itemDes = debugAction.des
+                    initItem()
+
+                    itemPropertyNumber = when {
+                        DslPropertyNumberItem.isInt(debugAction.type) -> debugAction.key.hawkGet(
+                            (debugAction.defValue as? Int) ?: 0
+                        )
+                        DslPropertyNumberItem.isLong(debugAction.type) -> debugAction.key.hawkGet(
+                            (debugAction.defValue as? Long) ?: 0L
+                        )
+                        DslPropertyNumberItem.isFloat(debugAction.type) -> debugAction.key.hawkGet(
+                            (debugAction.defValue as? Float) ?: 0
+                        )
+                        else -> debugAction.defValue as? Number
+                    }
+
+                    observeItemChange {
+                        debugAction.key.hawkPut(itemPropertyNumber)
+                        debugAction.action?.invoke(this@DebugFragment, itemPropertyNumber)
+                    }
+                }
+            } else {
+                //文本输入
+                DslPropertyStringItem()() {
+                    itemLabel = debugAction.label
+                    itemDes = debugAction.des
+                    initItem()
+
+                    itemEditText = debugAction.key.hawkGet("${debugAction.defValue ?: ""}")
+                    observeItemChange {
+                        debugAction.key.hawkPut(itemEditText)
+                        debugAction.action?.invoke(this@DebugFragment, itemEditText)
                     }
                 }
             }
