@@ -20,7 +20,7 @@ object LibHawkKeys {
     /**当颜色的透明值小于此值时, 视为透明色*/
     var alphaThreshold: Int by HawkPropertyValue<Any, Int>(8)
 
-    /**灰度阈值*/
+    /**灰度阈值, 大于这个值视为白色*/
     var grayThreshold: Int by HawkPropertyValue<Any, Int>(128)
 
     /**为滑台重复图片间距。单位mm,保留一位小数。*/
