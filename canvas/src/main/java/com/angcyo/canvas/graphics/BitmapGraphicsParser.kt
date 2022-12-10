@@ -2,6 +2,8 @@ package com.angcyo.canvas.graphics
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.Path
+import androidx.core.graphics.scale
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toMm
@@ -109,8 +111,7 @@ class BitmapGraphicsParser : IGraphicsParser {
             return null
         } else {
             val gcodeDrawable = GCodeHelper.parseGCode(gcode) ?: return null
-            gcodeDrawable.gCodePath =
-                gcodeDrawable.gCodePath.flip(bean._flipScaleX, bean._flipScaleY)
+            gcodeDrawable.gCodePath = gcodeDrawable.gCodePath.flipEngravePath(bean)
 
             val item = DataBitmapItem(bean)
             item.originBitmap = originBitmap
@@ -142,7 +143,11 @@ class BitmapGraphicsParser : IGraphicsParser {
             //抖动数据需要实时更新
             if (originBitmap != null) {
                 //com.angcyo.canvas.laser.pecker.CanvasBitmapHandler.handleDithering
-                bean.src = handleDithering(originBitmap, bean)?.toBase64Data()
+                val scaleBitmap = originBitmap.scale(
+                    bean._widthScalePixel.floor().toInt(),
+                    bean._heightScalePixel.floor().toInt()
+                )//抖动数据, 实时缩放图片计算
+                bean.src = handleDithering(scaleBitmap, bean)?.toBase64Data()
             }
         } else if (bean.src.isNullOrBlank() && originBitmap != null) {
             //只有原图, 没有算法处理后的图片, 则需要主动应用算法处理图片
@@ -168,8 +173,7 @@ class BitmapGraphicsParser : IGraphicsParser {
 
         val item = DataBitmapItem(bean)
         item.originBitmap = originBitmap
-        item.modifyBitmap =
-            bean.src?.toBitmapOfBase64()?.flip(bean._flipScaleX, bean._flipScaleY)
+        item.modifyBitmap = bean.src?.toBitmapOfBase64()?.flipEngraveBitmap(bean)
         item.gCodeDrawable = null
 
         //扭曲后, 其他算法操作应该在扭曲上的图片操作
@@ -179,7 +183,7 @@ class BitmapGraphicsParser : IGraphicsParser {
                 bean.minDiameter,
                 bean.maxDiameter,
                 bean.meshShape ?: "CONE"
-            )?.flip(bean._flipScaleX, bean._flipScaleY)
+            )?.flipEngraveBitmap(bean)
         }
 
         val bitmap =
@@ -193,5 +197,13 @@ class BitmapGraphicsParser : IGraphicsParser {
         }
         return item
     }
-
 }
+
+/**翻转图片*/
+fun Bitmap.flipEngraveBitmap(bean: CanvasProjectItemBean) = flip(bean._flipScaleX, bean._flipScaleY)
+
+/**翻转Path*/
+fun Path.flipEngravePath(bean: CanvasProjectItemBean) = flip(bean._flipScaleX, bean._flipScaleY)
+
+fun List<Path>.flipEngravePath(bean: CanvasProjectItemBean) =
+    flip(bean._flipScaleX, bean._flipScaleY)

@@ -2,7 +2,6 @@ package com.angcyo.canvas.items.data
 
 import android.graphics.*
 import android.view.MotionEvent
-import androidx.core.graphics.scale
 import androidx.core.graphics.withMatrix
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
@@ -13,7 +12,6 @@ import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.SmartAssistant
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
-import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.L
 import com.angcyo.library.component.ScalePictureDrawable
@@ -192,26 +190,9 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
      * */
     override fun getEngraveBitmap(renderParams: RenderParams): Bitmap? {
         val item = getRendererRenderItem()
-        val result = if (item is DataBitmapItem) {
-            if (item.dataBean.mtype == CanvasConstant.DATA_TYPE_BITMAP &&
-                item.dataBean.imageFilter == CanvasConstant.DATA_MODE_DITHERING
-            ) {
-                //如果是抖动数据, 则返回的依旧是原始图片
-                item.originBitmap
-            } else {
-                //其他
-                item.modifyBitmap ?: item.originBitmap
-            }
-        } else {
-            null
-        }
-        if (result != null) {
-            //这里需要处理缩放和旋转
-            val bounds = getBounds()
-            val width = bounds.width().toInt()
-            val height = bounds.height().toInt()
-            val scaleBitmap = result.scale(width, height)
-            return scaleBitmap.rotate(rotate)
+        val bitmap = item?._getEngraveBitmap()
+        if (bitmap != null) {
+            return bitmap
         }
         return super.getEngraveBitmap(renderParams)
     }

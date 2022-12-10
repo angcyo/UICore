@@ -16,6 +16,7 @@ import com.angcyo.canvas.data.toPaintStyleInt
 import com.angcyo.canvas.data.toTypeNameString
 import com.angcyo.canvas.graphics.GraphicsHelper
 import com.angcyo.canvas.graphics.IEngraveProvider
+import com.angcyo.canvas.graphics.flipEngraveBitmap
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
@@ -188,21 +189,18 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
 
     override fun getEngraveDataItem(): DataItem? = this
 
-    /**
-     * [com.angcyo.canvas.items.data.DataItem.getEngraveBitmap]
-     * [com.angcyo.canvas.items.data.DataItemRenderer.getEngraveBitmap]
-     * */
-    override fun getEngraveBitmap(renderParams: RenderParams): Bitmap? {
+    /**[getEngraveBitmap]*/
+    fun _getEngraveBitmap(): Bitmap? {
         val item = this
         val bitmap = if (item is DataBitmapItem) {
             if (item.dataBean.mtype == CanvasConstant.DATA_TYPE_BITMAP &&
                 item.dataBean.imageFilter == CanvasConstant.DATA_MODE_DITHERING
             ) {
                 //如果是抖动数据, 则返回的依旧是原始图片
-                item.originBitmap
+                item.originBitmap?.flipEngraveBitmap(item.dataBean)
             } else {
                 //其他
-                item.modifyBitmap ?: item.originBitmap
+                item.modifyBitmap ?: item.originBitmap?.flipEngraveBitmap(item.dataBean)
             }
         } else {
             null
@@ -218,6 +216,19 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
             val scaleBitmap = bitmap.scale(width, height)
             return scaleBitmap.rotate(rotate)
         }
+        return null
+    }
+
+    /**
+     * [com.angcyo.canvas.items.data.DataItem.getEngraveBitmap]
+     * [com.angcyo.canvas.items.data.DataItemRenderer.getEngraveBitmap]
+     * */
+    override fun getEngraveBitmap(renderParams: RenderParams): Bitmap? {
+        val bitmap = _getEngraveBitmap()
+        if (bitmap != null) {
+            return bitmap
+        }
+        val rotate = _rotate
         getDrawable(renderParams)?.let { drawable ->
             val renderBounds = getEngraveBounds()
             val renderWidth = renderBounds.width()

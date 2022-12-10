@@ -348,6 +348,7 @@ data class CanvasProjectItemBean(
     //endregion ---私有属性---
 ) {
 
+    /**原始的宽高, 毫米*/
     @MM
     val _width: Float
         get() = width ?: 0f
@@ -355,6 +356,15 @@ data class CanvasProjectItemBean(
     @MM
     val _height: Float
         get() = height ?: 0f
+
+    /**缩放后的宽高, 像素*/
+    @Pixel
+    val _widthScalePixel: Float
+        get() = _width * _scaleX
+
+    @Pixel
+    val _heightScalePixel: Float
+        get() = _height * _scaleY
 
     //---
 

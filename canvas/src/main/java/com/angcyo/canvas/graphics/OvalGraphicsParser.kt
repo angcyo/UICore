@@ -9,7 +9,6 @@ import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataShapeItem
 import com.angcyo.canvas.utils.CanvasConstant
-import com.angcyo.library.ex.flip
 import com.angcyo.vector.VectorWriteHandler
 
 /**
@@ -51,7 +50,7 @@ class OvalGraphicsParser : PathGraphicsParser() {
                     VectorWriteHandler.DEFAULT_PATH_DIRECTION
                 )
             }
-            item.addDataPath(dataPath.flip(bean._flipScaleX, bean._flipScaleY))
+            item.addDataPath(dataPath.flipEngravePath(bean))
 
             createPathDrawable(item, canvasView) ?: return null
 
