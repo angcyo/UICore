@@ -82,7 +82,8 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
             return reason.reason == Reason.REASON_USER && reason.flag.have(Reason.REASON_FLAG_BOUNDS)
         }
         if (this is DataBitmapItem) {
-            if (dataBean.imageFilter == CanvasConstant.DATA_MODE_GCODE) {
+            if (dataBean.imageFilter == CanvasConstant.DATA_MODE_GCODE ||
+                dataBean.imageFilter == CanvasConstant.DATA_MODE_DITHERING /*抖动数据也要实时更新*/) {
                 return reason.reason == Reason.REASON_USER && reason.flag.have(Reason.REASON_FLAG_BOUNDS)
             }
         }
@@ -194,10 +195,20 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
     override fun getEngraveBitmap(renderParams: RenderParams): Bitmap? {
         val item = this
         val bitmap = if (item is DataBitmapItem) {
-            item.modifyBitmap ?: item.originBitmap
+            if (item.dataBean.mtype == CanvasConstant.DATA_TYPE_BITMAP &&
+                item.dataBean.imageFilter == CanvasConstant.DATA_MODE_DITHERING
+            ) {
+                //如果是抖动数据, 则返回的依旧是原始图片
+                item.originBitmap
+            } else {
+                //其他
+                item.modifyBitmap ?: item.originBitmap
+            }
         } else {
             null
         }
+
+        //---
         val rotate = _rotate
         if (bitmap != null) {
             //这里需要处理缩放和旋转

@@ -13,6 +13,7 @@ import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.SmartAssistant
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.L
 import com.angcyo.library.component.ScalePictureDrawable
@@ -192,7 +193,15 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
     override fun getEngraveBitmap(renderParams: RenderParams): Bitmap? {
         val item = getRendererRenderItem()
         val result = if (item is DataBitmapItem) {
-            item.modifyBitmap ?: item.originBitmap
+            if (item.dataBean.mtype == CanvasConstant.DATA_TYPE_BITMAP &&
+                item.dataBean.imageFilter == CanvasConstant.DATA_MODE_DITHERING
+            ) {
+                //如果是抖动数据, 则返回的依旧是原始图片
+                item.originBitmap
+            } else {
+                //其他
+                item.modifyBitmap ?: item.originBitmap
+            }
         } else {
             null
         }
