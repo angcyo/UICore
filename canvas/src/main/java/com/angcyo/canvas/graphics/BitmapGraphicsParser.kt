@@ -130,7 +130,7 @@ class BitmapGraphicsParser : IGraphicsParser {
                             bean.minDiameter,
                             bean.maxDiameter,
                             bean.meshShape ?: "CONE"
-                        )
+                        )?.flip(bean._flipScaleX, bean._flipScaleY)
                     }
 
                     val bitmap =
