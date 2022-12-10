@@ -7,6 +7,7 @@ import android.graphics.*
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Base64
+import androidx.core.graphics.scale
 import androidx.exifinterface.media.ExifInterface
 import com.angcyo.library.L
 import com.angcyo.library.app
@@ -278,6 +279,28 @@ fun Bitmap.rotate(degrees: Float = 0f): Bitmap = if (degrees != 0f) {
     rotatedBitmap
 } else {
     this
+}
+
+/**如果图片的宽/高小于指定的大小, 则将其缩放方法处理*/
+fun Bitmap.scaleToMinSize(minWidth: Int, minHeight: Int): Bitmap {
+    val sw = minWidth * 1f / width
+    val sh = minHeight * 1f / height
+    val scale = max(sw, sh)
+    return if (scale > 1f) scale(
+        (width * scale).floor().toInt(),
+        (height * scale).floor().toInt()
+    ) else this
+}
+
+/**如果图片的宽/高大于指定的大小, 则将其缩放方法处理*/
+fun Bitmap.scaleToMaxSize(maxWidth: Int, maxHeight: Int): Bitmap {
+    val sw = maxWidth * 1f / width
+    val sh = maxHeight * 1f / height
+    val scale = min(sw, sh)
+    return if (scale < 1f) scale(
+        (width * scale).floor().toInt(),
+        (height * scale).floor().toInt()
+    ) else this
 }
 
 /**水平/垂直翻转图片*/
