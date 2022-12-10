@@ -32,6 +32,7 @@ import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.unit.IValueUnit
 import com.angcyo.library.unit.PixelValueUnit
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CopyOnWriteArraySet
 import kotlin.math.max
 import kotlin.math.min
@@ -163,7 +164,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
     var yAxisRender = YAxisRenderer(yAxis, this)
 
     /**核心项目渲染器*/
-    val itemsRendererList = mutableListOf<BaseItemRenderer<*>>()
+    val itemsRendererList = CopyOnWriteArrayList<BaseItemRenderer<*>>()
 
     /**智能提示组件渲染
      * [rendererLastList]*/
