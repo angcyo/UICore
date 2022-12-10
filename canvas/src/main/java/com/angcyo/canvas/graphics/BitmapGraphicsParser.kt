@@ -198,12 +198,3 @@ class BitmapGraphicsParser : IGraphicsParser {
         return item
     }
 }
-
-/**翻转图片*/
-fun Bitmap.flipEngraveBitmap(bean: CanvasProjectItemBean) = flip(bean._flipScaleX, bean._flipScaleY)
-
-/**翻转Path*/
-fun Path.flipEngravePath(bean: CanvasProjectItemBean) = flip(bean._flipScaleX, bean._flipScaleY)
-
-fun List<Path>.flipEngravePath(bean: CanvasProjectItemBean) =
-    flip(bean._flipScaleX, bean._flipScaleY)

@@ -2,6 +2,7 @@ package com.angcyo.canvas.graphics
 
 import android.graphics.Bitmap
 import android.graphics.Paint
+import android.graphics.Path
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toMm
@@ -10,6 +11,7 @@ import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.ShapesHelper
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.ex.flip
 import com.angcyo.library.ex.toBase64Data
 
 /**
@@ -203,3 +205,16 @@ fun CanvasDelegate.addGCodeRender(gcode: String?) =
     GraphicsHelper.addRenderItemDataBean(this, gcode.toGCodeItemData())
 
 //endregion ---矢量---
+
+//region ---算法---
+
+/**翻转图片*/
+fun Bitmap.flipEngraveBitmap(bean: CanvasProjectItemBean) = flip(bean._flipScaleX, bean._flipScaleY)
+
+/**翻转Path*/
+fun Path.flipEngravePath(bean: CanvasProjectItemBean) = flip(bean._flipScaleX, bean._flipScaleY)
+
+fun List<Path>.flipEngravePath(bean: CanvasProjectItemBean) =
+    flip(bean._flipScaleX, bean._flipScaleY)
+
+//endregion ---算法---
