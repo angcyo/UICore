@@ -75,15 +75,16 @@ fun createStaticLayout(
     return layout
 }
 
-/**排序规则离左上角越近的优先
+/**排序规则从上到下
  * 比较它的两个参数的顺序。
  * 如果两个参数相等，则返回零;
  * 如果第一个参数小于第二个参数，则返回负数;
  * 如果第一个参数大于第二个参数，则返回正数;
  * 从小到大的自然排序
  * */
-fun List<BaseItemRenderer<*>>.sort(): List<BaseItemRenderer<*>> {
-    return sortedWith { left, right ->
+fun List<BaseItemRenderer<*>>.engraveSort(): List<BaseItemRenderer<*>> {
+    return sortedBy { it.getRotateBounds().top }
+    /*sortedWith { left, right ->
         val leftBounds = left.getRotateBounds()
         val rightBounds = right.getRotateBounds()
 
@@ -98,7 +99,7 @@ fun List<BaseItemRenderer<*>>.sort(): List<BaseItemRenderer<*>> {
         } else {
             0
         }
-    }
+    }*/
 }
 
 /**是否是GCode内容*/
