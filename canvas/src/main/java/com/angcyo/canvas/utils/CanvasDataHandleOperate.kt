@@ -42,11 +42,10 @@ object CanvasDataHandleOperate {
 
     /**工程文件输出
      * [ensureExt] 是否要保证后缀为[CanvasConstant.PROJECT_EXT]*/
-    fun _defaultProjectOutputFile(name: String, ensureExt: Boolean = true) =
-        filePath(
-            CanvasConstant.PROJECT_FILE_FOLDER,
-            if (ensureExt) name.ensureName(CanvasConstant.PROJECT_EXT) else name
-        ).file()
+    fun _defaultProjectOutputFile(name: String, ensureExt: Boolean = true) = filePath(
+        CanvasConstant.PROJECT_FILE_FOLDER,
+        if (ensureExt) name.ensureName(CanvasConstant.PROJECT_EXT) else name
+    ).file()
 
     //---
 
