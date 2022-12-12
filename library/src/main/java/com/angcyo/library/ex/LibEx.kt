@@ -473,6 +473,30 @@ fun <T> List<T>.after(element: T): T? {
     return getOrNull(index + 1)
 }
 
+/**列表中, 当前[element]是否在[anchor]元素之前
+ * [def] 默认, 当元素不在列表中时*/
+fun <T> List<T>.isElementBeforeWith(element: T, anchor: T, def: Boolean = false): Boolean {
+    val index1 = indexOf(element)
+    val index2 = indexOf(anchor)
+    return if (index1 != -1 && index2 != -1) {
+        index1 < index2
+    } else {
+        def
+    }
+}
+
+/**列表中, 当前[element]是否在[anchor]元素之后
+ * [def] 默认, 当元素不在列表中时*/
+fun <T> List<T>.isElementAfterWith(element: T, anchor: T, def: Boolean = true): Boolean {
+    val index1 = indexOf(element)
+    val index2 = indexOf(anchor)
+    return if (index1 != -1 && index2 != -1) {
+        index1 > index2
+    } else {
+        def
+    }
+}
+
 /**将当前元素, 移动到列表末尾*/
 fun <T> MutableList<T>.moveToLast(element: T) {
     remove(element)

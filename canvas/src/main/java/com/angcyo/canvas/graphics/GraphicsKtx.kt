@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.Path
 import com.angcyo.canvas.CanvasDelegate
+import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.data.toPaintStyleInt
@@ -216,5 +217,14 @@ fun Path.flipEngravePath(bean: CanvasProjectItemBean) = flip(bean._flipScaleX, b
 
 fun List<Path>.flipEngravePath(bean: CanvasProjectItemBean) =
     flip(bean._flipScaleX, bean._flipScaleY)
+
+/**数据索引
+ * [com.angcyo.canvas.data.CanvasProjectItemBean.index]*/
+val IRenderer.dataItemIndex: Int?
+    get() = if (this is DataItemRenderer) {
+        this.rendererItem?.dataBean?.index
+    } else {
+        null
+    }
 
 //endregion ---算法---

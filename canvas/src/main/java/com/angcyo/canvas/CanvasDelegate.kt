@@ -16,6 +16,8 @@ import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.canvas.data.LimitDataInfo
 import com.angcyo.canvas.graphics.GraphicsHelper
+import com.angcyo.canvas.graphics.dataItemIndex
+import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
@@ -32,6 +34,7 @@ import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.unit.IValueUnit
 import com.angcyo.library.unit.PixelValueUnit
+import com.angcyo.library.utils.isChildClassOf
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CopyOnWriteArraySet
 import kotlin.math.max
@@ -91,7 +94,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
      * 不处理[Matrix]*/
     val rendererAfterList = mutableSetOf<BaseRenderer>()
 
-    /**最后渲染的渲染器*/
+    /**最后渲染的渲染器
+     * 不处理[Matrix]*/
     val rendererLastList = mutableSetOf<BaseRenderer>()
 
     /**将操作移动到[onSizeChanged]后触发*/
@@ -164,6 +168,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
     var yAxisRender = YAxisRenderer(yAxis, this)
 
     /**核心项目渲染器*/
+    @MatrixAffect
     val itemsRendererList = CopyOnWriteArrayList<BaseItemRenderer<*>>()
 
     /**智能提示组件渲染
@@ -174,7 +179,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**控制器渲染*/
     var controlRenderer = ControlRenderer(controlHandler, this)
 
-    /**限制提示框渲染*/
+    /**限制提示框渲染
+     * 处理[Matrix]*/
+    @MatrixAffect
     var limitRenderer: LimitRenderer = LimitRenderer(this)
 
     /**预览边框, 雕刻进度渲染
@@ -733,6 +740,21 @@ class CanvasDelegate(val view: View) : ICanvasView {
         )
     }
 
+    /**获取一个渲染器*/
+    fun <T> getRenderer(cls: Class<T>): T? {
+        return getRenderer(cls, rendererBeforeList) ?: getRenderer(cls, rendererAfterList)
+        ?: getRenderer(cls, rendererLastList)
+    }
+
+    fun <T> getRenderer(cls: Class<T>, list: Collection<BaseRenderer>): T? {
+        for (renderer in list) {
+            if (renderer.javaClass.isChildClassOf(cls)) {
+                return renderer as T
+            }
+        }
+        return null
+    }
+
     /**通过[uuid], 获取对应的[BaseItemRenderer]*/
     fun getRendererItem(uuid: String?): BaseItemRenderer<*>? {
         if (uuid.isNullOrEmpty()) {
@@ -748,6 +770,39 @@ class CanvasDelegate(val view: View) : ICanvasView {
             }
         }
         return null
+    }
+
+    /**通过数据索引[indexList], 获取对应的[BaseItemRenderer]*/
+    fun getRendererItem(indexList: List<String>?): List<BaseItemRenderer<*>> {
+        val result = mutableListOf<BaseItemRenderer<*>>()
+        /*for (item in itemsRendererList) {
+            val renderItem = item.getRendererRenderItem()
+            if (renderItem is DataItem) {
+                index?.find { it == "${renderItem.dataBean.index}" }?.let {
+                    result.add(item)
+                }
+            }
+        }*/
+        indexList?.forEach { index ->
+            itemsRendererList.find { "${it.dataItemIndex}" == index }?.let { item ->
+                result.add(item)
+            }
+        }
+        return result
+    }
+
+    /**通过数据索引[index], 获取对应的[BaseItemRenderer]*/
+    fun getRendererItem(index: Int?): List<BaseItemRenderer<*>> {
+        val result = mutableListOf<BaseItemRenderer<*>>()
+        for (item in itemsRendererList) {
+            val renderItem = item.getRendererRenderItem()
+            if (renderItem is DataItem) {
+                if (renderItem.dataBean.index == index) {
+                    result.add(item)
+                }
+            }
+        }
+        return result
     }
 
     /**默认在当前视图中心添加一个绘制元素*/

@@ -22,17 +22,25 @@ interface IRenderer {
     /**获取图层描述的名字*/
     fun getName(): CharSequence?
 
-    /**距离坐标系原点的像素坐标*/
+    /**距离坐标系原点的像素坐标
+     *
+     * [com.angcyo.canvas.items.renderer.IItemRenderer.getRotateBounds]
+     * */
     fun getBounds(): RectF
 
     /**获取坐标系中的可绘制坐标, 非视图系的坐标
      * 相对于坐标系原点的像素坐标
-     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.renderItemBoundsChanged]*/
+     * [com.angcyo.canvas.items.renderer.BaseItemRenderer.renderItemBoundsChanged]
+     *
+     * [com.angcyo.canvas.items.renderer.IItemRenderer.getRotateBounds]
+     * */
     fun getRenderBounds(): RectF
 
     /**获取视图系中的坐标
      * 相对于视图左上角的像素坐标
      * [com.angcyo.canvas.items.renderer.BaseItemRenderer.renderItemBoundsChanged]
+     *
+     * [com.angcyo.canvas.items.renderer.IItemRenderer.getVisualRotateBounds]
      * */
     fun getVisualBounds(): RectF
 
