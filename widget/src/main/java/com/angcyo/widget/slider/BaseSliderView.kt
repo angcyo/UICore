@@ -11,10 +11,10 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.view.GestureDetectorCompat
 import com.angcyo.library.L
+import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
-import com.angcyo.library.ex.*
 import com.angcyo.widget.base.isTouchFinish
 import kotlin.math.abs
 
@@ -159,8 +159,8 @@ abstract class BaseSliderView(context: Context, attributeSet: AttributeSet? = nu
             }
 
             override fun onScroll(
-                e1: MotionEvent?,
-                e2: MotionEvent?,
+                e1: MotionEvent,
+                e2: MotionEvent,
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
@@ -168,7 +168,7 @@ abstract class BaseSliderView(context: Context, attributeSet: AttributeSet? = nu
                 val absY = abs(distanceY)
 
                 var handle = false
-                if (absX > absY && e2 != null) {
+                if (absX > absY) {
                     parent.requestDisallowInterceptTouchEvent(true)
                     _onTouchMoveTo(e2.x, e2.y, false)
                     handle = true

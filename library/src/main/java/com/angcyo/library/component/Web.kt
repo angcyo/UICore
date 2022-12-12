@@ -1,5 +1,6 @@
 package com.angcyo.library.component
 
+import android.os.Build
 import android.webkit.CookieSyncManager
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -28,7 +29,9 @@ object Web {
         initWebSettings(webSetting)
 
         //
-        webSetting.setAppCachePath(webView.context.cacheDir.absolutePath)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            //webSetting.setAppCachePath(webView.context.cacheDir.absolutePath)
+        }
         webSetting.databasePath = webView.context.cacheDir.absolutePath
         webSetting.setGeolocationDatabasePath(webView.context.cacheDir.absolutePath)
 
@@ -49,11 +52,13 @@ object Web {
         webSetting.loadWithOverviewMode = true //this
         webSetting.setSupportMultipleWindows(false)//this
         // webSetting.setLoadWithOverviewMode(true);
-        webSetting.setAppCacheEnabled(true)//this
         webSetting.databaseEnabled = true;//this
         webSetting.domStorageEnabled = true
         webSetting.setGeolocationEnabled(true)
-        webSetting.setAppCacheMaxSize(Long.MAX_VALUE)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            //webSetting.setAppCacheEnabled(true)//this
+            //webSetting.setAppCacheMaxSize(Long.MAX_VALUE)
+        }
         // webSetting.setPageCacheCapacity(IX5WebSettings.DEFAULT_CACHE_CAPACITY);//this
         webSetting.pluginState = WebSettings.PluginState.ON //ON_DEMAND
         webSetting.setRenderPriority(WebSettings.RenderPriority.HIGH)//this
@@ -62,7 +67,9 @@ object Web {
         // settings 的设计
 
         webSetting.defaultTextEncodingName = "utf-8"
-        webSetting.mediaPlaybackRequiresUserGesture = true//this
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            webSetting.mediaPlaybackRequiresUserGesture = true//this
+        }
 
         //UA设置
         webSetting.userAgentString = (CUSTOM_UA ?: webSetting.userAgentString) + UA_EXTEND

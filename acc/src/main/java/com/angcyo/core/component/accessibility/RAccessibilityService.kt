@@ -93,7 +93,7 @@ open class RAccessibilityService : BaseAccessibilityService() {
         }
 
         val packageName = event.packageName
-        val className = event.className
+        val className = event.className ?: ""
         lastPackageNameList.add(packageName to className)
 
         if (last?.first != packageName) {

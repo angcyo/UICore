@@ -60,7 +60,7 @@ fun View.onDoubleTap(action: (View) -> Boolean) {
     val view = this
     val gestureDetector = GestureDetectorCompat(context,
         object : GestureDetector.SimpleOnGestureListener() {
-            override fun onDoubleTap(e: MotionEvent?): Boolean {
+            override fun onDoubleTap(e: MotionEvent): Boolean {
                 return action(view)
             }
         })

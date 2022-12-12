@@ -49,7 +49,7 @@ class StripeDrawable : Drawable() {
     val _matrix = Matrix()
     val _rotateRect = RectF()
 
-    override fun onBoundsChange(bounds: Rect?) {
+    override fun onBoundsChange(bounds: Rect) {
         super.onBoundsChange(bounds)
         update()
     }

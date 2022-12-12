@@ -185,17 +185,17 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
         return enableTouchBack && nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL
     }
 
-    override fun onNestedScrollAccepted(child: View?, target: View?, axes: Int) {
+    override fun onNestedScrollAccepted(child: View, target: View, axes: Int) {
         super.onNestedScrollAccepted(child, target, axes)
         isNestedAccepted = true
     }
 
-    override fun onStopNestedScroll(child: View?) {
+    override fun onStopNestedScroll(child: View) {
         super.onStopNestedScroll(child)
     }
 
     override fun onNestedScroll(
-        target: View?,
+        target: View,
         dxConsumed: Int,
         dyConsumed: Int,
         dxUnconsumed: Int,
@@ -205,7 +205,7 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
     }
 
     /*内嵌滚动开始, 处理需要消耗的滚动距离*/
-    override fun onNestedPreScroll(target: View?, dx: Int, dy: Int, consumed: IntArray) {
+    override fun onNestedPreScroll(target: View, dx: Int, dy: Int, consumed: IntArray) {
         super.onNestedPreScroll(target, dx, dy, consumed)
         if (dy < 0) {
             //手指向下滑动

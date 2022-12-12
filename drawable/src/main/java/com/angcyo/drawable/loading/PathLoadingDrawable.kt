@@ -33,10 +33,10 @@ class PathLoadingDrawable : BaseSectionDrawable() {
         textPaint.color = Color.RED
     }
 
-    override fun onBoundsChange(bounds: Rect?) {
+    override fun onBoundsChange(bounds: Rect) {
         super.onBoundsChange(bounds)
 
-        bounds?.let {
+        bounds.let {
             path.reset()
             val rectF = it.toRectF().apply {
                 inset(strokeWidth / 2, strokeWidth / 2)

@@ -280,23 +280,21 @@ class RuleSliderView(context: Context, attributeSet: AttributeSet? = null) :
             }
 
             override fun onScroll(
-                e1: MotionEvent?,
-                e2: MotionEvent?,
+                e1: MotionEvent,
+                e2: MotionEvent,
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
                 var handle = false
-                if (e2 != null) {
-                    parent.requestDisallowInterceptTouchEvent(true)
-                    _onTouchMoveTo(e2.x, e2.y, false)
-                    handle = true
-                }
+                parent.requestDisallowInterceptTouchEvent(true)
+                _onTouchMoveTo(e2.x, e2.y, false)
+                handle = true
                 return handle
             }
 
             override fun onFling(
-                e1: MotionEvent?,
-                e2: MotionEvent?,
+                e1: MotionEvent,
+                e2: MotionEvent,
                 velocityX: Float,
                 velocityY: Float
             ): Boolean {

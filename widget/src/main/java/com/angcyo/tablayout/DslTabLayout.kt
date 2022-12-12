@@ -1459,8 +1459,8 @@ open class DslTabLayout(
     val _gestureDetector: GestureDetectorCompat by lazy {
         GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
             override fun onFling(
-                e1: MotionEvent?,
-                e2: MotionEvent?,
+                e1: MotionEvent,
+                e2: MotionEvent,
                 velocityX: Float,
                 velocityY: Float
             ): Boolean {
@@ -1480,8 +1480,8 @@ open class DslTabLayout(
             }
 
             override fun onScroll(
-                e1: MotionEvent?,
-                e2: MotionEvent?,
+                e1: MotionEvent,
+                e2: MotionEvent,
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
@@ -1850,12 +1850,12 @@ open class DslTabLayout(
                 _onAnimateValue(it.animatedValue as Float)
             }
             addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationCancel(animation: Animator?) {
+                override fun onAnimationCancel(animation: Animator) {
                     _onAnimateValue(1f)
                     onAnimationEnd(animation)
                 }
 
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     _onAnimateEnd()
                 }
             })

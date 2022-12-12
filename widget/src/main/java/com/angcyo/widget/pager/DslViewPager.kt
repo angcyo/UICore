@@ -55,8 +55,8 @@ open class DslViewPager : ViewPager {
         //监听最后一页滚动
         _gestureDetectorCompat = GestureDetectorCompat(context, object : SimpleOnGestureListener() {
             override fun onFling(
-                e1: MotionEvent?,
-                e2: MotionEvent?,
+                e1: MotionEvent,
+                e2: MotionEvent,
                 velocityX: Float,
                 velocityY: Float
             ): Boolean {

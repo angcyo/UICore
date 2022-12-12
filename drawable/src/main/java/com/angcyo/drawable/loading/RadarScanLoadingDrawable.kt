@@ -96,7 +96,7 @@ class RadarScanLoadingDrawable : AbsDslDrawable() {
 
     var _scanShader: Shader? = null
 
-    override fun onBoundsChange(bounds: Rect?) {
+    override fun onBoundsChange(bounds: Rect) {
         super.onBoundsChange(bounds)
         updateShader()
     }

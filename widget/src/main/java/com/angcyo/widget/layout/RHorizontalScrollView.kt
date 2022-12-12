@@ -18,7 +18,7 @@ class RHorizontalScrollView(context: Context, attributeSet: AttributeSet? = null
     HorizontalScrollView(context, attributeSet) {
     private val gestureDetector =
         GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onSingleTapUp(e: MotionEvent?): Boolean {
+            override fun onSingleTapUp(e: MotionEvent): Boolean {
                 performClick()
                 return super.onSingleTapUp(e)
             }

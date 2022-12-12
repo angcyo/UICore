@@ -280,8 +280,8 @@ open class DslRecyclerView : RecyclerView, ILayoutDelegate, ITouchHold, ITouchDe
     }
 
     override fun requestChildRectangleOnScreen(
-        child: View?,
-        rect: Rect?,
+        child: View,
+        rect: Rect,
         immediate: Boolean
     ): Boolean {
         //L.v()

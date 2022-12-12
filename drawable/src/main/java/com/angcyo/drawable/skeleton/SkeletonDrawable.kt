@@ -276,7 +276,7 @@ class SkeletonDrawable : AbsDslDrawable() {
     var _linearGradientMatrix: Matrix? = null
     var _translate: Int = 0
 
-    override fun onBoundsChange(bounds: Rect?) {
+    override fun onBoundsChange(bounds: Rect) {
         super.onBoundsChange(bounds)
         _linearGradient = LinearGradient(
             -viewWidth.toFloat(),

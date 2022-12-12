@@ -190,7 +190,7 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
                 L.e("call: onLongPress -> ")
             }
 
-            override fun onSingleTapUp(e: MotionEvent?): Boolean {
+            override fun onSingleTapUp(e: MotionEvent): Boolean {
                 if (isLongPress) {
                     return false
                 }
@@ -456,7 +456,7 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
             }
 
             progressAnimator.addListener(object : Animator.AnimatorListener {
-                override fun onAnimationRepeat(animation: Animator?) {
+                override fun onAnimationRepeat(animation: Animator) {
                 }
 
                 override fun onAnimationEnd(animation: Animator) {
@@ -466,10 +466,10 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
                     }
                 }
 
-                override fun onAnimationCancel(animation: Animator?) {
+                override fun onAnimationCancel(animation: Animator) {
                 }
 
-                override fun onAnimationStart(animation: Animator?) {
+                override fun onAnimationStart(animation: Animator) {
                     listener?.onRecordStart()
                 }
 
