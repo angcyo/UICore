@@ -45,6 +45,9 @@ import kotlin.math.min
  * 低
  * ：无提示音，且不会在状态栏中显示。	IMPORTANCE_MIN	PRIORITY_MIN
  *
+ * Android 13 / API 33需要声明权限
+ * [android.permission.POST_NOTIFICATIONS]
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/02/13
