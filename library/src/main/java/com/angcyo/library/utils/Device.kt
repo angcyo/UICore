@@ -370,7 +370,7 @@ object Device {
             append(" sp:").append(displayMetrics.scaledDensity)
             append(" dpi:").appendln(displayMetrics.densityDpi)
 
-            //多少寸
+            //多少寸, 屏幕寸数
             append("w:").append("%.02f".format(width))
             append(" h:").append("%.02f".format(height))
             append(" inches:").append("%.02f".format(screenInches))
