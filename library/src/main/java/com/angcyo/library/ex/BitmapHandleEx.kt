@@ -63,6 +63,47 @@ fun Bitmap.toGrayHandle(
     return result
 }
 
+/**[toGrayHandle], 支持更多参数
+ * [invert] 是否反色
+ * [contrast] 对比度 [-1~1]
+ * [brightness] 亮度 [-1~1]
+ * */
+fun Bitmap.toGrayHandle(
+    invert: Boolean,
+    contrast: Float,
+    brightness: Float,
+    alphaBgColor: Int = Color.TRANSPARENT,
+    alphaThreshold: Int = LibHawkKeys.alphaThreshold
+): Bitmap {
+    val width = width
+    val height = height
+    val result = Bitmap.createBitmap(width, height, config)
+
+    for (y in 0 until height) {
+        for (x in 0 until width) {
+            val color = getPixel(x, y)
+            val alpha = Color.alpha(color)
+
+            if (alpha < alphaThreshold) {
+                //透明颜色
+                result.setPixel(x, y, alphaBgColor)
+            } else {
+                //灰度值
+                var grayValue = color.toGrayInt()
+                grayValue = ((contrast + 1) * grayValue + brightness * 255).toInt()
+                grayValue = clamp(grayValue, 0, 255)
+                if (invert) {
+                    grayValue = 255 - grayValue
+                }
+                //灰度颜色
+                val targetColor = Color.argb(alpha, grayValue, grayValue, grayValue)
+                result.setPixel(x, y, targetColor)
+            }
+        }
+    }
+    return result
+}
+
 /**将图片转灰度, 并且返回一张没有透明像素的图片
  * [alphaBgColor] 透明像素时的替换颜色*/
 fun Bitmap.toGrayHandleAlpha(

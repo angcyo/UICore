@@ -83,8 +83,9 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
             return reason.reason == Reason.REASON_USER && reason.flag.have(Reason.REASON_FLAG_BOUNDS)
         }
         if (this is DataBitmapItem) {
-            if (dataBean.imageFilter == CanvasConstant.DATA_MODE_GCODE ||
-                dataBean.imageFilter == CanvasConstant.DATA_MODE_DITHERING /*抖动数据也要实时更新*/) {
+            if (dataBean.imageFilter == CanvasConstant.DATA_MODE_GCODE /*||
+                dataBean.imageFilter == CanvasConstant.DATA_MODE_DITHERING*/ /*抖动数据也要实时更新*/) {
+                //2022-12-12 抖动图预览的时候是灰度图, 所以不需要实时刷新数据
                 return reason.reason == Reason.REASON_USER && reason.flag.have(Reason.REASON_FLAG_BOUNDS)
             }
         }

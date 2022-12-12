@@ -2,8 +2,6 @@ package com.angcyo.canvas.graphics
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.Path
-import androidx.core.graphics.scale
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toMm
@@ -139,7 +137,7 @@ class BitmapGraphicsParser : IGraphicsParser {
     /**图片其他算法那*/
     fun _parseBitmap(bean: CanvasProjectItemBean, originBitmap: Bitmap?): DataItem? {
         //其他算法处理后的图片
-        if (bean.imageFilter == CanvasConstant.DATA_MODE_DITHERING) {
+        /*if (bean.imageFilter == CanvasConstant.DATA_MODE_DITHERING) {
             //抖动数据需要实时更新
             if (originBitmap != null) {
                 //com.angcyo.canvas.laser.pecker.CanvasBitmapHandler.handleDithering
@@ -149,7 +147,7 @@ class BitmapGraphicsParser : IGraphicsParser {
                 )//抖动数据, 实时缩放图片计算
                 bean.src = handleDithering(scaleBitmap, bean)?.toBase64Data()
             }
-        } else if (bean.src.isNullOrBlank() && originBitmap != null) {
+        } else*/ if (bean.src.isNullOrBlank() && originBitmap != null) {
             //只有原图, 没有算法处理后的图片, 则需要主动应用算法处理图片
             bean.src = when (bean.imageFilter) {
                 CanvasConstant.DATA_MODE_BLACK_WHITE -> originBitmap.toBlackWhiteHandle(
@@ -161,7 +159,11 @@ class BitmapGraphicsParser : IGraphicsParser {
                     originBitmap,
                     bean.sealThreshold.toInt()
                 )
-                CanvasConstant.DATA_MODE_GREY -> OpenCV.bitmapToGrey(originBitmap)
+                CanvasConstant.DATA_MODE_GREY, CanvasConstant.DATA_MODE_DITHERING -> originBitmap.toGrayHandle(
+                    bean.inverse,
+                    bean.contrast,
+                    bean.brightness
+                )
                 CanvasConstant.DATA_MODE_PRINT -> OpenCV.bitmapToPrint(
                     app(),
                     originBitmap,
