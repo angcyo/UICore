@@ -13,7 +13,7 @@
 
     <com.angcyo.widget.text.DslTextView
         android:id="@+id/lib_text_view"
-        style="@style/LibBodyTextStyle"
+        style="@style/LibTitleTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="@dimen/lib_drawable_padding"
