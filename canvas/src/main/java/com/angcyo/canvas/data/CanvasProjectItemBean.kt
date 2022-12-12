@@ -360,11 +360,11 @@ data class CanvasProjectItemBean(
     /**缩放后的宽高, 像素*/
     @Pixel
     val _widthScalePixel: Float
-        get() = _width * _scaleX
+        get() = _width.toPixel() * _scaleX
 
     @Pixel
     val _heightScalePixel: Float
-        get() = _height * _scaleY
+        get() = _height.toPixel() * _scaleY
 
     //---
 

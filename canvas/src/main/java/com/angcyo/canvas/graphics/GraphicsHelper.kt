@@ -260,6 +260,7 @@ object GraphicsHelper {
     @AnyThread
     fun updateRenderItem(renderer: DataItemRenderer, bean: CanvasProjectItemBean, reason: Reason) {
         doBack(true) {
+            L.w("更新渲染数据:[${bean.index}]${reason}")
             renderer.renderItemDataChanged(reason)
             val item = parseRenderItemFrom(bean, renderer.canvasView) ?: return@doBack
             updateRenderItem(renderer, item)
