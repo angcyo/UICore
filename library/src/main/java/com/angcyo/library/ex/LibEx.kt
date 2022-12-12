@@ -2,12 +2,15 @@ package com.angcyo.library.ex
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.graphics.Point
 import android.graphics.PointF
 import android.os.Build
 import android.os.Debug
+import android.util.DisplayMetrics
 import android.view.View
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.collection.SimpleArrayMap
 import com.angcyo.library.*
@@ -28,6 +31,8 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.sqrt
 import kotlin.random.Random.Default.nextInt
 
 /**
@@ -548,3 +553,20 @@ fun Type.toClass(): Class<*>? = if (this is Class<*>) {
 /**是否处于调试模式
  * [android.os.Debug.isDebuggerConnected]*/
 fun isDebuggerConnected() = Debug.isDebuggerConnected()
+
+/**只要判断是屏幕大小大于等于7.0英寸的设备就是平板了
+ * https://blog.csdn.net/Fantasy_Lin_/article/details/111828002*/
+fun isPad(): Boolean {
+    val display = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        app().display
+    } else {
+        val wm = app().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        wm.defaultDisplay
+    }
+    val dm = DisplayMetrics()
+    display?.getMetrics(dm)
+    val x = (dm.widthPixels * 1.0 / dm.xdpi).pow(2.0)
+    val y = (dm.heightPixels * 1.0 / dm.ydpi).pow(2.0)
+    val c = sqrt(x + y)
+    return c >= 7.0
+}
