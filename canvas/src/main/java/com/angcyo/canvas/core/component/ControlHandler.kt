@@ -152,8 +152,14 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                 }
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
+                //多指按下
                 touchControlPoint = null
                 //touchPointerId = -1
+            }
+            MotionEvent.ACTION_POINTER_UP -> {
+                //多指抬起, 非主手指
+                updateTouchPoint(x, y, canvasViewBox)
+                updateMovePoint(x, y, canvasViewBox)
             }
             MotionEvent.ACTION_MOVE -> {
                 if (touchDownInfo?.touchPointerId == touchPointerId) {
@@ -202,9 +208,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                 //notify
                 if (holdControlPoint != null) {
                     //控制点操作结束回调
-                    selectedItemRender?.let {
-                        it.onControlFinish(holdControlPoint)
-                    }
+                    selectedItemRender?.onControlFinish(holdControlPoint)
                 }
                 //平移的撤销
                 selectedItemRender?.let {
