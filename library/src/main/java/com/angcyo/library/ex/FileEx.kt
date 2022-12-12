@@ -109,6 +109,8 @@ fun String?.fileSize(def: Long = 0L): Long {
     }
 }
 
+//---
+
 /**格式化文件大小, 根据系统版本号选择实现方式*/
 fun formatFileSize(context: Context, size: Long): String {
     return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
@@ -121,10 +123,10 @@ fun String?.fileSizeString(): String {
     return fileSize().fileSizeString()
 }
 
-/**[Long.fileSizeString]*/
+/**格式化字节大小 [Long.fileSizeString]*/
 fun Int.toSizeString(unit: SizeUnit = SizeUnit.Auto): String = toLong().toSizeString(unit)
 
-/**[Long.fileSizeString]*/
+/**格式化字节大小 [Long.fileSizeString]*/
 fun Long.toSizeString(unit: SizeUnit = SizeUnit.Auto): String = fileSizeString(unit)
 
 /**[this] b 字节数量
@@ -166,6 +168,8 @@ fun Long.fileSizeString(unit: SizeUnit = SizeUnit.Auto): String {
         else -> size.toString() + "B"
     }
 }
+
+//---
 
 /**
  * 获取文件的MD5校验码
