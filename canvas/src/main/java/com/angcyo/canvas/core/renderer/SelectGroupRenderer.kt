@@ -345,6 +345,11 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         if (list.isEmpty()) {
             return
         }
+        if (list.size() == 1) {
+            //只有一个
+            canvasDelegate.selectedItem(list.first())
+            return
+        }
         val oldList = selectItemList.toList()
         selectItemList.clear()
         selectItemList.addAll(list)
