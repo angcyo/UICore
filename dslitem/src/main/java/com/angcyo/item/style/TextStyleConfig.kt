@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import com.angcyo.library.UndefinedDrawable
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.undefined_color
 import com.angcyo.library.ex.undefined_float
 import com.angcyo.library.ex.undefined_size
@@ -34,6 +35,8 @@ open class TextStyleConfig : ViewStyleConfig() {
     var textBold: Boolean = false
     var textColor: Int = undefined_color
     var textColors: ColorStateList? = null
+
+    @Pixel
     var textSize: Float = undefined_float
     var textGravity: Int = Gravity.LEFT or Gravity.CENTER_VERTICAL
 
