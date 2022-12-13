@@ -155,6 +155,14 @@ fun Uri?.isFileScheme(): Boolean {
     //return path.isFileExist() //有性能损耗
 }
 
+/**是否是可直接读写file的uri资源
+ * content://com.angcyo.uicore.demo/sdcard/Android/data/com.angcyo.uicore.demo/files/demo/camera/2022-12-13_10-00-20-098.jpeg
+ * */
+fun Uri?.isContentScheme(): Boolean {
+    this ?: return false
+    return scheme?.startsWith("content") == true
+}
+
 fun Uri.query(context: Context = app()): MediaBean? {
     /**
      * 全部媒体数据 - PROJECTION
@@ -201,6 +209,7 @@ fun Uri?.loadUrl(): String? {
         this == null -> null
         isFileScheme() -> path
         isHttpScheme() -> toString()
+        isContentScheme() -> path ?: getPathFromUri()
         //this?.encodedPath
         //Uri.decode(this?.encodedPath)
         else -> toString()

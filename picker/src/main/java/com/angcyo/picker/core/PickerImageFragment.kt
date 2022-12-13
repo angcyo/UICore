@@ -275,6 +275,7 @@ class PickerImageFragment : BasePickerFragment() {
                     } else {
                         DslPicker.takePhoto(activity) {
                             if (it != null) {
+                                //content://com.angcyo.uicore.demo/sdcard/Android/data/com.angcyo.uicore.demo/files/demo/camera/2022-12-13_10-00-20-098.jpeg
                                 val path = it.loadUrl()
                                 val size = path?.bitmapSize()
 
