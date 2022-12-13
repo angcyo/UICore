@@ -99,25 +99,49 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
         return super.isSupportSmartAssistant(type)
     }
 
+    /**是否发生过缩放*/
+    var _isScaleHappen = false
+    override fun onCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix) {
+        super.onCanvasBoxMatrixChanged(matrix, oldValue)
+        if (oldValue.getScale() != matrix.getScale()) {
+            if (canvasView is CanvasDelegate) {
+                if (canvasView.isTouchHold) {
+                    _isScaleHappen = true
+                } else {
+                    _updateRenderItemIfNeed()
+                }
+            }
+        }
+    }
+
     var _touchDownScale = 1f
     override fun onCanvasTouchEvent(canvasDelegate: CanvasDelegate, event: MotionEvent): Boolean {
         val actionMasked = event.actionMasked
         if (actionMasked == MotionEvent.ACTION_DOWN) {
             _touchDownScale = canvasViewBox.getScaleX()
         } else if (actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_CANCEL) {
-            if (_touchDownScale != canvasViewBox.getScaleX()) {
-                val renderItem = getRendererRenderItem()
-                renderItem?.dataBean?.apply {
-                    if (renderItem is DataPathItem) {
-                        if (renderItem.itemPaint.style == Paint.Style.STROKE) {
-                            //描边的path, 需要放大边框线, 所以需要重新渲染数据
-                            renderItem.updateRenderItem(this@DataItemRenderer, Reason())
-                        }
+            if (_isScaleHappen || _touchDownScale != canvasViewBox.getScaleX()) {
+                _updateRenderItemIfNeed()
+            }
+        }
+        return super.onCanvasTouchEvent(canvasDelegate, event)
+    }
+
+    /**检查是否需要重新刷新可视化的数据*/
+    fun _updateRenderItemIfNeed() {
+        //L.w("更新....")
+        val renderItem = getRendererRenderItem()
+        if (isVisible() && !getRotateBounds().isNoSize()) {
+            renderItem?.dataBean?.apply {
+                if (renderItem is DataPathItem) {
+                    if (renderItem.itemPaint.style == Paint.Style.STROKE) {
+                        //描边的path, 需要放大边框线, 所以需要重新渲染数据
+                        renderItem.updateRenderItem(this@DataItemRenderer, Reason())
                     }
                 }
             }
         }
-        return super.onCanvasTouchEvent(canvasDelegate, event)
+        _isScaleHappen = false
     }
 
     override fun onCanvasBoxMatrixUpdate(

@@ -31,26 +31,21 @@ class CanvasTouchManager(val canvasView: CanvasDelegate) {
             else -> false
         }
 
-        //是否取消了手势
-        when (event.actionMasked) {
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                interceptCanvasTouch = null
-
-                //取消手势处理
-                canvasView.canvasListenerList.forEach {
-                    if (it != touch) {
-                        it.onCanvasTouchEvent(canvasView, event)
-                    }
-                }
-
-                if (touch != null) {
-                    return touch.onCanvasTouchEvent(canvasView, event)
-                }
-            }
-        }
-
         //被拦截
         if (touch != null) {
+            //是否取消了手势
+            when (event.actionMasked) {
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    interceptCanvasTouch = null
+
+                    //取消手势处理
+                    canvasView.canvasListenerList.forEach {
+                        if (it != touch) {
+                            it.onCanvasTouchEvent(canvasView, event)
+                        }
+                    }
+                }
+            }
             return touch.onCanvasTouchEvent(canvasView, event)
         }
 

@@ -46,7 +46,9 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
     /**触摸带来的视图矩阵变化*/
     val matrix: Matrix = Matrix()
-    val oldMatrix: Matrix = Matrix()
+
+    //刷新之前的矩阵
+    var oldMatrix: Matrix? = null
 
     //临时变量
     val invertMatrix: Matrix = Matrix()
@@ -80,8 +82,10 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
     /**刷新*/
     @UiThread
-    fun refresh(newMatrix: Matrix) {
-        oldMatrix.set(matrix)
+    fun refresh(newMatrix: Matrix, isEnd: Boolean = true) {
+        if (oldMatrix == null) {
+            oldMatrix = Matrix(matrix)
+        }
         canvasView.dispatchCanvasBoxMatrixChangeBefore(matrix, newMatrix)
 
         matrix.set(newMatrix)
@@ -90,8 +94,12 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         //反转矩阵后的值
         matrix.invert(invertMatrix)
 
-        canvasView.dispatchCanvasBoxMatrixChanged(matrix, oldMatrix)
+        if (isEnd) {
+            canvasView.dispatchCanvasBoxMatrixChanged(matrix, oldMatrix!!)
+            oldMatrix = null
+        }
 
+        //刷新view
         canvasView.refresh()
     }
 
@@ -397,14 +405,18 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         _updateAnimator?.cancel()
         _updateAnimator = null
         if (anim) {
-            _updateAnimator = matrixAnimator(matrix, endMatrix, finish = finish) {
+            _updateAnimator = matrixAnimator(matrix, endMatrix, finish = {
+                _updateAnimator = null
+                refresh(endMatrix)
+                finish(it)//
+            }) {
                 adjustScaleOutToLimit(it)
-                refresh(it)
+                refresh(it, false)
             }
         } else {
             adjustScaleOutToLimit(endMatrix)
             refresh(endMatrix)
-            finish(false)
+            finish(false)//
         }
     }
 
@@ -463,7 +475,8 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         scaleY: Float,
         px: Float = getContentCenterX(),
         py: Float = getContentCenterY(),
-        anim: Boolean = false
+        anim: Boolean = false,
+        finish: (isCancel: Boolean) -> Unit = {}
     ) {
         if ((scaleX < 1f && getScaleX() <= minScaleX) || (scaleX > 1f && getScaleX() >= maxScaleX)) {
             //已经达到了最小/最大, 还想缩放/放大
@@ -477,7 +490,7 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         val newMatrix = Matrix()
         newMatrix.set(matrix)
         newMatrix.postScale(scaleX, scaleY, px, py)
-        updateTo(newMatrix, anim)
+        updateTo(newMatrix, anim, finish)
     }
 
     //</editor-fold desc="matrix">
