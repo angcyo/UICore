@@ -225,7 +225,9 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
                 }
             }
         } else {
-            if (canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_MULTI_SELECT) && event.pointerCount < 2) {
+            if (canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_MULTI_SELECT) &&
+                event.pointerCount < 2
+            ) {
                 //移动多选框
                 canvasDelegate.selectGroupRenderer.moveSelect(
                     _movePointList[0].x,
