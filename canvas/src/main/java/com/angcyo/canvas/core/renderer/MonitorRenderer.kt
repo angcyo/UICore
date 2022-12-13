@@ -56,7 +56,7 @@ class MonitorRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView), ICanv
         if (_isTouchDown) {
             _touchPoint.set(event.x, event.y)
         }
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             _tempPoint.set(event.x, event.y)
             val coordinateSystemPoint =
                 canvasViewBox.viewPointToCoordinateSystemPoint(_tempPoint, PointF())
@@ -70,7 +70,7 @@ class MonitorRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView), ICanv
                 "view->",
                 viewPoint
             ) //手指在坐标系中的位置, px
-        }
+        }*/
         canvasViewBox.canvasView.refresh()
         return false
     }
