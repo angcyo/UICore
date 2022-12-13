@@ -58,7 +58,7 @@ abstract class BaseAxis : BaseComponent() {
      * */
     fun getAxisLineType(canvasViewBox: CanvasViewBox, index: Int, scale: Float): Int {
         var result = LINE_TYPE_NORMAL or LINE_TYPE_DRAW_GRID
-        val step = canvasViewBox.valueUnit.getGraduatedIndexGap()
+        val step = canvasViewBox.valueUnit.getGraduatedIndexGap(scale)
 
         if (index % step == 0) {
             //每10个点, 绘制一次大刻度

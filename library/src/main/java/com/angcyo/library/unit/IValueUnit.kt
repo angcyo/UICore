@@ -21,7 +21,7 @@ interface IValueUnit {
      * 毫米单位:每10个点, 绘制一次大刻度;每5个点, 绘制一次中刻度
      * 英寸单位:每16个点, 绘制一次大刻度;每8个点, 绘制一次中刻度
      * */
-    fun getGraduatedIndexGap(): Int = when (this) {
+    fun getGraduatedIndexGap(scale: Float): Int = when (this) {
         is InchValueUnit -> 16
         is PixelValueUnit -> 100
         else -> 10
@@ -29,8 +29,8 @@ interface IValueUnit {
 
     /**获取每个刻度之间最小的间隙, 像素*/
     @Pixel
-    fun getGraduatedMinGap(): Double = when (this) {
-        is InchValueUnit -> convertValueToPixel(1.0) / getGraduatedIndexGap()
+    fun getGraduatedMinGap(scale: Float): Double = when (this) {
+        is InchValueUnit -> convertValueToPixel(1.0) / getGraduatedIndexGap(scale)
         else -> convertValueToPixel(1.0)
     }
 
@@ -39,12 +39,12 @@ interface IValueUnit {
     @Pixel
     fun getGraduatedScaleGap(scale: Float): Double {
         var inScaleStep = 5.0 //每放大5的倍数, 处理一次
-        var deScaleStep = 2.0 //每缩小2的倍数, 处理一次
+        var deScaleStep = 1.0 //每缩小2的倍数, 处理一次
         if (this is PixelValueUnit) {
             inScaleStep = 5.0
             deScaleStep = 1.0
         }
-        return getGraduatedScaleGap(getGraduatedMinGap(), scale, inScaleStep, deScaleStep)
+        return getGraduatedScaleGap(getGraduatedMinGap(scale), scale, inScaleStep, deScaleStep)
     }
 
     /**[getGraduatedScaleGap]*/
@@ -75,7 +75,7 @@ interface IValueUnit {
         val pixel = index * gap
         val value = convertValueToPixel(1.0)
 
-        val graduatedIndexGap = getGraduatedIndexGap()
+        val graduatedIndexGap = getGraduatedIndexGap(1f)
         if (index % graduatedIndexGap == 0) {
         } else if (index % (graduatedIndexGap / 2) == 0 && this is InchValueUnit) {
             return (pixel / value).unitDecimal(1)
