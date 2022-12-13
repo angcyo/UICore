@@ -18,6 +18,8 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import com.angcyo.library.*
+import com.angcyo.library.component.Pad
+import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.connect
 import java.io.BufferedReader
 import java.io.FileReader
@@ -245,48 +247,48 @@ object Device {
     fun deviceInfo(context: Context, builder: Appendable): Appendable {
         val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
-        builder.appendln("deviceId/psuedoID: $deviceId")
-        builder.appendln("androidId: $androidId")
-        builder.appendln("id: ${ID.id}")
+        builder.appendLine("deviceId/psuedoID: $deviceId")
+        builder.appendLine("androidId: $androidId")
+        builder.appendLine("id: ${ID.id}")
 
-        builder.appendln()
+        builder.appendLine()
         deviceInfoLess(builder)
-        builder.appendln()
+        builder.appendLine()
 
         builder.append("memoryClass: ")
         builder.appendln(manager.memoryClass)
         builder.append("largeMemoryClass: ")
         builder.appendln(manager.largeMemoryClass)
-        builder.appendln()
+        builder.appendLine()
         builder.append("手机内存大小:")
-        builder.appendln(Formatter.formatFileSize(context, getTotalMemorySize()))
-        //        builder.appendln();
+        builder.appendLine(Formatter.formatFileSize(context, getTotalMemorySize()))
+        //        builder.appendLine();
 //        builder.append("JVM可用内存大小:");
-//        builder.appendln(Formatter.formatFileSize(context, Runtime.getRuntime().maxMemory()));
-//        builder.appendln();
+//        builder.appendLine(Formatter.formatFileSize(context, Runtime.getRuntime().maxMemory()));
+//        builder.appendLine();
         val memoryInfo: ActivityManager.MemoryInfo = getMemoryInfo(context)
         builder.append("系统总内存:")
-        builder.appendln(Formatter.formatFileSize(context, memoryInfo.totalMem))
+        builder.appendLine(Formatter.formatFileSize(context, memoryInfo.totalMem))
         builder.append("系统剩余内存:")
-        builder.appendln(Formatter.formatFileSize(context, memoryInfo.availMem))
+        builder.appendLine(Formatter.formatFileSize(context, memoryInfo.availMem))
         //        builder.append("是否内存警告:");
-//        builder.appendln(memoryInfo.lowMemory);
+//        builder.appendLine(memoryInfo.lowMemory);
 //        builder.append("阈值:");
-//        builder.appendln(Formatter.formatFileSize(context, memoryInfo.threshold));
-//        builder.appendln();
+//        builder.appendLine(Formatter.formatFileSize(context, memoryInfo.threshold));
+//        builder.appendLine();
 //        builder.append("getNativeHeapSize:");
-//        builder.appendln(Formatter.formatFileSize(context, Debug.getNativeHeapSize()));
+//        builder.appendLine(Formatter.formatFileSize(context, Debug.getNativeHeapSize()));
 //
 //        builder.append("getNativeHeapAllocatedSize:");
-//        builder.appendln(Formatter.formatFileSize(context, Debug.getNativeHeapAllocatedSize()));
+//        builder.appendLine(Formatter.formatFileSize(context, Debug.getNativeHeapAllocatedSize()));
 //
 //        builder.append("getNativeHeapFreeSize:");
-//        builder.appendln(Formatter.formatFileSize(context, Debug.getNativeHeapFreeSize()));
-        builder.appendln()
+//        builder.appendLine(Formatter.formatFileSize(context, Debug.getNativeHeapFreeSize()));
+        builder.appendLine()
         builder.append("SD空间大小:")
-        builder.appendln(Formatter.formatFileSize(context, getTotalExternalMemorySize()))
+        builder.appendLine(Formatter.formatFileSize(context, getTotalExternalMemorySize()))
         builder.append("SD可用空间大小:")
-        builder.appendln(Formatter.formatFileSize(context, getAvailableExternalMemorySize()))
+        builder.appendLine(Formatter.formatFileSize(context, getAvailableExternalMemorySize()))
         return builder
     }
 
@@ -296,7 +298,7 @@ object Device {
         // [Build.MODEL] 最终用户可见的名称
         builder.append("API ${Build.VERSION.SDK_INT}/${Build.MANUFACTURER}/${Build.BRAND}/${Build.MODEL}/${Build.PRODUCT}")
         if (abi) {
-            builder.appendln()
+            builder.appendLine()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 builder.append(Build.SUPPORTED_ABIS.connect("/"))
             } else {
@@ -312,11 +314,11 @@ object Device {
         if (cpu) {
             //CPU信息
             // CpuUtils.getCpuCurFreq().forEach {
-            //     builder.appendln()
+            //     builder.appendLine()
             //     builder.append(it)
             // }
 
-            builder.appendln()
+            builder.appendLine()
             builder.append("${CpuUtils.cpuCoreNum}/${CpuUtils.numCpuCores} ${CpuUtils.cpuMinFreqInfo}Hz/${CpuUtils.cpuMinFreq}Hz/${CpuUtils.cpuMaxFreq}Hz")
         }
     }
@@ -363,7 +365,7 @@ object Device {
             }
 
             //dp值
-            appendln()
+            appendLine()
             append("wDp:").append(widthDp)
             append(" hDp:").append(heightDp)
             append(" dp:").append(displayMetrics.density)
@@ -380,14 +382,22 @@ object Device {
             append(" sh:").append(statusBarHeight).append(" ")
                 .append(statusBarHeight / displayMetrics.density).append("dp")
             append(" nh:").append(navBarHeight).append(" ")
-                .append(navBarHeight / displayMetrics.density).append("dp").appendln()
+                .append(navBarHeight / displayMetrics.density).append("dp").appendLine()
+
+            //pad
+            append(" pad:").append(Pad.isPadSize())
+            append(" tablet:").append(Pad.isTabletDevice)
+            append(" tw:").append(Pad.isTabletWindow())
+            append(" magic:").append(Pad.inMagicWindow())
+            append(" mw:").append(Pad.isInMultiWindowMode(lastContext))
+            appendLine()
 
             val rect = Rect()
             val point = Point()
             if (decorView != null) {
                 decorView.getGlobalVisibleRect(rect, point)
                 append(" d:").append(rect)
-                append(" d:").append(point).appendln()
+                append(" d:").append(point).appendLine()
             }
 
             if (contentView != null) {
@@ -395,7 +405,7 @@ object Device {
                 append(" c:").append(rect)
                 append(" c:").append(point)
 
-                appendln()
+                appendLine()
                 contentView.getWindowVisibleDisplayFrame(rect)
                 append("frame:").append(rect)
             }
@@ -407,7 +417,7 @@ object Device {
                 val modes = windowManager.defaultDisplay.supportedModes
                 val first = modes.first()
                 val count = modes.size
-                appendln()
+                appendLine()
                 if (count > 1) {
                     append("1/${count} ")
                 }
@@ -446,9 +456,9 @@ object Device {
     /**常用想要的设备基础信息*/
     fun beautifyDeviceLog(builder: Appendable = StringBuilder()): String {
         deviceInfoLess(builder)
-        builder.appendln()
+        builder.appendLine()
         builder.append("${getAppVersionName()}/${getAppVersionCode()}/${getAppString("build_time")}")
-        builder.appendln()
+        builder.appendLine()
         return builder.toString()
     }
 
@@ -545,6 +555,10 @@ fun Appendable.append(value: Int): Appendable {
     return append(value.toString())
 }
 
+fun Appendable.append(value: Boolean): Appendable {
+    return append(value.toString())
+}
+
 fun Appendable.append(value: Float): Appendable {
     return append(value.toString())
 }
@@ -558,9 +572,9 @@ fun Appendable.append(value: Point): Appendable {
 }
 
 fun Appendable.appendln(value: Int): Appendable {
-    return appendln(value.toString())
+    return appendLine(value.toString())
 }
 
 fun Appendable.appendln(value: Float): Appendable {
-    return appendln(value.toString())
+    return appendLine(value.toString())
 }
