@@ -121,7 +121,7 @@ fun FragmentManager.getAllContainerValidityFragment(fragment: Fragment): List<Fr
 
 /**获取相同容器内的所有[Fragment]*/
 fun FragmentManager.getAllContainerValidityFragment(containerViewId: Int?): List<Fragment> =
-    fragments.filter { FragmentManagerHelper.isInContainer(it, containerViewId) }
+    fragments.filter { it.view != null && FragmentManagerHelper.isInContainer(it, containerViewId) }
 
 /**获取所有view!=null的[Fragment]*/
 fun FragmentManager.getAllValidityFragment(): List<Fragment> {
