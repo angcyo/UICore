@@ -66,6 +66,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
                     event.y,
                     true
                 )
+                //L.e("${event.x} ${event.y}")
             }
         }
     }
@@ -176,10 +177,6 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
             //双指 操作, 平移和缩放
 
             //处理双指缩放
-            /*if (_touchType == TOUCH_TYPE_NONE ||
-                _touchType == TOUCH_TYPE_SCALE ||
-                _touchDistance > canvasView.canvasViewBox.getContentWidth() / 3
-            ) {*/
             val moveDistance = VectorHelper.spacing(_movePointList[0], _movePointList[1])
             if ((moveDistance - _touchDistance).abs() >= minScalePointerDistance &&
                 canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_SCALE) //激活了缩放手势
@@ -187,49 +184,46 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
                 //开始缩放
                 _touchType = TOUCH_TYPE_SCALE
                 val scale = moveDistance / _touchDistance
-                canvasViewBox.scaleBy(
-                    scale,
-                    scale,
-                    _touchMiddlePoint.x,
-                    _touchMiddlePoint.y
-                )
+                //canvasViewBox.coordinateSystemPointToViewPoint(_touchMiddlePoint2)
+                //VectorHelper.midPoint(_movePointList[0], _movePointList[1], _touchMiddlePoint)
+                val point = _touchMiddlePoint
+                canvasViewBox.scaleBy(scale, scale, point.x, point.y)
+
                 _touchDistance = moveDistance
                 handle = true
             }
-            /*}*/
 
-            //处理双指平移
-            /*if (_touchType == TOUCH_TYPE_NONE || _touchType == TOUCH_TYPE_TRANSLATE) {*/
+            if (!handle) {
+                //没有被缩放处理
+                val dx2 = _movePointList[1].x - _touchPointList[1].x
+                val dy2 = _movePointList[1].y - _touchPointList[1].y
 
-            val dx2 = _movePointList[1].x - _touchPointList[1].x
-            val dy2 = _movePointList[1].y - _touchPointList[1].y
+                val dx = min(dx1, dx2)
+                val dy = min(dy1, dy2)
 
-            val dx = min(dx1, dx2)
-            val dy = min(dy1, dy2)
+                if ((dx.abs() > dragTriggerDistance || dy.abs() > dragTriggerDistance) &&
+                    canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_TRANSLATE)//激活了平移手势
+                ) {
+                    //开始平移
+                    _touchType = TOUCH_TYPE_TRANSLATE
+                    //不能用两个点的方向去判断平移意图, 而应该用各个方向的最大移动距离来判断
+                    /*if (VectorHelper.isHorizontalIntent(_movePointList[0], _movePointList[1])) {
+                        canvasViewBox.translateBy(dx, 0f, false)
+                    } else {
+                        canvasViewBox.translateBy(0f, dy, false)
+                    }*/
 
-            if ((dx.abs() > dragTriggerDistance || dy.abs() > dragTriggerDistance) &&
-                canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_TRANSLATE)//激活了平移手势
-            ) {
-                //开始平移
-                _touchType = TOUCH_TYPE_TRANSLATE
-                //不能用两个点的方向去判断平移意图, 而应该用各个方向的最大移动距离来判断
-                /*if (VectorHelper.isHorizontalIntent(_movePointList[0], _movePointList[1])) {
-                    canvasViewBox.translateBy(dx, 0f, false)
-                } else {
-                    canvasViewBox.translateBy(0f, dy, false)
-                }*/
+                    if (dx.abs() > dy.abs()) {
+                        //水平平移意图
+                        canvasViewBox.translateBy(dx, 0f, false)
+                    } else {
+                        //垂直平移意图
+                        canvasViewBox.translateBy(0f, dy, false)
+                    }
 
-                if (dx.abs() > dy.abs()) {
-                    //水平平移意图
-                    canvasViewBox.translateBy(dx, 0f, false)
-                } else {
-                    //垂直平移意图
-                    canvasViewBox.translateBy(0f, dy, false)
+                    handle = true
                 }
-
-                handle = true
             }
-            /*}*/
         } else {
             if (canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_MULTI_SELECT) && event.pointerCount < 2) {
                 //移动多选框

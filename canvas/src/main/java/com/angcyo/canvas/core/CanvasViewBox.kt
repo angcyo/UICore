@@ -174,6 +174,13 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         return invertMatrix.mapPoint(point, result)
     }
 
+    /**[mapCoordinateSystemPoint]*/
+    fun mapCoordinateSystemPoint2(point: PointF, result: PointF = _tempPoint): PointF {
+        _tempPoint.set(point)
+        _tempPoint.offset(-getCoordinateSystemX(), -getCoordinateSystemY())
+        return invertMatrix.mapPoint(_tempPoint, result)
+    }
+
     /**将屏幕上的点坐标, 映射成坐标系中的坐标. 没有偏移到坐标系原点*/
     fun mapCoordinateSystemPoint(x: Float, y: Float, result: PointF = _tempPoint): PointF {
         _tempPoint.set(x, y)
