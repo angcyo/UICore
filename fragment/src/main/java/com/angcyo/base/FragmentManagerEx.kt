@@ -9,7 +9,8 @@ import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import com.angcyo.DslFHelper
-import com.angcyo.base.Factory.factory
+import com.angcyo.base.FragmentManagerHelper.factory
+import com.angcyo.fragment.R
 import com.angcyo.library.L
 import com.angcyo.library.utils.setFieldValue
 import kotlin.reflect.KClass
@@ -21,8 +22,17 @@ import kotlin.reflect.KClass
  * @date 2019/12/22
  */
 
-object Factory {
+object FragmentManagerHelper {
+
     var factory: FragmentFactory = FragmentFactory()
+
+    /**判断当前的[fragment]是否在[containerViewId]相同的容器内*/
+    fun isInContainer(fragment: Fragment, containerViewId: Int?): Boolean =
+        if (containerViewId == null) {
+            true
+        } else {
+            fragment.getFragmentContainerId() == containerViewId
+        }
 }
 
 /**实例化*/
@@ -104,6 +114,14 @@ fun FragmentManager.have(tag: String?): Boolean {
     }
     return result
 }
+
+/**获取相同容器内的所有[Fragment]*/
+fun FragmentManager.getAllContainerValidityFragment(fragment: Fragment): List<Fragment> =
+    getAllContainerValidityFragment(fragment.getFragmentContainerId())
+
+/**获取相同容器内的所有[Fragment]*/
+fun FragmentManager.getAllContainerValidityFragment(containerViewId: Int?): List<Fragment> =
+    fragments.filter { FragmentManagerHelper.isInContainer(it, containerViewId) }
 
 /**获取所有view!=null的[Fragment]*/
 fun FragmentManager.getAllValidityFragment(): List<Fragment> {
@@ -245,3 +263,6 @@ fun FragmentManager.findBeforeFragment(anchor: Fragment? = null): Fragment? {
 }
 
 //endregion ---find---
+
+/**判断当前的[Fragment]是否在详情容器中*/
+fun Fragment.isInDetailContainer() = getFragmentContainerId() == R.id.fragment_detail_container

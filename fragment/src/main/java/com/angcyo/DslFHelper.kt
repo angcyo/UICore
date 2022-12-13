@@ -94,6 +94,9 @@ class DslFHelper(
     /**执行操作之前, 需要保证的权限. 无权限, 则取消操作*/
     val permissions = mutableListOf<String>()
 
+    /**是否要检查容器, 平板模式下左右分屏*/
+    var checkContainer: Boolean = false
+
     //</editor-fold desc="属性">
 
     init {
@@ -103,6 +106,18 @@ class DslFHelper(
         }
     }
 
+    /**默认容器*/
+    fun configDefaultContainer() {
+        containerViewId = R.id.fragment_container
+    }
+
+    /**平板模式下, 将容器切换为详情模式*/
+    fun configDetailContainer() {
+        checkContainer = true
+        finishActivityOnLastFragmentRemove = false
+        containerViewId = R.id.fragment_detail_container
+    }
+
     /**给Fragment配置参数*/
     fun configFragment(action: Fragment.() -> Unit) {
         showFragmentList.forEach {
@@ -110,9 +125,20 @@ class DslFHelper(
         }
     }
 
+    /**判断当前的[fragment]是否在[containerViewId]相同的容器内*/
+    fun isInContainer(fragment: Fragment) =
+        FragmentManagerHelper.isInContainer(fragment, containerViewId)
+
     /**隐藏最后一个[Fragment]*/
     fun hideLast() {
         hideBeforeIndex = 1
+    }
+
+    /**所有有效的[Fragment]*/
+    fun FragmentManager.allFragment() = if (checkContainer) {
+        fragments.filter { isInContainer(it) }
+    } else {
+        fragments
     }
 
     //<editor-fold desc="add 或者 show操作">
@@ -215,7 +241,7 @@ class DslFHelper(
             fm.findFragmentByTag(t)?.let { remove(it) }
 
             //this
-            fm.fragments.forEach {
+            fm.allFragment().forEach {
                 if (it.tag == t) {
                     remove(it)
                 }
@@ -223,8 +249,12 @@ class DslFHelper(
         }
     }
 
+    /**在相同的容器内移除指定的[fragment]*/
     fun remove(fragment: Fragment?) {
         if (fragment == null) {
+            return
+        }
+        if (checkContainer && !isInContainer(fragment)) {
             return
         }
         if (!removeFragmentList.contains(fragment)) {
@@ -244,6 +274,9 @@ class DslFHelper(
 
     fun hide(fragment: Fragment?) {
         if (fragment == null) {
+            return
+        }
+        if (checkContainer && !isInContainer(fragment)) {
             return
         }
         if (!hideFragmentList.contains(fragment)) {
@@ -268,7 +301,7 @@ class DslFHelper(
 
     /**根据表达式[predicate], 返回所有想要remove的[Fragment]*/
     fun remove(predicate: (Fragment) -> Boolean) {
-        fm.fragments.forEach {
+        fm.allFragment().forEach {
             if (predicate(it)) {
                 remove(it)
             }
@@ -277,7 +310,7 @@ class DslFHelper(
 
     /**移除所有[Fragment]*/
     fun removeAll() {
-        remove(fm.fragments)
+        remove(fm.allFragment())
     }
 
     /**移除所有[getView]不为空的[Fragment]*/
@@ -373,7 +406,7 @@ class DslFHelper(
     fun back(): Boolean {
         var result = true
 
-        val allValidityFragment = fm.getAllValidityFragment()
+        val allValidityFragment = fm.getAllContainerValidityFragment(containerViewId)
         val lastFragment = allValidityFragment.lastOrNull()
 
         if (lastFragment != null) {
@@ -452,7 +485,7 @@ class DslFHelper(
 
             val allValidityFragment = mutableListOf<Fragment>()
             val allNoViewFragment = mutableListOf<Fragment>()
-            fm.fragments.forEach {
+            fm.allFragment().forEach {
                 when {
                     showFragmentList.contains(it) -> {
                         //需要显示的Fragment, 已经存在于结构中
@@ -580,6 +613,7 @@ class DslFHelper(
                 finishActivityOnLastFragmentRemove &&
                 context is Activity
             ) {
+                //空Fragment, 需要关闭Activity
                 val activity = context
                 activity.dslAHelper {
                     finishToActivity = this@DslFHelper.finishToActivity

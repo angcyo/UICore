@@ -1324,10 +1324,12 @@ open class DslAdapterItem : LifecycleOwner {
             itemDslAdapter?.eachItem { index, dslAdapterItem ->
                 if (dslAdapterItem != this && itemIsSelectMutexAction(dslAdapterItem)) {
                     //互斥操作
-                    dslAdapterItem.itemSelectMutexFromItem = fromItem
-                    dslAdapterItem.itemIsSelected = false
-                    dslAdapterItem.updateAdapterItem()
-                    dslAdapterItem.itemSelectMutexFromItem = null //清空
+                    if (dslAdapterItem.itemIsSelected) {
+                        dslAdapterItem.itemSelectMutexFromItem = fromItem
+                        dslAdapterItem.itemIsSelected = false
+                        dslAdapterItem.updateAdapterItem()
+                        dslAdapterItem.itemSelectMutexFromItem = null //清空
+                    }
                 }
             }
         }

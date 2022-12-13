@@ -12,7 +12,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.Lifecycle
 import com.angcyo.DslAHelper
-import com.angcyo.base.getAllValidityFragment
+import com.angcyo.base.getAllContainerValidityFragment
+import com.angcyo.base.isInDetailContainer
 import com.angcyo.base.lightStatusBar
 import com.angcyo.behavior.HideTitleBarBehavior
 import com.angcyo.behavior.placeholder.TitleBarPlaceholderBehavior
@@ -218,7 +219,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     /**是否要显示返回按钮*/
     open fun enableBackItem(): Boolean {
         var showBackItem = false
-        val count = fragmentManager?.getAllValidityFragment()?.size ?: 0
+        val count = fragmentManager?.getAllContainerValidityFragment(this)?.size ?: 0
 
         if (enableBackItem) {
             /*强制激活了返回按钮*/
@@ -250,6 +251,9 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
                     }
                 }
             }
+        } else if (count == 1 && isInDetailContainer()) {
+            //平板模式中, 并且显示在详情容器
+            showBackItem = false
         } else {
             /*可见Fragment数量大于0*/
             showBackItem = topFragment() == this

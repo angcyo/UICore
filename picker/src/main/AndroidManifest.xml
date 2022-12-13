@@ -14,7 +14,7 @@
             android:excludeFromRecents="false"
             android:exported="false"
             android:noHistory="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="behind"
             android:theme="@style/PickerActivityStyle"
             android:windowSoftInputMode="adjustResize" />
 

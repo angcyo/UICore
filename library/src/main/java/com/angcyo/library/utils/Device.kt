@@ -18,7 +18,7 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import com.angcyo.library.*
-import com.angcyo.library.component.Pad
+import com.angcyo.library.component.pad.Pad
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.connect
 import java.io.BufferedReader

@@ -19,6 +19,7 @@ import com.angcyo.fragment.R
 import com.angcyo.library.L
 import com.angcyo.library.Screen
 import com.angcyo.library.component._delay
+import com.angcyo.library.component.pad.isInPadMode
 import com.angcyo.library.ex.Anim
 import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.utils.resultString
@@ -45,11 +46,15 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
     /**布局*/
     var activityLayoutId = R.layout.lib_activity_main_layout
 
+    /**平板布局*/
+    var activityLayoutPadId = activityLayoutId
+
     /**激活布局全屏*/
     var enableLayoutFullScreen = true
 
     //<editor-fold desc="基础方法处理">
 
+    /**[onCreateAfter]*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -102,12 +107,14 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         Screen.init(this)
     }
 
-    /**布局设置之后触发*/
+    /**布局设置之后触发
+     * [onCreate]*/
     open fun onCreateAfter(savedInstanceState: Bundle?) {
         if (enableLayoutFullScreen) {
             enableLayoutFullScreen()
         }
-        with(activityLayoutId) {
+        val layoutId = if (isInPadMode()) activityLayoutPadId else activityLayoutId
+        with(layoutId) {
             if (this > 0) {
                 setContentView(this)
             }

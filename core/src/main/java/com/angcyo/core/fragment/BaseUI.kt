@@ -7,6 +7,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import com.angcyo.base.back
+import com.angcyo.base.dslFHelper
+import com.angcyo.base.isInDetailContainer
 import com.angcyo.core.R
 import com.angcyo.library.ex.*
 import com.angcyo.widget.base.clickIt
@@ -104,7 +106,14 @@ open class FragmentUI {
                     }
                 }
                 clickIt {
-                    fragment.back()
+                    if (fragment.isInDetailContainer()) {
+                        fragment.dslFHelper {
+                            configDetailContainer()
+                            remove(fragment)
+                        }
+                    } else {
+                        fragment.back()
+                    }
                 }
             }
         }

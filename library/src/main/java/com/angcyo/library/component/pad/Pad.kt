@@ -1,4 +1,4 @@
-package com.angcyo.library.component
+package com.angcyo.library.component.pad
 
 import android.app.Activity
 import android.content.Context
