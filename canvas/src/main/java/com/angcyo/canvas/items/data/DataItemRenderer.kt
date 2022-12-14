@@ -161,14 +161,18 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
             updateByBounds(getBounds())
 
             //
-            if (canvasView is CanvasDelegate && !canvasView.isTouchHold) {
+            if (canvasView is CanvasDelegate) {
                 val oldWidth = oldBounds.width()
                 val oldHeight = oldBounds.height()
                 if (oldWidth != 0f && oldHeight != 0f) {
                     //
                     if (renderItem.needUpdateOfBoundsChanged(reason)) {
-                        renderItem.updateRenderItem(this@DataItemRenderer, reason)
-                        isUpdateItem = true
+                        if (canvasView.isTouchHold) {
+                            _isScaleHappen = true
+                        } else {
+                            renderItem.updateRenderItem(this@DataItemRenderer, reason)
+                            isUpdateItem = true
+                        }
                     }
                 }
             }
