@@ -169,7 +169,10 @@ fun Context.getAppVersionCode(): Long { // 获取package manager的实例
     return code
 }
 
-/**根据资源名字, 资源类型, 返回资源id*/
+/**根据资源名字, 资源类型, 返回资源id
+ * [getAppBoolean]
+ * [getAppString]
+ * */
 fun getId(name: String, type: String): Int {
     return getIdentifier(name, type)
 }
