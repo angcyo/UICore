@@ -18,6 +18,7 @@
         android:background="@drawable/lib_bottom_tran_solid_gradient" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lib_iview_wrap_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"

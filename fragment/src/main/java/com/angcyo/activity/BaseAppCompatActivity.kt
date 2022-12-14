@@ -47,7 +47,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
     var activityLayoutId = R.layout.lib_activity_main_layout
 
     /**平板布局*/
-    var activityLayoutPadId = activityLayoutId
+    var activityPadLayoutId: Int? = null
 
     /**激活布局全屏*/
     var enableLayoutFullScreen = true
@@ -113,7 +113,8 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         if (enableLayoutFullScreen) {
             enableLayoutFullScreen()
         }
-        val layoutId = if (isInPadMode()) activityLayoutPadId else activityLayoutId
+        val layoutId =
+            if (isInPadMode()) activityPadLayoutId ?: activityLayoutId else activityLayoutId
         with(layoutId) {
             if (this > 0) {
                 setContentView(this)

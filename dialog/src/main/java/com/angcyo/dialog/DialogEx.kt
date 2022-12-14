@@ -8,8 +8,11 @@ import android.view.Gravity
 import android.view.View
 import com.angcyo.base.enableLayoutFullScreen
 import com.angcyo.base.translucentStatusBar
+import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
+import com.angcyo.library.component.pad.isInPadMode
 import com.angcyo.library.ex.dpi
+import kotlin.math.min
 
 /**
  *
@@ -26,6 +29,9 @@ fun DslDialogConfig.configBottomDialog(context: Context? = null): DslDialogConfi
     return this.apply {
         canceledOnTouchOutside = false
         dialogWidth = -1
+        if (isInPadMode()) {
+            dialogWidth = min(_screenWidth, _screenHeight)
+        }
         dialogHeight = -2
         dialogGravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
         animStyleResId = R.style.LibDialogBottomTranslateAnimation
@@ -59,6 +65,9 @@ fun DslDialogConfig.configCenterDialog(
 fun Context.dslDialog(config: DslDialogConfig.() -> Unit): Dialog {
     return DslDialogConfig(this).run {
         dialogWidth = -1
+        if (isInPadMode()) {
+            dialogWidth = min(_screenWidth, _screenHeight)
+        }
         config()
         show()
     }
@@ -87,6 +96,9 @@ fun Context.customFullScreenDialog(config: DslDialogConfig.() -> Unit): Dialog {
 fun Context.normalDialog(config: NormalDialogConfig.() -> Unit): Dialog {
     return NormalDialogConfig(this).run {
         dialogWidth = -1
+        if (isInPadMode()) {
+            dialogWidth = min(_screenWidth, _screenHeight)
+        }
         config()
         show()
     }
@@ -95,6 +107,9 @@ fun Context.normalDialog(config: NormalDialogConfig.() -> Unit): Dialog {
 fun Context.normalIosDialog(config: IosDialogConfig.() -> Unit): Dialog {
     return IosDialogConfig(this).run {
         dialogWidth = -1
+        if (isInPadMode()) {
+            dialogWidth = min(_screenWidth, _screenHeight)
+        }
         config()
         show()
     }
@@ -112,6 +127,9 @@ fun Context.textDialog(config: TextDialogConfig.() -> Unit): Dialog {
 fun Context.messageDialog(config: MessageDialogConfig.() -> Unit): Dialog {
     return MessageDialogConfig(this).run {
         dialogWidth = -1
+        if (isInPadMode()) {
+            dialogWidth = min(_screenWidth, _screenHeight)
+        }
         canceledOnTouchOutside = false
         config()
         show()
