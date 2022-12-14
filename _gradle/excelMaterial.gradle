@@ -1,0 +1,149 @@
+/**
+ * 2022-12-14
+ * LaserPecker 从Excel中读取材质参数
+ *
+ * http://maxmoto1702.github.io/groovy-excel-builder/
+ *
+ * https://www.cnblogs.com/-beyond/p/12764501.html
+ *
+ * */
+buildscript {
+    repositories {
+        mavenCentral()
+        /*maven {
+            url "http://repo.serebryanskiy.site/"
+            allowInsecureProtocol = true
+        }*/
+    }
+    dependencies {
+        // https://mvnrepository.com/artifact/org.apache.poi/poi
+        //classpath 'org.apache.poi:poi:5.2.3'
+        classpath 'org.apache.poi:poi-ooxml:5.2.3'
+
+        //https://jcenter.bintray.com/com/google/code/gson/gson/
+        classpath "com.google.code.gson:gson:2.9.1"
+    }
+}
+
+task _excelMaterial(group: 'angcyo', description: 'LaserPecker 从Excel中读取材质参数') {
+    //配置任务
+}
+
+//执行任务
+_excelMaterial.doLast {
+    def excelPath = project.hasProperty("excel_path") ? project.ext.excel_path : ''
+    def excelFile = file(excelPath)
+    //println excelFile.absolutePath
+
+    if (!excelFile.exists()) {
+        throw new IllegalStateException("请在[gradle.properties]文件中配置excel文件路径:excel_path")
+    }
+
+    //读取数据
+    // 指定excel文件，创建缓存输入流
+    def inputStream = new BufferedInputStream(new FileInputStream(excelFile))
+    // 直接传入输入流即可，此时excel就已经解析了
+    def workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook(inputStream)
+    //println workbook
+    def sheet = workbook.getSheetAt(0)
+
+    //集合
+    def jsonList = new ArrayList<Map<String, Object>>()
+
+    def beforeMaterial = null //之前的材质
+    def beforeLayerName = null //之前的模式
+    def beforeResIdStr = null //之前的本地资源key
+
+    for (line in 0..<sheet.getPhysicalNumberOfRows()) {
+        def row = sheet.getRow(line)
+        //println row.getPhysicalNumberOfCells()
+        if (line == 0) {
+            //头:编号 材质 功率 深度 分辨率 模式
+            print row.getCell(0)
+            print " "
+            print row.getCell(1)
+            print " "
+            print row.getCell(2)
+            print " "
+            print row.getCell(3)
+            print " "
+            print row.getCell(4)
+            print " "
+            print row.getCell(5)
+            println()
+        } else {
+            def type = project.ext.excel_material_type.toFloat().toInteger() //激光类型
+            def material = row.getCell(1).toString() //材质名称 环保纸
+            def power = row.getCell(2).toString() //功率
+            def depth = row.getCell(3).toString() //深度
+            def dpi = row.getCell(4).toString() //分辨率 1K 2K 4K
+            def layerName = row.getCell(5).toString() //模式 黑白or灰度
+
+            def resIdStr = row.getCell(6).toString() //国际化资源key
+
+            def dpiScale = dpi.toLowerCase().replace("k", "") //缩放比例
+            def code = "" // 唯一标识
+
+            //
+            if (material.isBlank()) {
+                material = beforeMaterial
+            } else {
+                beforeMaterial = material
+            }
+
+            //
+            if (layerName.isBlank()) {
+                layerName = beforeLayerName
+            } else {
+                beforeLayerName = layerName
+            }
+
+            //
+            if (resIdStr.isBlank()) {
+                resIdStr = beforeResIdStr
+            } else {
+                beforeResIdStr = resIdStr
+            }
+
+            if (!power.isBlank() && !depth.isBlank() && !dpiScale.isBlank()) {
+                //功率,深度分辨率必须要值
+                def layerMode = layerName == "灰度" ? "5" : "1,6" //图层模式
+
+                def map = new HashMap<String, Object>()
+                map.put("type", type.toFloat().toInteger())
+                map.put("layerMode", layerMode)
+                map.put("power", power.toFloat().toInteger())
+                map.put("depth", depth.toFloat().toInteger())
+                map.put("dpiScale", dpiScale.toFloat().toInteger())
+                if (!material.isBlank() && !layerName.isBlank()) {
+                    map.put("_name", "${material}-${layerName}".toString())
+                }
+                if (!resIdStr.isBlank()) {
+                    map.put("resIdStr", resIdStr)
+                    code += resIdStr
+                    if (type == 0) {
+                        code += "_blue"
+                    } else {
+                        code += "_white"
+                    }
+                    if (material == "灰度") {
+                        code += "_gray"
+                    } else {
+                        code += "_bw"
+                    }
+                    code += "_${map.get("dpiScale")}"
+                    //
+                    map.put("code", code)
+                }
+                jsonList.add(map)
+            }
+        }
+    }
+    //println jsonList
+
+    def json = new com.google.gson.Gson().toJson(jsonList)
+    def output = file(project.ext.excel_output_path)
+    output.write(json)
+
+    println "输出->" + output.absolutePath
+}
