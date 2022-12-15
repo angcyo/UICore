@@ -48,6 +48,9 @@ data class Reason(
 
         //---flag
 
+        /**改变item的样式, 比如笔的大小/样式/颜色等*/
+        const val REASON_FLAG_STYLE = 0x00
+
         /**改变item的宽高*/
         const val REASON_FLAG_BOUNDS = 0x01
 
@@ -56,9 +59,6 @@ data class Reason(
 
         /**改变item的旋转*/
         const val REASON_FLAG_ROTATE = REASON_FLAG_TRANSLATE shl 1
-
-        /**改变item的样式, 比如笔的大小/样式/颜色等*/
-        const val REASON_FLAG_STYLE = REASON_FLAG_ROTATE shl 1
 
         //val
 

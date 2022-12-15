@@ -10,6 +10,10 @@ data class Strategy(
 ) {
 
     companion object {
+
+        /**来自初始化的操作*/
+        const val STRATEGY_TYPE_INIT = 0
+
         /**正常操作, 需要加入撤销栈*/
         const val STRATEGY_TYPE_NORMAL = 1
 
@@ -33,5 +37,8 @@ data class Strategy(
 
         val preview: Strategy
             get() = Strategy(STRATEGY_TYPE_PREVIEW)
+
+        val init: Strategy
+            get() = Strategy(STRATEGY_TYPE_INIT)
     }
 }

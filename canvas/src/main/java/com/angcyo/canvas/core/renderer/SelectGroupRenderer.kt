@@ -55,8 +55,8 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         canvasDelegate.addCanvasListener(this)
     }
 
-    override fun onItemRendererRemove(itemRenderer: IItemRenderer<*>) {
-        super.onItemRendererRemove(itemRenderer)
+    override fun onItemRendererRemove(itemRenderer: IItemRenderer<*>, strategy: Strategy) {
+        super.onItemRendererRemove(itemRenderer, strategy)
         if (selectItemList.contains(itemRenderer)) {
             canvasDelegate.selectedItem(null)
         }
@@ -161,7 +161,8 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     override fun onCanvasBoxMatrixUpdate(
         canvasView: CanvasDelegate,
         matrix: Matrix,
-        oldMatrix: Matrix
+        oldMatrix: Matrix,
+        isEnd: Boolean
     ) {
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
         updateSelectBounds()

@@ -94,8 +94,8 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         //反转矩阵后的值
         matrix.invert(invertMatrix)
 
+        canvasView.dispatchCanvasBoxMatrixChanged(matrix, oldMatrix!!, isEnd)
         if (isEnd) {
-            canvasView.dispatchCanvasBoxMatrixChanged(matrix, oldMatrix!!)
             oldMatrix = null
         }
 
@@ -412,10 +412,12 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         _updateAnimator?.cancel()
         _updateAnimator = null
         if (anim) {
-            _updateAnimator = matrixAnimator(matrix, endMatrix, finish = {
+            _updateAnimator = matrixAnimator(matrix, endMatrix, finish = { isCancel ->
                 _updateAnimator = null
-                refresh(endMatrix)
-                finish(it)//
+                if (!isCancel) {
+                    refresh(endMatrix)
+                }
+                finish(isCancel)//
             }) {
                 adjustScaleOutToLimit(it)
                 refresh(it, false)

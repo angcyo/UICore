@@ -209,6 +209,7 @@ object GraphicsHelper {
     fun renderItemDataBeanList(
         canvasView: ICanvasView,
         beanList: List<CanvasProjectItemBean>,
+        selected: Boolean,
         strategy: Strategy
     ): List<DataItemRenderer> {
         val result = mutableListOf<DataItemRenderer>()
@@ -226,7 +227,9 @@ object GraphicsHelper {
         if (result.isNotEmpty()) {
             (canvasView as? CanvasDelegate)?.apply {
                 addItemRenderer(result, strategy)
-                selectGroupRenderer.selectedRendererList(result, Strategy.preview)
+                if (selected) {
+                    selectGroupRenderer.selectedRendererList(result, Strategy.preview)
+                }
             }
         }
         return result

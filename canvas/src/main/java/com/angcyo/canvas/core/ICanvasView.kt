@@ -32,7 +32,7 @@ interface ICanvasView : IComponent {
     fun dispatchCanvasBoxMatrixChangeBefore(matrix: Matrix, newValue: Matrix) {}
 
     /**[com.angcyo.canvas.core.CanvasViewBox.refresh]*/
-    fun dispatchCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix) {}
+    fun dispatchCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix, isEnd: Boolean) {}
 
     /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.changeBoundsAction]*/
     fun dispatchItemBoundsChanged(itemRenderer: IRenderer, reason: Reason, oldBounds: RectF) {}

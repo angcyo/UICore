@@ -16,7 +16,6 @@ import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.getMaxLineWidth
-import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import com.angcyo.library.unit.InchValueUnit
 import com.angcyo.library.unit.MmValueUnit
@@ -78,7 +77,8 @@ class MonitorRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView), ICanv
     override fun onCanvasBoxMatrixUpdate(
         canvasView: CanvasDelegate,
         matrix: Matrix,
-        oldMatrix: Matrix
+        oldMatrix: Matrix,
+        isEnd: Boolean
     ) {
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
     }

@@ -204,7 +204,8 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     override fun onCanvasBoxMatrixUpdate(
         canvasView: CanvasDelegate,
         matrix: Matrix,
-        oldMatrix: Matrix
+        oldMatrix: Matrix,
+        isEnd: Boolean
     ) {
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldMatrix)
         changeBeforeBounds.set(getBounds())

@@ -138,8 +138,8 @@ class SmartAssistant(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         return super.onCanvasTouchEvent(canvasDelegate, event)
     }
 
-    override fun onCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix) {
-        super.onCanvasBoxMatrixChanged(matrix, oldValue)
+    override fun onCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix, isEnd: Boolean) {
+        super.onCanvasBoxMatrixChanged(matrix, oldValue, isEnd)
     }
 
     /**初始化智能数据*/

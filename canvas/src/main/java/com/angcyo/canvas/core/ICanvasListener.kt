@@ -4,6 +4,7 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import androidx.annotation.AnyThread
 import com.angcyo.canvas.Reason
+import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 
@@ -24,7 +25,7 @@ interface ICanvasListener : ICanvasTouch {
     fun onCanvasBoxMatrixChangeBefore(matrix: Matrix, newValue: Matrix) {}
 
     /**[CanvasView]改变[Matrix]之后回调*/
-    fun onCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix) {}
+    fun onCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix, isEnd: Boolean) {}
 
     //</editor-fold desc="绘制相关">
 
@@ -55,10 +56,10 @@ interface ICanvasListener : ICanvasTouch {
     fun onDoubleTapItem(itemRenderer: IItemRenderer<*>) {}
 
     /**[com.angcyo.canvas.CanvasDelegate.addItemRenderer]*/
-    fun onItemRendererAdd(itemRenderer: IItemRenderer<*>) {}
+    fun onItemRendererAdd(itemRenderer: IItemRenderer<*>, strategy: Strategy) {}
 
     /**[com.angcyo.canvas.CanvasDelegate.removeItemRenderer]*/
-    fun onItemRendererRemove(itemRenderer: IItemRenderer<*>) {}
+    fun onItemRendererRemove(itemRenderer: IItemRenderer<*>, strategy: Strategy) {}
 
     /**[com.angcyo.canvas.core.component.control.LockControlPoint.onClickControlPoint]*/
     fun onItemLockScaleRatioChanged(item: BaseItemRenderer<*>) {}

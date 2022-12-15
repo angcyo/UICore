@@ -3,6 +3,7 @@ package com.angcyo.canvas.items.renderer
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.canvas.Reason
+import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.items.ICanvasItem
@@ -76,10 +77,10 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
     fun onCancelSelected(toSelectedItem: BaseItemRenderer<*>?) {}
 
     /**当渲染器被添加到画布时的回调*/
-    fun onAddRenderer() {}
+    fun onAddRenderer(strategy: Strategy) {}
 
     /**当渲染器被移除画布时的回调*/
-    fun onRemoveRenderer() {}
+    fun onRemoveRenderer(strategy: Strategy) {}
 
     //</editor-fold desc="控制点回调">
 

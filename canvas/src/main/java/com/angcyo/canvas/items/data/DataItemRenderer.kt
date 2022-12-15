@@ -101,9 +101,9 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
 
     /**是否发生过缩放*/
     var _isScaleHappen = false
-    override fun onCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix) {
-        super.onCanvasBoxMatrixChanged(matrix, oldValue)
-        if (oldValue.getScale() != matrix.getScale()) {
+    override fun onCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix, isEnd: Boolean) {
+        super.onCanvasBoxMatrixChanged(matrix, oldValue, isEnd)
+        if (isEnd && oldValue.getScale() != matrix.getScale()) {
             if (canvasView is CanvasDelegate) {
                 if (canvasView.isTouchHold) {
                     _isScaleHappen = true
@@ -128,15 +128,15 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
     }
 
     /**检查是否需要重新刷新可视化的数据*/
-    fun _updateRenderItemIfNeed() {
+    fun _updateRenderItemIfNeed(reason: Reason = Reason(flag = Reason.REASON_FLAG_STYLE)) {
         //L.w("更新....")
         val renderItem = getRendererRenderItem()
         if (isVisible() && !getRotateBounds().isNoSize()) {
             renderItem?.dataBean?.apply {
                 if (renderItem is DataPathItem) {
-                    if (renderItem.itemPaint.style == Paint.Style.STROKE) {
+                    if (renderItem.itemPaint.style == Paint.Style.STROKE || renderItem.isLineShape()) {
                         //描边的path, 需要放大边框线, 所以需要重新渲染数据
-                        renderItem.updateRenderItem(this@DataItemRenderer, Reason())
+                        renderItem.updateRenderItem(this@DataItemRenderer, reason)
                     }
                 }
             }
@@ -147,9 +147,10 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
     override fun onCanvasBoxMatrixUpdate(
         canvasView: CanvasDelegate,
         matrix: Matrix,
-        oldMatrix: Matrix
+        oldMatrix: Matrix,
+        isEnd: Boolean
     ) {
-        super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldMatrix)
+        super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldMatrix, isEnd)
     }
 
     override fun renderItemBoundsChanged(reason: Reason, oldBounds: RectF) {
@@ -179,7 +180,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
         }
 
         if (!isUpdateItem) {
-            if (!oldBounds.isNoSize() && reason.flag > 0) {
+            if (!oldBounds.isNoSize() && reason.flag > Reason.REASON_FLAG_STYLE) {
                 //不管是平移, 旋转, 还是缩放, 发生改变之后, 都需要更新数据, 比如索引.
                 renderItemDataChanged(reason)
             }
@@ -194,7 +195,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
     }
 
     override fun renderItemDataChanged(reason: Reason) {
-        if (reason.flag > 0) {
+        if (reason.flag > Reason.REASON_FLAG_STYLE) {
             val dataBean = getRendererRenderItem()?.dataBean
             val index = dataBean?.index
             dataBean?.index = null

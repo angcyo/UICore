@@ -301,17 +301,17 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     /**当[Matrix]更新后触发
      * [com.angcyo.canvas.core.CanvasViewBox.refresh]*/
-    override fun dispatchCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix) {
+    override fun dispatchCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix, isEnd: Boolean) {
         eachAxisRender { axis ->
             if (axis.enable) {
-                onCanvasBoxMatrixUpdate(this@CanvasDelegate, matrix, oldValue)
+                onCanvasBoxMatrixUpdate(this@CanvasDelegate, matrix, oldValue, isEnd)
             }
         }
         eachAllRenderer {
-            onCanvasBoxMatrixUpdate(this@CanvasDelegate, matrix, oldValue)
+            onCanvasBoxMatrixUpdate(this@CanvasDelegate, matrix, oldValue, isEnd)
         }
         canvasListenerList.forEach {
-            it.onCanvasBoxMatrixChanged(matrix, oldValue)
+            it.onCanvasBoxMatrixChanged(matrix, oldValue, isEnd)
         }
     }
 
@@ -865,7 +865,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         val itemList = mutableListOf<BaseItemRenderer<*>>()
         if (item is SelectGroupRenderer) {
             itemList.addAll(item.selectItemList)
-            item.onAddRenderer()
+            item.onAddRenderer(strategy)
         } else {
             itemList.add(item)
         }
@@ -878,10 +878,10 @@ class CanvasDelegate(val view: View) : ICanvasView {
             list.forEach { item ->
                 if (!itemsRendererList.contains(item)) {
                     if (itemsRendererList.add(item)) {
-                        item.onAddRenderer()
+                        item.onAddRenderer(strategy)
 
                         canvasListenerList.forEach {
-                            it.onItemRendererAdd(item)
+                            it.onItemRendererAdd(item, strategy)
                         }
                     }
                     if (item is BaseItemRenderer) {
@@ -919,7 +919,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         val itemList = mutableListOf<BaseItemRenderer<*>>()
         if (item is SelectGroupRenderer) {
             itemList.addAll(item.selectItemList)
-            item.onRemoveRenderer()
+            item.onRemoveRenderer(strategy)
         } else {
             itemList.add(item)
         }
@@ -932,9 +932,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
         itemsRendererList.removeAll(list)
         list.forEach { item ->
-            item.onRemoveRenderer()
+            item.onRemoveRenderer(strategy)
             canvasListenerList.forEach {
-                it.onItemRendererRemove(item)
+                it.onItemRendererRemove(item, strategy)
             }
         }
 
@@ -993,7 +993,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
             return
         }
 
-        GraphicsHelper.renderItemDataBeanList(this, copyDataList, strategy)
+        GraphicsHelper.renderItemDataBeanList(this, copyDataList, true, strategy)
     }
 
     /**选中item[BaseItemRenderer]*/
@@ -1123,30 +1123,40 @@ class CanvasDelegate(val view: View) : ICanvasView {
         return result
     }
 
-    /**添加一个限制框数据*/
-    fun addAndShowLimitBounds(path: Path, block: LimitDataInfo.() -> Unit = {}) {
+    /**添加一个限制框数据
+     * [showBounds] 是否要显示到目标范围, 不指定时通过[com.angcyo.canvas.data.LimitDataInfo.isPrimary]判断*/
+    fun addAndShowLimitBounds(
+        path: Path,
+        showBounds: Boolean? = null,
+        block: LimitDataInfo.() -> Unit = {}
+    ) {
         val pathBounds = RectF()
         path.computeBounds(pathBounds, true)
         limitRenderer.addLimit {
             add(LimitDataInfo(path, false).apply(block))
         }
-        showRectBounds(
-            pathBounds,
-            offsetRectTop = limitRenderer.limitList.lastOrNull()?.offsetRectTop == true
-        )
+        val last = limitRenderer.limitList.lastOrNull()
+        if ((showBounds ?: last?.isPrimary) == true) {
+            showRectBounds(pathBounds, offsetRectTop = last?.offsetRectTop == true)
+        }
     }
 
-    /**显示一个限制框, 并且移动画布到最佳可视位置*/
-    fun showAndResetLimitBounds(path: Path, block: LimitDataInfo.() -> Unit = {}) {
+    /**显示一个限制框, 并且移动画布到最佳可视位置
+     * [showBounds] 是否要显示到目标范围, 不指定时通过[com.angcyo.canvas.data.LimitDataInfo.isPrimary]判断*/
+    fun showAndResetLimitBounds(
+        path: Path,
+        showBounds: Boolean? = null,
+        block: LimitDataInfo.() -> Unit = {}
+    ) {
         val pathBounds = RectF()
         path.computeBounds(pathBounds, true)
         limitRenderer.resetLimit {
             add(LimitDataInfo(path, true).apply(block))
         }
-        showRectBounds(
-            pathBounds,
-            offsetRectTop = limitRenderer.limitList.lastOrNull()?.offsetRectTop == true
-        )
+        val last = limitRenderer.limitList.lastOrNull()
+        if ((showBounds ?: last?.isPrimary) == true) {
+            showRectBounds(pathBounds, offsetRectTop = last?.offsetRectTop == true)
+        }
     }
 
     /**将画板移动到可以完全显示出[rect]
