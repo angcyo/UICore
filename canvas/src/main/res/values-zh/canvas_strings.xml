@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="canvas_tips">提示</string>
+    <string name="canvas_exit_edit">放弃编辑?</string>
+    <string name="canvas_title">创作</string>
+
     <string name="canvas_width">宽度</string>
     <string name="canvas_height">高度</string>
     <string name="canvas_axis_x">X轴</string>
