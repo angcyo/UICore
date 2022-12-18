@@ -133,7 +133,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
                 _itemBounds.bottom = _itemBounds.top + itemDrawStrokeWidth
             } else {
                 _itemBounds.set(visualBounds)
-                val dv = -paint.strokeWidth / 2 - itemDrawStrokeWidth / 2
+                val dv = -paint.strokeWidth / 2 /*- itemDrawStrokeWidth / 2*/
                 _itemBounds.inset(dv, dv)//放大元素边界的矩形
             }
 
