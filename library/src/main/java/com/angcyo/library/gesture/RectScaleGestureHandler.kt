@@ -494,6 +494,9 @@ class RectScaleGestureHandler {
     /**按在边框上拖动时, 是否也要保持比例*/
     var keepScaleRatioOnFrame: Boolean = false
 
+    /**在等比的情况下, 是否优先选择缩放值中的最大值*/
+    var optimizationScaleMax: Boolean = false
+
     /**当矩形缩放改变时的回调
      * [rect] 实时改变的矩形
      * [end] 手势是否结束*/
@@ -803,7 +806,7 @@ class RectScaleGestureHandler {
 
         //保持比例
         if (keepRatio) {
-            val scale = max(scaleX, scaleY)
+            val scale = if (optimizationScaleMax) max(scaleX, scaleY) else min(scaleX, scaleY)
             scaleX = onLimitWidthScaleAction(scale)
             scaleY = onLimitHeightScaleAction(scale)
         }
