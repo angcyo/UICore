@@ -137,6 +137,9 @@ object CanvasConstant {
     /**是否开启智能指南, 持久化*/
     var CANVAS_SMART_ASSISTANT: Boolean by HawkPropertyValue<Any, Boolean>(true)
 
+    /**是否开启网格绘制, 持久化*/
+    var CANVAS_DRAW_GRID: Boolean by HawkPropertyValue<Any, Boolean>(true)
+
     /**单位*/
     val valueUnit: IValueUnit
         get() = when (CANVAS_VALUE_UNIT) {
