@@ -7,6 +7,7 @@ import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.library.unit.IValueUnit
 
 /**
  *
@@ -26,6 +27,9 @@ interface ICanvasListener : ICanvasTouch {
 
     /**[CanvasView]改变[Matrix]之后回调*/
     fun onCanvasBoxMatrixChanged(matrix: Matrix, oldValue: Matrix, isEnd: Boolean) {}
+
+    /**坐标系单位改变*/
+    fun onCoordinateSystemUnitChanged(oldValueUnit: IValueUnit, valueUnit: IValueUnit) {}
 
     //</editor-fold desc="绘制相关">
 

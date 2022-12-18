@@ -365,8 +365,9 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
     /**更新坐标单位*/
     fun updateCoordinateSystemUnit(valueUnit: IValueUnit) {
+        val old = valueUnit
         this.valueUnit = valueUnit
-        canvasView.dispatchCoordinateSystemUnitChanged(valueUnit)
+        canvasView.dispatchCoordinateSystemUnitChanged(old, valueUnit)
         canvasView.refresh()
     }
 

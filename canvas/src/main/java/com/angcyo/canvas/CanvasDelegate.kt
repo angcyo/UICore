@@ -368,10 +368,16 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
-    override fun dispatchCoordinateSystemUnitChanged(valueUnit: IValueUnit) {
-        super.dispatchCoordinateSystemUnitChanged(valueUnit)
+    override fun dispatchCoordinateSystemUnitChanged(
+        oldValueUnit: IValueUnit,
+        valueUnit: IValueUnit
+    ) {
+        super.dispatchCoordinateSystemUnitChanged(oldValueUnit, valueUnit)
         eachAxisRender {
-            onCoordinateSystemUnitChanged(valueUnit)
+            onCoordinateSystemUnitChanged(oldValueUnit, valueUnit)
+        }
+        canvasListenerList.forEach {
+            it.onCoordinateSystemUnitChanged(oldValueUnit, valueUnit)
         }
         /*eachAllRenderer {
             if (this is IItemRenderer<*>) {

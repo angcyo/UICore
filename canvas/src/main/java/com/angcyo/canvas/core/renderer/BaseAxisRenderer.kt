@@ -57,7 +57,7 @@ abstract class BaseAxisRenderer(canvasView: ICanvasView) : BaseRenderer(canvasVi
     }
 
     /**坐标系单位改变后回调*/
-    fun onCoordinateSystemUnitChanged(valueUnit: IValueUnit) {
+    fun onCoordinateSystemUnitChanged(oldValueUnit: IValueUnit, valueUnit: IValueUnit) {
         updateAxisData()
     }
 

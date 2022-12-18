@@ -41,7 +41,7 @@ interface ICanvasView : IComponent {
     fun dispatchCoordinateSystemOriginChanged(point: PointF) {}
 
     /**当[CanvasViewBox]的坐标单位改变时触发*/
-    fun dispatchCoordinateSystemUnitChanged(valueUnit: IValueUnit) {}
+    fun dispatchCoordinateSystemUnitChanged(oldValueUnit: IValueUnit, valueUnit: IValueUnit) {}
 
     /**分发回退/恢复栈发生改变
      * [CanvasUndoManager]*/
