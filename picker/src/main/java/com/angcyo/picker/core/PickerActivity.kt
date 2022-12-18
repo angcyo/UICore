@@ -1,6 +1,5 @@
 package com.angcyo.picker.core
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -18,9 +17,10 @@ import com.angcyo.library.L
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.fileSizeString
-import com.angcyo.library.ex.havePermissions
+import com.angcyo.library.ex.havePermission
 import com.angcyo.library.toast
 import com.angcyo.loader.LoaderConfig
+import com.angcyo.picker.DslPicker
 import com.angcyo.picker.R
 import com.angcyo.viewmodel.VMProperty
 
@@ -71,15 +71,13 @@ class PickerActivity : BaseAppCompatActivity(), IActivityDebugInfo {
         }
     }
 
+    /**相册权限检查*/
     fun checkPermission() {
-
-        if (havePermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        val permission = DslPicker.pickerPermission
+        if (havePermission(permission)) {
             onPermissionGranted()
         } else {
-            dslPermission(
-                this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) { allGranted, foreverDenied ->
+            dslPermission(this, permission) { allGranted, foreverDenied ->
                 if (allGranted) {
                     onPermissionGranted()
                 } else {

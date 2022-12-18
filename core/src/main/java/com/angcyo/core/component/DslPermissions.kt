@@ -129,6 +129,19 @@ fun dslPermission(
     dslPermissions.doIt()
 }
 
+/**[dslPermission]*/
+fun dslPermission(
+    fragmentActivity: FragmentActivity?,
+    permission: List<String>,
+    onResult: (allGranted: Boolean, foreverDenied: Boolean) -> Unit
+) {
+    val dslPermissions = DslPermissions()
+    dslPermissions.fragmentActivity = fragmentActivity
+    dslPermissions.addPermissions(permission)
+    dslPermissions.onPermissionsResult = onResult
+    dslPermissions.doIt()
+}
+
 //endregion
 
 //region ---permissionList---

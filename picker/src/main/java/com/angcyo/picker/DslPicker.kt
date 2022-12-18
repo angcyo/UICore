@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -44,6 +45,17 @@ import java.io.File
  * @date 2020/01/31
  */
 object DslPicker {
+
+    /**相册的权限*/
+    val pickerPermission: List<String>
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) listOf(
+            Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.READ_MEDIA_VIDEO,
+            Manifest.permission.READ_MEDIA_AUDIO
+        ) else listOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
 
     /**开始选择器*/
     fun picker(context: Context?, config: LoaderConfig) {
