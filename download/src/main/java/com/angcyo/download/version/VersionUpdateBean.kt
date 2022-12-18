@@ -14,6 +14,9 @@ data class VersionUpdateBean(
     var versionName: String? = null,
     /**需要更新的版本号*/
     var versionCode: Long = 0,
+    /**更新提示:,比如 更新内容
+     * [versionDes]*/
+    var versionDesTip: String? = null,
     /**更新描述*/
     var versionDes: String? = null,
     /**强制更新*/

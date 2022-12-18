@@ -73,8 +73,10 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
         }
 
         _vh.tv(R.id.version_name_view)?.text = bean.versionName
+        _vh.tv(R.id.version_des_tip_view)?.text = bean.versionDesTip ?: "更新内容"
         _vh.tv(R.id.version_des_view)?.text = bean.versionDes
         _vh.visible(R.id.lib_cancel_view, !bean.versionForce)
+        _vh.visible(R.id.lib_button, !bean.versionUrl.isNullOrBlank())
         val startButton = _vh.tv(R.id.lib_button)
 
         if (bean.link) {

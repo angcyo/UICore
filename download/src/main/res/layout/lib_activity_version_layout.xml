@@ -47,24 +47,32 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/lib_xhdpi"
             android:text="更新内容"
-            app:layout_constraintBottom_toTopOf="@id/version_des_view"
+            app:layout_constraintBottom_toTopOf="@id/version_des_wrap_layout"
             app:layout_constraintLeft_toLeftOf="parent" />
 
-        <TextView
-            android:id="@+id/version_des_view"
-            style="@style/LibSubTextStyle"
-            android:layout_width="0dp"
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/version_des_wrap_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:lineSpacingExtra="4dp"
-            android:padding="@dimen/lib_xhdpi"
-            app:layout_constraintTop_toBottomOf="@id/lib_image_tip_view"
-            tools:text="1、性能修复及性能能优化，改进用户体验，修复已知bug；\n2、增加视频上传功能，强化视觉。\n3、简化初次成为主办方内容。" />
+            app:layout_constraintHeight_max="160dp"
+            app:layout_constraintTop_toBottomOf="@id/lib_image_tip_view">
+
+            <TextView
+                android:id="@+id/version_des_view"
+                style="@style/LibSubTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="4dp"
+                android:padding="@dimen/lib_xhdpi"
+                tools:text="1、性能修复及性能能优化，改进用户体验，修复已知bug；\n2、增加视频上传功能，强化视觉。\n3、简化初次成为主办方内容。" />
+
+        </androidx.core.widget.NestedScrollView>
 
         <com.angcyo.widget.progress.DslProgressBar
             android:id="@+id/lib_progress_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/version_des_view"
+            app:layout_constraintTop_toBottomOf="@id/version_des_wrap_layout"
             app:progress_radius="0dp" />
 
         <com.angcyo.widget.DslButton
