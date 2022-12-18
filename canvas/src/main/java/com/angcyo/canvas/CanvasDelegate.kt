@@ -634,14 +634,6 @@ class CanvasDelegate(val view: View) : ICanvasView {
         outWidth: Int = -1,
         outHeight: Int = -1
     ): Bitmap {
-        val canvasViewBox = getCanvasViewBox()
-
-        val oldBoxRect = emptyRectF()
-        oldBoxRect.set(canvasViewBox.contentRect)
-
-        //更新坐标系为0,0
-        canvasViewBox.contentRect.set(0f, 0f, width.toFloat(), height.toFloat())
-
         val bitmapWidth: Int
         val bitmapHeight: Int
 
@@ -668,20 +660,17 @@ class CanvasDelegate(val view: View) : ICanvasView {
         val scaleMatrix = acquireTempMatrix()
         scaleMatrix.setScale(bitmapWidth * 1f / width, bitmapHeight * 1f / height)
 
-        val oldRenderRect = emptyRectF()
         canvas.setMatrix(scaleMatrix)
 
         val paintOffset = 1 //向左上多偏移一段笔的粗细
         canvas.withTranslation(-left + paintOffset, -top + paintOffset) {
-            val renderParams = RenderParams(false)
+            val tempRenderRect = acquireTempRectF()
+            val renderParams = RenderParams(false, tempRenderRect)
             itemsRendererList.forEach { renderer ->
                 if (renderer.isVisible()) {
                     //item的旋转, 在此处理
                     val bounds = renderer.getBounds()
-                    //替换渲染矩形坐标
-                    val renderBounds = renderer.getRenderBounds()
-                    oldRenderRect.set(renderBounds)
-                    renderBounds.set(bounds)
+                    tempRenderRect.set(bounds)
                     canvas.withRotation(
                         renderer.rotate,
                         bounds.centerX(),
@@ -689,15 +678,11 @@ class CanvasDelegate(val view: View) : ICanvasView {
                     ) {
                         renderer.render(canvas, renderParams)
                     }
-                    //恢复渲染矩形
-                    renderBounds.set(oldRenderRect)
                 }
             }
+            tempRenderRect.release()
         }
         scaleMatrix.release()
-
-        //恢复
-        canvasViewBox.contentRect.set(oldBoxRect)
 
         return bitmap
     }

@@ -45,19 +45,19 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
 
     override fun render(canvas: Canvas, renderParams: RenderParams) {
         rendererItem?.getDrawable(renderParams)?.let { drawable ->
-            val bounds = getRenderBounds()
+            val renderBounds = renderParams.itemRenderBounds ?: getRenderBounds()
             //需要处理矩形翻转的情况
             if (drawable is ScalePictureDrawable) {
                 drawable.setBounds(
-                    bounds.left.toInt(),
-                    bounds.top.toInt(),
-                    bounds.right.toInt(),
-                    bounds.bottom.toInt()
+                    renderBounds.left.toInt(),
+                    renderBounds.top.toInt(),
+                    renderBounds.right.toInt(),
+                    renderBounds.bottom.toInt()
                 )
                 drawable.draw(canvas)
             } else {
                 //用于支持水平/垂直镜像绘制
-                bounds.adjustFlipRect(_flipRect)
+                renderBounds.adjustFlipRect(_flipRect)
                 var sx = 1f
                 var sy = 1f
                 if (getBounds().isFlipHorizontal) {
