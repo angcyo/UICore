@@ -129,8 +129,8 @@ open class PathGraphicsParser : IGraphicsParser {
             val lineShape = item.isLineShape()
 
             //偏移到路径开始的位置
-            val dx = if (lineShape) -pathBounds.left else strokeWidth - pathBounds.left
-            val dy = strokeWidth - pathBounds.top
+            val dx = if (lineShape) -pathBounds.left else strokeWidth / 2 - pathBounds.left
+            val dy = strokeWidth / 2 - pathBounds.top
 
             translate(dx, dy)
 

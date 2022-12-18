@@ -122,10 +122,12 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
         controlHandler.selectedItemRender?.let {
             var itemDrawStrokeWidth = 0f
             val rendererItem = it.getRendererRenderItem()
+            if (rendererItem is DataItem) {
+                itemDrawStrokeWidth = rendererItem.drawStrokeWidth
+            }
             //目标相对于视图左上角的位置
             val visualBounds = it.getVisualBounds()
             if (rendererItem is DataItem && it.isLineShape()) {
-                itemDrawStrokeWidth = rendererItem.drawStrokeWidth
                 _itemBounds.set(visualBounds)
                 _itemBounds.top = visualBounds.top
                 _itemBounds.bottom = _itemBounds.top + itemDrawStrokeWidth
