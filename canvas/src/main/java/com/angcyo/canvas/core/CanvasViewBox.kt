@@ -5,6 +5,7 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import androidx.annotation.UiThread
+import com.angcyo.library.L
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.ex.*
 import com.angcyo.library.unit.IValueUnit
@@ -50,7 +51,9 @@ class CanvasViewBox(val canvasView: ICanvasView) {
     //刷新之前的矩阵
     var oldMatrix: Matrix? = null
 
-    //临时变量
+    /**[matrix]的逆矩阵
+     * [com.angcyo.canvas.core.CanvasViewBox.refresh]
+     * */
     val invertMatrix: Matrix = Matrix()
 
     /**内容可视区域*/
@@ -169,38 +172,51 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         return result
     }
 
-    /**将可视化坐标点, 映射成坐标系点*/
-    fun mapCoordinateSystemPoint(point: PointF, result: PointF = _tempPoint): PointF {
-        return invertMatrix.mapPoint(point, result)
-    }
-
-    /**[mapCoordinateSystemPoint]*/
-    fun mapCoordinateSystemPoint2(point: PointF, result: PointF = _tempPoint): PointF {
-        _tempPoint.set(point)
-        _tempPoint.offset(-getCoordinateSystemX(), -getCoordinateSystemY())
-        return invertMatrix.mapPoint(_tempPoint, result)
+    /**将可视化坐标点, 映射成坐标系点
+     * [viewPointToCoordinateSystemPoint]*/
+    fun mapCoordinateSystemPoint(
+        point: PointF,
+        result: PointF = _tempPoint,
+        operateMatrix: Matrix = invertMatrix
+    ): PointF {
+        return operateMatrix.mapPoint(point, result)
     }
 
     /**将屏幕上的点坐标, 映射成坐标系中的坐标. 没有偏移到坐标系原点*/
-    fun mapCoordinateSystemPoint(x: Float, y: Float, result: PointF = _tempPoint): PointF {
+    fun mapCoordinateSystemPoint(
+        x: Float,
+        y: Float,
+        result: PointF = _tempPoint,
+        operateMatrix: Matrix = invertMatrix
+    ): PointF {
         _tempPoint.set(x, y)
-        return invertMatrix.mapPoint(_tempPoint, result)
+        return operateMatrix.mapPoint(_tempPoint, result)
     }
 
-    /**将视图坐标点[point] 转换成对应的坐标系中的点[result]*/
-    fun viewPointToCoordinateSystemPoint(point: PointF, result: PointF = _tempPoint): PointF {
-        invertMatrix.mapPoint(point, result)
+    /**将视图坐标点[point] 转换成对应的坐标系中的点[result]
+     * [coordinateSystemPointToViewPoint]*/
+    fun viewPointToCoordinateSystemPoint(
+        point: PointF,
+        result: PointF = _tempPoint,
+        operateMatrix: Matrix = invertMatrix
+    ): PointF {
+        operateMatrix.mapPoint(point, result)
         result.offset(-getCoordinateSystemX(), -getCoordinateSystemY())
         return result
     }
 
     //---
 
-    /**将坐标系中的坐标, 转换*/
-    fun coordinateSystemPointToViewPoint(point: PointF, result: PointF = _tempPoint): PointF {
+    /**将坐标系中的坐标, 转换成view上的坐标
+     * [viewPointToCoordinateSystemPoint]*/
+    fun coordinateSystemPointToViewPoint(
+        point: PointF,
+        result: PointF = _tempPoint,
+        operateMatrix: Matrix = matrix
+    ): PointF {
         result.set(point.x, point.y)
         result.offset(getCoordinateSystemX(), getCoordinateSystemY())
-        matrix.mapPoint(result, result)
+        operateMatrix.mapPoint(result, result)
         return result
     }
 
@@ -442,6 +458,7 @@ class CanvasViewBox(val canvasView: ICanvasView) {
      * 正向移动后, 绘制的内容在正向指定的位置绘制
      * */
     fun translateBy(distanceX: Float, distanceY: Float, anim: Boolean = true) {
+        L.i("平移画布:dx:${distanceX} dy:${distanceY} $anim")
         val newMatrix = Matrix()
         newMatrix.set(matrix)
         newMatrix.postTranslate(distanceX, distanceY)
@@ -495,10 +512,12 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         if ((scaleY < 1f && getScaleY() <= minScaleY) || (scaleY > 1f && getScaleY() >= maxScaleY)) {
             return
         }
+        L.i("缩放画布:sx:${scaleX} sy:${scaleY} x:${px} y:${py} $anim")
 
         val newMatrix = Matrix()
         newMatrix.set(matrix)
         newMatrix.postScale(scaleX, scaleY, px, py)
+
         updateTo(newMatrix, anim, finish)
     }
 
