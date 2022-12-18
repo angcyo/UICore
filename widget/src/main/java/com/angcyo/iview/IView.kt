@@ -16,6 +16,7 @@ import androidx.lifecycle.LifecycleRegistry
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.Anim
+import com.angcyo.library.ex.cancelAnimator
 import com.angcyo.library.ex.mH
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
@@ -35,6 +36,7 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
 
     /**添加[IView]时的过渡动画*/
     var iViewAddTransition: (rootView: View, end: () -> Unit) -> Unit = { rootView, end ->
+        rootView.cancelAnimator()
         rootView.doOnPreDraw {
             it.translationY = it.mH().toFloat()
             it.animate().translationY(0f).setDuration(Anim.ANIM_DURATION).start()
@@ -45,6 +47,7 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
 
     /**移除[IView]时的过渡动画*/
     var iViewRemoveTransition: (rootView: View, end: () -> Unit) -> Unit = { rootView, end ->
+        rootView.cancelAnimator()
         rootView.animate().translationY(rootView.mH().toFloat()).withEndAction {
             end()
         }.setDuration(Anim.ANIM_DURATION).start()
