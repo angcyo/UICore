@@ -22,6 +22,7 @@ import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.gesture.DoubleGestureDetector2
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.absoluteValue
 
 /**
@@ -43,7 +44,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     //<editor-fold desc="控制点">
 
     /**所有的控制点*/
-    val controlPointList = mutableListOf<ControlPoint>()
+    val controlPointList = CopyOnWriteArrayList<ControlPoint>()
 
     /**控制点的大小, 背景圆的直径*/
     var controlPointSize = 24 * dp

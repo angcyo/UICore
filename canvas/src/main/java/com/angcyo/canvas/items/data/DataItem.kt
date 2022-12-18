@@ -48,6 +48,10 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
         strokeCap = Paint.Cap.ROUND
     }
 
+    /**边框或者线(虚线和实线), 当前绘制的画笔宽度
+     * [com.angcyo.canvas.graphics.PathGraphicsParser.createPathDrawable]*/
+    var drawStrokeWidth: Float = 1f
+
     /**数据实际的[Drawable], 通常情况下会等于[renderDrawable]
      * 在绘制描边[Path]时, 为了能在坐标系缩放后同样得到相同的视觉效果.
      * */

@@ -22,6 +22,7 @@ import com.angcyo.library.ex.computePathBounds
 import com.angcyo.library.ex.withPicture
 import com.pixplicity.sharp.Sharp
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 /**
  * 矢量解析器
@@ -94,10 +95,12 @@ open class PathGraphicsParser : IGraphicsParser {
      * */
     open fun createPathDrawable(item: DataPathItem, canvasView: ICanvasView?): Drawable? {
         val paint = item.itemPaint
-        if (canvasView != null && paint.style == Paint.Style.STROKE) {
+        item.drawStrokeWidth = paint.strokeWidth
+        if (canvasView != null && (paint.style == Paint.Style.STROKE || item.isLineShape())) {
             val scaleX = canvasView.getCanvasViewBox().getScaleX()//抵消坐标系的缩放
             val newPaint = Paint(paint)
-            newPaint.strokeWidth = DataItem.DEFAULT_PAINT_WIDTH / scaleX
+            newPaint.strokeWidth = paint.strokeWidth / scaleX
+            item.drawStrokeWidth = newPaint.strokeWidth//this
 
             item.dataDrawable = createPathDrawable(item, paint)
             item.renderDrawable = createPathDrawable(item, newPaint)
@@ -114,34 +117,33 @@ open class PathGraphicsParser : IGraphicsParser {
         if (drawPathList.isEmpty()) {
             return null
         }
-        val lineShape = item.isLineShape()
-
         val pathBounds = acquireTempRectF()
         drawPathList.computeBounds(pathBounds, true)
 
         //绘制缩放后的path, 至少需要1像素
-        val shapeWidth = max(MIN_PATH_SIZE, pathBounds.width()).toInt()
-        val shapeHeight = max(MIN_PATH_SIZE, pathBounds.height()).toInt()
+        val shapeWidth = max(MIN_PATH_SIZE, pathBounds.width()).roundToInt()
+        val shapeHeight = max(MIN_PATH_SIZE, pathBounds.height()).roundToInt()
 
         val picture = withPicture(shapeWidth, shapeHeight) {
             val strokeWidth = paint.strokeWidth
+            val lineShape = item.isLineShape()
 
             //偏移到路径开始的位置
-            val dx = if (lineShape) -pathBounds.left else -strokeWidth / 2 - pathBounds.left
-            val dy = if (lineShape) -pathBounds.top else -strokeWidth / 2 - pathBounds.top
+            val dx = if (lineShape) -pathBounds.left else strokeWidth - pathBounds.left
+            val dy = strokeWidth - pathBounds.top
 
             translate(dx, dy)
 
-            //缩放边框, 以便于不会被Bounds裁剪
-            val drawWidth = shapeWidth - strokeWidth * 2
-            val drawHeight = shapeHeight - strokeWidth * 2
+            //缩放到目标大小
+            /*val drawWidth = shapeWidth * 1f - if (lineShape) 0f else strokeWidth
+            val drawHeight = shapeHeight * 1f - strokeWidth
             val scaleX = drawWidth / shapeWidth
             val scaleY = if (lineShape) {
                 1f
             } else {
                 drawHeight / shapeHeight
             }
-            scale(scaleX, scaleY, shapeWidth / 2f, shapeHeight / 2f)
+            scale(scaleX, scaleY, shapeWidth / 2f, shapeHeight / 2f)*/
 
             drawPathList.forEach { path ->
                 //线段的描边用虚线处理处理
@@ -159,10 +161,10 @@ open class PathGraphicsParser : IGraphicsParser {
                 }
             }
         }
+        pathBounds.release()
 
         //draw
         val drawable = ScalePictureDrawable(picture)
-        pathBounds.release()
         return drawable
     }
 

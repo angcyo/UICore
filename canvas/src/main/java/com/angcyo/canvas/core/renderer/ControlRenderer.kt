@@ -14,10 +14,12 @@ import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.ControlHandler
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
+import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.canvasDecimal
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.canvas.utils.createTextPaint
+import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.component.DrawText
 import com.angcyo.library.ex.*
 import com.angcyo.library.unit.convertPixelToValueUnit
@@ -118,17 +120,25 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
 
     override fun render(canvas: Canvas, renderParams: RenderParams) {
         controlHandler.selectedItemRender?.let {
-
+            var itemDrawStrokeWidth = 0f
+            val rendererItem = it.getRendererRenderItem()
             //目标相对于视图左上角的位置
             val visualBounds = it.getVisualBounds()
-            _itemBounds.set(visualBounds)
-            val rotate = it.rotate
+            if (rendererItem is DataItem && it.isLineShape()) {
+                itemDrawStrokeWidth = rendererItem.drawStrokeWidth
+                _itemBounds.set(visualBounds)
+                _itemBounds.top = visualBounds.top
+                _itemBounds.bottom = _itemBounds.top + itemDrawStrokeWidth
+            } else {
+                _itemBounds.set(visualBounds)
+                val dv = -paint.strokeWidth / 2 - itemDrawStrokeWidth / 2
+                _itemBounds.inset(dv, dv)//放大元素边界的矩形
+            }
 
             //绘制控制信息, 宽高xy值
+            val rotate = it.rotate
             canvas.withRotation(rotate, visualBounds.centerX(), visualBounds.centerY()) {
                 //绘制边框
-                val dv = -paint.strokeWidth / 2
-                _itemBounds.inset(dv, dv)//放大元素边界的矩形
                 canvas.drawRect(_itemBounds, paint)
 
                 //绘制控制信息

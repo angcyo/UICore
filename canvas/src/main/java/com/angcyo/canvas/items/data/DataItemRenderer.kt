@@ -37,8 +37,16 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
 
     init {
         _name = "Data"
+    }
 
+    override fun onAddRenderer(strategy: Strategy) {
+        super.onAddRenderer(strategy)
         canvasView.addCanvasListener(this)
+    }
+
+    override fun onRemoveRenderer(strategy: Strategy) {
+        super.onRemoveRenderer(strategy)
+        canvasView.removeCanvasListener(this)
     }
 
     //<editor-fold desc="核心回调">
