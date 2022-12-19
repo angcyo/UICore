@@ -37,7 +37,10 @@ object DslToast {
 
     /**android o, api 26 , 通知关闭之后, toast显示不出来 */
     @AnyThread
-    fun show(context: Context = app(), action: ToastConfig.() -> Unit) {
+    fun show(
+        context: Context = com.angcyo.library.component.lastContext,
+        action: ToastConfig.() -> Unit
+    ) {
         if (!isMain()) {
             //回到主线程调用
             ThreadExecutor.onMain { show(context, action) }
@@ -202,8 +205,7 @@ object DslToast {
 
         //创建新的布局
         config.withActivity?.apply {
-            val contentLayout: FrameLayout? =
-                window.findViewById(Window.ID_ANDROID_CONTENT)
+            val contentLayout: FrameLayout? = window.findViewById(Window.ID_ANDROID_CONTENT)
 
             val layout = _inflateLayout(this, config)
 
@@ -416,7 +418,7 @@ fun toast(action: ToastConfig.() -> Unit) {
 @AnyThread
 fun toast(
     text: CharSequence?,
-    context: Context = app(),
+    context: Context = com.angcyo.library.component.lastContext,
     @DrawableRes icon: Int = R.drawable.lib_ic_info,
     @LayoutRes layoutId: Int = R.layout.lib_toast_layout,
     action: ToastConfig.() -> Unit = {}
@@ -434,7 +436,7 @@ fun toast(
 @AnyThread
 fun tip(
     text: CharSequence?,
-    context: Context = app(),
+    context: Context = com.angcyo.library.component.lastContext,
     @DrawableRes icon: Int = R.drawable.lib_ic_succeed,
     @LayoutRes layoutId: Int = R.layout.lib_toast_tip_layout,
     action: ToastConfig.() -> Unit = {}
@@ -457,7 +459,7 @@ fun tip2(
     text: CharSequence?,
     @DrawableRes icon: Int = R.drawable.lib_ic_succeed,
     @LayoutRes layoutId: Int = R.layout.lib_toast_tip2_layout,
-    context: Context = app(),
+    context: Context = com.angcyo.library.component.lastContext,
     action: ToastConfig.() -> Unit = {}
 ) {
     tip(text, context, icon, layoutId, action)
@@ -467,7 +469,7 @@ fun tip2(
 @AnyThread
 fun toastQQ(
     text: CharSequence?,
-    context: Context = app(),
+    context: Context = com.angcyo.library.component.lastContext,
     @DrawableRes icon: Int = R.drawable.lib_ic_info,
     @LayoutRes layoutId: Int = R.layout.lib_toast_qq_layout,
     action: ToastConfig.() -> Unit = {}
@@ -483,7 +485,7 @@ fun toastQQ(
 @AnyThread
 fun toastWX(
     text: CharSequence?,
-    context: Context = app(),
+    context: Context = com.angcyo.library.component.lastContext,
     @DrawableRes icon: Int = undefined_res,
     @LayoutRes layoutId: Int = R.layout.lib_toast_wx_layout,
     action: ToastConfig.() -> Unit = {}
