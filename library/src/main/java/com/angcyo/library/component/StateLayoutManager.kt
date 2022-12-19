@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.forEach
 import com.angcyo.library.R
@@ -38,12 +39,15 @@ class StateLayoutManager {
         val imageView = rootView.find<ImageView>(R.id.lib_state_image_view)
         updateStateLayout(rootView, info)
 
-        group?.doOnPreDraw {
+        group?.doOnPreDraw { view ->
             if (info.clipAnim) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     rootView?.cancelAnimator()
                     rootView?.clipBoundsAnimatorFromLeft()
                 }
+            } else {
+                //去除clip
+                ViewCompat.setClipBounds(view, null)
             }
             if (info.rotateAnim) {
                 //imageView?.rotateYAnimator()
@@ -58,13 +62,16 @@ class StateLayoutManager {
         if (viewList.isEmpty()) {
             addState(info)
         } else {
-            viewList.forEach {
-                updateStateLayout(it, info)
+            viewList.forEach { view ->
+                updateStateLayout(view, info)
                 if (info.updateAnim) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        it.cancelAnimator()
-                        it.clipBoundsAnimatorFromLeft()
+                        view.cancelAnimator()
+                        view.clipBoundsAnimatorFromLeft()
                     }
+                } else {
+                    //去除clip
+                    ViewCompat.setClipBounds(view, null)
                 }
             }
         }
