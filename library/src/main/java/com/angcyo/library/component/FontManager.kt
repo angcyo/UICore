@@ -3,7 +3,6 @@ package com.angcyo.library.component
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
-import androidx.annotation.RequiresApi
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import com.angcyo.library.model.TypefaceInfo
@@ -107,12 +106,15 @@ object FontManager {
     //region ---导入自定义的字体---
 
     /**导入字体*/
-    @RequiresApi(Build.VERSION_CODES.KITKAT)
     fun importCustomFont(uri: Uri?): TypefaceInfo? {
         if (uri == null) {
             return null
         }
-        return importCustomFont(uri.saveToFolder())
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            importCustomFont(uri.saveToFolder())
+        } else {
+            null
+        }
     }
 
     /**导入字体*/
