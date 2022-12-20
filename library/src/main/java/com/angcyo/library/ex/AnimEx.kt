@@ -206,6 +206,14 @@ fun View.rotateAnimation(
     }
 }
 
+/**动画结束的回调*/
+fun Animation.onAnimationEnd(onEnd: (animation: Animation) -> Unit = {}) {
+    setAnimationListener(object : RAnimationListener() {
+        override fun onAnimationEnd(animation: Animation) {
+            onEnd(animation)
+        }
+    })
+}
 
 /**
  * 揭露动画

@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center">
+    android:layout_gravity="top|center_horizontal"
+    android:layout_marginTop="@dimen/status_bar_height">
 
     <FrameLayout
         android:id="@+id/base_toast_root_layout"
@@ -41,7 +42,7 @@
                 style="@style/LibBodyTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="hellor" />
+                tools:text="hello" />
         </LinearLayout>
 
     </FrameLayout>

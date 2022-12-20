@@ -349,6 +349,7 @@ object DslToast {
     }
 }
 
+/**数据参数配置*/
 data class ToastConfig(
     var withActivity: Activity? = null, //附着在Activity上, 不用toast展示
     var removeLastView: Int = 0,//1:移除全部 0:移除最后一个不相同的layoutId -1:不移除
