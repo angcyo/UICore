@@ -13,11 +13,11 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
 import android.text.TextUtils
+import androidx.annotation.MainThread
 import androidx.lifecycle.ViewModel
 import com.angcyo.base.requestSdCardPermission
 import com.angcyo.library.*
 import com.angcyo.library.component.lastContext
-import com.angcyo.library.ex.toBitmap
 import com.angcyo.library.utils.storage.haveSdCardPermission
 import com.angcyo.viewmodel.vmDataOnce
 import java.util.*
@@ -36,8 +36,7 @@ class ScreenShotModel : ViewModel() {
 
         private val DATE_TAKEN = "datetaken"
 
-        private val MEDIA_PROJECTIONS =
-            arrayOf(MediaStore.MediaColumns.DATA, DATE_TAKEN)
+        private val MEDIA_PROJECTIONS = arrayOf(MediaStore.MediaColumns.DATA, DATE_TAKEN)
 
         private val MEDIA_PROJECTIONS_API_16 = arrayOf(
             MediaStore.MediaColumns.DATA,
@@ -73,19 +72,25 @@ class ScreenShotModel : ViewModel() {
         }
     }
 
-    /**路径监听*/
-    var screenShotListener: OnScreenShotListener? = null
     private var startListenTime: Long = 0
     private var internalObserver: MediaContentObserver? = null
     private var externalObserver: MediaContentObserver? = null
     private val uiHandler = Handler(Looper.getMainLooper())
 
-    /**截图的图片, 需要SD卡权限才能读取[Bitmap]*/
-    val screenShotData = vmDataOnce<Bitmap?>(null)
+    /**截图的图片监听, 需要SD卡权限才能读取[Bitmap]*/
+    /**路径监听*/
+    val screenShotPathData = vmDataOnce<String?>(null)
+
+    /**路径监听*/
+    var screenShotListener: OnScreenShotListener? = null
 
     /**开始监听
      * [context] 如果需要自动处理sd卡权限, 请使用[Activity]上下文*/
+    @MainThread
     fun startListen(context: Context = lastContext) {
+        if (internalObserver != null) {
+            return
+        }
         assertInMainThread()
         startListenTime = System.currentTimeMillis()
         MediaContentObserver(context, MediaStore.Images.Media.INTERNAL_CONTENT_URI, uiHandler).let {
@@ -105,6 +110,7 @@ class ScreenShotModel : ViewModel() {
     }
 
     /**停止监听*/
+    @MainThread
     fun stopListen(context: Context = lastContext) {
         assertInMainThread()
         internalObserver?.let {
@@ -193,11 +199,7 @@ class ScreenShotModel : ViewModel() {
         if (checkScreenShot(path, dateTaken, width, height)) {
             L.i("ScreenShot: path = $path; size = $width * $height; date = $dateTaken")
             screenShotListener?.onScreenshot(path)
-
-            //转成图片发出去
-            val bitmap = path.toBitmap()
-            screenShotData.postValue(bitmap)
-
+            screenShotPathData.postValue(path)
         } else {
             //ScreenShotListenManager Media content changed,
             // but not screenshot: path = /storage/emulated/0/Pictures/Screenshots/Screenshot_20221112-125620.jpg;
@@ -257,6 +259,8 @@ class ScreenShotModel : ViewModel() {
         }
     }
 
+    /**[screenShotListener]
+     * [screenShotData]*/
     interface OnScreenShotListener {
         fun onScreenshot(path: String?)
     }
