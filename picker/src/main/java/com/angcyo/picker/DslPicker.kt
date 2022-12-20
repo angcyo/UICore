@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -24,6 +23,7 @@ import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.fileNameTime
 import com.angcyo.library.utils.filePath
+import com.angcyo.library.utils.storage.SD
 import com.angcyo.loader.LoaderConfig
 import com.angcyo.picker.DslPicker.picker
 import com.angcyo.picker.core.PickerActivity
@@ -48,14 +48,7 @@ object DslPicker {
 
     /**相册的权限*/
     val pickerPermission: List<String>
-        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) listOf(
-            Manifest.permission.READ_MEDIA_IMAGES,
-            Manifest.permission.READ_MEDIA_VIDEO,
-            Manifest.permission.READ_MEDIA_AUDIO
-        ) else listOf(
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        )
+        get() = SD.mediaPermissions(true, true, true)
 
     /**开始选择器*/
     fun picker(context: Context?, config: LoaderConfig) {

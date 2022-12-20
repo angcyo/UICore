@@ -339,19 +339,22 @@ fun FragmentActivity.checkAndRequestPermission(
 }
 
 /**请求SD卡权限*/
-fun Context.requestSdCardPermission(result: (granted: Boolean) -> Unit) {
-    if (haveSdCardPermission(this)) {
+fun Context.requestSdCardPermission(
+    permissionList: List<String> = sdCardPermission(),
+    result: (granted: Boolean) -> Unit
+) {
+    if (haveSdCardPermission(permissionList, this)) {
         result(true)
         return
     }
-    requestPermissions(sdCardPermission()) {
+    requestPermissions(permissionList) {
         result(it)
     }
 }
 
 /**请求SD卡管理权限*/
 fun Context.requestSdCardManagePermission(result: (granted: Boolean) -> Unit) {
-    if (haveSdCardManagePermission(this)) {
+    if (haveSdCardManagePermission(context = this)) {
         result(true)
         return
     }
@@ -360,7 +363,7 @@ fun Context.requestSdCardManagePermission(result: (granted: Boolean) -> Unit) {
         val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
         if (this is FragmentActivity) {
             requestActivityResult(supportFragmentManager, intent) { resultCode, data ->
-                result(haveSdCardManagePermission(this))
+                result(haveSdCardManagePermission(context = this))
             }
         } else {
             startActivity(intent)

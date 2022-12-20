@@ -1,6 +1,7 @@
 package com.angcyo.core.component
 
 import android.annotation.TargetApi
+import android.content.ContentResolver
 import android.content.Context
 import android.database.ContentObserver
 import android.database.Cursor
@@ -9,6 +10,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Point
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
@@ -18,9 +20,11 @@ import androidx.lifecycle.ViewModel
 import com.angcyo.base.requestSdCardPermission
 import com.angcyo.library.*
 import com.angcyo.library.component.lastContext
+import com.angcyo.library.utils.storage.SD
 import com.angcyo.library.utils.storage.haveSdCardPermission
 import com.angcyo.viewmodel.vmDataOnce
 import java.util.*
+
 
 /**
  * 截屏通知
@@ -93,17 +97,17 @@ class ScreenShotModel : ViewModel() {
         }
         assertInMainThread()
         startListenTime = System.currentTimeMillis()
-        MediaContentObserver(context, MediaStore.Images.Media.INTERNAL_CONTENT_URI, uiHandler).let {
+        MediaContentObserver(MediaStore.Images.Media.INTERNAL_CONTENT_URI, uiHandler).let {
             internalObserver = it
             context.contentResolver.registerContentObserver(
-                MediaStore.Images.Media.INTERNAL_CONTENT_URI, false,
+                MediaStore.Images.Media.INTERNAL_CONTENT_URI, true,
                 it
             )
         }
-        MediaContentObserver(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, uiHandler).let {
+        MediaContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, uiHandler).let {
             externalObserver = it
             context.contentResolver.registerContentObserver(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, false,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true,
                 it
             )
         }
@@ -139,13 +143,31 @@ class ScreenShotModel : ViewModel() {
     private fun handleMediaContentChange(context: Context, contentUri: Uri) {
         var cursor: Cursor? = null
         try {
-            cursor = context.contentResolver.query(
-                contentUri,
-                if (Build.VERSION.SDK_INT < 16) MEDIA_PROJECTIONS else MEDIA_PROJECTIONS_API_16,
-                null as String?,
-                null as Array<String?>?,
-                "date_added desc limit 1"
-            )
+            cursor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val queryArgs = Bundle()
+                /*queryArgs.putString(
+                    ContentResolver.QUERY_ARG_SQL_SORT_ORDER,
+                    MediaStore.MediaColumns.DATE_ADDED
+                )*/
+                queryArgs.putStringArray(
+                    ContentResolver.QUERY_ARG_SORT_COLUMNS,
+                    arrayOf(MediaStore.MediaColumns.DATE_ADDED)
+                )//排序列
+                queryArgs.putInt(
+                    ContentResolver.QUERY_ARG_SORT_DIRECTION,
+                    ContentResolver.QUERY_SORT_DIRECTION_DESCENDING
+                )//查询方向, 逆序
+                queryArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, 1)//查询数量相知
+                context.contentResolver.query(contentUri, MEDIA_PROJECTIONS_API_16, queryArgs, null)
+            } else {
+                context.contentResolver.query(
+                    contentUri,
+                    if (Build.VERSION.SDK_INT < 16) MEDIA_PROJECTIONS else MEDIA_PROJECTIONS_API_16,
+                    null as String?,
+                    null as Array<String?>?,
+                    "${MediaStore.MediaColumns.DATE_ADDED} desc limit 1"
+                )
+            }
             if (cursor == null) {
                 L.e("Deviant logic.")
                 return
@@ -239,18 +261,19 @@ class ScreenShotModel : ViewModel() {
         }
     }
 
-    private inner class MediaContentObserver(
-        val context: Context,
-        val uri: Uri,
-        handler: Handler?
-    ) : ContentObserver(handler) {
+    private inner class MediaContentObserver(val uri: Uri, handler: Handler?) :
+        ContentObserver(handler) {
         override fun onChange(selfChange: Boolean) {
             super.onChange(selfChange)
+            val permissions = SD.mediaPermissions(true)
+            val haveSdCardPermission = haveSdCardPermission(permissions)
+            L.i("onChange[$haveSdCardPermission]:$selfChange $uri")
 
-            if (haveSdCardPermission(context)) {
+            val context = lastContext
+            if (haveSdCardPermission) {
                 handleMediaContentChange(context, uri)
             } else {
-                context.requestSdCardPermission {
+                context.requestSdCardPermission(permissions) {
                     if (it) {
                         handleMediaContentChange(context, uri)
                     }

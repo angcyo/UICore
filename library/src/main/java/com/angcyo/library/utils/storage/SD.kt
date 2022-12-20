@@ -26,6 +26,24 @@ import java.io.File
  */
 object SD {
 
+    /**Android 13 媒体最新的权限*/
+    fun mediaPermissions(
+        image: Boolean = true,
+        video: Boolean = false,
+        audio: Boolean = false
+    ): List<String> {
+        val result = mutableListOf<String>()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (image) result.add(Manifest.permission.READ_MEDIA_IMAGES)
+            if (video) result.add(Manifest.permission.READ_MEDIA_VIDEO)
+            if (audio) result.add(Manifest.permission.READ_MEDIA_AUDIO)
+        } else {
+            result.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            result.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+        return result
+    }
+
     /*fun test() {
         val path = sdDocumentFolderPath("/angcyo/fonts")
         val list = path.file().listFiles()
@@ -116,15 +134,20 @@ fun sdCardManagePermission() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.
  *
  * [com.angcyo.base.ActivityExKt.requestSdCardPermission]
  * */
-fun haveSdCardPermission(context: Context = app()) = context.havePermission(sdCardPermission())
+fun haveSdCardPermission(
+    permissionList: List<String> = sdCardPermission(),
+    context: Context = app()
+) = context.havePermission(permissionList)
 
 /**是否有sd卡的管理权限*/
-fun haveSdCardManagePermission(context: Context = app()) =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        Environment.isExternalStorageManager()
-    } else {
-        context.havePermission(sdCardPermission())
-    }
+fun haveSdCardManagePermission(
+    permissionList: List<String> = sdCardPermission(),
+    context: Context = app()
+) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+    Environment.isExternalStorageManager()
+} else {
+    context.havePermission(permissionList)
+}
 
 /**
  * SD卡路径,
