@@ -92,7 +92,7 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
                 addInner(parent)
             }
         } else {
-            onIViewShow()
+            onIViewReShow()
         }
     }
 
@@ -134,6 +134,12 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
         showCount++
         onIViewEvent?.invoke(this, Lifecycle.Event.ON_RESUME)
         lifecycleRegistry.currentState = Lifecycle.State.RESUMED
+    }
+
+    /**再次显示*/
+    @CallSuper
+    open fun onIViewReShow() {
+        showCount++
     }
 
     @CallSuper
