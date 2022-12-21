@@ -70,12 +70,11 @@ object DslToast {
     fun _showWithToast(context: Context, config: ToastConfig) {
 
         if (config.removeLastView >= 0) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            if (config.removeLastView >= 1 || _toastRef?.get()?.view?.tag != config.layoutId) {
+                //移除任意的  //移除不一样的
                 _toastRef?.get()?.cancel()
                 _toastRef = null
             }
-        } else {
-            _toastRef = null
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && RBackground.isBackground()) {
@@ -97,6 +96,8 @@ object DslToast {
         }
 
         _toastRef?.get()?.apply {
+            val oldView = view?.tag == config.layoutId
+
             var usedWidth = config.fullMargin * 2
             if (config.fullScreen) {
                 initFullScreenToast(this, usedWidth) {
@@ -112,7 +113,10 @@ object DslToast {
                 //没有自定义的布局
                 setText(config.text)
             } else {
-                view = _inflateLayout(context, config).apply {
+                view = (if (oldView) {
+                    _initLayout(view, config)
+                    view
+                } else _inflateLayout(context, config))?.apply {
                     //宽度设置
                     if (config.fullScreen && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                         if (this is ViewGroup && childCount == 1) {
@@ -319,7 +323,8 @@ object DslToast {
         return layout
     }
 
-    fun _initLayout(layout: View, config: ToastConfig) {
+    fun _initLayout(layout: View?, config: ToastConfig) {
+        layout ?: return
         layout.findViewById<TextView>(R.id.lib_text_view)?.apply {
             if (config.text.isEmpty()) {
                 visibility = View.GONE
