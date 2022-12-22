@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
+import com.angcyo.library._refreshRateRatio
 
 /**
  *
@@ -21,7 +22,7 @@ class PickerLoadingView(context: Context, attributeSet: AttributeSet? = null) :
         super.onDraw(canvas)
 
         if (isEnabled && drawable != null) {
-            rotateDegrees += 5f
+            rotateDegrees += 5f / _refreshRateRatio
             rotateDegrees = if (rotateDegrees < 360) rotateDegrees else rotateDegrees - 360
             postInvalidate()
         }
