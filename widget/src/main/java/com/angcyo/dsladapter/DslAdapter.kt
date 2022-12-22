@@ -301,6 +301,14 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         }
     }
 
+    /**使得所有item, 都进入待更新的状态*/
+    @UpdateFlag
+    fun changingAllItem() {
+        adapterItems.forEach { item ->
+            item.itemChanging = true
+        }
+    }
+
     //</editor-fold desc="辅助方法">
 
     //<editor-fold desc="操作方法">

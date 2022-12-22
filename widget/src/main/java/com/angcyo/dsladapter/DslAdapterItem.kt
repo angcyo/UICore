@@ -530,15 +530,41 @@ open class DslAdapterItem : LifecycleOwner {
     }
 
     open fun _initItemStyle(itemHolder: DslViewHolder) {
+        val lastPositionInGroup = isLastPositionInGroup()
         val lineView = itemHolder.view(R.id.lib_item_line_view)
         if (lineView != null) {
             val showLine = itemShowLastLineView
             if (showLine == null) {
                 if (itemAutoHideLastLineView) {
-                    lineView.gone(isLastPositionInGroup())
+                    lineView.gone(lastPositionInGroup)
                 }
             } else {
                 lineView.visible(showLine)
+            }
+        }
+        //padding
+        if (itemAutoPaddingFirstOrLast && (itemFirstPaddingTop != null || itemLastPaddingBottom != null)) {
+            itemHolder.itemView.apply {
+                var tagPaddingTop = getTag(R.id.lib_tag_padding_top) as? Int
+                if (tagPaddingTop == null) {
+                    setTag(R.id.lib_tag_padding_top, paddingTop)
+                    tagPaddingTop = paddingTop
+                }
+
+                var tagPaddingBottom = getTag(R.id.lib_tag_padding_bottom) as? Int
+                if (tagPaddingBottom == null) {
+                    setTag(R.id.lib_tag_padding_bottom, paddingBottom)
+                    tagPaddingBottom = paddingBottom
+                }
+
+                setPadding(
+                    paddingLeft,
+                    if (isFirstPositionInGroup()) itemFirstPaddingTop
+                        ?: tagPaddingTop else tagPaddingTop,
+                    paddingRight,
+                    if (lastPositionInGroup) itemLastPaddingBottom
+                        ?: tagPaddingBottom else tagPaddingBottom
+                )
             }
         }
     }
@@ -804,6 +830,19 @@ open class DslAdapterItem : LifecycleOwner {
         _itemGroupParamsCache = null
     }
 
+    /**当前的[DslAdapterItem]是否在分组中的第一个*/
+    open fun isFirstPositionInGroup(useFilterList: Boolean = true): Boolean {
+        val adapter = itemDslAdapter ?: return false
+        return if (itemGroups.isEmpty()) {
+            //简单分组
+            val allItemList = adapter.getDataList(useFilterList)
+            val index = allItemList.indexOf(this)
+            index == 0
+        } else {
+            itemGroupParams.isFirstPosition()
+        }
+    }
+
     /**当前的[DslAdapterItem]是否在分组中的最后一个*/
     open fun isLastPositionInGroup(useFilterList: Boolean = true): Boolean {
         val adapter = itemDslAdapter ?: return false
@@ -828,6 +867,29 @@ open class DslAdapterItem : LifecycleOwner {
     var itemIsHover: Boolean = itemIsGroupHead
 
     //</editor-fold>
+
+    //<editor-fold desc="特性属性">
+
+    /**自动隐藏分组最后一个item的[R.id.lib_item_line_view]view*/
+    var itemAutoHideLastLineView: Boolean = true
+
+    /**是否强制隐藏/显示线*/
+    var itemShowLastLineView: Boolean? = null
+
+    //---
+
+    /**
+     * 自动在第一个/最后一个item,填充paddingTop/paddingBottom
+     * [itemLastPaddingBottom] [itemFirstPaddingTop]的使能开关*/
+    var itemAutoPaddingFirstOrLast: Boolean = true
+
+    /**最后一个item, 自动添加[paddingBottom]*/
+    var itemLastPaddingBottom: Int? = null
+
+    /**第一个item, 自动添加[paddingTop]*/
+    var itemFirstPaddingTop: Int? = null
+
+    //</editor-fold desc="特性属性">
 
     //<editor-fold desc="表单/分割线配置">
 
@@ -854,12 +916,6 @@ open class DslAdapterItem : LifecycleOwner {
      * 仅绘制offset的区域
      * */
     var onlyDrawOffsetArea = false
-
-    /**自动隐藏分组最后一个item的[R.id.lib_item_line_view]view*/
-    var itemAutoHideLastLineView: Boolean = true
-
-    /**是否强制隐藏/显示线*/
-    var itemShowLastLineView: Boolean? = null
 
     /**不绘制分组最后一个item的底部分割线*/
     var noDrawLastItemDecoration: Boolean = true
