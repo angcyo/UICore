@@ -34,7 +34,7 @@
 
     <!--https://developer.android.com/guide/topics/manifest/application-element-->
     <application
-        android:requestLegacyExternalStorage="true"
+        android:requestLegacyExternalStorage="false"
         android:usesCleartextTraffic="true">
         <meta-data
             android:name="android.max_aspect"

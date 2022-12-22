@@ -26,7 +26,9 @@ import java.io.File
  */
 object SD {
 
-    /**Android 13 媒体最新的权限*/
+    /**Android 13 媒体最新的权限
+     * https://developer.android.google.cn/about/versions/13/behavior-changes-13#granular-media-permissions
+     * */
     fun mediaPermissions(
         image: Boolean = true,
         video: Boolean = false,
