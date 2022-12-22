@@ -125,7 +125,8 @@ object FontManager {
                 val file = File(path!!)
 
                 val typeface = Typeface.createFromFile(file)
-                val targetFile = file.copyTo(File(defaultCustomFontFolder, file.name))
+                val targetFile = File(defaultCustomFontFolder, file.name)
+                file.copyTo(targetFile, true)
 
                 val typefaceInfo =
                     TypefaceInfo(file.name.noExtName(), typeface, targetFile.absolutePath)
