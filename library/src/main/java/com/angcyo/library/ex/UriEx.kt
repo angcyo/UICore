@@ -88,8 +88,13 @@ fun Uri.saveToFolder(
     context: Context = app()
 ): String {
     val name = if (fileName == null) {
-        val path = getPathFromUri()
-        path?.lastName() ?: fileNameUUID()
+        val displayName = getDisplayName()
+        if (displayName.isNullOrBlank()) {
+            val path = getPathFromUri()
+            path?.lastName() ?: fileNameUUID()
+        } else {
+            displayName
+        }
     } else {
         fileName
     }
@@ -218,7 +223,30 @@ fun Uri?.loadUrl(): String? {
     }
 }
 
-/**从[Uri]中获取对应的显示名称*/
+/**获取[Uri]对应的文件显示名
+ * [Uri.getDisplayName]*/
+fun Uri.getFileName(context: Context = app()): String? {
+    val uri = this
+    val mimeType = context.contentResolver.getType(uri)
+    var filename: String? = null
+    if (mimeType == null) {
+        filename = uri.toString().fileNameByPath()
+    } else {
+        val returnCursor = context.contentResolver.query(
+            uri, null,
+            null, null, null
+        )
+        returnCursor?.use {
+            val nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            returnCursor.moveToFirst()
+            filename = returnCursor.getString(nameIndex)
+        }
+    }
+    return filename
+}
+
+/**从[Uri]中获取对应的显示名称
+ * [Uri.getFileName]*/
 fun Uri.getDisplayName(context: Context = app()): String? {
     var result: String? = null
 
@@ -329,26 +357,6 @@ fun getDocumentCacheDir(context: Context): File {
         dir.mkdirs()
     }
     return dir
-}
-
-fun Uri.getFileName(context: Context = app()): String? {
-    val uri = this
-    val mimeType = context.contentResolver.getType(uri)
-    var filename: String? = null
-    if (mimeType == null) {
-        filename = uri.toString().fileNameByPath()
-    } else {
-        val returnCursor = context.contentResolver.query(
-            uri, null,
-            null, null, null
-        )
-        returnCursor?.use {
-            val nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-            returnCursor.moveToFirst()
-            filename = returnCursor.getString(nameIndex)
-        }
-    }
-    return filename
 }
 
 /**
