@@ -75,7 +75,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
                     sy = -1f
                 }
                 _flipMatrix.reset()
-                _flipMatrix.postScale(sx, sy, _flipRect.centerX(), _flipRect.centerY())
+                _flipMatrix.postScale(sx, sy, _flipRect.centerX(), _flipRect.centerY())//是否需要水平翻转
                 canvas.withMatrix(_flipMatrix) {
                     drawable.setBounds(
                         _flipRect.left.toInt(),

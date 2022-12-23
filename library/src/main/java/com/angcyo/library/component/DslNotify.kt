@@ -309,7 +309,7 @@ class DslNotify {
     var onConfigChannel: (NotificationChannel) -> Unit = {}
 
     /**创建通道,反复调用这段代码是安全的，因为创建现有通知渠道不会执行任何操作。*/
-    fun _createNotifyChannel(context: Context) {
+    fun _createNotifyChannel(context: Context = lastContext) {
         val notificationManager = NotificationManagerCompat.from(context)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -696,7 +696,7 @@ class DslNotify {
      */
     var notifyFlags: Int = undefined_int
 
-    fun doIt(context: Context): Int {
+    fun doIt(context: Context = lastContext): Int {
         _createNotifyChannel(context)
         val notification = _createNotify(context)
 

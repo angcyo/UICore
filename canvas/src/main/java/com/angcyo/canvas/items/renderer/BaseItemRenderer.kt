@@ -220,8 +220,8 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
             renderBounds.withSave(0f, 0f, renderWidth, renderHeight) {
                 val rotateBounds = getRenderRotateBounds()
 
-                val width = rotateBounds.width()
-                val height = rotateBounds.height()
+                val width = rotateBounds.width().ceil()
+                val height = rotateBounds.height().ceil()
 
                 val result = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
                     withRotation(rotate, width / 2, height / 2) {
