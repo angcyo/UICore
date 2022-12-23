@@ -49,10 +49,10 @@ data class Reason(
         //---flag
 
         /**改变item的样式, 比如笔的大小/样式/颜色等*/
-        const val REASON_FLAG_STYLE = 0x00
+        const val REASON_FLAG_STYLE = 0x01
 
         /**改变item的宽高*/
-        const val REASON_FLAG_BOUNDS = 0x01
+        const val REASON_FLAG_BOUNDS = REASON_FLAG_STYLE shl 1
 
         /**改变item的x,y*/
         const val REASON_FLAG_TRANSLATE = REASON_FLAG_BOUNDS shl 1

@@ -203,7 +203,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
     }
 
     override fun renderItemDataChanged(reason: Reason) {
-        if (reason.flag > Reason.REASON_FLAG_STYLE) {
+        if (reason.flag > 0) {
             val dataBean = getRendererRenderItem()?.dataBean
             val index = dataBean?.index
             dataBean?.index = null
