@@ -163,7 +163,7 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
     @CallComplianceAfter
     open fun onComplianceAfter() {
         //device, 需要合规
-        DslLastDeviceInfoItem.saveDeviceInfo(this, true)
+        DslLastDeviceInfoItem.saveDeviceInfo(this)
 
         DslCrashHandler.init(this)
         vmApp<StateModel>().updateState(ComplianceCheck.TYPE_COMPLIANCE_INIT_AFTER, true)

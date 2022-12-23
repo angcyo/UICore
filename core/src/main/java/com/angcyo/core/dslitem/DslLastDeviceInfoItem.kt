@@ -6,6 +6,7 @@ import android.os.StatFs
 import androidx.fragment.app.Fragment
 import com.angcyo.base.dslFHelper
 import com.angcyo.core.R
+import com.angcyo.core.component.ComplianceCheck
 import com.angcyo.core.component.HttpConfigDialog
 import com.angcyo.core.component.fileSelector
 import com.angcyo.core.component.model.LanguageModel
@@ -42,7 +43,7 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
          * [com.angcyo.library.utils.LogFile.device]*/
         fun saveDeviceInfo(
             context: Context = app(),
-            isCompliance: Boolean = false,
+            isCompliance: Boolean = ComplianceCheck.isCompliance(),
             config: DslSpan.() -> Unit = {}
         ) {
             deviceInfo(context, isCompliance) {

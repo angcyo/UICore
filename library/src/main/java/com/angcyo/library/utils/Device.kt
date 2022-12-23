@@ -18,8 +18,8 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import com.angcyo.library.*
-import com.angcyo.library.component.pad.Pad
 import com.angcyo.library.component.lastContext
+import com.angcyo.library.component.pad.Pad
 import com.angcyo.library.ex.connect
 import java.io.BufferedReader
 import java.io.FileReader
@@ -385,7 +385,7 @@ object Device {
                 .append(navBarHeight / displayMetrics.density).append("dp").appendLine()
 
             //pad
-            append(" pad:").append(Pad.isPadSize())
+            append("pad:").append(Pad.isPadSize())
             append(" tablet:").append(Pad.isTabletDevice)
             append(" tw:").append(Pad.isTabletWindow())
             append(" magic:").append(Pad.inMagicWindow())
