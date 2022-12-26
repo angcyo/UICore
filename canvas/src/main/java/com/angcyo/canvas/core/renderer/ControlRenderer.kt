@@ -241,17 +241,17 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
                 val value = canvasViewBox.calcDistanceValueWithOrigin(point)
                 val xUnit = valueUnit.formattedValueUnit(value.x)
                 val yUnit = valueUnit.formattedValueUnit(value.y)
-                "X: $xUnit\nY: $yUnit"
+                "x:$xUnit\ny:$yUnit"
             }
             controlPoint is RotateControlPoint -> {
                 //需要绘制角度
-                "R: ${rotate.canvasDecimal()}°"
+                "${rotate.canvasDecimal()}°"
             }
             else -> {
                 //没有按下, 或者点击缩放控制时,绘制宽高
                 val widthUnit = valueUnit.convertPixelToValueUnit(renderBounds.width())
                 val heightUnit = valueUnit.convertPixelToValueUnit(renderBounds.height())
-                "W: $widthUnit\nH: $heightUnit"
+                "w:$widthUnit\nh:$heightUnit"
             }
         }
 
