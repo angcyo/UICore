@@ -10,14 +10,12 @@ import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.toMm
-import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.graphics.PathGraphicsParser.Companion.MIN_PATH_SIZE
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.isLineShape
-import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
@@ -117,7 +115,7 @@ object GraphicsHelper {
             bean.left = bounds.centerX().toMm() - bean._width / 2
             bean.top = bounds.centerY().toMm() - bean._height / 2
         }
-
+/*2022-12-26 移除缩放, 1:1显示
         //调整可视化的缩放比例
         val visualRect = canvasViewBox.getVisualRect()
         if (!visualRect.isEmpty) {
@@ -139,7 +137,7 @@ object GraphicsHelper {
                 bean.scaleX = targetWidth / width
                 bean.scaleY = targetHeight / height
             }
-        }
+        }*/
     }
 
     /**当界面关闭后, 恢复分配的默认位置*/
