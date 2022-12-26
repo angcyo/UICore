@@ -72,7 +72,7 @@ _excelMaterial.doLast {
             print row.getCell(5)
             println()
         } else {
-            def type = project.ext.excel_material_type.toFloat().toInteger() //激光类型
+            def type = project.ext.excel_material_laser_type.toFloat().toInteger() //激光类型
             def material = row.getCell(1).toString() //材质名称 环保纸
             def power = row.getCell(2).toString() //功率
             def depth = row.getCell(3).toString() //深度
@@ -114,7 +114,13 @@ _excelMaterial.doLast {
                 map.put("layerModeStr", layerMode)
                 map.put("power", power.toFloat().toInteger())
                 map.put("depth", depth.toFloat().toInteger())
-                map.put("dpiScale", dpiScale.toFloat().toInteger())
+                def dpiFloat = dpiScale.toFloat()
+                def dpiInt = dpiFloat.toInteger()
+                if (dpiFloat == dpiInt) {
+                    map.put("dpiScale", dpiInt)
+                } else {
+                    map.put("dpiScale", dpiFloat)
+                }
                 if (!material.isBlank() && !layerName.isBlank()) {
                     map.put("_name", "${material}-${layerName}".toString())
                 }
