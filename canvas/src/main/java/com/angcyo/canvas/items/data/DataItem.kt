@@ -153,10 +153,10 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
         }
         renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
             dataBean.isVisible = old
-            updateRenderItem(renderer, Reason())
+            updateRenderItem(renderer, Reason.user)
         }) {
             dataBean.isVisible = new
-            updateRenderItem(renderer, Reason())
+            updateRenderItem(renderer, Reason.user)
         }
     }
 
