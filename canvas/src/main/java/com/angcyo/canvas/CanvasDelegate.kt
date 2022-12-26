@@ -693,6 +693,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
         return bitmap
     }
 
+    /**工程名*/
+    var projectName: String? = null
+
     /**获取画布上的元素数据
      * 当只指定一个宽/高时, 另一个等比缩放
      * [outWidth] 需要输出预览图宽度, -1表示所有元素的宽度
@@ -703,6 +706,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
         outWidth: Int = -1,
         outHeight: Int = -1
     ): CanvasProjectBean {
+        projectName = fileName ?: projectName
+
         val bitmap = getBitmap(true, outWidth, outHeight)
         val width = MM_UNIT.convertPixelToValue(bitmap.width.toDouble())
         val height = MM_UNIT.convertPixelToValue(bitmap.height.toDouble())
