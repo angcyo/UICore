@@ -235,3 +235,25 @@ fun Double.formatShow(n: Int = 2): String {
     instance.maximumFractionDigits = n //小数点最大位数
     return instance.format(this)
 }
+
+/**优先确保1.0 返回 1
+ * 其他情况1.3 返回 1.3*/
+fun Float.ensureInt(): String {
+    val f = this
+    val int = this.toInt()
+    return if (f == int.toFloat()) {
+        "$int"
+    } else {
+        "$f"
+    }
+}
+
+fun Double.ensureInt(): String {
+    val d = this
+    val int = this.toInt()
+    return if (d == int.toDouble()) {
+        "$int"
+    } else {
+        "$d"
+    }
+}
