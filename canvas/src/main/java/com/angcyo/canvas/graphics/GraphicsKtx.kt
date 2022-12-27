@@ -237,34 +237,42 @@ fun CanvasDelegate.addTextRender(
 //region ---其他---
 
 /**添加 功率 深度, 雕刻参数对照表. 耗时操作, 建议在子线程中执行
- * [bounds] 限制显示的区域*/
+ * [bounds] 限制显示的区域
+ * [powerDepth] 阈值, 当 功率*深度 <= this 时才需要添加到参数表
+ * */
 @WorkerThread
-fun CanvasDelegate.addParameterComparisonTable(@Pixel bounds: RectF) {
+fun CanvasDelegate.addParameterComparisonTable(@Pixel bounds: RectF, powerDepth: Int) {
     val padding = 5f.toPixel()
 
     val gridCount = 10
-    val gridMargin = 1f.toPixel()
+    val gridMargin = 2f.toPixel()
     val textMargin = 1f.toPixel()
+
+    val numberTextItem = DataTextItem(CanvasProjectItemBean().apply {
+        text = "100"
+        fontSize = 3f
+
+        //参数, 使用最后一次的默认
+        //com.angcyo.engrave.EngraveFlowDataHelper.generateEngraveConfig
+    })
 
     //功率/深度文本的宽高
     val powerTextItem = DataTextItem(CanvasProjectItemBean().apply {
         mtype = CanvasConstant.DATA_TYPE_TEXT
         fontSize = 5f
         text = "Power(%)"
+
+        printPrecision = numberTextItem.dataBean.printPrecision
+        printCount = numberTextItem.dataBean.printCount
     })
     val depthTextItem = DataTextItem(CanvasProjectItemBean().apply {
         mtype = CanvasConstant.DATA_TYPE_TEXT
         fontSize = powerTextItem.dataBean.fontSize
         text = "Depth(%)"
         angle = -90f
-    })
-    val numberTextItem = DataTextItem(CanvasProjectItemBean().apply {
-        text = "100"
-        fontSize = 3f
 
-        //参数
-        printPrecision = 1
-        printCount = 1
+        printPrecision = numberTextItem.dataBean.printPrecision
+        printCount = numberTextItem.dataBean.printCount
     })
 
     val powerTextHeight = powerTextItem.getTextHeight()
@@ -318,9 +326,9 @@ fun CanvasDelegate.addParameterComparisonTable(@Pixel bounds: RectF) {
 
             //参数
             printPrecision = numberTextItem.dataBean.printPrecision
+            printCount = numberTextItem.dataBean.printCount
             printPower = numberTextItem.dataBean.printPower
             printDepth = numberTextItem.dataBean.printDepth
-            printCount = numberTextItem.dataBean.printCount
         })
         powerNumberItem.dataBean.left =
             (x + gridWidth / 2 - powerNumberItem.getTextWidth() / 2).toMm()
@@ -343,9 +351,9 @@ fun CanvasDelegate.addParameterComparisonTable(@Pixel bounds: RectF) {
 
                     //参数
                     printPrecision = numberTextItem.dataBean.printPrecision
+                    printCount = numberTextItem.dataBean.printCount
                     printPower = numberTextItem.dataBean.printPower
                     printDepth = numberTextItem.dataBean.printDepth
-                    printCount = numberTextItem.dataBean.printCount
                 })
                 depthNumberItem.dataBean.left =
                     (padding + depthTextHeight + textMargin + depthNumberItem.getTextHeight() / 2 - depthNumberItem.getTextWidth() / 2).toMm()
@@ -354,20 +362,24 @@ fun CanvasDelegate.addParameterComparisonTable(@Pixel bounds: RectF) {
                 numberBeanList.add(depthNumberItem.dataBean)
             }
 
-            beanList.add(CanvasProjectItemBean().apply {
-                mtype = CanvasConstant.DATA_TYPE_RECT
-                paintStyle = Paint.Style.FILL.toPaintStyleInt()
-                width = (gridWidth - gridMargin * 2).toMm()
-                height = (gridHeight - gridMargin * 2).toMm()
-                left = (x + gridMargin).toMm()
-                top = (y + gridMargin).toMm()
+            val powerValue = (power + 1) * maxIndex
+            val depthValue = (depth + 1) * maxIndex
+            if (powerValue * depthValue <= powerDepth) {
+                beanList.add(CanvasProjectItemBean().apply {
+                    mtype = CanvasConstant.DATA_TYPE_RECT
+                    paintStyle = Paint.Style.FILL.toPaintStyleInt()
+                    width = (gridWidth - gridMargin * 2).toMm()
+                    height = (gridHeight - gridMargin * 2).toMm()
+                    left = (x + gridMargin).toMm()
+                    top = (y + gridMargin).toMm()
 
-                //参数
-                printPrecision = 1
-                printPower = (power + 1) * maxIndex
-                printDepth = (depth + 1) * maxIndex
-                printCount = 1
-            })
+                    //参数
+                    printPrecision = numberTextItem.dataBean.printPrecision
+                    printCount = numberTextItem.dataBean.printCount
+                    printPower = powerValue
+                    printDepth = depthValue
+                })
+            }
         }
     }
 
@@ -408,9 +420,9 @@ fun CanvasDelegate.addParameterComparisonTable(@Pixel bounds: RectF) {
 
         //参数
         printPrecision = numberTextItem.dataBean.printPrecision
+        printCount = numberTextItem.dataBean.printCount
         printPower = numberTextItem.dataBean.printPower
         printDepth = numberTextItem.dataBean.printDepth
-        printCount = numberTextItem.dataBean.printCount
     })
 
     //---文本
