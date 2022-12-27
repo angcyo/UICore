@@ -2,8 +2,8 @@ package com.angcyo.vector
 
 import android.graphics.Path
 import android.os.Build
-import android.os.Debug
 import com.angcyo.library.L
+import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.Flag
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Private
@@ -127,11 +127,13 @@ abstract class VectorWriteHandler {
      * GCode 数据的一些初始化配置
      * Svg 数据的M操作
      * */
+    @CallPoint
     open fun onPathStart() {
 
     }
 
     /**[Path]的终点*/
+    @CallPoint
     open fun onPathEnd() {
         clearLastPoint()
     }
@@ -321,6 +323,7 @@ abstract class VectorWriteHandler {
      *
      * [x] [y] 非像素值, 真实值
      * */
+    @CallPoint
     fun writePoint(x: Double, y: Double) {
         val point = generatePoint(x, y)
 

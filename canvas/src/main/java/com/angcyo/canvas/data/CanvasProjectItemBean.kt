@@ -154,11 +154,11 @@ data class CanvasProjectItemBean(
 
     /**字间距*/
     @MM
-    var charSpacing: Float = 0f,
+    var charSpacing: Float = DEFAULT_CHAR_SPACING,
 
     /**行间距*/
     @MM
-    var lineSpacing: Float = 0f,
+    var lineSpacing: Float = DEFAULT_CHAR_SPACING,
 
     /**字体名称*/
     var fontFamily: String? = null,
@@ -403,6 +403,10 @@ data class CanvasProjectItemBean(
 
         /**默认的GCode线距*/
         const val DEFAULT_LINE_SPACE = 5.0f
+
+        /**默认的字间距*/
+        @MM
+        const val DEFAULT_CHAR_SPACING = 0.5f
     }
 
     /**设置渲染的位置

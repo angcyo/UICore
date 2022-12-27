@@ -52,10 +52,9 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
     //region ---方法---
 
     /**更新画笔属性*/
-    fun updatePaint() {
-        val typefaceInfo =
-            FontManager.loadTypefaceInfo(dataBean.fontFamily) ?: FontManager.getSystemFontList()
-                .firstOrNull()
+    fun updatePaint(): Paint {
+        val loadTypefaceInfo = FontManager.loadTypefaceInfo(dataBean.fontFamily)
+        val typefaceInfo = loadTypefaceInfo ?: FontManager.getSystemFontList().firstOrNull()
         itemPaint.let {
             //删除线
             it.isStrikeThruText = dataBean.linethrough
@@ -75,7 +74,18 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
                 itemPaint.typeface = typeface
             }
         }
+        return itemPaint
     }
+
+    /**获取当前文本对应的宽高, 像素值*/
+    @Pixel
+    fun getTextWidth(text: String = dataBean.text ?: "", paint: Paint = updatePaint()): Float =
+        calcTextWidth(text, paint)
+
+    /**获取当前文本对应的宽高, 像素值*/
+    @Pixel
+    fun getTextHeight(text: String = dataBean.text ?: "", paint: Paint = updatePaint()): Float =
+        calcTextHeight(text, paint)
 
     /**计算多行文本的宽度*/
     @Pixel
@@ -108,6 +118,7 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
     }
 
     /**计算多行文本的高度*/
+    @Pixel
     fun calcTextHeight(text: String, paint: Paint = itemPaint): Float {
         var result = 0f
         val lineTextList = text.lineTextList()
