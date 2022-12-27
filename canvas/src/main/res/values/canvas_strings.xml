@@ -135,6 +135,7 @@
 
     <string name="canvas_outline">Outline</string>
 
+    <string name="canvas_clear">Clear</string>
     <string name="canvas_origin">Origin</string>
     <string name="canvas_reset">Reset</string>
     <string name="canvas_best">Adapt</string>

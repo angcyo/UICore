@@ -119,6 +119,7 @@ class InitialPointHandler : BaseComponent() {
             offsetY = -(delegate.view.mH() - canvasViewBox.getContentTop().toInt())
             menuItemClickAction = {
                 when (it.itemId) {
+                    R.id.menu_clear -> delegate.removeAllItemRenderer()
                     R.id.menu_reset -> canvasViewBox.reset()
                     R.id.menu_best -> onClick(delegate)
                     R.id.menu_ratio_1 -> canvasViewBox.scaleTo(1f, 1f)
