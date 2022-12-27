@@ -74,6 +74,11 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
     /**入口*/
     @CanvasEntryPoint
     override fun onCanvasTouchEvent(canvasDelegate: CanvasDelegate, event: MotionEvent): Boolean {
+        if (canvasDelegate.controlHandler.isTouchInControlPoint()) {
+            //有控制点按下时, 不处理手势
+            return false
+        }
+
         initialPointHandler.onTouch(canvasDelegate, event)
         doubleGestureDetector.onTouchEvent(event)
         when (event.actionMasked) {

@@ -86,13 +86,13 @@ class CanvasTouchManager(val canvasView: CanvasDelegate) {
                 return true
             }
         }
-        //控制点,手势
+        //controlHandler 控制点,手势
         if (canvasView.controlHandler.enable) {
             if (canvasView.controlHandler.onCanvasTouchEvent(canvasView, event)) {
                 return true
             }
         }
-        //画布,手势
+        //canvasTouchHandler 画布,手势
         if (canvasView.canvasTouchHandler.enable) {
             return canvasView.canvasTouchHandler.onCanvasTouchEvent(canvasView, event)
         }

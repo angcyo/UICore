@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import androidx.core.graphics.contains
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
+import com.angcyo.canvas.core.CanvasEntryPoint
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasTouch
 import com.angcyo.canvas.core.component.control.DeleteControlPoint
@@ -89,10 +90,14 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         }
     }
 
+    /**是否在控制点上按下*/
+    fun isTouchInControlPoint(): Boolean = touchDownInfo?.controlPoint != null
+
     //</editor-fold desc="控制点">
 
     /**手势处理
      * [com.angcyo.canvas.CanvasView.onTouchEvent]*/
+    @CanvasEntryPoint
     override fun onCanvasTouchEvent(canvasDelegate: CanvasDelegate, event: MotionEvent): Boolean {
         doubleGestureDetector.onTouchEvent(event)
 
@@ -154,7 +159,8 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
                 //多指按下
-                touchControlPoint = null
+                //touchControlPoint = null //支持恢复之前的控制点
+                //touchDownInfo?.touchPointerId = -1 //取消单手指移动
                 //touchPointerId = -1
             }
             MotionEvent.ACTION_POINTER_UP -> {
@@ -274,6 +280,8 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                 }
                 isDoubleTouch = false
                 touchControlPoint = null
+                touchDownInfo?.release()
+                touchDownInfo = null
                 //touchPointerId = -1
             }
         }
