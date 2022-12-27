@@ -23,16 +23,23 @@ object MainExecutor : Executor {
 
     var _lastRunnable: WeakReference<MainRunnable?>? = null
 
+    /**直接执行[command]*/
     override fun execute(command: Runnable) {
         if (!handler.post(command)) {
             throw RejectedExecutionException("$handler is shutting down")
         }
     }
 
+    /**延迟执行[command]*/
     fun delay(command: Runnable, delayMillis: Long) {
         if (!handler.postDelayed(command, delayMillis)) {
             throw RejectedExecutionException("$handler is shutting down")
         }
+    }
+
+    /**移除执行[command]*/
+    fun remove(command: Runnable) {
+        handler.removeCallbacks(command)
     }
 }
 

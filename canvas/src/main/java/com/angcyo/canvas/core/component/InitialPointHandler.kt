@@ -6,6 +6,7 @@ import android.view.ViewConfiguration
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex.emptyRectF
 import com.angcyo.library.ex.longFeedback
 import com.angcyo.library.ex.mH
@@ -29,6 +30,12 @@ class InitialPointHandler : BaseComponent() {
     /**按下的时间, 用来计算是否长按了*/
     var _touchDownTime: Long = -1
 
+    /**长按检测时间*/
+    val longPressTimeout = ViewConfiguration.getLongPressTimeout().toLong()//400
+
+    /**长按事件*/
+    var _longRunnable: Runnable? = null
+
     @CallPoint
     fun onTouch(delegate: CanvasDelegate, event: MotionEvent): Boolean {
         val canvasViewBox = delegate.getCanvasViewBox()
@@ -42,23 +49,29 @@ class InitialPointHandler : BaseComponent() {
                 )
                 isTouchDownInInitial = initialPointRect.contains(event.x, event.y)
                 _touchDownTime = if (isTouchDownInInitial) {
+                    _longRunnable = Runnable {
+                        if (isTouchDownInInitial) {
+                            //长按
+                            isTouchDownInInitial = false
+                            onLongPress(delegate)
+                        }
+                    }
+                    MainExecutor.delay(_longRunnable!!, longPressTimeout)
                     nowTime()
                 } else {
                     -1
                 }
             }
             MotionEvent.ACTION_MOVE -> {
-                if (isTouchDownInInitial && _touchDownTime > 0) {
-                    val nowTime = nowTime()
-                    val longPressTimeout = ViewConfiguration.getLongPressTimeout()//400
-                    if (nowTime - _touchDownTime > longPressTimeout) {
-                        //长按
-                        isTouchDownInInitial = false
-                        return onLongPress(delegate)
-                    }
+                if (isTouchDownInInitial) {
+                    isTouchDownInInitial = initialPointRect.contains(event.x, event.y)
                 }
             }
             MotionEvent.ACTION_UP -> {
+                _longRunnable?.let {
+                    MainExecutor.remove(it)
+                    _longRunnable = null
+                }
                 if (isTouchDownInInitial) {
                     if (initialPointRect.contains(event.x, event.y)) {
                         return onClick(delegate)
