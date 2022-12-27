@@ -16,6 +16,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.angcyo.dialog.LoadingDialog.dialogPool
 import com.angcyo.dialog.LoadingDialog.removeDialog
+import com.angcyo.library.IActivityProvider
 import com.angcyo.library.ex.elseNull
 import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.getLongNum
@@ -183,6 +184,7 @@ fun ActivityResultCaller.loadingCaller(
             is Fragment -> activity
             is Activity -> this
             is Context -> this
+            is IActivityProvider -> getActivityContext()
             else -> null
         } ?: return null
         activity.loading(text, layoutId, showCloseView, config, onCancel)

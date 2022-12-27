@@ -12,14 +12,21 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcherOwner
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultCaller
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.ActivityResultRegistry
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.annotation.LayoutRes
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.PopupWindowCompat
 import com.angcyo.dsladapter.getViewRect
+import com.angcyo.library.IActivityProvider
 import com.angcyo.library.L
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.*
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.*
@@ -54,7 +61,7 @@ fun TargetWindow.dismissWindow() {
     }
 }
 
-open class PopupConfig {
+open class PopupConfig : ActivityResultCaller, IActivityProvider {
     /**
      * 标准需要显示的属性, 使用[showAsDropDown]显示
      *
@@ -669,6 +676,9 @@ open class PopupConfig {
 
     //</editor-fold desc="PopupActivity">
 
+    override fun getActivityContext(): Context? =
+        contentView?.context ?: anchor?.context ?: parent?.context ?: lastContext
+
     /**移除[Activity]模式的界面
      * 需要[OnBackPressedDispatcherOwner]支持*/
     fun hide() {
@@ -678,5 +688,20 @@ open class PopupConfig {
                 it.dismiss()
             }
         }
+    }
+
+    override fun <I : Any?, O : Any?> registerForActivityResult(
+        contract: ActivityResultContract<I, O>,
+        callback: ActivityResultCallback<O>
+    ): ActivityResultLauncher<I> {
+        error("未实现:registerForActivityResult")
+    }
+
+    override fun <I : Any?, O : Any?> registerForActivityResult(
+        contract: ActivityResultContract<I, O>,
+        registry: ActivityResultRegistry,
+        callback: ActivityResultCallback<O>
+    ): ActivityResultLauncher<I> {
+        error("未实现:registerForActivityResult")
     }
 }

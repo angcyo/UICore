@@ -559,6 +559,9 @@ fun CanvasProjectItemBean.isItalic() = fontStyle == "italic"
 /**毫米转像素*/
 fun Float?.toPixel() = MM_UNIT.convertValueToPixel(this ?: 0f)
 
+/**毫米转像素*/
+fun Double?.toPixel() = MM_UNIT.convertValueToPixel(this ?: 0.0)
+
 /**MmValueUnit*/
 fun Int.toMm() = toFloat().toMm()
 

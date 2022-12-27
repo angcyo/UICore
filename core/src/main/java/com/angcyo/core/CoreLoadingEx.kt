@@ -121,6 +121,7 @@ fun ActivityResultCaller.tgStrokeLoadingCaller(
             is Fragment -> activity
             is Activity -> this
             is Context -> this
+            is IActivityProvider -> getActivityContext()
             else -> null
         } ?: return null
         activity.tgStrokeLoading(cancel, showErrorToast, action)
