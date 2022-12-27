@@ -172,7 +172,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                 if (touchDownInfo?.touchPointerId == touchPointerId) {
                     //按下的手指和移动的手指同一个时, 才处理
 
-                    //L.d("\ntouch:${_touchPoint}\nmove:${_movePoint}")
+                    //L.d("\n touch:${_touchPoint}\n move:${_movePoint}")
                     if (touchControlPoint == null) {
                         //没有在控制点上按压时, 才处理item的移动
                         if (selectedItemRender != null && event.pointerCount < 2 /*单手操作*/) {
