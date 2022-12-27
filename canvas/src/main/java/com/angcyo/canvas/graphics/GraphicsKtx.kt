@@ -261,6 +261,10 @@ fun CanvasDelegate.addParameterComparisonTable(@Pixel bounds: RectF) {
     val numberTextItem = DataTextItem(CanvasProjectItemBean().apply {
         text = "100"
         fontSize = 3f
+
+        //参数
+        printPrecision = 1
+        printCount = 1
     })
 
     val powerTextHeight = powerTextItem.getTextHeight()
@@ -311,6 +315,12 @@ fun CanvasDelegate.addParameterComparisonTable(@Pixel bounds: RectF) {
             mtype = CanvasConstant.DATA_TYPE_TEXT
             fontSize = numberTextItem.dataBean.fontSize
             text = "${(power + 1) * maxIndex}"
+
+            //参数
+            printPrecision = numberTextItem.dataBean.printPrecision
+            printPower = numberTextItem.dataBean.printPower
+            printDepth = numberTextItem.dataBean.printDepth
+            printCount = numberTextItem.dataBean.printCount
         })
         powerNumberItem.dataBean.left =
             (x + gridWidth / 2 - powerNumberItem.getTextWidth() / 2).toMm()
@@ -330,6 +340,12 @@ fun CanvasDelegate.addParameterComparisonTable(@Pixel bounds: RectF) {
                     fontSize = numberTextItem.dataBean.fontSize
                     text = "${(depth + 1) * maxIndex}"
                     angle = depthTextItem.dataBean.angle
+
+                    //参数
+                    printPrecision = numberTextItem.dataBean.printPrecision
+                    printPower = numberTextItem.dataBean.printPower
+                    printDepth = numberTextItem.dataBean.printDepth
+                    printCount = numberTextItem.dataBean.printCount
                 })
                 depthNumberItem.dataBean.left =
                     (padding + depthTextHeight + textMargin + depthNumberItem.getTextHeight() / 2 - depthNumberItem.getTextWidth() / 2).toMm()
@@ -391,10 +407,10 @@ fun CanvasDelegate.addParameterComparisonTable(@Pixel bounds: RectF) {
         top = gridTop.toMm()
 
         //参数
-        printPrecision = 1
-        printPower = 100
-        printDepth = 30
-        printCount = 1
+        printPrecision = numberTextItem.dataBean.printPrecision
+        printPower = numberTextItem.dataBean.printPower
+        printDepth = numberTextItem.dataBean.printDepth
+        printCount = numberTextItem.dataBean.printCount
     })
 
     //---文本
