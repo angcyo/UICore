@@ -318,6 +318,7 @@ data class CanvasProjectItemBean(
 
     /**[com.angcyo.objectbox.laser.pecker.entity.EngraveConfigEntity]*/
 
+    /**[com.angcyo.engrave.EngraveFlowDataHelper.generateEngraveConfig]*/
     //材质key
     var materialKey: String? = null,
     //激光类型

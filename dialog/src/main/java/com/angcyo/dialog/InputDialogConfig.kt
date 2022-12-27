@@ -82,7 +82,11 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
         false
     }
 
-    /**文本输入类型*/
+    /**文本输入类型
+     * [InputType.TYPE_CLASS_TEXT]
+     * [InputType.TYPE_CLASS_NUMBER]
+     * [InputType.TYPE_NUMBER_FLAG_DECIMAL]
+     * */
     var inputType = InputType.TYPE_CLASS_TEXT
 
     /**输入框过滤器*/
