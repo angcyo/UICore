@@ -2,6 +2,7 @@ package com.angcyo.core.component
 
 import android.annotation.TargetApi
 import android.content.ContentResolver
+import android.content.ContentUris
 import android.content.Context
 import android.database.ContentObserver
 import android.database.Cursor
@@ -20,6 +21,8 @@ import androidx.lifecycle.ViewModel
 import com.angcyo.base.requestSdCardPermission
 import com.angcyo.library.*
 import com.angcyo.library.component.lastContext
+import com.angcyo.library.ex.lastName
+import com.angcyo.library.ex.saveToFolder
 import com.angcyo.library.utils.storage.SD
 import com.angcyo.library.utils.storage.haveSdCardPermission
 import com.angcyo.viewmodel.vmDataOnce
@@ -40,9 +43,11 @@ class ScreenShotModel : ViewModel() {
 
         private val DATE_TAKEN = "datetaken"
 
-        private val MEDIA_PROJECTIONS = arrayOf(MediaStore.MediaColumns.DATA, DATE_TAKEN)
+        private val MEDIA_PROJECTIONS =
+            arrayOf(MediaStore.Images.Media._ID, MediaStore.MediaColumns.DATA, DATE_TAKEN)
 
         private val MEDIA_PROJECTIONS_API_16 = arrayOf(
+            MediaStore.Images.Media._ID,
             MediaStore.MediaColumns.DATA,
             DATE_TAKEN,
             MediaStore.MediaColumns.WIDTH,
@@ -173,6 +178,7 @@ class ScreenShotModel : ViewModel() {
                 return
             }
             if (cursor.moveToFirst()) {
+                val idIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID)
                 val index = cursor.getColumnIndex(MediaStore.MediaColumns.DATA)
                 val dateTakenIndex = cursor.getColumnIndex(DATE_TAKEN)
                 var widthIndex = -1
@@ -181,6 +187,7 @@ class ScreenShotModel : ViewModel() {
                     widthIndex = cursor.getColumnIndex(MediaStore.MediaColumns.WIDTH)
                     heightIndex = cursor.getColumnIndex(MediaStore.MediaColumns.HEIGHT)
                 }
+                val id = cursor.getLong(idIndex)
                 val data = cursor.getString(index)
                 val dateTaken = cursor.getLong(dateTakenIndex)
                 val width: Int
@@ -193,7 +200,17 @@ class ScreenShotModel : ViewModel() {
                     width = size.x
                     height = size.y
                 }
-                handleMediaRowData(data, dateTaken, width, height)
+
+                val uri = ContentUris.withAppendedId(
+                    MediaStore.Images.Media.getContentUri("external"),
+                    id
+                )
+
+                //这里数据流转存到cache目录下, 在vivo手机上虽然有SD卡权限, 但是还是无法直接加载这个路径
+                val name = data.lastName()
+                val cachePath = uri.saveToFolder(fileName = name)
+
+                handleMediaRowData(cachePath, dateTaken, width, height)
                 return
             }
             L.i("Cursor no data.")
