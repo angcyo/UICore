@@ -115,8 +115,7 @@ fun sdDownloadFolderPath(folder: String = "", mk: Boolean = true): String {
  * android 11+ 使用 [android.os.Environment.isExternalStorageManager] 判断权限
  * [com.angcyo.base.ActivityExKt.requestSdCardPermission]
  * */
-fun sdCardPermission() =
-    listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+fun sdCardPermission() = SD.mediaPermissions(true, false, false)
 
 /**管理SD卡的权限
  * android 11+ 使用 [android.os.Environment.isExternalStorageManager] 判断权限
