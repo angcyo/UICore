@@ -299,6 +299,7 @@ data class CanvasProjectItemBean(
 
     /**发给机器的数据索引
      * 当数据没有改变时, 相同的索引不必重复发送数据给机器
+     * [com.angcyo.engrave.transition.IEngraveTransition.initTransferDataIndex]
      * */
     var index: Int? = null,
 
