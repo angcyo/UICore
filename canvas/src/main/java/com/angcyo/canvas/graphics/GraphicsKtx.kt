@@ -342,7 +342,7 @@ fun CanvasDelegate.addParameterComparisonTable(
         })
         powerNumberItem.dataBean.left =
             (x + gridWidth / 2 - powerNumberItem.getTextWidth() / 2).toMm()
-        powerNumberItem.dataBean.top = (padding + powerTextHeight + textMargin).toMm()
+        powerNumberItem.dataBean.top = (bounds.top + padding + powerTextHeight + textMargin).toMm()
         numberBeanList.add(powerNumberItem.dataBean)
 
         for (depth in 0 until gridCount) {
@@ -357,7 +357,7 @@ fun CanvasDelegate.addParameterComparisonTable(
                     text = "${(depth + 1) * step}"
                 })
                 depthNumberItem.dataBean.left =
-                    (padding + depthTextHeight + textMargin + depthNumberItem.getTextHeight() / 2 - depthNumberItem.getTextWidth() / 2).toMm()
+                    (bounds.left + padding + depthTextHeight + textMargin + depthNumberItem.getTextHeight() / 2 - depthNumberItem.getTextWidth() / 2).toMm()
                 depthNumberItem.dataBean.top =
                     (y + gridHeight / 2 - depthNumberItem.getTextHeight() / 2).toMm()
                 numberBeanList.add(depthNumberItem.dataBean)
@@ -423,10 +423,11 @@ fun CanvasDelegate.addParameterComparisonTable(
     //---文本
     powerTextItem.dataBean.left =
         (gridLeft + gridWidthSum / 2 - powerTextItem.getTextWidth() / 2).toMm()
-    powerTextItem.dataBean.top = padding.toMm()
+    powerTextItem.dataBean.top = (bounds.top + padding).toMm()
     beanList.add(powerTextItem.dataBean)
 
-    depthTextItem.dataBean.left = (padding + depthTextHeight / 2 - depthTextWidth / 2).toMm()
+    depthTextItem.dataBean.left =
+        (bounds.left + padding + depthTextHeight / 2 - depthTextWidth / 2).toMm()
     depthTextItem.dataBean.top =
         (gridTop + gridHeightSum / 2 - depthTextHeight / 2).toMm()
     beanList.add(depthTextItem.dataBean)
