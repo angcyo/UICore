@@ -191,6 +191,8 @@ open class PopupConfig : ActivityResultCaller, IActivityProvider {
     /**[PopupWindow]or[Window]载体*/
     var _container: TargetWindow? = null
 
+    //---
+
     /**显示, 根据条件, 选择使用[PopupWindow]or[Window]载体*/
     @CallPoint
     open fun show(context: Context): TargetWindow {
@@ -203,6 +205,14 @@ open class PopupConfig : ActivityResultCaller, IActivityProvider {
                 _container = this
             }
         }
+    }
+
+    /**显示在[view]的底部*/
+    fun showOnViewBottom(view: View) {
+        animationStyle = R.style.LibPopupBottomAnimation
+        parent = view
+        gravity = Gravity.BOTTOM
+        width = WindowManager.LayoutParams.MATCH_PARENT
     }
 
     //<editor-fold desc="PopupWindow">

@@ -90,10 +90,16 @@
 
     <!--顶部Translate动画-->
     <style name="LibPopupAnimation" parent="Animation.AppCompat.DropDownUp">
-        <item name="android:windowEnterAnimation">@anim/lib_popup_enter_animation</item>
+        <item name="android:windowEnterAnimation">@anim/lib_popup_top_enter_animation</item>
         <!--        <item name="android:windowShowAnimation">@anim/lib_popup_enter_animation</item>-->
-        <item name="android:windowExitAnimation">@anim/lib_popup_exit_animation</item>
+        <item name="android:windowExitAnimation">@anim/lib_popup_top_exit_animation</item>
         <!--        <item name="android:windowHideAnimation">@anim/lib_popup_exit_animation</item>-->
+    </style>
+
+    <!--底部Translate动画-->
+    <style name="LibPopupBottomAnimation" parent="Animation.AppCompat.DropDownUp">
+        <item name="android:windowEnterAnimation">@anim/lib_popup_bottom_enter_animation</item>
+        <item name="android:windowExitAnimation">@anim/lib_popup_bottom_exit_animation</item>
     </style>
 
     <style name="LibFullPopupAnimation" parent="Animation.AppCompat.DropDownUp">

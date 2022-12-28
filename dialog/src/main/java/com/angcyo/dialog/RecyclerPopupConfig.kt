@@ -2,6 +2,7 @@ package com.angcyo.dialog
 
 import android.app.Activity
 import android.widget.PopupWindow
+import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.ItemSelectorHelper
 import com.angcyo.dsladapter.itemIndexPosition
@@ -16,8 +17,10 @@ import com.angcyo.widget.DslViewHolder
  */
 open class RecyclerPopupConfig : PopupConfig() {
 
+    /**选择模式*/
     var popupSelectorModel: Int = ItemSelectorHelper.MODEL_NORMAL
 
+    /**配置类*/
     val _recyclerConfig = RecyclerConfig()
 
     /**单选/多选后的回调*/
@@ -52,6 +55,23 @@ open class RecyclerPopupConfig : PopupConfig() {
                     hide()
                 }
             }
+        }
+    }
+
+    //---
+
+    /**调用此方法, 添加[DslAdapterItem]
+     * [DslAdapterItem]
+     * [com.angcyo.dialog.RecyclerConfig.addItem]*/
+    fun addItem(item: DslAdapterItem) {
+        _recyclerConfig.addItem(item)
+    }
+
+    /**直接渲染界面, 此方法需要在[com.angcyo.dialog.RecyclerConfig.initRecycler]之前调用*/
+    fun renderAdapter(action: DslAdapter.() -> Unit) {
+        _recyclerConfig.onRenderAction = { recyclerView, adapter ->
+            adapter._recyclerView = recyclerView
+            adapter.action()
         }
     }
 }

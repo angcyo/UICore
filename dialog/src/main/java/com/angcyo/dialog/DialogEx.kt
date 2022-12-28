@@ -272,6 +272,10 @@ fun Context.fullPopupWindow(anchor: View? = null, config: PopupConfig.() -> Unit
     return popupConfig.show(this)
 }
 
+/**[recyclerPopupWindow]*/
+fun View.recyclerPopupWindow(config: RecyclerPopupConfig.() -> Unit): Any =
+    context.recyclerPopupWindow(this, config)
+
 /**展示列表*/
 fun Context.recyclerPopupWindow(anchor: View? = null, config: RecyclerPopupConfig.() -> Unit): Any {
     val popupConfig = RecyclerPopupConfig()

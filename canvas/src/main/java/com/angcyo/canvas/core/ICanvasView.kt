@@ -86,7 +86,11 @@ interface ICanvasView : IComponent {
     fun getCanvasViewBox(): CanvasViewBox
 
     /**通过手势坐标, 查找对应的[BaseItemRenderer]*/
-    fun findItemRenderer(touchPoint: PointF): BaseItemRenderer<*>? = null
+    fun findItemRenderer(touchPoint: PointF): BaseItemRenderer<*>? =
+        findItemRendererList(touchPoint).firstOrNull()
+
+    /**[findItemRenderer] 获取一组*/
+    fun findItemRendererList(touchPoint: PointF): List<BaseItemRenderer<*>> = emptyList()
 
     /**回退管理*/
     fun getCanvasUndoManager(): CanvasUndoManager

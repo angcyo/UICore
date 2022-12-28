@@ -274,7 +274,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
-    override fun findItemRenderer(touchPoint: PointF): BaseItemRenderer<*>? {
+    override fun findItemRendererList(touchPoint: PointF): List<BaseItemRenderer<*>> {
+        val result = mutableListOf<BaseItemRenderer<*>>()
         val canvasViewBox = getCanvasViewBox()
         val point = acquireTempPointF()
         canvasViewBox.mapCoordinateSystemPoint(touchPoint, point)
@@ -284,19 +285,19 @@ class CanvasDelegate(val view: View) : ICanvasView {
         if (selectedRenderer is SelectGroupRenderer) {
             if (selectedRenderer.isVisible() && selectedRenderer.containsPoint(point)) {
                 point.release()
-                return selectedRenderer
+                result.add(selectedRenderer)
+                return result
             }
         }
 
-        //item渲染
+        //item渲染, 逆序
         itemsRendererList.reversed().forEach {
             if (it.isVisible() && it.containsPoint(point)) {
-                point.release()
-                return it
+                result.add(it)
             }
         }
         point.release()
-        return null
+        return result
     }
 
     /**当[Matrix]更新后触发

@@ -29,6 +29,8 @@ data class ControlTouchInfo(
     var touchPoint: PointF = acquireTempPointF(),
     /**[touchPoint]相对于坐标系统原点的坐标*/
     var touchSystemPoint: PointF = acquireTempPointF(),
+    /**按下时, 下面所有的渲染器*/
+    var touchItemRendererList: List<BaseItemRenderer<*>>? = null,
 ) {
     /**释放资源*/
     fun release() {

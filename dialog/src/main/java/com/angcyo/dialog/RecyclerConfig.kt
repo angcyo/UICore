@@ -3,10 +3,12 @@ package com.angcyo.dialog
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dialog.dslitem.DslDialogTextItem
+import com.angcyo.dialog.popup.MenuPopupConfig
 import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.filter.RemoveItemDecorationFilterAfterInterceptor
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex._dimen
+import com.angcyo.library.ex.have
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.recycler.initDslAdapter
 
@@ -64,6 +66,10 @@ open class RecyclerConfig {
                 } else {
                     onRenderAction?.invoke(this@apply, this)
                 }
+
+                //托管itemClick
+                wrapItemClick(dialog)
+
                 updateNow()
             }
             //设置选择模式
@@ -74,7 +80,23 @@ open class RecyclerConfig {
         }
     }
 
-    /**添加item*/
+    /**自动销毁[window]*/
+    fun DslAdapter.wrapItemClick(window: TargetWindow) {
+        getDataList(false).forEach { item ->
+            if (item.itemClick != null && item.itemFlag.have(MenuPopupConfig.FLAG_ITEM_DISMISS)) {
+                val oldClick = item.itemClick
+                item.itemClick = {
+                    window.dismissWindow()
+                    oldClick?.invoke(it)
+                }
+            }
+        }
+    }
+
+    /**添加item
+     * 点击后自动关闭pop
+     * itemFlag = MenuPopupConfig.FLAG_ITEM_DISMISS
+     * */
     open fun addItem(item: DslAdapterItem) {
         val oldItemClick = item.itemClick
         adapterItemList.add(item.apply {

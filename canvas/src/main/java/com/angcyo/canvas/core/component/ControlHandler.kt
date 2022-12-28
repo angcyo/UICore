@@ -61,6 +61,9 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
     //---
 
+    /**当按下时, 下面包含多个渲染器*/
+    var onTouchItemRendererListAction: ((ControlTouchInfo) -> Unit)? = null
+
     /**按下时的一些信息*/
     var touchDownInfo: ControlTouchInfo? = null
 
@@ -148,11 +151,15 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
                 if (touchControlPoint == null) {
                     //未点在控制点上, 则检查是否点在[BaseItemRenderer]中
-                    val itemRenderer = canvasDelegate.findItemRenderer(touchPoint)
+                    val list = canvasDelegate.findItemRendererList(touchPoint)
+                    val itemRenderer = list.firstOrNull()
                     //selectedItemRender = itemRenderer
                     touchInfo.itemRenderer = itemRenderer
                     touchInfo.itemRenderer?.let {
                         touchInfo.itemBounds.set(it.getBounds())
+                    }
+                    if (list.size() > 1) {
+                        touchInfo.touchItemRendererList = list
                     }
                     canvasDelegate.selectedItem(itemRenderer)
                 }
@@ -278,6 +285,13 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                         })
                     }
                 }
+
+                //如果按下时, 有个多个, 则弹窗显示
+                val touchItemRendererList = touchDownInfo?.touchItemRendererList
+                if (touchItemRendererList.size() > 1) {
+                    onTouchItemRendererListAction?.invoke(touchDownInfo!!)
+                }
+
                 isDoubleTouch = false
                 touchControlPoint = null
                 touchDownInfo?.release()
