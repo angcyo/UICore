@@ -37,6 +37,12 @@ object LibHawkKeys {
      * */
     var lpSupportFirmware: String? by HawkPropertyValue<Any, String?>(null)
 
+    /**
+     * 哪些固件范围的中心点在物理中心
+     * resValue "string", "lp_device_origin_center", '"250~252 270~270 300~313 350~357 370~372 5500~5507 5510~5512"'
+     * */
+    var lpDeviceOriginCenter: String? by HawkPropertyValue<Any, String?>(null)
+
     /**允许最大分配的图片大小,
      * 10mb 10 * 1024 * 1024 => 10,485,760
      * 64,000,000 61mb
