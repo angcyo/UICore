@@ -53,4 +53,10 @@ open class DslTagGroupItem : DslAdapterItem() {
         list.action()
         itemLabelDesList = list
     }
+
+    /**创建一个[LabelDesData]*/
+    fun labelDes(label: Any?, des: Any?) = LabelDesData("$label", "$des")
+
+    /**在label后面加:号*/
+    fun formatLabelDes(label: CharSequence?, des: CharSequence?) = LabelDesData("${label}:", des)
 }

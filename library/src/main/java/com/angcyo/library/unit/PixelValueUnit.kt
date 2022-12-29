@@ -7,9 +7,13 @@ package com.angcyo.library.unit
  */
 class PixelValueUnit : IValueUnit {
 
-    override fun convertValueToPixel(value: Double): Double = value
+    override fun convertValueToPixel(value: Float): Float = value
 
-    override fun formattedValueUnit(value: Double): String = "${value.toInt()}${getUnit()}"
+    override fun formattedValueUnit(value: Double, ensureInt: Boolean): String =
+        "${value.toInt()}${getUnit()}"
+
+    override fun formattedValueUnit(value: Float, ensureInt: Boolean): String =
+        "${value.toInt()}${getUnit()}"
 
     override fun getUnit(): String = "px"
 }

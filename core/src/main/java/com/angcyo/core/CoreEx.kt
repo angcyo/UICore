@@ -101,11 +101,11 @@ fun IView.showIn(fragment: AbsLifecycleFragment, group: ViewGroup? = null) {
     var parentView: ViewGroup? = group
     if (parentView == null) {
         parentView = fragment._vh.group(R.id.lib_content_overlay_wrap_layout)
-        parentView.visible()
     }
     if (parentView == null) {
         parentView = fragment._vh.itemView as ViewGroup
     }
+    parentView.visible() //必须可见?
     show(fragment, parentView)
 }
 

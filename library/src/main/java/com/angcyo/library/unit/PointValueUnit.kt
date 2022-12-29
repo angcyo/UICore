@@ -19,7 +19,7 @@ class PointValueUnit : IValueUnit {
     /**
      * 将pt单位转换成px单位
      * [TypedValue.COMPLEX_UNIT_PT]*/
-    override fun convertValueToPixel(value: Double): Double {
+    override fun convertValueToPixel(value: Float): Float {
         val app = app()
         if (app.isPlaceholderApplication()) {
             return value
@@ -29,10 +29,14 @@ class PointValueUnit : IValueUnit {
         //1英寸等于多少像素, 1英寸=2.54厘米=25.4毫米      //537.882
         //1pt = 7.4705834px
         //1 * dm.densityDpi / 72 = 7.0277777px
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, value.toFloat(), dm).toDouble()
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, value, dm)
     }
 
-    override fun formattedValueUnit(value: Double): String = "${value.unitDecimal(2)}${getUnit()}"
+    override fun formattedValueUnit(value: Double, ensureInt: Boolean): String =
+        "${value.unitDecimal(2, ensureInt = ensureInt)}${getUnit()}"
+
+    override fun formattedValueUnit(value: Float, ensureInt: Boolean): String =
+        "${value.unitDecimal(2, ensureInt = ensureInt)}${getUnit()}"
 
     override fun getUnit(): String = "pt"
 }

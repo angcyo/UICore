@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/lib_content_wrap_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|left"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/lib_hdpi">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lib_label_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="@dimen/lib_sdpi"
+            tools:text="作者123" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lib_des_view"
+            style="@style/LibDesTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            tools:text="angcyo\n angcyo" />
+
+    </LinearLayout>
+
+</FrameLayout>

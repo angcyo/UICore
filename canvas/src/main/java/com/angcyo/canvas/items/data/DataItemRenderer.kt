@@ -116,7 +116,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
                 if (canvasView.isTouchHold) {
                     _isScaleHappen = true
                 } else {
-                    _updateRenderItemIfNeed()
+                    _updateRenderItemIfNeed(Reason.user)
                 }
             }
         }
@@ -208,7 +208,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
             val index = dataBean?.index
             dataBean?.index = null
             if ((index ?: 0) > 0) {
-                L.i("数据改变,清空索引:${index} ${reason}")
+                L.i("数据改变,清空索引:${index} $reason")
             }
         }
         super.renderItemDataChanged(reason)

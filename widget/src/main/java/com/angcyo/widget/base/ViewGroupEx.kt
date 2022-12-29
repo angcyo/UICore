@@ -392,14 +392,17 @@ fun ViewGroup.resetDslItem(items: List<DslAdapterItem>) {
     //替换不相同的Item
     replaceIndexList.forEach { i ->
         val dslItem = items[i]
-
-        removeViewAt(i)
+        if (childCount > i) {
+            removeViewAt(i)
+        }
         addDslItem(dslItem, i)
     }
 
     //移除多余的item
     for (i in itemSize until childSize) {
-        removeViewAt(i)
+        if (childCount > i) {
+            removeViewAt(i)
+        }
     }
 
     //追加新的Item

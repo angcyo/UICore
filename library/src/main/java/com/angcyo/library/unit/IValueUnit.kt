@@ -88,15 +88,22 @@ interface IValueUnit {
     //region---值转换相关方法---
 
     @Pixel
-    fun convertValueToPixel(value: Float): Float = convertValueToPixel(value.toDouble()).toFloat()
+    fun convertValueToPixel(value: Float): Float
 
     /**获取每个单位间隔刻度对应的像素大小
      * 将1个单位的值, 转换成屏幕像素点数值
      * [TypedValue.COMPLEX_UNIT_MM]*/
     @Pixel
-    fun convertValueToPixel(value: Double): Double
+    fun convertValueToPixel(value: Double): Double = convertValueToPixel(value.toFloat()).toDouble()
 
-    fun convertPixelToValue(value: Float): Double = convertPixelToValue(value.toDouble())
+    fun convertPixelToValue(pixel: Float): Float {
+        val unit = convertValueToPixel(1.0f)
+        val result = pixel / unit
+        if (result.isFinite()) {
+            return result
+        }
+        return result.nextDown()
+    }
 
     /**将像素转换为单位数值*/
     fun convertPixelToValue(pixel: Double): Double {
@@ -109,9 +116,9 @@ interface IValueUnit {
     }
 
     /**将value转换成对应单位的文本*/
-    fun formattedValueUnit(value: Double): String
+    fun formattedValueUnit(value: Double, ensureInt: Boolean = true): String
 
-    fun formattedValueUnit(value: Float): String = formattedValueUnit(value.toDouble())
+    fun formattedValueUnit(value: Float, ensureInt: Boolean = true): String
 
     /**获取描述的单位字符创*/
     fun getUnit(): String
@@ -137,11 +144,18 @@ fun Double.unitDecimal(
     return decimal(digit, ensureInt, fadedUp)
 }
 
-fun IValueUnit.convertPixelToValueUnit(pixel: Float?): String =
-    convertPixelToValueUnit(pixel?.toDouble())
+/**[Float]*/
+fun IValueUnit.convertPixelToValueUnit(pixel: Float?, ensureInt: Boolean = true): String {
+    if (pixel == null) {
+        return formattedValueUnit(0.0, ensureInt)
+    }
+    val value = convertPixelToValue(pixel)
+    return formattedValueUnit(value, ensureInt)
+}
 
 /**[convertPixelToValue]
- * [formattedValueUnit]*/
+ * [formattedValueUnit]
+ * [Double]*/
 fun IValueUnit.convertPixelToValueUnit(pixel: Double?): String {
     if (pixel == null) {
         return formattedValueUnit(0.0)

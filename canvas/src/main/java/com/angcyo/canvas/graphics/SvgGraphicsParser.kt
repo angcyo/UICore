@@ -29,10 +29,10 @@ class SvgGraphicsParser : PathGraphicsParser() {
                         Svg.loadSvgPathDrawable(data, -1, null, item.itemPaint, 0, 0)
                     if (sharpDrawable != null) {
                         //
-                        if (bean._width == 0f) {
+                        if (bean.width == null) {
                             bean.width = sharpDrawable.pathBounds.width().toMm()
                         }
-                        if (bean._height == 0f) {
+                        if (bean.height == null) {
                             bean.height = sharpDrawable.pathBounds.height().toMm()
                         }
                         //
