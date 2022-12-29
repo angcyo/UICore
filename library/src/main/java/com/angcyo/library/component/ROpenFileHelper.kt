@@ -49,13 +49,14 @@ object ROpenFileHelper {
             if (savePath == null) {
                 //%E9%87%91%E9%97%A8%E5%A4%A7%E6%A1%A5-GCODE.dxf
                 //decode->金门大桥-GCODE.dxf
-                val name = path.decode().lastName()
+
+                val name = data.getDisplayName() ?: path.decode().lastName()
                 var extName = name.extName()
 
                 val fileName = if (extName.isEmpty()) {
                     //无扩展名
-                    extName =
-                        ext ?: intent.type?.mimeTypeToExtName() ?: intent.type?.lastName() ?: ""
+                    extName = ext ?: intent.type?.mimeTypeToExtName()
+                            ?: intent.type?.lastName() ?: ""
                     if (extName.startsWith(".")) {
                         "${name}${extName}"
                     } else {
