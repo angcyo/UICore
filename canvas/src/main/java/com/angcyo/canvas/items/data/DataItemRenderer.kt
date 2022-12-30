@@ -129,7 +129,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
             _touchDownScale = canvasViewBox.getScaleX()
         } else if (actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_CANCEL) {
             if (_isScaleHappen || _touchDownScale != canvasViewBox.getScaleX()) {
-                _updateRenderItemIfNeed()
+                _updateRenderItemIfNeed(Reason.user)
             }
         }
         return super.onCanvasTouchEvent(canvasDelegate, event)
