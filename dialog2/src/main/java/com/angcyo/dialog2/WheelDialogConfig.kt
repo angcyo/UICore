@@ -2,10 +2,15 @@ package com.angcyo.dialog2
 
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Rect
 import com.angcyo.dialog.BaseDialogConfig
 import com.angcyo.dialog.configBottomDialog
 import com.angcyo.dialog2.widget.ArrayWheelAdapter
 import com.angcyo.library.L
+import com.angcyo.library.ex.dp
+import com.angcyo.library.extend.IToDrawable
 import com.angcyo.library.extend.IToText
 import com.angcyo.widget.DslViewHolder
 import com.contrarywind.view.WheelView
@@ -82,7 +87,7 @@ open class WheelDialogConfig : BaseDialogConfig() {
         dialogViewHolder.v<WheelView>(R.id.lib_wheel_view)?.apply {
             _wheelView = this
 
-            val stringList = mutableListOf<CharSequence>()
+            val stringList = mutableListOf<String>()
 
             for (item in wheelItems ?: emptyList()) {
                 stringList.add("${wheelItemToStringAction(item)}")
@@ -93,7 +98,37 @@ open class WheelDialogConfig : BaseDialogConfig() {
                 L.v("wheel selected $it")
             }
 
-            adapter = ArrayWheelAdapter(stringList)
+            adapter = object : ArrayWheelAdapter<String>(stringList) {
+                override fun onDrawOnText(
+                    wheelView: WheelView,
+                    canvas: Canvas,
+                    text: String?,
+                    textDrawX: Float,
+                    textDrawY: Float,
+                    textDrawPaint: Paint,
+                    index: Int,
+                    textBounds: Rect
+                ) {
+                    if (!text.isNullOrBlank()) {
+                        wheelItems?.get(index)?.let { item ->
+                            if (item is IToDrawable) {
+                                item.toDrawable()?.let { drawable ->
+                                    val size = textBounds.height()
+                                    val offset = 4 * dp
+                                    val left = textDrawX - size - offset
+                                    drawable.setBounds(
+                                        left.toInt(),
+                                        0,
+                                        (left + size).toInt(),
+                                        size
+                                    )
+                                    drawable.draw(canvas)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             setCyclic(wheelCyclic)
 
