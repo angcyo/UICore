@@ -152,16 +152,20 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                 if (touchControlPoint == null) {
                     //未点在控制点上, 则检查是否点在[BaseItemRenderer]中
                     val list = canvasDelegate.findItemRendererList(touchPoint)
-                    val itemRenderer = list.firstOrNull()
-                    //selectedItemRender = itemRenderer
-                    touchInfo.itemRenderer = itemRenderer
-                    touchInfo.itemRenderer?.let {
-                        touchInfo.itemBounds.set(it.getBounds())
+                    if (selectedItemRender != null && list.contains(selectedItemRender)) {
+                        //no op
+                    } else {
+                        val itemRenderer = list.firstOrNull()
+                        //selectedItemRender = itemRenderer
+                        touchInfo.itemRenderer = itemRenderer
+                        touchInfo.itemRenderer?.let {
+                            touchInfo.itemBounds.set(it.getBounds())
+                        }
+                        if (list.size() > 1) {
+                            touchInfo.touchItemRendererList = list
+                        }
+                        canvasDelegate.selectedItem(itemRenderer)
                     }
-                    if (list.size() > 1) {
-                        touchInfo.touchItemRendererList = list
-                    }
-                    canvasDelegate.selectedItem(itemRenderer)
                 }
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
@@ -286,10 +290,12 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                     }
                 }
 
-                //如果按下时, 有个多个, 则弹窗显示
-                val touchItemRendererList = touchDownInfo?.touchItemRendererList
-                if (touchItemRendererList.size() > 1) {
-                    onTouchItemRendererListAction?.invoke(touchDownInfo!!)
+                if (!isTranslated) {
+                    //如果按下时, 有个多个, 则弹窗显示
+                    val touchItemRendererList = touchDownInfo?.touchItemRendererList
+                    if (touchItemRendererList.size() > 1) {
+                        onTouchItemRendererListAction?.invoke(touchDownInfo!!)
+                    }
                 }
 
                 isDoubleTouch = false
