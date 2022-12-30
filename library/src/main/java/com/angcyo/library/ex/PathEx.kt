@@ -205,12 +205,29 @@ fun Path.length(): Float {
     return PathMeasure(this, false).length
 }
 
+/**用一系列线段近似 Path 。这将返回包含点组件的数组的 float[]。每个点按顺序有三个组成部分。
+ * [android.graphics.Path.approximate]*/
+fun Path.approximate2(acceptableError: Float = 0.5f): FloatArray {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        //Android 8 support
+        approximate(acceptableError)
+    } else {
+        val result = mutableListOf<Float>()
+        eachPath(acceptableError) { index, ratio, contourIndex, posArray ->
+            result.add(ratio)
+            result.add(posArray[0])
+            result.add(posArray[1])
+        }
+        result.toFloatArray()
+    }
+}
+
 /**枚举路径上所有的点
  * [step] 枚举的步长
  *
  * [contourIndex] 第几段路径
- * [index] 当前回调次数
- * [ratio] 路径比例
+ * [index] 当前段回调次数
+ * [ratio] 当前段路径比例
  * [posArray] 路径坐标
  * */
 fun Path.eachPath(
@@ -301,11 +318,31 @@ fun Path.eachSegment(len: Float, block: (index: Int, ratio: Float, path: Path) -
         length = pathMeasure.length
         _each()
     }
-
 }
 
+/**计算[Path]的bounds
+ * [exact] 是否需要确切的bounds, true:此方法使用读取path中的所有点坐标进行bounds计算
+ * */
 fun Path.computePathBounds(bounds: RectF = RectF(), exact: Boolean = true): RectF {
-    computeBounds(bounds, exact)
+    if (exact) {
+        computeExactBounds(bounds)
+    } else {
+        computeBounds(bounds, exact)
+    }
+    return bounds
+}
+
+/** [acceptableError] 误差级别*/
+fun Path.computeExactBounds(bounds: RectF = RectF(), acceptableError: Float = 0.5f): RectF {
+    val pos: FloatArray = approximate2(acceptableError)
+
+    var i = 0
+    while (i < pos.size) {
+        if (i == 0) bounds[pos[i + 1], pos[i + 2], pos[i + 1]] =
+            pos[i + 2] else bounds.union(pos[i + 1], pos[i + 2])
+        i += 3
+    }
+
     return bounds
 }
 
@@ -320,7 +357,7 @@ fun List<Path>.computeBounds(bounds: RectF = RectF(), exact: Boolean = true): Re
     var bottom: Float? = null
     val pathRect = acquireTempRectF()
     for (path in this) {
-        path.computeBounds(pathRect, exact)
+        path.computePathBounds(pathRect, exact)
         left = min(left ?: pathRect.left, pathRect.left)
         top = min(top ?: pathRect.top, pathRect.top)
         right = max(right ?: pathRect.right, pathRect.right)
