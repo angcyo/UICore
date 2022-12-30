@@ -136,16 +136,18 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
             VectorHelper.midPoint(_touchPointList[0], _touchPointList[1], _touchMiddlePoint)
             isDoubleTouch = false
 
-            if (selectedRenderer != null) {
-                val touchPoint = acquireTempPointF()
-                touchPoint.set(event.getX(event.actionIndex), event.getY(event.actionIndex))
-                val nextSelectedRenderer = canvasDelegate.findItemRenderer(touchPoint)
-                if (nextSelectedRenderer != null) {
-                    canvasDelegate.selectGroupRenderer.addSelectedRenderer(nextSelectedRenderer)
-                }
-                touchPoint.release()
-            } else {
-                if (canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_MULTI_SELECT)) {
+            if (canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_MULTI_SELECT)) {
+                //多指多选
+                if (selectedRenderer != null) {
+                    //已经有选中的渲染器
+                    val touchPoint = acquireTempPointF()
+                    touchPoint.set(event.getX(event.actionIndex), event.getY(event.actionIndex))
+                    val nextSelectedRenderer = canvasDelegate.findItemRenderer(touchPoint)
+                    if (nextSelectedRenderer != null) {
+                        canvasDelegate.selectGroupRenderer.addSelectedRenderer(nextSelectedRenderer)
+                    }
+                    touchPoint.release()
+                } else {
                     canvasDelegate.selectGroupRenderer.endSelect()
                 }
             }
