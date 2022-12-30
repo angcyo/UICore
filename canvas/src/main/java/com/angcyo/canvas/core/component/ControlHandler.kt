@@ -18,6 +18,7 @@ import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.data.ControlTouchInfo
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
+import com.angcyo.library.L
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.release
@@ -57,7 +58,10 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     var controlPointOffset = -4 * dp
 
     /**手指移动多少距离后, 才算作移动了*/
-    var translateThreshold = 3
+    var translateThreshold = 3 * dp
+
+    /**手指移动的距离小于这个值时, 才开启智能推荐*/
+    var smartTranslateThreshold = 30 * dp
 
     //---
 
@@ -194,6 +198,8 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                             if (dx.absoluteValue >= translateThreshold ||
                                 dy.absoluteValue >= translateThreshold
                             ) {
+                                L.d("dx:${dx} dy:${dy}")
+
                                 //触发了移动
                                 //移动的时候不绘制控制点
                                 handle = true
@@ -202,16 +208,27 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
                                 val translateX = touchSystemPointPoint.x - moveSystemPointPoint.x
                                 val translateY = touchSystemPointPoint.y - moveSystemPointPoint.y
-                                canvasDelegate.smartAssistant.smartTranslateItemBy(
-                                    selectedItemRender,
-                                    translateX,
-                                    translateY
-                                ).apply {
-                                    if (this[0] || this[1]) {
-                                        //如果被消耗了, 才更新坐标
-                                        //move point
-                                        updateMovePoint(x, y, canvasViewBox)
+
+                                if (dx.absoluteValue <= smartTranslateThreshold && dy.absoluteValue <= smartTranslateThreshold) {
+                                    canvasDelegate.smartAssistant.smartTranslateItemBy(
+                                        selectedItemRender,
+                                        translateX,
+                                        translateY
+                                    ).apply {
+                                        if (this[0] || this[1]) {
+                                            //如果被消耗了, 才更新坐标
+                                            //move point
+                                            updateMovePoint(x, y, canvasViewBox)
+                                        }
                                     }
+                                } else {
+                                    //不开启智能推荐, 直接移动
+                                    canvasDelegate.translateItemBy(
+                                        selectedItemRender,
+                                        translateX,
+                                        translateY
+                                    )
+                                    updateMovePoint(x, y, canvasViewBox)
                                 }
                             }
                         }
