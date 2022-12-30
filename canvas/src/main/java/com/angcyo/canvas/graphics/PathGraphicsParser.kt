@@ -9,10 +9,13 @@ import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.canvas.data.toMm
+import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataPathItem
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.canvas.utils.CanvasDataHandleOperate
 import com.angcyo.canvas.utils.isLineShape
+import com.angcyo.gcode.GCodeHelper
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -89,16 +92,50 @@ open class PathGraphicsParser : IGraphicsParser {
         return item
     }
 
+    /**检查[Path]是否需要fill*/
+    fun checkPathGCodeFill(item: DataPathItem): Boolean {
+        val paint = item.itemPaint
+        val bean = item.dataBean
+        if (IGraphicsParser.isNeedGCodeFill(bean)) {
+            //需要填充的path
+            val dataPathList = item.dataPathList.toList()
+
+            val renderBounds = acquireTempRectF()
+            bean.updateToRenderBounds(renderBounds)
+            val gcode = CanvasDataHandleOperate.pathToGCode(
+                dataPathList,
+                renderBounds,
+                0f,
+                style = if (paint.style == Paint.Style.FILL) Paint.Style.FILL else Paint.Style.FILL_AND_STROKE,
+                fillPathStep = bean.gcodeFillStep.toPixel()
+            ).readText()
+            renderBounds.release()
+            val gCodeDrawable = GCodeHelper.parseGCode(gcode, paint)
+            gCodeDrawable?.let {
+                item.clearPathList()
+                item.addDataPath(gCodeDrawable.gCodePath)//替换path
+                //item.dataPathList.resetAll(dataPathList) //need?
+                return true
+            }
+        }
+        return false
+    }
+
     /**同时创建
      * [com.angcyo.canvas.items.data.DataItem.dataDrawable]
      * [com.angcyo.canvas.items.data.DataItem.renderDrawable]
      * */
     open fun createPathDrawable(item: DataPathItem, canvasView: ICanvasView?): Drawable? {
+        val pathFill = checkPathGCodeFill(item)//fill
         val paint = item.itemPaint
         item.drawStrokeWidth = paint.strokeWidth
-        if (canvasView != null && (paint.style == Paint.Style.STROKE || item.isLineShape())) {
+        if (canvasView != null && (paint.style == Paint.Style.STROKE || item.isLineShape() || pathFill)) {
             val scaleX = canvasView.getCanvasViewBox().getScaleX()//抵消坐标系的缩放
             val newPaint = Paint(paint)
+            if (pathFill) {
+                //强制使用描边
+                newPaint.style = Paint.Style.STROKE
+            }
             newPaint.strokeWidth = paint.strokeWidth / scaleX
             item.drawStrokeWidth = newPaint.strokeWidth//this
 

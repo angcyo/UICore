@@ -8,6 +8,7 @@ import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -20,6 +21,14 @@ import com.angcyo.library.ex.withPicture
  * @since 2022/09/21
  */
 interface IGraphicsParser {
+
+    companion object {
+        /**是否需要使用gcode填充path*/
+        fun isNeedGCodeFill(bean: CanvasProjectItemBean): Boolean {
+            return !bean.isLineShape() &&
+                    bean.gcodeFillStep > 0
+        }
+    }
 
     /**解析数据*/
     @CallPoint

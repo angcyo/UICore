@@ -389,14 +389,15 @@ abstract class VectorWriteHandler {
         writeLast: Boolean = true,
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
-        pathStep: Float = 1f
+        pathStep: Float = 1f,
+        fillPathStep: Float = 1f //填充间距
     ) {
         //能够完全包含path的矩形
         val pathBounds = acquireTempRectF()
         path.computeBounds(pathBounds, true)
 
         //矩形由上往下扫描, 取与path的交集
-        val scanStep = pathStep //扫描步长
+        val scanStep = fillPathStep //扫描步长
 
         var y = pathBounds.top + scanStep
         var endY = pathBounds.bottom
@@ -427,9 +428,9 @@ abstract class VectorWriteHandler {
             } else {
                 scanPath.addRect(
                     pathBounds.left,
-                    y - scanStep,
-                    pathBounds.right,
                     y,
+                    pathBounds.right,
+                    y + scanStep,
                     Path.Direction.CCW //ccw无效?
                 )
             }
@@ -446,7 +447,7 @@ abstract class VectorWriteHandler {
                         false,
                         offsetLeft,
                         offsetTop,
-                        scanStep,
+                        pathStep,
                     )
                     isFirst = false
                 }
@@ -458,14 +459,15 @@ abstract class VectorWriteHandler {
 
             //
             y += if (pathFillType == PATH_FILL_TYPE_CIRCLE) {
-                scanStep
+                scanStep * 2
             } else {
-                pathStep + scanStep
+                scanStep * 2
             }
 
             //
             if (y > endY) {
-                y = endY
+                //y = endY //填充下, 丢弃. 防止重复雕刻
+                break
             }
         }
         clearLastPoint()
@@ -522,7 +524,8 @@ abstract class VectorWriteHandler {
         writeLast: Boolean = true,
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
-        pathStep: Float = 1f
+        pathStep: Float = 1f,
+        fillPathStep: Float = 1f //填充间距
     ) {
         var isFirst = true
         for (path in pathList) {
@@ -536,7 +539,8 @@ abstract class VectorWriteHandler {
                 false,
                 offsetLeft,
                 offsetTop,
-                pathStep
+                pathStep,
+                fillPathStep
             )
 
             isFirst = false

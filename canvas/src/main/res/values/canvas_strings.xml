@@ -30,6 +30,7 @@
     <string name="canvas_love">Heart</string>
     <string name="canvas_stroke">Stroke</string>
     <string name="canvas_fill">Fill</string>
+    <string name="canvas_path_fill">Path fill</string>
     <string name="canvas_fill_stroke">Fill&amp;Stroke</string>
 
     <string name="canvas_solid">Solid</string>
@@ -66,6 +67,7 @@
     <string name="canvas_contrast">Contrast</string>
     <string name="canvas_brightness">Brightness</string>
     <string name="canvas_line_space">Line Space</string>
+    <string name="canvas_path_fill_line_space">Path line spacing</string>
     <string name="canvas_angle">Angle</string>
     <string name="canvas_direction">Direction</string>
     <string name="canvas_inch_unit">Inch</string>

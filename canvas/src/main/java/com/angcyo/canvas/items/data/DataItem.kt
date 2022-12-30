@@ -188,6 +188,28 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
         }
     }
 
+    /**路径填充*/
+    fun updatePathFill(
+        gcodeFillStep: Float,
+        renderer: DataItemRenderer,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val old = dataBean.gcodeFillStep
+        val new = gcodeFillStep
+
+        if (old == new) {
+            return
+        }
+
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.gcodeFillStep = old
+            updateRenderItem(renderer)
+        }) {
+            dataBean.gcodeFillStep = new
+            updateRenderItem(renderer)
+        }
+    }
+
     //<editor-fold desc="IEngraveProvider">
 
     override fun getEngraveRenderer(): IItemRenderer<*>? = null

@@ -1,6 +1,7 @@
 package com.angcyo.canvas.utils
 
 import android.graphics.Bitmap
+import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.view.Gravity
@@ -15,6 +16,7 @@ import com.angcyo.library.utils.fileNameTime
 import com.angcyo.library.utils.filePath
 import com.angcyo.svg.SvgWriteHandler
 import java.io.File
+import java.io.FileOutputStream
 import kotlin.math.max
 
 /**
@@ -24,7 +26,7 @@ import kotlin.math.max
  */
 object CanvasDataHandleOperate {
 
-    //---
+    //region ---文件输出信息---
 
     /**gcode文件输出*/
     fun _defaultGCodeOutputFile() =
@@ -47,7 +49,96 @@ object CanvasDataHandleOperate {
         if (ensureExt) name.ensureName(CanvasConstant.PROJECT_EXT) else name
     ).file()
 
-    //---
+    //endregion ---文件输出信息---
+
+    //region ---GCode---
+
+    /**路径转GCode
+     *
+     * [style]
+     *   [Paint.Style.STROKE]:只输出描边数据
+     *   [Paint.Style.FILL]:只输出填充数据
+     *   [Paint.Style.FILL_AND_STROKE]:同时输出描边和填充数据
+     *
+     * [pathStrokeToGCode]
+     * [pathFillToGCode]
+     * */
+    fun pathToGCode(
+        pathList: List<Path>,
+        bounds: RectF,
+        rotate: Float,
+        style: Paint.Style = Paint.Style.FILL_AND_STROKE,
+        outputFile: File = _defaultGCodeOutputFile(),
+        writeFirst: Boolean = true,
+        writeLast: Boolean = true,
+        offsetLeft: Float = 0f, //偏移的像素
+        offsetTop: Float = 0f,
+        strokePathStep: Float = 1f,
+        fillPathStep: Float = 1f,
+        autoCnc: Boolean = false,
+    ): File {
+        when (style) {
+            Paint.Style.STROKE -> {
+                pathStrokeToGCode(
+                    pathList,
+                    bounds,
+                    rotate,
+                    outputFile,
+                    writeFirst,
+                    writeLast,
+                    offsetLeft,
+                    offsetTop,
+                    strokePathStep,
+                    autoCnc
+                )
+            }
+            Paint.Style.FILL -> {
+                pathFillToGCode(
+                    pathList,
+                    bounds,
+                    rotate,
+                    outputFile,
+                    writeFirst,
+                    writeLast,
+                    offsetLeft,
+                    offsetTop,
+                    strokePathStep,
+                    fillPathStep,
+                    autoCnc
+                )
+            }
+            else -> {
+                pathStrokeToGCode(
+                    pathList,
+                    bounds,
+                    rotate,
+                    outputFile,
+                    writeFirst,
+                    false,
+                    offsetLeft,
+                    offsetTop,
+                    strokePathStep,
+                    autoCnc
+                )
+                pathFillToGCode(
+                    pathList,
+                    bounds,
+                    rotate,
+                    outputFile,
+                    false,
+                    writeLast,
+                    offsetLeft,
+                    offsetTop,
+                    strokePathStep,
+                    fillPathStep,
+                    autoCnc,
+                    true
+                )
+            }
+        }
+
+        return outputFile
+    }
 
     /**将路径集合转换成GCode. 输出的GCode可以直接打印
      * [pathList] 未缩放旋转的原始路径数据
@@ -68,13 +159,14 @@ object CanvasDataHandleOperate {
         offsetTop: Float = 0f,
         pathStep: Float = 1f,
         autoCnc: Boolean = false,
+        append: Boolean = false,
     ): File {
         val newPathList = pathList.transform(bounds, rotate)
         //转换成GCode
         val gCodeHandler = GCodeWriteHandler()
         gCodeHandler.unit = MM_UNIT
         gCodeHandler.isAutoCnc = autoCnc
-        outputFile.writer().use { writer ->
+        FileOutputStream(outputFile, append).writer().use { writer ->
             gCodeHandler.writer = writer
             gCodeHandler.pathStrokeToVector(
                 newPathList,
@@ -88,6 +180,7 @@ object CanvasDataHandleOperate {
         return outputFile
     }
 
+    /**[pathStrokeToGCode]*/
     fun pathFillToGCode(
         pathList: List<Path>,
         bounds: RectF,
@@ -98,14 +191,16 @@ object CanvasDataHandleOperate {
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
         pathStep: Float = 1f,
+        fillPathStep: Float = 1f,
         autoCnc: Boolean = false,
+        append: Boolean = false,
     ): File {
         val newPathList = pathList.transform(bounds, rotate)
         //转换成GCode
         val gCodeHandler = GCodeWriteHandler()
         gCodeHandler.unit = MM_UNIT
         gCodeHandler.isAutoCnc = autoCnc
-        outputFile.writer().use { writer ->
+        FileOutputStream(outputFile, append).writer().use { writer ->
             gCodeHandler.writer = writer
             gCodeHandler.pathFillToVector(
                 newPathList,
@@ -113,13 +208,12 @@ object CanvasDataHandleOperate {
                 writeLast,
                 offsetLeft,
                 offsetTop,
-                pathStep
+                pathStep,
+                fillPathStep
             )
         }
         return outputFile
     }
-
-    //---
 
     /**GCode数据坐标调整, 先缩放旋转,再偏移
      * 将GCode中心移动到[bounds]中心, 并且缩放到[bounds]大小
@@ -157,6 +251,10 @@ object CanvasDataHandleOperate {
         }
         return outputFile
     }
+
+    //endregion ---GCode---
+
+    //region ---Bitmap---
 
     /**简单的将[Bitmap]转成GCode数据
      * 横向扫描像素点,白色像素跳过,黑色就用G1打印
@@ -370,7 +468,9 @@ object CanvasDataHandleOperate {
         return outputFile
     }
 
-    //---
+    //endregion ---Bitmap---
+
+    //region ---Svg---
 
     /**
      * [pathStrokeToGCode]
@@ -386,12 +486,13 @@ object CanvasDataHandleOperate {
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
         pathStep: Float = 1f,
+        append: Boolean = false,
     ): File {
         val newPathList = pathList.transform(bounds, rotate)
         //转换成Svg, 使用像素单位
         val svgWriteHandler = SvgWriteHandler()
         //svgWriteHandler.unit = mmUnit
-        outputFile.writer().use { writer ->
+        FileOutputStream(outputFile, append).writer().use { writer ->
             svgWriteHandler.writer = writer
             svgWriteHandler.gapValue = 1f
             svgWriteHandler.gapMaxValue = 1f
@@ -417,12 +518,13 @@ object CanvasDataHandleOperate {
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
         pathStep: Float = 1f,
+        append: Boolean = false,
     ): File {
         val newPathList = pathList.transform(bounds, rotate)
         //转换成Svg, 使用像素单位
         val svgWriteHandler = SvgWriteHandler()
         //svgWriteHandler.unit = mmUnit
-        outputFile.writer().use { writer ->
+        FileOutputStream(outputFile, append).writer().use { writer ->
             svgWriteHandler.writer = writer
             svgWriteHandler.gapValue = 1f
             svgWriteHandler.gapMaxValue = 1f
@@ -437,5 +539,7 @@ object CanvasDataHandleOperate {
         }
         return outputFile
     }
+
+    //endregion ---Svg---
 
 }

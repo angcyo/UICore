@@ -277,6 +277,11 @@ data class CanvasProjectItemBean(
     /**gcode是否需要轮廓*/
     var gcodeOutline: Boolean = true,
 
+    /**2022-12-30 矢量使用GCode线段填充线距(毫米), 大于0时生效
+     * [paintStyle] == 1 时, 才有效*/
+    @MM
+    var gcodeFillStep: Float = 0f,
+
     /**是否扭曲*/
     var isMesh: Boolean = false,
 
