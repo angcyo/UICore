@@ -438,4 +438,62 @@ fun CanvasDelegate.addParameterComparisonTable(
     GraphicsHelper.renderItemDataBeanList(this, beanList, true, Strategy.normal)
 }
 
+/**乘法口诀表*/
+@WorkerThread
+fun CanvasDelegate.addMultiplicationTable(@Pixel bounds: RectF) {
+    @Pixel
+    val padding = 5f.toPixel()
+    val horizontalGap = 3f.toPixel()
+    val verticalGap = 2f.toPixel()
+
+    val count = 9
+    val textWidthSum = bounds.width() - padding * 2 - (count - 1) * horizontalGap
+    val textHeightSum = bounds.height() - padding * 2 - (count - 1) * verticalGap
+
+    /* @Pixel
+     val textWidth = textWidthSum / count
+     val textHeight = textHeightSum / count*/
+
+    val textItem = DataTextItem(CanvasProjectItemBean().apply {
+        mtype = CanvasConstant.DATA_TYPE_TEXT
+        text = "9 × 9=81"
+        fontSize = 4f
+        charSpacing = 0.2f
+
+        /*width = textWidth.toMm()
+        height = textHeight.toMm()*/
+    })
+
+    @Pixel
+    val textWidth = textItem.getTextWidth()
+    val textHeight = textItem.getTextHeight()
+
+    val textLeft = bounds.left + padding
+    val textTop = bounds.centerY() - (textHeight * count + verticalGap * (count - 1)) / 2
+
+    //CanvasProjectItemBean
+    fun createItemBean(): CanvasProjectItemBean = CanvasProjectItemBean().apply {
+        mtype = CanvasConstant.DATA_TYPE_TEXT
+        fontSize = textItem.dataBean.fontSize
+        charSpacing = textItem.dataBean.charSpacing
+        width = textItem.dataBean.width
+        height = textItem.dataBean.height
+    }
+
+    val beanList = mutableListOf<CanvasProjectItemBean>()
+    for (x in 1..count) { //1~9 列
+        val left = textLeft + (x - 1) * (textWidth + horizontalGap)
+        for (y in x..count) { //x~9 行
+            val top = textTop + (y - 1) * (textHeight + verticalGap)
+            beanList.add(createItemBean().apply {
+                text = "$x × $y=${x * y}"
+                this.left = left.toMm()
+                this.top = top.toMm()
+            })
+        }
+    }
+
+    GraphicsHelper.renderItemDataBeanList(this, beanList, true, Strategy.normal)
+}
+
 //endregion ---其他---
