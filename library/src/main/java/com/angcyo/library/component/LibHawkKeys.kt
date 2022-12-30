@@ -18,7 +18,7 @@ object LibHawkKeys {
     var minKeepSize: Int by HawkPropertyValue<Any, Int>(400)
 
     /**当颜色的透明值小于此值时, 视为透明色*/
-    var alphaThreshold: Int by HawkPropertyValue<Any, Int>(8)
+    var alphaThreshold: Int by HawkPropertyValue<Any, Int>(250)
 
     /**灰度阈值, 大于这个值视为白色*/
     var grayThreshold: Int by HawkPropertyValue<Any, Int>(128)

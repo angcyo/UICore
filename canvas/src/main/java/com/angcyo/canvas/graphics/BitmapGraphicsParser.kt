@@ -41,7 +41,7 @@ class BitmapGraphicsParser : IGraphicsParser {
             contrast: Double = 0.0,
             brightness: Double = 0.0
         ): Bitmap? {
-            val grayBitmap = bitmap.toGrayHandle(Color.WHITE)//灰度
+            val grayBitmap = bitmap.toGrayHandle(if (invert) Color.BLACK else Color.WHITE)//灰度
             //对于低尺寸的图片需要先放大到 1000
             //val grayBitmapScale = grayBitmap.scaleToMinSize(1000, 1000)
             val grayBitmapScale = grayBitmap
