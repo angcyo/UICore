@@ -6,7 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.widget.LinearLayout
 import androidx.annotation.ColorInt
-import com.angcyo.library.component.LibHawkKeys
+import com.angcyo.library.component.hawk.LibHawkKeys
 import kotlin.math.max
 import kotlin.math.min
 

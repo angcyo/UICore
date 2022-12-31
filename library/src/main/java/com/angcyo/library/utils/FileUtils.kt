@@ -3,7 +3,7 @@ package com.angcyo.library.utils
 import android.content.Context
 import android.graphics.Bitmap
 import com.angcyo.library.*
-import com.angcyo.library.component.LibHawkKeys
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.file
 import com.angcyo.library.utils.FileUtils.writeExternal
 import java.io.File

@@ -21,7 +21,7 @@ import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
-import com.angcyo.library.component.LibHawkKeys
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.abs
 import com.angcyo.library.toastQQ

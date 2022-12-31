@@ -7,7 +7,7 @@ import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.Flag
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Private
-import com.angcyo.library.component.LibHawkKeys
+import com.angcyo.library.component.hawk.LibLpHawkKeys
 import com.angcyo.library.component.pool.acquireTempPath
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
@@ -225,7 +225,7 @@ abstract class VectorWriteHandler {
             return _valueChangedType(last, x, y)
         } else {
             //之前已经有多个点
-            if (LibHawkKeys.enableVectorArc && _pointList.size() == 2) {
+            if (LibLpHawkKeys.enableVectorArc && _pointList.size() == 2) {
                 //之前有2个点, 现在是第3个点, 则判断3个点是否是在圆上
                 val first = _pointList.first()
                 val x1 = first.x

@@ -6,7 +6,7 @@ import com.angcyo.coroutine.launchGlobal
 import com.angcyo.library.L
 import com.angcyo.library.LTime
 import com.angcyo.library.app
-import com.angcyo.library.component.LibHawkKeys
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.bitmapSize
 import com.angcyo.library.ex.fileSize
 import com.angcyo.library.ex.save

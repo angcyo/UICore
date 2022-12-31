@@ -11,7 +11,7 @@ import androidx.core.graphics.scale
 import androidx.exifinterface.media.ExifInterface
 import com.angcyo.library.L
 import com.angcyo.library.app
-import com.angcyo.library.component.LibHawkKeys
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.*
 import com.angcyo.library.utils.Constant.PICTURE_FOLDER_NAME
