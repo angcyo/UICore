@@ -101,18 +101,64 @@ fun RectF.isOverflowOf(rect: Rect): Boolean {
 }
 
 /**将[this]矩形, 限制在[rect]内*/
-fun RectF.limitInRect(rect: RectF) {
-    left = max(rect.left, left)
-    top = max(rect.top, top)
-    right = min(rect.right, right)
-    bottom = min(rect.bottom, bottom)
+fun RectF.limitInRect(rect: RectF, result: RectF = this): RectF {
+    val w1 = width()
+    val w2 = rect.width()
+
+    val h1 = height()
+    val h2 = rect.height()
+
+    result.set(this)
+
+    if (w1 > w2 || h1 > h2) {
+        //宽高超出
+        val newWidth = min(w1, w2)
+        val newHeight = min(h1, h2)
+
+        val sw = newWidth / w1
+        val sh = newHeight / h1
+
+        val s = min(sw, sh)
+        result.right = left + w1 * s
+        result.bottom = top + h1 * s
+    }
+
+    result.left = max(rect.left, left)
+    result.top = max(rect.top, top)
+    result.right = min(rect.right, right)
+    result.bottom = min(rect.bottom, bottom)
+
+    return result
 }
 
-fun RectF.limitInRect(rect: Rect) {
-    left = max(rect.left.toFloat(), left)
-    top = max(rect.top.toFloat(), top)
-    right = min(rect.right.toFloat(), right)
-    bottom = min(rect.bottom.toFloat(), bottom)
+fun RectF.limitInRect(rect: Rect, result: RectF = this): RectF {
+    val w1 = width()
+    val w2 = rect.width().toFloat()
+
+    val h1 = height()
+    val h2 = rect.height().toFloat()
+
+    result.set(this)
+
+    if (w1 > w2 || h1 > h2) {
+        //宽高超出
+        val newWidth = min(w1, w2)
+        val newHeight = min(h1, h2)
+
+        val sw = newWidth / w1
+        val sh = newHeight / h1
+
+        val s = min(sw, sh)
+        result.right = left + w1 * s
+        result.bottom = top + h1 * s
+    }
+
+    result.left = max(rect.left.toFloat(), left)
+    result.top = max(rect.top.toFloat(), top)
+    result.right = min(rect.right.toFloat(), right)
+    result.bottom = min(rect.bottom.toFloat(), bottom)
+
+    return result
 }
 
 //</editor-fold desc="base">

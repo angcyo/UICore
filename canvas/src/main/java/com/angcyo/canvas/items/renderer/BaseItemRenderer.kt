@@ -180,7 +180,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     /**Bounds改变后, 触发. 可以再次限制Bounds的大小
      * [changeBoundsAction]*/
     open fun onChangeBoundsAfter(reason: Reason) {
-        //getBounds().limitMinWidthHeight(100f, 100f, ADJUST_TYPE_LT)
+        getBounds().limitInRect(ItemsOperateHandler.BOUNDS_LIMIT, getBounds())
         /*if (reason.flag == Reason.REASON_FLAG_BOUNDS || reason.flag == Reason.REASON_FLAG_ROTATE) {
 
         }*/

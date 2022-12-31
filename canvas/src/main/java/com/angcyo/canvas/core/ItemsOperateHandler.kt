@@ -8,6 +8,7 @@ import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.core.renderer.SelectGroupRenderer
+import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
@@ -28,6 +29,10 @@ import java.lang.Math.tan
 class ItemsOperateHandler {
 
     companion object {
+
+        /**元素的范围限制, +-1000mm*/
+        val BOUNDS_LIMIT =
+            RectF((-1000f).toPixel(), (-1000f).toPixel(), 1000f.toPixel(), (5_000f).toPixel())
 
         //region ---can---
 
