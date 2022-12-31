@@ -39,7 +39,9 @@ class HawkProperty<T>(
 @Keep
 class HawkPropertyValue<T, Value>(
     /*默认值*/
-    val def: Value
+    val def: Value,
+    /*更新值的回调*/
+    val onSetValue: (newValue: Value) -> Unit = {}
 ) : ReadWriteProperty<T, Value> {
 
     override fun getValue(thisRef: T, property: KProperty<*>): Value {
@@ -48,5 +50,6 @@ class HawkPropertyValue<T, Value>(
 
     override fun setValue(thisRef: T, property: KProperty<*>, value: Value) {
         property.name.hawkPut(value)
+        onSetValue(value)
     }
 }

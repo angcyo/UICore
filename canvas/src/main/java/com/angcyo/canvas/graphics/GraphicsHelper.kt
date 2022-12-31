@@ -245,7 +245,7 @@ object GraphicsHelper {
             null
         } else {
             if (canvasView is CanvasDelegate) {
-                if (canvasView.itemRendererCount > LibHawkKeys.canvasRenderMaxCount) {
+                if (LibHawkKeys.enableCanvasRenderLimit && canvasView.itemRendererCount > LibHawkKeys.canvasRenderMaxCount) {
                     toastQQ(_string(R.string.canvas_item_outof_limit))
                     return null
                 }

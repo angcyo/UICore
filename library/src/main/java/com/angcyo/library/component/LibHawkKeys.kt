@@ -55,6 +55,10 @@ object LibHawkKeys {
      * [com.angcyo.vector.VectorWriteHandler._valueChangedType]*/
     var enableVectorArc: Boolean by HawkPropertyValue<Any, Boolean>(false)
 
+    /**是否要激活Canvas的渲染数量限制
+     * 激活后[canvasRenderMaxCount]才有效*/
+    var enableCanvasRenderLimit: Boolean by HawkPropertyValue<Any, Boolean>(true)
+
     /**[com.angcyo.canvas.CanvasDelegate]允许添加的最大渲染元素数据*/
     var canvasRenderMaxCount: Int by HawkPropertyValue<Any, Int>(30)
 }
