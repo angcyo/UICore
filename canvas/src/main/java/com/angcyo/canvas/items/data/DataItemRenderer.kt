@@ -227,7 +227,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
      * */
     override fun getEngraveBitmap(renderParams: RenderParams): Bitmap? {
         val item = getRendererRenderItem()
-        val bitmap = item?._getEngraveBitmap()
+        val bitmap = item?._getEngraveBitmap(renderParams)
         if (bitmap != null) {
             return bitmap
         }

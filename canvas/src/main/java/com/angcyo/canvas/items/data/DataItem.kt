@@ -21,9 +21,7 @@ import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.CanvasConstant
-import com.angcyo.library.ex.bitmapCanvas
-import com.angcyo.library.ex.have
-import com.angcyo.library.ex.rotate
+import com.angcyo.library.ex.*
 
 /**
  * [com.angcyo.canvas.data.CanvasProjectItemBean]
@@ -210,14 +208,38 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
         }
     }
 
+    /**栅格化*/
+    fun itemRasterize(renderer: DataItemRenderer, strategy: Strategy = Strategy.normal) {
+        if (dataBean.mtype != CanvasConstant.DATA_TYPE_BITMAP) {
+            val oldType = dataBean.mtype
+            renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+                dataBean.mtype = oldType
+                updateRenderItem(renderer)
+                renderer.canvasView.dispatchItemTypeChanged(renderer)
+            }) {
+                dataBean.mtype = CanvasConstant.DATA_TYPE_BITMAP
+                dataBean.imageOriginal = getEngraveBitmap(
+                    RenderParams(
+                        isFromRenderer = true,
+                        renderOrigin = true
+                    )
+                )?.toBase64Data()
+                updateRenderItem(renderer)
+                renderer.canvasView.dispatchItemTypeChanged(renderer)
+            }
+        }
+    }
+
     //<editor-fold desc="IEngraveProvider">
 
     override fun getEngraveRenderer(): IItemRenderer<*>? = null
 
     override fun getEngraveDataItem(): DataItem? = this
 
-    /**[getEngraveBitmap]*/
-    fun _getEngraveBitmap(): Bitmap? {
+    /**
+     * 这个方法从来处理[DataBitmapItem]
+     * [getEngraveBitmap]*/
+    fun _getEngraveBitmap(renderParams: RenderParams): Bitmap? {
         val item = this
         val bitmap = if (item is DataBitmapItem) {
             if (item.dataBean.mtype == CanvasConstant.DATA_TYPE_BITMAP &&
@@ -235,7 +257,7 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
 
         //---
         val rotate = _rotate
-        if (bitmap != null) {
+        if (bitmap != null && !renderParams.renderOrigin) {
             //这里需要处理缩放和旋转
             val bounds = getEngraveBounds()
             val width = bounds.width().toInt()
@@ -243,7 +265,7 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
             val scaleBitmap = bitmap.scale(width, height)
             return scaleBitmap.rotate(rotate)
         }
-        return null
+        return bitmap
     }
 
     /**
@@ -251,48 +273,52 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
      * [com.angcyo.canvas.items.data.DataItemRenderer.getEngraveBitmap]
      * */
     override fun getEngraveBitmap(renderParams: RenderParams): Bitmap? {
-        val bitmap = _getEngraveBitmap()
+        val bitmap = _getEngraveBitmap(renderParams)
         if (bitmap != null) {
             return bitmap
         }
-        val rotate = _rotate
+        val rotate = if (renderParams.renderOrigin) 0f else _rotate
         getDrawable(renderParams)?.let { drawable ->
-            val renderBounds = getEngraveBounds()
-            val renderWidth = renderBounds.width()
-            val renderHeight = renderBounds.height()
+            if (renderParams.renderOrigin) {
+                return drawable.toBitmap()
+            } else {
+                val renderBounds = getEngraveBounds()
+                val renderWidth = renderBounds.width()
+                val renderHeight = renderBounds.height()
 
-            val rotateBounds = getEngraveRotateBounds()
-            val width = rotateBounds.width()
-            val height = rotateBounds.height()
+                val rotateBounds = getEngraveRotateBounds()
+                val width = rotateBounds.width()
+                val height = rotateBounds.height()
 
-            /*val result = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
-                withRotation(rotate, width / 2, height / 2) {
-                    withTranslation( width / 2 - renderWidth / 2, height / 2 - renderHeight / 2 ) {
-                        drawable.setBounds(
-                            renderBounds.left.toInt(),
-                            renderBounds.top.toInt(),
-                            renderBounds.right.toInt(),
-                            renderBounds.bottom.toInt()
-                        )
-                        drawable.draw(this)
+                /*val result = ScalePictureDrawable(withPicture(width.toInt(), height.toInt()) {
+                    withRotation(rotate, width / 2, height / 2) {
+                        withTranslation( width / 2 - renderWidth / 2, height / 2 - renderHeight / 2 ) {
+                            drawable.setBounds(
+                                renderBounds.left.toInt(),
+                                renderBounds.top.toInt(),
+                                renderBounds.right.toInt(),
+                                renderBounds.bottom.toInt()
+                            )
+                            drawable.draw(this)
+                        }
                     }
-                }
-            })
-            return result.toBitmap()
-            */
+                })
+                return result.toBitmap()
+                */
 
-            val result = bitmapCanvas(width.toInt(), height.toInt()) {
-                rotate(rotate, width / 2, height / 2)
-                translate(width / 2 - renderWidth / 2, height / 2 - renderHeight / 2)
-                drawable.setBounds(
-                    0,
-                    0,
-                    renderBounds.width().toInt(),
-                    renderBounds.height().toInt()
-                )
-                drawable.draw(this)
+                val result = bitmapCanvas(width.toInt(), height.toInt()) {
+                    rotate(rotate, width / 2, height / 2)
+                    translate(width / 2 - renderWidth / 2, height / 2 - renderHeight / 2)
+                    drawable.setBounds(
+                        0,
+                        0,
+                        renderBounds.width().toInt(),
+                        renderBounds.height().toInt()
+                    )
+                    drawable.draw(this)
+                }
+                return result
             }
-            return result
         }
         return null
     }

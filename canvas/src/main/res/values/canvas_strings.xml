@@ -122,6 +122,7 @@
     <string name="canvas_word_spacing">Word space</string>
     <string name="canvas_line_spacing">Line space</string>
     <string name="canvas_curve">Curve</string>
+    <string name="canvas_rasterize">Rasterize</string>
 
     <string name="canvas_side">Edges</string>
     <string name="canvas_depth">Depth</string>

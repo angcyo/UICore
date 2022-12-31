@@ -65,6 +65,9 @@ interface ICanvasView : IComponent {
     /**当有item的数据发生改变后触发, 此时可以触发数据保存提示*/
     fun dispatchItemDataChanged(itemRenderer: IItemRenderer<*>, reason: Reason) {}
 
+    /**分发当[itemRenderer]类型改变了, 比如从文本数据变成了图片数据*/
+    fun dispatchItemTypeChanged(itemRenderer: IItemRenderer<*>) {}
+
     //</editor-fold desc="dispatch">
 
     //<editor-fold desc="listener">

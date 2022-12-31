@@ -76,6 +76,9 @@ interface ICanvasListener : ICanvasTouch {
      * */
     fun onRenderItemDataChanged(itemRenderer: IItemRenderer<*>, reason: Reason) {}
 
+    /**[com.angcyo.canvas.core.ICanvasView.dispatchItemTypeChanged]*/
+    fun onRenderItemTypeChanged(itemRenderer: IItemRenderer<*>) {}
+
     //</editor-fold desc="Item相关">
 
     //<editor-fold desc="其他">

@@ -7,6 +7,7 @@ import android.graphics.RectF
  * @since 2022/11/29
  */
 data class RenderParams(
+
     /**是否是来自画布的渲染请求, 决定了使用哪个对象绘制
      * [com.angcyo.canvas.items.data.DataItem.dataDrawable]
      * [com.angcyo.canvas.items.data.DataItem.renderDrawable]*/
@@ -14,5 +15,9 @@ data class RenderParams(
 
     /**[IRenderer]在渲染时, 需要强制绘制在此区域
      * [com.angcyo.canvas.core.IRenderer.render]*/
-    var itemRenderBounds: RectF? = null
+    var itemRenderBounds: RectF? = null,
+
+    /**是否渲染原始的属性数据,
+     * 不旋转, 不缩放*/
+    var renderOrigin: Boolean = false,
 )

@@ -162,7 +162,8 @@ class BitmapGraphicsParser : IGraphicsParser {
                 CanvasConstant.DATA_MODE_GREY, CanvasConstant.DATA_MODE_DITHERING -> originBitmap.toGrayHandle(
                     bean.inverse,
                     bean.contrast,
-                    bean.brightness
+                    bean.brightness,
+                    alphaThreshold = 1 //透明颜色识别阈值
                 )
                 CanvasConstant.DATA_MODE_PRINT -> OpenCV.bitmapToPrint(
                     app(),

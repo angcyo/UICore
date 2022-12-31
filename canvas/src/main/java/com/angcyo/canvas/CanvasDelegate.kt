@@ -410,6 +410,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
+    override fun dispatchItemTypeChanged(itemRenderer: IItemRenderer<*>) {
+        super.dispatchItemTypeChanged(itemRenderer)
+        canvasListenerList.forEach {
+            it.onRenderItemTypeChanged(itemRenderer)
+        }
+    }
+
     override fun getCanvasUndoManager(): CanvasUndoManager = undoManager
 
     //</editor-fold desc="关键方法">

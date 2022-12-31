@@ -6,9 +6,11 @@ import android.graphics.Rect
 import android.graphics.Typeface
 import android.widget.LinearLayout
 import com.angcyo.canvas.Strategy
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.data.*
 import com.angcyo.canvas.graphics.TextGraphicsParser
 import com.angcyo.canvas.graphics.lineTextList
+import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.FontManager
