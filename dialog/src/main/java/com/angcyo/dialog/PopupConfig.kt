@@ -403,9 +403,24 @@ open class PopupConfig : ActivityResultCaller, IActivityProvider {
                 minVerticalOffset
             }
 
+            //宽高计算
+            val _width = if (width == WindowManager.LayoutParams.WRAP_CONTENT ||
+                width == WindowManager.LayoutParams.MATCH_PARENT
+            ) {
+                _screenWidth
+            } else {
+                width
+            }
+            val _height = if (height == WindowManager.LayoutParams.WRAP_CONTENT ||
+                height == WindowManager.LayoutParams.MATCH_PARENT
+            ) {
+                _screenHeight
+            } else {
+                width
+            }
             rootView.measure(
-                atMost(_screenWidth - (leftMargin + rightMargin)),
-                atMost(_screenHeight - (topMargin + bottomMargin))
+                atMost(_width - (leftMargin + rightMargin)),
+                atMost(_height - (topMargin + bottomMargin))
             )
             val rootViewWidth = rootView.mW()
             val rootViewHeight = rootView.mH()
