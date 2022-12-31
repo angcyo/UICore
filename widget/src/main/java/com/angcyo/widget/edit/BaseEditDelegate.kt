@@ -28,7 +28,8 @@ abstract class BaseEditDelegate(val editText: EditText) {
 
     companion object {
 
-        /**全局监听文本改变*/
+        /**全局监听文本改变
+         * [com.angcyo.core.Debug.onDebugTextChanged]*/
         val textChangedActionList = mutableListOf<TextChangedAction>()
     }
 

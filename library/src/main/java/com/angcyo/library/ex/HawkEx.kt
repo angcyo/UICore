@@ -116,7 +116,11 @@ fun String?.hawkAppend(value: CharSequence?, symbol: String = ""): Boolean {
 fun String?.hawkGet(def: String? = null): String? {
     var result: String? = null
     this?.let {
-        result = Hawk.get<String>(it, def)
+        try {
+            result = Hawk.get<String>(it, def)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
     return result
 }
@@ -127,7 +131,11 @@ fun String?.hawkGet(def: String? = null): String? {
 fun <T> String?.hawkGet(def: T? = null): T? {
     var result: T? = def
     this?.let {
-        result = Hawk.get<T>(it, def)
+        try {
+            result = Hawk.get<T>(it, def)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
     return result
 }
@@ -135,7 +143,11 @@ fun <T> String?.hawkGet(def: T? = null): T? {
 fun String?.hawkGetBoolean(def: Boolean = false): Boolean {
     var result: Boolean = def
     this?.let {
-        result = Hawk.get(it, def)
+        try {
+            result = Hawk.get(it, def)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
     return result
 }
@@ -143,7 +155,11 @@ fun String?.hawkGetBoolean(def: Boolean = false): Boolean {
 fun String?.hawkGetInt(def: Int = -1): Int {
     var result = def
     this?.let {
-        result = Hawk.get(it, def)
+        try {
+            result = Hawk.get(it, def)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
     return result
 }
@@ -151,7 +167,11 @@ fun String?.hawkGetInt(def: Int = -1): Int {
 fun String?.hawkGetFloat(def: Float = -1f): Float {
     var result = def
     this?.let {
-        result = Hawk.get(it, def)
+        try {
+            result = Hawk.get(it, def)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
     return result
 }

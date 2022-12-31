@@ -26,7 +26,8 @@ object Debug {
     /**开启调试模式*/
     var onChangedToDebug: MutableList<Action> = mutableListOf()
 
-    /**调试:文本输入框文本改变时*/
+    /**调试:文本输入框文本改变时
+     * [com.angcyo.widget.edit.BaseEditDelegate.Companion.textChangedActionList]*/
     fun onDebugTextChanged(
         editText: EditText?,
         text: CharSequence?,
@@ -34,7 +35,11 @@ object Debug {
         lengthBefore: Int,
         lengthAfter: Int
     ) {
-        when (text?.toString()?.lowercase()) {
+        val inputText = text?.toString()
+        if (inputText.isNullOrBlank()) {
+            return
+        }
+        when (inputText.lowercase()) {
             //开启调试模式
             "cmd:debug", "9.999999" -> {
                 Library.isDebugTypeVal = true
@@ -73,6 +78,77 @@ object Debug {
                                 targetPath = appFolderPath()
                             }) {
                                 //no op
+                            }
+                        }
+                    }
+                }
+            }
+            else -> {
+                //@key#int=value 此指令用来设置hawk key value
+                if (inputText.contains("@") && inputText.contains("#") && inputText.contains("=")) {
+                    val keyBuilder = StringBuilder()
+                    val typeBuilder = StringBuilder()
+                    val valueBuilder = StringBuilder()
+
+                    var operate: StringBuilder? = null
+                    inputText.forEach {
+                        when (it) {
+                            '@' -> operate = keyBuilder
+                            '#' -> operate = typeBuilder
+                            '=' -> operate = valueBuilder
+                            else -> operate?.append(it)
+                        }
+                    }
+
+                    val key = keyBuilder.toString()
+                    val type = typeBuilder.toString()
+                    val valueString = valueBuilder.toString()
+                    if (key.isNotBlank()) {
+                        when (type.lowercase()) {
+                            "bool", "boolean" -> {
+                                val value = valueString.toBoolean()
+                                key.hawkPut(value)
+                                editText?.longFeedback()
+                            }
+                            "int", "i" -> {
+                                val value = valueString.toIntOrNull()
+                                if (value == null) {
+                                    key.hawkDelete()
+                                } else {
+                                    key.hawkPut(value)
+                                }
+                                editText?.longFeedback()
+                            }
+                            "long", "l" -> {
+                                val value = valueString.toLongOrNull()
+                                if (value == null) {
+                                    key.hawkDelete()
+                                } else {
+                                    key.hawkPut(value)
+                                }
+                                editText?.longFeedback()
+                            }
+                            "float", "f" -> {
+                                val value = valueString.toFloatOrNull()
+                                if (value == null) {
+                                    key.hawkDelete()
+                                } else {
+                                    key.hawkPut(value)
+                                }
+                                editText?.longFeedback()
+                            }
+                            "double", "d" -> {
+                                val value = valueString.toDoubleOrNull()
+                                if (value == null) {
+                                    key.hawkDelete()
+                                } else {
+                                    key.hawkPut(value)
+                                }
+                                editText?.longFeedback()
+                            }
+                            "string", "s" -> {
+                                key.hawkPut(valueString)
+                                editText?.longFeedback()
                             }
                         }
                     }

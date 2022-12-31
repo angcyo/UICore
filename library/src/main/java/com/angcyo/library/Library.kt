@@ -39,18 +39,34 @@ object Library {
         initHawk(context)
     }
 
+    /**[Hawk]文件存储的路径*/
+    var hawkPath: String? = null
+
     /**初始化[Hawk]*/
     fun initHawk(context: Context) {
         /*sp持久化库*/
+        fun _initHawk() {
+            Hawk.init(context)
+                .build()
+            val path = "/shared_prefs/Hawk2.xml"
+            val hawkXmlFile = File(
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    context.dataDir
+                } else {
+                    context.filesDir.parentFile
+                }, path
+            )
+            if (hawkXmlFile.exists()) {
+                hawkPath = hawkXmlFile.absolutePath
+            }
+        }
         try {
             if (!Hawk.isBuilt()) {
-                Hawk.init(context)
-                    .build()
+                _initHawk()
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Hawk.init(context)
-                .build()
+            _initHawk()
         }
     }
 
