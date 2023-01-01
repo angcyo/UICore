@@ -108,7 +108,7 @@ object Debug {
                             "bool", "boolean" -> {
                                 val value = valueString.toBoolean()
                                 key.hawkPut(value)
-                                editText?.longFeedback()
+                                editText?._feedback()
                             }
                             "int", "i" -> {
                                 val value = valueString.toIntOrNull()
@@ -117,7 +117,7 @@ object Debug {
                                 } else {
                                     key.hawkPut(value)
                                 }
-                                editText?.longFeedback()
+                                editText?._feedback()
                             }
                             "long", "l" -> {
                                 val value = valueString.toLongOrNull()
@@ -126,7 +126,7 @@ object Debug {
                                 } else {
                                     key.hawkPut(value)
                                 }
-                                editText?.longFeedback()
+                                editText?._feedback()
                             }
                             "float", "f" -> {
                                 val value = valueString.toFloatOrNull()
@@ -135,7 +135,7 @@ object Debug {
                                 } else {
                                     key.hawkPut(value)
                                 }
-                                editText?.longFeedback()
+                                editText?._feedback()
                             }
                             "double", "d" -> {
                                 val value = valueString.toDoubleOrNull()
@@ -144,16 +144,22 @@ object Debug {
                                 } else {
                                     key.hawkPut(value)
                                 }
-                                editText?.longFeedback()
+                                editText?._feedback()
                             }
                             "string", "s" -> {
                                 key.hawkPut(valueString)
-                                editText?.longFeedback()
+                                editText?._feedback()
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    /**反馈*/
+    fun EditText._feedback() {
+        selectAll()
+        longFeedback()
     }
 }
