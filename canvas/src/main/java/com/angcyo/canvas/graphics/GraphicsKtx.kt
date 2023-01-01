@@ -17,10 +17,14 @@ import com.angcyo.canvas.items.data.DataTextItem
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.ShapesHelper
 import com.angcyo.gcode.GCodeWriteHandler
+import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.flip
+import com.angcyo.library.ex.size
 import com.angcyo.library.ex.toBase64Data
 import java.io.StringWriter
+import kotlin.math.pow
+import kotlin.random.Random.Default.nextInt
 
 /**
  * 扩展方法
@@ -493,6 +497,90 @@ fun CanvasDelegate.addMultiplicationTable(@Pixel bounds: RectF) {
         }
     }
 
+    GraphicsHelper.renderItemDataBeanList(this, beanList, true, Strategy.normal)
+}
+
+/**视力表*/
+@WorkerThread
+fun CanvasDelegate.addVisualChart(@Pixel bounds: RectF) {
+    @Pixel
+    val padding = 5f.toPixel()
+    val horizontalGap = 3f.toPixel()
+    val verticalGap = 4f.toPixel()
+
+    var textLeft = bounds.left + padding
+    var textTop = bounds.top + padding
+
+    //每一行, 有多少个E, 从上到下
+    val lineSizeList = listOf(1, 2, 2, 3, 3, 4, 4, 5, 6, 7, 8, 8, 8, 8)
+
+    @MM
+    var maxFontSize = 20f //最上面一行的字体大小
+    val scaleFactor = 0.8f //每一行字体大小是上一行的多少倍
+    val lineCount = lineSizeList.size() //总共的行数
+    val minFontSize = maxFontSize * scaleFactor.pow(lineCount - 1)
+
+    //随机旋转的角度
+    fun randomAngle(): Float {
+        return when (nextInt(0, 4)) { //[0~4)
+            1 -> 90f
+            2 -> 180f
+            3 -> 270f
+            else -> 0f
+        }
+    }
+
+    val textItem = DataTextItem(CanvasProjectItemBean().apply {
+        mtype = CanvasConstant.DATA_TYPE_TEXT
+        text = "E"
+        fontSize = minFontSize
+
+        /*width = textWidth.toMm()
+        height = textHeight.toMm()*/
+    })
+
+    //计算最后一行需要占用的宽度
+    val lastLineSize = lineSizeList.last()
+
+    @Pixel
+    val textAllWidth = lastLineSize * textItem.getTextWidth() + (lastLineSize - 1) * horizontalGap
+    textLeft = bounds.centerX() - textAllWidth / 2
+
+    //CanvasProjectItemBean
+    fun createItemBean(): CanvasProjectItemBean = CanvasProjectItemBean().apply {
+        mtype = CanvasConstant.DATA_TYPE_TEXT
+        fontSize = textItem.dataBean.fontSize
+        text = textItem.dataBean.text
+        angle = randomAngle()
+        width = textItem.dataBean.width
+        height = textItem.dataBean.height
+    }
+
+    val beanList = mutableListOf<CanvasProjectItemBean>()
+    for (line in 0 until lineCount) {
+        val lineSize = lineSizeList[line]
+        val lineTop = textTop
+        var lineHeight = 0f
+        for (size in 0 until lineSize) {
+            beanList.add(createItemBean().apply {
+                fontSize = maxFontSize
+
+                val eWidth = textAllWidth / lineSize
+                val centerX = textLeft + eWidth * size + eWidth / 2
+                val item = DataTextItem(this)
+                val itemWidth = item.getTextWidth()
+                lineHeight = item.getTextHeight()
+
+                left = (centerX - itemWidth / 2).toMm()
+                top = lineTop.toMm()
+
+                height = lineHeight.toMm()
+                width = itemWidth.toMm()
+            })
+        }
+        textTop = lineTop + lineHeight + verticalGap
+        maxFontSize *= scaleFactor
+    }
     GraphicsHelper.renderItemDataBeanList(this, beanList, true, Strategy.normal)
 }
 
