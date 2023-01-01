@@ -524,7 +524,9 @@ fun CanvasDelegate.addVisualChart(@Pixel bounds: RectF) {
     val angleList = mutableListOf<Float>()
     fun randomAngle(): Float {
         if (angleList.size() >= 4) {
+            val last = angleList.last()
             angleList.clear()
+            angleList.add(last)
         }
         while (true) {
             val angle = when (nextInt(0, 4)) { //[0~4)
