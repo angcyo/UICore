@@ -521,13 +521,24 @@ fun CanvasDelegate.addVisualChart(@Pixel bounds: RectF) {
     val minFontSize = maxFontSize * scaleFactor.pow(lineCount - 1)
 
     //随机旋转的角度
+    val angleList = mutableListOf<Float>()
     fun randomAngle(): Float {
-        return when (nextInt(0, 4)) { //[0~4)
-            1 -> 90f
-            2 -> 180f
-            3 -> 270f
-            else -> 0f
+        if (angleList.size() >= 4) {
+            angleList.clear()
         }
+        while (true) {
+            val angle = when (nextInt(0, 4)) { //[0~4)
+                1 -> 90f
+                2 -> 180f
+                3 -> 270f
+                else -> 0f
+            }
+            if (!angleList.contains(angle)) {
+                angleList.add(angle)
+                break
+            }
+        }
+        return angleList.last()
     }
 
     val textItem = DataTextItem(CanvasProjectItemBean().apply {
