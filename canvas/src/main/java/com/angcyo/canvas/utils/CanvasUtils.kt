@@ -75,7 +75,7 @@ fun createStaticLayout(
     return layout
 }
 
-/**排序规则从上到下
+/**排序规则从上到下, 从左到右
  * 比较它的两个参数的顺序。
  * 如果两个参数相等，则返回零;
  * 如果第一个参数小于第二个参数，则返回负数;
@@ -83,23 +83,16 @@ fun createStaticLayout(
  * 从小到大的自然排序
  * */
 fun List<BaseItemRenderer<*>>.engraveSort(): List<BaseItemRenderer<*>> {
-    return sortedBy { it.getRotateBounds().top }
-    /*sortedWith { left, right ->
+    //return sortedBy { it.getRotateBounds().top }
+    return sortedWith { left, right ->
         val leftBounds = left.getRotateBounds()
         val rightBounds = right.getRotateBounds()
-
-        if (leftBounds.left < rightBounds.left) {
-            -1
-        } else if (leftBounds.left == rightBounds.left) {
-            if (leftBounds.top < rightBounds.top) {
-                -1
-            } else {
-                1
-            }
+        if (leftBounds.top == rightBounds.top) {
+            leftBounds.left.compareTo(rightBounds.left)
         } else {
-            0
+            leftBounds.top.compareTo(rightBounds.top)
         }
-    }*/
+    }
 }
 
 /**是否是GCode内容*/
