@@ -459,7 +459,7 @@ class CanvasViewBox(val canvasView: ICanvasView) {
      * 正向移动后, 绘制的内容在正向指定的位置绘制
      * */
     fun translateBy(distanceX: Float, distanceY: Float, anim: Boolean = true) {
-        L.i("平移画布:dx:${distanceX} dy:${distanceY} $anim")
+        L.d("平移画布:dx:${distanceX} dy:${distanceY} $anim")
         val newMatrix = Matrix()
         newMatrix.set(matrix)
         newMatrix.postTranslate(distanceX, distanceY)
@@ -513,7 +513,7 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         if ((scaleY < 1f && getScaleY() <= minScaleY) || (scaleY > 1f && getScaleY() >= maxScaleY)) {
             return
         }
-        L.i("缩放画布:sx:${scaleX} sy:${scaleY} x:${px} y:${py} $anim")
+        L.d("缩放画布:sx:${scaleX} sy:${scaleY} x:${px} y:${py} $anim")
 
         val newMatrix = Matrix()
         newMatrix.set(matrix)
