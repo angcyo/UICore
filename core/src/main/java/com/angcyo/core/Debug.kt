@@ -86,14 +86,15 @@ object Debug {
                                 //no op
                             }
                         }
+                        editText._feedback()
                     }
                 }
-                editText?._feedback()
             }
             "@cmd#open=debug" -> {
                 lastContext.apply {
                     if (this is FragmentActivity) {
                         onShowDebugFragment?.invoke(this)
+                        editText?._feedback()
                     }
                 }
             }
