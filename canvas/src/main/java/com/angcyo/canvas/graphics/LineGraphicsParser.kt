@@ -3,10 +3,10 @@ package com.angcyo.canvas.graphics
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataShapeItem
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.library.unit.toPixel
 
 /**
  * 线段解析器

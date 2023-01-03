@@ -9,7 +9,6 @@ import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.graphics.PathGraphicsParser.Companion.MIN_PATH_SIZE
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.data.DataItem
@@ -25,6 +24,7 @@ import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.abs
 import com.angcyo.library.toastQQ
+import com.angcyo.library.unit.toMm
 
 /**
  * 用来解析[CanvasProjectItemBean]

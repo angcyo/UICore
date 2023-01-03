@@ -9,9 +9,7 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.data.toPaintStyleInt
-import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.data.DataTextItem
 import com.angcyo.canvas.utils.CanvasConstant
@@ -22,6 +20,9 @@ import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.flip
 import com.angcyo.library.ex.size
 import com.angcyo.library.ex.toBase64Data
+import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
+import com.angcyo.library.unit.toMm
+import com.angcyo.library.unit.toPixel
 import java.io.StringWriter
 import kotlin.math.pow
 import kotlin.random.Random.Default.nextInt
@@ -390,7 +391,7 @@ fun CanvasDelegate.addParameterComparisonTable(
 
     //---横竖线
     val gCodeHandler = GCodeWriteHandler()
-    gCodeHandler.unit = CanvasProjectItemBean.MM_UNIT
+    gCodeHandler.unit = MM_UNIT
     gCodeHandler.isAutoCnc = false
     val gCodeWriter = StringWriter()
     gCodeHandler.writer = gCodeWriter

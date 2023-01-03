@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.items.data.DataBitmapItem
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.utils.CanvasConstant
@@ -13,6 +12,7 @@ import com.angcyo.gcode.GCodeHelper
 import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.ex.*
+import com.angcyo.library.unit.toMm
 import com.angcyo.opencv.OpenCV
 import com.hingin.rn.image.ImageProcess
 import kotlin.io.readText

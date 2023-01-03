@@ -2,7 +2,7 @@ package com.angcyo.canvas.utils
 
 import android.graphics.Path
 import com.angcyo.canvas.LinePath
-import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
+import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.ex.toRadians
 import kotlin.math.cos

@@ -1143,9 +1143,9 @@ open class DslAdapterItem : LifecycleOwner {
     /**标识当前的item是否被移除了, 被移除之后, 会影响[thisAreItemsTheSame]的比对*/
     var itemRemoveFlag: Boolean = false
 
-    /**是否需要更新item,等同于[itemChanging], 但不会触发[itemChanged]
+    /**是否需要更新item,等同于[itemChanging], 但是不会触发[itemChanged]的回调
      * 在[diffResult]之后会被重置为[false]
-     * * 默认为[true], 确保每次new的[DslAdapterItem]有机会更新数据
+     * 默认为[true], 确保每次new的[DslAdapterItem]有机会更新数据
      * [itemChanging]*/
     var itemUpdateFlag: Boolean = true
 
@@ -1245,7 +1245,8 @@ open class DslAdapterItem : LifecycleOwner {
 
     //<editor-fold desc="定向更新">
 
-    /**标识此[Item]是否发生过改变, 可用于实现退出界面提示是否保存内容.*/
+    /**标识此[Item]是否发生过改变, 可用于实现退出界面提示是否保存内容.
+     * [itemChanging]*/
     @UpdateByDiff
     @UpdateByNotify
     var itemChanged = false

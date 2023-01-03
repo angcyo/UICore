@@ -4,10 +4,10 @@ import android.graphics.Bitmap
 import android.graphics.Paint
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.canvas.data.toMm
 import com.angcyo.canvas.data.toPaintStyle
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.library.unit.toMm
 import com.angcyo.qrcode.createBarCode
 import com.angcyo.qrcode.createQRCode
 import com.google.zxing.BarcodeFormat

@@ -10,7 +10,7 @@ import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
+import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 import com.angcyo.canvas.data.toPaintStyle
 import com.angcyo.canvas.data.toPaintStyleInt
 import com.angcyo.canvas.data.toTypeNameString

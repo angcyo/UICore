@@ -3,7 +3,6 @@ package com.angcyo.canvas.data
 import android.graphics.Paint
 import android.graphics.RectF
 import android.widget.LinearLayout
-import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
 import com.angcyo.canvas.graphics.GraphicsHelper
 import com.angcyo.canvas.graphics.PathGraphicsParser
 import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_BOLD
@@ -21,7 +20,9 @@ import com.angcyo.library.ex.add
 import com.angcyo.library.ex.ensure
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.toBitmapOfBase64
-import com.angcyo.library.unit.MmValueUnit
+import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
+import com.angcyo.library.unit.toMm
+import com.angcyo.library.unit.toPixel
 import kotlin.math.max
 
 /**
@@ -402,9 +403,6 @@ data class CanvasProjectItemBean(
 
     companion object {
 
-        /**毫米单位计算*/
-        val MM_UNIT = MmValueUnit()
-
         /**默认的阈值*/
         val DEFAULT_THRESHOLD: Float = LibHawkKeys.grayThreshold.toFloat()
 
@@ -441,18 +439,18 @@ data class CanvasProjectItemBean(
     fun updateScale(@Pixel w: Float, @Pixel h: Float) {
         val valueUnit = MM_UNIT
         if (w != 0f && _width != 0f) {
-            scaleX = (valueUnit.convertPixelToValue(w).toFloat() / _width).ensure(1f)
+            scaleX = (valueUnit.convertPixelToValue(w) / _width).ensure(1f)
         }
         if (h != 0f && _height != 0f) {
-            scaleY = (valueUnit.convertPixelToValue(h).toFloat() / _height).ensure(1f)
+            scaleY = (valueUnit.convertPixelToValue(h) / _height).ensure(1f)
         }
     }
 
     /**更新坐标, 缩放比例数据*/
     fun updateByBounds(@Pixel bounds: RectF) {
         val valueUnit = MM_UNIT
-        left = valueUnit.convertPixelToValue(bounds.left).toFloat()
-        top = valueUnit.convertPixelToValue(bounds.top).toFloat()
+        left = valueUnit.convertPixelToValue(bounds.left)
+        top = valueUnit.convertPixelToValue(bounds.top)
 
         val width = bounds.width()
         val height = bounds.height()
@@ -492,8 +490,8 @@ data class CanvasProjectItemBean(
                 false
             ) { dslGravity, centerX, centerY ->
                 //修改
-                left = valueUnit.convertPixelToValue(dslGravity._gravityLeft).toFloat()
-                top = valueUnit.convertPixelToValue(dslGravity._gravityTop).toFloat()
+                left = valueUnit.convertPixelToValue(dslGravity._gravityLeft)
+                top = valueUnit.convertPixelToValue(dslGravity._gravityTop)
             }
         }
     }
@@ -566,20 +564,6 @@ fun CanvasProjectItemBean.isBold() = fontWeight == "bold"
 
 /**是否斜体*/
 fun CanvasProjectItemBean.isItalic() = fontStyle == "italic"
-
-/**毫米转像素*/
-fun Float?.toPixel() = MM_UNIT.convertValueToPixel(this ?: 0f)
-
-/**毫米转像素*/
-fun Double?.toPixel() = MM_UNIT.convertValueToPixel(this ?: 0.0)
-
-/**MmValueUnit*/
-fun Int.toMm() = toFloat().toMm()
-
-/**像素转毫米*/
-fun Float?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0f).toFloat()
-
-fun Double?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0.0).toFloat()
 
 //--
 

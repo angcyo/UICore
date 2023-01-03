@@ -4,6 +4,7 @@ import android.util.TypedValue
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.ceil
 import com.angcyo.library.ex.decimal
+import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 import kotlin.math.max
 import kotlin.math.nextDown
 import kotlin.math.roundToInt
@@ -14,6 +15,11 @@ import kotlin.math.roundToInt
  * @since 2022/04/24
  */
 interface IValueUnit {
+
+    companion object {
+        /**毫米单位计算*/
+        val MM_UNIT = MmValueUnit()
+    }
 
     //region---刻度相关方法---
 
@@ -163,3 +169,17 @@ fun IValueUnit.convertPixelToValueUnit(pixel: Double?): String {
     val value = convertPixelToValue(pixel)
     return formattedValueUnit(value)
 }
+
+/**毫米转像素*/
+fun Float?.toPixel() = MM_UNIT.convertValueToPixel(this ?: 0f)
+
+/**毫米转像素*/
+fun Double?.toPixel() = MM_UNIT.convertValueToPixel(this ?: 0.0)
+
+/**MmValueUnit*/
+fun Int.toMm() = toFloat().toMm()
+
+/**像素转毫米*/
+fun Float?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0f)
+
+fun Double?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0.0)

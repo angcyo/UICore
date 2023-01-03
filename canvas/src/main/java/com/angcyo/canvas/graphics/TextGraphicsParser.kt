@@ -7,8 +7,6 @@ import android.graphics.RectF
 import android.widget.LinearLayout
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.canvas.data.toMm
-import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataTextItem
 import com.angcyo.canvas.utils.CanvasConstant
@@ -21,6 +19,8 @@ import com.angcyo.library.ex.computePathBounds
 import com.angcyo.library.ex.ensure
 import com.angcyo.library.ex.textBounds
 import com.angcyo.library.gesture.RectScaleGestureHandler
+import com.angcyo.library.unit.toMm
+import com.angcyo.library.unit.toPixel
 
 /**
  * 文本数据解析器

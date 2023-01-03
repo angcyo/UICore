@@ -7,9 +7,6 @@ import android.graphics.drawable.Drawable
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.canvas.data.CanvasProjectItemBean.Companion.MM_UNIT
-import com.angcyo.canvas.data.toMm
-import com.angcyo.canvas.data.toPixel
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataPathItem
 import com.angcyo.canvas.utils.CanvasConstant
@@ -23,6 +20,9 @@ import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.computeBounds
 import com.angcyo.library.ex.computePathBounds
 import com.angcyo.library.ex.withPicture
+import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
+import com.angcyo.library.unit.toMm
+import com.angcyo.library.unit.toPixel
 import com.pixplicity.sharp.Sharp
 import kotlin.math.max
 import kotlin.math.roundToInt

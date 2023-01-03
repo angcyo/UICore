@@ -141,7 +141,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
 
     /**回调此方法, 直接拿到输入后的值
      * 不能覆盖[onClickNumberAction]方法*/
-    var onNumberResultAction: (number: Double) -> Unit = { }
+    var onNumberResultAction: (number: Float) -> Unit = { }
 
     /**格式化文本内容, 比如90°, 则应该返回90*/
     var onFormatTextAction: (value: String) -> String = {
@@ -316,7 +316,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
             incrementStep,
             longIncrementStep
         ).apply {
-            toDoubleOrNull()?.let { toValue ->
+            toFloatOrNull()?.let { toValue ->
                 _pendingRunnable = Runnable {
                     _pendingRunnable = null
                     onNumberResultAction(toValue)
