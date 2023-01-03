@@ -2,7 +2,11 @@
 <resources>
     <!--密码输入过滤-->
     <string name="lib_password_digits">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^*()_+=</string>
+    <!--英文输入过滤-->
     <string name="lib_en_digits">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789</string>
+    <!--hex十六进制过滤-->
+    <string name="lib_hex_digits">ABCDEFabcdef0123456789</string>
+    <!--浮点数输入过滤-->
     <string name="lib_number_digits">-.1234567890</string>
     <!--条码字符-->
     <!--https://en.wikipedia.org/wiki/Code_128-->
