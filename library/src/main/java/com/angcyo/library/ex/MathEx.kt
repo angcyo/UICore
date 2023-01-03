@@ -121,7 +121,7 @@ fun Double.decimal(
     fadedUp: Boolean,
 ): String {
     if (ensureInt) {
-        val int = toInt()
+        val int = if (fadedUp) roundToInt() else toInt()
         val intD = int.toDouble()
         if (this == intD || formatShow(digit).toDoubleOrNull() == intD) {
             return "$int"
@@ -140,9 +140,9 @@ fun Double.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
     val value = if (isNaN()) {
         0.0
     } else if (fadedUp) {
-        (this * f).roundToInt()
+        (this * f).roundToInt() //四舍五入
     } else {
-        (this * f).toInt()
+        (this * f).toInt() //取整
     } / f
     return String.format(Locale.US, "%.${digit}f", value.toFloat())
 }
@@ -163,7 +163,7 @@ fun Float.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
 /**保留小数点后几位*/
 fun Float.decimal(digit: Int, ensureInt: Boolean, fadedUp: Boolean): String {
     if (ensureInt) {
-        val int = toInt()
+        val int = if (fadedUp) roundToInt() else toInt()
         val intF = int.toFloat()
         if (this == intF || formatShow(digit).toFloatOrNull() == intF) {
             return "$int"
