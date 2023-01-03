@@ -43,7 +43,7 @@ class CodeGraphicsParser : IGraphicsParser {
     /**处理图片*/
     fun handleBitmap(bean: CanvasProjectItemBean, bitmap: Bitmap): DataItem {
         val item = DataItem(bean)
-        wrapBitmap(item, bitmap)
+        wrapBitmapDrawable(item, bitmap)
 
         if (bean._width <= 0) {
             bean.width = bitmap.width.toMm()

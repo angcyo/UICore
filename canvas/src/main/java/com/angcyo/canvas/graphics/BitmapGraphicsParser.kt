@@ -191,7 +191,7 @@ class BitmapGraphicsParser : IGraphicsParser {
 
         val bitmap =
             item.modifyBitmap ?: item.meshBitmap ?: item.originBitmap ?: return null
-        wrapBitmap(item, bitmap)
+        wrapBitmapDrawable(item, bitmap)
 
         bean._dataMode = when (bean.imageFilter) {
             CanvasConstant.DATA_MODE_DITHERING -> CanvasConstant.DATA_MODE_DITHERING

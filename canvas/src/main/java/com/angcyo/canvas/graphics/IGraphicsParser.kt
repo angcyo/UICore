@@ -59,13 +59,16 @@ interface IGraphicsParser {
     })
 
     /**包裹一个bitmap对象*/
-    fun wrapBitmap(item: DataItem, bitmap: Bitmap) {
+    fun wrapBitmapDrawable(item: DataItem, bitmap: Bitmap) {
         val width = bitmap.width
         val height = bitmap.height
         item.renderDrawable = wrapScalePictureDrawable(width, height) {
             val rect = acquireTempRectF()
             rect.set(0f, 0f, width.toFloat(), height.toFloat())
-            drawBitmap(bitmap, null, rect, Paint(Paint.ANTI_ALIAS_FLAG))
+            drawBitmap(bitmap, null, rect, Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                isAntiAlias = true
+                isFilterBitmap = true
+            })
             rect.release()
         }
     }
