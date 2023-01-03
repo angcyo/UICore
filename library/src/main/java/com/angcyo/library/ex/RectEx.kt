@@ -100,13 +100,13 @@ fun RectF.isOverflowOf(rect: Rect): Boolean {
     return false
 }
 
-/**将[this]矩形, 限制在[rect]内*/
-fun RectF.limitInRect(rect: RectF, result: RectF = this): RectF {
+/**将[this]矩形, 限制在[limitRect]内*/
+fun RectF.limitInRect(limitRect: RectF, result: RectF = this): RectF {
     val w1 = width()
-    val w2 = rect.width()
+    val w2 = limitRect.width()
 
     val h1 = height()
-    val h2 = rect.height()
+    val h2 = limitRect.height()
 
     result.set(this)
 
@@ -123,20 +123,29 @@ fun RectF.limitInRect(rect: RectF, result: RectF = this): RectF {
         result.bottom = top + h1 * s
     }
 
-    result.left = max(rect.left, left)
-    result.top = max(rect.top, top)
-    result.right = min(rect.right, right)
-    result.bottom = min(rect.bottom, bottom)
+    val dx = if (result.left < limitRect.left)
+        limitRect.left - result.left
+    else if (result.right > limitRect.right)
+        limitRect.right - result.right
+    else 0f
+
+    val dy = if (result.top < limitRect.top)
+        limitRect.top - result.top
+    else if (result.bottom > limitRect.bottom)
+        limitRect.bottom - result.bottom
+    else 0f
+
+    result.offset(dx, dy)
 
     return result
 }
 
-fun RectF.limitInRect(rect: Rect, result: RectF = this): RectF {
+fun RectF.limitInRect(limitRect: Rect, result: RectF = this): RectF {
     val w1 = width()
-    val w2 = rect.width().toFloat()
+    val w2 = limitRect.width().toFloat()
 
     val h1 = height()
-    val h2 = rect.height().toFloat()
+    val h2 = limitRect.height().toFloat()
 
     result.set(this)
 
@@ -153,10 +162,19 @@ fun RectF.limitInRect(rect: Rect, result: RectF = this): RectF {
         result.bottom = top + h1 * s
     }
 
-    result.left = max(rect.left.toFloat(), left)
-    result.top = max(rect.top.toFloat(), top)
-    result.right = min(rect.right.toFloat(), right)
-    result.bottom = min(rect.bottom.toFloat(), bottom)
+    val dx = if (result.left < limitRect.left)
+        limitRect.left - result.left
+    else if (result.right > limitRect.right)
+        limitRect.right - result.right
+    else 0f
+
+    val dy = if (result.top < limitRect.top)
+        limitRect.top - result.top
+    else if (result.bottom > limitRect.bottom)
+        limitRect.bottom - result.bottom
+    else 0f
+
+    result.offset(dx, dy)
 
     return result
 }
