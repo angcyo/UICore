@@ -30,9 +30,9 @@ class ItemsOperateHandler {
 
     companion object {
 
-        /**元素的范围限制, +-1000mm*/
+        /**元素的范围限制, +-10000mm*/
         val BOUNDS_LIMIT =
-            RectF((-1000f).toPixel(), (-1000f).toPixel(), 1000f.toPixel(), (5_000f).toPixel())
+            RectF((-30000f).toPixel(), (-30000f).toPixel(), 30000f.toPixel(), (5_0000f).toPixel())
 
         //region ---can---
 
@@ -47,6 +47,14 @@ class ItemsOperateHandler {
             toWidth: Float,
             toHeight: Float
         ): Boolean {
+            val bounds = itemRenderer.getBounds()
+            val width = bounds.width()
+            val height = bounds.height()
+
+            if (toWidth < width || toHeight < height) {
+                //缩小大小, 则允许操作
+                return true
+            }
 
             /*if (itemRenderer is SelectGroupRenderer) {
                 //群组选择, 不允许反向
@@ -80,12 +88,12 @@ class ItemsOperateHandler {
                 return false
             }
 
-            if (toWidth.abs() > 40_000f) {
+            if (toWidth.abs() > BOUNDS_LIMIT.width()) {
                 //限制宽度最大值
                 return false
             }
 
-            if (toHeight.abs() > 40_000f) {
+            if (toHeight.abs() > BOUNDS_LIMIT.height()) {
                 //限制高度最大值
                 return false
             }
