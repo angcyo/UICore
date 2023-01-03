@@ -7,7 +7,7 @@ import com.angcyo.core.CoreApplication.Companion.DEFAULT_FILE_PRINT_PATH
 import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.fileSelector
 import com.angcyo.library.Library
-import com.angcyo.library.app
+import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.FileUtils
@@ -26,6 +26,9 @@ object Debug {
     /**开启调试模式*/
     var onChangedToDebug: MutableList<Action> = mutableListOf()
 
+    /**显示调试界面*/
+    var onShowDebugFragment: ((FragmentActivity) -> Unit)? = null
+
     /**调试:文本输入框文本改变时
      * [com.angcyo.widget.edit.BaseEditDelegate.Companion.textChangedActionList]*/
     fun onDebugTextChanged(
@@ -41,32 +44,35 @@ object Debug {
         }
         when (inputText.lowercase()) {
             //开启调试模式
-            "cmd:debug", "9.999999" -> {
+            "@cmd#debug", "@9.999999" -> {
                 Library.isDebugTypeVal = true
                 onChangedToDebug.forEach {
                     it()
                 }
-                app().vibrate()
+                editText?._feedback()
             }
             //分享http日志文件
-            "cmd:share:http", "9.777777" -> {
+            "@cmd#share=http", "@9.777777" -> {
                 val file = FileUtils.appRootExternalFolderFile(
                     Constant.HTTP_FOLDER_NAME,
                     logFileName()
                 )
                 file.shareFile()
+                editText?._feedback()
             }
             //分享L.log
-            "cmd:share:l", "9.111111" -> {
+            "@cmd#share=l", "@9.111111" -> {
                 val file = DEFAULT_FILE_PRINT_PATH?.file()
                 file?.shareFile()
+                editText?._feedback()
             }
             //分享crash.log
-            "cmd:share:crash", "9.333333" -> {
+            "@cmd#share=crash", "@9.333333" -> {
                 val file = DslCrashHandler.KEY_CRASH_FILE.hawkGet()?.file()
                 file?.shareFile()
+                editText?._feedback()
             }
-            "cmd:open:file", "9.555555" -> {
+            "@cmd#open=file", "@9.555555" -> {
                 //打开文件预览对话框
                 editText?.context?.apply {
                     if (this is FragmentActivity) {
@@ -80,6 +86,14 @@ object Debug {
                                 //no op
                             }
                         }
+                    }
+                }
+                editText?._feedback()
+            }
+            "@cmd#open=debug" -> {
+                lastContext.apply {
+                    if (this is FragmentActivity) {
+                        onShowDebugFragment?.invoke(this)
                     }
                 }
             }
