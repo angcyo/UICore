@@ -133,7 +133,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     /**预览*/
     override fun preview(renderParams: RenderParams): Drawable? {
         val bounds = getRotateBounds()
-        return canvasDelegate.getBitmap(bounds).toDrawable(canvasDelegate.view.resources)
+        return canvasDelegate.getBitmap(bounds)?.toDrawable(canvasDelegate.view.resources)
     }
 
     override fun isSupportControlPoint(type: Int): Boolean {

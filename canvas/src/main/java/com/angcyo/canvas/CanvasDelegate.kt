@@ -13,7 +13,6 @@ import com.angcyo.canvas.core.component.*
 import com.angcyo.canvas.core.renderer.*
 import com.angcyo.canvas.data.CanvasProjectBean
 import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 import com.angcyo.canvas.data.LimitDataInfo
 import com.angcyo.canvas.graphics.GraphicsHelper
 import com.angcyo.canvas.graphics.dataItemIndex
@@ -33,6 +32,7 @@ import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.unit.IValueUnit
+import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 import com.angcyo.library.unit.PixelValueUnit
 import com.angcyo.library.utils.isChildClassOf
 import java.util.concurrent.CopyOnWriteArrayList
@@ -582,7 +582,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
     //<editor-fold desc="操作方法">
 
     /** [itemOrigin] 是否使用最左上角的元素当做原点, 否则就是0,0位置为左上角原点 */
-    fun getBitmap(itemOrigin: Boolean = true, outWidth: Int = -1, outHeight: Int = -1): Bitmap {
+    fun getBitmap(itemOrigin: Boolean = true, outWidth: Int = -1, outHeight: Int = -1): Bitmap? {
         //val contentWidth = getCanvasViewBox().getContentWidth()
         //val contentHeight = getCanvasViewBox().getContentHeight()
 
@@ -618,7 +618,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
     }
 
     /**获取指定坐标对应的图片*/
-    fun getBitmap(rect: RectF, outWidth: Int = -1, outHeight: Int = -1): Bitmap {
+    fun getBitmap(rect: RectF, outWidth: Int = -1, outHeight: Int = -1): Bitmap? {
         return getBitmap(
             rect.left,
             rect.top,
@@ -647,7 +647,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         height: Int,
         outWidth: Int = -1,
         outHeight: Int = -1
-    ): Bitmap {
+    ): Bitmap? {
         val bitmapWidth: Int
         val bitmapHeight: Int
 
@@ -667,6 +667,10 @@ class CanvasDelegate(val view: View) : ICanvasView {
             //宽高都指定了
             bitmapWidth = outWidth
             bitmapHeight = outHeight
+        }
+
+        if (bitmapWidth <= 0 || bitmapHeight <= 0) {
+            return null
         }
 
         val bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888)
@@ -717,8 +721,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
         projectName = fileName ?: projectName
 
         val bitmap = getBitmap(true, outWidth, outHeight)
-        val width = MM_UNIT.convertPixelToValue(bitmap.width.toDouble())
-        val height = MM_UNIT.convertPixelToValue(bitmap.height.toDouble())
+        val width = MM_UNIT.convertPixelToValue(bitmap?.width?.toDouble() ?: 0.0)
+        val height = MM_UNIT.convertPixelToValue(bitmap?.height?.toDouble() ?: 0.0)
 
         val data = jsonArray {
             itemsRendererList.forEach {
@@ -736,7 +740,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         return CanvasProjectBean(
             width,
             height,
-            bitmap.toBase64Data(),
+            bitmap?.toBase64Data(),
             data,
             fileName,
             nowTime(),
