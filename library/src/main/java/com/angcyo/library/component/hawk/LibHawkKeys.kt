@@ -20,7 +20,9 @@ object LibHawkKeys {
     /**当颜色的透明值小于此值时, 视为透明色*/
     var alphaThreshold: Int by HawkPropertyValue<Any, Int>(250)
 
-    /**灰度阈值, 大于这个值视为白色*/
+    /**灰度阈值, 大于这个值视为白色
+     * 白色传1, 1不出光.
+     * 黑色传0, 0出光. */
     var grayThreshold: Int by HawkPropertyValue<Any, Int>(128)
 
     /**日志单文件最大数据量的大小
