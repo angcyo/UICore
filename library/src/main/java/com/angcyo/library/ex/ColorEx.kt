@@ -118,6 +118,11 @@ fun evaluateColor(fraction: Float, colors: IntArray, positions: FloatArray? = nu
     return ArgbEvaluator().evaluate(f, startColor, endColor) as Int
 }
 
+/**[alpha]*/
+fun Int.alpha(alpha: Float): Int {
+    return alpha(alpha.toInt())
+}
+
 /**
  * 设置一个颜色的透明值, 并返回这个颜色值.
  *
@@ -127,13 +132,9 @@ fun Int.alpha(alpha: Int): Int {
     return ColorUtils.setAlphaComponent(this, MathUtils.clamp(alpha, 0, 255))
 }
 
-/**[alpha]不透明度比例, 值越大越不透明, 值越小越透明*/
+/**[alpha]不透明度比例, 值越小越透明, 值越大越不透明.*/
 fun Int.alphaRatio(alpha: Float): Int {
     return alpha(alpha * 255)
-}
-
-fun Int.alpha(alpha: Float): Int {
-    return alpha(alpha.toInt())
 }
 
 /**0xFFFF8000*/

@@ -38,7 +38,8 @@ fun Int.toGrayColorInt(): Int {
 }
 
 /**将图片转灰度
- * [alphaBgColor] 透明像素时的替换颜色*/
+ * [alphaBgColor] 透明像素时的替换颜色
+ * [alphaThreshold] 透明通道的阈值*/
 fun Bitmap.toGrayHandle(
     alphaBgColor: Int = Color.TRANSPARENT,
     alphaThreshold: Int = LibHawkKeys.alphaThreshold

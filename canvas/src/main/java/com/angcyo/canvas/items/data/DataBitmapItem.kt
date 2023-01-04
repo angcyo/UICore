@@ -4,11 +4,11 @@ import android.graphics.Bitmap
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.renderer.ICanvasStep
 import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 import com.angcyo.canvas.data.updateWidthHeightByOriginImage
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.gcode.GCodeDrawable
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 
 /**
  * 图片数据item
@@ -74,12 +74,18 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
             dataBean.imageFilter = oldImageFilter
 
             updateRenderItem(renderer)
+            if (oldImageFilter != newImageFilter) {
+                renderer.canvasView.dispatchItemTypeChanged(renderer)
+            }
         }) {
             dataBean.imageOriginal = newOrigin
             dataBean.src = newSrc
             dataBean.imageFilter = newImageFilter
 
             updateRenderItem(renderer)
+            if (oldImageFilter != newImageFilter) {
+                renderer.canvasView.dispatchItemTypeChanged(renderer)
+            }
         }
     }
 
@@ -111,6 +117,9 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
             dataBean.updateWidthHeightByOriginImage()
             dataBean.updateScale(oldWidth, oldHeight)
             updateRenderItem(renderer)
+            if (oldImageFilter != newImageFilter) {
+                renderer.canvasView.dispatchItemTypeChanged(renderer)
+            }
         }) {
             dataBean.imageOriginal = newOrigin
             dataBean.src = newSrc
@@ -120,6 +129,9 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
             dataBean.updateWidthHeightByOriginImage()
             dataBean.updateScale(width, height)
             updateRenderItem(renderer)
+            if (oldImageFilter != newImageFilter) {
+                renderer.canvasView.dispatchItemTypeChanged(renderer)
+            }
         }
     }
 
@@ -135,18 +147,19 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         minDiameter: Float,
         @Pixel
         maxDiameter: Float,
+        oldIsMesh: Boolean,
         renderer: DataItemRenderer,
         strategy: Strategy = Strategy.normal
     ) {
         val oldImageFilter = dataBean.imageFilter
         val oldImage = dataBean.src
-        val oldIsMesh = dataBean.isMesh
         val oldMeshShape = dataBean.meshShape
         val oldMinDiameter = dataBean.minDiameter
         val oldMaxDiameter = dataBean.maxDiameter
 
         dataBean.imageFilter = imageFilter
         dataBean.src = image
+        val newIsMesh = true
 
         renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
             dataBean.src = oldImage
@@ -158,16 +171,22 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
             dataBean.maxDiameter = oldMaxDiameter
 
             updateRenderItem(renderer)
+            if (oldIsMesh != newIsMesh) {
+                renderer.canvasView.dispatchItemTypeChanged(renderer)
+            }
         }) {
             dataBean.src = image
             dataBean.imageFilter = imageFilter
 
-            dataBean.isMesh = true
+            dataBean.isMesh = newIsMesh
             dataBean.meshShape = meshShale
-            dataBean.minDiameter = MM_UNIT.convertPixelToValue(minDiameter).toFloat()
-            dataBean.maxDiameter = MM_UNIT.convertPixelToValue(maxDiameter).toFloat()
+            dataBean.minDiameter = MM_UNIT.convertPixelToValue(minDiameter)
+            dataBean.maxDiameter = MM_UNIT.convertPixelToValue(maxDiameter)
 
             updateRenderItem(renderer)
+            if (oldIsMesh != newIsMesh) {
+                renderer.canvasView.dispatchItemTypeChanged(renderer)
+            }
         }
     }
 
@@ -184,7 +203,8 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         val oldMode = dataBean.imageFilter
         val oldSrc = dataBean.src
 
-        dataBean.imageFilter = mode
+        val newMode = mode
+        dataBean.imageFilter = newMode
         dataBean.src = src
 
         /*if (mode == CanvasConstant.DATA_MODE_GCODE) {
@@ -200,13 +220,16 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
                 }
 
                 override fun runRedo() {
-                    updateBitmapByMode(src, mode, renderer, Strategy.redo)
+                    updateBitmapByMode(src, newMode, renderer, Strategy.redo)
                 }
             })
         }
 
         //更新
         updateRenderItem(renderer)
+        if (oldMode != newMode) {
+            renderer.canvasView.dispatchItemTypeChanged(renderer)
+        }
     }
 
     /**多了2个指定宽高的参数*/
@@ -223,10 +246,11 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         val oldWidth = renderer.getBounds().width()
         val oldHeight = renderer.getBounds().height()
 
-        dataBean.imageFilter = mode
+        val newMode = mode
+        dataBean.imageFilter = newMode
         dataBean.src = src
 
-        if (mode == CanvasConstant.DATA_MODE_GCODE) {
+        if (newMode == CanvasConstant.DATA_MODE_GCODE) {
             //GCode数据放这里
             dataBean.data = src
         }
@@ -248,16 +272,18 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
                 }
 
                 override fun runRedo() {
-                    updateBitmapByMode(src, mode, renderer, width, height, Strategy.redo)
+                    updateBitmapByMode(src, newMode, renderer, width, height, Strategy.redo)
                 }
             })
         }
 
         //更新
         updateRenderItem(renderer)
+        if (oldMode != newMode) {
+            renderer.canvasView.dispatchItemTypeChanged(renderer)
+        }
     }
 
     //endregion ---方法---
-
 
 }

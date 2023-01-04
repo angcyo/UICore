@@ -313,6 +313,12 @@ annotation class Shape
 @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
 annotation class GradientType
 
+/**使用[solidColor]颜色填充一个圆*/
+fun DslGradientDrawable.solidCircle(solidColor: Int) {
+    gradientShape = GradientDrawable.OVAL
+    gradientSolidColor = solidColor
+}
+
 /**快速创建[GradientDrawable]*/
 fun dslGradientDrawable(action: DslGradientDrawable.() -> Unit): GradientDrawable {
     return DslGradientDrawable().run {

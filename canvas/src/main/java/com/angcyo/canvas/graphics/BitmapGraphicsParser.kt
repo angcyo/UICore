@@ -11,6 +11,7 @@ import com.angcyo.canvas.utils.parseGCode
 import com.angcyo.gcode.GCodeHelper
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.*
 import com.angcyo.library.unit.toMm
 import com.angcyo.opencv.OpenCV
@@ -41,7 +42,8 @@ class BitmapGraphicsParser : IGraphicsParser {
             contrast: Double = 0.0,
             brightness: Double = 0.0
         ): Bitmap? {
-            val grayBitmap = bitmap.toGrayHandle(if (invert) Color.BLACK else Color.WHITE)//灰度
+            val bgColor = if (invert) Color.BLACK else Color.WHITE
+            val grayBitmap = bitmap.toGrayHandle(bgColor, LibHawkKeys.bgAlphaThreshold)//灰度
             //对于低尺寸的图片需要先放大到 1000
             //val grayBitmapScale = grayBitmap.scaleToMinSize(1000, 1000)
             val grayBitmapScale = grayBitmap

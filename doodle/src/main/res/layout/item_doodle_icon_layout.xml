@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -7,16 +8,28 @@
     android:layout_marginHorizontal="@dimen/lib_dpi"
     android:layout_marginVertical="@dimen/lib_sdpi"
     android:background="@drawable/lib_theme_horizontal_gradient_selector"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
     android:paddingHorizontal="@dimen/lib_xhdpi"
     android:paddingVertical="@dimen/lib_sdpi">
+
+    <View
+        android:id="@+id/check_tip_view"
+        android:layout_width="@dimen/lib_xxhdpi"
+        android:layout_height="@dimen/lib_xxhdpi"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@drawable/lib_theme_circle_shape" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/lib_image_view"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@id/lib_text_view"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/doodle_eraser"
         tools:visibility="visible" />
 
@@ -26,6 +39,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/lib_theme_text_selector"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lib_image_view"
         tools:text="!!橡皮擦!!" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
