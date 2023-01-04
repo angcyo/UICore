@@ -3,6 +3,7 @@ package com.angcyo.core.activity
 import android.content.res.Configuration
 import android.os.Bundle
 import com.angcyo.activity.BaseAppCompatActivity
+import com.angcyo.base.enableHighRefresh
 import com.angcyo.core.R
 import com.angcyo.core.checkShowCrashDialog
 import com.angcyo.core.component.ComplianceCheck
@@ -10,6 +11,7 @@ import com.angcyo.core.component.StateModel
 import com.angcyo.core.component.model.LanguageModel
 import com.angcyo.core.vmApp
 import com.angcyo.library.annotation.CallComplianceAfter
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.*
 import com.angcyo.library.toastQQ
 
@@ -34,6 +36,10 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
 
     override fun onCreateAfter(savedInstanceState: Bundle?) {
         super.onCreateAfter(savedInstanceState)
+
+        if (LibHawkKeys.enableHighRefresh) {
+            window.enableHighRefresh()
+        }
 
         //Compliance 合规后的初始化
         vmApp<StateModel>().waitState(

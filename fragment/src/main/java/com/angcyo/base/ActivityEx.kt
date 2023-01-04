@@ -270,6 +270,28 @@ fun Window.translucentNavigationBar(full: Boolean = false) {
     }
 }
 
+/**使用最高帧率
+ * https://zhuanlan.zhihu.com/p/150011773*/
+fun Window.enableHighRefresh() {
+    /*
+        M 是 6.0，6.0修改了新的api，并且就已经支持修改window的刷新率了。
+        但是6.0那会儿，也没什么手机支持高刷新率吧，所以也没什么人注意它。
+        我更倾向于直接判断 O，也就是 Android 8.0，我觉得这个时候支持高刷新率的手机已经开始了。
+        */
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        // 获取系统window支持的模式
+        val modes = windowManager.defaultDisplay.supportedModes
+        // 对获取的模式，基于刷新率的大小进行排序，从小到大排序
+        modes.sortBy {
+            it.refreshRate
+        }
+        val lp = attributes
+        // 取出最大的那一个刷新率，直接设置给window
+        lp.preferredDisplayModeId = modes.last().modeId
+        attributes = lp
+    }
+}
+
 private fun Int.remove(value: Int): Int = this and value.inv()
 
 /**开始[Window]转场动画, 请调用[transition]*/

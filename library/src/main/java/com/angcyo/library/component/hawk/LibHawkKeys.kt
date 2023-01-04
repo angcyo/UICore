@@ -2,6 +2,7 @@ package com.angcyo.library.component.hawk
 
 import androidx.annotation.Keep
 import com.angcyo.library.component.HawkPropertyValue
+import com.angcyo.library.ex.isDebug
 
 /**
  * 内部库中的一些持久化数据
@@ -49,5 +50,8 @@ object LibHawkKeys {
 
     /**[com.angcyo.canvas.CanvasDelegate]允许添加的最大渲染元素数据*/
     var canvasRenderMaxCount: Int by HawkPropertyValue<Any, Int>(30)
+
+    /**是否强制使用高刷*/
+    var enableHighRefresh: Boolean by HawkPropertyValue<Any, Boolean>(isDebug())
 
 }
