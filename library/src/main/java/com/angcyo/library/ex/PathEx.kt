@@ -3,6 +3,7 @@ package com.angcyo.library.ex
 import android.graphics.*
 import android.os.Build
 import androidx.core.graphics.withTranslation
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.pool.*
 import kotlin.math.atan2
 import kotlin.math.max
@@ -86,7 +87,7 @@ fun Path.getProgressPath(progress: Float, dst: Path = Path()): Path {
 fun Path.contains(x: Int, y: Int, clipRect: RectF? = null): Boolean {
     val _clipRect = if (clipRect == null) {
         val rectF = acquireTempRectF()
-        computeBounds(rectF, true)
+        computePathBounds(rectF)
         rectF
     } else {
         clipRect
@@ -323,11 +324,14 @@ fun Path.eachSegment(len: Float, block: (index: Int, ratio: Float, path: Path) -
 /**计算[Path]的bounds
  * [exact] 是否需要确切的bounds, true:此方法使用读取path中的所有点坐标进行bounds计算
  * */
-fun Path.computePathBounds(bounds: RectF = RectF(), exact: Boolean = true): RectF {
+fun Path.computePathBounds(
+    bounds: RectF = RectF(),
+    exact: Boolean = LibHawkKeys.enablePathBoundsExact
+): RectF {
     if (exact) {
         computeExactBounds(bounds)
     } else {
-        computeBounds(bounds, exact)
+        computeBounds(bounds, true)
     }
     return bounds
 }
@@ -347,7 +351,10 @@ fun Path.computeExactBounds(bounds: RectF = RectF(), acceptableError: Float = 0.
 }
 
 /**计算一组[Path]的bounds*/
-fun List<Path>.computeBounds(bounds: RectF = RectF(), exact: Boolean = true): RectF {
+fun List<Path>.computeBounds(
+    bounds: RectF = RectF(),
+    exact: Boolean = LibHawkKeys.enablePathBoundsExact
+): RectF {
     if (isEmpty()) {
         return bounds
     }
@@ -377,7 +384,7 @@ fun Path.toBitmap(
     }
 ): Bitmap? {
     val pathRect = RectF()
-    computeBounds(pathRect, true)
+    computePathBounds(pathRect)
     val width = max(1, pathRect.width().toInt())
     val height = max(1, pathRect.height().toInt())
     return bitmapCanvas(width, height) {
@@ -439,7 +446,7 @@ fun Path.bezier(c1Point: PointF, c2Point: PointF, endPoint: PointF): Path {
 fun Path.adjustWidthHeight(newWidth: Float, newHeight: Float, result: Path = Path()): Path {
     //path实际的宽高
     val pathBounds = acquireTempRectF()
-    computeBounds(pathBounds, true)
+    computePathBounds(pathBounds)
     val pathWidth = pathBounds.width()
     val pathHeight = pathBounds.height()
 

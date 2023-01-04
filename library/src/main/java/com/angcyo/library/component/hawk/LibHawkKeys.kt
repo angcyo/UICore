@@ -51,6 +51,9 @@ object LibHawkKeys {
     /**[com.angcyo.canvas.CanvasDelegate]允许添加的最大渲染元素数据*/
     var canvasRenderMaxCount: Int by HawkPropertyValue<Any, Int>(30)
 
+    /**是否激活[Path]确切的bounds计算, 计算量会变大*/
+    var enablePathBoundsExact: Boolean by HawkPropertyValue<Any, Boolean>(true)
+
     /**是否强制使用高刷*/
     var enableHighRefresh: Boolean by HawkPropertyValue<Any, Boolean>(isDebug())
 

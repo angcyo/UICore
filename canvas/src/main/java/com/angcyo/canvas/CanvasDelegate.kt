@@ -1139,7 +1139,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         block: LimitDataInfo.() -> Unit = {}
     ) {
         val pathBounds = RectF()
-        path.computeBounds(pathBounds, true)
+        path.computePathBounds(pathBounds)
         limitRenderer.addLimit {
             add(LimitDataInfo(path, false).apply(block))
         }

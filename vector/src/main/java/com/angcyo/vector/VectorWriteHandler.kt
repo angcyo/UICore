@@ -394,7 +394,7 @@ abstract class VectorWriteHandler {
     ) {
         //能够完全包含path的矩形
         val pathBounds = acquireTempRectF()
-        path.computeBounds(pathBounds, true)
+        path.computePathBounds(pathBounds)
 
         //矩形由上往下扫描, 取与path的交集
         val scanStep = fillPathStep //扫描步长

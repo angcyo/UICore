@@ -44,7 +44,7 @@ class LimitRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView) {
     fun drawLimitData(canvas: Canvas, pathInfo: LimitDataInfo) {
         val path = pathInfo.limitPath
         if (!path.isEmpty) {
-            path.computeBounds(_limitPathBounds, true)
+            path.computePathBounds(_limitPathBounds)
             val scale = canvasViewBox.getScaleX()
             paint.color = pathInfo.limitStrokeColor
             paint.strokeWidth = pathInfo.limitStrokeWidth / scale //抵消坐标系的缩放

@@ -383,7 +383,7 @@ object GCodeHelper {
                 parseGCodeLine(lineData, path)
             }
 
-            path.computeBounds(gCodeBounds, true)
+            path.computePathBounds(gCodeBounds)
 
             /*//更新gCodeBounds
             val pathBounds = emptyRectF()
