@@ -18,6 +18,8 @@ import com.angcyo.item.style.itemText
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.highlight
 import com.angcyo.library.ex.removeSpan
+import com.angcyo.library.ex.resetAll
+import com.angcyo.library.extend.IFilterItem
 import com.angcyo.library.extend.IToText
 import com.angcyo.widget.base.onTextChange
 
@@ -34,6 +36,57 @@ typealias FilterItemAction = (DslAdapterItem) -> Boolean
 
 class SearchAdapterFilter {
 
+    companion object {
+
+        /**过滤[list]*/
+        fun filterItemList(
+            list: List<DslAdapterItem>,
+            filterText: String,
+            filterItemAction: FilterItemAction? = null
+        ): List<DslAdapterItem> {
+            return list.filter { item ->
+                var filter = false
+                when (item) {
+                    is ITextItem -> {
+                        //ITextItem
+                        item.itemUpdateFlag = true
+                        item.itemText?.removeSpan(ForegroundColorSpan::class.java)
+                        if (item.itemText?.have(filterText) == true) {
+                            item.itemText = item.itemText?.highlight(filterText)
+                            filter = true
+                        }
+                    }
+                    is IDesItem -> {
+                        //IDesItem
+                        item.itemUpdateFlag = true
+                        item.itemDes?.removeSpan(ForegroundColorSpan::class.java)
+                        if (item.itemDes?.have(filterText) == true) {
+                            item.itemDes = item.itemDes?.highlight(filterText)
+                            filter = true
+                        }
+                    }
+                    is IToText -> {
+                        //IToText
+                        val itemText = item.toText()
+                        itemText?.removeSpan(ForegroundColorSpan::class.java)
+                        if (itemText?.have(filterText) == true) {
+                            filter = true
+                        }
+                    }
+                    is IFilterItem -> {
+                        //IFilterItem
+                        if (item.containsFilterText(filterText)) {
+                            filter = true
+                        }
+                    }
+                }
+                //result
+                if (filter) true else filterItemAction?.invoke(item) ?: false
+            }
+        }
+
+    }
+
     /**额外的过滤条件判断回调, 用来过滤[DslAdapterItem]
      * 返回true, 表示需要显示当前的Item
      * */
@@ -49,47 +102,7 @@ class SearchAdapterFilter {
                 //无需要过滤的文本
                 return chain.requestList
             }
-            return chain.requestList.filter { item ->
-                when (item) {
-                    is ITextItem -> {
-                        //ITextItem
-                        item.itemUpdateFlag = true
-                        item.itemText?.removeSpan(ForegroundColorSpan::class.java)
-                        when {
-                            item.itemText?.have(text) == true -> {
-                                item.itemText = item.itemText?.highlight(text)
-                                true
-                            }
-                            else -> filterItemAction?.invoke(item) ?: false
-                        }
-                    }
-                    is IDesItem -> {
-                        //IDesItem
-                        item.itemUpdateFlag = true
-                        item.itemDes?.removeSpan(ForegroundColorSpan::class.java)
-                        when {
-                            item.itemDes?.have(text) == true -> {
-                                item.itemDes = item.itemDes?.highlight(text)
-                                true
-                            }
-                            else -> filterItemAction?.invoke(item) ?: false
-                        }
-                    }
-                    is IToText -> {
-                        val itemText = item.toText()
-                        itemText?.removeSpan(ForegroundColorSpan::class.java)
-                        when {
-                            itemText?.have(text) == true -> {
-                                true
-                            }
-                            else -> filterItemAction?.invoke(item) ?: false
-                        }
-                    }
-                    else -> {
-                        filterItemAction?.invoke(item) ?: true
-                    }
-                }
-            }
+            return filterItemList(chain.requestList, text, filterItemAction)
         }
     }
 
@@ -143,6 +156,19 @@ class SearchAdapterFilter {
             //触发流程
             updateItemDepend()
         }
+    }
+}
+
+/**直接过滤现有的[DslAdapterItem]*/
+fun DslAdapter.filterItem(
+    filterText: String,
+    useFilterList: Boolean = true,
+    filterItemAction: FilterItemAction? = null
+) {
+    val list =
+        SearchAdapterFilter.filterItemList(getDataList(useFilterList), filterText, filterItemAction)
+    changeDataItems {
+        it.resetAll(list)
     }
 }
 
