@@ -65,7 +65,7 @@ open class DslTabHighlight(val tabLayout: DslTabLayout) : DslGradientDrawable() 
         }
     }
 
-    override fun updateOriginDrawable(): GradientDrawable? {
+    override fun updateOriginDrawable(): GradientDrawable {
         val drawable = super.updateOriginDrawable()
         highlightDrawable = originDrawable
         return drawable

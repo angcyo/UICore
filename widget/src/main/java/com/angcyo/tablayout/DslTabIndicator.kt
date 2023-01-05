@@ -313,7 +313,7 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
         }
     }
 
-    override fun updateOriginDrawable(): GradientDrawable? {
+    override fun updateOriginDrawable(): GradientDrawable {
         val drawable = super.updateOriginDrawable()
         indicatorDrawable = originDrawable
         return drawable
