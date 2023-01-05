@@ -10,7 +10,6 @@ import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 import com.angcyo.canvas.data.toPaintStyle
 import com.angcyo.canvas.data.toPaintStyleInt
 import com.angcyo.canvas.data.toTypeNameString
@@ -22,6 +21,7 @@ import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.library.ex.*
+import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 
 /**
  * [com.angcyo.canvas.data.CanvasProjectItemBean]
@@ -218,6 +218,7 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
                 renderer.canvasView.dispatchItemTypeChanged(renderer)
             }) {
                 dataBean.mtype = CanvasConstant.DATA_TYPE_BITMAP
+                dataBean.imageFilter = CanvasConstant.DATA_MODE_BLACK_WHITE
                 dataBean.imageOriginal = getEngraveBitmap(
                     RenderParams(
                         isFromRenderer = true,
