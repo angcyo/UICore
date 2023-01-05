@@ -43,16 +43,7 @@ class TGSolidLoadingDrawable : BaseTGLoadingDrawable() {
         } else {
             progress / 100f * 360
         }
-        canvas.drawArc(
-            _loadingRectF.left,
-            _loadingRectF.top,
-            _loadingRectF.right,
-            _loadingRectF.bottom,
-            _angle,
-            sweepAngle,
-            false,
-            paint
-        )
+        canvas.drawArc(_loadingRectF, _angle, sweepAngle, false, paint)
 
         if (loading) {
             doAngle()

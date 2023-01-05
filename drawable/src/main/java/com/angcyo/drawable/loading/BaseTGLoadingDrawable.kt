@@ -7,6 +7,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import com.angcyo.drawable.R
 import com.angcyo.drawable.base.BaseProgressDrawable
+import com.angcyo.library._refreshRateRatio
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.toColorInt
 
@@ -92,7 +93,7 @@ abstract class BaseTGLoadingDrawable : BaseProgressDrawable() {
 
     open fun doAngle() {
         //动画
-        _angle += angleStep
+        _angle += angleStep / _refreshRateRatio
         _angle %= 360
         invalidateSelf()
     }

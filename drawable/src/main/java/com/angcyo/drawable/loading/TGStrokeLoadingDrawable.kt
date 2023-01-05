@@ -52,16 +52,7 @@ class TGStrokeLoadingDrawable : BaseTGLoadingDrawable() {
         //绘制背景
         paint.strokeWidth = bgStrokeWidth
         paint.color = loadingBgColor
-        canvas.drawArc(
-            _loadingRectF.left,
-            _loadingRectF.top,
-            _loadingRectF.right,
-            _loadingRectF.bottom,
-            _angle,
-            360f,
-            false,
-            paint
-        )
+        canvas.drawArc(_loadingRectF, _angle, 360f, false, paint)
 
         //绘制进度
         paint.color = loadingColor
@@ -72,16 +63,7 @@ class TGStrokeLoadingDrawable : BaseTGLoadingDrawable() {
         }
         paint.strokeWidth = loadingWidth
         _loadingRectF.inset(loadingOffset, loadingOffset)
-        canvas.drawArc(
-            _loadingRectF.left,
-            _loadingRectF.top,
-            _loadingRectF.right,
-            _loadingRectF.bottom,
-            _angle,
-            sweepAngle,
-            false,
-            paint
-        )
+        canvas.drawArc(_loadingRectF, _angle, sweepAngle, false, paint)
 
         if (loading) {
             doAngle()
