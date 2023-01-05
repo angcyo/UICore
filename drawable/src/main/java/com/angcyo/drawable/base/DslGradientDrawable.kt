@@ -134,16 +134,13 @@ open class DslGradientDrawable : AbsDslDrawable() {
     }
 
     /**构建或者更新[originDrawable]*/
-    open fun updateOriginDrawable(): GradientDrawable? {
-        val drawable: GradientDrawable? = when (originDrawable) {
-            null -> GradientDrawable()
+    open fun updateOriginDrawable(): GradientDrawable {
+        val drawable: GradientDrawable = when (originDrawable) {
             is GradientDrawable -> originDrawable as GradientDrawable
-            else -> {
-                null
-            }
+            else -> GradientDrawable()
         }
 
-        drawable?.apply {
+        drawable.apply {
             bounds = this@DslGradientDrawable.bounds
 
             shape = gradientShape
@@ -323,6 +320,6 @@ fun DslGradientDrawable.solidCircle(solidColor: Int) {
 fun dslGradientDrawable(action: DslGradientDrawable.() -> Unit): GradientDrawable {
     return DslGradientDrawable().run {
         action()
-        updateOriginDrawable()!!
+        updateOriginDrawable()
     }
 }
