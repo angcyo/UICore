@@ -2,7 +2,7 @@ package com.angcyo.widget.pager
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.GestureDetector.SimpleOnGestureListener
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -32,10 +32,19 @@ open class DslViewPager : ViewPager {
     var _heightMeasureMode = MeasureSpec.EXACTLY
     var _orientation = LinearLayout.HORIZONTAL
 
-    lateinit var _gestureDetectorCompat: GestureDetectorCompat
+    /**手势探测器, 用来识别最后一页*/
+    var _gestureDetectorCompat: GestureDetectorCompat? = null
 
     /**最后一页继续滑动时回调*/
     var pagerEndListener: OnPagerEndListener? = null
+        set(value) {
+            field = value
+            if (value == null) {
+                _gestureDetectorCompat = null
+            } else {
+                initGestureDetectorCompat()
+            }
+        }
 
     constructor(context: Context) : super(context) {
         initAttribute(context, null)
@@ -51,33 +60,6 @@ open class DslViewPager : ViewPager {
         } else {
             setPageTransformer(true, DefaultVerticalTransformer())
         }
-
-        //监听最后一页滚动
-        _gestureDetectorCompat = GestureDetectorCompat(context, object : SimpleOnGestureListener() {
-            override fun onFling(
-                e1: MotionEvent,
-                e2: MotionEvent,
-                velocityX: Float,
-                velocityY: Float
-            ): Boolean {
-                if (pagerEndListener != null &&
-                    adapter != null &&
-                    currentItem == adapter!!.count - 1
-                ) {
-                    if (_orientation == LinearLayout.VERTICAL) {
-                        if (velocityY < -1000) {
-                            pagerEndListener?.onPagerFlingEnd()
-                        }
-                    } else {
-                        if (velocityX < -1000) {
-                            pagerEndListener?.onPagerFlingEnd()
-                        }
-                    }
-                }
-                return super.onFling(e1, e2, velocityX, velocityY)
-            }
-        })
-
         //支持wrap_content测量模式
         addOnPageChangeListener(object : SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
@@ -120,11 +102,12 @@ open class DslViewPager : ViewPager {
         }
         try {
             return if (_orientation == LinearLayout.VERTICAL) {
-                (_gestureDetectorCompat.onTouchEvent(ev) || super.onTouchEvent(swapTouchEvent(ev)))
+                _gestureDetectorCompat?.onTouchEvent(ev) == true ||
+                        super.onTouchEvent(swapTouchEvent(ev))
             } else {
-                _gestureDetectorCompat.onTouchEvent(ev) || super.onTouchEvent(ev)
+                _gestureDetectorCompat?.onTouchEvent(ev) == true || super.onTouchEvent(ev)
             }
-        } catch (ex: IllegalArgumentException) {
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
         return false
@@ -137,12 +120,40 @@ open class DslViewPager : ViewPager {
         try {
             return if (_orientation == LinearLayout.VERTICAL)
                 super.onInterceptTouchEvent(swapTouchEvent(ev))
-            else
-                super.onInterceptTouchEvent(ev)
-        } catch (ex: IllegalArgumentException) {
+            else super.onInterceptTouchEvent(ev)
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
         return false
+    }
+
+    /**初始化手势, 用来监听最后一页的滚动*/
+    fun initGestureDetectorCompat() {
+        _gestureDetectorCompat =
+            GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
+                override fun onFling(
+                    e1: MotionEvent,
+                    e2: MotionEvent,
+                    velocityX: Float,
+                    velocityY: Float
+                ): Boolean {
+                    if (pagerEndListener != null &&
+                        adapter != null &&
+                        currentItem == adapter!!.count - 1
+                    ) {
+                        if (_orientation == LinearLayout.VERTICAL) {
+                            if (velocityY < -1000) {
+                                pagerEndListener?.onPagerFlingEnd()
+                            }
+                        } else {
+                            if (velocityX < -1000) {
+                                pagerEndListener?.onPagerFlingEnd()
+                            }
+                        }
+                    }
+                    return true
+                }
+            })
     }
 
     /**交换之前的x, y坐标*/

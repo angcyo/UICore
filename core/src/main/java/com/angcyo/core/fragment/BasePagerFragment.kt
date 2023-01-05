@@ -13,11 +13,11 @@ import com.angcyo.behavior.refresh.IRefreshBehavior
 import com.angcyo.core.R
 import com.angcyo.core.viewpager.ViewPager1Delegate
 import com.angcyo.getData
+import com.angcyo.library.ex.eachChild
 import com.angcyo.library.ex.find
 import com.angcyo.library.ex.onDoubleTap
 import com.angcyo.library.ex.simpleClassName
 import com.angcyo.putData
-import com.angcyo.library.ex.eachChild
 import com.angcyo.widget.base.resetChild
 import com.angcyo.widget.recycler.scrollHelper
 import com.angcyo.widget.tab
@@ -38,6 +38,7 @@ import kotlin.math.min
 abstract class BasePagerFragment : BaseTitleFragment() {
 
     companion object {
+        /**默认选中的索引key*/
         const val TAB_SELECT_INDEX = "tab_select_index"
     }
 
@@ -197,7 +198,9 @@ abstract class BasePagerFragment : BaseTitleFragment() {
 
     //</editor-fold desc="ViewPager相关">
 
-    /**添加一个页面*/
+    /**添加一个页面
+     * 在init方法中调用
+     * */
     fun addPage(
         title: CharSequence,
         fragment: Class<out Fragment>,

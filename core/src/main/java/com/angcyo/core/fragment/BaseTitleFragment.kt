@@ -174,6 +174,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
 
+        //是否是在有标题的Fragment中, 如果是智能隐藏sub的标题
         val isInTitleFragment = parentFragment is BaseTitleFragment
 
         //智能处理标题栏
