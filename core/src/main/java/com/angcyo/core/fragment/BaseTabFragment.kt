@@ -19,6 +19,12 @@ import com.angcyo.widget.text.BadgeTextView
 
 /**
  * 简单的底部tab界面,不支持title, 多用于首页
+ *
+ * 默认tab在下面
+ * [R.layout.lib_tab_fragment]
+ * 可以选择在上面
+ * [R.layout.lib_top_tab_fragment]
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/09/18
