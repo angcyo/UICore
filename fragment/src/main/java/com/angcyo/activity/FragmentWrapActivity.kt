@@ -11,6 +11,12 @@ import com.angcyo.library.L
 
 /**
  * Fragment容器Activity
+ * ```
+ * dslAHelper {
+ *   start(CommandFragment::class)
+ * }
+ * ```
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/02/26
@@ -18,7 +24,10 @@ import com.angcyo.library.L
  */
 
 open class FragmentWrapActivity : BaseAppCompatActivity() {
+
     companion object {
+
+        /**key*/
         const val KEY_TARGET_FRAGMENT = "key_target_fragment"
 
         /**创建一个[FragmentWrapActivity], 包含目标[targetFragment]的[Intent]*/
