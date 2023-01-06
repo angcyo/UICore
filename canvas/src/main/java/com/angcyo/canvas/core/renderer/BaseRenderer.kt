@@ -33,10 +33,18 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
     /**相对于视图左上角的坐标*/
     val _visualBounds = emptyRectF()
 
+    //---
+
+    val canvasDelegate: CanvasDelegate
+        get() = canvasView as CanvasDelegate
+
     val canvasViewBox: CanvasViewBox
         get() = canvasView.getCanvasViewBox()
 
     var _name: CharSequence? = null
+
+    //---
+
 
     /**获取图层描述的名字*/
     override fun getName(): CharSequence? = _name ?: "Default"

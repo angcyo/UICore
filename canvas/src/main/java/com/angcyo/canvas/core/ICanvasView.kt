@@ -62,6 +62,12 @@ interface ICanvasView : IComponent {
      * [com.angcyo.canvas.CanvasDelegate.arrangeSort]*/
     fun dispatchItemSortChanged(itemList: List<BaseItemRenderer<*>>) {}
 
+    /**当渲染的元素列表发生变化之后, 触发的回调.
+     * 比如: 组合/解散组合改变
+     * [itemList] 新的渲染列表
+     * [reason] 触发原因*/
+    fun dispatchItemListChanged(itemList: List<BaseItemRenderer<*>>, reason: Reason) {}
+
     /**当有item的数据发生改变后触发, 此时可以触发数据保存提示*/
     fun dispatchItemDataChanged(itemRenderer: IItemRenderer<*>, reason: Reason) {}
 

@@ -8,6 +8,7 @@ import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.core.renderer.GroupRenderer
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.graphics.PathGraphicsParser.Companion.MIN_PATH_SIZE
 import com.angcyo.canvas.items.BaseItem
@@ -23,6 +24,7 @@ import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.abs
+import com.angcyo.library.ex.size
 import com.angcyo.library.toastQQ
 import com.angcyo.library.unit.toMm
 
@@ -209,19 +211,46 @@ object GraphicsHelper {
         beanList: List<CanvasProjectItemBean>,
         selected: Boolean,
         strategy: Strategy
-    ): List<DataItemRenderer> {
-        val result = mutableListOf<DataItemRenderer>()
+    ): List<BaseItemRenderer<*>> {
+        val result = mutableListOf<BaseItemRenderer<*>>()
+        val groupMap = hashMapOf<String, MutableList<BaseItemRenderer<*>>>()
         beanList.forEach { bean ->
             val item = parseRenderItemFrom(bean, canvasView)
             item?.let {
                 val renderer = DataItemRenderer(canvasView)
                 renderer.setRendererRenderItem(item)
-                result.add(renderer)
-
                 //更新坐标
                 updateRendererProperty(renderer, bean)
+
+                val groupId = bean.groupId
+                if (groupId == null) {
+                    result.add(renderer)
+                } else {
+                    //有分组信息
+                    val groupList = groupMap[groupId] ?: mutableListOf()
+                    groupMap[groupId] = groupList
+
+                    groupList.add(renderer)
+                }
             }
         }
+
+        //分组检查
+        groupMap.forEach { entry ->
+            val groupId = entry.key
+            val list = entry.value
+            if (list.size() > 1) {
+                //组内有多个元素
+                if (canvasView is CanvasDelegate) {
+                    val groupRenderer = GroupRenderer(canvasView)
+                    groupRenderer.resetAllSubList(list, groupId)
+                    result.add(groupRenderer)
+                }
+            } else if (list.isNotEmpty()) {
+                result.addAll(list)
+            }
+        }
+
         if (result.isNotEmpty()) {
             (canvasView as? CanvasDelegate)?.apply {
                 addItemRenderer(result, strategy)

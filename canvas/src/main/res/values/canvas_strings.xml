@@ -118,6 +118,8 @@
     <string name="canvas_flat">Average</string>
     <string name="canvas_flat_horizontal">Horizontal Average</string>
     <string name="canvas_flat_vertical">Vertical Average</string>
+    <string name="canvas_group_dissolve">Unpack</string>
+    <string name="canvas_group_group">Group</string>
 
     <string name="canvas_font_size">Font size</string>
     <string name="canvas_word_spacing">Word space</string>

@@ -71,6 +71,9 @@ interface ICanvasListener : ICanvasTouch {
     /**[com.angcyo.canvas.core.ICanvasView.dispatchItemSortChanged]*/
     fun onRenderItemSortChanged(itemList: List<BaseItemRenderer<*>>) {}
 
+    /**[com.angcyo.canvas.core.ICanvasView.dispatchItemListChanged]*/
+    fun onRenderItemListChanged(itemList: List<BaseItemRenderer<*>>, reason: Reason) {}
+
     /**当真实的数据发生了改变后, 触发此方法.
      * 此时可能需要清空数据索引, 以便可以重新发送数据.
      * */

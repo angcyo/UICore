@@ -22,6 +22,7 @@ import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer.Companion.ROTATE_FLAG_NORMAL
 import com.angcyo.canvas.utils.ShapesHelper
+import com.angcyo.canvas.utils.isJustGroupRenderer
 import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.http.base.json
 import com.angcyo.http.base.jsonArray
@@ -403,6 +404,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
+    override fun dispatchItemListChanged(itemList: List<BaseItemRenderer<*>>, reason: Reason) {
+        super.dispatchItemListChanged(itemList, reason)
+        canvasListenerList.forEach {
+            it.onRenderItemListChanged(itemList, reason)
+        }
+    }
+
     override fun dispatchItemDataChanged(itemRenderer: IItemRenderer<*>, reason: Reason) {
         super.dispatchItemDataChanged(itemRenderer, reason)
         canvasListenerList.forEach {
@@ -507,7 +515,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                             //item的旋转, 在此处理
                             val bounds = renderer.getRenderBounds()
                             canvas.withRotation(
-                                renderer.rotate,
+                                renderer.getDrawRotate(),
                                 bounds.centerX(),
                                 bounds.centerY()
                             ) {
@@ -610,22 +618,28 @@ class CanvasDelegate(val view: View) : ICanvasView {
         return getBitmap(
             left!!,
             top!!,
-            (right!! - left!!).toInt(),
-            (bottom!! - top!!).toInt(),
+            (right!! - left!!).ceil().toInt(),
+            (bottom!! - top!!).ceil().toInt(),
             outWidth,
             outHeight
         )
     }
 
     /**获取指定坐标对应的图片*/
-    fun getBitmap(rect: RectF, outWidth: Int = -1, outHeight: Int = -1): Bitmap? {
+    fun getBitmap(
+        rect: RectF,
+        outWidth: Int = -1,
+        outHeight: Int = -1,
+        renderList: List<BaseItemRenderer<*>>? = itemsRendererList
+    ): Bitmap? {
         return getBitmap(
             rect.left,
             rect.top,
-            rect.width().toInt(),
-            rect.height().toInt(),
+            rect.width().ceil().toInt(),
+            rect.height().ceil().toInt(),
             outWidth,
-            outHeight
+            outHeight,
+            renderList
         )
     }
 
@@ -638,6 +652,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
      * 当只指定一个宽/高时, 另一个等比缩放
      * [outWidth] 需要输出预览图宽度, -1表示所有元素的宽度
      * [outHeight] 需要输出预览图高度, -1表示所有元素的高度
+     *
+     * [renderList]指定需要渲染的元素
      * */
     @UiThread
     fun getBitmap(
@@ -646,7 +662,8 @@ class CanvasDelegate(val view: View) : ICanvasView {
         width: Int,
         height: Int,
         outWidth: Int = -1,
-        outHeight: Int = -1
+        outHeight: Int = -1,
+        renderList: List<BaseItemRenderer<*>>? = itemsRendererList
     ): Bitmap? {
         val bitmapWidth: Int
         val bitmapHeight: Int
@@ -669,7 +686,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
             bitmapHeight = outHeight
         }
 
-        if (bitmapWidth <= 0 || bitmapHeight <= 0) {
+        if (bitmapWidth <= 0 || bitmapHeight <= 0 || renderList.isNullOrEmpty()) {
             return null
         }
 
@@ -684,7 +701,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         canvas.withTranslation(-left + paintOffset, -top + paintOffset) {
             val tempRenderRect = acquireTempRectF()
             val renderParams = RenderParams(false, tempRenderRect)
-            itemsRendererList.forEach { renderer ->
+            renderList.forEach { renderer ->
                 if (renderer.isVisible()) {
                     //item的旋转, 在此处理
                     val bounds = renderer.getBounds()
@@ -725,15 +742,18 @@ class CanvasDelegate(val view: View) : ICanvasView {
         val height = MM_UNIT.convertPixelToValue(bitmap?.height?.toDouble() ?: 0.0)
 
         val data = jsonArray {
-            itemsRendererList.forEach {
-                try {
-                    if (it is DataItemRenderer) {
-                        it.getRendererRenderItem()?.dataBean?.let { bean ->
-                            add(bean.toJson().json())
+            itemsRendererList.forEach { renderer ->
+                val list = renderer.getDependRendererList()
+                list.forEach { sub ->
+                    try {
+                        if (sub is DataItemRenderer) {
+                            sub.getRendererRenderItem()?.dataBean?.let { bean ->
+                                add(bean.toJson().json())
+                            }
                         }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
             }
         }.toString()
@@ -872,7 +892,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
     fun addItemRenderer(item: BaseItemRenderer<*>, strategy: Strategy) {
         val itemList = mutableListOf<BaseItemRenderer<*>>()
         if (item is SelectGroupRenderer) {
-            itemList.addAll(item.selectItemList)
+            itemList.addAll(item.subItemList)
             item.onAddRenderer(strategy)
         } else {
             itemList.add(item)
@@ -926,7 +946,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
     fun removeItemRenderer(item: BaseItemRenderer<*>, strategy: Strategy) {
         val itemList = mutableListOf<BaseItemRenderer<*>>()
         if (item is SelectGroupRenderer) {
-            itemList.addAll(item.selectItemList)
+            itemList.addAll(item.subItemList)
             item.onRemoveRenderer(strategy)
         } else {
             itemList.add(item)
@@ -1119,12 +1139,20 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
-    /**获取所有选中的单元素*/
-    fun getSelectedRendererList(): List<BaseItemRenderer<*>> {
+    /**获取所有选中的单元素
+     * [includeGroupSubItem] 是否要拆组, 把组内的所有元素拆出来
+     * */
+    fun getSelectedRendererList(includeGroupSubItem: Boolean): List<BaseItemRenderer<*>> {
         val selectedRenderer = getSelectedRenderer()
         val result = mutableListOf<BaseItemRenderer<*>>()
-        if (selectedRenderer is SelectGroupRenderer) {
-            result.addAll(selectedRenderer.selectItemList)
+        if (selectedRenderer is GroupRenderer) {
+            if (includeGroupSubItem) {
+                result.addAll(selectedRenderer.getDependRendererList())
+            } else if (selectedRenderer is SelectGroupRenderer) {
+                result.addAll(selectedRenderer.subItemList)
+            } else {
+                result.add(selectedRenderer)
+            }
         } else if (selectedRenderer != null) {
             result.add(selectedRenderer)
         }
@@ -1282,7 +1310,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
         if (itemRenderer is SelectGroupRenderer) {
             val itemList = mutableListOf<BaseItemRenderer<*>>()
-            itemList.addAll(itemRenderer.selectItemList)
+            itemList.addAll(itemRenderer.subItemList)
 
             val anchor = PointF().apply {
                 set(itemRenderer.getBoundsScaleAnchor())
@@ -1299,7 +1327,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                         Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_ROTATE)
                     )
                     if (getSelectedRenderer() == itemRenderer) {
-                        itemRenderer.updateSelectBounds()
+                        itemRenderer.updateGroupBounds()
                     }
                 }
 
@@ -1313,7 +1341,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                         Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_ROTATE)
                     )
                     if (getSelectedRenderer() == itemRenderer) {
-                        itemRenderer.updateSelectBounds()
+                        itemRenderer.updateGroupBounds()
                     }
                 }
             }
@@ -1355,7 +1383,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         val step: ICanvasStep
         if (itemRenderer is SelectGroupRenderer) {
             val itemList = mutableListOf<BaseItemRenderer<*>>()
-            itemList.addAll(itemRenderer.selectItemList)
+            itemList.addAll(itemRenderer.subItemList)
             val bounds = RectF(itemRenderer.getBounds())
             step = object : ICanvasStep {
                 override fun runUndo() {
@@ -1367,7 +1395,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                         Reason(Reason.REASON_USER, flag = Reason.REASON_FLAG_ROTATE)
                     )
                     if (getSelectedRenderer() == itemRenderer) {
-                        itemRenderer.updateSelectBounds()
+                        itemRenderer.updateGroupBounds()
                     }
                 }
 
@@ -1380,7 +1408,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                         Reason(Reason.REASON_USER, flag = Reason.REASON_FLAG_ROTATE)
                     )
                     if (getSelectedRenderer() == itemRenderer) {
-                        itemRenderer.updateSelectBounds()
+                        itemRenderer.updateGroupBounds()
                     }
                 }
             }
@@ -1402,12 +1430,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
-    /**检查[renderer]是否可以执行指定的排序操作*/
+    /**检查[renderer]是否可以执行指定的排序操作
+     * [arrange]*/
     fun canArrange(renderer: BaseItemRenderer<*>, type: Int): Boolean {
         val list = mutableListOf<BaseItemRenderer<*>>()
 
         if (renderer is SelectGroupRenderer) {
-            list.addAll(renderer.selectItemList)
+            list.addAll(renderer.subItemList)
         } else {
             list.add(renderer)
         }
@@ -1431,12 +1460,14 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
-    /**安排排序*/
+    /**安排排序
+     * [canArrange]
+     * [arrangeSort]*/
     fun arrange(renderer: BaseItemRenderer<*>, type: Int, strategy: Strategy) {
         val list = mutableListOf<BaseItemRenderer<*>>()
 
         if (renderer is SelectGroupRenderer) {
-            list.addAll(renderer.selectItemList)
+            list.addAll(renderer.subItemList)
         } else {
             list.add(renderer)
         }
@@ -1464,6 +1495,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
     }
 
     /**排序, 将[rendererList], 放到指定的位置[to]
+     * [GroupRenderer]
      * [SelectGroupRenderer]
      * */
     fun arrangeSort(rendererList: List<BaseItemRenderer<*>>, to: Int, strategy: Strategy) {
@@ -1546,6 +1578,101 @@ class CanvasDelegate(val view: View) : ICanvasView {
         itemsRendererList.forEach {
             it.renderItemDataChanged(reason)
         }
+    }
+
+    /**通过当前的[renderer], 查找对应的[GroupRenderer]
+     * 没有找到就返回自身*/
+    fun findOperateRenderer(renderer: BaseItemRenderer<*>?): BaseItemRenderer<*>? {
+        renderer ?: return null
+        for (item in itemsRendererList) {
+            if (item is GroupRenderer) {
+                if (item.subItemList.contains(renderer)) {
+                    return item
+                }
+            } else if (item == renderer) {
+                return item
+            }
+        }
+        return null
+    }
+
+    /**创建组合*/
+    fun groupGroup(
+        groupRenderer: GroupRenderer,
+        strategy: Strategy = Strategy.normal,
+        reason: Reason = Reason.user
+    ): GroupRenderer {
+        //旧数据
+        val oldRendererList = itemsRendererList.toList()
+        val oldGroupList = oldRendererList.filter { it.isJustGroupRenderer() }
+
+        val dependRendererList = groupRenderer.getDependRendererList()
+        val targetGroupRenderer: GroupRenderer =
+            oldGroupList.firstOrNull() as? GroupRenderer ?: GroupRenderer(this)
+        targetGroupRenderer.resetAllSubList(dependRendererList)
+
+        //新数据
+        val newRendererList = mutableListOf<BaseItemRenderer<*>>()
+        newRendererList.addAll(oldRendererList)
+        newRendererList.removeAll(oldGroupList)
+        newRendererList.removeAll(dependRendererList)
+        newRendererList.add(targetGroupRenderer)
+
+        undoManager.addAndRedo(strategy, {
+            itemsRendererList.resetAll(oldRendererList)
+            GroupRenderer.restoreListGroupId(oldRendererList)
+            dispatchItemListChanged(oldRendererList, reason)
+
+            groupRenderer.canvasDelegate.selectedItem(null)
+            refresh()
+        }) {
+            itemsRendererList.resetAll(newRendererList)
+            GroupRenderer.restoreListGroupId(oldRendererList)
+            dispatchItemListChanged(newRendererList, reason)
+
+            //选中
+            groupRenderer.canvasDelegate.selectedItem(targetGroupRenderer)
+            refresh()
+        }
+        return targetGroupRenderer
+    }
+
+    /**解散组合*/
+    fun groupDissolve(
+        groupRenderer: GroupRenderer,
+        strategy: Strategy = Strategy.normal,
+        reason: Reason = Reason.user
+    ): List<BaseItemRenderer<*>> {
+        val dependRendererList = groupRenderer.getDependRendererList()
+        //旧数据
+        val oldRendererList = itemsRendererList.toList()
+        //新数据
+        val newRendererList = mutableListOf<BaseItemRenderer<*>>()
+        newRendererList.addAll(oldRendererList)
+        newRendererList.remove(groupRenderer)
+        newRendererList.addAll(dependRendererList)
+
+        undoManager.addAndRedo(strategy, {
+            itemsRendererList.resetAll(oldRendererList)
+            GroupRenderer.restoreListGroupId(oldRendererList)
+            dispatchItemListChanged(oldRendererList, reason)
+
+            groupRenderer.canvasDelegate.selectedItem(null)
+            refresh()
+        }) {
+            itemsRendererList.resetAll(newRendererList)
+            GroupRenderer.restoreListGroupId(oldRendererList)
+            dispatchItemListChanged(newRendererList, reason)
+
+            //选中
+            groupRenderer.canvasDelegate.selectGroupRenderer.selectedRendererList(
+                dependRendererList,
+                Strategy.preview
+            )
+            refresh()
+        }
+
+        return dependRendererList
     }
 
     //</editor-fold desc="操作方法">

@@ -1,28 +1,17 @@
 package com.angcyo.canvas.core.renderer
 
 import android.graphics.*
-import android.graphics.drawable.Drawable
-import android.view.Gravity
-import android.widget.LinearLayout
-import androidx.core.graphics.drawable.toDrawable
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
-import com.angcyo.canvas.core.*
+import com.angcyo.canvas.core.CanvasEntryPoint
+import com.angcyo.canvas.core.IRenderer
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.ControlPoint
-import com.angcyo.canvas.core.component.control.ScaleControlPoint
-import com.angcyo.canvas.data.RendererBounds
-import com.angcyo.canvas.items.SelectGroupItem
-import com.angcyo.canvas.items.data.DataItem
-import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
-import com.angcyo.drawable.*
-import com.angcyo.library.component.pool.acquireTempRectF
-import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
-import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
 
@@ -31,17 +20,10 @@ import kotlin.math.min
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/05/09
  */
-class SelectGroupRenderer(canvasView: CanvasDelegate) :
-    BaseItemRenderer<SelectGroupItem>(canvasView), ICanvasListener {
-
-    /**保存选中渲染项*/
-    val selectItemList = mutableSetOf<BaseItemRenderer<*>>()
+class SelectGroupRenderer(canvasView: CanvasDelegate) : GroupRenderer(canvasView) {
 
     /**选择框的颜色*/
     var paintColor: Int = _color(R.color.canvas_select, canvasDelegate.view.context)
-
-    val canvasDelegate: CanvasDelegate
-        get() = canvasView as CanvasDelegate
 
     val selectRect = emptyRectF()
     val selectRectMap = emptyRectF()
@@ -51,13 +33,11 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
     init {
         paint.strokeWidth = 1 * dp
         paint.style = Paint.Style.STROKE
-
-        canvasDelegate.addCanvasListener(this)
     }
 
     override fun onItemRendererRemove(itemRenderer: IItemRenderer<*>, strategy: Strategy) {
         super.onItemRendererRemove(itemRenderer, strategy)
-        if (selectItemList.contains(itemRenderer)) {
+        if (subItemList.contains(itemRenderer)) {
             canvasDelegate.selectedItem(null)
         }
     }
@@ -70,21 +50,9 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         super.onChangeBoundsAfter(reason)
     }
 
-    override fun onRenderItemBoundsChanged(
-        itemRenderer: IRenderer,
-        reason: Reason,
-        oldBounds: RectF
-    ) {
-        if (selectItemList.contains(itemRenderer)) {
-            if (reason.reason == Reason.REASON_USER) {
-                updateSelectBounds()
-            }
-        }
-    }
-
     override fun onRenderItemVisibleChanged(itemRenderer: IRenderer, visible: Boolean) {
         if (!visible) {
-            if (selectItemList.contains(itemRenderer)) {
+            if (subItemList.contains(itemRenderer)) {
                 removeSelectedRenderer(itemRenderer)
             }
         }
@@ -111,7 +79,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
 
     /**重置*/
     fun reset() {
-        selectItemList.clear()
+        subItemList.clear()
         selectRect.setEmpty()
         //重置滚动
         rotate = 0f
@@ -130,29 +98,8 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         }
     }
 
-    /**预览*/
-    override fun preview(renderParams: RenderParams): Drawable? {
-        val bounds = getRotateBounds()
-        return canvasDelegate.getBitmap(bounds)?.toDrawable(canvasDelegate.view.resources)
-    }
-
-    override fun isSupportControlPoint(type: Int): Boolean {
-        /*return when (type) {
-            ControlPoint.POINT_TYPE_DELETE -> true
-            ControlPoint.POINT_TYPE_SCALE -> true
-            else -> false
-        }*/
-        //return super.isSupportControlPoint(type)
-        /*if (type == ControlPoint.POINT_TYPE_LOCK) {
-            //不支持任意比例缩放
-            return false
-        }
-        return true*/
-        return super.isSupportControlPoint(type)
-    }
-
     override fun containsPoint(point: PointF): Boolean {
-        if (selectItemList.size() > 1) {
+        if (subItemList.size() > 1) {
             return super.containsPoint(point)
         }
         return false
@@ -165,7 +112,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         isEnd: Boolean
     ) {
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
-        updateSelectBounds()
+        updateGroupBounds()
     }
 
     override fun onControlFinish(controlPoint: ControlPoint) {
@@ -175,123 +122,7 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         }*/
     }
 
-    override fun renderItemRotateChanged(oldRotate: Float, rotateFlag: Int) {
-        super.renderItemRotateChanged(oldRotate, rotateFlag)
-        val degrees = rotate - oldRotate
-        canvasDelegate.itemsOperateHandler.rotateItemList(
-            selectItemList,
-            degrees,
-            getBounds().centerX(),
-            getBounds().centerY(),
-            Reason(Reason.REASON_CODE, flag = Reason.REASON_FLAG_ROTATE)
-        )
-    }
-
-    override fun renderItemBoundsChanged(reason: Reason, oldBounds: RectF) {
-        super.renderItemBoundsChanged(reason, oldBounds)
-        if (selectItemList.isEmpty()) {
-            return
-        }
-        val renderers = selectItemList.toList()
-        if (reason.reason == Reason.REASON_USER) {
-            if (reason.flag.have(Reason.REASON_FLAG_TRANSLATE) || reason.flag.have(Reason.REASON_FLAG_BOUNDS)) {
-                if (groupTouchDownItemBoundsList.isEmpty()) {
-                    //如果不是手势调整的Bounds
-                    canvasDelegate.itemsOperateHandler.changeBoundsItemList(
-                        renderers,
-                        oldBounds,
-                        getBounds(),
-                        getBoundsScaleAnchor(),
-                        rotate,
-                        Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
-                    )
-                } else {
-                    //如果是手势调整的Bounds
-                    val itemOriginBoundsList = mutableListOf<RectF>()
-                    for (render in renderers) {
-                        groupTouchDownItemBoundsList.find { it.renderer == render }?.let {
-                            itemOriginBoundsList.add(it.bounds)
-                        }
-                    }
-                    canvasDelegate.itemsOperateHandler.changeBoundsItemList(
-                        renderers,
-                        itemOriginBoundsList,
-                        groupTouchDownBounds,
-                        getBounds(),
-                        getBoundsScaleAnchor(),
-                        rotate,
-                        Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
-                    )
-                }
-            }
-        }
-    }
-
-    /**按下时, 最开始的Bounds*/
-    val groupTouchDownBounds = acquireTempRectF()
-
-    /**按下时, 选中元素开始的Bounds*/
-    val groupTouchDownItemBoundsList = mutableListOf<RendererBounds>()
-
-    override fun onScaleControlStart(controlPoint: ScaleControlPoint) {
-        super.onScaleControlStart(controlPoint)
-        //记录开始时所有item的bounds
-        groupTouchDownBounds.set(getBounds())
-        groupTouchDownItemBoundsList.clear()
-        selectItemList.forEach {
-            groupTouchDownItemBoundsList.add(RendererBounds(it))
-        }
-    }
-
-    override fun onScaleControlFinish(controlPoint: ScaleControlPoint, rect: RectF, end: Boolean) {
-        super.onScaleControlFinish(controlPoint, rect, end)
-        if (end) {
-            for (render in selectItemList) {
-                if (render is DataItemRenderer) {
-                    val renderItem = render.rendererItem
-                    val reason = Reason(Reason.REASON_USER, false, Reason.REASON_FLAG_BOUNDS)
-                    if (renderItem is DataItem && renderItem.needUpdateOfBoundsChanged(reason)) {
-                        renderItem.updateRenderItem(render, reason)
-                    }
-                }
-            }
-            groupTouchDownItemBoundsList.clear()
-        }
-    }
-
-    /**更新选中的bounds大小, 需要包含所有选中的元素*/
-    fun updateSelectBounds(resetRotate: Boolean = true) {
-        if (selectItemList.isEmpty()) {
-            return
-        }
-        if (resetRotate) {
-            rotate = 0f//重置旋转
-        }
-        changeBoundsAction(Reason(Reason.REASON_CODE, true)) {
-            var l = 0f
-            var t = 0f
-            var r = 0f
-            var b = 0f
-            selectItemList.forEachIndexed { index, renderer ->
-                val rotateBounds = renderer.getRotateBounds().adjustFlipRect(acquireTempRectF())
-                if (index == 0) {
-                    l = rotateBounds.left
-                    t = rotateBounds.top
-
-                    r = rotateBounds.right
-                    b = rotateBounds.bottom
-                } else {
-                    l = min(l, rotateBounds.left)
-                    t = min(t, rotateBounds.top)
-
-                    r = max(r, rotateBounds.right)
-                    b = max(b, rotateBounds.bottom)
-                }
-                rotateBounds.release()
-            }
-            set(l, t, r, b)
-        }
-    }
+    //---
 
     /**开始多选*/
     @CanvasEntryPoint
@@ -311,10 +142,10 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
             )
 
             canvasViewBox.mapCoordinateSystemRect(selectRect, selectRectMap)
-            selectItemList.clear()
+            subItemList.clear()
             canvasDelegate.itemsRendererList.forEach {
                 if (it.isVisible() && it.intersectRect(selectRectMap)) {
-                    selectItemList.add(it)
+                    subItemList.add(it)
                     //L.i("相交:$it")
                 }
             }
@@ -327,14 +158,14 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
         if (_isStart) {
             _isStart = false
             selectRect.setEmpty()
-            if (selectItemList.isNotEmpty()) {
+            if (subItemList.isNotEmpty()) {
                 //不为空, 则表示选中了元素
-                if (selectItemList.size() == 1) {
+                if (subItemList.size() == 1) {
                     //只选中了一个
-                    canvasDelegate.selectedItem(selectItemList.first())
+                    canvasDelegate.selectedItem(subItemList.first())
                 } else {
                     //否则选中自己
-                    updateSelectBounds()
+                    updateGroupBounds()
                     canvasDelegate.selectedItem(this)
                 }
             }
@@ -351,10 +182,10 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
             canvasDelegate.selectedItem(list.first())
             return
         }
-        val oldList = selectItemList.toList()
-        selectItemList.clear()
-        selectItemList.addAll(list)
-        updateSelectBounds()
+        val oldList = subItemList.toList()
+        subItemList.clear()
+        subItemList.addAll(list)
+        updateGroupBounds()
         if (oldList.isEmpty()) {
             canvasDelegate.selectedItem(this)
         }
@@ -382,21 +213,21 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
             //还未选中过
             canvasDelegate.selectedItem(itemRenderer)
         } else if (selectedRenderer == this) {
-            selectItemList.add(itemRenderer)
-            updateSelectBounds()
+            subItemList.add(itemRenderer)
+            updateGroupBounds()
         } else if (selectedRenderer != itemRenderer) {
-            selectItemList.clear()
-            selectItemList.add(selectedRenderer)
-            selectItemList.add(itemRenderer)
-            updateSelectBounds()
+            subItemList.clear()
+            subItemList.add(selectedRenderer)
+            subItemList.add(itemRenderer)
+            updateGroupBounds()
             canvasDelegate.selectedItem(this)
         }
     }
 
     /**清空选中的列表*/
     fun clearSelectedList(strategy: Strategy) {
-        val oldList = selectItemList.toList()
-        selectItemList.clear()
+        val oldList = subItemList.toList()
+        subItemList.clear()
         canvasDelegate.selectedItem(null)
 
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
@@ -419,196 +250,17 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) :
             canvasDelegate.selectedItem(null)
             return
         }
-        selectItemList.remove(itemRenderer)
-        if (selectItemList.size() == 1) {
+        subItemList.remove(itemRenderer)
+        if (subItemList.size() == 1) {
             //只剩下一个
-            canvasDelegate.selectedItem(selectItemList.first())
-        } else if (selectItemList.isEmpty()) {
+            canvasDelegate.selectedItem(subItemList.first())
+        } else if (subItemList.isEmpty()) {
             //全部没了
             canvasDelegate.selectedItem(null)
         } else {
-            updateSelectBounds()
+            updateGroupBounds()
         }
     }
 
-    /**更新选中子项的对齐方式
-     * [align] [Gravity.LEFT]*/
-    fun updateAlign(align: Int = Gravity.LEFT, strategy: Strategy = Strategy.normal) {
-        val list = selectItemList
-        if (list.size() <= 1) {
-            return
-        }
-
-        //寻找定位锚点item
-        var anchorItemRenderer: BaseItemRenderer<*>? = null
-        if (align.isGravityCenter()) {
-            //找出距离中心点最近的Item
-            val centerX = getBounds().centerX()
-            val centerY = getBounds().centerY()
-
-            //2点之间的最小距离
-            var minR = Float.MAX_VALUE
-
-            list.forEach {
-                val bounds = it.getRotateBounds()
-                val r = c(centerX, centerY, bounds.centerX(), bounds.centerY()).absoluteValue
-                if (r < minR) {
-                    anchorItemRenderer = it
-                    minR = r.toFloat()
-                }
-            }
-        } else if (align.isGravityCenterHorizontal()) {
-            //水平居中, 找出最大的高度item
-            var maxHeight = Float.MIN_VALUE
-            list.forEach {
-                val bounds = it.getRotateBounds()
-                if (bounds.height() > maxHeight) {
-                    anchorItemRenderer = it
-                    maxHeight = bounds.height()
-                }
-            }
-        } else if (align.isGravityCenterVertical()) {
-            //垂直居中, 找出最大的宽度item
-            var maxWidth = Float.MIN_VALUE
-            list.forEach {
-                val bounds = it.getRotateBounds()
-                if (bounds.width() > maxWidth) {
-                    anchorItemRenderer = it
-                    maxWidth = bounds.width()
-                }
-            }
-        } else if (align.isGravityTop()) {
-            var minTop = Float.MAX_VALUE
-            list.forEach {
-                val bounds = it.getRotateBounds()
-                if (bounds.top < minTop) {
-                    anchorItemRenderer = it
-                    minTop = bounds.top
-                }
-            }
-        } else if (align.isGravityBottom()) {
-            var maxBottom = Float.MIN_VALUE
-            list.forEach {
-                val bounds = it.getRotateBounds()
-                if (bounds.bottom > maxBottom) {
-                    anchorItemRenderer = it
-                    maxBottom = bounds.bottom
-                }
-            }
-        } else if (align.isGravityLeft()) {
-            var minLeft = Float.MAX_VALUE
-            list.forEach {
-                val bounds = it.getRotateBounds()
-                if (bounds.left < minLeft) {
-                    anchorItemRenderer = it
-                    minLeft = bounds.left
-                }
-            }
-        } else if (align.isGravityRight()) {
-            var maxRight = Float.MIN_VALUE
-            list.forEach {
-                val bounds = it.getRotateBounds()
-                if (bounds.right > maxRight) {
-                    anchorItemRenderer = it
-                    maxRight = bounds.right
-                }
-            }
-        }
-
-        if (anchorItemRenderer == null) {
-            return
-        }
-
-        val offsetList = mutableListOf<OffsetItemData>()
-
-        val anchorBounds = anchorItemRenderer!!.getRotateBounds()
-        for (item in list) {
-            if (item != anchorItemRenderer) {
-                val itemBounds = item.getRotateBounds()
-                //开始调整
-                var dx = 0f
-                var dy = 0f
-
-                if (align.isGravityCenter()) {
-                    dx = anchorBounds.centerX() - itemBounds.centerX()
-                    dy = anchorBounds.centerY() - itemBounds.centerY()
-                } else if (align.isGravityCenterHorizontal()) {
-                    dy = anchorBounds.centerY() - itemBounds.centerY()
-                } else if (align.isGravityCenterVertical()) {
-                    dx = anchorBounds.centerX() - itemBounds.centerX()
-                } else if (align.isGravityTop()) {
-                    dy = anchorBounds.top - itemBounds.top
-                } else if (align.isGravityBottom()) {
-                    dy = anchorBounds.bottom - itemBounds.bottom
-                } else if (align.isGravityLeft()) {
-                    dx = anchorBounds.left - itemBounds.left
-                } else if (align.isGravityRight()) {
-                    dx = anchorBounds.right - itemBounds.right
-                }
-                offsetList.add(OffsetItemData(item, dx, dy))
-            }
-        }
-        canvasDelegate.itemsOperateHandler.offsetItemList(
-            canvasDelegate,
-            this,
-            offsetList,
-            strategy
-        )
-    }
-
-    /**水平分布/垂直分布*/
-    fun updateFlat(flat: Int, strategy: Strategy = Strategy.normal) {
-        val list = selectItemList
-        val count = list.size()
-        if (count <= 2) {
-            return
-        }
-
-        val sortList = selectItemList.toMutableList()
-        //先排序
-        if (flat == LinearLayout.VERTICAL) {
-            sortList.sortBy { it.getBounds().centerY() }
-        } else if (flat == LinearLayout.HORIZONTAL) {
-            sortList.sortBy { it.getBounds().centerX() }
-        } else {
-            return
-        }
-
-        val first = sortList.first()
-        val last = sortList.last()
-
-        val firstX = first.getBounds().centerX()
-        val firstY = first.getBounds().centerY()
-        //步长
-        val step = when (flat) {
-            LinearLayout.HORIZONTAL -> last.getBounds().centerX() - firstX
-            LinearLayout.VERTICAL -> last.getBounds().centerY() - firstY
-            else -> 0f
-        } / (count - 1)
-
-        val offsetList = mutableListOf<OffsetItemData>()
-        sortList.forEachIndexed { index, renderer ->
-            if (renderer != first && renderer != last) {
-                when (flat) {
-                    LinearLayout.VERTICAL -> {
-                        val dy = firstY + (step * index) - renderer.getBounds().centerY()
-                        offsetList.add(OffsetItemData(renderer, 0f, dy))
-                    }
-                    LinearLayout.HORIZONTAL -> {
-                        val dx = firstX + (step * index) - renderer.getBounds().centerX()
-                        offsetList.add(OffsetItemData(renderer, dx, 0f))
-                    }
-                }
-            }
-        }
-
-        if (offsetList.isNotEmpty()) {
-            canvasDelegate.itemsOperateHandler.offsetItemList(
-                canvasDelegate,
-                this,
-                offsetList,
-                strategy
-            )
-        }
-    }
+    //---
 }

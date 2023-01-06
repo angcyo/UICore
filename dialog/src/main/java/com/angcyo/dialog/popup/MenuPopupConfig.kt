@@ -1,6 +1,7 @@
 package com.angcyo.dialog.popup
 
 import android.content.Context
+import android.os.Build
 import android.view.View
 import com.angcyo.dialog.PopupConfig
 import com.angcyo.dialog.R
@@ -59,8 +60,10 @@ open class MenuPopupConfig : PopupConfig() {
         }
         super.initLayout(window, viewHolder)
 
-        viewHolder.itemView.clipBoundsAnimator {
-            //no op
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            viewHolder.itemView.clipBoundsAnimator {
+                //no op
+            }
         }
     }
 
@@ -86,7 +89,6 @@ open class MenuPopupConfig : PopupConfig() {
             }
         }
     }
-
 }
 
 /**Dsl*/

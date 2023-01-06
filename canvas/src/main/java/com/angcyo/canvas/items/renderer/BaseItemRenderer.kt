@@ -93,6 +93,9 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         }
     }
 
+    /**绘制时, 画布需要旋转的角度*/
+    open fun getDrawRotate(): Float = rotate
+
     /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.renderItemBoundsChanged]*/
     override fun getRotateBounds(): RectF = _rotateBounds
 
@@ -455,6 +458,9 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     //</editor-fold desc="IEngraveProvider">
 
     //<editor-fold desc="Api">
+
+    /**获取相关的渲染器, 这样就支持1对N, 支持组合的功能*/
+    open fun getDependRendererList(): List<BaseItemRenderer<*>> = listOf(this)
 
     /**在[bounds]内对齐*/
     open fun alignInBounds(

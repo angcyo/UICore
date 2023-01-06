@@ -252,7 +252,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
                         val itemList = mutableListOf<BaseItemRenderer<*>>()
                         if (it is SelectGroupRenderer) {
-                            itemList.addAll(it.selectItemList)
+                            itemList.addAll(it.subItemList)
                         }
 
                         canvasDelegate.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
@@ -275,7 +275,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                                         Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
                                     )
                                     if (canvasDelegate.getSelectedRenderer() == itemRenderer) {
-                                        itemRenderer.updateSelectBounds()
+                                        itemRenderer.updateGroupBounds()
                                     }
                                 } else {
                                     itemRenderer.changeBoundsAction {
@@ -295,7 +295,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                                         Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
                                     )
                                     if (canvasDelegate.getSelectedRenderer() == itemRenderer) {
-                                        itemRenderer.updateSelectBounds()
+                                        itemRenderer.updateGroupBounds()
                                     }
                                 } else {
                                     itemRenderer.changeBoundsAction {

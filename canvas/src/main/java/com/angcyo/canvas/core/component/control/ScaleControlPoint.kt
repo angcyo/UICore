@@ -101,7 +101,7 @@ class ScaleControlPoint : ControlPoint() {
     ) {
         val itemList = mutableListOf<BaseItemRenderer<*>>()
         if (itemRenderer is SelectGroupRenderer) {
-            itemList.addAll(itemRenderer.selectItemList)
+            itemList.addAll(itemRenderer.subItemList)
         }
         canvasDelegate.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
             val item = itemRenderer
@@ -123,7 +123,7 @@ class ScaleControlPoint : ControlPoint() {
                         Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
                     )
                     if (canvasDelegate.getSelectedRenderer() == item) {
-                        item.updateSelectBounds()
+                        item.updateGroupBounds()
                     }
                 } else {
                     item.changeBoundsAction {
@@ -143,7 +143,7 @@ class ScaleControlPoint : ControlPoint() {
                         Reason(Reason.REASON_CODE, false, Reason.REASON_FLAG_BOUNDS)
                     )
                     if (canvasDelegate.getSelectedRenderer() == item) {
-                        item.updateSelectBounds()
+                        item.updateGroupBounds()
                     }
                 } else {
                     item.changeBoundsAction {

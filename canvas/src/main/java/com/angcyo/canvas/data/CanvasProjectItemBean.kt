@@ -104,6 +104,9 @@ data class CanvasProjectItemBean(
     /**图层名称, 如果不指定, 则通过[mtype]类型获取*/
     var name: String? = null,
 
+    /**相同id的视为在同一组 string `2023-1-6`*/
+    var groupId: String? = null,
+
     /**填充颜色, 形状的颜色*/
     var fill: String? = null,
 

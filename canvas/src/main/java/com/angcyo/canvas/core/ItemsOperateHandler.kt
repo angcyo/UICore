@@ -6,8 +6,8 @@ import android.graphics.RectF
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
+import com.angcyo.canvas.core.renderer.GroupRenderer
 import com.angcyo.canvas.core.renderer.ICanvasStep
-import com.angcyo.canvas.core.renderer.SelectGroupRenderer
 import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
@@ -306,7 +306,7 @@ class ItemsOperateHandler {
     /**批量偏移[bounds]*/
     fun offsetItemList(
         canvasDelegate: CanvasDelegate,
-        selectGroupRenderer: SelectGroupRenderer?,
+        groupRenderer: GroupRenderer?,
         offsetList: List<OffsetItemData>,
         strategy: Strategy
     ) {
@@ -329,7 +329,7 @@ class ItemsOperateHandler {
                         offset(item.dx, item.dy)
                     }
                 }
-                selectGroupRenderer?.updateSelectBounds()
+                groupRenderer?.updateGroupBounds()
             }
 
             override fun runRedo() {
@@ -344,7 +344,7 @@ class ItemsOperateHandler {
                         offset(item.dx, item.dy)
                     }
                 }
-                selectGroupRenderer?.updateSelectBounds()
+                groupRenderer?.updateGroupBounds()
             }
         }
 
