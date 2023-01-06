@@ -9,7 +9,7 @@ import com.angcyo.library.L
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
-import com.angcyo.library.ex.computeBounds
+import com.angcyo.library.ex.computePathBounds
 import com.angcyo.library.ex.isDebuggerConnected
 import com.angcyo.library.ex.toColor
 
@@ -66,7 +66,7 @@ open class DataPathItem(bean: CanvasProjectItemBean) : DataItem(bean) {
 
         //path实际的宽高
         val pathBounds = acquireTempRectF()
-        pathList.computeBounds(pathBounds, true)
+        pathList.computePathBounds(pathBounds, true)
         val pathWidth = pathBounds.width()
         val pathHeight = pathBounds.height()
 

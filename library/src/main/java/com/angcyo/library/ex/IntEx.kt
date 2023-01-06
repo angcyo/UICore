@@ -257,3 +257,6 @@ fun Double.ensureInt(): String {
         "$d"
     }
 }
+
+/**当前的值, 是否是旋转值, 就是有旋转角度*/
+fun Float.isRotated(): Boolean = this != 0f && this != 360f

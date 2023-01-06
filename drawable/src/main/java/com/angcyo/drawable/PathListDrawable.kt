@@ -3,7 +3,7 @@ package com.angcyo.drawable
 import android.graphics.*
 import androidx.core.graphics.withSave
 import com.angcyo.drawable.base.AbsDslDrawable
-import com.angcyo.library.ex.computeBounds
+import com.angcyo.library.ex.computePathBounds
 
 /** 用来绘制[Path]
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -72,7 +72,7 @@ class PathListDrawable : AbsDslDrawable() {
 
     /**更新数据, 触发刷新*/
     fun updatePath() {
-        pathList.computeBounds(pathBounds)
+        pathList.computePathBounds(pathBounds)
         scalePictureX = pathBounds.left
         scalePointY = pathBounds.top
         _updateScale(bounds.width().toFloat(), bounds.height().toFloat())

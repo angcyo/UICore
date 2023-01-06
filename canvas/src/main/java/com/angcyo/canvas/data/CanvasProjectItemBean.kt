@@ -283,6 +283,10 @@ data class CanvasProjectItemBean(
     @MM
     var gcodeFillStep: Float = 0f,
 
+    /**路径填充的角度
+     * [gcodeFillStep]*/
+    var gcodeFillAngle: Float = 0f,
+
     /**是否扭曲*/
     var isMesh: Boolean = false,
 

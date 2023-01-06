@@ -5,13 +5,13 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.view.Gravity
-import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 import com.angcyo.gcode.GCodeAdjust
 import com.angcyo.gcode.GCodeWriteHandler
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
 import com.angcyo.library.libCacheFile
+import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 import com.angcyo.library.utils.fileNameTime
 import com.angcyo.library.utils.filePath
 import com.angcyo.svg.SvgWriteHandler
@@ -75,6 +75,7 @@ object CanvasDataHandleOperate {
         offsetTop: Float = 0f,
         strokePathStep: Float = 1f,
         fillPathStep: Float = 1f,
+        fillAngle: Float = 0f,
         autoCnc: Boolean = false,
     ): File {
         when (style) {
@@ -104,6 +105,7 @@ object CanvasDataHandleOperate {
                     offsetTop,
                     strokePathStep,
                     fillPathStep,
+                    fillAngle,
                     autoCnc
                 )
             }
@@ -131,6 +133,7 @@ object CanvasDataHandleOperate {
                     offsetTop,
                     strokePathStep,
                     fillPathStep,
+                    fillAngle,
                     autoCnc,
                     true
                 )
@@ -192,6 +195,7 @@ object CanvasDataHandleOperate {
         offsetTop: Float = 0f,
         pathStep: Float = 1f,
         fillPathStep: Float = 1f,
+        fillAngle: Float = 0f, //填充线的旋转角度
         autoCnc: Boolean = false,
         append: Boolean = false,
     ): File {
@@ -209,7 +213,8 @@ object CanvasDataHandleOperate {
                 offsetLeft,
                 offsetTop,
                 pathStep,
-                fillPathStep
+                fillPathStep,
+                fillAngle
             )
         }
         return outputFile

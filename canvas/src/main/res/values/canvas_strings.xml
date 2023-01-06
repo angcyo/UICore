@@ -67,7 +67,8 @@
     <string name="canvas_contrast">Contrast</string>
     <string name="canvas_brightness">Brightness</string>
     <string name="canvas_line_space">Line Space</string>
-    <string name="canvas_path_fill_line_space">Path line spacing</string>
+    <string name="canvas_path_fill_line_space">Fill space</string>
+    <string name="canvas_path_fill_angle">Fill angle</string>
     <string name="canvas_angle">Angle</string>
     <string name="canvas_direction">Direction</string>
     <string name="canvas_inch_unit">Inch</string>

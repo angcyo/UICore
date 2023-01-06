@@ -189,21 +189,26 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
     /**路径填充*/
     fun updatePathFill(
         gcodeFillStep: Float,
+        gcodeFillAngle: Float,
         renderer: DataItemRenderer,
         strategy: Strategy = Strategy.normal
     ) {
         val old = dataBean.gcodeFillStep
+        val oldAngle = dataBean.gcodeFillAngle
         val new = gcodeFillStep
+        val newAngle = gcodeFillAngle
 
-        if (old == new) {
+        if (old == new && oldAngle == newAngle) {
             return
         }
 
         renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
             dataBean.gcodeFillStep = old
+            dataBean.gcodeFillAngle = oldAngle
             updateRenderItem(renderer)
         }) {
             dataBean.gcodeFillStep = new
+            dataBean.gcodeFillAngle = newAngle
             updateRenderItem(renderer)
         }
     }

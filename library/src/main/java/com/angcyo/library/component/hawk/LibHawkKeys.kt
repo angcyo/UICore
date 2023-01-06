@@ -54,6 +54,10 @@ object LibHawkKeys {
     /**是否激活[Path]确切的bounds计算, 计算量会变大*/
     var enablePathBoundsExact: Boolean by HawkPropertyValue<Any, Boolean>(true)
 
+    /**计算[Bounds]时, 容错率, 应该也是each path的采样率
+     * [enablePathBoundsExact]*/
+    var pathAcceptableError: Float by HawkPropertyValue<Any, Float>(1f)
+
     /**是否强制使用高刷*/
     var enableHighRefresh: Boolean by HawkPropertyValue<Any, Boolean>(isDebug())
 

@@ -17,7 +17,6 @@ import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
-import com.angcyo.library.ex.computeBounds
 import com.angcyo.library.ex.computePathBounds
 import com.angcyo.library.ex.withPicture
 import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
@@ -107,7 +106,8 @@ open class PathGraphicsParser : IGraphicsParser {
                 renderBounds,
                 0f,
                 style = if (paint.style == Paint.Style.FILL) Paint.Style.FILL else Paint.Style.FILL_AND_STROKE,
-                fillPathStep = bean.gcodeFillStep.toPixel()
+                fillPathStep = bean.gcodeFillStep.toPixel(),
+                fillAngle = bean.gcodeFillAngle
             ).readText()
             renderBounds.release()
             val gCodeDrawable = GCodeHelper.parseGCode(gcode, paint)
@@ -155,7 +155,7 @@ open class PathGraphicsParser : IGraphicsParser {
             return null
         }
         val pathBounds = acquireTempRectF()
-        drawPathList.computeBounds(pathBounds, true)
+        drawPathList.computePathBounds(pathBounds, true)
 
         //绘制缩放后的path, 至少需要1像素
         val shapeWidth = max(MIN_PATH_SIZE, pathBounds.width()).roundToInt()

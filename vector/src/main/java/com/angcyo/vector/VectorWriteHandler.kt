@@ -1,6 +1,7 @@
 package com.angcyo.vector
 
 import android.graphics.Path
+import android.graphics.PointF
 import android.os.Build
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
@@ -390,11 +391,20 @@ abstract class VectorWriteHandler {
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
         pathStep: Float = 1f,
-        fillPathStep: Float = 1f //填充间距
+        fillPathStep: Float = 1f, //填充间距
+        fillAngle: Float = 0f, //填充线的旋转角度
     ) {
         //能够完全包含path的矩形
         val pathBounds = acquireTempRectF()
-        path.computePathBounds(pathBounds)
+        val targetPath = Path(path)
+
+        var rotatePoint: PointF? = null
+        if (fillAngle.isRotated()) {
+            targetPath.computePathBounds(pathBounds)
+            rotatePoint = PointF(pathBounds.centerX(), pathBounds.centerY())
+            targetPath.rotate(-fillAngle, rotatePoint) //先反向旋转, 再正向旋转
+        }
+        targetPath.computePathBounds(pathBounds)
 
         //矩形由上往下扫描, 取与path的交集
         val scanStep = fillPathStep //扫描步长
@@ -436,11 +446,16 @@ abstract class VectorWriteHandler {
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
-                resultPath.op(scanPath, path, Path.Op.INTERSECT)
+                resultPath.op(scanPath, targetPath, Path.Op.INTERSECT)
             ) {
                 //操作成功
                 if (!resultPath.isEmpty) {
                     //有交集数据, 写入GCode数据
+
+                    if (fillAngle.isRotated()) {
+                        resultPath.rotate(fillAngle, rotatePoint) //正向旋转
+                    }
+
                     pathStrokeToVector(
                         resultPath,
                         writeFirst && isFirst,
@@ -525,7 +540,8 @@ abstract class VectorWriteHandler {
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
         pathStep: Float = 1f,
-        fillPathStep: Float = 1f //填充间距
+        fillPathStep: Float = 1f, //填充间距
+        fillAngle: Float = 0f, //填充线的旋转角度
     ) {
         var isFirst = true
         for (path in pathList) {
@@ -540,7 +556,8 @@ abstract class VectorWriteHandler {
                 offsetLeft,
                 offsetTop,
                 pathStep,
-                fillPathStep
+                fillPathStep,
+                fillAngle
             )
 
             isFirst = false
