@@ -1,5 +1,6 @@
 package com.angcyo.library.component
 
+import androidx.annotation.WorkerThread
 import com.angcyo.library.annotation.DSL
 
 /**
@@ -8,6 +9,7 @@ import com.angcyo.library.annotation.DSL
  * @since 2022/10/21
  */
 
+@WorkerThread
 class BatchHandle<T>(
     /**需要处理的数据*/
     val dataPool: List<T>,
@@ -90,10 +92,10 @@ class BatchHandle<T>(
 }
 
 /**开始批处理数据
- * listOf("").batchHandle({ handle ->
- *     handle.next()
+ * listOf("bean").batchHandle({ bean ->
+ *      next()
  *   }) {
- *   L.i(it.error, it.isFinish)
+ *      L.i(it.error, it.isFinish)
  * }
  * */
 @DSL
