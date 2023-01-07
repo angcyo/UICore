@@ -170,6 +170,7 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
             if (iViewLayoutId == -1) {
                 L.w("未指定[iViewLayoutId].")
             } else {
+                isEnabled = true//OnBackPressedCallback
                 _parentView = parent
                 val rootView = LayoutInflater.from(iContext).inflate(iViewLayoutId, parent, false)
                 iViewHolder = DslViewHolder(rootView)
@@ -188,10 +189,10 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
     }
 
     fun removeInner(parent: ViewGroup?, end: () -> Unit) {
-        isEnabled = false//OnBackPressedCallback
         if (parent == null) {
             end()
         } else {
+            isEnabled = false//OnBackPressedCallback
             val rootView = iViewHolder?.itemView
 
             if (rootView != null) {
