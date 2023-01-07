@@ -492,7 +492,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         //肉眼可见的矩形范围
         canvasViewBox.getVisualRect(visualBounds)
 
-        //前置,不处理matrix
+        //前置
         rendererBeforeList.forEach { renderer ->
             drawRenderer(canvas, renderer)
         }
@@ -502,7 +502,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
             drawRenderer(canvas, renderer)
         }
 
-        //后置,不处理matrix
+        //后置
         if (controlRenderer.isVisible()) {
             controlRenderer.render(canvas, renderParams)
         }

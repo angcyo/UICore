@@ -156,11 +156,11 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
     //---
 
-    /**获取当前能够看到的坐标系的范围矩形, 肉眼坐标保持不变.
+    /**获取当前能够看到的坐标系的范围矩形, 肉眼坐标保持不变. 返回的是坐标系中的坐标
      * [contentRect] 保持原先的位置, [matrix]缩放平移之后,一个新的[RectF]
      * */
     fun getVisualRect(result: RectF = acquireTempRectF()): RectF {
-        invertMatrix.mapRect(result, contentRect)
+        viewRectToCoordinateSystemRect(contentRect, result)
         return result
     }
 
@@ -205,6 +205,19 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         return result
     }
 
+    /**将视图矩形, 转换成坐标系矩形
+     * [viewPointToCoordinateSystemPoint]
+     * [coordinateSystemRectToViewRect]*/
+    fun viewRectToCoordinateSystemRect(
+        rect: RectF,
+        result: RectF = _tempRect,
+        operateMatrix: Matrix = invertMatrix
+    ): RectF {
+        operateMatrix.mapRect(result, rect)
+        result.offset(-getCoordinateSystemX(), -getCoordinateSystemY()) //后偏移, 才是对的
+        return result
+    }
+
     //---
 
     /**将坐标系中的坐标, 转换成view上的坐标
@@ -220,7 +233,8 @@ class CanvasViewBox(val canvasView: ICanvasView) {
         return result
     }
 
-    /**将坐标系中的矩形, 转换成可以直接绘制的矩形*/
+    /**将坐标系中的矩形, 转换成可以直接绘制的矩形
+     * [viewRectToCoordinateSystemRect]*/
     fun coordinateSystemRectToViewRect(rect: RectF, result: RectF = _tempRect): RectF {
         result.set(rect)
         result.offset(getCoordinateSystemX(), getCoordinateSystemY())

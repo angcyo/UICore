@@ -12,6 +12,7 @@ import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.isLineShape
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
@@ -30,9 +31,29 @@ class ItemsOperateHandler {
 
     companion object {
 
+        private val _tempBoundsLimit = RectF()
+
         /**元素的范围限制, +-10000mm*/
-        val BOUNDS_LIMIT =
-            RectF((-30000f).toPixel(), (-30000f).toPixel(), 30000f.toPixel(), (5_0000f).toPixel())
+        val BOUNDS_LIMIT: RectF?
+            get() {
+                val limit = LibHawkKeys.canvasItemBoundsLimit
+                return if (limit.isBlank()) {
+                    null
+                } else {
+                    val list = limit.split(",")
+                    list.forEachIndexed { index, string ->
+                        when (index) {
+                            0 -> _tempBoundsLimit.left = string.toFloatOrNull()?.toPixel() ?: 0f //l
+                            1 -> _tempBoundsLimit.top = string.toFloatOrNull()?.toPixel() ?: 0f  //t
+                            2 -> _tempBoundsLimit.right =
+                                string.toFloatOrNull()?.toPixel() ?: 0f //r
+                            3 -> _tempBoundsLimit.bottom =
+                                string.toFloatOrNull()?.toPixel() ?: 0f //b
+                        }
+                    }
+                    _tempBoundsLimit
+                }
+            }
 
         //region ---can---
 
@@ -88,14 +109,17 @@ class ItemsOperateHandler {
                 return false
             }
 
-            if (toWidth.abs() > BOUNDS_LIMIT.width()) {
-                //限制宽度最大值
-                return false
-            }
+            val boundsLimit = BOUNDS_LIMIT
+            if (boundsLimit != null) {
+                if (toWidth.abs() > boundsLimit.width()) {
+                    //限制宽度最大值
+                    return false
+                }
 
-            if (toHeight.abs() > BOUNDS_LIMIT.height()) {
-                //限制高度最大值
-                return false
+                if (toHeight.abs() > boundsLimit.height()) {
+                    //限制高度最大值
+                    return false
+                }
             }
 
             return true

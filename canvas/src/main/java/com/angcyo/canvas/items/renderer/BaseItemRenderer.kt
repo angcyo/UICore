@@ -65,6 +65,9 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     //临时变量
     val _oldBounds = emptyRectF()
 
+    /**是否需要限制渲染器的Bounds*/
+    var needLimitRendererBounds: Boolean = true
+
     //</editor-fold desc="属性">
 
     //<editor-fold desc="绘制相关属性">
@@ -208,7 +211,9 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     /**Bounds改变后, 触发. 可以再次限制Bounds的大小
      * [changeBoundsAction]*/
     open fun onChangeBoundsAfter(reason: Reason) {
-        getBounds().limitInRect(ItemsOperateHandler.BOUNDS_LIMIT)
+        if (needLimitRendererBounds) {
+            ItemsOperateHandler.BOUNDS_LIMIT?.let { getBounds().limitInRect(it) }
+        }
         /*if (reason.flag == Reason.REASON_FLAG_BOUNDS || reason.flag == Reason.REASON_FLAG_ROTATE) {
 
         }*/

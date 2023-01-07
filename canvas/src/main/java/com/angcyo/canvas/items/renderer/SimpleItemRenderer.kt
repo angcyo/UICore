@@ -1,6 +1,9 @@
 package com.angcyo.canvas.items.renderer
 
+import android.graphics.Canvas
+import android.graphics.RectF
 import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.items.SimpleItem
 
 /**
@@ -8,7 +11,7 @@ import com.angcyo.canvas.items.SimpleItem
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/01/07
  */
-class SimpleItemRenderer(canvasView: ICanvasView, simpleItem: SimpleItem) :
+class SimpleItemRenderer(canvasView: ICanvasView, simpleItem: SimpleItem? = null) :
     BaseItemRenderer<SimpleItem>(canvasView) {
 
     init {
@@ -22,5 +25,13 @@ class SimpleItemRenderer(canvasView: ICanvasView, simpleItem: SimpleItem) :
             }
         }
         super.onUpdateRendererItem(item, oldItem)
+    }
+
+    override fun isOutOfVisualRect(visualRect: RectF): Boolean {
+        return super.isOutOfVisualRect(visualRect)
+    }
+
+    override fun render(canvas: Canvas, renderParams: RenderParams) {
+        super.render(canvas, renderParams)
     }
 }

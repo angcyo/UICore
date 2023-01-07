@@ -139,7 +139,9 @@ fun RectF.limitInRect(limitRect: RectF, result: RectF = this): RectF {
         limitRect.bottom - result.bottom
     else 0f
 
-    result.offset(dx, dy)
+    if (dx != 0f || dy != 0f) {
+        result.offset(dx, dy)
+    }
 
     return result
 }
