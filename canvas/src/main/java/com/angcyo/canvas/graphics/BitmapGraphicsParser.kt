@@ -166,7 +166,10 @@ class BitmapGraphicsParser : IGraphicsParser {
                 )
                 CanvasConstant.DATA_MODE_SEAL -> OpenCV.bitmapToSeal(
                     app(),
-                    originBitmap,
+                    originBitmap.toBlackWhiteHandle(
+                        bean.sealThreshold.toInt(),
+                        alphaBgColor = Color.WHITE
+                    ),
                     bean.sealThreshold.toInt()
                 )
                 CanvasConstant.DATA_MODE_GREY, CanvasConstant.DATA_MODE_DITHERING -> originBitmap.toGrayHandle(
