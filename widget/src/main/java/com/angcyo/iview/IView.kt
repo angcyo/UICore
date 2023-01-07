@@ -84,6 +84,8 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
 
     /**
      * 将[IView]显示到[parent]中, 如果[parent]为空, 会将[IView]从原来的[parent]中移除
+     *
+     * [addInner]
      * */
     @CallPoint
     open fun show(parent: ViewGroup?) {
@@ -98,6 +100,8 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
 
     /**
      * 将[IView]从到[_parentView]中移除
+     *
+     * [removeInner]
      * */
     @CallPoint
     open fun hide(end: (() -> Unit)? = null) {
@@ -106,7 +110,6 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
                 return
             }
             removeInner(_parentView) {
-                isEnabled = false//OnBackPressedCallback
                 end?.invoke()
             }
         }
@@ -185,6 +188,7 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
     }
 
     fun removeInner(parent: ViewGroup?, end: () -> Unit) {
+        isEnabled = false//OnBackPressedCallback
         if (parent == null) {
             end()
         } else {
