@@ -213,6 +213,12 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
             dataBean.src = null
         }*/
 
+        if (oldMode != newMode) {
+            if (oldMode == CanvasConstant.DATA_MODE_GCODE) {
+                //从GCode切换到其他算法
+            }
+        }
+
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
             renderer.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
                 override fun runUndo() {
