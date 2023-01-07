@@ -21,6 +21,7 @@ import com.angcyo.library.*
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.component.pad.Pad
 import com.angcyo.library.ex.connect
+import com.angcyo.library.unit.toPixel
 import java.io.BufferedReader
 import java.io.FileReader
 import java.io.IOException
@@ -409,6 +410,8 @@ object Device {
                 contentView.getWindowVisibleDisplayFrame(rect)
                 append("frame:").append(rect)
             }
+            //毫米转像素
+            append(" 1mm==${1f.toPixel()}px")
 
             //刷新率
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -419,7 +422,7 @@ object Device {
                 val count = modes.size
                 appendLine()
                 if (count > 1) {
-                    append("1/${count} ")
+                    append("${modes.indexOf(windowManager.defaultDisplay.mode)}/${count} ")
                 }
                 append("w:${first.physicalWidth} h:${first.physicalHeight} fps:${first.refreshRate.toInt()} ")
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
