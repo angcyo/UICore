@@ -41,6 +41,10 @@ android {
         //pickFirst 'lib/armeabi-v7a/libRSSupport.so'
         //pickFirst 'lib/arm64-v8a/libRSSupport.so'
         //pickFirst 'lib/arm64-v8a/librsjni.so'
+
+        //opencv
+        //pickFirst 'lib/armeabi-v7a/libopencv_java4.so'
+        //pickFirst 'lib/arm64-v8a/libopencv_java4.so'
     }
 
 //    aaptOptions {
