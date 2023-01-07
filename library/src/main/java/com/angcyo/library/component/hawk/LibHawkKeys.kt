@@ -61,4 +61,11 @@ object LibHawkKeys {
     /**是否强制使用高刷*/
     var enableHighRefresh: Boolean by HawkPropertyValue<Any, Boolean>(isDebug())
 
+    /**2个浮点比较, 误差小于此值视为相等
+     * 0.0000000 //浮点小数点后面有7位*/
+    var floatAcceptableError: Float by HawkPropertyValue<Any, Float>(0.00001f) //5位
+
+    /**2个双精度浮点比较, 误差小于此值视为相等
+     * 0.0000000000000000 //双精度浮点小数点后面有16位*/
+    var doubleAcceptableError: Double by HawkPropertyValue<Any, Double>(0.000000000000001) //15位
 }

@@ -1,6 +1,7 @@
 package com.angcyo.library.ex
 
 import android.os.SystemClock
+import com.angcyo.library.component.hawk.LibHawkKeys
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -191,18 +192,29 @@ fun Double.ensure(def: Double = 1.0): Double {
     return this
 }
 
-/**判断2个浮点数是否相等*/
+/**在指定误差范围[acceptableError]内, 是否相等*/
+fun Float.equalError(
+    other: Float,
+    acceptableError: Float = LibHawkKeys.floatAcceptableError
+): Boolean = (this - other).absoluteValue < acceptableError
+
+fun Double.equalError(
+    other: Double,
+    acceptableError: Double = LibHawkKeys.doubleAcceptableError
+): Boolean = (this - other).absoluteValue < acceptableError
+
+/**判断2个浮点数是否相等, 数值全等*/
 fun Float.eq(other: Float): Boolean =
     java.lang.Float.floatToIntBits(this) == java.lang.Float.floatToIntBits(other)
 
-/**判断2个浮点数是否相等*/
+/**判断2个浮点数是否相等, 数值全等*/
 fun Double.eq(other: Double): Boolean =
     java.lang.Double.doubleToLongBits(this) == java.lang.Double.doubleToLongBits(other)
 
-/**判断2个浮点数是否相等*/
+/**判断2个浮点数是否相等, 数值全等*/
 fun Float.equal2(value: Float): Boolean = toDouble().equal2(value.toDouble())
 
-/**判断2个浮点数是否相等*/
+/**判断2个浮点数是否相等, 数值全等*/
 fun Double.equal2(value: Double): Boolean {
     val data1 = BigDecimal(this)
     val data2 = BigDecimal(value)
