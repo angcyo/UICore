@@ -8,7 +8,9 @@ import com.angcyo.canvas.data.updateWidthHeightByOriginImage
 import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.gcode.GCodeDrawable
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.ex.equalError
 import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
+import com.angcyo.library.unit.toMm
 
 /**
  * 图片数据item
@@ -190,6 +192,21 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         }
     }
 
+    /**未缩放情况下, 图片转GCode, 或者GCode转图片切换*/
+    fun CanvasProjectItemBean.isGCodeFilterHandle(oldMode: Int, newMode: Int): Boolean {
+        val sx = _scaleX
+        val sy = _scaleY
+        if (sx.equalError(1f) && sy.equalError(1f)) {
+            //未缩放
+            if (oldMode != newMode) {
+                if (oldMode == CanvasConstant.DATA_MODE_GCODE || newMode == CanvasConstant.DATA_MODE_GCODE) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     /**更新图片模式
      * [src] 可以是修改后的图片base64数据, 也可以是GCode数据
      * [mode] 数据模式
@@ -213,10 +230,10 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
             dataBean.src = null
         }*/
 
-        if (oldMode != newMode) {
-            if (oldMode == CanvasConstant.DATA_MODE_GCODE) {
-                //从GCode切换到其他算法
-            }
+        if (dataBean.isGCodeFilterHandle(oldMode, newMode)) {
+            //从GCode切换到其他算法, 重置宽高, 使用数据本身的宽高
+            dataBean.width = null
+            dataBean.height = null
         }
 
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
@@ -262,7 +279,19 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         }
 
         //bounds
-        dataBean.updateScale(width, height)
+        if (dataBean.isGCodeFilterHandle(oldMode, newMode)) {
+            //未缩放, 切换到GCode, 重置宽高, 使用数据本身的宽高
+            if (newMode == CanvasConstant.DATA_MODE_GCODE) {
+                //GCode数据的宽高
+                dataBean.width = width.toMm()
+                dataBean.height = height.toMm()
+            } else {
+                dataBean.width = null
+                dataBean.height = null
+            }
+        } else {
+            dataBean.updateScale(width, height)
+        }
 
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
             renderer.canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {

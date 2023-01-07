@@ -10,6 +10,7 @@ import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.parseGCode
 import com.angcyo.gcode.GCodeHelper
 import com.angcyo.library.L
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.app
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.*
@@ -60,20 +61,13 @@ class BitmapGraphicsParser : IGraphicsParser {
     override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
         if (bean.mtype == CanvasConstant.DATA_TYPE_BITMAP && !bean.imageOriginal.isNullOrEmpty()) {
             try {
-                val originBitmap = bean.imageOriginal?.toBitmapOfBase64()
-                originBitmap?.let {
-                    if (bean._width <= 0) {
-                        bean.width = it.width.toMm()
-                    }
-                    if (bean._height <= 0) {
-                        bean.height = it.height.toMm()
-                    }
-                }
+                val originBitmap = bean.imageOriginal?.toBitmapOfBase64() ?: return null
                 return if (bean.imageFilter == CanvasConstant.DATA_MODE_GCODE) {
                     //图片转成了GCode
                     _parseBitmapGCode(bean, originBitmap)
                 } else {
                     //图片其他算法
+                    bean.initBeanWidthHeight(originBitmap.width, originBitmap.height)
                     _parseBitmap(bean, originBitmap)
                 }
             } catch (e: Exception) {
@@ -81,6 +75,16 @@ class BitmapGraphicsParser : IGraphicsParser {
             }
         }
         return super.parse(bean, canvasView)
+    }
+
+    /**初始化数据的宽高属性, 如果之前没有宽高数据*/
+    fun CanvasProjectItemBean.initBeanWidthHeight(@Pixel width: Int, @Pixel height: Int) {
+        if (_width <= 0) {
+            this.width = width.toMm()
+        }
+        if (_height <= 0) {
+            this.height = height.toMm()
+        }
     }
 
     /**图片转GCode处理*/
@@ -119,8 +123,12 @@ class BitmapGraphicsParser : IGraphicsParser {
             item.modifyBitmap = null
 
             val bound = gcodeDrawable.gCodeBound
-            val width = bound.width().toInt()
-            val height = bound.height().toInt()
+            val width = bound.width().ceil().toInt()
+            val height = bound.height().ceil().toInt()
+
+            //init
+            bean.initBeanWidthHeight(width, height)
+
             item.renderDrawable = wrapFlipScalePictureDrawable(
                 bean._flipX,
                 bean._flipY,
