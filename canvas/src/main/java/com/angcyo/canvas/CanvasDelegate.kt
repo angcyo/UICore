@@ -590,7 +590,12 @@ class CanvasDelegate(val view: View) : ICanvasView {
     //<editor-fold desc="操作方法">
 
     /** [itemOrigin] 是否使用最左上角的元素当做原点, 否则就是0,0位置为左上角原点 */
-    fun getBitmap(itemOrigin: Boolean = true, outWidth: Int = -1, outHeight: Int = -1): Bitmap? {
+    fun getBitmap(
+        itemOrigin: Boolean = true,
+        outWidth: Int = -1,
+        outHeight: Int = -1,
+        renderList: List<BaseItemRenderer<*>>? = itemsRendererList
+    ): Bitmap? {
         //val contentWidth = getCanvasViewBox().getContentWidth()
         //val contentHeight = getCanvasViewBox().getContentHeight()
 
@@ -599,29 +604,28 @@ class CanvasDelegate(val view: View) : ICanvasView {
         var right: Float? = null
         var bottom: Float? = null
 
-        itemsRendererList.forEach {
+        val bounds = acquireTempRectF()
+        renderList?.forEach {
             if (it.isVisible()) {
-                val bounds = it.getRotateBounds().adjustFlipRect(acquireTempRectF())
+                it.getRotateBounds().adjustFlipRect(bounds)
                 left = min(left ?: bounds.left, bounds.left)
                 top = min(top ?: bounds.top, bounds.top)
                 right = max(right ?: bounds.right, bounds.right)
                 bottom = max(bottom ?: bounds.bottom, bounds.bottom)
-                bounds.release()
             }
         }
+        bounds.release()
 
-        left = left ?: 0f
-        top = top ?: 0f
-        right = right ?: 1f
-        bottom = bottom ?: 1f
+        val l = left ?: 0f
+        val t = top ?: 0f
+        val r = right ?: 1f
+        val b = bottom ?: 1f
 
         return getBitmap(
-            left!!,
-            top!!,
-            (right!! - left!!).ceil().toInt(),
-            (bottom!! - top!!).ceil().toInt(),
+            l, t, (r - l).ceil().toInt(), (b - t).ceil().toInt(),
             outWidth,
-            outHeight
+            outHeight,
+            renderList
         )
     }
 
@@ -733,16 +737,17 @@ class CanvasDelegate(val view: View) : ICanvasView {
     fun getCanvasDataBean(
         fileName: String? = null,
         outWidth: Int = -1,
-        outHeight: Int = -1
+        outHeight: Int = -1,
+        renderList: List<BaseItemRenderer<*>>? = itemsRendererList
     ): CanvasProjectBean {
         projectName = fileName ?: projectName
 
-        val bitmap = getBitmap(true, outWidth, outHeight)
+        val bitmap = getBitmap(true, outWidth, outHeight, renderList)
         val width = MM_UNIT.convertPixelToValue(bitmap?.width?.toDouble() ?: 0.0)
         val height = MM_UNIT.convertPixelToValue(bitmap?.height?.toDouble() ?: 0.0)
 
         val data = jsonArray {
-            itemsRendererList.forEach { renderer ->
+            renderList?.forEach { renderer ->
                 val list = renderer.getDependRendererList()
                 list.forEach { sub ->
                     try {
