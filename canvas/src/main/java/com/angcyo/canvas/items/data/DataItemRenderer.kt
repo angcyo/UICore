@@ -1,8 +1,10 @@
 package com.angcyo.canvas.items.data
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.RectF
 import android.view.MotionEvent
-import androidx.core.graphics.withMatrix
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
@@ -14,8 +16,8 @@ import com.angcyo.canvas.core.component.SmartAssistant
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.L
-import com.angcyo.library.component.ScalePictureDrawable
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.getScale
+import com.angcyo.library.ex.isNoSize
 
 /**
  * 数据渲染器
@@ -27,13 +29,6 @@ import com.angcyo.library.ex.*
  */
 class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(canvasView),
     ICanvasListener {
-
-    //<editor-fold desc="临时变量">
-
-    val _flipMatrix = Matrix()
-    val _flipRect = emptyRectF()
-
-    //</editor-fold desc="临时变量">
 
     init {
         _name = "Data"
@@ -50,44 +45,6 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
     }
 
     //<editor-fold desc="核心回调">
-
-    override fun render(canvas: Canvas, renderParams: RenderParams) {
-        rendererItem?.getDrawable(renderParams)?.let { drawable ->
-            val renderBounds = renderParams.itemRenderBounds ?: getRenderBounds()
-            //需要处理矩形翻转的情况
-            if (drawable is ScalePictureDrawable) {
-                drawable.setBounds(
-                    renderBounds.left.toInt(),
-                    renderBounds.top.toInt(),
-                    renderBounds.right.toInt(),
-                    renderBounds.bottom.toInt()
-                )
-                drawable.draw(canvas)
-            } else {
-                //用于支持水平/垂直镜像绘制
-                renderBounds.adjustFlipRect(_flipRect)
-                var sx = 1f
-                var sy = 1f
-                if (getBounds().isFlipHorizontal) {
-                    sx = -1f
-                }
-                if (getBounds().isFlipVertical) {
-                    sy = -1f
-                }
-                _flipMatrix.reset()
-                _flipMatrix.postScale(sx, sy, _flipRect.centerX(), _flipRect.centerY())//是否需要水平翻转
-                canvas.withMatrix(_flipMatrix) {
-                    drawable.setBounds(
-                        _flipRect.left.toInt(),
-                        _flipRect.top.toInt(),
-                        _flipRect.right.toInt(),
-                        _flipRect.bottom.toInt()
-                    )
-                    drawable.draw(canvas)
-                }
-            }
-        }
-    }
 
     override fun isSupportControlPoint(type: Int): Boolean {
         if (type == ControlPoint.POINT_TYPE_LOCK) {
@@ -195,8 +152,8 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
         }
     }
 
-    override fun renderItemRotateChanged(oldRotate: Float, rotateFlag: Int) {
-        super.renderItemRotateChanged(oldRotate, rotateFlag)
+    override fun renderItemRotateChanged(oldRotate: Float, newRotate: Float, rotateFlag: Int) {
+        super.renderItemRotateChanged(oldRotate, newRotate, rotateFlag)
         getRendererRenderItem()?.dataBean?.apply {
             angle = rotate
         }

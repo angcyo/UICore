@@ -19,7 +19,7 @@ import com.angcyo.library.ex.dp
  * @since 2022/04/22
  */
 class SmartAssistantRenderer(val smartAssistant: SmartAssistant, canvasView: ICanvasView) :
-    BaseRenderer(canvasView) {
+    BaseOverlayRenderer(canvasView) {
 
     val paint = createPaint(
         _color(R.color.canvas_assistant, smartAssistant.canvasDelegate.view.context),

@@ -15,7 +15,7 @@ import com.angcyo.library.ex.*
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/07/19
  */
-class ProgressRenderer(canvasDelegate: CanvasDelegate) : BaseRenderer(canvasDelegate) {
+class ProgressRenderer(canvasDelegate: CanvasDelegate) : BaseOverlayRenderer(canvasDelegate) {
 
     /**画笔*/
     val paint = createPaint(Color.RED).apply {

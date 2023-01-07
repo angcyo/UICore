@@ -112,8 +112,9 @@ interface IItemRenderer<T : ICanvasItem> : IRenderer {
      * [rotateFlag] 旋转操作的标识 [ROTATE_FLAG_NORMAL] [ROTATE_FLAG_MOVE]*/
     fun rotateBy(degrees: Float, rotateFlag: Int)
 
-    /**当元素的旋转属性发生改变时触发*/
-    fun renderItemRotateChanged(oldRotate: Float, rotateFlag: Int) {}
+    /**当元素的旋转属性发生改变时触发
+     * [newRotate] 会等于 属性[rotate]*/
+    fun renderItemRotateChanged(oldRotate: Float, newRotate: Float, rotateFlag: Int) {}
 
     /**当真实的数据发生了改变后, 触发此方法.
      * 此时可能需要清空数据索引, 以便可以重新发送数据.

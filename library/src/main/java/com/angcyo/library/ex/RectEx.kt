@@ -18,10 +18,14 @@ import kotlin.math.roundToInt
 
 //<editor-fold desc="base">
 
-fun emptyRectF() = RectF(0f, 0f, 0f, 0f)
+fun emptyRectF(def: Float = 0f) = RectF(def, def, def, def)
 
 val Rect.rectF: RectF
     get() = toRectF()
+
+/**矩形是否初始化过*/
+fun RectF.isInitialize(def: Float = 0f): Boolean = left != def &&
+        top != def && right != def && bottom != def
 
 fun Rect.toRectF() = RectF(this)
 

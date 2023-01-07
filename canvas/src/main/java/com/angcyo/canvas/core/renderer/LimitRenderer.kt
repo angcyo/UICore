@@ -32,6 +32,10 @@ class LimitRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView) {
     @Private
     val _limitPathBounds: RectF = RectF()
 
+    init {
+        needCanvasTranslateCoordinateOrigin = true
+    }
+
     override fun render(canvas: Canvas, renderParams: RenderParams) {
         limitList.forEach {
             if (it.enableRender) {

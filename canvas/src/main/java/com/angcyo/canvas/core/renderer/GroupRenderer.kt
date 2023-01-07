@@ -1,6 +1,7 @@
 package com.angcyo.canvas.core.renderer
 
 import android.graphics.Canvas
+import android.graphics.Matrix
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.view.Gravity
@@ -21,6 +22,8 @@ import com.angcyo.canvas.items.SelectGroupItem
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.canvas.utils.getAllDependRendererList
+import com.angcyo.canvas.utils.isJustGroupRenderer
 import com.angcyo.drawable.*
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
@@ -112,8 +115,8 @@ open class GroupRenderer(canvasView: CanvasDelegate) :
         return super.isSupportControlPoint(type)
     }
 
-    override fun renderItemRotateChanged(oldRotate: Float, rotateFlag: Int) {
-        super.renderItemRotateChanged(oldRotate, rotateFlag)
+    override fun renderItemRotateChanged(oldRotate: Float, newRotate: Float, rotateFlag: Int) {
+        super.renderItemRotateChanged(oldRotate, newRotate, rotateFlag)
         val degrees = rotate - oldRotate
         val bounds = getBounds()
         canvasDelegate.itemsOperateHandler.rotateItemList(
@@ -134,6 +137,24 @@ open class GroupRenderer(canvasView: CanvasDelegate) :
     }
 
     //---
+
+    override fun onCanvasBoxMatrixUpdate(
+        canvasView: CanvasDelegate,
+        matrix: Matrix,
+        oldMatrix: Matrix,
+        isEnd: Boolean
+    ) {
+        //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldMatrix, isEnd)
+        if (isJustGroupRenderer()) {
+            for (renderer in getAllDependRendererList()) {
+                if (renderer != this) {
+                    //转发事件
+                    renderer.onCanvasBoxMatrixUpdate(canvasView, matrix, oldMatrix, isEnd)
+                }
+            }
+        }
+        updateGroupBounds(false)
+    }
 
     override fun onRenderItemBoundsChanged(
         itemRenderer: IRenderer,
@@ -265,6 +286,11 @@ open class GroupRenderer(canvasView: CanvasDelegate) :
         result.set(l ?: 0f, t ?: 0f, r ?: 0f, b ?: 0f)
         return result
     }
+
+    /**获取所有依赖的渲染器, 拆组后的所有渲染器
+     * [com.angcyo.canvas.CanvasDelegate.getAllDependRendererList]*/
+    fun getAllDependRendererList(): List<BaseItemRenderer<*>> =
+        subItemList.getAllDependRendererList()
 
     //---
 

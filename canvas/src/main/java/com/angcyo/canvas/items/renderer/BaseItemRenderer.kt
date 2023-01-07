@@ -3,6 +3,7 @@ package com.angcyo.canvas.items.renderer
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.view.Gravity
+import androidx.core.graphics.withMatrix
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasDelegate
@@ -19,6 +20,7 @@ import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.utils.createTextPaint
 import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.L
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
@@ -94,7 +96,14 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     }
 
     /**绘制时, 画布需要旋转的角度*/
-    open fun getDrawRotate(): Float = rotate
+    override fun getDrawRotate(): Float = rotate
+
+    /**当前的渲染器是否超过可视化渲染区域, 超过区域的渲染器不会被渲染 */
+    override fun isOutOfVisualRect(@Pixel visualRect: RectF): Boolean {
+        return if (getBounds().isInitialize(Float.MIN_VALUE)) {
+            getRenderRotateBounds().isOutOf(visualRect)
+        } else false
+    }
 
     /**[com.angcyo.canvas.items.renderer.BaseItemRenderer.renderItemBoundsChanged]*/
     override fun getRotateBounds(): RectF = _rotateBounds
@@ -175,6 +184,22 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         mapRotateRect(getVisualBounds(), getVisualRotateBounds())
     }
 
+    /**首次输出化渲染器的渲染范围*/
+    open fun initRendererBounds(
+        bounds: RectF? = null,
+        reason: Reason = Reason(
+            Reason.REASON_CODE,
+            false,
+            Reason.REASON_FLAG_BOUNDS
+        ),
+        block: RectF.() -> Unit = {}
+    ) {
+        changeBoundsAction(reason) {
+            bounds?.let { set(bounds) }
+            block()
+        }
+    }
+
     /**是否可以改变bound*/
     open fun canChangeBounds(toBounds: RectF): Boolean {
         return ItemsOperateHandler.canChangeBounds(this, toBounds)
@@ -213,6 +238,49 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
         //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldMatrix)
         changeBeforeBounds.set(getBounds())
         renderItemBoundsChanged(Reason(), changeBeforeBounds)
+    }
+
+    //---
+
+    val _flipMatrix = Matrix()
+    val _flipRect = emptyRectF()
+
+    override fun render(canvas: Canvas, renderParams: RenderParams) {
+        rendererItem?.getDrawDrawable(renderParams)?.let { drawable ->
+            val renderBounds = renderParams.itemRenderBounds ?: getRenderBounds()
+            //需要处理矩形翻转的情况
+            if (drawable is ScalePictureDrawable) {
+                drawable.setBounds(
+                    renderBounds.left.toInt(),
+                    renderBounds.top.toInt(),
+                    renderBounds.right.toInt(),
+                    renderBounds.bottom.toInt()
+                )
+                drawable.draw(canvas)
+            } else {
+                //用于支持水平/垂直镜像绘制
+                renderBounds.adjustFlipRect(_flipRect)
+                var sx = 1f
+                var sy = 1f
+                if (getBounds().isFlipHorizontal) {
+                    sx = -1f
+                }
+                if (getBounds().isFlipVertical) {
+                    sy = -1f
+                }
+                _flipMatrix.reset()
+                _flipMatrix.postScale(sx, sy, _flipRect.centerX(), _flipRect.centerY())//是否需要水平翻转
+                canvas.withMatrix(_flipMatrix) {
+                    drawable.setBounds(
+                        _flipRect.left.toInt(),
+                        _flipRect.top.toInt(),
+                        _flipRect.right.toInt(),
+                        _flipRect.bottom.toInt()
+                    )
+                    drawable.draw(canvas)
+                }
+            }
+        }
     }
 
     override fun preview(renderParams: RenderParams): Drawable? {
@@ -421,7 +489,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
             rotate += degrees
             rotate %= 360
         }
-        renderItemRotateChanged(oldRotate, rotateFlag)
+        renderItemRotateChanged(oldRotate, rotate, rotateFlag)
         L.i("旋转by->$degrees -> $rotate")
     }
 

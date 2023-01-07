@@ -1,6 +1,9 @@
 package com.angcyo.canvas.core.renderer
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.PointF
+import android.graphics.RectF
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.canvas.Reason
@@ -33,6 +36,8 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) : GroupRenderer(canvasView
     init {
         paint.strokeWidth = 1 * dp
         paint.style = Paint.Style.STROKE
+
+        overlayRender()
     }
 
     override fun onItemRendererRemove(itemRenderer: IItemRenderer<*>, strategy: Strategy) {
@@ -103,16 +108,6 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) : GroupRenderer(canvasView
             return super.containsPoint(point)
         }
         return false
-    }
-
-    override fun onCanvasBoxMatrixUpdate(
-        canvasView: CanvasDelegate,
-        matrix: Matrix,
-        oldMatrix: Matrix,
-        isEnd: Boolean
-    ) {
-        //super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldValue)
-        updateGroupBounds()
     }
 
     override fun onControlFinish(controlPoint: ControlPoint) {

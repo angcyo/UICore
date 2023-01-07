@@ -12,7 +12,7 @@ import com.angcyo.canvas.utils.createPaint
  * @since 2022/04/08
  */
 class CenterRenderer(canvasView: CanvasDelegate) :
-    BaseRenderer(canvasView) {
+    BaseOverlayRenderer(canvasView) {
 
     val paint = createPaint(Color.RED).apply {
         //init

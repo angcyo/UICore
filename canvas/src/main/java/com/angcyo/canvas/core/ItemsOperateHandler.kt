@@ -119,7 +119,11 @@ class ItemsOperateHandler {
             tempRect.rotate(degrees, pivotX, pivotY)
             val oldRotate = renderer.rotate
             renderer.rotate += degrees
-            renderer.renderItemRotateChanged(oldRotate, IItemRenderer.ROTATE_FLAG_NORMAL)
+            renderer.renderItemRotateChanged(
+                oldRotate,
+                renderer.rotate,
+                IItemRenderer.ROTATE_FLAG_NORMAL
+            )
             renderer.changeBoundsAction(reason) {
                 offset(tempRect.centerX() - centerX(), tempRect.centerY() - centerY())
             }

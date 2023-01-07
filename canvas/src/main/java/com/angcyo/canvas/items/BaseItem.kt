@@ -1,6 +1,7 @@
 package com.angcyo.canvas.items
 
 import android.graphics.drawable.Drawable
+import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.library.ex.uuid
 
@@ -21,10 +22,15 @@ abstract class BaseItem : ICanvasItem {
     /**图层预览的图形*/
     override var itemLayerDrawable: Drawable? = null
 
-    //
+    //---
 
     /**获取当前的缩放比例*/
     open fun getItemScaleX(renderer: BaseItemRenderer<*>): Float = 1f
 
     open fun getItemScaleY(renderer: BaseItemRenderer<*>): Float = 1f
+
+    //---
+
+    /**获取绘制在界面上的[Drawable]*/
+    open fun getDrawDrawable(renderParams: RenderParams): Drawable? = null
 }

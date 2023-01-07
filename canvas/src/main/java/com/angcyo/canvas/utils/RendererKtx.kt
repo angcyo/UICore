@@ -30,3 +30,12 @@ fun BaseItem.isLineShape(): Boolean {
 }
 
 fun CanvasProjectItemBean.isLineShape(): Boolean = mtype == CanvasConstant.DATA_TYPE_LINE
+
+/**获取所有依赖的渲染器, 拆组后的所有渲染器*/
+fun Collection<BaseItemRenderer<*>>.getAllDependRendererList(): List<BaseItemRenderer<*>> {
+    val result = mutableListOf<BaseItemRenderer<*>>()
+    for (renderer in this) {
+        result.addAll(renderer.getDependRendererList())
+    }
+    return result
+}

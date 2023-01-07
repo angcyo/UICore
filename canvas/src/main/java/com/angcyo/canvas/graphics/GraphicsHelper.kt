@@ -319,7 +319,7 @@ object GraphicsHelper {
         renderer.rotate = bean.angle
 
         //bounds
-        renderer.changeBoundsAction(Reason(Reason.REASON_CODE, true, Reason.REASON_FLAG_BOUNDS)) {
+        renderer.initRendererBounds {
             bean.updateToRenderBounds(this)
             if (renderer.isLineShape() && height().abs() < MIN_PATH_SIZE) {
                 //如果是线条, 则高度强制使用1像素

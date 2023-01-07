@@ -4,10 +4,7 @@ import android.graphics.*
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.UiThread
-import androidx.core.graphics.withClip
-import androidx.core.graphics.withMatrix
-import androidx.core.graphics.withRotation
-import androidx.core.graphics.withTranslation
+import androidx.core.graphics.*
 import com.angcyo.canvas.core.*
 import com.angcyo.canvas.core.component.*
 import com.angcyo.canvas.core.renderer.*
@@ -22,6 +19,7 @@ import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer.Companion.ROTATE_FLAG_NORMAL
 import com.angcyo.canvas.utils.ShapesHelper
+import com.angcyo.canvas.utils.getAllDependRendererList
 import com.angcyo.canvas.utils.isJustGroupRenderer
 import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.http.base.json
@@ -87,16 +85,13 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**事件回调, 支持多线程操作*/
     val canvasListenerList = CopyOnWriteArraySet<ICanvasListener>()
 
-    /**内容绘制之前, 额外的渲染器.
-     * 不处理[Matrix]*/
+    /**内容绘制之前, 额外的渲染器*/
     val rendererBeforeList = mutableSetOf<BaseRenderer>()
 
-    /**内容绘制之后, 额外的渲染器
-     * 不处理[Matrix]*/
+    /**内容绘制之后, 额外的渲染器*/
     val rendererAfterList = mutableSetOf<BaseRenderer>()
 
-    /**最后渲染的渲染器
-     * 不处理[Matrix]*/
+    /**最后渲染的渲染器 */
     val rendererLastList = mutableSetOf<BaseRenderer>()
 
     /**将操作移动到[onSizeChanged]后触发*/
@@ -492,39 +487,19 @@ class CanvasDelegate(val view: View) : ICanvasView {
             }
         }
 
-        //前置,不处理matrix
-        rendererBeforeList.forEach {
-            if (it.isVisible()) {
-                it.render(canvas, renderParams)
-            }
-        }
-
         //内容, 绘制内容时, 自动使用[matrix]
         val canvasViewBox = getCanvasViewBox()
         //肉眼可见的矩形范围
-        val visualRect = canvasViewBox.getVisualRect(visualBounds)
-        canvas.withClip(canvasViewBox.contentRect) {
-            canvas.withMatrix(canvasViewBox.matrix) {
-                itemsRendererList.forEach { renderer ->
-                    if (renderer.isVisible()) {
-                        val renderRotateBounds = renderer.getRenderRotateBounds()
+        canvasViewBox.getVisualRect(visualBounds)
 
-                        if (renderRotateBounds.isOutOf(visualRect)) {
-                            //超过了肉眼可见范围, 不绘制
-                        } else {
-                            //item的旋转, 在此处理
-                            val bounds = renderer.getRenderBounds()
-                            canvas.withRotation(
-                                renderer.getDrawRotate(),
-                                bounds.centerX(),
-                                bounds.centerY()
-                            ) {
-                                renderer.render(canvas, renderParams)
-                            }
-                        }
-                    }
-                }
-            }
+        //前置,不处理matrix
+        rendererBeforeList.forEach { renderer ->
+            drawRenderer(canvas, renderer)
+        }
+
+        //元素绘制
+        itemsRendererList.forEach { renderer ->
+            drawRenderer(canvas, renderer)
         }
 
         //后置,不处理matrix
@@ -533,30 +508,44 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
 
         //after
-        rendererAfterList.forEach {
-            if (it.isVisible()) {
-                it.render(canvas, renderParams)
-            }
+        rendererAfterList.forEach { renderer ->
+            drawRenderer(canvas, renderer)
         }
 
         //限制框提示渲染
-        if (limitRenderer.isVisible()) {
-            canvas.withClip(canvasViewBox.contentRect) {
-                canvas.withMatrix(canvasViewBox.matrix) {
-                    canvas.withTranslation(
-                        canvasViewBox.getCoordinateSystemX(),
-                        canvasViewBox.getCoordinateSystemY()
-                    ) {
-                        limitRenderer.render(canvas, renderParams)
-                    }
-                }
-            }
-        }
+        drawRenderer(canvas, limitRenderer)
 
         //last
-        rendererLastList.forEach {
-            if (it.isVisible()) {
-                it.render(canvas, renderParams)
+        rendererLastList.forEach { renderer ->
+            drawRenderer(canvas, renderer)
+        }
+    }
+
+    /**绘制对应的[renderer]*/
+    private fun drawRenderer(canvas: Canvas, renderer: BaseRenderer) {
+        if (renderer.isVisible() && !renderer.isOutOfVisualRect(visualBounds)) {
+            val canvasViewBox = getCanvasViewBox()
+            canvas.withSave {
+                if (renderer.needCanvasClipContent) {
+                    clipRect(canvasViewBox.contentRect)
+                }
+                if (renderer.needCanvasContentMatrix) {
+                    concat(canvasViewBox.matrix)
+                }
+                if (renderer.needCanvasTranslateCoordinateOrigin) {
+                    translate(
+                        canvasViewBox.getCoordinateSystemX(),
+                        canvasViewBox.getCoordinateSystemY()
+                    )
+                }
+                if (renderer.needCanvasRotation) {
+                    val drawRotate = renderer.getDrawRotate()
+                    if (drawRotate.isRotated()) {
+                        val bounds = renderer.getRenderBounds()
+                        rotate(drawRotate, bounds.centerX(), bounds.centerY())
+                    }
+                }
+                renderer.render(canvas, renderParams)
             }
         }
     }
@@ -788,6 +777,11 @@ class CanvasDelegate(val view: View) : ICanvasView {
         return null
     }
 
+    /**获取所有依赖的渲染器, 拆组后的所有渲染器
+     * [com.angcyo.canvas.core.renderer.GroupRenderer.getAllDependRendererList]*/
+    fun getAllDependRendererList(): List<BaseItemRenderer<*>> =
+        itemsRendererList.getAllDependRendererList()
+
     /**通过[uuid], 获取对应的[BaseItemRenderer]*/
     fun getRendererItem(uuid: String?): BaseItemRenderer<*>? {
         if (uuid.isNullOrEmpty()) {
@@ -807,6 +801,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     /**通过数据索引[indexList], 获取对应的[BaseItemRenderer]*/
     fun getRendererItem(indexList: List<String>?): List<BaseItemRenderer<*>> {
+        indexList ?: return emptyList()
         val result = mutableListOf<BaseItemRenderer<*>>()
         /*for (item in itemsRendererList) {
             val renderItem = item.getRendererRenderItem()
@@ -816,10 +811,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
                 }
             }
         }*/
-        indexList?.forEach { index ->
-            itemsRendererList.find { "${it.dataItemIndex}" == index }?.let { item ->
-                result.add(item)
-            }
+        val list = getAllDependRendererList()
+        indexList.forEach { index ->
+            list.find { "${it.dataItemIndex}" == index }?.let { item -> result.add(item) }
         }
         return result
     }

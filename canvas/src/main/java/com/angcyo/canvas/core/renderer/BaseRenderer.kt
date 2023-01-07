@@ -10,8 +10,11 @@ import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.RenderParams
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.ex.emptyRectF
+import com.angcyo.library.ex.isInitialize
+import com.angcyo.library.ex.isOutOf
 import com.angcyo.library.ex.withPicture
 
 /**
@@ -25,13 +28,13 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
     var _visible: Boolean = true
 
     /**距离坐标系原点的像素坐标*/
-    val _bounds = emptyRectF()
+    val _bounds = emptyRectF(Float.MIN_VALUE)
 
     /**在坐标系中的坐标*/
-    val _renderBounds = emptyRectF()
+    val _renderBounds = emptyRectF(Float.MIN_VALUE)
 
     /**相对于视图左上角的坐标*/
-    val _visualBounds = emptyRectF()
+    val _visualBounds = emptyRectF(Float.MIN_VALUE)
 
     //---
 
@@ -43,8 +46,29 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
 
     var _name: CharSequence? = null
 
+    /**当前的渲染器绘制的时候需要[Canvas]剪切内容*/
+    var needCanvasClipContent: Boolean = true
+
+    /**当前的渲染器绘制的时候是否需要旋转
+     * [getDrawRotate]*/
+    var needCanvasRotation: Boolean = true
+
+    /**当前的渲染器绘制的时候需要收到[CanvasViewBox]的[Matrix]影响*/
+    var needCanvasContentMatrix: Boolean = true
+
+    /**当前的渲染器绘制的时候是否需要偏移到坐标系原点*/
+    var needCanvasTranslateCoordinateOrigin: Boolean = false
+
     //---
 
+    /**覆盖渲染*/
+    fun overlayRender() {
+        needCanvasClipContent = false
+        needCanvasContentMatrix = false
+        needCanvasTranslateCoordinateOrigin = false
+    }
+
+    //---
 
     /**获取图层描述的名字*/
     override fun getName(): CharSequence? = _name ?: "Default"
@@ -92,6 +116,16 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
 
     override fun onCanvasSizeChanged(canvasView: CanvasDelegate) {
         //no op
+    }
+
+    /**[needCanvasRotation]*/
+    open fun getDrawRotate(): Float = 0f
+
+    /**当前的渲染器是否超过可视化渲染区域, 超过区域的渲染器不会被渲染 */
+    open fun isOutOfVisualRect(@Pixel visualRect: RectF): Boolean {
+        return if (getBounds().isInitialize(Float.MIN_VALUE)) {
+            getRenderBounds().isOutOf(visualRect)
+        } else false
     }
 
     /**当[CanvasViewBox]坐标系发生改变时, 实时更新[_visualBounds]*/

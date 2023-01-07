@@ -28,7 +28,7 @@ import com.angcyo.library.unit.convertPixelToValueUnit
  * @date 2022/04/02
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class MonitorRenderer(canvasView: ICanvasView) : BaseRenderer(canvasView), ICanvasListener {
+class MonitorRenderer(canvasView: ICanvasView) : BaseOverlayRenderer(canvasView), ICanvasListener {
 
     val paint = createTextPaint().apply {
         //init

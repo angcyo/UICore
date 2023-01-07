@@ -109,7 +109,7 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
     //---操作---
 
     /**获取需要绘制的[Drawable]*/
-    fun getDrawable(renderParams: RenderParams): Drawable? {
+    override fun getDrawDrawable(renderParams: RenderParams): Drawable? {
         val drawable = if (renderParams.isFromRenderer) {
             renderDrawable
         } else {
@@ -284,7 +284,7 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
             return bitmap
         }
         val rotate = if (renderParams.renderOrigin) 0f else _rotate
-        getDrawable(renderParams)?.let { drawable ->
+        getDrawDrawable(renderParams)?.let { drawable ->
             if (renderParams.renderOrigin) {
                 return drawable.toBitmap()
             } else {
