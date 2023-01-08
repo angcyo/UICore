@@ -6,6 +6,7 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.canvas.Reason
+import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.library.unit.IValueUnit
@@ -49,7 +50,7 @@ interface ICanvasView : IComponent {
 
     /**分发渲染器可见性改变
      * [com.angcyo.canvas.core.ICanvasListener.onRenderItemVisibleChanged]*/
-    fun dispatchItemVisibleChanged(item: IRenderer, visible: Boolean) {}
+    fun dispatchItemVisibleChanged(item: IRenderer, visible: Boolean, strategy: Strategy) {}
 
     /**分发渲染更新
      * [com.angcyo.canvas.core.ICanvasListener.onItemRenderUpdate]*/

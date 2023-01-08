@@ -17,7 +17,7 @@ interface IRenderer {
     //<editor-fold desc="属性操作">
 
     /**是否可见*/
-    fun isVisible(): Boolean
+    fun isVisible(renderParams: RenderParams? = null): Boolean
 
     /**获取图层描述的名字*/
     fun getName(): CharSequence?

@@ -323,10 +323,10 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
     }
 
-    override fun dispatchItemVisibleChanged(item: IRenderer, visible: Boolean) {
-        super.dispatchItemVisibleChanged(item, visible)
+    override fun dispatchItemVisibleChanged(item: IRenderer, visible: Boolean, strategy: Strategy) {
+        super.dispatchItemVisibleChanged(item, visible, strategy)
         canvasListenerList.forEach {
-            it.onRenderItemVisibleChanged(item, visible)
+            it.onRenderItemVisibleChanged(item, visible, strategy)
         }
         if (!visible) {
             //不可见
@@ -693,9 +693,9 @@ class CanvasDelegate(val view: View) : ICanvasView {
         val paintOffset = 1 //向左上多偏移一段笔的粗细
         canvas.withTranslation(-left + paintOffset, -top + paintOffset) {
             val tempRenderRect = acquireTempRectF()
-            val renderParams = RenderParams(false, tempRenderRect)
+            val renderParams = RenderParams(false, tempRenderRect, isPreview = true)
             renderList.forEach { renderer ->
-                if (renderer.isVisible()) {
+                if (renderer is GroupRenderer || renderer.isVisible(renderParams)) {
                     //item的旋转, 在此处理
                     val bounds = renderer.getBounds()
                     tempRenderRect.set(bounds)

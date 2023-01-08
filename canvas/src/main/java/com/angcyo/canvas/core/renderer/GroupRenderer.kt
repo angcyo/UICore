@@ -80,7 +80,7 @@ open class GroupRenderer(canvasView: CanvasDelegate) :
     /**渲染*/
     override fun render(canvas: Canvas, renderParams: RenderParams) {
         subItemList.forEach { renderer ->
-            if (renderer.isVisible()) {
+            if (renderer.isVisible(renderParams)) {
                 //item的旋转, 在此处理
                 val bounds = renderer.getRenderBounds()
                 canvas.withRotation(
@@ -242,7 +242,27 @@ open class GroupRenderer(canvasView: CanvasDelegate) :
         }
     }
 
+    override fun onRendererVisibleChanged(from: Boolean, to: Boolean, strategy: Strategy) {
+        super.onRendererVisibleChanged(from, to, strategy)
+        getDependRendererList().forEach { item ->
+            item.setVisible(to, Strategy.preview)
+        }
+    }
+
     //---
+
+    /**更新组的可见性, 组内有一个不可见, 则不可见*/
+    fun updateGroupProperty(list: List<BaseItemRenderer<*>>) {
+        //可见性
+        var isVisible = true
+        for (renderer in list) {
+            if (!renderer.isVisible()) {
+                isVisible = false
+                break
+            }
+        }
+        setVisible(isVisible, Strategy.preview)
+    }
 
     /**更新选中的bounds大小, 需要包含所有选中的元素*/
     fun updateGroupBounds(resetRotate: Boolean = true) {
@@ -265,6 +285,7 @@ open class GroupRenderer(canvasView: CanvasDelegate) :
         if (groupId != null) {
             this.groupId = groupId
         }
+        updateGroupProperty(newList)
         updateListGroupId(newList, this.groupId)
         updateGroupBounds(true)
     }

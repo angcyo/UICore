@@ -58,7 +58,11 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) : GroupRenderer(canvasView
         super.onChangeBoundsAfter(reason)
     }
 
-    override fun onRenderItemVisibleChanged(itemRenderer: IRenderer, visible: Boolean) {
+    override fun onRenderItemVisibleChanged(
+        itemRenderer: IRenderer,
+        visible: Boolean,
+        strategy: Strategy
+    ) {
         if (!visible) {
             if (subItemList.contains(itemRenderer)) {
                 removeSelectedRenderer(itemRenderer)

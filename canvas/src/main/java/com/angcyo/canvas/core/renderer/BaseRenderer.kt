@@ -73,17 +73,16 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
     /**获取图层描述的名字*/
     override fun getName(): CharSequence? = _name ?: "Default"
 
-    override fun isVisible(): Boolean = _visible
+    override fun isVisible(renderParams: RenderParams?): Boolean =
+        if (renderParams?.isPreview == true) true else _visible
 
     /**设置可见性*/
     open fun setVisible(visible: Boolean, strategy: Strategy = Strategy.normal) {
-        val oldValue = isVisible()
+        val oldValue = isVisible(null)
         if (visible == oldValue) {
             return
         }
         _visible = visible
-        canvasView.dispatchItemVisibleChanged(this, visible)
-        refresh()
 
         if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
             canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
@@ -96,7 +95,14 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
                 }
             })
         }
+
+        onRendererVisibleChanged(oldValue, visible, strategy)
+        canvasView.dispatchItemVisibleChanged(this, visible, strategy)
+        refresh()
     }
+
+    /**自身的回调, 可见性改变了*/
+    open fun onRendererVisibleChanged(from: Boolean, to: Boolean, strategy: Strategy) {}
 
     /**此[_bounds]是相对于坐标原点的坐标, 不带旋转属性
      *

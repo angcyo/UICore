@@ -20,4 +20,7 @@ data class RenderParams(
     /**是否渲染原始的属性数据,
      * 不旋转, 不缩放*/
     var renderOrigin: Boolean = false,
+
+    /**是否是来自预览的请求*/
+    var isPreview: Boolean = false,
 )

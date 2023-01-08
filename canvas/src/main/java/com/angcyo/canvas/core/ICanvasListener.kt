@@ -54,7 +54,7 @@ interface ICanvasListener : ICanvasTouch {
     fun onItemRenderUpdate(itemRenderer: IRenderer) {}
 
     /**可见性改变回调*/
-    fun onRenderItemVisibleChanged(itemRenderer: IRenderer, visible: Boolean) {}
+    fun onRenderItemVisibleChanged(itemRenderer: IRenderer, visible: Boolean, strategy: Strategy) {}
 
     /**双击[IItemRenderer]*/
     fun onDoubleTapItem(itemRenderer: IItemRenderer<*>) {}

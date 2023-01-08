@@ -171,9 +171,9 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
         super.renderItemDataChanged(reason)
     }
 
-    override fun setVisible(visible: Boolean, strategy: Strategy) {
-        super.setVisible(visible, strategy)
-        getRendererRenderItem()?.updateVisible(visible, this, Strategy.preview)
+    override fun onRendererVisibleChanged(from: Boolean, to: Boolean, strategy: Strategy) {
+        super.onRendererVisibleChanged(from, to, strategy)
+        getRendererRenderItem()?.updateVisible(to, this, Strategy.preview)
     }
 
     //<editor-fold desc="IEngraveProvider">
