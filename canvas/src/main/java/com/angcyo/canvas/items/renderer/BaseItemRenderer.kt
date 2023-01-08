@@ -15,6 +15,7 @@ import com.angcyo.canvas.core.ItemsOperateHandler
 import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.core.renderer.BaseRenderer
+import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.graphics.IEngraveProvider
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.utils.createTextPaint
@@ -531,6 +532,9 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     //</editor-fold desc="IEngraveProvider">
 
     //<editor-fold desc="Api">
+
+    /**复制数据*/
+    open fun copyItemRendererData(strategy: Strategy): List<CanvasProjectItemBean>? = null
 
     /**获取相关的渲染器, 这样就支持1对N, 支持组合的功能*/
     open fun getDependRendererList(): List<BaseItemRenderer<*>> = listOf(this)

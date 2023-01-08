@@ -13,6 +13,7 @@ import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.SmartAssistant
+import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.L
@@ -174,6 +175,10 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
     override fun onRendererVisibleChanged(from: Boolean, to: Boolean, strategy: Strategy) {
         super.onRendererVisibleChanged(from, to, strategy)
         getRendererRenderItem()?.updateVisible(to, this, Strategy.preview)
+    }
+
+    override fun copyItemRendererData(strategy: Strategy): List<CanvasProjectItemBean>? {
+        return dataItem?.dataBean?.copyBean()?.run { listOf(this) }
     }
 
     //<editor-fold desc="IEngraveProvider">

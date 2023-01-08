@@ -17,6 +17,7 @@ import com.angcyo.canvas.core.OffsetItemData
 import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
+import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.RendererBounds
 import com.angcyo.canvas.items.SelectGroupItem
 import com.angcyo.canvas.items.data.DataItem
@@ -120,7 +121,7 @@ open class GroupRenderer(canvasView: CanvasDelegate) :
         val degrees = rotate - oldRotate
         val bounds = getBounds()
         canvasDelegate.itemsOperateHandler.rotateItemList(
-            subItemList,
+            subItemList.getAllDependRendererList(),
             degrees,
             bounds.centerX(),
             bounds.centerY(),
@@ -132,6 +133,18 @@ open class GroupRenderer(canvasView: CanvasDelegate) :
         val result = mutableListOf<BaseItemRenderer<*>>()
         for (item in subItemList) {
             result.addAll(item.getDependRendererList())
+        }
+        return result
+    }
+
+    override fun copyItemRendererData(strategy: Strategy): List<CanvasProjectItemBean>? {
+        val result = mutableListOf<CanvasProjectItemBean>()
+        val groupId = uuid()
+        for (sub in getDependRendererList()) {
+            sub.copyItemRendererData(strategy)?.let { list ->
+                list.forEach { it.groupId = groupId }
+                result.addAll(list)
+            }
         }
         return result
     }
@@ -181,7 +194,7 @@ open class GroupRenderer(canvasView: CanvasDelegate) :
         //记录开始时所有item的bounds
         groupTouchDownBounds.set(getBounds())
         groupTouchDownItemBoundsList.clear()
-        subItemList.forEach {
+        subItemList.getAllDependRendererList().forEach {
             groupTouchDownItemBoundsList.add(RendererBounds(it))
         }
     }
@@ -207,7 +220,7 @@ open class GroupRenderer(canvasView: CanvasDelegate) :
         if (subItemList.isEmpty()) {
             return
         }
-        val renderers = subItemList.toList()
+        val renderers = subItemList.getAllDependRendererList()
         if (reason.reason == Reason.REASON_USER) {
             if (reason.flag.have(Reason.REASON_FLAG_TRANSLATE) || reason.flag.have(Reason.REASON_FLAG_BOUNDS)) {
                 if (groupTouchDownItemBoundsList.isEmpty()) {
