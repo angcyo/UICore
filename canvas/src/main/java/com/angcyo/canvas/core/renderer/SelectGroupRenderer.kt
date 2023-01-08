@@ -41,8 +41,6 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) : GroupRenderer(canvasView
         overlayRender()
     }
 
-    override fun isOutOfVisualRect(visualRect: RectF): Boolean = false
-
     override fun onItemRendererRemove(itemRenderer: IItemRenderer<*>, strategy: Strategy) {
         super.onItemRendererRemove(itemRenderer, strategy)
         if (subItemList.contains(itemRenderer)) {
