@@ -1008,10 +1008,18 @@ class CanvasDelegate(val view: View) : ICanvasView {
     /**复制一组item*/
     fun copyItemRenderer(list: List<BaseItemRenderer<*>>, strategy: Strategy) {
         val copyDataList = mutableListOf<CanvasProjectItemBean>()
-        list.forEach { item ->
-            if (item is DataItemRenderer) {
-                item.dataItem?.dataBean?.let {
-                    copyDataList.add(it.copyBean())
+        list.forEach { renderer ->
+            if (renderer is GroupRenderer) {
+                val groupId = uuid()
+                for (sub in renderer.getDependRendererList()) {
+                    copyDataItemBean(sub)?.let {
+                        it.groupId = groupId
+                        copyDataList.add(it)
+                    }
+                }
+            } else {
+                copyDataItemBean(renderer)?.let {
+                    copyDataList.add(it)
                 }
             }
         }
@@ -1021,6 +1029,14 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
 
         GraphicsHelper.renderItemDataBeanList(this, copyDataList, true, strategy)
+    }
+
+    /**复制一份原始数据*/
+    fun copyDataItemBean(renderer: BaseItemRenderer<*>): CanvasProjectItemBean? {
+        if (renderer is DataItemRenderer) {
+            return renderer.dataItem?.dataBean?.copyBean()
+        }
+        return null
     }
 
     /**选中item[BaseItemRenderer]*/
