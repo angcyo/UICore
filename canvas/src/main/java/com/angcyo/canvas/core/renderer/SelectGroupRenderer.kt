@@ -37,8 +37,11 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) : GroupRenderer(canvasView
         paint.strokeWidth = 1 * dp
         paint.style = Paint.Style.STROKE
 
+        needLimitRendererBounds = false
         overlayRender()
     }
+
+    override fun isOutOfVisualRect(visualRect: RectF): Boolean = false
 
     override fun onItemRendererRemove(itemRenderer: IItemRenderer<*>, strategy: Strategy) {
         super.onItemRendererRemove(itemRenderer, strategy)

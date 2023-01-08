@@ -15,6 +15,7 @@ class SimpleItemRenderer(canvasView: ICanvasView, simpleItem: SimpleItem? = null
     BaseItemRenderer<SimpleItem>(canvasView) {
 
     init {
+        needLimitRendererBounds = false
         setRendererRenderItem(simpleItem)
     }
 
