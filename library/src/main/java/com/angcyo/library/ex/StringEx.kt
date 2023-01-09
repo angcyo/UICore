@@ -718,7 +718,7 @@ fun String?.md5(algorithm: String = "MD5"): String? {
     return this?.toByteArray(Charsets.UTF_8)?.encrypt(algorithm)?.toHexString()
 }
 
-/**字节大小*/
+/**字节大小, 返回字节数量*/
 fun String.byteSize(): Int {
     return toByteArray(Charsets.UTF_8).size
 }

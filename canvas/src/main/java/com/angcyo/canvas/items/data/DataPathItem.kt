@@ -28,6 +28,9 @@ open class DataPathItem(bean: CanvasProjectItemBean) : DataItem(bean) {
     /**用来绘制的路径列表, 通常是[dataPathList]的缩放后的数据, 但是不包括旋转*/
     val drawPathList = mutableListOf<Path>()
 
+    /**路径填充后的[Path]*/
+    var pathFillGCodePath: Path? = null
+
     //endregion ---属性---
 
     //region ---方法---

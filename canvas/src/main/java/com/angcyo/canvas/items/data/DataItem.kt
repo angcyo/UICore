@@ -2,6 +2,7 @@ package com.angcyo.canvas.items.data
 
 import android.graphics.Bitmap
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import androidx.annotation.AnyThread
@@ -20,8 +21,13 @@ import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.canvas.utils.CanvasDataHandleOperate
+import com.angcyo.gcode.GCodeHelper
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
+import com.angcyo.library.unit.toPixel
 
 /**
  * [com.angcyo.canvas.data.CanvasProjectItemBean]
@@ -129,6 +135,9 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
         if (old == new) {
             return
         }
+
+        clearPathFillCache()
+
         renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
             dataBean.paintStyle = old.toPaintStyleInt()
             updateRenderItem(renderer)
@@ -205,12 +214,55 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
         renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
             dataBean.gcodeFillStep = old
             dataBean.gcodeFillAngle = oldAngle
+
+            //提前处理
+            if (this is DataPathItem) {
+                pathFillToGCode(dataPathList, itemPaint)?.let {
+                    pathFillGCodePath = it
+                }
+            }
             updateRenderItem(renderer)
         }) {
             dataBean.gcodeFillStep = new
             dataBean.gcodeFillAngle = newAngle
+
+            //提前处理
+            if (this is DataPathItem) {
+                pathFillToGCode(dataPathList, itemPaint)?.let {
+                    pathFillGCodePath = it
+                }
+            }
             updateRenderItem(renderer)
         }
+    }
+
+    /**清理掉路径填充的缓存*/
+    fun clearPathFillCache() {
+        if (this is DataPathItem) {
+            pathFillGCodePath = null
+        }
+    }
+
+    /**转换成对应的GCode[Path]*/
+    fun pathFillToGCode(pathList: List<Path>, paint: Paint): Path? {
+        if (this is DataPathItem) {
+            val bean = dataBean
+            val dataPathList = pathList.toList()
+            val renderBounds = acquireTempRectF()
+            bean.updateToRenderBounds(renderBounds)
+            val gcode = CanvasDataHandleOperate.pathToGCode(
+                dataPathList,
+                renderBounds,
+                0f,
+                style = if (paint.style == Paint.Style.FILL) Paint.Style.FILL else Paint.Style.FILL_AND_STROKE,
+                fillPathStep = bean.gcodeFillStep.toPixel(),
+                fillAngle = bean.gcodeFillAngle
+            ).readText()
+            renderBounds.release()
+            val gCodeDrawable = GCodeHelper.parseGCode(gcode, paint)
+            return gCodeDrawable?.gCodePath
+        }
+        return null
     }
 
     /**栅格化*/

@@ -10,9 +10,7 @@ import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataPathItem
 import com.angcyo.canvas.utils.CanvasConstant
-import com.angcyo.canvas.utils.CanvasDataHandleOperate
 import com.angcyo.canvas.utils.isLineShape
-import com.angcyo.gcode.GCodeHelper
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -21,7 +19,6 @@ import com.angcyo.library.ex.computePathBounds
 import com.angcyo.library.ex.withPicture
 import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 import com.angcyo.library.unit.toMm
-import com.angcyo.library.unit.toPixel
 import com.pixplicity.sharp.Sharp
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -97,23 +94,15 @@ open class PathGraphicsParser : IGraphicsParser {
         val bean = item.dataBean
         if (IGraphicsParser.isNeedGCodeFill(bean)) {
             //需要填充的path
-            val dataPathList = item.dataPathList.toList()
-
-            val renderBounds = acquireTempRectF()
-            bean.updateToRenderBounds(renderBounds)
-            val gcode = CanvasDataHandleOperate.pathToGCode(
-                dataPathList,
-                renderBounds,
-                0f,
-                style = if (paint.style == Paint.Style.FILL) Paint.Style.FILL else Paint.Style.FILL_AND_STROKE,
-                fillPathStep = bean.gcodeFillStep.toPixel(),
-                fillAngle = bean.gcodeFillAngle
-            ).readText()
-            renderBounds.release()
-            val gCodeDrawable = GCodeHelper.parseGCode(gcode, paint)
-            gCodeDrawable?.let {
+            if (item.pathFillGCodePath == null) {
+                //生成新的路径算法
+                item.pathFillToGCode(item.dataPathList, paint)?.let {
+                    item.pathFillGCodePath = it
+                }
+            }
+            item.pathFillGCodePath?.let {
                 item.clearPathList()
-                item.addDataPath(gCodeDrawable.gCodePath)//替换path
+                item.addDataPath(it)//替换path
                 //item.dataPathList.resetAll(dataPathList) //need?
                 return true
             }

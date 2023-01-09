@@ -39,6 +39,9 @@ open class DoodleIconItem : DslAdapterItem() {
     /**check提示的颜色*/
     var itemCheckColor: Int = Color.TRANSPARENT
 
+    /**回调, 用来更新[]itemCheckColor*/
+    var itemUpdateCheckColorAction: (() -> Int)? = null
+
     init {
         itemLayoutId = R.layout.item_doodle_icon_layout
     }
@@ -52,6 +55,9 @@ open class DoodleIconItem : DslAdapterItem() {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
 
         //check tip
+        itemUpdateCheckColorAction?.let {
+            itemCheckColor = it.invoke()
+        }
         if (itemCheckColor == Color.TRANSPARENT) {
             itemHolder.gone(R.id.check_tip_view)
         } else {

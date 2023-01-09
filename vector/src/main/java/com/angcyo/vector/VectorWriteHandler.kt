@@ -394,6 +394,10 @@ abstract class VectorWriteHandler {
         fillPathStep: Float = 1f, //填充间距
         fillAngle: Float = 0f, //填充线的旋转角度
     ) {
+        if (fillPathStep <= 0f) {
+            L.w("fillPathStep = $fillPathStep!")
+            return
+        }
         //能够完全包含path的矩形
         val pathBounds = acquireTempRectF()
         val targetPath = Path(path)

@@ -24,7 +24,8 @@ interface IGraphicsParser {
 
     companion object {
         /**是否需要使用gcode填充path*/
-        fun isNeedGCodeFill(bean: CanvasProjectItemBean): Boolean {
+        fun isNeedGCodeFill(bean: CanvasProjectItemBean?): Boolean {
+            bean ?: return false
             return !bean.isLineShape() &&
                     bean.gcodeFillStep > 0
         }
