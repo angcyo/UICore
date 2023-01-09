@@ -19,11 +19,14 @@ import com.angcyo.canvas.data.ControlTouchInfo
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.library.L
+import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.gesture.DoubleGestureDetector2
+import com.angcyo.library.unit.toPixel
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.absoluteValue
 
@@ -97,8 +100,48 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         }
     }
 
+    @Pixel
+    var canvasEdgeThreshold: Float = LibHawkKeys.canvasEdgeThreshold.toPixel()
+
+    @Pixel
+    var canvasEdgeTranslateStep: Float = LibHawkKeys.canvasEdgeTranslateStep.toPixel()
+
     /**是否在控制点上按下*/
     fun isTouchInControlPoint(): Boolean = touchDownInfo?.controlPoint != null
+
+    override fun onComputeScroll(canvasDelegate: CanvasDelegate) {
+        super.onComputeScroll(canvasDelegate)
+        if (canvasDelegate.isTouchHold && canvasEdgeTranslateStep > 0) {
+            val canvasViewBox = canvasDelegate.getCanvasViewBox()
+            val contentRect = canvasViewBox.contentRect
+
+            var distanceX = 0f
+            var distanceY = 0f
+
+            val translateStep = canvasEdgeTranslateStep
+
+            val dLeft = touchPoint.x - contentRect.left
+            val dTop = touchPoint.y - contentRect.top
+            val dRight = contentRect.right - touchPoint.x
+            val dBottom = contentRect.bottom - touchPoint.y
+
+            if (dLeft > 0 && dLeft < canvasEdgeThreshold) {
+                distanceX = translateStep
+            }
+            if (dRight > 0 && dRight < canvasEdgeThreshold) {
+                distanceX = -translateStep
+            }
+
+            if (dTop > 0 && dTop < canvasEdgeThreshold) {
+                distanceY = translateStep
+            }
+            if (dBottom > 0 && dBottom < canvasEdgeThreshold) {
+                distanceY = -translateStep
+            }
+
+            canvasViewBox.translateBy(distanceX, distanceY, false)
+        }
+    }
 
     //</editor-fold desc="控制点">
 

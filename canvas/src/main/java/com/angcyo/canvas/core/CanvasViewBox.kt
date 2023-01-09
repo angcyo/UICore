@@ -10,6 +10,7 @@ import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.ex.*
 import com.angcyo.library.unit.IValueUnit
 import com.angcyo.library.unit.MmValueUnit
+import kotlin.math.max
 
 /**
  * CanvasView 内容可视区域范围
@@ -296,10 +297,15 @@ class CanvasViewBox(val canvasView: ICanvasView) {
 
     fun getContentHeight() = getContentBottom() - getContentTop()
 
+    /**当前缩放的参考值*/
+    fun getScale() = max(getScaleX(), getScaleY())
+
+    /**当前x轴方向的缩放*/
     fun getScaleX(): Float {
         return matrix.getScaleX()
     }
 
+    /**当前y轴方向的缩放*/
     fun getScaleY(): Float {
         return matrix.getScaleY()
     }

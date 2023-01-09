@@ -1,6 +1,7 @@
 package com.angcyo.library.component.hawk
 
 import androidx.annotation.Keep
+import com.angcyo.library.annotation.MM
 import com.angcyo.library.component.HawkPropertyValue
 import com.angcyo.library.ex.isDebug
 
@@ -54,6 +55,14 @@ object LibHawkKeys {
 
     /**[com.angcyo.canvas.CanvasDelegate]允许添加的最大渲染元素数据*/
     var canvasRenderMaxCount: Int by HawkPropertyValue<Any, Int>(30)
+
+    /**当手指移动到距离画布多少距离时, 视为在边界, 毫米单位*/
+    @MM
+    var canvasEdgeThreshold: Float by HawkPropertyValue<Any, Float>(3f)
+
+    /**在边界移动时的步长, 毫米*/
+    @MM
+    var canvasEdgeTranslateStep: Float by HawkPropertyValue<Any, Float>(1f)
 
     /**是否激活[Path]确切的bounds计算, 计算量会变大*/
     var enablePathBoundsExact: Boolean by HawkPropertyValue<Any, Boolean>(true)
