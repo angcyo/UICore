@@ -1,10 +1,10 @@
 package com.angcyo.canvas.core.component
 
 import android.graphics.PointF
-import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
+import android.view.VelocityTracker
+import android.view.ViewConfiguration
 import android.widget.OverScroller
-import androidx.core.view.GestureDetectorCompat
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasEntryPoint
@@ -13,7 +13,6 @@ import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.nowTime
 import com.angcyo.library.gesture.DoubleGestureDetector2
 import com.angcyo.vector.VectorHelper
 import kotlin.math.min
@@ -42,14 +41,14 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
     var dragTriggerDistance = 1 * dp
 
     //手势意图
-    var _touchType = TOUCH_TYPE_NONE
+    private var _touchType = TOUCH_TYPE_NONE
 
     //按下的坐标
-    val _touchPoint = PointF()
+    private val _touchPoint = PointF()
 
     //多点处理
-    val _touchPointList: MutableList<PointF> = mutableListOf()
-    val _movePointList: MutableList<PointF> = mutableListOf()
+    private val _touchPointList: MutableList<PointF> = mutableListOf()
+    private val _movePointList: MutableList<PointF> = mutableListOf()
 
     //左上角初始点处理, 点击后恢复原位置
     val initialPointHandler = InitialPointHandler()
@@ -58,72 +57,34 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
     var isDoubleTouch: Boolean = false
 
     /**双击检测*/
-    val doubleGestureDetector = DoubleGestureDetector2(canvasDelegate.view.context) { event ->
-        if (canvasDelegate.controlHandler.selectedItemRender == null) {
-            if (canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_SCALE)) {
-                isDoubleTouch = true
-                //双击
-                canvasDelegate.getCanvasViewBox().scaleBy(
-                    doubleScaleValue,
-                    doubleScaleValue,
-                    event.x,
-                    event.y,
-                    true
-                )
-                //L.e("${event.x} ${event.y}")
-            }
-        }
-    }
-
-    /**fling检测*/
-    val gestureDetector =
-        GestureDetectorCompat(canvasDelegate.view.context, object : SimpleOnGestureListener() {
-            override fun onFling(
-                e1: MotionEvent,
-                e2: MotionEvent,
-                velocityX: Float,
-                velocityY: Float
-            ): Boolean {
-                if (_multiMovePointCount >= 2 && (_upTime - _pointerUpTime) <= 300) {
-                    //多指操作时, 才允许fling
-                    val canvasViewBox = canvasDelegate.getCanvasViewBox()
-                    overScroller.fling(
-                        canvasViewBox.getTranslateX().toInt(),
-                        canvasViewBox.getTranslateY().toInt(),
-                        velocityX.toInt(),
-                        velocityY.toInt(),
-                        Int.MIN_VALUE,
-                        Int.MAX_VALUE,
-                        Int.MIN_VALUE,
-                        Int.MAX_VALUE,
+    private val doubleGestureDetector =
+        DoubleGestureDetector2(canvasDelegate.view.context) { event ->
+            if (canvasDelegate.controlHandler.selectedItemRender == null) {
+                if (canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_SCALE)) {
+                    isDoubleTouch = true
+                    //双击
+                    canvasDelegate.getCanvasViewBox().scaleBy(
+                        doubleScaleValue,
+                        doubleScaleValue,
+                        event.x,
+                        event.y,
+                        true
                     )
-                    canvasDelegate.refresh()
-                    return true
+                    //L.e("${event.x} ${event.y}")
                 }
-                return super.onFling(e1, e2, velocityX, velocityY)
             }
-        })
-
-    /**fling执行*/
-    val overScroller: OverScroller = OverScroller(canvasDelegate.view.context)
-
-    //按下的手指数量
-    var _touchPointCount: Int = 0
-
-    //多指移动时的手指数量
-    var _multiMovePointCount: Int = 0
-
-    //多指up的时间
-    var _pointerUpTime: Long = 0
-    var _upTime: Long = 0
-
-    override fun onComputeScroll(canvasDelegate: CanvasDelegate) {
-        super.onComputeScroll(canvasDelegate)
-        if (overScroller.computeScrollOffset()) {
-            canvasDelegate.getCanvasViewBox()
-                .translateTo(overScroller.currX.toFloat(), overScroller.currY.toFloat(), false)
-            canvasDelegate.refresh()
         }
+
+    /**最小的fling速率*/
+    private var minimumFlingVelocity: Int
+
+    /**允许的最大速率*/
+    private var maximumFlingVelocity: Int
+
+    init {
+        val configuration = ViewConfiguration.get(canvasDelegate.view.context)
+        minimumFlingVelocity = configuration.scaledMinimumFlingVelocity
+        maximumFlingVelocity = configuration.scaledMaximumFlingVelocity
     }
 
     /**入口*/
@@ -136,10 +97,9 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
 
         initialPointHandler.onTouch(canvasDelegate, event)
         doubleGestureDetector.onTouchEvent(event)
-        gestureDetector.onTouchEvent(event)
+        handleFlingEvent(event)
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                _touchPointCount = 1
                 overScroller.abortAnimation()
                 _touchPoint.set(event.x, event.y)
                 obtainPointList(event, _touchPointList)
@@ -147,28 +107,20 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
                 //多指按下
-                _touchPointCount++
                 overScroller.abortAnimation()
                 obtainPointList(event, _touchPointList)
                 handleActionDown(event, canvasDelegate)
             }
             MotionEvent.ACTION_POINTER_UP -> {
-                _touchPointCount--
-                _pointerUpTime = nowTime()
                 obtainPointList(event, _touchPointList)
             }
             MotionEvent.ACTION_MOVE -> {
-                if (_touchPointCount > 1) {
-                    _multiMovePointCount = event.pointerCount
-                }
                 obtainPointList(event, _movePointList)
                 if (handleActionMove(event, canvasDelegate)) {
                     obtainPointList(event, _touchPointList)
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                _touchPointCount = 0
-                _upTime = nowTime()
                 isDoubleTouch = false
                 _touchPointList.clear()
                 _movePointList.clear()
@@ -186,6 +138,8 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
             list.add(PointF(event.getX(i), event.getY(i)))
         }
     }
+
+    //---
 
     /**按下时, 2指之间的距离*/
     var _touchDistance: Float = 0f
@@ -231,6 +185,8 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
         }
     }
 
+    //---
+
     /**各个点位移动的距离*/
     val _moveDistanceList: MutableList<PointF> = mutableListOf()
 
@@ -246,6 +202,10 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
         val dy1 = _movePointList[0].y - _touchPointList[0].y
 
         var handle = false
+
+        if (isFlingHappen) {
+            return handle
+        }
 
         if (_movePointList.size >= 2) {
             //双指 操作, 平移和缩放
@@ -313,5 +273,80 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
         }
 
         return handle
+    }
+
+    //---
+
+    /**是否发生过fling*/
+    var isFlingHappen = false
+
+    /**fling执行*/
+    private val overScroller: OverScroller = OverScroller(canvasDelegate.view.context)
+
+    private var velocityTracker: VelocityTracker? = null
+
+    private var lastVelocityX: Float? = null
+    private var lastVelocityY: Float? = null
+
+    override fun onComputeScroll(canvasDelegate: CanvasDelegate) {
+        super.onComputeScroll(canvasDelegate)
+        if (overScroller.computeScrollOffset()) {
+            canvasDelegate.getCanvasViewBox()
+                .translateTo(overScroller.currX.toFloat(), overScroller.currY.toFloat(), false)
+            canvasDelegate.refresh()
+        }
+    }
+
+    /**fling事件处理入口*/
+    fun handleFlingEvent(event: MotionEvent) {
+        if (velocityTracker == null) {
+            velocityTracker = VelocityTracker.obtain()
+        }
+        velocityTracker?.addMovement(event)
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                isFlingHappen = false
+                lastVelocityX = null
+                lastVelocityY = null
+            }
+            MotionEvent.ACTION_POINTER_UP -> {
+                velocityTracker?.computeCurrentVelocity(1000, maximumFlingVelocity.toFloat())
+                val id = event.getPointerId(0)
+                val velocityX = velocityTracker?.getXVelocity(id)
+                val velocityY = velocityTracker?.getYVelocity(id)
+
+                if (velocityX.abs() > minimumFlingVelocity ||
+                    velocityY.abs() > minimumFlingVelocity
+                ) {
+                    isFlingHappen = true
+                    lastVelocityX = velocityX
+                    lastVelocityY = velocityY
+                }
+            }
+            MotionEvent.ACTION_UP -> {
+                if (isFlingHappen) {
+                    startFling(lastVelocityX!!, lastVelocityY!!)
+                }
+                velocityTracker?.clear()
+                velocityTracker?.recycle()
+                velocityTracker = null
+            }
+        }
+    }
+
+    /**开始fling操作*/
+    fun startFling(velocityX: Float, velocityY: Float) {
+        val canvasViewBox = canvasDelegate.getCanvasViewBox()
+        overScroller.fling(
+            canvasViewBox.getTranslateX().toInt(),
+            canvasViewBox.getTranslateY().toInt(),
+            velocityX.toInt(),
+            velocityY.toInt(),
+            Int.MIN_VALUE,
+            Int.MAX_VALUE,
+            Int.MIN_VALUE,
+            Int.MAX_VALUE,
+        )
+        canvasDelegate.refresh()
     }
 }

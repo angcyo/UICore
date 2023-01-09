@@ -2,15 +2,12 @@ package com.angcyo.library.ex
 
 import android.app.Activity
 import android.app.Application
-import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.graphics.Point
 import android.graphics.PointF
 import android.os.Build
 import android.os.Debug
-import android.util.DisplayMetrics
 import android.view.View
-import android.view.WindowManager
 import android.widget.TextView
 import androidx.collection.SimpleArrayMap
 import com.angcyo.library.*
@@ -31,8 +28,6 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.pow
-import kotlin.math.sqrt
 import kotlin.random.Random.Default.nextInt
 
 /**
@@ -153,7 +148,7 @@ fun isMultiApp(packageName: String) = RUtils.checkByOriginApkPackageName(package
 //运行在模拟器中
 fun isRunningInEmulator() = EmulatorCheckUtil.singleInstance.readSysProperty()
 
-fun Float.abs() = kotlin.math.abs(this)
+fun Float?.abs() = kotlin.math.abs(this ?: 0f)
 
 fun Int.abs() = kotlin.math.abs(this)
 
