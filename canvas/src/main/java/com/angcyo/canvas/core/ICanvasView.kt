@@ -15,13 +15,15 @@ import com.angcyo.library.unit.IValueUnit
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/04/01
  */
-interface ICanvasView : IComponent {
+interface ICanvasView {
 
     //<editor-fold desc="core">
 
     fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int)
 
     fun onTouchEvent(event: MotionEvent): Boolean
+
+    fun computeScroll()
 
     fun onDraw(canvas: Canvas)
 

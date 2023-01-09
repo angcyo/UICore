@@ -478,6 +478,21 @@ class CanvasDelegate(val view: View) : ICanvasView {
         return true
     }
 
+    /**获取所有组件*/
+    fun getCanvasComponentList(): List<IComponent> {
+        val result = mutableListOf<IComponent>()
+        result.add(canvasTouchHandler)
+        result.add(controlHandler)
+        result.add(smartAssistant)
+        return result
+    }
+
+    override fun computeScroll() {
+        getCanvasComponentList().forEach { component ->
+            component.onComputeScroll(this)
+        }
+    }
+
     /**入口点*/
     @CanvasEntryPoint
     override fun onDraw(canvas: Canvas) {

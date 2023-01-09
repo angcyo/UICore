@@ -1,7 +1,10 @@
 package com.angcyo.canvas.core.component
 
 import android.graphics.PointF
+import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
+import android.widget.OverScroller
+import androidx.core.view.GestureDetectorCompat
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasEntryPoint
@@ -10,6 +13,7 @@ import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.nowTime
 import com.angcyo.library.gesture.DoubleGestureDetector2
 import com.angcyo.vector.VectorHelper
 import kotlin.math.min
@@ -71,6 +75,57 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
         }
     }
 
+    /**fling检测*/
+    val gestureDetector =
+        GestureDetectorCompat(canvasDelegate.view.context, object : SimpleOnGestureListener() {
+            override fun onFling(
+                e1: MotionEvent,
+                e2: MotionEvent,
+                velocityX: Float,
+                velocityY: Float
+            ): Boolean {
+                if (_multiMovePointCount >= 2 && (_upTime - _pointerUpTime) <= 300) {
+                    //多指操作时, 才允许fling
+                    val canvasViewBox = canvasDelegate.getCanvasViewBox()
+                    overScroller.fling(
+                        canvasViewBox.getTranslateX().toInt(),
+                        canvasViewBox.getTranslateY().toInt(),
+                        velocityX.toInt(),
+                        velocityY.toInt(),
+                        Int.MIN_VALUE,
+                        Int.MAX_VALUE,
+                        Int.MIN_VALUE,
+                        Int.MAX_VALUE,
+                    )
+                    canvasDelegate.refresh()
+                    return true
+                }
+                return super.onFling(e1, e2, velocityX, velocityY)
+            }
+        })
+
+    /**fling执行*/
+    val overScroller: OverScroller = OverScroller(canvasDelegate.view.context)
+
+    //按下的手指数量
+    var _touchPointCount: Int = 0
+
+    //多指移动时的手指数量
+    var _multiMovePointCount: Int = 0
+
+    //多指up的时间
+    var _pointerUpTime: Long = 0
+    var _upTime: Long = 0
+
+    override fun onComputeScroll(canvasDelegate: CanvasDelegate) {
+        super.onComputeScroll(canvasDelegate)
+        if (overScroller.computeScrollOffset()) {
+            canvasDelegate.getCanvasViewBox()
+                .translateTo(overScroller.currX.toFloat(), overScroller.currY.toFloat(), false)
+            canvasDelegate.refresh()
+        }
+    }
+
     /**入口*/
     @CanvasEntryPoint
     override fun onCanvasTouchEvent(canvasDelegate: CanvasDelegate, event: MotionEvent): Boolean {
@@ -81,27 +136,39 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
 
         initialPointHandler.onTouch(canvasDelegate, event)
         doubleGestureDetector.onTouchEvent(event)
+        gestureDetector.onTouchEvent(event)
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                _touchPointCount = 1
+                overScroller.abortAnimation()
                 _touchPoint.set(event.x, event.y)
                 obtainPointList(event, _touchPointList)
                 handleActionDown(event, canvasDelegate)
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
                 //多指按下
+                _touchPointCount++
+                overScroller.abortAnimation()
                 obtainPointList(event, _touchPointList)
                 handleActionDown(event, canvasDelegate)
             }
             MotionEvent.ACTION_POINTER_UP -> {
+                _touchPointCount--
+                _pointerUpTime = nowTime()
                 obtainPointList(event, _touchPointList)
             }
             MotionEvent.ACTION_MOVE -> {
+                if (_touchPointCount > 1) {
+                    _multiMovePointCount = event.pointerCount
+                }
                 obtainPointList(event, _movePointList)
                 if (handleActionMove(event, canvasDelegate)) {
                     obtainPointList(event, _touchPointList)
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                _touchPointCount = 0
+                _upTime = nowTime()
                 isDoubleTouch = false
                 _touchPointList.clear()
                 _movePointList.clear()
@@ -208,6 +275,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
                 val dx = min(dx1, dx2)
                 val dy = min(dy1, dy2)
 
+                //处理双指平移
                 if ((dx.abs() > dragTriggerDistance || dy.abs() > dragTriggerDistance) &&
                     canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_TRANSLATE)//激活了平移手势
                 ) {

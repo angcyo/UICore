@@ -24,6 +24,11 @@ class CanvasView(context: Context, attributeSet: AttributeSet? = null) :
         canvasDelegate.onSizeChanged(w, h, oldw, oldh)
     }
 
+    override fun computeScroll() {
+        super.computeScroll()
+        canvasDelegate.computeScroll()
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (event.actionMasked == MotionEvent.ACTION_DOWN) {

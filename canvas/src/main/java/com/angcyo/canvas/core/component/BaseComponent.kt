@@ -1,5 +1,6 @@
 package com.angcyo.canvas.core.component
 
+import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.IComponent
 
 /**
@@ -10,5 +11,7 @@ abstract class BaseComponent : IComponent {
 
     /**是否激活当前组件*/
     var enable: Boolean = true
+
+    override fun onComputeScroll(canvasDelegate: CanvasDelegate) {}
 
 }
