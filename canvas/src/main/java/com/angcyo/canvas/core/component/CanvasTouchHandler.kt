@@ -59,7 +59,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
     /**双击检测*/
     private val doubleGestureDetector =
         DoubleGestureDetector2(canvasDelegate.view.context) { event ->
-            if (canvasDelegate.controlHandler.selectedItemRender == null) {
+            if (canvasDelegate.controlHandler.selectedItemRender == null && !isFlingHappen) {
                 if (canvasDelegate.isEnableTouchFlag(CanvasDelegate.TOUCH_FLAG_SCALE)) {
                     isDoubleTouch = true
                     //双击
@@ -95,9 +95,9 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
             return false
         }
 
+        handleFlingEvent(event)
         initialPointHandler.onTouch(canvasDelegate, event)
         doubleGestureDetector.onTouchEvent(event)
-        handleFlingEvent(event)
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 overScroller.abortAnimation()
@@ -204,7 +204,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
         var handle = false
 
         if (isFlingHappen) {
-            return handle
+            return false
         }
 
         if (_movePointList.size >= 2) {
@@ -290,7 +290,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
 
     override fun onComputeScroll(canvasDelegate: CanvasDelegate) {
         super.onComputeScroll(canvasDelegate)
-        if (overScroller.computeScrollOffset()) {
+        if (isFlingHappen && overScroller.computeScrollOffset()) {
             canvasDelegate.getCanvasViewBox()
                 .translateTo(overScroller.currX.toFloat(), overScroller.currY.toFloat(), false)
             canvasDelegate.refresh()
