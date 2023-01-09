@@ -1,5 +1,6 @@
 package com.angcyo.library
 
+import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.nowTime
 import java.util.*
 
@@ -13,6 +14,7 @@ object LTime {
     private val stack = Stack<Long>()
 
     /**记录时间*/
+    @CallPoint
     fun tick(): Long {
         val nowTime = nowTime()
         if (L.debug) {
@@ -22,6 +24,7 @@ object LTime {
     }
 
     /**获取与最近一次时间匹配的时间间隔(ms)*/
+    @CallPoint
     fun time(): String {
         if (!L.debug) {
             return "not debug!"
@@ -31,6 +34,7 @@ object LTime {
         return time(startTime, nowTime)
     }
 
+    /**主动计算2个时间的差值*/
     fun time(startTime: Long, endTIme: Long = nowTime()): String {
         val s = (endTIme - startTime) / 1000
         //val ms = ((endTIme - startTime) % 1000) * 1f / 1000
@@ -50,6 +54,7 @@ object LTime {
     var _count: Long = 0
 
     /**1秒之内, 调用的次数大于[threshold]时, 才输出日志*/
+    @CallPoint
     fun dump(threshold: Int = 60) {
         _count++
         val nowTime = nowTime()
