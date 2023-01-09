@@ -100,11 +100,16 @@ object GCodeHelper {
         _lastRatio = config.mmRatio // 默认使用毫米单位
 
         var spindleType: Int? = null // M03/M05/M04 激光类型
+        var lastGCmd: String? = null //上一次的G指令
         config.text.lines().forEach { line ->
             if (line.isNotBlank()) {
                 //不为空
-                val gCodeLineData = _parseGCodeLine(line, config.mmRatio, config.inRatio)
+                val gCodeLineData = _parseGCodeLine(line, config.mmRatio, config.inRatio, lastGCmd)
                 gCodeLineDataList.add(gCodeLineData)
+
+                if (gCodeLineData.isGCmd()) {
+                    lastGCmd = gCodeLineData.cmdList.first().code
+                }
 
                 if (spindleType == null) {
                     //还未找到激光类型指令
@@ -164,7 +169,12 @@ object GCodeHelper {
     }
 
     /**[GCodeLineData]*/
-    fun _parseGCodeLine(line: String, mmRatio: Double, inRatio: Double): GCodeLineData {
+    fun _parseGCodeLine(
+        line: String,
+        mmRatio: Double,
+        inRatio: Double,
+        lastGCmd: String?
+    ): GCodeLineData {
         val cmdList = mutableListOf<GCodeCmd>()
 
         var ratio = _lastRatio
@@ -172,7 +182,7 @@ object GCodeHelper {
         //注释
         var comment: String? = null
 
-        var cmdString: String = line//G00 G17 G40 G21 G54
+        var cmdString: String = line//G00 G17 G40 G21 G54 //G5.2
         val commentIndex = line.indexOf(";")
         if (commentIndex == -1) {
             //无注释
@@ -192,6 +202,10 @@ object GCodeHelper {
                 val regex = "[A-z][-]?[\\d.]*\\d+"
                 cmdStringList = cmdString.patternList(regex)//G1X83.4949Y-8.0145;无空格隔开的指令
             }
+        }
+        if (cmdString.isShrinkGCmd() && lastGCmd != null) {
+            ///省略的G指令, 则使用上一次G指令
+            cmdStringList = mutableListOf(lastGCmd, *cmdStringList.toTypedArray())
         }
         val lineFirstCmd: String = cmdStringList.firstOrNull() ?: ""
         cmdStringList.forEach { cmd ->
@@ -233,8 +247,30 @@ object GCodeHelper {
         _lastRatio = ratio
 
         //result
-        val resultData = GCodeLineData(line, cmdString, cmdList, comment)
+        val resultData = GCodeLineData(line, cmdString, comment, cmdList)
         return resultData
+    }
+
+    /**是否是省略了Gxx的指令
+     * [text] 指令, 不包含注释的*/
+    fun String.isShrinkGCmd(): Boolean {
+        var firstIsG = false
+        var haveXYZ = false
+
+        for (char in this) {
+            val str = char.uppercase()
+            if (str == "G") {
+                firstIsG = true
+            } else if (str == "X" || str == "Y" || str == "Z") {
+                haveXYZ = true
+
+                if (firstIsG) {
+                    break
+                }
+            }
+        }
+
+        return !firstIsG && haveXYZ
     }
 
     fun _fillCodeCmd(builder: StringBuilder, cmd: GCodeCmd?, char: Char) {

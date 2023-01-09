@@ -14,12 +14,15 @@ import com.angcyo.gcode.GCodeHelper.SPINDLE_ON
 data class GCodeLineData(
     /**整行的数据=[cmdString]+[comment]*/
     val lineCode: String,
-    /**只包含命令字符*/
+    /**这一行的命令字符*/
     val cmdString: String,
-    /**[cmdString]分解的所有指令, 一行中的所有指令*/
-    val cmdList: List<GCodeCmd>,
     /**这一行的注释*/
     val comment: String? = null,
+
+    //---
+
+    /**[cmdString]分解的所有指令, 一行中的所有指令*/
+    val cmdList: List<GCodeCmd>,
     /**是否全文中没有发现M03/04/05指令, 只在第一行数据中赋值
      * [com.angcyo.gcode.GCodeHelper.parseGCodeLineList]
      * */
@@ -28,6 +31,11 @@ data class GCodeLineData(
 
 fun GCodeLineData.isGCodeMoveDirective(): Boolean {
     return cmdList.firstOrNull()?.cmd?.isGCodeMoveDirective() ?: false
+}
+
+/**是否是Gxx指令*/
+fun GCodeLineData.isGCmd(): Boolean {
+    return cmdList.find { it.cmd.startsWith("G") } != null
 }
 
 /**是否具有点位信息*/
