@@ -11,6 +11,7 @@ import android.util.DisplayMetrics
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.graphics.drawable.DrawableCompat
+import com.angcyo.library.L
 import com.angcyo.library.app
 
 
@@ -181,6 +182,7 @@ fun Drawable.toBitmap(
     val config =
         if (opacity == PixelFormat.OPAQUE) Bitmap.Config.RGB_565 else Bitmap.Config.ARGB_8888
 
+    L.v("createBitmap:$width $height")
     // 创建bitmap
     val bitmap = Bitmap.createBitmap(width, height, config)
 

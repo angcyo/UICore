@@ -1,6 +1,7 @@
 package com.angcyo.gcode
 
 import android.graphics.Path
+import com.angcyo.library.component.hawk.LibLpHawkKeys
 import com.angcyo.library.ex.toLossyFloat
 import com.angcyo.library.unit.InchValueUnit
 import com.angcyo.vector.VectorWriteHandler
@@ -23,6 +24,12 @@ class GCodeWriteHandler : VectorWriteHandler() {
      * 通常在图片转GCode的时候使用
      * */
     var isPixelValue = false
+
+    /**是否激活GCode压缩指令*/
+    var enableGCodeShrink: Boolean = LibLpHawkKeys.enableGCodeShrink
+
+    //上一次的信息
+    private var lastInfo: GCodeLastInfo = GCodeLastInfo()
 
     override fun onPathStart() {
         //[G20]英寸单位 [G21]毫米单位
@@ -61,7 +68,28 @@ class GCodeWriteHandler : VectorWriteHandler() {
             xValue = unit?.convertPixelToValue(x) ?: x
             yValue = unit?.convertPixelToValue(y) ?: y
         }
-        writer?.appendLine("G0 X${xValue.toLossyFloat()} Y${yValue.toLossyFloat()}")
+
+        val cmd = "G0"
+        val x = xValue.toLossyFloat()
+        val y = yValue.toLossyFloat()
+        if (enableGCodeShrink) {
+            writer?.appendLine(buildString {
+                if (lastInfo.lastCmd != cmd) {
+                    append(cmd)
+                }
+                if (lastInfo.lastX != x) {
+                    append("X$x")
+                }
+                if (lastInfo.lastY != y) {
+                    append("Y$y")
+                }
+            })
+        } else {
+            writer?.appendLine("$cmd X${x} Y${y}")
+        }
+        lastInfo.lastCmd = cmd
+        lastInfo.lastX = x
+        lastInfo.lastY = y
     }
 
     override fun onLineToPoint(point: VectorPoint) {
@@ -92,13 +120,43 @@ class GCodeWriteHandler : VectorWriteHandler() {
                 //`G2` 顺时针画弧 -> Path.Direction.CCW
                 //`G3` 逆时针画弧 -> Path.Direction.CW
                 writer?.appendLine(buildString {
-                    if (first.circleDir == Path.Direction.CW) {
-                        append("G3 ")
+                    val cmd = if (first.circleDir == Path.Direction.CW) {
+                        "G3"
                     } else {
-                        append("G2 ")
+                        "G2"
                     }
-                    append("X${xValue.toLossyFloat()} Y${yValue.toLossyFloat()} ")
-                    append("I${iValue.toLossyFloat()} J${jValue.toLossyFloat()}")
+                    val x = xValue.toLossyFloat()
+                    val y = yValue.toLossyFloat()
+                    val i = iValue.toLossyFloat()
+                    val j = jValue.toLossyFloat()
+
+                    if (enableGCodeShrink) {
+                        if (lastInfo.lastCmd != cmd) {
+                            append(cmd)
+                        }
+                        if (lastInfo.lastX != x) {
+                            append("X$x")
+                        }
+                        if (lastInfo.lastY != y) {
+                            append("Y$y")
+                        }
+                        if (lastInfo.lastI != i) {
+                            append("I$i")
+                        }
+                        if (lastInfo.lastJ != j) {
+                            append("J$j")
+                        }
+                    } else {
+                        append("$cmd ")
+                        append("X${x} Y${y} ")
+                        append("I${i} J${j}")
+                    }
+
+                    lastInfo.lastCmd = cmd
+                    lastInfo.lastX = x
+                    lastInfo.lastY = y
+                    lastInfo.lastI = i
+                    lastInfo.lastJ = j
                 })
             }
         } else {
@@ -115,8 +173,30 @@ class GCodeWriteHandler : VectorWriteHandler() {
             xValue = unit?.convertPixelToValue(x) ?: x
             yValue = unit?.convertPixelToValue(y) ?: y
         }
-        writer?.appendLine("G1 X${xValue.toLossyFloat()} Y${yValue.toLossyFloat()}")
+
+        if (enableGCodeShrink) {
+            val cmd = "G1"
+            val x = xValue.toLossyFloat()
+            val y = yValue.toLossyFloat()
+            writer?.appendLine(buildString {
+                if (lastInfo.lastCmd != cmd) {
+                    append(cmd)
+                }
+                if (lastInfo.lastX != x) {
+                    append("X$x")
+                }
+                if (lastInfo.lastY != y) {
+                    append("Y$y")
+                }
+            })
+            lastInfo.lastCmd = cmd
+            lastInfo.lastX = x
+            lastInfo.lastY = y
+        } else {
+            writer?.appendLine("G1 X${xValue.toLossyFloat()} Y${yValue.toLossyFloat()}")
+        }
     }
+
 
     //region ---core---
 

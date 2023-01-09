@@ -37,6 +37,9 @@ object LibLpHawkKeys {
      * [com.angcyo.vector.VectorWriteHandler._valueChangedType]*/
     var enableVectorArc: Boolean by HawkPropertyValue<Any, Boolean>(false)
 
+    /**是否激活压缩GCode输出*/
+    var enableGCodeShrink: Boolean by HawkPropertyValue<Any, Boolean>(true)
+
     //---
 
     /**L1的物理尺寸配置*/
