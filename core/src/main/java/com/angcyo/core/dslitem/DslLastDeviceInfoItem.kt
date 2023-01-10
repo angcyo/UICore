@@ -40,6 +40,9 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
         /**分隔符*/
         const val SPLIT = "/"
 
+        /**额外的设备信息*/
+        var additional_info: String? = null
+
         /**保存设备信息到日志
          * [com.angcyo.library.utils.LogFile.device]*/
         fun saveDeviceInfo(
@@ -51,6 +54,9 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
                 config()
                 appendln()
                 append("<-${nowTimeString()}")
+
+                //额外的信息
+                additional_info?.let { append(it) }
             }.toString().writeTo(LogFile.device.toLogFilePath(), false)
         }
 

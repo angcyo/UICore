@@ -101,7 +101,7 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         }
 
         //device
-        DslLastDeviceInfoItem.saveDeviceInfo(this)
+        DslLastDeviceInfoItem.saveDeviceInfo(this, false)
 
         //语言
         vmApp<LanguageModel>().onCreate(this)
@@ -163,7 +163,7 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
     @CallComplianceAfter
     open fun onComplianceAfter() {
         //device, 需要合规
-        DslLastDeviceInfoItem.saveDeviceInfo(this)
+        DslLastDeviceInfoItem.saveDeviceInfo(this, true)
 
         DslCrashHandler.init(this)
         vmApp<StateModel>().updateState(ComplianceCheck.TYPE_COMPLIANCE_INIT_AFTER, true)
