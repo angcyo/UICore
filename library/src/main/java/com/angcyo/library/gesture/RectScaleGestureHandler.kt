@@ -334,13 +334,13 @@ class RectScaleGestureHandler {
          * [groupOffsetLeft] [groupOffsetTop] 额外需要偏移的距离
          * */
         fun rectScaleToWithGroup(
-            target: RectF,
-            result: RectF,
-            scaleX: Float,
+            target: RectF,//需要操作的矩形
+            result: RectF,//结果返回
+            scaleX: Float,//当前缩放标量
             scaleY: Float,
-            anchorX: Float,
+            anchorX: Float,//锚点位置(旋转后的)
             anchorY: Float,
-            groupRotate: Float,
+            groupRotate: Float,//锚点的旋转角度
             groupOldBounds: RectF,
             groupOffsetLeft: Float = 0f,
             groupOffsetTop: Float = 0f,
@@ -364,7 +364,7 @@ class RectScaleGestureHandler {
             matrix.mapRect(result)
 
             //然后计算需要偏移的量
-            //缩放的锚点, 一定要是未旋转的, 所以需要反向旋转一下
+            //缩放的锚点, 一定要是旋转的, 所以需要反向旋转一下
             matrix.reset()
             matrix.setRotate(groupRotate, groupOldCenterX, groupOldCenterY)
             matrix.invert(matrix)
