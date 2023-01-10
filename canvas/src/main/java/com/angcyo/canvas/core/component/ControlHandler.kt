@@ -111,6 +111,12 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
     override fun onComputeScroll(canvasDelegate: CanvasDelegate) {
         super.onComputeScroll(canvasDelegate)
+
+        //2023-1-10
+        if (!canvasDelegate.isTouchHold) {
+            canvasDelegate.controlRenderer.updateControlPointLocation() //更新控制点位置
+        }
+
         if (canvasDelegate.isTouchHold && canvasEdgeTranslateStep > 0) {
             val canvasViewBox = canvasDelegate.getCanvasViewBox()
             val contentRect = canvasViewBox.contentRect
