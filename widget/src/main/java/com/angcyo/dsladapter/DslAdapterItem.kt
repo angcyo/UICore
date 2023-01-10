@@ -399,6 +399,7 @@ open class DslAdapterItem : LifecycleOwner {
                         animator.setTarget(itemHolder.itemView)
                         animator.startDelay = _itemAnimateDelay
                         itemHolder.itemView.setAnimator(animator)
+                        itemHolder.itemView.clearAnimatorProperty()
                         animator.start()
                         _itemAnimateDelay = -2 //动画已执行标识
                     }
