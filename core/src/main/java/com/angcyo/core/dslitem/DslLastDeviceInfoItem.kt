@@ -14,6 +14,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.isItemLastInAdapter
 import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.library.app
+import com.angcyo.library.component.RBackground
 import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.*
 import com.angcyo.library.libFolderPath
@@ -43,7 +44,7 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
          * [com.angcyo.library.utils.LogFile.device]*/
         fun saveDeviceInfo(
             context: Context = app(),
-            isCompliance: Boolean = ComplianceCheck.isCompliance(),
+            isCompliance: Boolean = ComplianceCheck.isCompliance() && !RBackground.isBackground(),
             config: DslSpan.() -> Unit = {}
         ) {
             deviceInfo(context, isCompliance) {
@@ -107,7 +108,7 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
                 foregroundColor = getColor(R.color.colorPrimary)
             }
             appendln()
-            
+
             //本地APK编译信息
             Device.buildString(this._builder)
             //屏幕信息
