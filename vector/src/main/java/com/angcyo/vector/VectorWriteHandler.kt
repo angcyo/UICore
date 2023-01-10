@@ -8,6 +8,7 @@ import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.Flag
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Private
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.hawk.LibLpHawkKeys
 import com.angcyo.library.component.pool.acquireTempPath
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -359,7 +360,7 @@ abstract class VectorWriteHandler {
         writeLast: Boolean = true,
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
-        pathStep: Float = 1f
+        pathStep: Float = LibHawkKeys.pathAcceptableError
     ) {
         path.eachPath(pathStep) { index, ratio, contourIndex, posArray ->
             val xPixel = posArray[0] + offsetLeft + 0.0
@@ -508,7 +509,7 @@ abstract class VectorWriteHandler {
         writeLast: Boolean = true,
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
-        pathStep: Float = 1f
+        pathStep: Float = LibHawkKeys.pathAcceptableError
     ) {
         var isFirst = true
         for (path in pathList) {

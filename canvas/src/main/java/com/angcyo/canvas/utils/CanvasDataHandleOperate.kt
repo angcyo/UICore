@@ -9,6 +9,7 @@ import com.angcyo.gcode.GCodeAdjust
 import com.angcyo.gcode.GCodeWriteHandler
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.*
 import com.angcyo.library.libCacheFile
 import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
@@ -160,7 +161,7 @@ object CanvasDataHandleOperate {
         writeLast: Boolean = true,
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
-        pathStep: Float = 1f,
+        pathStep: Float = LibHawkKeys.pathAcceptableError,
         autoCnc: Boolean = false,
         append: Boolean = false,
     ): File {

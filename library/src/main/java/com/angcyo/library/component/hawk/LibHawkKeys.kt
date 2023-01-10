@@ -2,6 +2,7 @@ package com.angcyo.library.component.hawk
 
 import androidx.annotation.Keep
 import com.angcyo.library.annotation.MM
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.HawkPropertyValue
 import com.angcyo.library.ex.isDebug
 
@@ -68,7 +69,9 @@ object LibHawkKeys {
     var enablePathBoundsExact: Boolean by HawkPropertyValue<Any, Boolean>(true)
 
     /**计算[Bounds]时, 容错率, 应该也是each path的采样率
-     * [enablePathBoundsExact]*/
+     * [enablePathBoundsExact]
+     * */
+    @Pixel
     var pathAcceptableError: Float by HawkPropertyValue<Any, Float>(1f)
 
     /**是否强制使用高刷*/
