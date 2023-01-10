@@ -6,7 +6,10 @@ import androidx.core.graphics.withScale
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
+import com.angcyo.canvas.Reason
+import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.ICanvasView
+import com.angcyo.canvas.core.IRenderer
 import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.ControlHandler
 import com.angcyo.canvas.core.component.ControlPoint
@@ -26,7 +29,7 @@ import com.angcyo.library.unit.convertPixelToValueUnit
  * @since 2022/04/08
  */
 class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasView) :
-    BaseRenderer(canvasView) {
+    BaseRenderer(canvasView), ICanvasListener {
 
     /**用来绘制边框*/
     val paint = createPaint(
@@ -61,6 +64,45 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
             }
             return false
         }
+
+    init {
+        canvasViewBox.canvasView.addCanvasListener(this)
+    }
+
+    //---
+
+    override fun onRenderItemBoundsChanged(
+        itemRenderer: IRenderer,
+        reason: Reason,
+        oldBounds: RectF
+    ) {
+        super.onRenderItemBoundsChanged(itemRenderer, reason, oldBounds)
+        if (itemRenderer == controlHandler.selectedItemRender) {
+            updateControlPointLocation()
+        }
+    }
+
+    /*override fun onCanvasBoxMatrixUpdate(
+        canvasView: CanvasDelegate,
+        matrix: Matrix,
+        oldMatrix: Matrix,
+        isEnd: Boolean
+    ) {
+        super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldMatrix, isEnd)
+        updateControlPointLocation()
+    }
+    */
+    /*override fun onSelectedItem(
+        itemRenderer: IItemRenderer<*>?,
+        oldItemRenderer: IItemRenderer<*>?
+    ) {
+        super.onSelectedItem(itemRenderer, oldItemRenderer)
+        if (itemRenderer != null) {
+            updateControlPointLocation()
+        }
+    }*/
+
+    //---
 
     /**更新控制点位坐标*/
     fun updateControlPointLocation() {
