@@ -392,6 +392,22 @@ fun PointF.rotate(rotate: Float, pivotX: Float, pivotY: Float, result: PointF = 
     return result
 }
 
+/**缩放一个点*/
+fun PointF.scale(
+    scaleX: Float,
+    scaleY: Float,
+    pivotX: Float,
+    pivotY: Float,
+    result: PointF = this
+): PointF {
+    val matrix = acquireTempMatrix()
+    matrix.reset()
+    matrix.setScale(scaleX, scaleY, pivotX, pivotY)
+    matrix.mapPoint(this, result)
+    matrix.release()
+    return result
+}
+
 /**反向旋转一个点坐标*/
 fun PointF.invertRotate(
     rotate: Float,

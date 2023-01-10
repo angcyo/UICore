@@ -208,13 +208,17 @@ const val ADJUST_TYPE_LB = 0x12
  * [scaleX] [scaleY] 宽高缩放的比例
  * [pivotX] [pivotY] 缩放的锚点
  * */
-fun RectF.scale(scaleX: Float, scaleY: Float, pivotX: Float = left, pivotY: Float = top): RectF {
+fun RectF.scale(
+    scaleX: Float, scaleY: Float,
+    pivotX: Float = left, pivotY: Float = top,
+    result: RectF = this
+): RectF {
     val matrix = acquireTempMatrix()
     matrix.reset()
     matrix.setScale(scaleX, scaleY, pivotX, pivotY)
-    matrix.mapRect(this)
+    matrix.mapRect(result, this)
     matrix.release()
-    return this
+    return result
 }
 
 /**将矩形平移*/
