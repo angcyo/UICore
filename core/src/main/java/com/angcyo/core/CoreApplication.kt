@@ -100,9 +100,6 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
             ActivityDebugInfo.install(this)
         }
 
-        //device
-        DslLastDeviceInfoItem.saveDeviceInfo(this, false)
-
         //语言
         vmApp<LanguageModel>().onCreate(this)
 

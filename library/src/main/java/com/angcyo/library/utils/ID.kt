@@ -14,8 +14,6 @@ import android.os.Build
 import android.os.Environment
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
-import android.telephony.TelephonyManager.PHONE_TYPE_CDMA
-import android.telephony.TelephonyManager.PHONE_TYPE_GSM
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -23,7 +21,6 @@ import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.ex.md5
 import java.io.*
-import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.net.NetworkInterface
 import java.util.*
@@ -358,8 +355,9 @@ object ID {
     }
 
     @SuppressLint("MissingPermission")
-    private fun getImeiOrMeId(isImei: Boolean): String {
-        if (!isHaveSelfPermission(Manifest.permission.READ_PHONE_STATE)) {
+    private fun getImeiOrMeId(isImei: Boolean): String? {
+        return null
+        /*if (!isHaveSelfPermission(Manifest.permission.READ_PHONE_STATE)) {
             return ""
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -424,7 +422,7 @@ object ID {
                 }
             }
         }
-        return ""
+        return ""*/
     }
 
     //---
