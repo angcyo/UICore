@@ -70,7 +70,7 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             if (api.isNotEmpty()) {
                 appendLine(api)
             }
-            if (isCompliance) {
+            if (isCompliance && isDebug()) {
                 append(getWifiIP()).append(SPLIT).append(getMobileIP())
             } else {
                 append(getWifiIP())

@@ -302,18 +302,20 @@ object ID {
     }
 
     /**
+     * 隐私政策: 2023-1-10
      * @param slotId slotId为卡槽Id，它的值为 0、1；
      * @return
      */
     private fun getIMEI(slotId: Int): String? {
-        return try {
+        return null
+        /*return try {
             val manager = getTelephonyManager()
             val method =
                 manager.javaClass.getMethod("getImei", Int::class.javaPrimitiveType)
             method.invoke(manager, slotId) as String
         } catch (e: java.lang.Exception) {
-            ""
-        }
+            null
+        }*/
     }
 
     private fun getMeId(): String? {
