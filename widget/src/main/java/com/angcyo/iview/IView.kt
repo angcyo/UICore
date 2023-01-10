@@ -165,6 +165,7 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
 
     //<editor-fold desc="内部方法">
 
+    /**添加到界面*/
     fun addInner(parent: ViewGroup?) {
         if (parent != null) {
             if (iViewLayoutId == -1) {
@@ -188,7 +189,8 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
         }
     }
 
-    fun removeInner(parent: ViewGroup?, end: () -> Unit) {
+    /**直接移除界面*/
+    fun removeInner(parent: ViewGroup? = _parentView, end: () -> Unit = {}) {
         if (parent == null) {
             end()
         } else {
