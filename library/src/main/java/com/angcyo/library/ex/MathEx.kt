@@ -3,6 +3,7 @@ package com.angcyo.library.ex
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
+import android.os.Build
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -221,6 +222,16 @@ fun Matrix.getTranslateY(): Float {
     return _tempValues[Matrix.MTRANS_Y]
 }
 
+fun Matrix.getSkewX(): Float {
+    getValues(_tempValues)
+    return _tempValues[Matrix.MSKEW_X]
+}
+
+fun Matrix.getSkewY(): Float {
+    getValues(_tempValues)
+    return _tempValues[Matrix.MSKEW_Y]
+}
+
 fun Matrix.setTranslateValue(x: Float, y: Float) {
     getValues(_tempValues)
     _tempValues[Matrix.MTRANS_X] = x
@@ -395,6 +406,33 @@ fun PointF.invertRotate(
     matrix.mapPoint(this, result)
     matrix.release()
     return result
+}
+
+/**to string*/
+fun Matrix.toLogString(): String = buildString {
+    appendLine()
+    val rotate = getRotateDegrees()
+    appendLine("rotate:${rotate}° ${rotate.toRadians()}")
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        appendLine("isAffine:${isAffine}")
+    }
+    appendLine("isIdentity:${isIdentity}")
+    appendLine()
+
+    getValues(_tempValues)
+    for (i in 0 until 9) {
+        if (i % 3 == 0) {
+            append("[")
+        }
+        append(_tempValues[i])
+        if (i % 3 != 2) {
+            append(", ")
+        }
+        if (i % 3 == 2) {
+            append("]")
+            appendLine()
+        }
+    }
 }
 
 //</editor-fold desc="matrix">

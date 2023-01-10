@@ -567,6 +567,27 @@ fun View.clipBoundsAnimator(
     return animator
 }
 
+/**清空属性动画的相关属性*/
+fun View.clearAnimatorProperty(
+    scale: Boolean = true,
+    translation: Boolean = true,
+    alpha: Boolean = true
+) {
+    if (scale) {
+        scaleX = 1f
+        scaleY = 1f
+    }
+
+    if (translation) {
+        translationX = 0f
+        translationY = 0f
+    }
+
+    if (alpha) {
+        this.alpha = 1f
+    }
+}
+
 fun View.setAnimator(animator: Animator) {
     setTag(R.id.lib_tag_animator, WeakReference(animator))
 }
