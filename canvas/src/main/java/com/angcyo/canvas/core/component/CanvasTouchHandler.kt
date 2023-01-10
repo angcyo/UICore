@@ -9,6 +9,7 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.CanvasView
 import com.angcyo.canvas.core.CanvasEntryPoint
 import com.angcyo.canvas.core.ICanvasTouch
+import com.angcyo.library.L
 import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.abs
@@ -75,15 +76,15 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
             }
         }
 
-    /**最小的fling速率*/
+    /**最小的fling速率, 131*/
     private var minimumFlingVelocity: Int
 
-    /**允许的最大速率*/
+    /**允许的最大速率, 21000*/
     private var maximumFlingVelocity: Int
 
     init {
         val configuration = ViewConfiguration.get(canvasDelegate.view.context)
-        minimumFlingVelocity = configuration.scaledMinimumFlingVelocity
+        minimumFlingVelocity = 1000 //configuration.scaledMinimumFlingVelocity
         maximumFlingVelocity = configuration.scaledMaximumFlingVelocity
     }
 
@@ -336,6 +337,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
 
     /**开始fling操作*/
     fun startFling(velocityX: Float, velocityY: Float) {
+        L.d("fling:velocityX:${velocityX} velocityY:${velocityY}")
         val canvasViewBox = canvasDelegate.getCanvasViewBox()
         overScroller.fling(
             canvasViewBox.getTranslateX().toInt(),
