@@ -8,6 +8,7 @@ import com.angcyo.widget.R
 
 /**
  * 网格图片展示item
+ *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/08/04
  */
@@ -20,6 +21,9 @@ open class DslGridMediaItem : DslAdapterItem(), IGridMediaItem {
 
         itemWidth = -1
         itemHeight = -2
+
+        //gridMediaSpanCount = 2
+        //addGridMedia()
     }
 
     override fun onItemViewRecycled(itemHolder: DslViewHolder, itemPosition: Int) {

@@ -12,6 +12,7 @@ import com.angcyo.item.R
 import com.angcyo.library.app
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.gone
+import com.angcyo.library.ex.resetAll
 import com.angcyo.library.ex.visible
 import com.angcyo.library.model.LoaderMedia
 import com.angcyo.library.model.loadUri
@@ -142,6 +143,16 @@ interface IGridMediaItem : IAutoInitItem {
  * */
 fun IGridMediaItem.addGridMedia(url: String) {
     gridMediaItemConfig.itemGridMediaList.add(url.toLoaderMedia())
+}
+
+/**清空媒体文件*/
+fun IGridMediaItem.clearGridMedia() {
+    gridMediaItemConfig.itemGridMediaList.clear()
+}
+
+/**重置媒体文件*/
+fun IGridMediaItem.resetGridMedia(newList: Collection<LoaderMedia>) {
+    gridMediaItemConfig.itemGridMediaList.resetAll(newList)
 }
 
 /** [GridLayoutManager] span Count */
