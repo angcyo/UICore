@@ -100,6 +100,9 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         }
     }
 
+    /**是否开启边缘移动*/
+    var enableCanvasEdgeTranslate: Boolean = LibHawkKeys.enableCanvasEdgeTranslate
+
     @Pixel
     var canvasEdgeThreshold: Float = LibHawkKeys.canvasEdgeThreshold.toPixel()
 
@@ -112,7 +115,8 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     override fun onComputeScroll(canvasDelegate: CanvasDelegate) {
         super.onComputeScroll(canvasDelegate)
 
-        if (canvasDelegate.isTouchHold &&
+        if (enableCanvasEdgeTranslate &&
+            canvasDelegate.isTouchHold &&
             canvasEdgeTranslateStep > 0 &&
             _eventPointerCount <= 1 //单指移动的时候才移动
         ) {

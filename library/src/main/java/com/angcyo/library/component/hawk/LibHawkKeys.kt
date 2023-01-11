@@ -57,6 +57,10 @@ object LibHawkKeys {
     /**[com.angcyo.canvas.CanvasDelegate]允许添加的最大渲染元素数据*/
     var canvasRenderMaxCount: Int by HawkPropertyValue<Any, Int>(30)
 
+    /**是否激活画布的边缘移动
+     * [canvasEdgeThreshold] [canvasEdgeTranslateStep]*/
+    var enableCanvasEdgeTranslate: Boolean by HawkPropertyValue<Any, Boolean>(true)
+
     /**当手指移动到距离画布多少距离时, 视为在边界, 毫米单位*/
     @MM
     var canvasEdgeThreshold: Float by HawkPropertyValue<Any, Float>(3f)
