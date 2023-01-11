@@ -124,9 +124,7 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
 
     @CallSuper
     open fun onIViewCreate() {
-        if (lifecycleRegistry.currentState == Lifecycle.State.DESTROYED) {
-            lifecycleRegistry = LifecycleRegistry(this)
-        }
+        lifecycleRegistry = LifecycleRegistry(this)
         onIViewEvent?.invoke(this, Lifecycle.Event.ON_CREATE)
         onIViewEvent?.invoke(this, Lifecycle.Event.ON_START)
         lifecycleRegistry.currentState = Lifecycle.State.STARTED
