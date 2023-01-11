@@ -9,6 +9,7 @@ import com.angcyo.core.component.fileSelector
 import com.angcyo.library.Library
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.*
+import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.FileUtils
 import com.angcyo.library.utils.appFolderPath
@@ -26,8 +27,8 @@ object Debug {
     /**开启调试模式*/
     var onChangedToDebug: MutableList<Action> = mutableListOf()
 
-    /**显示调试界面*/
-    var onShowDebugFragment: ((FragmentActivity) -> Unit)? = null
+    /**显示界面回调*/
+    var onShowFragmentAction: ((FragmentActivity, show: String) -> Unit)? = null
 
     /**调试:文本输入框文本改变时
      * [com.angcyo.widget.edit.BaseEditDelegate.Companion.textChangedActionList]*/
@@ -90,17 +91,12 @@ object Debug {
                     }
                 }
             }
-            "@cmd#open=debug" -> {
-                lastContext.apply {
-                    if (this is FragmentActivity) {
-                        onShowDebugFragment?.invoke(this)
-                        editText?._feedback()
-                    }
-                }
-            }
             else -> {
                 //@key#int=value 此指令用来设置hawk key value
-                if (inputText.contains("@") && inputText.contains("#") && inputText.contains("=")) {
+                if (inputText.contains("@") &&
+                    inputText.contains("#") &&
+                    inputText.contains("=")
+                ) {
                     val keyBuilder = StringBuilder()
                     val typeBuilder = StringBuilder()
                     val valueBuilder = StringBuilder()
@@ -115,55 +111,81 @@ object Debug {
                         }
                     }
 
-                    val key = keyBuilder.toString()
-                    val type = typeBuilder.toString()
+                    val key = keyBuilder.toString().lowercase()
+                    val type = typeBuilder.toString().lowercase()
                     val valueString = valueBuilder.toString()
                     if (key.isNotBlank()) {
-                        when (type.lowercase()) {
-                            "bool", "boolean" -> {
-                                val value = valueString.toBoolean()
-                                key.hawkPut(value)
-                                editText?._feedback()
-                            }
-                            "int", "i" -> {
-                                val value = valueString.toIntOrNull()
-                                if (value == null) {
-                                    key.hawkDelete()
-                                } else {
-                                    key.hawkPut(value)
+                        when (key) {
+                            "cmd" -> {
+                                when (type) {
+                                    "open" -> {
+                                        //打开Fragment界面
+                                        //@cmd#open=value
+                                        lastContext.apply {
+                                            if (this is FragmentActivity) {
+                                                onShowFragmentAction?.invoke(this, valueString)
+                                                editText?._feedback()
+                                            }
+                                        }
+                                    }
+                                    "hawk" -> {
+                                        //显示hawk的值
+                                        //@cmd#hawk=key
+                                        val hawkKey = valueString.lowercase()
+                                        toastQQ("${hawkKey.hawkGet<Any>()}")
+                                        editText?._feedback()
+                                    }
                                 }
-                                editText?._feedback()
                             }
-                            "long", "l" -> {
-                                val value = valueString.toLongOrNull()
-                                if (value == null) {
-                                    key.hawkDelete()
-                                } else {
-                                    key.hawkPut(value)
+                            else -> {
+                                //@key#int=value
+                                when (type) {
+                                    "bool", "boolean" -> {
+                                        val value = valueString.toBoolean()
+                                        key.hawkPut(value)
+                                        editText?._feedback()
+                                    }
+                                    "int", "i" -> {
+                                        val value = valueString.toIntOrNull()
+                                        if (value == null) {
+                                            key.hawkDelete()
+                                        } else {
+                                            key.hawkPut(value)
+                                        }
+                                        editText?._feedback()
+                                    }
+                                    "long", "l" -> {
+                                        val value = valueString.toLongOrNull()
+                                        if (value == null) {
+                                            key.hawkDelete()
+                                        } else {
+                                            key.hawkPut(value)
+                                        }
+                                        editText?._feedback()
+                                    }
+                                    "float", "f" -> {
+                                        val value = valueString.toFloatOrNull()
+                                        if (value == null) {
+                                            key.hawkDelete()
+                                        } else {
+                                            key.hawkPut(value)
+                                        }
+                                        editText?._feedback()
+                                    }
+                                    "double", "d" -> {
+                                        val value = valueString.toDoubleOrNull()
+                                        if (value == null) {
+                                            key.hawkDelete()
+                                        } else {
+                                            key.hawkPut(value)
+                                        }
+                                        editText?._feedback()
+                                    }
+                                    "string", "s" -> {
+                                        key.hawkPut(valueString)
+                                        editText?._feedback()
+                                    }
                                 }
-                                editText?._feedback()
-                            }
-                            "float", "f" -> {
-                                val value = valueString.toFloatOrNull()
-                                if (value == null) {
-                                    key.hawkDelete()
-                                } else {
-                                    key.hawkPut(value)
-                                }
-                                editText?._feedback()
-                            }
-                            "double", "d" -> {
-                                val value = valueString.toDoubleOrNull()
-                                if (value == null) {
-                                    key.hawkDelete()
-                                } else {
-                                    key.hawkPut(value)
-                                }
-                                editText?._feedback()
-                            }
-                            "string", "s" -> {
-                                key.hawkPut(valueString)
-                                editText?._feedback()
                             }
                         }
                     }
