@@ -111,11 +111,12 @@ object Debug {
                         }
                     }
 
-                    val key = keyBuilder.toString().lowercase()
+                    //@key#int=value
+                    val key = keyBuilder.toString()
                     val type = typeBuilder.toString().lowercase()
                     val valueString = valueBuilder.toString()
                     if (key.isNotBlank()) {
-                        when (key) {
+                        when (key.lowercase()) {
                             "cmd" -> {
                                 when (type) {
                                     "open" -> {
