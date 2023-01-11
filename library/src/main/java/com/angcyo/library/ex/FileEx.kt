@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.text.format.Formatter
 import androidx.annotation.AnyThread
 import com.angcyo.library.app
+import com.angcyo.library.model.Page
 import com.angcyo.library.toastQQ
 import java.io.*
 import java.nio.channels.FileChannel
@@ -484,3 +485,25 @@ fun File.deleteRecursivelySafe() {
  * 返回是否成功和对应的Uri
  * [com.angcyo.library.ex.ContextExKt.saveToDCIM]*/
 fun File.saveToDCIM(context: Context = app()) = context.saveToDCIM(this)
+
+/**分页获取文件列表
+ * [sortModified] 是否按照时间降序排序, true: 降序排序, false: 升序排序, null:不排序*/
+fun File.page(page: Page, sortModifiedDesc: Boolean? = true): List<File> {
+    val list = listFiles() ?: return emptyList()
+    val targetList = if (sortModifiedDesc == null) {
+        list.toList()
+    } else if (sortModifiedDesc) {
+        list.sortedByDescending { it.lastModified() }
+    } else {
+        list.sortedBy { it.lastModified() }
+    }
+
+    val result = mutableListOf<File>()
+    targetList.forEachIndexed { index, file ->
+        if (index in page.currentStartIndex until page.currentEndIndex) {
+            result.add(file)
+        }
+    }
+
+    return result
+}

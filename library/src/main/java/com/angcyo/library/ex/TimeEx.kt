@@ -55,6 +55,8 @@ fun Long.fullTime(pattern: String = "yyyy-MM-dd HH:mm:ss.SSS"): String {
     return toTime(pattern)
 }
 
+fun Long.toFullTime(pattern: String = "yyyy-MM-dd HH:mm:ss.SSS"): String = fullTime(pattern)
+
 /**文件名中, 不能包含[:]等特殊字符 [ ]空格会应用adb pull指令
  * [yyyy-MM-dd_HH-mm-ss-SSS]
  * */

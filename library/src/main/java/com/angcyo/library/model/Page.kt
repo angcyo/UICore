@@ -42,6 +42,14 @@ class Page {
     /** 每页请求的数量 */
     var requestPageSize: Int = PAGE_SIZE
 
+    /**当前请求开始的索引*/
+    val currentStartIndex: Int
+        get() = (requestPageIndex - firstPageIndex) * requestPageSize
+
+    /**当前请求结束的索引*/
+    val currentEndIndex: Int
+        get() = currentStartIndex + requestPageSize
+
     /**页面刷新, 重置page index*/
     fun pageRefresh() {
         _currentPageIndex = firstPageIndex
