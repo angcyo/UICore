@@ -62,9 +62,18 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) : GroupRenderer(canvasView
         strategy: Strategy
     ) {
         if (!visible) {
-            if (subItemList.contains(itemRenderer)) {
-                removeSelectedRenderer(itemRenderer)
-            }
+            removeSelectedRenderer(itemRenderer)
+        }
+    }
+
+    override fun onRenderItemLockChanged(
+        itemRenderer: IRenderer,
+        lock: Boolean,
+        strategy: Strategy
+    ) {
+        super.onRenderItemLockChanged(itemRenderer, lock, strategy)
+        if (lock) {
+            removeSelectedRenderer(itemRenderer)
         }
     }
 
@@ -248,6 +257,9 @@ class SelectGroupRenderer(canvasView: CanvasDelegate) : GroupRenderer(canvasView
         if (itemRenderer == this) {
             reset()
             canvasDelegate.selectedItem(null)
+            return
+        }
+        if (!subItemList.contains(itemRenderer)) {
             return
         }
         subItemList.remove(itemRenderer)

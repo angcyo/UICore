@@ -27,6 +27,9 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
     /**是否可见, 决定是否绘制*/
     var _visible: Boolean = true
 
+    /**是否锁定, 决定是否可以操作*/
+    var _isLock: Boolean = false
+
     /**距离坐标系原点的像素坐标*/
     val _bounds = emptyRectF(Float.MIN_VALUE)
 
@@ -76,6 +79,8 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
     override fun isVisible(renderParams: RenderParams?): Boolean =
         if (renderParams?.isPreview == true) true else _visible
 
+    override fun isLock(): Boolean = _isLock
+
     /**设置可见性*/
     open fun setVisible(visible: Boolean, strategy: Strategy = Strategy.normal) {
         val oldValue = isVisible(null)
@@ -101,8 +106,36 @@ abstract class BaseRenderer(val canvasView: ICanvasView) : IRenderer {
         refresh()
     }
 
+    /**设置锁定状态, 锁定后的图层不能进行控制操作, 只能渲染*/
+    open fun setLockLayer(lock: Boolean, strategy: Strategy = Strategy.normal) {
+        val oldValue = isLock()
+        if (lock == oldValue) {
+            return
+        }
+        _isLock = lock
+
+        if (strategy.type == Strategy.STRATEGY_TYPE_NORMAL) {
+            canvasView.getCanvasUndoManager().addUndoAction(object : ICanvasStep {
+                override fun runUndo() {
+                    setLockLayer(oldValue, Strategy.undo)
+                }
+
+                override fun runRedo() {
+                    setLockLayer(lock, Strategy.redo)
+                }
+            })
+        }
+
+        onRendererLockChanged(oldValue, lock, strategy)
+        canvasView.dispatchItemLockChanged(this, lock, strategy)
+        refresh()
+    }
+
     /**自身的回调, 可见性改变了*/
     open fun onRendererVisibleChanged(from: Boolean, to: Boolean, strategy: Strategy) {}
+
+    /**自身的锁定状态改变回调*/
+    open fun onRendererLockChanged(from: Boolean, to: Boolean, strategy: Strategy) {}
 
     /**此[_bounds]是相对于坐标原点的坐标, 不带旋转属性
      *

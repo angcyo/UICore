@@ -330,10 +330,18 @@ class CanvasDelegate(val view: View) : ICanvasView {
         }
         if (!visible) {
             //不可见
-            val selectedRenderer = getSelectedRenderer()
-            if (selectedRenderer == item) {
-                selectedItem(null)
-            }
+            checkCancelSelectRenderer(item)
+        }
+    }
+
+    override fun dispatchItemLockChanged(item: IRenderer, lock: Boolean, strategy: Strategy) {
+        super.dispatchItemLockChanged(item, lock, strategy)
+        canvasListenerList.forEach {
+            it.onRenderItemLockChanged(item, lock, strategy)
+        }
+        if (lock) {
+            //锁定
+            checkCancelSelectRenderer(item)
         }
     }
 
@@ -1034,10 +1042,24 @@ class CanvasDelegate(val view: View) : ICanvasView {
         GraphicsHelper.renderItemDataBeanList(this, copyDataList, true, strategy)
     }
 
-    /**选中item[BaseItemRenderer]*/
-    fun selectedItem(itemRenderer: BaseItemRenderer<*>?) {
+    /**检查是否要取消选中[item]*/
+    private fun checkCancelSelectRenderer(item: IRenderer) {
+        val selectedRenderer = getSelectedRenderer()
+        if (selectedRenderer == item) {
+            selectedItem(null)
+        }
+    }
+
+    /**选中item[BaseItemRenderer]
+     * [force] 是否要强制选中, 否则锁定的图层不允许被选中*/
+    fun selectedItem(itemRenderer: BaseItemRenderer<*>?, force: Boolean = false) {
         if (itemRenderer != null && !itemRenderer.isVisible()) {
             //选中一个不可见的项
+            return
+        }
+
+        if (!force && itemRenderer?.isLock() == true) {
+            //非强制选中, 则被锁定后不允许选中
             return
         }
 

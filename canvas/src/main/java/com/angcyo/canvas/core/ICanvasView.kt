@@ -54,6 +54,10 @@ interface ICanvasView {
      * [com.angcyo.canvas.core.ICanvasListener.onRenderItemVisibleChanged]*/
     fun dispatchItemVisibleChanged(item: IRenderer, visible: Boolean, strategy: Strategy) {}
 
+    /**分发渲染器锁定状态改变
+     * [com.angcyo.canvas.core.ICanvasListener.onRenderItemVisibleChanged]*/
+    fun dispatchItemLockChanged(item: IRenderer, lock: Boolean, strategy: Strategy) {}
+
     /**分发渲染更新
      * [com.angcyo.canvas.core.ICanvasListener.onItemRenderUpdate]*/
     fun dispatchItemRenderUpdate(item: IRenderer) {}

@@ -262,6 +262,13 @@ open class GroupRenderer(canvasView: CanvasDelegate) :
         }
     }
 
+    override fun onRendererLockChanged(from: Boolean, to: Boolean, strategy: Strategy) {
+        super.onRendererLockChanged(from, to, strategy)
+        getDependRendererList().forEach { item ->
+            item.setLockLayer(to, Strategy.preview)
+        }
+    }
+
     //---
 
     /**更新组的可见性, 组内有一个不可见, 则不可见*/
@@ -275,6 +282,16 @@ open class GroupRenderer(canvasView: CanvasDelegate) :
             }
         }
         setVisible(isVisible, Strategy.preview)
+
+        //锁定
+        var isLock = true
+        for (renderer in list) {
+            if (!renderer.isLock()) {
+                isLock = false
+                break
+            }
+        }
+        setLockLayer(isLock, Strategy.preview)
     }
 
     /**更新选中的bounds大小, 需要包含所有选中的元素*/

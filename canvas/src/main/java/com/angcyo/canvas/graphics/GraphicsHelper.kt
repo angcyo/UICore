@@ -315,6 +315,9 @@ object GraphicsHelper {
         //可见性
         renderer._visible = bean.isVisible
 
+        //锁定
+        renderer._isLock = bean.isLock
+
         //角度
         renderer.rotate = bean.angle
 

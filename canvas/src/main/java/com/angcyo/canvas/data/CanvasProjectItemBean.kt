@@ -129,6 +129,9 @@ data class CanvasProjectItemBean(
     /**是否可见*/
     var isVisible: Boolean = true,
 
+    /**是否锁定了图层*/
+    var isLock: Boolean = false,
+
     //endregion ---公共属性---
 
     //region ---文本类型---

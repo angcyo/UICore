@@ -167,6 +167,26 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
         }
     }
 
+    /**更新锁定状态*/
+    fun updateLock(
+        lock: Boolean,
+        renderer: DataItemRenderer,
+        strategy: Strategy = Strategy.normal
+    ) {
+        val old = dataBean.isLock
+        val new = lock
+        if (old == new) {
+            return
+        }
+        renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
+            dataBean.isLock = old
+            updateRenderItem(renderer, Reason.user)
+        }) {
+            dataBean.isLock = new
+            updateRenderItem(renderer, Reason.user)
+        }
+    }
+
     /**水平翻转切换*/
     fun toggleFlipX(renderer: DataItemRenderer, strategy: Strategy = Strategy.normal) {
         val old = dataBean.flipX

@@ -19,6 +19,9 @@ interface IRenderer {
     /**是否可见*/
     fun isVisible(renderParams: RenderParams? = null): Boolean
 
+    /**是否锁定了, 锁定后,不能进行操作*/
+    fun isLock(): Boolean
+
     /**获取图层描述的名字*/
     fun getName(): CharSequence?
 

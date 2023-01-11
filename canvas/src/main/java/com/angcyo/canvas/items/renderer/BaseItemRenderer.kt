@@ -351,6 +351,9 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     val rotatePath: Path = Path()
 
     override fun containsPoint(point: PointF): Boolean {
+        if (isLock()) {
+            return false
+        }
         var rendererBounds = getRenderBounds()
 
         val tempRect = acquireTempRectF()
@@ -379,6 +382,9 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     }
 
     override fun containsRect(rect: RectF): Boolean {
+        if (isLock()) {
+            return false
+        }
         val rendererBounds = getRenderBounds()
         return getRotateMatrix(rendererBounds.centerX(), rendererBounds.centerY()).run {
             rotatePath.reset()
@@ -389,6 +395,9 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     }
 
     override fun intersectRect(rect: RectF): Boolean {
+        if (isLock()) {
+            return false
+        }
         val rendererBounds = getRenderBounds()
         return getRotateMatrix(rendererBounds.centerX(), rendererBounds.centerY()).run {
             rotatePath.reset()

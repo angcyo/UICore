@@ -177,6 +177,11 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
         getRendererRenderItem()?.updateVisible(to, this, Strategy.preview)
     }
 
+    override fun onRendererLockChanged(from: Boolean, to: Boolean, strategy: Strategy) {
+        super.onRendererLockChanged(from, to, strategy)
+        getRendererRenderItem()?.updateLock(to, this, Strategy.preview)
+    }
+
     override fun copyItemRendererData(strategy: Strategy): List<CanvasProjectItemBean>? {
         return dataItem?.dataBean?.copyBean()?.run { listOf(this) }
     }
