@@ -15,6 +15,7 @@ import com.angcyo.canvas.core.component.ControlHandler
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.RotateControlPoint
 import com.angcyo.canvas.items.data.DataItem
+import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.canvasDecimal
 import com.angcyo.canvas.utils.createPaint
 import com.angcyo.canvas.utils.createTextPaint
@@ -82,7 +83,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
         }
     }
 
-    /*override fun onCanvasBoxMatrixUpdate(
+    override fun onCanvasBoxMatrixUpdate(
         canvasView: CanvasDelegate,
         matrix: Matrix,
         oldMatrix: Matrix,
@@ -91,8 +92,8 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
         super.onCanvasBoxMatrixUpdate(canvasView, matrix, oldMatrix, isEnd)
         updateControlPointLocation()
     }
-    */
-    /*override fun onSelectedItem(
+
+    override fun onSelectedItem(
         itemRenderer: IItemRenderer<*>?,
         oldItemRenderer: IItemRenderer<*>?
     ) {
@@ -100,7 +101,14 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
         if (itemRenderer != null) {
             updateControlPointLocation()
         }
-    }*/
+    }
+
+    override fun onRenderItemTypeChanged(itemRenderer: IItemRenderer<*>) {
+        super.onRenderItemTypeChanged(itemRenderer)
+        if (itemRenderer == controlHandler.selectedItemRender) {
+            updateControlPointLocation()
+        }
+    }
 
     //---
 
