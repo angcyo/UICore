@@ -12,5 +12,6 @@ dependencies {
 
     //https://github.com/angcyo/Luban
     //2022-12-29 fix focusAlpha
-    implementation 'com.github.angcyo:Luban:1.1.8.1'
+    //2023-1-11 fix ignore size (long)
+    implementation 'com.github.angcyo:Luban:1.1.8.2'
 }
