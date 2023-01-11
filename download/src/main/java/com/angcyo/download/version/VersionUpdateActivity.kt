@@ -72,7 +72,7 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
             return
         }
 
-        _vh.tv(R.id.version_name_view)?.text = bean.versionName
+        _vh.tv(R.id.version_name_view)?.text = "${bean.versionName ?: ""}  " //加2个空格, 防止倾斜之后显示不全
         _vh.tv(R.id.version_des_tip_view)?.text = bean.versionDesTip ?: "更新内容"
         _vh.tv(R.id.version_des_view)?.text = bean.versionDes
         _vh.visible(R.id.lib_cancel_view, !bean.versionForce)

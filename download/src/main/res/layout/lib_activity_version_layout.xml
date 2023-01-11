@@ -31,6 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
+            android:clipToOutline="false"
             android:padding="@dimen/lib_hdpi"
             android:textColor="#DDE5F3"
             android:textSize="24dp"
