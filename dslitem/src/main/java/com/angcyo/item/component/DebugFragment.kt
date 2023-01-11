@@ -201,7 +201,7 @@ open class DebugFragment : BaseDslFragment() {
                             (debugAction.defValue as? Long) ?: 0L
                         )
                         DslPropertyNumberItem.isFloat(debugAction.type) -> debugAction.key.hawkGet(
-                            (debugAction.defValue as? Float) ?: 0
+                            (debugAction.defValue as? Float) ?: 0f
                         )
                         else -> debugAction.defValue as? Number
                     }
