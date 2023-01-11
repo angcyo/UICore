@@ -292,6 +292,7 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
     override fun onComputeScroll(canvasDelegate: CanvasDelegate) {
         super.onComputeScroll(canvasDelegate)
         if (isFlingHappen && overScroller.computeScrollOffset()) {
+            //fling支持
             canvasDelegate.getCanvasViewBox()
                 .translateTo(overScroller.currX.toFloat(), overScroller.currY.toFloat(), false)
             canvasDelegate.refresh()

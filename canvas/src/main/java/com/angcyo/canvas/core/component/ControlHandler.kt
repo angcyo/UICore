@@ -112,12 +112,10 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     override fun onComputeScroll(canvasDelegate: CanvasDelegate) {
         super.onComputeScroll(canvasDelegate)
 
-        //2023-1-10
-        if (!canvasDelegate.isTouchHold) {
-            canvasDelegate.controlRenderer.updateControlPointLocation() //更新控制点位置
-        }
-
-        if (canvasDelegate.isTouchHold && canvasEdgeTranslateStep > 0) {
+        if (canvasDelegate.isTouchHold &&
+            canvasEdgeTranslateStep > 0 &&
+            _eventPointerCount <= 1 //单指移动的时候才移动
+        ) {
             val canvasViewBox = canvasDelegate.getCanvasViewBox()
             val contentRect = canvasViewBox.contentRect
 
@@ -151,10 +149,15 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
 
     //</editor-fold desc="控制点">
 
+    /**手指数量*/
+    var _eventPointerCount: Int = 0
+
     /**手势处理
      * [com.angcyo.canvas.CanvasView.onTouchEvent]*/
     @CanvasEntryPoint
     override fun onCanvasTouchEvent(canvasDelegate: CanvasDelegate, event: MotionEvent): Boolean {
+        _eventPointerCount = event.pointerCount
+
         doubleGestureDetector.onTouchEvent(event)
 
         var handle = isDoubleTouch
