@@ -29,7 +29,7 @@ object LibHawkKeys {
      * 或者在图片旋转后, 移除边上的透明颜色时使用*/
     var bgAlphaThreshold: Int by HawkPropertyValue<Any, Int>(250)
 
-    /**灰度阈值, 大于这个值视为白色
+    /**灰度阈值, 大于这个值视为白色1不出光, 小于这个值视为黑色0出光
      * 白色传1, 1不出光.
      * 黑色传0, 0出光. */
     var grayThreshold: Int by HawkPropertyValue<Any, Int>(128)
