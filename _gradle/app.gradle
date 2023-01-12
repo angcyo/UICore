@@ -108,6 +108,8 @@ android {
             //applicationIdSuffix ".pre"
             //versionNameSuffix "-pre"
             //applicationId "com.acc.xxx.pre"
+            //versionCode 100
+            //versionName "1.0.0"
             dimension "flavor"
             minSdkVersion Integer.parseInt(_M_SDK)
             resValue "bool", "is_preview", "true"
