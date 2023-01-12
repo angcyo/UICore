@@ -124,17 +124,19 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
 
     @CallSuper
     open fun onIViewCreate() {
-        lifecycleRegistry = LifecycleRegistry(this)
-        onIViewEvent?.invoke(this, Lifecycle.Event.ON_CREATE)
-        onIViewEvent?.invoke(this, Lifecycle.Event.ON_START)
+        if (lifecycleRegistry.currentState == Lifecycle.State.DESTROYED) {
+            lifecycleRegistry = LifecycleRegistry(this)
+        }
         lifecycleRegistry.currentState = Lifecycle.State.STARTED
+        onLifecycleEvent(Lifecycle.Event.ON_CREATE)
+        onLifecycleEvent(Lifecycle.Event.ON_START)
     }
 
     @CallSuper
     open fun onIViewShow() {
         showCount++
-        onIViewEvent?.invoke(this, Lifecycle.Event.ON_RESUME)
         lifecycleRegistry.currentState = Lifecycle.State.RESUMED
+        onLifecycleEvent(Lifecycle.Event.ON_RESUME)
     }
 
     /**再次显示*/
@@ -145,8 +147,8 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
 
     @CallSuper
     open fun onIViewHide() {
-        onIViewEvent?.invoke(this, Lifecycle.Event.ON_STOP)
         lifecycleRegistry.currentState = Lifecycle.State.STARTED
+        onLifecycleEvent(Lifecycle.Event.ON_STOP)
     }
 
     @CallSuper
@@ -155,8 +157,14 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
         iViewHolder?.clear()
         iViewHolder = null
         _parentView = null
-        onIViewEvent?.invoke(this, Lifecycle.Event.ON_DESTROY)
         lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+        onLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    }
+
+    /**声明周期事件回调*/
+    open fun onLifecycleEvent(event: Lifecycle.Event) {
+        L.v("onLifecycleEvent:$event")
+        onIViewEvent?.invoke(this, event)
     }
 
     //</editor-fold desc="生命周期方法">
