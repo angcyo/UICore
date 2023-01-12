@@ -92,9 +92,9 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
     }
 
     fun updateBitmapOriginal(
-        origin: String?,
-        filter: String?,
-        imageFilter: Int,
+        origin: String?,//需要替换的原始图片
+        filter: String?,//过滤算法处理后的图片
+        imageFilter: Int,//过滤算法
         renderer: DataItemRenderer,
         @Pixel width: Float, //更新到的可视宽度
         @Pixel height: Float, //更新到的可视高度

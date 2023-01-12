@@ -411,7 +411,7 @@ class CropOverlay(val cropDelegate: CropDelegate) {
     }
 
     fun updateClipRect(rect: RectF) {
-        clipRect.set(rect)
+        clipRect.setOut(false, rect)
         updateClipPath()
         cropDelegate.refresh()
     }
@@ -423,16 +423,16 @@ class CropOverlay(val cropDelegate: CropDelegate) {
             //原始比例
             clipRect.set(targetRect)
         } else {
-            var width = targetRect.width()
-            var height = targetRect.height()
+            var width: Float = targetRect.width().toFloat()
+            var height: Float = targetRect.height().toFloat()
 
             val s1 = width * 1f / height
             val s2 = ratio
 
             if (width <= height) {
-                height = (height * s1 / s2).toInt()
+                height = height * s1 / s2
             } else {
-                width = (width * s2 / s1).toInt()
+                width = width * s2 / s1
             }
 
             val maxWidth = cropDelegate.maxWidth
@@ -441,13 +441,14 @@ class CropOverlay(val cropDelegate: CropDelegate) {
             val scaleHeight = maxHeight * 1f / height
             val minScale = minOf(scaleWidth, scaleHeight)
 
-            width = (width * minScale).toInt()
-            height = (height * minScale).toInt()
+            width *= minScale
+            height *= minScale
 
             val centerX = targetRect.centerX()
             val centerY = targetRect.centerY()
 
-            clipRect.set(
+            clipRect.setOut(
+                false,
                 centerX - width / 2,
                 centerY - height / 2,
                 centerX + width / 2,
@@ -458,26 +459,27 @@ class CropOverlay(val cropDelegate: CropDelegate) {
     }
 
     /**更新剪切矩形*/
-    fun updateClipPath() {
-        _clipPath.rewind()
+    fun updateClipPath(path: Path = _clipPath, rect: Rect = clipRect): Path {
+        path.rewind()
         when (clipType) {
             TYPE_CIRCLE -> {
                 //椭圆
-                _clipPath.addOval(
-                    clipRect.toRectF(),
+                path.addOval(
+                    rect.toRectF(),
                     Path.Direction.CW
                 )
             }
             else -> {
                 //圆角矩形
-                _clipPath.addRoundRect(
-                    clipRect.toRectF(),
+                path.addRoundRect(
+                    rect.toRectF(),
                     roundRadius,
                     roundRadius,
                     Path.Direction.CW
                 )
             }
         }
+        return path
     }
 
     fun updateClipRect(endMatrix: Matrix, anim: Boolean) {

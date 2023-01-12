@@ -222,6 +222,14 @@ fun Matrix.getTranslateY(): Float {
     return _tempValues[Matrix.MTRANS_Y]
 }
 
+/**直接更新矩阵中的偏移量*/
+fun Matrix.updateTranslate(tx: Float, ty: Float) {
+    getValues(_tempValues)
+    _tempValues[Matrix.MTRANS_X] = tx
+    _tempValues[Matrix.MTRANS_Y] = ty
+    setValues(_tempValues)
+}
+
 fun Matrix.getSkewX(): Float {
     getValues(_tempValues)
     return _tempValues[Matrix.MSKEW_X]
@@ -232,17 +240,11 @@ fun Matrix.getSkewY(): Float {
     return _tempValues[Matrix.MSKEW_Y]
 }
 
-fun Matrix.setTranslateValue(x: Float, y: Float) {
+/**直接更新矩阵中的倾斜量*/
+fun Matrix.updateSkew(kx: Float, ky: Float) {
     getValues(_tempValues)
-    _tempValues[Matrix.MTRANS_X] = x
-    _tempValues[Matrix.MTRANS_Y] = y
-    setValues(_tempValues)
-}
-
-fun Matrix.setScaleValue(x: Float, y: Float) {
-    getValues(_tempValues)
-    _tempValues[Matrix.MSCALE_X] = x
-    _tempValues[Matrix.MSCALE_Y] = y
+    _tempValues[Matrix.MSKEW_X] = kx
+    _tempValues[Matrix.MSKEW_Y] = ky
     setValues(_tempValues)
 }
 
@@ -266,6 +268,14 @@ fun Matrix.getScale(): Float {
         _tempValues[Matrix.MSCALE_X].toDouble().pow(2.0) +
                 _tempValues[Matrix.MSKEW_Y].toDouble().pow(2.0)
     ).toFloat()
+}
+
+/**直接更新矩阵中的缩放量*/
+fun Matrix.updateScale(sx: Float, sy: Float) {
+    getValues(_tempValues)
+    _tempValues[Matrix.MSCALE_X] = sx
+    _tempValues[Matrix.MSCALE_Y] = sy
+    setValues(_tempValues)
 }
 
 /**获取旋转的角度, 非弧度

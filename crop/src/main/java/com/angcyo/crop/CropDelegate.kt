@@ -52,7 +52,10 @@ class CropDelegate(val view: View) {
     /**图片显示矩阵*/
     val _bitmapMatrix: Matrix = Matrix()
 
-    val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        isAntiAlias = true
+        isFilterBitmap = true
+    }
 
     //region ---property---
 
@@ -206,18 +209,19 @@ class CropDelegate(val view: View) {
         return true
     }
 
+    /**[crop]*/
     @CallPoint
     fun onDraw(canvas: Canvas) {
         //移动到中心开始绘制
-        _bitmap?.let {
+        _bitmap?.let { bitmap ->
             canvas.withMatrix(_bitmapMatrix) {
                 canvas.withScale(
                     if (flipHorizontal) -1f else 1f,
                     if (flipVertical) -1f else 1f,
-                    it.width / 2f,
-                    it.height / 2f
+                    bitmap.width / 2f,
+                    bitmap.height / 2f
                 ) {
-                    canvas.drawBitmap(it, 0f, 0f, paint)
+                    canvas.drawBitmap(bitmap, 0f, 0f, paint)
                 }
             }
         }
@@ -378,7 +382,7 @@ class CropDelegate(val view: View) {
         this.rotate = rotate % 360
 
         val bestRect = calcBestRect(_bitmapOriginRect.rectF)
-        _bestRect.set(bestRect)
+        _bestRect.setOut(true, bestRect)
 
         moveBitmapToRect(bestRect, anim)
 
@@ -453,22 +457,78 @@ class CropDelegate(val view: View) {
         }
     }
 
-    /**剪裁*/
+    /**将矩形反向映射到原始的图片中的位置*/
+    fun mapOriginRect(src: Rect = overlay.clipRect, result: RectF = RectF()): RectF {
+        result.set(src)
+        val matrix = acquireTempMatrix()
+        _bitmapMatrix.invert(matrix)
+        matrix.mapRect(result)
+        matrix.release()
+        return result
+    }
+
+    /**开始剪裁
+     * [onDraw]*/
     fun crop(): Bitmap? {
+        val bitmap = _bitmap ?: return null
         val clipRect = overlay.clipRect
-        if (clipRect.isEmpty || _bitmap == null) {
+        if (clipRect.isEmpty) {
             return null
         }
-        val bitmap =
-            Bitmap.createBitmap(clipRect.width(), clipRect.height(), Bitmap.Config.ARGB_8888)
-        val canvas = CropCanvas(bitmap)
+        if (overlay.enableClipMoveMode) {
+            //这种方式下的截图, 使用原始图片
 
-        canvas.withTranslation(-clipRect.left.toFloat(), -clipRect.top.toFloat()) {
-            withClip(overlay._clipPath) {
-                onDraw(this)
+            /*
+            val targetRect = mapOriginRect(overlay.clipRect).toRectOut(false)
+            val result = Bitmap.createBitmap(
+                bitmap,
+                targetRect.left, targetRect.top,
+                targetRect.width(), targetRect.height(),
+                matrix,
+                false
+            )
+
+            matrix.release()*/
+
+            val matrix = acquireTempMatrix()
+            matrix.setRotate(rotate, bitmap.width / 2f, bitmap.height / 2f)
+            matrix.postScale(
+                if (flipHorizontal) -1f else 1f,
+                if (flipVertical) -1f else 1f,
+                bitmap.width / 2f,
+                bitmap.height / 2f
+            )
+            val targetRect = mapOriginRect(overlay.clipRect).toRectOut(false)
+            matrix.postTranslate(-targetRect.left.toFloat(), -targetRect.top.toFloat())
+
+            val result = Bitmap.createBitmap(
+                targetRect.width(),
+                targetRect.height(),
+                bitmap.config
+            )
+            val canvas = CropCanvas(result)
+
+            canvas.withMatrix(matrix) {//旋转镜像
+                withClip(overlay.updateClipPath(Path(), targetRect)) {//clip
+                    drawBitmap(bitmap, 0f, 0f, paint)
+                }
             }
+            return result
+        } else {
+            val result = Bitmap.createBitmap(
+                clipRect.width(),
+                clipRect.height(),
+                bitmap.config//if (originBitmap.hasAlpha()) Bitmap.Config.ARGB_8888 else originBitmap.config
+            )
+            val canvas = CropCanvas(result)
+
+            canvas.withTranslation(-clipRect.left.toFloat(), -clipRect.top.toFloat()) {
+                withClip(overlay._clipPath) {
+                    onDraw(this)
+                }
+            }
+            return result
         }
-        return bitmap
     }
 
     //endregion ---operate---

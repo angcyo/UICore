@@ -7,9 +7,7 @@ import android.graphics.RectF
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.roundToInt
+import kotlin.math.*
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -29,8 +27,27 @@ fun RectF.isInitialize(def: Float = 0f): Boolean = left != def &&
 
 fun Rect.toRectF() = RectF(this)
 
-fun Rect.set(rect: RectF) {
-    set(rect.left.toInt(), rect.top.toInt(), rect.right.toInt(), rect.bottom.toInt())
+/**[out] 是否要获取包裹[RectF]的最大矩形, 负责就是四舍五入*/
+fun RectF.toRectOut(out: Boolean, result: Rect = Rect()): Rect {
+    if (out) {
+        roundOut(result)
+    } else {
+        round(result)
+    }
+    return result
+}
+
+fun Rect.setOut(out: Boolean, result: RectF) {
+    result.toRectOut(out, this)
+}
+
+/**[toRectOut]*/
+fun Rect.setOut(out: Boolean, left: Float, top: Float, right: Float, bottom: Float) {
+    if (out) {
+        set(floor(left).toInt(), floor(top).toInt(), ceil(right).toInt(), ceil(bottom).toInt())
+    } else {
+        set(round(left).toInt(), round(top).toInt(), round(right).toInt(), round(bottom).toInt())
+    }
 }
 
 /**2个矩形是否不一样*/
