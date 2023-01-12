@@ -15,13 +15,13 @@ import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
+import com.angcyo.library.ex.ceil
 import com.angcyo.library.ex.computePathBounds
 import com.angcyo.library.ex.withPicture
 import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 import com.angcyo.library.unit.toMm
 import com.pixplicity.sharp.Sharp
 import kotlin.math.max
-import kotlin.math.roundToInt
 
 /**
  * 矢量解析器
@@ -144,11 +144,11 @@ open class PathGraphicsParser : IGraphicsParser {
             return null
         }
         val pathBounds = acquireTempRectF()
-        drawPathList.computePathBounds(pathBounds, true)
+        drawPathList.computePathBounds(pathBounds)
 
         //绘制缩放后的path, 至少需要1像素
-        val shapeWidth = max(MIN_PATH_SIZE, pathBounds.width()).roundToInt()
-        val shapeHeight = max(MIN_PATH_SIZE, pathBounds.height()).roundToInt()
+        val shapeWidth = max(MIN_PATH_SIZE, pathBounds.width()).ceil().toInt()
+        val shapeHeight = max(MIN_PATH_SIZE, pathBounds.height()).ceil().toInt()
 
         val picture = withPicture(shapeWidth, shapeHeight) {
             val strokeWidth = paint.strokeWidth

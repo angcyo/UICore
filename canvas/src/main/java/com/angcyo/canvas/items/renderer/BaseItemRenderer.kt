@@ -250,18 +250,16 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
 
     val _flipMatrix = Matrix()
     val _flipRect = emptyRectF()
+    val _tempRect = emptyRect()
 
     override fun render(canvas: Canvas, renderParams: RenderParams) {
         rendererItem?.getDrawDrawable(renderParams)?.let { drawable ->
             val renderBounds = renderParams.itemRenderBounds ?: getRenderBounds()
+
             //需要处理矩形翻转的情况
             if (drawable is ScalePictureDrawable) {
-                drawable.setBounds(
-                    renderBounds.left.toInt(),
-                    renderBounds.top.toInt(),
-                    renderBounds.right.toInt(),
-                    renderBounds.bottom.toInt()
-                )
+                renderBounds.toRectOut(true, _tempRect)
+                drawable.setBounds(_tempRect.left, _tempRect.top, _tempRect.right, _tempRect.bottom)
                 drawable.draw(canvas)
             } else {
                 //用于支持水平/垂直镜像绘制
