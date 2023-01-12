@@ -69,11 +69,13 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
      * */
     var renderDrawable: Drawable? = null
 
-    //endregion ---属性---
+    override var itemLayerName: CharSequence?
+        get() = dataBean.name ?: dataBean.mtype.toTypeNameString()
+        set(value) {
+            super.itemLayerName = value
+        }
 
-    init {
-        itemLayerName = dataBean.name ?: dataBean.mtype.toTypeNameString()
-    }
+    //endregion ---属性---
 
     override fun getItemScaleX(renderer: BaseItemRenderer<*>): Float {
         val width = MM_UNIT.convertValueToPixel(dataBean._width)

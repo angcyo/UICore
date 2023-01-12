@@ -144,9 +144,7 @@ abstract class AbsFragment : Fragment() {
         super.onSaveInstanceState(outState)
     }
 
-    /**
-     * View需要恢复状态
-     */
+    /** View需要恢复状态 */
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
     }

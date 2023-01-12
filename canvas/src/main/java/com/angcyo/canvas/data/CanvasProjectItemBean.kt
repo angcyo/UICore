@@ -5,12 +5,15 @@ import android.graphics.RectF
 import android.widget.LinearLayout
 import com.angcyo.canvas.graphics.GraphicsHelper
 import com.angcyo.canvas.graphics.PathGraphicsParser
+import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_BOLD
 import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_DELETE_LINE
 import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_ITALIC
 import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_NONE
 import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_UNDER_LINE
+import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.canvas.utils.getAllDependRendererList
 import com.angcyo.drawable.dslGravity
 import com.angcyo.library.annotation.Implementation
 import com.angcyo.library.annotation.MM
@@ -424,6 +427,33 @@ data class CanvasProjectItemBean(
         const val DEFAULT_CHAR_SPACING = 0.5f
     }
 
+    /**[generateName]*/
+    fun generateNameByRenderer(list: List<BaseItemRenderer<*>>) {
+        val beanList = mutableListOf<CanvasProjectItemBean>()
+        list.getAllDependRendererList().forEach {
+            if (it is DataItemRenderer) {
+                it.dataItem?.dataBean?.let { beanList.add(it) }
+            }
+        }
+        generateName(beanList)
+    }
+
+    /**构建一个图层名*/
+    fun generateName(list: List<CanvasProjectItemBean>) {
+        if (name == null) {
+            if (mtype >= 0) {
+                val typeName = mtype.toTypeNameString()
+                val typeCount = list.count { it.mtype == mtype }
+                name = "$typeName ${typeCount + 1}"
+
+                val nameCount = list.count { it.name == name }
+                if (nameCount > 0) {
+                    name = "${name}(${nameCount + 1})"
+                }
+            }
+        }
+    }
+
     /**设置渲染的位置
      * [bounds] 返回值*/
     fun updateToRenderBounds(@Pixel bounds: RectF): RectF {
@@ -576,6 +606,13 @@ fun CanvasProjectItemBean.isBold() = fontWeight == "bold"
 fun CanvasProjectItemBean.isItalic() = fontStyle == "italic"
 
 //--
+
+/**构建元素的名称*/
+fun List<CanvasProjectItemBean>.generateName() {
+    forEach {
+        it.generateName(this)
+    }
+}
 
 /**[com.angcyo.canvas.data.CanvasProjectItemBean.mtype]类型转成字符串*/
 fun Int.toTypeNameString() = when (this) {

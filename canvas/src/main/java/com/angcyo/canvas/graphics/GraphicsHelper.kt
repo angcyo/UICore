@@ -186,6 +186,9 @@ object GraphicsHelper {
         assignLocation: Boolean = false,
         strategy: Strategy = Strategy.normal
     ): DataItemRenderer? {
+        if (canvasView is CanvasDelegate) {
+            bean.generateNameByRenderer(canvasView.itemsRendererList)
+        }
         val item = parseRenderItemFrom(bean, canvasView) ?: return null
         val renderer = DataItemRenderer(canvasView)
         renderer.setRendererRenderItem(item)

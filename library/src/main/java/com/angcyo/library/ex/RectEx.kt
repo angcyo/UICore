@@ -16,6 +16,8 @@ import kotlin.math.*
 
 //<editor-fold desc="base">
 
+fun emptyRect(def: Int = 0) = Rect(def, def, def, def)
+
 fun emptyRectF(def: Float = 0f) = RectF(def, def, def, def)
 
 val Rect.rectF: RectF
