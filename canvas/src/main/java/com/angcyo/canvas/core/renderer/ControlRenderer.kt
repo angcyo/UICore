@@ -78,9 +78,7 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
         oldBounds: RectF
     ) {
         super.onRenderItemBoundsChanged(itemRenderer, reason, oldBounds)
-        if (itemRenderer == controlHandler.selectedItemRender) {
-            updateControlPointLocation()
-        }
+        checkUpdateControlPointLocation(itemRenderer)
     }
 
     override fun onCanvasBoxMatrixUpdate(
@@ -103,14 +101,24 @@ class ControlRenderer(val controlHandler: ControlHandler, canvasView: ICanvasVie
         }
     }
 
+    override fun onRenderItemDataChanged(itemRenderer: IItemRenderer<*>, reason: Reason) {
+        super.onRenderItemDataChanged(itemRenderer, reason)
+        checkUpdateControlPointLocation(itemRenderer)
+    }
+
     override fun onRenderItemTypeChanged(itemRenderer: IItemRenderer<*>) {
         super.onRenderItemTypeChanged(itemRenderer)
+        checkUpdateControlPointLocation(itemRenderer)
+    }
+
+    //---
+
+    /**检查是否要更新控制点位置*/
+    fun checkUpdateControlPointLocation(itemRenderer: IRenderer) {
         if (itemRenderer == controlHandler.selectedItemRender) {
             updateControlPointLocation()
         }
     }
-
-    //---
 
     /**更新控制点位坐标*/
     fun updateControlPointLocation() {
