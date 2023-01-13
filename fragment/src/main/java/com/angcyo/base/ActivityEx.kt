@@ -105,7 +105,11 @@ fun View.fullscreen(enable: Boolean = true) {
  * 请在[super.onCreate]调用之后触发
  * */
 fun Activity.lightStatusBar(light: Boolean = true) {
-    window.lightStatusBar(light)
+    try {
+        window.lightStatusBar(light)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
 
 fun Window.lightStatusBar(light: Boolean = true) {

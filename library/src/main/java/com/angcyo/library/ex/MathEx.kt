@@ -278,11 +278,14 @@ fun Matrix.updateScale(sx: Float, sy: Float) {
     setValues(_tempValues)
 }
 
+/**获取旋转角度
+ * [0~360°]*/
+fun Matrix.getRotate(): Float = (360 + getRotateDegrees()) % 360
+
 /**获取旋转的角度, 非弧度
  * https://stackoverflow.com/questions/12256854/get-the-rotate-value-from-matrix-in-android
  * [0~180°]
  * [-180°~0]
- *
  * */
 fun Matrix.getRotateDegrees(): Float {
     getValues(_tempValues)
@@ -311,7 +314,7 @@ fun Matrix.getRotateDegrees(): Float {
         _tempValues[Matrix.MSCALE_X]
     ) * (180 / Math.PI)
 
-    return -degrees.roundToLong().toFloat()
+    return (-degrees).toFloat()
 }
 
 /**[PointF]*/
@@ -437,14 +440,12 @@ fun PointF.invertRotate(
 /**to string*/
 fun Matrix.toLogString(): String = buildString {
     appendLine()
-    val rotate = getRotateDegrees()
+    val rotate = getRotate()
     appendLine("rotate:${rotate}° ${rotate.toRadians()}")
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        appendLine("isAffine:${isAffine}")
+        append("isAffine:${isAffine} ")
     }
     appendLine("isIdentity:${isIdentity}")
-    appendLine()
-
     getValues(_tempValues)
     for (i in 0 until 9) {
         if (i % 3 == 0) {
