@@ -8,11 +8,11 @@
  * */
 def output = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
 
-//APK输出文件名配置:
+//APK输出文件名配置:(不包含扩展名)
 //可用参数: #an:app名字; #vn:版本名; #t:当天日期; #fn:风味名; #bn:编译类型名;
 //         #sn:使用的签名名称; #ka:使用的签名别名;
 
-def apkFormatName = project.hasProperty("apkName") ? project.ext.apkName : "#an-#vn_#t_#fn_#bn_#ka.apk"
+def apkFormatName = project.hasProperty("apkName") ? project.ext.apkName : "#an-#vn_#t_#fn_#bn_#ka"
 
 def _app_name = project.hasProperty("APP_NAME") ? project.ext.APP_NAME : ((project.name != "app") ? project.name : rootProject.name)
 def apk_time = apkTime()
@@ -52,18 +52,22 @@ android {
             def defPath = defFolder.absolutePath
             println "\napk.gradle ${gradleVersion}→默认输出目录↓\n${variant.name}-> ${defPath}"
 
+            def outputFolder = new File(apkFolder, variant.name)
+            def outputName = formatApkName(apkFormatName,
+                    _app_name,
+                    variant.versionName,
+                    apk_time,
+                    variant.flavorName,
+                    variant.buildType.name,
+                    variant.signingConfig?.name ?: '',
+                    keyAlias
+            )
+            setAabPathProperty(variant.flavorName, variant.buildType.name, new File(outputFolder, outputName + ".aab").absolutePath)
+
             if (variant.buildType.name != "debug") {
-                variant.packageApplicationProvider.get().outputDirectory = new File(apkFolder, variant.name)
+                variant.packageApplicationProvider.get().outputDirectory = outputFolder
                 variant.outputs.forEach {
-                    it.outputFileName = formatApkName(apkFormatName,
-                            _app_name,
-                            variant.versionName,
-                            apk_time,
-                            variant.flavorName,
-                            variant.buildType.name,
-                            variant.signingConfig?.name ?: '',
-                            keyAlias
-                    )
+                    it.outputFileName = outputName + ".apk"
                 }
             }
         }
@@ -73,18 +77,22 @@ android {
             def defPath = variant.packageApplicationProvider.get().outputDirectory.getAsFile().get().absolutePath
             println "\napk.gradle ${gradleVersion}→APK默认输出目录:${defPath}"
 
+            def outputFolder = new File(apkFolder, variant.name)
+            def outputName = formatApkName(apkFormatName,
+                    _app_name,
+                    variant.versionName,
+                    apk_time,
+                    variant.flavorName,
+                    variant.buildType.name,
+                    variant.signingConfig?.name ?: '',
+                    keyAlias
+            )
+            setAabPathProperty(variant.flavorName, variant.buildType.name, new File(outputFolder, outputName + ".aab").absolutePath)
+
             if (variant.buildType.name != "debug") {
                 variant.packageApplicationProvider.get().outputDirectory = new File(apkFolder, variant.name)
                 variant.outputs.forEach {
-                    it.apkData.outputFileName = formatApkName(apkFormatName,
-                            _app_name,
-                            variant.versionName,
-                            apk_time,
-                            variant.flavorName,
-                            variant.buildType.name,
-                            variant.signingConfig?.name ?: '',
-                            keyAlias
-                    )
+                    it.apkData.outputFileName = outputName + ".apk"
                 }
             }
         }
@@ -94,18 +102,22 @@ android {
             def defPath = variant.packageApplication.outputDirectory.getAsFile().get().absolutePath
             println "\napk.gradle ${gradleVersion}→APK默认输出目录:${defPath}"
 
+            def outputFolder = new File(apkFolder, variant.name)
+            def outputName = formatApkName(apkFormatName,
+                    _app_name,
+                    variant.versionName,
+                    apk_time,
+                    variant.flavorName,
+                    variant.buildType.name,
+                    variant.signingConfig?.name ?: '',
+                    keyAlias
+            )
+            setAabPathProperty(variant.flavorName, variant.buildType.name, new File(outputFolder, outputName + ".aab").absolutePath)
+
             if (variant.buildType.name != "debug") {
                 variant.packageApplication.outputDirectory = new File(apkFolder, variant.name)
                 variant.packageApplication.outputScope?.apkDatas?.forEach { apkData ->
-                    apkData.outputFileName = formatApkName(apkFormatName,
-                            _app_name,
-                            variant.versionName,
-                            apk_time,
-                            variant.flavorName,
-                            variant.buildType.name,
-                            variant.signingConfig?.name ?: '',
-                            keyAlias
-                    )
+                    apkData.outputFileName = outputName + ".apk"
                 }
             }
         }
@@ -115,23 +127,42 @@ android {
             def defPath = variant.getPackageApplication().outputDirectory.getAsFile().get().absolutePath
             println "\napk.gradle ${gradleVersion}→APK默认输出目录:${defPath}"
 
+            def outputFolder = new File(apkFolder, variant.name)
+            def outputName = formatApkName(apkFormatName,
+                    _app_name,
+                    variant.versionName,
+                    apk_time,
+                    variant.flavorName,
+                    variant.buildType.name,
+                    variant.signingConfig?.name ?: '',
+                    keyAlias
+            )
+            setAabPathProperty(variant.flavorName, variant.buildType.name, new File(outputFolder, outputName + ".aab").absolutePath)
+
             if (variant.buildType.name != "debug") {
                 //new File(project.rootDir.absolutePath + "/apk")
                 variant.getPackageApplication().outputDirectory = new File(apkFolder, variant.name)
                 variant.getPackageApplication().outputScope.apkDatas.forEach { apkData ->
-                    apkData.outputFileName = formatApkName(apkFormatName,
-                            _app_name,
-                            variant.versionName,
-                            apk_time,
-                            variant.flavorName,
-                            variant.buildType.name,
-                            variant.signingConfig?.name ?: '',
-                            keyAlias
-                    )
+                    apkData.outputFileName = outputName + ".apk"
                 }
             }
         }
     }
+}
+
+/**设置aab输出的全路径属性*/
+def setAabPathProperty(flavor, buildType, path) {
+    def aabPathKey = ""
+
+    if (flavor != null) {
+        aabPathKey = "$aabPathKey${flavor}"
+    }
+    if (buildType != null) {
+        aabPathKey = "$aabPathKey${buildType}"
+    }
+    aabPathKey = "${aabPathKey}AabOutputPath"
+    rootProject.ext.setProperty(aabPathKey, path)
+    println "设置属性:${aabPathKey} ->${getProperty(aabPathKey)}"
 }
 
 static def formatApkName(format, an, vn, t, fn, bn, sn, ka) {
@@ -162,7 +193,7 @@ gradle.buildFinished { buildResult -> /*BuildResult*/
 
             for (subFile in subFileList) {
                 def fileName = subFile.name
-                if (subFile.isFile() && fileName.endsWith(".apk")) {
+                if (subFile.isFile() && (fileName.endsWith(".apk") || fileName.endsWith(".aab"))) {
                     def ignoreFile = false
 
                     def haveCopyFile = false

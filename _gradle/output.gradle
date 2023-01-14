@@ -102,7 +102,7 @@ gradle.buildFinished { buildResult -> /*BuildResult*/
 
             for (subFile in subFileList) {
                 def fileName = subFile.name
-                if (subFile.isFile() && fileName.endsWith(".apk")) {
+                if (subFile.isFile() && (fileName.endsWith(".apk") || fileName.endsWith(".aab"))) {
                     def ignoreFile = false
 
                     def haveCopyFile = false

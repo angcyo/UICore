@@ -189,3 +189,4 @@ apply from: allGradle.version
 apply from: allGradle.collectMR
 apply from: allGradle.apk
 apply from: allGradle.metadata
+apply from: allGradle.copyAab

@@ -1,0 +1,113 @@
+/**
+ * 复制aab文件, 并重命名
+ * [.../app/build/outputs/bundle/release/xxx.aab]
+ * [.../app/build/outputs/bundle/apkRelease/xxx.aab]
+ *
+ * https://stackoverflow.com/questions/55058980/android-appbundle-rename-generated-outputfile-aab
+ *
+ * 2023-01-14
+ * */
+
+android {
+    tasks.whenTaskAdded { task ->
+        def name = task.name
+
+        //Skip some unnecessary tasks
+        if (name.startsWith("bundle")
+                && !name.contains("Classes")
+                && !name.contains("Resources")
+                && name != "bundle") {
+
+            def flavor = getFlavor(name)
+            def buildType = getBuildType(name)
+            println "匹配到aab任务:${name} flavor:${flavor} buildType:${buildType}"
+
+            def renameTaskName = "rename${task.name.capitalize()}Aab"
+
+            tasks.create(renameTaskName) {
+                description = "复制aab文件."
+
+                //原aab的文件名
+                def aabName = getProperty('archivesBaseName')
+                def aabFolder = ""
+                if (flavor != null) {
+                    aabName = "${aabName}-${flavor}"
+                    aabFolder = "$aabFolder${flavor}"
+                }
+                if (buildType != null) {
+                    aabName = "${aabName}-${buildType}"
+                    aabFolder = "$aabFolder${buildType}"
+                }
+                aabName = "${aabName}.aab"
+
+                //原aab文件的路径
+                def aabPath = new File(buildDir, "outputs/bundle/${aabFolder}/${aabName}")
+                doLast {
+                    def pathKey = "${aabFolder}AabOutputPath"
+                    if (rootProject.hasProperty(pathKey)) {
+                        def targetPath = rootProject.getProperty(pathKey)
+                        println "[copyAab.gradle] 复制aab:${aabPath} -> ${targetPath}"
+                        if (file(aabPath).exists()) {
+                            //ant.move
+                            //ant.copy
+                            ant.copy file: aabPath,
+                                    tofile: targetPath
+                        }
+                    } else {
+                        System.err.println "未配置aab输出路径[${pathKey}]"
+                    }
+                }
+            }
+
+            task.finalizedBy(renameTaskName)
+        }
+    }
+}
+
+static String firstMatchingSubstring(String taskName, String[] keys) {
+    def lcName = taskName.toLowerCase()
+
+    for (String key : keys) {
+        if (lcName.contains(key.toLowerCase())) return key
+    }
+
+    return null
+}
+
+/**
+ *
+ * @param taskName e.g., bundleMyFlavorRelease or bundleRelease
+ * @return
+ */
+String getBuildType(String taskName) {
+    return firstMatchingSubstring(taskName, getBuildTypeNames())
+}
+
+/**
+ *
+ * @param taskName e.g., bundleMyFlavorRelease
+ * @return
+ */
+String getFlavor(String taskName) {
+    return firstMatchingSubstring(taskName, getProductFlavorNames())
+}
+
+String[] getBuildTypeNames() {
+    def types = []
+
+    android.buildTypes.all { type ->
+        types.add(type.name)
+    }
+
+    return types
+}
+
+String[] getProductFlavorNames() {
+    def flavors = []
+
+    android.productFlavors.all { flavor ->
+        flavors.add(flavor.name)
+    }
+
+    return flavors
+}
