@@ -20,6 +20,7 @@ import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempPointF
@@ -154,12 +155,13 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
     //</editor-fold desc="控制点">
 
     /**手指数量*/
-    var _eventPointerCount: Int = 0
+    private var _eventPointerCount: Int = 0
 
     /**手势处理
      * [com.angcyo.canvas.CanvasView.onTouchEvent]*/
     @CanvasEntryPoint
     override fun onCanvasTouchEvent(canvasDelegate: CanvasDelegate, event: MotionEvent): Boolean {
+        //L.d(event)
         _eventPointerCount = event.pointerCount
 
         doubleGestureDetector.onTouchEvent(event)
@@ -224,7 +226,13 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                         if (list.size() > 1) {
                             touchInfo.touchItemRendererList = list
                         }
-                        canvasDelegate.selectedItem(itemRenderer)
+                        if (itemRenderer == null) {
+                            //意图取消选中item
+                            //延迟取消item, 这样在快速多指按下时, 不会触发取消选择
+                            delayCancelSelectRenderer()
+                        } else {
+                            canvasDelegate.selectedItem(itemRenderer)
+                        }
                     }
                 }
             }
@@ -233,6 +241,7 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
                 //touchControlPoint = null //支持恢复之前的控制点
                 //touchDownInfo?.touchPointerId = -1 //取消单手指移动
                 //touchPointerId = -1
+                removeDelayCancelSelectRenderer()
             }
             MotionEvent.ACTION_POINTER_UP -> {
                 //多指抬起, 非主手指
@@ -388,6 +397,18 @@ class ControlHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), ICan
         //result
         val result = selectedItemRender != null || holdControlPoint != null
         return result && handle
+    }
+
+    private var delayFindRendererListRunnable: Runnable? = null
+
+    private fun delayCancelSelectRenderer() {
+        delayFindRendererListRunnable = Runnable { canvasDelegate.selectedItem(null) }
+        MainExecutor.delay(delayFindRendererListRunnable!!, 60)
+    }
+
+    private fun removeDelayCancelSelectRenderer() {
+        delayFindRendererListRunnable?.let { MainExecutor.remove(it) }
+        delayFindRendererListRunnable = null
     }
 
     /**通过坐标, 找到控制点
