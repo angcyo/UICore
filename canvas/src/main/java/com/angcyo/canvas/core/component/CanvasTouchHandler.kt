@@ -14,6 +14,7 @@ import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.size
 import com.angcyo.library.gesture.DoubleGestureDetector2
 import com.angcyo.vector.VectorHelper
 import kotlin.math.min
@@ -299,6 +300,9 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
         }
     }
 
+    private val flingDownPointList = mutableListOf<PointF>()
+    private val flingMovePointList = mutableListOf<PointF>()
+
     /**fling事件处理入口*/
     fun handleFlingEvent(event: MotionEvent) {
         if (velocityTracker == null) {
@@ -311,18 +315,26 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
                 lastVelocityX = null
                 lastVelocityY = null
             }
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                obtainPointList(event, flingDownPointList)
+            }
+            MotionEvent.ACTION_MOVE -> {
+                obtainPointList(event, flingMovePointList)
+            }
             MotionEvent.ACTION_POINTER_UP -> {
-                velocityTracker?.computeCurrentVelocity(1000, maximumFlingVelocity.toFloat())
-                val id = event.getPointerId(0)
-                val velocityX = velocityTracker?.getXVelocity(id)
-                val velocityY = velocityTracker?.getYVelocity(id)
+                if (isFlingIntent()) {
+                    velocityTracker?.computeCurrentVelocity(1000, maximumFlingVelocity.toFloat())
+                    val id = event.getPointerId(0)
+                    val velocityX = velocityTracker?.getXVelocity(id)
+                    val velocityY = velocityTracker?.getYVelocity(id)
 
-                if (velocityX.abs() > minimumFlingVelocity ||
-                    velocityY.abs() > minimumFlingVelocity
-                ) {
-                    isFlingHappen = true
-                    lastVelocityX = velocityX
-                    lastVelocityY = velocityY
+                    if (velocityX.abs() > minimumFlingVelocity ||
+                        velocityY.abs() > minimumFlingVelocity
+                    ) {
+                        isFlingHappen = true
+                        lastVelocityX = velocityX
+                        lastVelocityY = velocityY
+                    }
                 }
             }
             MotionEvent.ACTION_UP -> {
@@ -334,6 +346,26 @@ class CanvasTouchHandler(val canvasDelegate: CanvasDelegate) : BaseComponent(), 
                 velocityTracker = null
             }
         }
+    }
+
+    /**是否是fling意图*/
+    private fun isFlingIntent(): Boolean {
+        if (flingDownPointList.size() < 2 || flingMovePointList.size() < 2) {
+            return false
+        }
+
+        val dp1 = flingDownPointList[0]
+        val dp2 = flingDownPointList[1]
+
+        val mp1 = flingMovePointList[0]
+        val mp2 = flingMovePointList[1]
+
+        val dx1 = mp1.x - dp1.x
+        val dy1 = mp1.y - dp1.y
+
+        val dx2 = mp2.x - dp2.x
+        val dy2 = mp2.y - dp2.y
+        return (dx1 > dy1 && dx2 > dy2) || (dx1 < dy1 && dx2 < dy2)
     }
 
     /**开始fling操作*/
