@@ -1,6 +1,7 @@
 package com.angcyo.library.component
 
 import android.content.Intent
+import android.net.Uri
 import com.angcyo.library.L
 import com.angcyo.library.ex.*
 import com.angcyo.library.libCacheFile
@@ -21,7 +22,7 @@ object ROpenFileHelper {
      *
      * [ext] 如果[intent]中未包含扩展名, 则需要补充的扩展名,智能识别.号
      *
-     * [savePath] 强制指定转存的文件全路径
+     * [savePath] 强制指定文件的全路径, 此时[ext]参数无效
      * [folderPath] 单独指定转存的文件目录, 自动补齐文件名
      * @return 返回转存后的文件路径
      * */
@@ -35,54 +36,65 @@ object ROpenFileHelper {
         val action = intent.action
 
         val data = when (action) {
-            Intent.ACTION_VIEW -> intent.data
+            //Intent.ACTION_VIEW -> intent.data
             Intent.ACTION_SEND -> intent.extras?.getParcelable(Intent.EXTRA_STREAM)
-            else -> null
+            else -> intent.data
         }
         //android.intent.action.VIEW
         //content://com.estrongs.files/storage/emulated/0/tencent/QQ_Images/ffea464c0cb6e12.jpg
         L.i("解析:$action $data")
+        return parseData(
+            data,
+            ext ?: intent.type?.mimeTypeToExtName() ?: intent.type?.lastName(),
+            savePath,
+            folderPath
+        )
+    }
 
-        if (data != null) {
-            val filePath: String
-            val path = "$data"
-            if (savePath == null) {
-                //%E9%87%91%E9%97%A8%E5%A4%A7%E6%A1%A5-GCODE.dxf
-                //decode->金门大桥-GCODE.dxf
+    /**[parseIntent]*/
+    fun parseData(
+        data: Uri?,
+        ext: String? = null, //单独指定文件的扩展名
+        savePath: String? = null, //强制指定文件的全路径, 此时[ext]参数无效
+        folderPath: String? = null //单独指定文件的存储目录
+    ): String? {
+        data ?: return null
+        val filePath: String
+        val path = "$data"
+        if (savePath == null) {
+            //%E9%87%91%E9%97%A8%E5%A4%A7%E6%A1%A5-GCODE.dxf
+            //decode->金门大桥-GCODE.dxf
 
-                val name = data.getDisplayName() ?: path.decode().lastName()
-                var extName = name.extName()
+            val name = data.getDisplayName() ?: path.decode().lastName()
+            var extName = name.extName()
 
-                val fileName = if (extName.isEmpty()) {
-                    //无扩展名
-                    extName = ext ?: intent.type?.mimeTypeToExtName()
-                            ?: intent.type?.lastName() ?: ""
-                    if (extName.startsWith(".")) {
-                        "${name}${extName}"
-                    } else {
-                        "${name}.${extName}"
-                    }
+            val fileName = if (extName.isEmpty() && !ext.isNullOrEmpty()) {
+                //无扩展名
+                extName = ext
+                if (extName.startsWith(".")) {
+                    "${name}${extName}"
                 } else {
-                    name
+                    "${name}.${extName}"
                 }
-
-                val newPath = if (folderPath == null) {
-                    libCacheFile(fileName)
-                } else {
-                    File(folderPath, fileName)
-                }.absolutePath
-
-                filePath = newPath
             } else {
-                filePath = savePath
+                name
             }
-            data.saveTo(filePath)//转存文件
-            ///data/user/0/com.angcyo.uicore.demo/cache/documents/ffea464c0cb6e12(2).jpg
-            //->/storage/emulated/0/Android/data/com.angcyo.uicore.demo/cache/ffea464c0cb6e12(2).jpg
-            L.i("转存文件:$path ->$filePath")
-            return filePath
+
+            val newPath = if (folderPath == null) {
+                libCacheFile(fileName)
+            } else {
+                File(folderPath, fileName)
+            }.absolutePath
+
+            filePath = newPath
+        } else {
+            filePath = savePath
         }
-        return null
+        data.saveTo(filePath)//转存文件
+        ///data/user/0/com.angcyo.uicore.demo/cache/documents/ffea464c0cb6e12(2).jpg
+        //->/storage/emulated/0/Android/data/com.angcyo.uicore.demo/cache/ffea464c0cb6e12(2).jpg
+        L.i("转存文件:$path ->$filePath")
+        return filePath
     }
 
 }
