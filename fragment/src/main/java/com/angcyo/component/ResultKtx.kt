@@ -44,18 +44,18 @@ fun Context.getPhoto(fragmentManager: FragmentManager, onResult: (Bitmap?) -> Un
             //val newBitmap = newPath.toBitmap()
 
             val uriBitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
-            onResult(uriBitmap.rotate(degree.toFloat()))
+            onResult(uriBitmap?.rotate(degree.toFloat()))
         }
     }
 }
 
 /**获取一个文件 */
-fun FragmentActivity.getFile(type: String, onResult: (Uri?) -> Unit) {
+fun FragmentActivity.getFile(type: String = "*/*", onResult: (Uri?) -> Unit) {
     supportFragmentManager.getFile(type, onResult)
 }
 
 /**获取一个文件*/
-fun Fragment.getFile(type: String, onResult: (Uri?) -> Unit) {
+fun Fragment.getFile(type: String = "*/*", onResult: (Uri?) -> Unit) {
     parentFragmentManager.getFile(type, onResult)
 }
 
@@ -63,7 +63,7 @@ fun Fragment.getFile(type: String, onResult: (Uri?) -> Unit) {
  * [type] "font/`*`
  * [com.angcyo.core.component.FileSelectorFragment.fileSelector]
  * */
-fun FragmentManager.getFile(type: String, onResult: (Uri?) -> Unit) {
+fun FragmentManager.getFile(type: String = "*/*", onResult: (Uri?) -> Unit) {
     //val action = if (type.isImageMimeType()) Intent.ACTION_PICK else Intent.ACTION_GET_CONTENT
     val intent = Intent(Intent.ACTION_GET_CONTENT)
     intent.addCategory(Intent.CATEGORY_OPENABLE)

@@ -515,7 +515,10 @@ fun String?.isImageType(): Boolean {
     if (lc.mimeType()?.startsWith("image", true) == true) {
         return true
     }
-    return lc.endsWith(".jpg") || lc.endsWith(".jpeg") || lc.endsWith(".png") || lc.endsWith(".webp")
+    return lc.endsWith(".jpg", true) ||
+            lc.endsWith(".jpeg", true) ||
+            lc.endsWith(".png", true) ||
+            lc.endsWith(".webp", true)
 }
 
 /**是否是字体
