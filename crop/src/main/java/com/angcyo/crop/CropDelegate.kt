@@ -214,14 +214,16 @@ class CropDelegate(val view: View) {
     fun onDraw(canvas: Canvas) {
         //移动到中心开始绘制
         _bitmap?.let { bitmap ->
-            canvas.withMatrix(_bitmapMatrix) {
-                canvas.withScale(
-                    if (flipHorizontal) -1f else 1f,
-                    if (flipVertical) -1f else 1f,
-                    bitmap.width / 2f,
-                    bitmap.height / 2f
-                ) {
-                    canvas.drawBitmap(bitmap, 0f, 0f, paint)
+            if (!bitmap.isRecycled) {
+                canvas.withMatrix(_bitmapMatrix) {
+                    canvas.withScale(
+                        if (flipHorizontal) -1f else 1f,
+                        if (flipVertical) -1f else 1f,
+                        bitmap.width / 2f,
+                        bitmap.height / 2f
+                    ) {
+                        canvas.drawBitmap(bitmap, 0f, 0f, paint)
+                    }
                 }
             }
         }
