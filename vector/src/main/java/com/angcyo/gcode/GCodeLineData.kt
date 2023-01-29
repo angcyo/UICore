@@ -60,6 +60,11 @@ fun GCodeLineData.getGCodeCmd(cmd: String): GCodeCmd? {
     return cmdList.find { it.cmd.startsWith(cmd) }
 }
 
+/**程序是否关闭, 比如到了文件尾部, 或者遇到了M2*/
+fun GCodeLineData.isClose(): Boolean {
+    return cmdList.find { it.cmd.startsWith("M", true) && it.number.toInt() == 2 } != null
+}
+
 /**最后一条有效指令的索引*/
 fun List<GCodeLineData>.lastValidIndex(): Int {
     for ((index, line) in withIndex().reversed()) {
@@ -79,7 +84,7 @@ fun GCodeLineData.spindleType(def: Int? = null): Int? {
     var result = def
     cmdList.forEach { cmdData ->
         val cmdString = cmdData.cmd
-        if (cmdString.startsWith("M")) {
+        if (cmdString.startsWith("M", true)) {
             //M05指令:主轴关闭, M03:主轴打开 M04:自动
             result = when (cmdData.number.toInt()) {
                 5 -> SPINDLE_OFF

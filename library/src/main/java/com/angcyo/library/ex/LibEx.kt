@@ -464,6 +464,18 @@ fun <T> List<T>.before(element: T): T? {
     return getOrNull(index - 1)
 }
 
+/**当前元素[element]前面所有的元素集合*/
+fun <T> List<T>.beforeList(element: T): List<T> {
+    val result = mutableListOf<T>()
+    val index = indexOf(element)
+    if (index != -1) {
+        for (i in 0..index) {
+            result.add(get(i))
+        }
+    }
+    return result
+}
+
 /**列表中, 当前[element]的后一个元素*/
 fun <T> List<T>.after(element: T): T? {
     val index = indexOf(element)
@@ -471,6 +483,18 @@ fun <T> List<T>.after(element: T): T? {
         return null
     }
     return getOrNull(index + 1)
+}
+
+/**当前元素[element]后面所有的元素集合*/
+fun <T> List<T>.afterList(element: T): List<T> {
+    val result = mutableListOf<T>()
+    val index = indexOf(element)
+    if (index != -1) {
+        for (i in index + 1..lastIndex) {
+            result.add(get(i))
+        }
+    }
+    return result
 }
 
 /**列表中, 当前[element]是否在[anchor]元素之前

@@ -414,9 +414,9 @@ object GCodeHelper {
             //解析一行的数据
             _initSpindleType(gCodeLineList)
 
-            for (lineData in gCodeLineList) {
-                spindleType = lineData.spindleType(spindleType)
-                parseGCodeLine(lineData, path)
+            for (line in gCodeLineList) {
+                spindleType = line.spindleType(spindleType)
+                parseGCodeLine(line, gCodeLineList.afterList(line), path)
             }
 
             path.computePathBounds(gCodeBounds)
@@ -437,7 +437,7 @@ object GCodeHelper {
             _initSpindleType(gCodeLineList)
             gCodeLineList.forEach { line ->
                 spindleType = line.spindleType(spindleType)
-                if (!parseGCodeLine(line)) {
+                if (!parseGCodeLine(line, gCodeLineList.afterList(line))) {
                     //其他指令, 原封不动写入
                     overrideCommand?.invoke(line)
                 }
@@ -445,8 +445,14 @@ object GCodeHelper {
         }
 
         /**主轴关闭后, 所有的G指令操作, 都变成Move
+         * [line] 当前行的指令
+         * [afterLineList] 当前行后面的所有指令
          *  返回值表示是否处理了*/
-        fun parseGCodeLine(line: GCodeLineData, toPath: Path = path): Boolean {
+        fun parseGCodeLine(
+            line: GCodeLineData,
+            afterLineList: List<GCodeLineData>,
+            toPath: Path = path
+        ): Boolean {
             val firstCmd = line.cmdList.firstOrNull()
             val firstCmdString = firstCmd?.cmd
 
@@ -484,7 +490,19 @@ object GCodeHelper {
                     val originLastX = _lastOriginX
                     val originLastY = _lastOriginY
 
-                    transformPoint(line, x, y, _tempXYPoint)
+                    if (number == 0 && x.toInt() == 0 && y.toInt() == 0) {
+                        //G0 情况下, 如果下一个有效指令没有G1 2/3
+                        val after = afterLineList.firstOrNull()
+                        if (after == null || after.isClose()) {
+                            //程序关闭
+                            _tempXYPoint.x = x
+                            _tempXYPoint.y = y
+                        } else {
+                            transformPoint(line, x, y, _tempXYPoint)
+                        }
+                    } else {
+                        transformPoint(line, x, y, _tempXYPoint)
+                    }
                     x = _tempXYPoint.x
                     y = _tempXYPoint.y
 
@@ -660,7 +678,7 @@ object GCodeHelper {
         fun transformPoint(line: GCodeLineData, x: Double, y: Double, point: PointD) {
             _lastOriginX = x
             _lastOriginY = y
-            point.set(x, y)
+            point[x] = y
             transformPoint?.invoke(line, point)
         }
     }
