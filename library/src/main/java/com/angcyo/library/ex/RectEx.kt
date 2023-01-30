@@ -1,6 +1,5 @@
 package com.angcyo.library.ex
 
-import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
@@ -286,19 +285,18 @@ fun RectF.rotateToPath(
     return result
 }
 
-/**
- * 在矩形中间点, 缩放
- * */
-fun RectF.scaleFromCenter(scaleX: Float, scaleY: Float): RectF {
-    val matrix = Matrix()
-    matrix.setScale(scaleX, scaleY)
-    val tempRectF = RectF()
-    matrix.mapRect(tempRectF, this)
-    matrix.postTranslate(
-        this.width() / 2 - tempRectF.width() / 2,
-        this.height() / 2 - tempRectF.height() / 2
-    )
-    matrix.mapRect(this)
+/** 在矩形中间点, 缩放 */
+fun RectF.scaleFromCenter(
+    scaleX: Float, scaleY: Float,
+    pivotX: Float = centerX(), pivotY: Float = centerY(),
+    result: RectF = this
+): RectF = scale(scaleX, scaleY, pivotX, pivotY, result)
+
+/** 将矩形的中点偏移到指定的中点*/
+fun RectF.offsetCenterTo(newCenterX: Float, newCenterY: Float): RectF {
+    val dx = newCenterX - centerX()
+    val dy = newCenterY - centerY()
+    offset(dx, dy)
     return this
 }
 

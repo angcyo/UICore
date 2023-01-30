@@ -223,7 +223,7 @@ fun Matrix.getTranslateY(): Float {
 }
 
 /**直接更新矩阵中的偏移量*/
-fun Matrix.updateTranslate(tx: Float, ty: Float) {
+fun Matrix.updateTranslate(tx: Float = 0f, ty: Float = 0f) {
     getValues(_tempValues)
     _tempValues[Matrix.MTRANS_X] = tx
     _tempValues[Matrix.MTRANS_Y] = ty
@@ -241,7 +241,7 @@ fun Matrix.getSkewY(): Float {
 }
 
 /**直接更新矩阵中的倾斜量*/
-fun Matrix.updateSkew(kx: Float, ky: Float) {
+fun Matrix.updateSkew(kx: Float = 0f, ky: Float = 0f) {
     getValues(_tempValues)
     _tempValues[Matrix.MSKEW_X] = kx
     _tempValues[Matrix.MSKEW_Y] = ky
@@ -271,7 +271,7 @@ fun Matrix.getScale(): Float {
 }
 
 /**直接更新矩阵中的缩放量*/
-fun Matrix.updateScale(sx: Float, sy: Float) {
+fun Matrix.updateScale(sx: Float = 1f, sy: Float = 1f) {
     getValues(_tempValues)
     _tempValues[Matrix.MSCALE_X] = sx
     _tempValues[Matrix.MSCALE_Y] = sy
