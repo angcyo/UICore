@@ -69,7 +69,7 @@ data class CanvasProjectItemBean(
      * */
     var gravity: Int? = null,
 
-    /**旋转的角度*/
+    /**旋转的度数, 角度单位*/
     var angle: Float = 0f,
 
     /**数据绘制时的缩放比例*/
@@ -77,11 +77,23 @@ data class CanvasProjectItemBean(
 
     var scaleY: Float? = null,
 
-    /**水平翻转*/
+    /**是否水平翻转*/
     var flipX: Boolean? = null,
 
-    /**垂直翻转*/
+    /**是否垂直翻转*/
     var flipY: Boolean? = null,
+
+    /**数据绘制时的倾斜度数, 角度单位.
+     * 先缩放, 再倾斜. 然后旋转绘制
+     *
+     * ```
+     * postSkew(tan(skewX.toRadians()).toFloat(), tan(skewY.toRadians()).toFloat(), rect.left, rect.top)
+     * ```
+     * */
+    var skewX: Float? = null,
+
+    /**这是值始终为0*/
+    var skewY: Float? = null,
 
     //endregion ---bounds---
 
@@ -411,6 +423,15 @@ data class CanvasProjectItemBean(
 
     val _flipScaleY: Float
         get() = if (_flipY) -1f else 1f
+
+    //---
+
+    /**倾斜, 角度*/
+    val _skewX: Float
+        get() = skewX ?: 0f
+
+    val _skewY: Float
+        get() = skewY ?: 0f
 
     //---
 
