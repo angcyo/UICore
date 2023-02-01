@@ -265,9 +265,9 @@ fun Matrix.getScaleY(): Float {
 fun Matrix.getScale(): Float {
     getValues(_tempValues)
     return sqrt(
-        _tempValues[Matrix.MSCALE_X].toDouble().pow(2.0) +
-                _tempValues[Matrix.MSKEW_Y].toDouble().pow(2.0)
-    ).toFloat()
+        _tempValues[Matrix.MSCALE_X].pow(2) +
+                _tempValues[Matrix.MSKEW_Y].pow(2)
+    )
 }
 
 /**直接更新矩阵中的缩放量*/
@@ -315,6 +315,16 @@ fun Matrix.getRotateDegrees(): Float {
     ) * (180 / Math.PI)
 
     return (-degrees).toFloat()
+}
+
+/**[getRotateDegrees]*/
+fun Matrix.getRotateDegreesY(): Float {
+    getValues(_tempValues)
+    val degrees = atan2(
+        _tempValues[Matrix.MSKEW_Y],
+        _tempValues[Matrix.MSCALE_Y]
+    )
+    return (-degrees).toDegrees()
 }
 
 /**[PointF]*/
@@ -460,6 +470,25 @@ fun Matrix.toLogString(): String = buildString {
             appendLine()
         }
     }
+}
+
+/**从当前矩阵中移除[matrix]矩阵
+ *
+ * 矩阵除法运算 A/B等价于A乘以B的逆矩阵
+ * https://yuncode.net/code/c_50ab2790a735119*/
+fun Matrix.removeMatrix(matrix: Matrix, result: Matrix = Matrix()): Matrix {
+    val tempMatrix = acquireTempMatrix()
+    matrix.invert(tempMatrix)
+
+    result.set(this)
+    result.preConcat(tempMatrix) //注意preConcat, 不能用postConcat
+
+    tempMatrix.release()
+
+    //返回的矩阵满足以下关系
+    //matrix.postConcat(result) == matrix
+
+    return result
 }
 
 //</editor-fold desc="matrix">
