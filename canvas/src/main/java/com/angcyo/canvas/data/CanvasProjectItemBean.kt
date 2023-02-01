@@ -1,5 +1,6 @@
 package com.angcyo.canvas.data
 
+import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
 import android.widget.LinearLayout
@@ -19,6 +20,9 @@ import com.angcyo.library.annotation.Implementation
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.hawk.LibHawkKeys
+import com.angcyo.library.component.pool.acquireTempMatrix
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.add
 import com.angcyo.library.ex.ensure
 import com.angcyo.library.ex.have
@@ -475,9 +479,26 @@ data class CanvasProjectItemBean(
         }
     }
 
-    /**设置渲染的位置
-     * [bounds] 返回值*/
-    fun updateToRenderBounds(@Pixel bounds: RectF): RectF {
+    /**获取数据对应的转换矩阵
+     * 先缩放, 后倾斜, 再旋转.
+     * [rotate] 是否需要映射旋转*/
+    fun getDataMatrix(result: Matrix = Matrix(), rotate: Boolean = true): Matrix {
+        val rect = getRect(acquireTempRectF())
+        result.setScale(_scaleX, _scaleX, rect.left, rect.top) //按照左上角处理
+        result.postSkew(_skewX, _skewY, rect.left, rect.top) //按照左上角处理
+        if (rotate) {
+            result.mapRect(rect)
+            result.postRotate(angle, rect.centerX(), rect.centerY()) //按照中心点处理
+        }
+        rect.release()
+        return result
+    }
+
+    /**获取属性[left] [top] [width] [height]描述的矩形
+     * 不包含旋转属性
+     * @return 像素单位*/
+    @Pixel
+    fun getRect(@Pixel result: RectF = RectF()): RectF {
         val valueUnit = MM_UNIT
         val l = valueUnit.convertValueToPixel(left)
         val t = valueUnit.convertValueToPixel(top)
@@ -488,9 +509,27 @@ data class CanvasProjectItemBean(
         w = max(PathGraphicsParser.MIN_PATH_SIZE, w)
         h = max(PathGraphicsParser.MIN_PATH_SIZE, h)
 
-        val sx = _scaleX
-        val sy = _scaleY
-        bounds.set(l, t, l + w * sx, t + h * sy)
+        result.set(l, t, l + w, t + h)
+        return result
+    }
+
+    /**获取属性[scaleX] [scaleY] [skewX] [skewY]作用后能包裹的矩形\
+     * 不包含旋转属性
+     * @return 像素单位*/
+    @Pixel
+    fun getBoundsRect(@Pixel result: RectF = RectF()): RectF {
+        result.set(getRect())
+        val matrix = getDataMatrix(acquireTempMatrix(), false)
+        matrix.mapRect(result)
+        matrix.release()
+        return result
+    }
+
+    /**设置渲染的位置
+     * [bounds] 返回值
+     * [getBoundsRect]*/
+    fun updateToRenderBounds(@Pixel bounds: RectF): RectF {
+        getBoundsRect(bounds)
         return bounds
     }
 
