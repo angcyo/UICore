@@ -130,20 +130,20 @@ object DslDownload {
     }
 
     /**获取任务下载进度[0-100]*/
-    fun getTaskProgress(task: DownloadTask?): Int {
+    fun getTaskProgress(task: DownloadTask?): Float {
         if (task == null) {
-            return 0
+            return 0f
         }
-        var percent = 0
+        var percent = 0f
         val info = StatusUtil.getCurrentInfo(task)
         if (info != null) {
             val totalLength = info.totalLength
             val totalOffset = info.totalOffset
 
             percent = if (totalLength <= 0) {
-                0
+                0f
             } else {
-                (totalOffset * 100 / totalLength).toInt()
+                totalOffset * 100f / totalLength
             }
         }
         return percent
@@ -234,7 +234,7 @@ data class DownloadConfig(
 
     var onTaskStart: (DownloadTask) -> Unit = {},
 
-    var onTaskProgress: (DownloadTask, progress: Int, speed: Long) -> Unit = { _, _, _ -> },
+    var onTaskProgress: (DownloadTask, progress: Float, speed: Long) -> Unit = { _, _, _ -> },
 
     /**[cause]任务结束的情况.*/
     var onTaskFinish: (DownloadTask, cause: EndCause, Exception?) -> Unit = { _, _, _ -> }

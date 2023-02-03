@@ -138,13 +138,13 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
 
         /**SD空间信息
          * @return 剩余空间比例[0~100]*/
-        fun _statFsInfo(appendable: Appendable, context: Context = app()): Int {
+        fun _statFsInfo(appendable: Appendable, context: Context = app()): Float {
             //SD空间信息
             val statFs = StatFs(
                 context.getExternalFilesDir("")?.absolutePath ?: context.filesDir.absolutePath
             )
             val usedBytes = statFs.totalBytes - statFs.availableBytes
-            val progress = (usedBytes * 1f / statFs.totalBytes * 100).toInt()
+            val progress = usedBytes * 1f / statFs.totalBytes * 100
 
             appendable.apply {
                 append(usedBytes.fileSizeString())

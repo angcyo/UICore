@@ -33,7 +33,7 @@ abstract class DslBaseDownloadItem : DslAdapterItem() {
     }
 
     /**下载进度*/
-    var itemDownloadProgress: (DownloadTask, progress: Int, speed: Long) -> Unit =
+    var itemDownloadProgress: (DownloadTask, progress: Float, speed: Long) -> Unit =
         { downloadTask, progress, speed -> onDownloadProgress(downloadTask, progress, speed) }
 
     //当前任务
@@ -89,7 +89,7 @@ abstract class DslBaseDownloadItem : DslAdapterItem() {
     ) {
     }
 
-    open fun onDownloadProgress(task: DownloadTask, progress: Int, speed: Long) {
+    open fun onDownloadProgress(task: DownloadTask, progress: Float, speed: Long) {
     }
 
     //</editor-fold desc="任务回调">

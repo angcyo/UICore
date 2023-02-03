@@ -13,7 +13,7 @@ import kotlin.math.max
 open class DslListener : FDownloadListener() {
 
     var onTaskStart: ((DownloadTask) -> Unit)? = null
-    var onTaskProgress: ((DownloadTask, progress: Int, speed: Long) -> Unit)? = null
+    var onTaskProgress: ((DownloadTask, progress: Float, speed: Long) -> Unit)? = null
     var onTaskFinish: ((DownloadTask, cause: EndCause, Exception?) -> Unit)? = null
 
     override fun fetchStart(task: DownloadTask, blockIndex: Int, contentLength: Long) {
@@ -25,7 +25,7 @@ open class DslListener : FDownloadListener() {
         super.taskEnd(task, cause, realCause)
         if (cause == EndCause.COMPLETED) {
             //任务完成, 发送一个100进度的回调
-            onTaskProgress?.invoke(task, 100, 0)
+            onTaskProgress?.invoke(task, 100f, 0)
         }
         onTaskFinish?.invoke(task, cause, realCause)
     }
@@ -38,7 +38,7 @@ open class DslListener : FDownloadListener() {
         speed: Long
     ) {
         super.taskProgress(task, totalLength, totalOffset, increaseBytes, speed)
-        val percent = (totalOffset * 100 / max(1, totalLength)).toInt()
+        val percent = totalOffset * 100f / max(1, totalLength)
         onTaskProgress?.invoke(task, percent, speed)
     }
 }

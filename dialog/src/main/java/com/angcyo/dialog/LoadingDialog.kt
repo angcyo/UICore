@@ -161,7 +161,7 @@ fun updateLoadingProgress(progress: String?) {
             if (view is TextView) {
                 view.text = progress
             } else if (view is DslProgressBar) {
-                view.setProgress(progress.getLongNum()?.toInt() ?: 0)
+                view.setProgress(progress.getLongNum()?.toFloat() ?: 0f)
             }
         }
     }

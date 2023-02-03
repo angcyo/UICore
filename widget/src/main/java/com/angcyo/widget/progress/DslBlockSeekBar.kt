@@ -7,7 +7,6 @@ import android.view.MotionEvent
 import androidx.core.view.GestureDetectorCompat
 import com.angcyo.library.ex.dpi
 import kotlin.math.abs
-import kotlin.math.floor
 
 /**
  * 大块的圆角矩形[android.widget.SeekBar]
@@ -68,11 +67,8 @@ open class DslBlockSeekBar(context: Context, attributeSet: AttributeSet? = null)
 
     /**手指移动*/
     open fun _onTouchMoveTo(x: Float, y: Float) {
-        val progress: Int =
-            floor(((x - _progressBound.left) / _progressBound.width() * progressMaxValue).toDouble()).toInt()
-
+        val progress = (x - _progressBound.left) / _progressBound.width() * progressMaxValue
         progressValue = validProgress(progress)
-
         onSeekBarConfig?.apply { onSeekChanged(progressValue, _progressFraction, true) }
     }
 
@@ -81,7 +77,7 @@ open class DslBlockSeekBar(context: Context, attributeSet: AttributeSet? = null)
     /**回调监听*/
     var onSeekBarConfig: SeekBarConfig? = null
 
-    override fun setProgress(progress: Int, fromProgress: Int, animDuration: Long) {
+    override fun setProgress(progress: Float, fromProgress: Float, animDuration: Long) {
         super.setProgress(progress, fromProgress, animDuration)
         onSeekBarConfig?.apply { onSeekChanged(validProgress(progress), _progressFraction, false) }
     }

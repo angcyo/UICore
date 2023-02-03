@@ -43,12 +43,15 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     /**进度条*/
     var progressTrackDrawable: Drawable? = null
 
+    /**最小进度*/
+    var progressMinValue: Float = 0f
+
     /**最大进度*/
-    var progressMaxValue: Int = 100
+    var progressMaxValue: Float = 100f
 
     /**当前的进度
      * [0~100]*/
-    var progressValue: Int = 0
+    var progressValue: Float = 0f
         set(value) {
             val old = field
             field = validProgress(value)
@@ -65,7 +68,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         }
 
     /**第二进度*/
-    var progressSecondValue: Int = 0
+    var progressSecondValue: Float = 0f
         set(value) {
             field = validProgress(value)
             postInvalidate()
@@ -247,15 +250,15 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         //---end
 
         progressMaxValue =
-            typedArray.getInt(R.styleable.DslProgressBar_progress_max_value, progressMaxValue)
+            typedArray.getFloat(R.styleable.DslProgressBar_progress_max_value, progressMaxValue)
 
-        progressValue = typedArray.getInt(
+        progressValue = typedArray.getFloat(
             R.styleable.DslProgressBar_progress_value,
-            if (isInEditMode) 50 else progressValue
+            if (isInEditMode) 50f else progressValue
         )
-        progressSecondValue = typedArray.getInt(
+        progressSecondValue = typedArray.getFloat(
             R.styleable.DslProgressBar_progress_second_value,
-            if (isInEditMode) 70 else progressSecondValue
+            if (isInEditMode) 70f else progressSecondValue
         )
 
         enableShowHideProgress = typedArray.getBoolean(
@@ -571,8 +574,16 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     var _animtor: Animator? = null
 
     /**限制设置的非法进度值*/
-    fun validProgress(progress: Int): Int {
-        return MathUtils.clamp(progress, 0, progressMaxValue)
+    fun validProgress(progress: Float): Float {
+        return MathUtils.clamp(progress, progressMinValue, progressMaxValue)
+    }
+    
+    open fun setProgress(
+        progress: Int,
+        fromProgress: Float = progressValue,
+        animDuration: Long = Anim.ANIM_DURATION
+    ) {
+        setProgress(progress.toFloat(), fromProgress, animDuration)
     }
 
     /**
@@ -582,8 +593,8 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
      * @param animDuration 动画时长, 小于等于0, 不开启动画
      * */
     open fun setProgress(
-        progress: Int,
-        fromProgress: Int = progressValue,
+        progress: Float,
+        fromProgress: Float = progressValue,
         animDuration: Long = Anim.ANIM_DURATION
     ) {
         _animtor?.cancel()
@@ -595,7 +606,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
                     it.duration = animDuration
                 }
                 onAnimatorUpdateValue = { value, _ ->
-                    this@DslProgressBar.progressValue = value as Int
+                    this@DslProgressBar.progressValue = value as Float
                 }
             }
         } else {
@@ -603,11 +614,16 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         }
     }
 
-    fun getProgress(value: Float, minValue: Float, maxValue: Float): Int {
-        return ((value - minValue) / (maxValue - minValue) * 100).toInt()
+    /**获取一个值[value], 在指定范围[minValue]~[maxValue]中的比例
+     * 返回的比例是[0~100f]的值*/
+    fun getProgress(value: Float, minValue: Float, maxValue: Float): Float {
+        return progressMinValue + (value - minValue) / (maxValue - minValue) * (progressMaxValue - progressMinValue)
     }
 
-    fun getValue(progress: Int, minValue: Float, maxValue: Float): Int {
-        return (minValue + (maxValue - minValue) * progress / 100).toInt()
+    /**获取一个进度[progress], 在指定范围[minValue]~[maxValue]中的值
+     * [progress] 是[0~100f]的进度
+     * */
+    fun getValue(progress: Float, minValue: Float, maxValue: Float): Float {
+        return minValue + (maxValue - minValue) * (progressMinValue + progress / (progressMaxValue - progressMinValue))
     }
 }

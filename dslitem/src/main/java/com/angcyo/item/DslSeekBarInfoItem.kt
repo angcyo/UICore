@@ -21,7 +21,7 @@ import com.angcyo.widget.progress.DslSeekBar
 open class DslSeekBarInfoItem : DslBaseInfoItem() {
 
     /**[0-100]*/
-    var itemSeekProgress: Int = 0
+    var itemSeekProgress: Float = 0f
 
     /**是否显示进度文本*/
     var itemShowProgressText: Boolean = false
@@ -42,10 +42,10 @@ open class DslSeekBarInfoItem : DslBaseInfoItem() {
      * [value] 进度值
      * [fraction] 进度比例
      * [fromUser] 是否是用户触发*/
-    var itemSeekChanged: (value: Int, fraction: Float, fromUser: Boolean) -> Unit = { _, _, _ -> }
+    var itemSeekChanged: (value: Float, fraction: Float, fromUser: Boolean) -> Unit = { _, _, _ -> }
 
     /**Touch结束后的回调*/
-    var itemSeekTouchEnd: (value: Int, fraction: Float) -> Unit = { _, _ -> }
+    var itemSeekTouchEnd: (value: Float, fraction: Float) -> Unit = { _, _ -> }
 
     init {
         itemExtendLayoutId = R.layout.dsl_extent_seek_item

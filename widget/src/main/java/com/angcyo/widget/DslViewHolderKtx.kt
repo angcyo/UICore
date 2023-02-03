@@ -3,9 +3,9 @@ package com.angcyo.widget
 import androidx.annotation.IdRes
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
-import com.angcyo.tablayout.DslTabLayout
 import com.angcyo.library.ex.Anim
 import com.angcyo.library.ex.error
+import com.angcyo.tablayout.DslTabLayout
 import com.angcyo.widget.base.checkEmpty
 import com.angcyo.widget.base.simulateClick
 import com.angcyo.widget.edit.AutoCompleteEditText
@@ -62,7 +62,7 @@ fun DslViewHolder.seek(@IdRes id: Int): DslSeekBar? = v(id)
 
 fun DslViewHolder.seek(
     @IdRes id: Int,
-    changed: (value: Int, fraction: Float, fromUser: Boolean) -> Unit
+    changed: (value: Float, fraction: Float, fromUser: Boolean) -> Unit
 ): DslSeekBar? {
     val view = v<DslSeekBar>(id)
     view?.config {

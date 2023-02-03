@@ -53,7 +53,7 @@ class DslCacheSumItem : DslAdapterItem() {
                 ?: itemHolder.context.filesDir.absolutePath
         )
         val usedBytes = statFs.totalBytes - statFs.availableBytes
-        val progress = (usedBytes * 1f / statFs.totalBytes * 100).toInt()
+        val progress = usedBytes * 1f / statFs.totalBytes * 100
         itemHolder.v<DslProgressBar>(R.id.lib_progress_bar)?.setProgress(progress)
 
         //

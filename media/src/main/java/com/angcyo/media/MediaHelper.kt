@@ -41,9 +41,9 @@ object MediaHelper {
     }
 
     /**重置布局*/
-    fun resetLayout(itemHolder: DslViewHolder?, onSeekTo: (value: Int, fraction: Float) -> Unit) {
+    fun resetLayout(itemHolder: DslViewHolder?, onSeekTo: (value: Float, fraction: Float) -> Unit) {
         showMediaLoadingView(itemHolder, false)
-        itemHolder?.v<DslSeekBar>(R.id.lib_seek_bar)?.setProgress(0, 0, 0)
+        itemHolder?.v<DslSeekBar>(R.id.lib_seek_bar)?.setProgress(0f, 0f, 0)
 
         itemHolder?.v<DslSeekBar>(R.id.lib_seek_bar)?.config {
             onSeekTouchEnd = onSeekTo
@@ -77,7 +77,7 @@ object MediaHelper {
 
         itemHolder?.v<DslSeekBar>(R.id.lib_seek_bar)?.run {
             if (!isTouchDown) {
-                setProgress((progress * 1f / maxProgress * 100).toInt())
+                setProgress(progress * 1f / maxProgress * 100)
             }
         }
     }

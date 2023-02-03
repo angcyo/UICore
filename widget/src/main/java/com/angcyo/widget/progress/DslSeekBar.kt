@@ -16,7 +16,6 @@ import com.angcyo.library.ex.getColor
 import com.angcyo.library.ex.setBounds
 import com.angcyo.widget.R
 import com.angcyo.widget.base.*
-import kotlin.math.floor
 import kotlin.math.min
 
 /**
@@ -338,8 +337,7 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 
     /**手指移动*/
     open fun _onTouchMoveTo(x: Float, y: Float, isFinish: Boolean) {
-        val progress: Int =
-            floor(((x - _progressBound.left) / _progressBound.width() * progressMaxValue).toDouble()).toInt()
+        val progress = (x - _progressBound.left) / _progressBound.width() * progressMaxValue
 
         progressValue = validProgress(progress)
 
@@ -348,9 +346,12 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 
     //</editor-fold desc="Touch事件">
 
-    override fun setProgress(progress: Int, fromProgress: Int, animDuration: Long) {
+    override fun setProgress(progress: Float, fromProgress: Float, animDuration: Long) {
         super.setProgress(progress, fromProgress, animDuration)
-        onSeekBarConfig?.apply { onSeekChanged(validProgress(progress), _progressFraction, false) }
+        val validProgress = validProgress(progress)
+        onSeekBarConfig?.apply {
+            onSeekChanged(validProgress, validProgress / progressMaxValue, false)
+        }
     }
 
     fun config(action: SeekBarConfig.() -> Unit) {
@@ -367,11 +368,11 @@ open class SeekBarConfig {
      * [value] 进度值[0~100]
      * [fraction] 进度比例[0~1]
      * [fromUser] 是否是用户触发*/
-    var onSeekChanged: (value: Int, fraction: Float, fromUser: Boolean) -> Unit = { _, _, _ -> }
+    var onSeekChanged: (value: Float, fraction: Float, fromUser: Boolean) -> Unit = { _, _, _ -> }
 
     /**Touch结束后的回调
      * [value] 进度值[0~100]
      * [fraction] 进度比例[0~1]
      * */
-    var onSeekTouchEnd: (value: Int, fraction: Float) -> Unit = { _, _ -> }
+    var onSeekTouchEnd: (value: Float, fraction: Float) -> Unit = { _, _ -> }
 }

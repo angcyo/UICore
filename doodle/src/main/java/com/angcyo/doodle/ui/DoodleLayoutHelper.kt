@@ -172,11 +172,11 @@ class DoodleLayoutHelper {
         viewHolder.group(R.id.undo_wrap_layout)?.resetDslItem(undoItemList)
     }
 
-    fun _progress(value: Float): Int {
-        return ((value - minPaintWidth) / (maxPaintWidth - minPaintWidth) * 100).toInt()
+    fun _progress(value: Float): Float {
+        return (value - minPaintWidth) / (maxPaintWidth - minPaintWidth) * 100
     }
 
-    fun _value(progress: Int): Float {
+    fun _value(progress: Float): Float {
         //
         return minPaintWidth + (maxPaintWidth - minPaintWidth) * progress / 100
     }
