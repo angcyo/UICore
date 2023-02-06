@@ -203,6 +203,7 @@ fun Float.toRadians(): Float = Math.toRadians(this.toDouble()).toFloat()
 /**弧度转角度*/
 fun Float.toDegrees(): Float = Math.toDegrees(this.toDouble()).toFloat()
 
+/**弧度转角度*/
 fun Double.toDegrees(): Double = Math.toDegrees(this)
 
 //<editor-fold desc="matrix">
