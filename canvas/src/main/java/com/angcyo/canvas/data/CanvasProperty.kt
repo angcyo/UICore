@@ -104,13 +104,14 @@ open class CanvasProperty : Cloneable {
     //endregion---关键方法---
 
     /**获取矩阵属性对应的矩阵[Matrix]
+     * 这里使用默认的锚点, 如果需要指定锚点, 可以在返回后使用preConcat锚点信息
      * [includeRotate] 是否需要旋转属性, 在Group中计算包含元素Bounds时, 推荐true, 在单元素绘制时推荐false*/
     open fun getMatrix(includeRotate: Boolean = true): Matrix {
-        //这里使用默认的锚点, 如果需要指定锚点, 可以在返回后使用preConcat锚点信息
         return getMatrix(includeRotate, 0f, 0f)
     }
 
-    protected fun getMatrix(includeRotate: Boolean, px: Float, py: Float): Matrix {
+    /**指定锚点[getMatrix]*/
+    open fun getMatrix(includeRotate: Boolean, px: Float, py: Float): Matrix {
         val matrix = Matrix()
         matrix.preSkew(tan(skewX.toRadians()), tan(skewY.toRadians()), px, py)
         //这里的翻转要在中心点效果才对

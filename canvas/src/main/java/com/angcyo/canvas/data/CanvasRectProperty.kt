@@ -59,15 +59,17 @@ class CanvasRectProperty : CanvasProperty() {
     }
 
     /**获取矩形属性描述的矩形, 没有进行[Matrix]映射*/
-    fun getRect(result: RectF = RectF()): RectF {
+    @Pixel
+    fun getRect(@Pixel result: RectF = RectF()): RectF {
         result.set(left, top, left + width, top + height)
         return result
     }
 
     /**获取映射后, 原始矩形变换后的矩形*/
-    fun getBounds(includeRotate: Boolean = false): RectF {
+    @Pixel
+    fun getBounds(@Pixel result: RectF = RectF(), includeRotate: Boolean = false): RectF {
         val matrix = super.getMatrix(includeRotate)
-        val result = getRect()
+        getRect(result)
 
         matrix.mapRect(result)
 
@@ -75,7 +77,9 @@ class CanvasRectProperty : CanvasProperty() {
         return result
     }
 
-    /**@inheritDoc*/
+    /**
+     * 这里获取到的矩阵锚点是矩形的中心
+     * @inheritDoc*/
     override fun getMatrix(includeRotate: Boolean): Matrix {
         val rect = getRect(acquireTempRectF())
         val originCenterX = rect.centerX()
@@ -89,6 +93,11 @@ class CanvasRectProperty : CanvasProperty() {
 
         rect.release()
         return matrix
+    }
+
+    /**此方法可以指定锚点*/
+    override fun getMatrix(includeRotate: Boolean, px: Float, py: Float): Matrix {
+        return super.getMatrix(includeRotate, px, py)
     }
 
     /**将矩形的中点, 偏移到矩阵[matrix]所描述的位置*/
