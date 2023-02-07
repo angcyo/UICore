@@ -1,0 +1,55 @@
+/**
+ * 2023-2-7
+ * 将多个路径的文件内容合并到一个文件
+ * */
+
+task _mergeFile(group: 'angcyo', description: '将多个路径的文件内容合并到一个文件') {
+    //配置任务
+}
+
+_mergeFile.doFirst {
+    def outputPathZh = file(".apk/LaserPecker Android Resource(中文).xml").absolutePath
+    def outputPathEn = file(".apk/LaserPecker Android Resource(英文).xml").absolutePath
+    def pathListZh = []
+    def pathListEn = []
+
+    pathListZh += "./UICore/crop/src/main/res/values-zh/crop_strings.xml"
+    pathListZh += "./UICore/doodle/src/main/res/values-zh/doodle_strings.xml"
+
+    pathListZh += "./UICoreEx/canvas_lp/src/main/res/values-zh/canvas_strings.xml"
+    pathListZh += "./UICoreEx/engrave/src/main/res/values-zh/engrave_strings.xml"
+    pathListZh += "./UICoreEx/fsc/src/main/res/values-zh/strings.xml"
+
+    _mergeFile(pathListZh, outputPathZh)
+
+    //--
+
+    pathListEn += "./UICore/crop/src/main/res/values/crop_strings.xml"
+    pathListEn += "./UICore/doodle/src/main/res/values/doodle_strings.xml"
+
+    pathListEn += "./UICoreEx/canvas_lp/src/main/res/values/canvas_strings.xml"
+    pathListEn += "./UICoreEx/engrave/src/main/res/values/engrave_strings.xml"
+    pathListEn += "./UICoreEx/fsc/src/main/res/values/strings.xml"
+
+    _mergeFile(pathListEn, outputPathEn)
+}
+
+/** 合并文件内容到一个文件*/
+def _mergeFile(pathList, outputPath) {
+    def outputFile = file(outputPath)
+    if (pathList != null && pathList.size() > 0) {
+        outputFile.delete()
+        def index = 0
+        for (path in pathList) {
+            def pathFile = file(path)
+            if (pathFile.exists()) {
+                if (index > 0) {
+                    outputFile.append("\n")
+                }
+                outputFile.append(pathFile.text)
+                index++
+            }
+        }
+        System.err.println "合并完成:${pathList}↓\n${outputPath}"
+    }
+}
