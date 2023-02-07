@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="doodle_title">涂鸦</string>
+
+    <string name="doodle_undo">撤销</string>
+    <string name="doodle_redo">重做</string>
+    <string name="doodle_color">颜色</string>
+    <string name="doodle_eraser">橡皮擦</string>
+    <string name="doodle_brush">毛笔</string>
+    <string name="doodle_pencil">钢笔</string>
+    <string name="doodle_size">大小</string>
+</resources>
