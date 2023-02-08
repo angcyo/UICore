@@ -18,7 +18,7 @@ _mergeFile.doFirst {
 
     pathListZh += "./UICoreEx/canvas_lp/src/main/res/values-zh/canvas_strings.xml"
     pathListZh += "./UICoreEx/engrave/src/main/res/values-zh/engrave_strings.xml"
-    pathListZh += "./UICoreEx/fsc/src/main/res/values-zh/strings.xml"
+    pathListZh += "./UICoreEx/fsc/src/main/res/values-zh/fsc_strings.xml"
 
     _mergeFile(pathListZh, outputPathZh)
 
@@ -29,7 +29,7 @@ _mergeFile.doFirst {
 
     pathListEn += "./UICoreEx/canvas_lp/src/main/res/values/canvas_strings.xml"
     pathListEn += "./UICoreEx/engrave/src/main/res/values/engrave_strings.xml"
-    pathListEn += "./UICoreEx/fsc/src/main/res/values/strings.xml"
+    pathListEn += "./UICoreEx/fsc/src/main/res/values/fsc_strings.xml"
 
     _mergeFile(pathListEn, outputPathEn)
 }
@@ -40,13 +40,32 @@ def _mergeFile(pathList, outputPath) {
     if (pathList != null && pathList.size() > 0) {
         outputFile.delete()
         def index = 0
+        def size = pathList.size()
         for (path in pathList) {
             def pathFile = file(path)
             if (pathFile.exists()) {
                 if (index > 0) {
                     outputFile.append("\n")
                 }
-                outputFile.append(pathFile.text)
+                //outputFile.append(pathFile.text)
+                def lines = pathFile.text.readLines()
+                def fromIndex = 0
+                def toIndex = lines.size()
+
+                if (size > 1) {
+                    if (index == 0) {
+                        //如果是第一个文件, 则删除xml中的最后1行
+                        toIndex = toIndex - 1
+                    } else if (index == size - 1) {
+                        //最后一个文件, 则删除xml中的前2行
+                        fromIndex = 2
+                    } else {
+                        //中间行, 删除前2行, 删除最后1行
+                        toIndex = toIndex - 1
+                        fromIndex = 2
+                    }
+                }
+                outputFile.append(lines.subList(fromIndex, toIndex).join("\n"))
                 index++
             }
         }
