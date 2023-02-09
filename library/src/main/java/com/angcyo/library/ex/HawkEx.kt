@@ -98,6 +98,18 @@ fun <T> String?.hawkPut(value: T?): Boolean {
     } ?: false
 }
 
+/**如果key对应的值不存在或者为null时, 则设置值*/
+fun <T> String?.hawkPutIfNull(value: T?): Boolean {
+    return this?.run {
+        val key = this
+        val old: T? = Hawk.get(key)
+        if (old == null) {
+            Hawk.put(key, value)
+        }
+        true
+    } ?: false
+}
+
 /**数字累加计算,保存并返回*/
 fun String?.hawkAccumulate(value: Long = 1, def: Long = 0): Long {
     val origin = hawkGet(null)?.toLongOrNull() ?: def
