@@ -10,6 +10,7 @@ import com.angcyo.http.rx.errorMessage
 import com.angcyo.http.rx.observableToBack
 import com.angcyo.http.rx.observableToMain
 import com.angcyo.library.L
+import com.angcyo.library.ex._string
 import com.angcyo.library.ex.connectUrl
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -195,7 +196,7 @@ object DslHttp {
     var DEFAULT_MSG_KEY = "msg"
 
     /**默认的错误提示*/
-    var DEFAULT_ERROR_MSG = "接口异常!"
+    var DEFAULT_ERROR_MSG = _string(R.string.http_exception)
 
     val dslHttpConfig = DslHttpConfig()
 

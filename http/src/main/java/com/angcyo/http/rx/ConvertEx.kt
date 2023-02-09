@@ -1,12 +1,14 @@
 package com.angcyo.http.rx
 
 import com.angcyo.http.DslHttp
+import com.angcyo.http.R
 import com.angcyo.http.base.getString
 import com.angcyo.http.base.isJson
 import com.angcyo.http.base.readString
 import com.angcyo.http.base.toJsonObject
 import com.angcyo.http.exception.HttpDataException
 import com.angcyo.http.toBean
+import com.angcyo.library.ex._string
 import com.angcyo.library.ex.isShowDebug
 import com.google.gson.JsonElement
 import io.reactivex.Observable
@@ -25,7 +27,7 @@ import java.lang.reflect.Type
  */
 
 /**从[Response]中获取错误的提示信息*/
-fun Response<*>.errorMessage(def: String = "接口异常"): String {
+fun Response<*>.errorMessage(def: String = _string(R.string.http_exception)): String {
     var errorString = errorBody()?.readString()
     if (errorString.isNullOrEmpty()) {
         errorString = message()
