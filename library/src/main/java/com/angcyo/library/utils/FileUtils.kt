@@ -93,14 +93,15 @@ object FileUtils {
         folder: String,
         name: String,
         data: FileTextData,
-        append: Boolean = true /*false 强制重新写入*/
+        append: Boolean = true, /*false 强制重新写入*/
+        recycle: Boolean = false,
     ): String {
         // /storage/emulated/0/Android/data/com.angcyo.uicore.demo/files/$type
         var filePath = ""
 
         try {
             filePath = appRootExternalFolderFile(folder, name).apply {
-                filePath = writeExternal(this, data, append)
+                filePath = writeExternal(this, data, append, recycle)
             }.absolutePath
         } catch (e: Exception) {
             L.e("写入文件失败:$e")
@@ -111,13 +112,14 @@ object FileUtils {
 
     /**[append]=true 根据文件大小智能判断是否要重写
      * [limitLength] 是否限制大小[com.angcyo.library.utils.FileUtils.fileMaxSize]
-     *
+     * [recycle] 如果是图片数据时, 是否回收图片
      * @return 文件路径*/
     fun writeExternal(
         file: File,
         data: FileTextData,
         append: Boolean = true,
-        limitLength: Boolean = true
+        limitLength: Boolean = true,
+        recycle: Boolean = false,
     ): String {
         var filePath: String = file.absolutePath
 
@@ -129,7 +131,16 @@ object FileUtils {
                 if (data is Bitmap) {
                     //保存图片
                     outputStream().use {
-                        data.compress(Bitmap.CompressFormat.PNG, 100, it)
+                        //data.compress(Bitmap.CompressFormat.PNG, 100, it)
+                        val format =
+                            if (data.hasAlpha()) Bitmap.CompressFormat.PNG else Bitmap.CompressFormat.JPEG
+                        data.compress(format, 100, it)
+                    }
+                    if (recycle) {
+                        try {
+                            data.recycle()
+                        } catch (e: Exception) {
+                        }
                     }
                 } else {
                     when {

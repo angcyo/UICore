@@ -35,19 +35,20 @@ object DslFileHelper {
      * code .
      * */
     fun write(
-        folder: String /*文件夹名, 相对于应用目录下的/files/文件夹*/,
-        name: String = logFileName() /*文件名, 默认当天日期*/,
-        data: FileTextData /*需要写入的数据*/,
-        append: Boolean = true
+        folder: String, /*文件夹名, 相对于应用目录下的/files/文件夹*/
+        name: String = logFileName(), /*文件名, 默认当天日期*/
+        data: FileTextData, /*需要写入的数据*/
+        append: Boolean = true,
+        recycle: Boolean = false, /*图片数据保存时, 是否要回收图片*/
     ): String? {
         return if (async) {
             launchGlobal(Dispatchers.IO + CoroutineErrorHandler()) {
-                FileUtils.writeExternal(folder, name, data, append)
+                FileUtils.writeExternal(folder, name, data, append, recycle)
             }
             //返回文件路径
             FileUtils.appRootExternalFolderFile(folder, name).absolutePath
         } else {
-            FileUtils.writeExternal(folder, name, data, append)
+            FileUtils.writeExternal(folder, name, data, append, recycle)
         }
     }
 
@@ -114,25 +115,27 @@ fun CharSequence.wrapData() = DslFileHelper._wrapData2(this)
 fun FileTextData?.writeTo(
     folder: String = Constant.LOG_FOLDER_NAME,
     name: String = logFileName(),
-    append: Boolean = true
+    append: Boolean = true,
+    recycle: Boolean = false,
 ): String? {
     if (this == null) {
         return FileUtils.appRootExternalFolderFile(folder, name).absolutePath
     }
-    return DslFileHelper.write(folder, name, this, append)
+    return DslFileHelper.write(folder, name, this, append, recycle)
 }
 
 /**写入到缓存目录*/
 fun FileTextData?.writeToCache(
     folder: String = Constant.LOG_FOLDER_NAME,
     name: String = logFileName(),
-    append: Boolean = true
+    append: Boolean = true,
+    recycle: Boolean = false,
 ): String? {
     val libCacheFile = libCacheFile(name, folder)
     if (this == null) {
         return libCacheFile.absolutePath
     }
-    return FileUtils.writeExternal(libCacheFile, this, append)
+    return FileUtils.writeExternal(libCacheFile, this, append, recycle)
 }
 
 /**将日志写入到指定的日志文件[logLevel.log], 默认在[logLevel]文件夹下
