@@ -30,10 +30,18 @@ class SvgGraphicsParser : PathGraphicsParser() {
                     if (sharpDrawable != null) {
                         //
                         if (bean.width == null) {
-                            bean.width = sharpDrawable.pathBounds.width().toMm()
+                            val width = sharpDrawable.pathBounds.width()
+                            bean.width = width.toMm()
+                            sharpDrawable.sharpPicture?.let {
+                                bean.scaleX = it.bounds.width() / width
+                            }
                         }
                         if (bean.height == null) {
-                            bean.height = sharpDrawable.pathBounds.height().toMm()
+                            val height = sharpDrawable.pathBounds.height()
+                            bean.height = height.toMm()
+                            sharpDrawable.sharpPicture?.let {
+                                bean.scaleY = it.bounds.height() / height
+                            }
                         }
                         //
                         item.addDataPath(sharpDrawable.pathList.flipEngravePath(bean))
