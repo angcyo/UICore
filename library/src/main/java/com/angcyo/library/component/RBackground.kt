@@ -1,5 +1,6 @@
 package com.angcyo.library.component
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.app.ActivityManager.RunningAppProcessInfo
@@ -187,25 +188,29 @@ object RBackground {
      * [android.Manifest.permission.REORDER_TASKS]
      * @param context
      */
-    fun moveAppToFront(context: Context = app()) {
+    @SuppressLint("MissingPermission")
+    fun moveAppToFront(context: Context = lastContext) {
         if (!isRunningForeground(context)) {
-            //获取ActivityManager
-            val activityManager =
-                context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            try {//获取ActivityManager
+                val activityManager =
+                    context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
-            //获得当前运行的task(任务)
-            val taskInfoList = activityManager.getRunningTasks(100)
-            for (taskInfo in taskInfoList) {
-                //找到本应用的 task，并将它切换到前台
-                if (taskInfo.topActivity?.packageName == context.packageName) {
-                    val id = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        taskInfo.taskId
-                    } else {
-                        taskInfo.id
+                //获得当前运行的task(任务)
+                val taskInfoList = activityManager.getRunningTasks(100)
+                for (taskInfo in taskInfoList) {
+                    //找到本应用的 task，并将它切换到前台
+                    if (taskInfo.topActivity?.packageName == context.packageName) {
+                        val id = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            taskInfo.taskId
+                        } else {
+                            taskInfo.id
+                        }
+                        activityManager.moveTaskToFront(id, 0)
+                        break
                     }
-                    activityManager.moveTaskToFront(id, 0)
-                    break
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

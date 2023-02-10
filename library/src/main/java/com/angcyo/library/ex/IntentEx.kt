@@ -203,9 +203,12 @@ fun Context.openApp(
         }
     }
 
-    intent?.baseConfig(this)
-    intent?.addFlags(flags)
-    intent?.config()
+    intent?.apply {
+        setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+        baseConfig(this@openApp)
+        addFlags(flags)
+        config()
+    }
 
     if (intent == null) {
         L.w("packageName launch intent is null!")
