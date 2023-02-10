@@ -104,6 +104,16 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/lib_provider_paths" />
         </provider>
+
+        <!--跳板Activity-->
+        <activity
+            android:name=".component.EmptyJumpActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:taskAffinity="${applicationId}"
+            android:theme="@android:style/Theme.NoDisplay" />
     </application>
 
     <!--api 30, 包的可见性-->
