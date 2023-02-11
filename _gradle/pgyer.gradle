@@ -76,7 +76,7 @@ task _pgyerUpload(group: 'angcyo', description: '上传文件到蒲公英') {
     //upload("123.apk")
 }
 
-_pgyerUpload.doFirst {
+_pgyerUpload.doLast {
 
     def api_key = project.hasProperty("pgyer_api_key") ? project.ext.pgyer_api_key : pgyerConfig.pgyer_api_key
     def user_key = project.hasProperty("pgyer_user_key") ? project.ext.pgyer_user_key : pgyerConfig.pgyer_user_key

@@ -42,3 +42,6 @@ apply from: allGradle.aliyunOss
 
 //抖音无水印视频下载
 apply from: allGradle.dyVideo
+
+//批量任务执行
+apply from: allGradle.batchTasks
