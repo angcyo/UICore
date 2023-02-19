@@ -11,7 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.angcyo.library.L
 import com.angcyo.library.ex.simpleHash
-import com.angcyo.widget.base.actionToString
+import com.angcyo.library.ex.actionToString
 import com.angcyo.widget.layout.isEnableCoordinator
 
 /**

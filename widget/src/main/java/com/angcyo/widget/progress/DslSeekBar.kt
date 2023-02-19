@@ -10,10 +10,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import com.angcyo.drawable.base.DslGradientDrawable
 import com.angcyo.drawable.text.DslTextDrawable
-import com.angcyo.library.ex.alpha
-import com.angcyo.library.ex.dpi
-import com.angcyo.library.ex.getColor
-import com.angcyo.library.ex.setBounds
+import com.angcyo.library.ex.*
 import com.angcyo.widget.R
 import com.angcyo.widget.base.*
 import kotlin.math.min

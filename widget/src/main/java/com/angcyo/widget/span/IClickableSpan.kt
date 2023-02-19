@@ -3,7 +3,7 @@ package com.angcyo.widget.span
 import android.view.MotionEvent
 import android.view.View
 import com.angcyo.library.L
-import com.angcyo.widget.base.actionToString
+import com.angcyo.library.ex.actionToString
 
 /**
  *

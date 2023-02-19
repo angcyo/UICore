@@ -176,7 +176,9 @@ fun Float.decimal(digit: Int, ensureInt: Boolean, fadedUp: Boolean): String {
 /**向上取整
  * 1.01 -> 2*/
 fun Double.ceil() = ceil(this)
+fun Double.ceilInt() = ceil(this).toInt()
 fun Float.ceil() = ceil(this.toDouble()).toFloat()
+fun Float.ceilInt() = ceil(this.toDouble()).toInt()
 
 /**向上取整, 如果小于零时, 向下取整*/
 fun Float.ceilReverse() = if (this > 0f) {
@@ -188,7 +190,9 @@ fun Float.ceilReverse() = if (this > 0f) {
 /**向下取整
  * 1.01 -> 1*/
 fun Double.floor() = floor(this)
+fun Double.floorInt() = floor(this).toInt()
 fun Float.floor() = floor(this.toDouble()).toFloat()
+fun Float.floorInt() = floor(this.toDouble()).toInt()
 
 /**向下取整, 如果大于零时, 向上取整*/
 fun Float.floorReverse() = if (this > 0f) {

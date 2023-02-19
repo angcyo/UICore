@@ -8,9 +8,9 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import com.angcyo.widget.R
-import com.angcyo.widget.base.isTouchDown
-import com.angcyo.widget.base.isTouchFinish
-import com.angcyo.widget.base.isTouchIn
+import com.angcyo.library.ex.isTouchDown
+import com.angcyo.library.ex.isTouchFinish
+import com.angcyo.library.ex.isTouchIn
 
 /**
  * 支持[GestureDetector]的处理.

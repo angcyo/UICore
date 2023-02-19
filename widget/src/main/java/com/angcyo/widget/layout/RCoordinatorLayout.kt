@@ -14,8 +14,8 @@ import com.angcyo.library.ex.each
 import com.angcyo.library.ex.eachChildVisibility
 import com.angcyo.widget.R
 import com.angcyo.widget.base.coordinatorParams
-import com.angcyo.widget.base.isTouchDown
-import com.angcyo.widget.base.isTouchFinish
+import com.angcyo.library.ex.isTouchDown
+import com.angcyo.library.ex.isTouchFinish
 
 /**
  * 协调布局

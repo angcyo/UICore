@@ -18,7 +18,7 @@ import com.angcyo.library.L
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.base.ThrottleClickListener
 import com.angcyo.widget.base.ThrottleClickListener.Companion.DEFAULT_THROTTLE_INTERVAL
-import com.angcyo.widget.base.motionEvent
+import com.angcyo.library.ex.motionEvent
 import java.lang.ref.WeakReference
 
 /**

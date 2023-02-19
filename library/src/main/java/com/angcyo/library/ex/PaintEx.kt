@@ -37,6 +37,9 @@ fun Paint.textWidth(text: String?): Float {
 /**文本的高度*/
 fun Paint?.textHeight(): Float = this?.run { descent() - ascent() } ?: 0f
 
+/**文本绘制的高度, 在绘制文本时top-此高度值, 就是文本绘制时的左下角坐标*/
+fun Paint?.textDrawHeight(): Float = this?.run { -ascent() } ?: 0f
+
 /**文本绘制时的y坐标
  * [originY]原本y坐标¬*/
 fun Paint.drawTextY(originY: Float): Float {

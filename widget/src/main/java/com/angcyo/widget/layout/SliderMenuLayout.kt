@@ -13,8 +13,8 @@ import com.angcyo.library.ex.alpha
 import com.angcyo.library.ex.dp
 import com.angcyo.tablayout.exactlyMeasure
 import com.angcyo.widget.R
-import com.angcyo.widget.base.isTouchDown
-import com.angcyo.widget.base.isTouchFinish
+import com.angcyo.library.ex.isTouchDown
+import com.angcyo.library.ex.isTouchFinish
 import com.angcyo.widget.layout.touch.TouchLayout
 import kotlin.math.max
 

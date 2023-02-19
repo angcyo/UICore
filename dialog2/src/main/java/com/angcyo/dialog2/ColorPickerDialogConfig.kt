@@ -10,7 +10,7 @@ import com.angcyo.dialog.BaseColorPickerDialog
 import com.angcyo.dialog.configBottomDialog
 import com.angcyo.library.ex.*
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.motionEvent
+import com.angcyo.library.ex.motionEvent
 import com.skydoves.colorpickerview.AlphaTileView
 import com.skydoves.colorpickerview.ColorEnvelope
 import com.skydoves.colorpickerview.ColorPickerView

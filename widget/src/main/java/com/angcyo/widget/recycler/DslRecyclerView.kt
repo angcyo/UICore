@@ -10,8 +10,8 @@ import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.widget.R
-import com.angcyo.widget.base.isTouchDown
-import com.angcyo.widget.base.isTouchFinish
+import com.angcyo.library.ex.isTouchDown
+import com.angcyo.library.ex.isTouchFinish
 import com.angcyo.widget.layout.*
 import java.lang.ref.WeakReference
 import java.util.*

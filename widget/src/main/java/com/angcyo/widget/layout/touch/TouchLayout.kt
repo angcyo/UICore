@@ -11,8 +11,8 @@ import androidx.annotation.CallSuper
 import androidx.core.view.GestureDetectorCompat
 import com.angcyo.library.L
 import com.angcyo.library.ex.simpleHash
-import com.angcyo.widget.base.isTouchDown
-import com.angcyo.widget.base.isTouchFinish
+import com.angcyo.library.ex.isTouchDown
+import com.angcyo.library.ex.isTouchFinish
 import kotlin.math.abs
 
 /**

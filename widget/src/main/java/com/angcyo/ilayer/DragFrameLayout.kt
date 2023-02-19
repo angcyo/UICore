@@ -13,7 +13,7 @@ import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.longFeedback
 import com.angcyo.library.ex.simpleHash
-import com.angcyo.widget.base.isTouchFinish
+import com.angcyo.library.ex.isTouchFinish
 
 /**
  * 拖动事件回调布局

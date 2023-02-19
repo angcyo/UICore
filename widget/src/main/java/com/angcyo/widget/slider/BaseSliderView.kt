@@ -15,7 +15,7 @@ import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
-import com.angcyo.widget.base.isTouchFinish
+import com.angcyo.library.ex.isTouchFinish
 import kotlin.math.abs
 
 /**

@@ -8,6 +8,7 @@ import com.angcyo.library.component.pool.*
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 
 /**
@@ -80,6 +81,10 @@ fun Path.getProgressPath(progress: Float, dst: Path = Path()): Path {
     pathMeasure.getSegment(0f, progress * pathMeasure.length, dst, true)
 
     return dst
+}
+
+fun Path.contains(point: PointF, clipRect: RectF? = null): Boolean {
+    return contains(point.x.roundToInt(), point.y.roundToInt(), clipRect)
 }
 
 /**判断点是否在[Path]内, path是否包含点
