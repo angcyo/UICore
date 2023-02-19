@@ -111,6 +111,7 @@ _pgyerUpload.doLast {
             def clientBuilder = new okhttp3.OkHttpClient.Builder()
             clientBuilder.connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
             clientBuilder.readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+            clientBuilder.writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
 
             okhttp3.OkHttpClient client = clientBuilder.build()
 
