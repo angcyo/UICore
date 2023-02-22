@@ -43,6 +43,7 @@ object Debug {
         if (inputText.isNullOrBlank()) {
             return
         }
+        var match = false
         when (inputText.lowercase()) {
             //开启调试模式
             "@cmd#debug", "@9.999999" -> {
@@ -50,7 +51,7 @@ object Debug {
                 onChangedToDebug.forEach {
                     it()
                 }
-                editText?._feedback()
+                match = true
             }
             //分享http日志文件
             "@cmd#share=http", "@9.777777" -> {
@@ -59,19 +60,19 @@ object Debug {
                     logFileName()
                 )
                 file.shareFile()
-                editText?._feedback()
+                match = true
             }
             //分享L.log
             "@cmd#share=l", "@9.111111" -> {
                 val file = DEFAULT_FILE_PRINT_PATH?.file()
                 file?.shareFile()
-                editText?._feedback()
+                match = true
             }
             //分享crash.log
             "@cmd#share=crash", "@9.333333" -> {
                 val file = DslCrashHandler.KEY_CRASH_FILE.hawkGet()?.file()
                 file?.shareFile()
-                editText?._feedback()
+                match = true
             }
             "@cmd#open=file", "@9.555555" -> {
                 //打开文件预览对话框
@@ -93,98 +94,100 @@ object Debug {
             }
             else -> {
                 //@key#int=value 此指令用来设置hawk key value
-                if (inputText.contains("@") &&
-                    inputText.contains("#") &&
-                    inputText.contains("=")
-                ) {
-                    val keyBuilder = StringBuilder()
-                    val typeBuilder = StringBuilder()
-                    val valueBuilder = StringBuilder()
+                inputText.lines().forEach { line ->
+                    if (line.contains("@") &&
+                        line.contains("#") &&
+                        line.contains("=")
+                    ) {
+                        val keyBuilder = StringBuilder()
+                        val typeBuilder = StringBuilder()
+                        val valueBuilder = StringBuilder()
 
-                    var operate: StringBuilder? = null
-                    inputText.forEach {
-                        when (it) {
-                            '@' -> operate = keyBuilder
-                            '#' -> operate = typeBuilder
-                            '=' -> operate = valueBuilder
-                            else -> operate?.append(it)
+                        var operate: StringBuilder? = null
+                        line.forEach {
+                            when (it) {
+                                '@' -> operate = keyBuilder
+                                '#' -> operate = typeBuilder
+                                '=' -> operate = valueBuilder
+                                else -> operate?.append(it)
+                            }
                         }
-                    }
 
-                    //@key#int=value
-                    val key = keyBuilder.toString()
-                    val type = typeBuilder.toString().lowercase()
-                    val valueString = valueBuilder.toString()
-                    if (key.isNotBlank()) {
-                        when (key.lowercase()) {
-                            "cmd" -> {
-                                when (type) {
-                                    "open" -> {
-                                        //打开Fragment界面
-                                        //@cmd#open=value
-                                        lastContext.apply {
-                                            if (this is FragmentActivity) {
-                                                onShowFragmentAction?.invoke(this, valueString)
-                                                editText?._feedback()
+                        //@key#int=value
+                        val key = keyBuilder.toString()
+                        val type = typeBuilder.toString().lowercase()
+                        val valueString = valueBuilder.toString()
+                        if (key.isNotBlank()) {
+                            when (key.lowercase()) {
+                                "cmd" -> {
+                                    when (type) {
+                                        "open" -> {
+                                            //打开Fragment界面
+                                            //@cmd#open=value
+                                            lastContext.apply {
+                                                if (this is FragmentActivity) {
+                                                    onShowFragmentAction?.invoke(this, valueString)
+                                                    match = true
+                                                }
                                             }
                                         }
-                                    }
-                                    "hawk" -> {
-                                        //显示hawk的值
-                                        //@cmd#hawk=key
-                                        val hawkKey = valueString.lowercase()
-                                        toastQQ("${hawkKey.hawkGet<Any>()}")
-                                        editText?._feedback()
+                                        "hawk" -> {
+                                            //显示hawk的值
+                                            //@cmd#hawk=key
+                                            val hawkKey = valueString.lowercase()
+                                            toastQQ("${hawkKey.hawkGet<Any>()}")
+                                            match = true
+                                        }
                                     }
                                 }
-                            }
-                            else -> {
-                                //@key#int=value
-                                when (type) {
-                                    "bool", "boolean" -> {
-                                        val value = valueString.toBoolean()
-                                        key.hawkPut(value)
-                                        editText?._feedback()
-                                    }
-                                    "int", "i" -> {
-                                        val value = valueString.toIntOrNull()
-                                        if (value == null) {
-                                            key.hawkDelete()
-                                        } else {
+                                else -> {
+                                    //@key#int=value
+                                    when (type) {
+                                        "bool", "boolean" -> {
+                                            val value = valueString.toBoolean()
                                             key.hawkPut(value)
+                                            match = true
                                         }
-                                        editText?._feedback()
-                                    }
-                                    "long", "l" -> {
-                                        val value = valueString.toLongOrNull()
-                                        if (value == null) {
-                                            key.hawkDelete()
-                                        } else {
-                                            key.hawkPut(value)
+                                        "int", "i" -> {
+                                            val value = valueString.toIntOrNull()
+                                            if (value == null) {
+                                                key.hawkDelete()
+                                            } else {
+                                                key.hawkPut(value)
+                                            }
+                                            match = true
                                         }
-                                        editText?._feedback()
-                                    }
-                                    "float", "f" -> {
-                                        val value = valueString.toFloatOrNull()
-                                        if (value == null) {
-                                            key.hawkDelete()
-                                        } else {
-                                            key.hawkPut(value)
+                                        "long", "l" -> {
+                                            val value = valueString.toLongOrNull()
+                                            if (value == null) {
+                                                key.hawkDelete()
+                                            } else {
+                                                key.hawkPut(value)
+                                            }
+                                            match = true
                                         }
-                                        editText?._feedback()
-                                    }
-                                    "double", "d" -> {
-                                        val value = valueString.toDoubleOrNull()
-                                        if (value == null) {
-                                            key.hawkDelete()
-                                        } else {
-                                            key.hawkPut(value)
+                                        "float", "f" -> {
+                                            val value = valueString.toFloatOrNull()
+                                            if (value == null) {
+                                                key.hawkDelete()
+                                            } else {
+                                                key.hawkPut(value)
+                                            }
+                                            match = true
                                         }
-                                        editText?._feedback()
-                                    }
-                                    "string", "s" -> {
-                                        key.hawkPut(valueString)
-                                        editText?._feedback()
+                                        "double", "d" -> {
+                                            val value = valueString.toDoubleOrNull()
+                                            if (value == null) {
+                                                key.hawkDelete()
+                                            } else {
+                                                key.hawkPut(value)
+                                            }
+                                            match = true
+                                        }
+                                        "string", "s" -> {
+                                            key.hawkPut(valueString)
+                                            match = true
+                                        }
                                     }
                                 }
                             }
@@ -192,6 +195,9 @@ object Debug {
                     }
                 }
             }
+        }
+        if (match) {
+            editText?._feedback()
         }
     }
 
