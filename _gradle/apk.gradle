@@ -178,6 +178,19 @@ static def formatApkName(format, an, vn, t, fn, bn, sn, ka) {
 //https://www.jianshu.com/p/e7a40a592f15/
 //构建完成后, 将文件夹(./.apk)子目录中的apk文件, 复制到上一级
 gradle.buildFinished { buildResult -> /*BuildResult*/
+    copyApkFile()
+    println "[apk.gradle] 构建完毕->${buildResult.action}"
+}
+
+task _copyApkFile(group: 'angcyo', description: '将文件夹(./.apk)子目录中的apk文件, 复制到上一级') {
+    doLast {
+        copyApkFile()
+        println "[apk.gradle] 复制完毕!"
+    }
+}
+
+def copyApkFile() {
+    def output = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
     def apkFolder = new File(project.rootDir.absolutePath + "/" + output)
     def fileList = apkFolder.listFiles()
     for (file in fileList) {
@@ -223,5 +236,4 @@ gradle.buildFinished { buildResult -> /*BuildResult*/
             }
         }
     }
-    println "[apk.gradle] 构建完毕->${buildResult.action}"
 }

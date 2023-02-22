@@ -10,6 +10,32 @@
  * https://docs.gradle.org/current/userguide/more_about_tasks.html#sec:ordering_tasks
  * */
 
+task _batchBuildTasks(group: 'angcyo', description: '批量编译任务,任务无顺序性') {
+    if (project.hasProperty("batchBuildTasks")) {
+        def taskList = getBatchBuildTasks()
+        dependsOn taskList
+
+        if (project.ext.batchBuildTasks.endsWith(";")) {
+            //最后一个任务, 必须等待其他任务执行完毕后执行
+            tasks.named(taskList.last()) {
+                mustRunAfter taskList.subList(0, taskList.size() - 2)
+            }
+        }
+    }
+
+    doFirst {
+        if (project.hasProperty("batchBuildTasks")) {
+            System.err.println "准备执行批量编译任务:${getBatchBuildTasks()}"
+        } else {
+            throw new StopExecutionException("请在[gradle.properties]文件中配置批量任务[batchBuildTasks=xxx;xxx;xxx]")
+        }
+    }
+
+    doLast {
+        System.err.println "批量编译任务执行完成:${getBatchBuildTasks()}"
+    }
+}
+
 task _batchTasks(group: 'angcyo', description: '批量任务执行') {
     if (project.hasProperty("batchTasks")) {
         def taskList = getBatchTasks()
@@ -34,6 +60,11 @@ task _batchTasks(group: 'angcyo', description: '批量任务执行') {
     doLast {
         System.err.println "批量任务执行完成:${getBatchTasks()}"
     }
+}
+
+def getBatchBuildTasks() {
+    def tasks = project.ext.batchBuildTasks
+    return tasks.split(";").findAll { !it.isEmpty() }
 }
 
 def getBatchTasks() {
