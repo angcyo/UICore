@@ -2,7 +2,31 @@
  * 2023-2-11
  * 批量任务执行
  * 可以实现一键打包测试包/正式包/aab并上传apk文件到蒲公英
+ *
+ * https://docs.gradle.org/current/javadoc/org/gradle/api/Task.html
+ * https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/TaskContainer.html
+ *
+ * https://docs.gradle.org/current/userguide/more_about_tasks.html#sec:ordering_tasks
  * */
+
+task _batchBuildTasks(group: 'angcyo', description: '批量编译任务,任务无顺序性') {
+    if (project.hasProperty("batchBuildTasks")) {
+        def tasks = getBatchBuildTasks()
+        dependsOn tasks
+    }
+
+    doFirst {
+        if (project.hasProperty("batchBuildTasks")) {
+            System.err.println "准备执行批量编译任务:${getBatchBuildTasks()}"
+        } else {
+            throw new StopExecutionException("请在[gradle.properties]文件中配置批量任务[batchBuildTasks=xxx;xxx;xxx]")
+        }
+    }
+
+    doLast {
+        System.err.println "批量编译任务执行完成:${getBatchBuildTasks()}"
+    }
+}
 
 task _batchTasks(group: 'angcyo', description: '批量任务执行') {
     if (project.hasProperty("batchTasks")) {
@@ -14,7 +38,7 @@ task _batchTasks(group: 'angcyo', description: '批量任务执行') {
         if (project.hasProperty("batchTasks")) {
             System.err.println "准备执行批量任务:${getBatchTasks()}"
         } else {
-            throw new IllegalStateException("请在[gradle.properties]文件中配置批量任务[batchTasks=xxx;xxx;xxx]")
+            throw new StopExecutionException("请在[gradle.properties]文件中配置批量任务[batchTasks=xxx;xxx;xxx]")
         }
     }
 
@@ -23,7 +47,12 @@ task _batchTasks(group: 'angcyo', description: '批量任务执行') {
     }
 }
 
+def getBatchBuildTasks() {
+    def tasks = project.ext.batchTasks
+    return tasks.split(";").findAll { !it.isEmpty() }
+}
+
 def getBatchTasks() {
     def tasks = project.ext.batchTasks
-    return tasks.split(";")
+    return tasks.split(";").findAll { !it.isEmpty() }
 }
