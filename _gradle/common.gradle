@@ -203,6 +203,56 @@ static def getLocalIp() {
     return ip
 }
 
+/**复制apk文件*/
+def copyApkFile() {
+    def output = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
+    def apkFolder = new File(project.rootDir.absolutePath + "/" + output)
+    def fileList = apkFolder.listFiles()
+    for (file in fileList) {
+        if (file.isDirectory()) {
+            def subFileList = file.listFiles()
+
+            def isCopyFile = new File(file, ".copy") //文件是否已经复制过
+            if (!isCopyFile.exists()) {
+                isCopyFile.createNewFile()
+            }
+            def copyFileList = []
+            copyFileList = isCopyFile.readLines('UTF8')
+
+            for (subFile in subFileList) {
+                def fileName = subFile.name
+                if (subFile.isFile() && (fileName.endsWith(".apk") || fileName.endsWith(".aab"))) {
+                    def ignoreFile = false
+
+                    def haveCopyFile = false
+
+                    //是否要忽略此文件名
+                    copyFileList.each {
+                        haveCopyFile = haveCopyFile || it == fileName
+                    }
+
+                    ignoreFile = haveCopyFile
+
+                    def targetFile = new File(apkFolder, fileName)
+                    if (targetFile.exists() && subFile.lastModified() != targetFile.lastModified()) {
+                        //如果目标文件存在, 但是和源文件时间不一样, 则强制需要复制
+                        ignoreFile = false
+                    }
+
+                    if (!ignoreFile) {
+                        //apk文件, 开始复制. 文件不一样的时候才复制
+                        copyFile(subFile.absolutePath, targetFile.absolutePath)
+
+                        if (!haveCopyFile) {
+                            isCopyFile.append("${fileName}\n") //添加已经复制过的文件名
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 //导出
 ext {
     isMac = this.&isMac
@@ -219,4 +269,5 @@ ext {
     copyFile = this.&copyFile
     getLogoPath = this.&getLogoPath
     getLocalIp = this.&getLocalIp
+    copyApkFile = this.&copyApkFile
 }

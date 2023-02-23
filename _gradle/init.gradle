@@ -28,6 +28,9 @@ apply from: allGradle.common
 //读取local.properties
 apply from: allGradle.local
 
+//复制apk文件任务
+apply from: allGradle.copyApkFile
+
 //配置基本库 强制版本信息
 apply from: allGradle.versionConfigLib
 

@@ -1,0 +1,11 @@
+/**
+ * 复制apk文件
+ * 2023-2-23
+ * */
+
+task _copyApkFile(group: 'angcyo', description: '将文件夹(./.apk)子目录中的apk文件, 复制到上一级') {
+    doLast {
+        copyApkFile()
+        println "[copyApkFile.gradle] 复制完毕!"
+    }
+}
