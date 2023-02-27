@@ -218,6 +218,9 @@ val _tempValues = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
 /**临时对象, 用来存储坐标点位值*/
 val _tempPoints = floatArrayOf(0f, 0f)
 
+/**临时对象*/
+val _tempPoint = PointF(0f, 0f)
+
 /**当前矩阵, 偏移的x*/
 fun Matrix.getTranslateX(): Float {
     getValues(_tempValues)
