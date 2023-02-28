@@ -26,9 +26,6 @@ object LTime {
     /**获取与最近一次时间匹配的时间间隔(ms)*/
     @CallPoint
     fun time(): String {
-        if (!L.debug) {
-            return "not debug!"
-        }
         val startTime = if (stack.isEmpty()) nowTime() else stack.pop()
         val nowTime = nowTime()
         return time(startTime, nowTime)
