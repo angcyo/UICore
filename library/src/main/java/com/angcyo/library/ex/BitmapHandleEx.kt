@@ -150,6 +150,7 @@ fun Bitmap.toGrayHandleAlpha(
  * [alphaBgColor] 透明像素时的替换颜色
  * [thresholdChannelColor] 颜色阈值判断的通道支持[Color.RED] [Color.GREEN] [Color.BLUE] [Color.GRAY]
  * [alphaThreshold] 透明颜色的阈值, 当颜色的透明值小于此值时, 视为透明
+ * [alphaBgColor] 如果是透明颜色, 则使用此值替代
  * */
 fun Bitmap.toBlackWhiteHandle(
     threshold: Int = LibHawkKeys.grayThreshold,
