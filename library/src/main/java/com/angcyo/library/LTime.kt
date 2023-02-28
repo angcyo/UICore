@@ -17,9 +17,7 @@ object LTime {
     @CallPoint
     fun tick(): Long {
         val nowTime = nowTime()
-        if (L.debug) {
-            stack.push(nowTime)
-        }
+        stack.push(nowTime)
         return nowTime
     }
 
