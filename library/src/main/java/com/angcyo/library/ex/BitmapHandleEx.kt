@@ -37,6 +37,28 @@ fun Int.toGrayColorInt(): Int {
     return Color.argb(alpha, value, value, value)
 }
 
+/**将按比例缩小的版本加载到内存中
+ * [android.graphics.BitmapFactory.Options.inSampleSize]
+ * https://developer.android.com/topic/performance/graphics/load-bitmap?hl=zh-cn#load-bitmap*/
+fun calculateInSampleSize(bitmapWidth: Int, bitmapHeight: Int, reqWidth: Int, reqHeight: Int): Int {
+    // Raw height and width of image
+    var inSampleSize = 1
+
+    if (bitmapHeight > reqHeight || bitmapWidth > reqWidth) {
+
+        val halfHeight: Int = bitmapHeight / 2
+        val halfWidth: Int = bitmapWidth / 2
+
+        // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+        // height and width larger than the requested height and width.
+        while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+            inSampleSize *= 2
+        }
+    }
+
+    return inSampleSize
+}
+
 /**[toGrayHandle], 支持更多参数
  * [invert] 是否反色
  * [contrast] 对比度 [-1~1]
