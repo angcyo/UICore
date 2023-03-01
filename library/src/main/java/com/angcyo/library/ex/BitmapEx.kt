@@ -319,8 +319,8 @@ fun Bitmap.flip(scaleX: Float, scaleY: Float): Bitmap {
     return flipBitmap
 }
 
-fun ByteArray.toBitmap(): Bitmap {
-    return BitmapFactory.decodeByteArray(this, 0, this.size)
+fun ByteArray.toBitmap(opts: BitmapFactory.Options? = null): Bitmap {
+    return BitmapFactory.decodeByteArray(this, 0, this.size, opts)
 }
 
 /**[rotate]纠正旋转角度*/

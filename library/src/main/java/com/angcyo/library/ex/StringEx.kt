@@ -4,10 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.*
 import android.net.Uri
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -339,7 +336,7 @@ fun String?.isEmail(regex: String = PATTERN_EMAIL): Boolean {
 
 /**将base64字符串, 转换成图片
  * [Bitmap.toBase64Data]*/
-fun String.toBitmapOfBase64(): Bitmap {
+fun String.toBitmapOfBase64(opts: BitmapFactory.Options? = null): Bitmap {
     var data = this
     if (startsWith("data:")) {
         val index = indexOf(",")
@@ -348,7 +345,7 @@ fun String.toBitmapOfBase64(): Bitmap {
         }
     }
     val bytes = Base64.decode(data, Base64.NO_WRAP)
-    return bytes.toBitmap()
+    return bytes.toBitmap(opts)
 }
 
 fun String.toBase64(): String {
