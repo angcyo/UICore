@@ -5,4 +5,7 @@ dependencies {
     implementation project(allModule.widget)
     implementation project(allModule.dialog)
     implementation project(allModule.dslitem)
+
+    //图片算法支持
+    compileOnly "com.angcyo:bitmapHandle:${opencv_version}"
 }

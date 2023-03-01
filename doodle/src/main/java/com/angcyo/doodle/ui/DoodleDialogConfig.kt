@@ -3,6 +3,7 @@ package com.angcyo.doodle.ui
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Bitmap
+import com.angcyo.bitmap.handle.BitmapHandle
 import com.angcyo.core.loadingAsyncTg
 import com.angcyo.dialog.DslDialogConfig
 import com.angcyo.dialog.configBottomDialog
@@ -10,7 +11,6 @@ import com.angcyo.doodle.R
 import com.angcyo.doodle.core.IDoodleListener
 import com.angcyo.doodle.element.BaseElement
 import com.angcyo.doodle.layer.BaseLayer
-import com.angcyo.library.ex.trimEdgeColor
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -61,7 +61,8 @@ class DoodleDialogConfig(context: Context? = null) : DslDialogConfig(context) {
 
                 //async
                 loadingAsyncTg({
-                    getPreviewBitmap().trimEdgeColor()
+                    /*getPreviewBitmap().trimEdgeColor()*/
+                    BitmapHandle.trimEdgeColor(getPreviewBitmap(), 200)
                 }) { bitmap ->
                     onDoodleResultAction(bitmap!!)
                     //

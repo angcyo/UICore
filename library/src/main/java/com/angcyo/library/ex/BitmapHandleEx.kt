@@ -37,42 +37,16 @@ fun Int.toGrayColorInt(): Int {
     return Color.argb(alpha, value, value, value)
 }
 
-/**将图片转灰度
- * [alphaBgColor] 透明像素时的替换颜色
- * [alphaThreshold] 透明通道的阈值*/
-fun Bitmap.toGrayHandle(
-    alphaBgColor: Int = Color.TRANSPARENT,
-    alphaThreshold: Int = LibHawkKeys.alphaThreshold
-): Bitmap {
-    val width = width
-    val height = height
-    val result = Bitmap.createBitmap(width, height, config)
-
-    for (y in 0 until height) {
-        for (x in 0 until width) {
-            val color = getPixel(x, y)
-            val alpha = Color.alpha(color)
-
-            if (alpha < alphaThreshold) {
-                //透明颜色
-                result.setPixel(x, y, alphaBgColor)
-            } else {
-                result.setPixel(x, y, color.toGrayColorInt())
-            }
-        }
-    }
-    return result
-}
-
 /**[toGrayHandle], 支持更多参数
  * [invert] 是否反色
  * [contrast] 对比度 [-1~1]
  * [brightness] 亮度 [-1~1]
  * */
+@Deprecated("请使用jni算法[BitmapHandle]库")
 fun Bitmap.toGrayHandle(
-    invert: Boolean,
-    contrast: Float,
-    brightness: Float,
+    invert: Boolean = false,
+    contrast: Float = 0f,
+    brightness: Float = 0f,
     alphaBgColor: Int = Color.TRANSPARENT,
     alphaThreshold: Int = LibHawkKeys.alphaThreshold
 ): Bitmap {
@@ -152,6 +126,7 @@ fun Bitmap.toGrayHandleAlpha(
  * [alphaThreshold] 透明颜色的阈值, 当颜色的透明值小于此值时, 视为透明
  * [alphaBgColor] 如果是透明颜色, 则使用此值替代
  * */
+@Deprecated("请使用jni算法[BitmapHandle]库")
 fun Bitmap.toBlackWhiteHandle(
     threshold: Int = LibHawkKeys.grayThreshold,
     invert: Boolean = false,
@@ -304,6 +279,7 @@ fun ByteArray.toChannelBitmap(width: Int, height: Int, channelType: Int = Color.
  * @param colors 需要移除的边界颜色值集合
  * @return 清除边界后的Bitmap
  */
+@Deprecated("请使用jni算法[BitmapHandle]库")
 fun Bitmap.trimEdgeColor(
     bwThreshold: Int = 200,
     colors: List<Int> = listOf(Color.TRANSPARENT, Color.WHITE),

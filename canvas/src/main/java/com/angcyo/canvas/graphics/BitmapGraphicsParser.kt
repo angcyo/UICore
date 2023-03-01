@@ -2,6 +2,7 @@ package com.angcyo.canvas.graphics
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import com.angcyo.bitmap.handle.BitmapHandle
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.data.DataBitmapItem
@@ -13,11 +14,13 @@ import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.app
 import com.angcyo.library.component.hawk.LibHawkKeys
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.ceil
+import com.angcyo.library.ex.deleteSafe
+import com.angcyo.library.ex.toBase64Data
+import com.angcyo.library.ex.toBitmapOfBase64
 import com.angcyo.library.unit.toMm
 import com.angcyo.opencv.OpenCV
 import com.hingin.rn.image.ImageProcess
-import kotlin.io.readText
 
 /**
  * 图片数据解析器
@@ -44,7 +47,13 @@ class BitmapGraphicsParser : IGraphicsParser {
             brightness: Double = 0.0
         ): Bitmap? {
             val bgColor = if (invert) Color.BLACK else Color.WHITE
-            val grayBitmap = bitmap.toGrayHandle(bgColor, LibHawkKeys.bgAlphaThreshold)//灰度
+            //val grayBitmap = bitmap.toGrayHandle(bgColor, LibHawkKeys.bgAlphaThreshold)//灰度
+            val grayBitmap = BitmapHandle.toGrayHandle(
+                bitmap,
+                alphaBgColor = bgColor,
+                alphaThreshold = LibHawkKeys.bgAlphaThreshold
+            )!!
+
             //对于低尺寸的图片需要先放大到 1000
             //val grayBitmapScale = grayBitmap.scaleToMinSize(1000, 1000)
             val grayBitmapScale = grayBitmap
@@ -160,24 +169,33 @@ class BitmapGraphicsParser : IGraphicsParser {
         } else*/ if (bean.src.isNullOrBlank() && originBitmap != null) {
             //只有原图, 没有算法处理后的图片, 则需要主动应用算法处理图片
             bean.src = when (bean.imageFilter) {
-                CanvasConstant.DATA_MODE_BLACK_WHITE -> originBitmap.toBlackWhiteHandle(
+                CanvasConstant.DATA_MODE_BLACK_WHITE -> BitmapHandle.toBlackWhiteHandle(
+                    originBitmap,
                     bean.blackThreshold.toInt(),
                     bean.inverse
                 )
+                /*originBitmap.toBlackWhiteHandle( bean.blackThreshold.toInt(), bean.inverse )*/
                 CanvasConstant.DATA_MODE_SEAL -> OpenCV.bitmapToSeal(
                     app(),
-                    originBitmap.toBlackWhiteHandle(
+                    BitmapHandle.toBlackWhiteHandle(
+                        originBitmap,
+                        bean.blackThreshold.toInt(),
+                        alphaBgColor = Color.WHITE
+                    )!!
+                    /*originBitmap.toBlackWhiteHandle(
                         bean.sealThreshold.toInt(),
                         alphaBgColor = Color.WHITE
-                    ),
+                    )*/,
                     bean.sealThreshold.toInt()
                 )
-                CanvasConstant.DATA_MODE_GREY, CanvasConstant.DATA_MODE_DITHERING -> originBitmap.toGrayHandle(
+                CanvasConstant.DATA_MODE_GREY, CanvasConstant.DATA_MODE_DITHERING -> BitmapHandle.toGrayHandle(
+                    originBitmap,
                     bean.inverse,
                     bean.contrast,
                     bean.brightness,
-                    alphaThreshold = 1 //透明颜色识别阈值
+                    alphaThreshold = 1
                 )
+                /*originBitmap.toGrayHandle( bean.inverse, bean.contrast, bean.brightness, alphaThreshold = 1 //透明颜色识别阈值 )*/
                 CanvasConstant.DATA_MODE_PRINT -> OpenCV.bitmapToPrint(
                     app(),
                     originBitmap,

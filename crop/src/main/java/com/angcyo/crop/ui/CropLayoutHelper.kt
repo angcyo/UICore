@@ -1,5 +1,6 @@
 package com.angcyo.crop.ui
 
+import com.angcyo.bitmap.handle.BitmapHandle
 import com.angcyo.core.loadingAsyncTg
 import com.angcyo.crop.CropDelegate
 import com.angcyo.crop.CropOverlay
@@ -10,7 +11,10 @@ import com.angcyo.crop.ui.dslitem.CropRadioItem
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.drawRight
 import com.angcyo.library.annotation.CallPoint
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex._string
+import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.elseNull
+import com.angcyo.library.ex.toColor
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.recycler.renderDslAdapter
 
@@ -41,13 +45,19 @@ class CropLayoutHelper(val cropProvide: ICropProvide) {
                 itemClick = {
                     cropProvide.getOriginCropBitmap()?.let { bitmap ->
                         cropProvide.getCropLifecycleOwner()?.loadingAsyncTg({
-                            bitmap.trimEdgeColor()
+                            //bitmap.trimEdgeColor()
+                            BitmapHandle.trimEdgeColor(bitmap, 200)
                         }) {
                             it?.let {
                                 cropDelegate?.updateBitmap(it)
                             }
                         }.elseNull {
-                            cropDelegate?.updateBitmap(bitmap.trimEdgeColor())
+                            cropDelegate?.updateBitmap(
+                                BitmapHandle.trimEdgeColor(
+                                    bitmap,
+                                    200
+                                )!! /*bitmap.trimEdgeColor()*/
+                            )
                         }
                     }
                 }
