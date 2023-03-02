@@ -308,6 +308,16 @@ fun Context.readAssets(fileName: String, charset: Charset = Charsets.UTF_8): Str
     }
 }
 
+/**从[assets]中读取字节数组*/
+fun Context.readAssetsBytes(fileName: String): ByteArray? {
+    return try {
+        assets.open(fileName).readBytes()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
 /**从[Resource]中读取字符串*/
 fun Context.readResource(resId: Int, charset: Charset = Charsets.UTF_8): String? {
     return try {

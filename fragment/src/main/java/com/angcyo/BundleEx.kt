@@ -21,6 +21,7 @@ import java.io.Serializable
 
 const val BUNDLE_KEY_JSON = "BUNDLE_KEY_JSON"
 const val BUNDLE_KEY_SERIALIZABLE = "BUNDLE_KEY_SERIALIZABLE"
+const val BUNDLE_KEY_SERIALIZABLE_LIST = "BUNDLE_KEY_SERIALIZABLE_LIST"
 
 /**创建一个默认传输[json]数据的[Bundle]*/
 fun jsonBundle(data: Any?, key: String = BUNDLE_KEY_JSON): Bundle {
@@ -96,9 +97,23 @@ fun Fragment.putDataSerializable(
 }
 
 /**[Parcelable]*/
+fun Fragment.putParcelable(data: Parcelable?, key: String = BUNDLE_KEY_SERIALIZABLE): Fragment {
+    val bundle = Bundle()
+    bundle.putParcelable(key, data)
+
+    arguments?.putAll(bundle)
+
+    if (arguments == null) {
+        arguments = bundle
+    }
+
+    return this
+}
+
+/**[Parcelable]*/
 fun Fragment.putParcelableList(
     data: ArrayList<out Parcelable>?,
-    key: String = BUNDLE_KEY_SERIALIZABLE
+    key: String = BUNDLE_KEY_SERIALIZABLE_LIST
 ): Fragment {
     val bundle = Bundle()
     bundle.putParcelableArrayList(key, data)
@@ -122,7 +137,10 @@ fun <DATA> Fragment.getDataList(cls: Class<DATA>, key: String = BUNDLE_KEY_JSON)
 inline fun <reified DATA> Fragment.getDataSerializable(key: String = BUNDLE_KEY_SERIALIZABLE): DATA? =
     arguments?.getSerializable(key) as? DATA?
 
-inline fun <reified DATA : Parcelable?> Fragment.getParcelableList(key: String = BUNDLE_KEY_SERIALIZABLE): ArrayList<DATA>? =
+inline fun <reified DATA : Parcelable?> Fragment.getParcelable(key: String = BUNDLE_KEY_SERIALIZABLE): DATA? =
+    arguments?.getParcelable(key)
+
+inline fun <reified DATA : Parcelable?> Fragment.getParcelableList(key: String = BUNDLE_KEY_SERIALIZABLE_LIST): ArrayList<DATA>? =
     arguments?.getParcelableArrayList(key)
 
 //</editor-fold desc="Fragment put get">
