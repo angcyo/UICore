@@ -95,13 +95,6 @@ fun List<BaseItemRenderer<*>>.engraveSort(): List<BaseItemRenderer<*>> {
     }
 }
 
-/**是否是GCode内容*/
-fun String.isGCodeContent() =
-    have("(G90)|(G91)\\s*(G20)|(G21)") || have("(G20)|(G21)\\s*(G90)|(G91)")
-
-/**是否是GCode内容*/
-fun String.isSvgContent() = have("</svg>")
-
 //</editor-fold desc="canvas">
 
 //<editor-fold desc="Other">

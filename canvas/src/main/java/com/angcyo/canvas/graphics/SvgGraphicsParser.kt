@@ -5,8 +5,8 @@ import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataPathItem
 import com.angcyo.canvas.utils.CanvasConstant
-import com.angcyo.canvas.utils.isSvgContent
 import com.angcyo.library.unit.toMm
+import com.angcyo.library.utils.isSvgContent
 import com.angcyo.svg.Svg
 
 /**

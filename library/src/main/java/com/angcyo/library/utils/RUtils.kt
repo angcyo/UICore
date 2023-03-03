@@ -22,6 +22,7 @@ import com.angcyo.library.L
 import com.angcyo.library.app
 import com.angcyo.library.component.RNetwork.isWifiConnect
 import com.angcyo.library.ex.checkPermissions
+import com.angcyo.library.ex.have
 import com.angcyo.library.ex.patternList
 import com.angcyo.library.toast
 import java.io.BufferedReader
@@ -669,3 +670,14 @@ else
     }
     result
 }
+
+//region ---canvas---
+
+/**是否是GCode内容*/
+fun String.isGCodeContent() =
+    have("(G90)|(G91)\\s*(G20)|(G21)") || have("(G20)|(G21)\\s*(G90)|(G91)")
+
+/**是否是GCode内容*/
+fun String.isSvgContent() = have("</svg>")
+
+//endregion ---canvas---
