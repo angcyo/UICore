@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.result.ActivityResultCaller
@@ -158,24 +159,36 @@ fun updateLoadingProgress(progress: String?) {
     lastDialog()?.window?.decorView?.dslViewHolder()?.apply {
         post {
             val view = view(R.id.lib_progress_view)
-            view?.isVisible = progress != null
-            if (view is TextView) {
-                view.text = progress
-            } else if (view is DslProgressBar) {
-                view.setProgress(progress.getLongNum()?.toFloat() ?: 0f)
+            if (view == null) {
+                updateLoadingProgress(view(R.id.lib_loading_view), progress)
             } else {
-                val background = view?.background
-                if (background is BaseProgressDrawable) {
-                    val p = progress?.toIntOrNull()
-                    if (p != null) {
-                        background.isIndeterminate = p <= 0
-                        background.progress = p
-                    }
-                }
+                updateLoadingProgress(view, progress)
             }
         }
     }
 }
+
+/**[updateLoadingProgress]
+ * [view] 要操作的视图
+ * [progress] 进度文本*/
+fun updateLoadingProgress(view: View?, progress: String?) {
+    view?.isVisible = progress != null
+    if (view is TextView) {
+        view.text = progress
+    } else if (view is DslProgressBar) {
+        view.setProgress(progress.getLongNum()?.toFloat() ?: 0f)
+    } else {
+        val background = view?.background
+        if (background is BaseProgressDrawable) {
+            val p = progress?.toIntOrNull()
+            if (p != null) {
+                background.isIndeterminate = p <= 0
+                background.progress = p
+            }
+        }
+    }
+}
+
 
 //</editor-fold desc="隐藏对话框">
 
