@@ -16,6 +16,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.angcyo.dialog.LoadingDialog.dialogPool
 import com.angcyo.dialog.LoadingDialog.removeDialog
+import com.angcyo.drawable.base.BaseProgressDrawable
 import com.angcyo.library.IActivityProvider
 import com.angcyo.library.ex.elseNull
 import com.angcyo.library.toastQQ
@@ -64,7 +65,7 @@ object LoadingDialog {
 //<editor-fold desc="隐藏对话框">
 
 /**最后个对话框[Dialog]*/
-fun lastDialog(): Dialog? = dialogPool.lastElement()?.get()
+fun lastDialog(): Dialog? = dialogPool.lastOrNull()?.get()
 
 /**隐藏最后一个dialog*/
 @AnyThread
@@ -162,6 +163,15 @@ fun updateLoadingProgress(progress: String?) {
                 view.text = progress
             } else if (view is DslProgressBar) {
                 view.setProgress(progress.getLongNum()?.toFloat() ?: 0f)
+            } else {
+                val background = view?.background
+                if (background is BaseProgressDrawable) {
+                    val p = progress?.toIntOrNull()
+                    if (p != null) {
+                        background.isIndeterminate = p > 0
+                        background.progress = p
+                    }
+                }
             }
         }
     }
