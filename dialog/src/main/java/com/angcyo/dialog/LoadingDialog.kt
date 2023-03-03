@@ -168,7 +168,7 @@ fun updateLoadingProgress(progress: String?) {
                 if (background is BaseProgressDrawable) {
                     val p = progress?.toIntOrNull()
                     if (p != null) {
-                        background.isIndeterminate = p > 0
+                        background.isIndeterminate = p <= 0
                         background.progress = p
                     }
                 }
