@@ -149,6 +149,20 @@ open class GroupRenderer(canvasView: CanvasDelegate) :
         return result
     }
 
+    /**排序改变之后, 需要重新调整[subItemList]的顺序*/
+    override fun onRenderItemSortChanged(itemList: List<BaseItemRenderer<*>>) {
+        super.onRenderItemSortChanged(itemList)
+        if (subItemList.isNotEmpty()) {
+            val list = mutableListOf<BaseItemRenderer<*>>()
+            for (item in itemList) {
+                if (subItemList.contains(item)) {
+                    list.add(item)
+                }
+            }
+            subItemList.resetAll(list)
+        }
+    }
+
     //---
 
     override fun onCanvasBoxMatrixUpdate(
