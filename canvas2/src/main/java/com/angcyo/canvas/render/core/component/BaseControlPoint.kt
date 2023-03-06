@@ -10,6 +10,7 @@ import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
 import com.angcyo.canvas.render.core.CanvasControlManager
 import com.angcyo.canvas.render.core.IRenderer
+import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.util.createRenderPaint
 import com.angcyo.library.ex.*
 
@@ -63,9 +64,11 @@ abstract class BaseControlPoint(controlManager: CanvasControlManager) : BaseCont
     val controlTouchPointPaint =
         createRenderPaint(_color(R.color.transparent50), style = Paint.Style.FILL)
 
+    override var renderFlags: Int = 0xf
+
     protected val _tempPoint = PointF()
 
-    override fun render(canvas: Canvas) {
+    override fun renderOnOutside(canvas: Canvas, params: RendererParams) {
         if (isEnable) {
             drawable?.let {
 

@@ -230,7 +230,7 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
         return result
     }
 
-    /**将相对于画板左上角的点, 转换成画板内部的坐标*/
+    /**将相对于画板左上角的点, 转换成画板内部相对于画板原点的坐标*/
     fun transformToInside(point: PointF, result: PointF = point): PointF {
         val originPoint = getOriginPoint()
         result.set(point)

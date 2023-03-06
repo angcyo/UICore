@@ -5,11 +5,11 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
-import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.render.core.component.*
+import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
-import com.angcyo.canvas.render.renderer.CanvasElementRenderer
 import com.angcyo.library.ex.mapPoint
+import com.angcyo.library.ex.remove
 
 /**
  * 4个点的控制器管理器
@@ -38,7 +38,12 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
     val touchControlPoint: BaseControlPoint?
         get() = if (_interceptTarget is BaseControlPoint) _interceptTarget as BaseControlPoint else null
 
+    override var renderFlags: Int = 0xff
+
     init {
+        renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_VIEW)
+            .remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
+
         delegate.touchManager.touchListenerList.add(this)
         delegate.renderListenerList.add(this)
 
@@ -79,19 +84,14 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
         scaleControlPoint.isLockScaleRatio = selectorRenderer.isLockScaleRatio
     }
 
-    override fun render(canvas: Canvas) {
+    override fun renderOnOutside(canvas: Canvas, params: RendererParams) {
         if (delegate.selectorManager.isSelectorElement &&
             !delegate.selectorManager.isTouchInSelectorRenderer
         ) {
-            val renderViewBox = delegate.renderViewBox
-            val renderBounds = renderViewBox.renderBounds
-            canvas.withTranslation(renderBounds.left, renderBounds.top) {
-                clipRect(0f, 0f, renderBounds.width(), renderBounds.height())
-                deleteControlPoint.render(canvas)
-                rotateControlPoint.render(canvas)
-                scaleControlPoint.render(canvas)
-                lockControlPoint.render(canvas)
-            }
+            deleteControlPoint.renderOnOutside(canvas, params)
+            rotateControlPoint.renderOnOutside(canvas, params)
+            scaleControlPoint.renderOnOutside(canvas, params)
+            lockControlPoint.renderOnOutside(canvas, params)
         }
     }
 

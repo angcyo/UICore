@@ -1,6 +1,11 @@
 package com.angcyo.canvas.render.core
 
 import android.graphics.Canvas
+import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
+import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
+import com.angcyo.canvas.render.annotation.RenderFlag
+import com.angcyo.canvas.render.data.RendererParams
+import com.angcyo.library.annotation.CallPoint
 
 /**
  * 声明一个可以渲染的组件
@@ -9,7 +14,50 @@ import android.graphics.Canvas
  */
 interface IRenderer {
 
-    /**绘制入口*/
-    fun render(canvas: Canvas)
+    companion object {
 
+        /**激活回调[renderOnView]*/
+        @RenderFlag
+        const val RENDERER_FLAG_ON_VIEW = 0b1
+
+        /**激活回调[renderOnInside]*/
+        @RenderFlag
+        const val RENDERER_FLAG_ON_INSIDE = RENDERER_FLAG_ON_VIEW shl 1
+
+        /**激活回调[renderOnOutside]*/
+        @RenderFlag
+        const val RENDERER_FLAG_ON_OUTSIDE = RENDERER_FLAG_ON_INSIDE shl 1
+    }
+
+    /**当前类的flag标识位*/
+    var renderFlags: Int
+
+    /**直接在[android.view.View]上绘制*/
+    @CallPoint
+    fun renderOnView(canvas: Canvas, params: RendererParams) {
+    }
+
+    /**在画板内部绘制, 相对于画板原点坐标系绘制
+     * 受[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderBounds]影响
+     * 受[com.angcyo.canvas.render.core.CanvasRenderViewBox.originGravity]影响
+     * 受[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderMatrix]影响
+     *
+     * [com.angcyo.canvas.render.core.CanvasRenderViewBox.transformToInside]
+     * */
+    @CallPoint
+    @CanvasInsideCoordinate
+    fun renderOnInside(canvas: Canvas, params: RendererParams) {
+    }
+
+    /**在画板上面, 相对于画板左上角坐标系绘制
+     * 受[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderBounds]影响
+     * 受[com.angcyo.canvas.render.core.CanvasRenderViewBox.originGravity]影响
+     * 不受[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderMatrix]影响
+     *
+     * [com.angcyo.canvas.render.core.CanvasRenderViewBox.transformToOutside]
+     * */
+    @CallPoint
+    @CanvasOutsideCoordinate
+    fun renderOnOutside(canvas: Canvas, params: RendererParams) {
+    }
 }

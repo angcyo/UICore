@@ -2,9 +2,9 @@ package com.angcyo.canvas.render.renderer
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import com.angcyo.canvas.render.BuildConfig
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IRenderer
+import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.util.createRenderPaint
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.textWidth
@@ -20,7 +20,9 @@ class CanvasMonitorRenderer(val delegate: CanvasRenderDelegate) : IRenderer {
         textSize = 9 * dp
     }
 
-    override fun render(canvas: Canvas) {
+    override var renderFlags: Int = 0xf
+
+    override fun renderOnView(canvas: Canvas, params: RendererParams) {
         val renderViewBox = delegate.renderViewBox
 
         /*if (BuildConfig.DEBUG) {

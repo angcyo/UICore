@@ -35,7 +35,7 @@ abstract class BaseSectionDrawable : AbsDslDrawable(), ILoadingDrawable {
      * 总进度, 100表示需要绘制path的全部, 这个值用来触发动画
      * [0~100f]
      */
-    var progress = 100f
+    var progress = 0f
         set(value) {
             field = clamp(value, 0f, 100f)
             invalidateSelf()

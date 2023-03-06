@@ -8,8 +8,8 @@ import androidx.core.graphics.withSave
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.element.IElement
-import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.remove
 
@@ -42,8 +42,7 @@ class CanvasElementRenderer : BaseRenderer() {
 
     //region---core---
 
-    @CallPoint
-    override fun render(canvas: Canvas) {
+    override fun renderOnInside(canvas: Canvas, params: RendererParams) {
         element ?: return
         updateRenderIfNeed()
         renderProperty?.let { property ->

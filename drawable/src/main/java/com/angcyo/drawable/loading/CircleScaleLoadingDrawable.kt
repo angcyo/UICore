@@ -23,6 +23,10 @@ class CircleScaleLoadingDrawable : BaseSectionDrawable() {
 
     /**渐变开始的颜色*/
     var circleFromColor = _color(R.color.colorAccent)
+        set(value) {
+            field = value
+            circleToColor = circleFromColor.alphaRatio(0.3f)
+        }
 
     /**渐变结束的颜色*/
     var circleToColor = circleFromColor
@@ -49,7 +53,7 @@ class CircleScaleLoadingDrawable : BaseSectionDrawable() {
         )
         circleToColor = typedArray.getColor(
             R.styleable.CircleScaleLoadingDrawable_r_loading_circle_to_color,
-            circleFromColor.alphaRatio(0.3f)
+            circleToColor
         )
         circleRadius = typedArray.getDimensionPixelOffset(
             R.styleable.CircleScaleLoadingDrawable_r_loading_circle_radius,

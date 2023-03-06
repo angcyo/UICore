@@ -7,6 +7,7 @@ import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.CanvasRenderViewBox
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.element.IElement
 import com.angcyo.library.ex.getScaleX
 import com.angcyo.library.ex.getScaleY
@@ -28,12 +29,26 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
     //region---core---
 
-    override fun render(canvas: Canvas) {
+    override fun renderOnOutside(canvas: Canvas, params: RendererParams) {
+        super.renderOnOutside(canvas, params)
         for (renderer in rendererList) {
-            renderer.render(canvas)
+            renderer.renderOnOutside(canvas, params)
         }
     }
 
+    override fun renderOnView(canvas: Canvas, params: RendererParams) {
+        super.renderOnView(canvas, params)
+        for (renderer in rendererList) {
+            renderer.renderOnView(canvas, params)
+        }
+    }
+
+    override fun renderOnInside(canvas: Canvas, params: RendererParams) {
+        super.renderOnInside(canvas, params)
+        for (renderer in rendererList) {
+            renderer.renderOnInside(canvas, params)
+        }
+    }
 
     override fun getElementList(): List<IElement> {
         val result = mutableListOf<IElement>()
@@ -45,6 +60,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
     override fun getRendererList(): List<BaseRenderer> {
         val result = mutableListOf<BaseRenderer>()
+        result.add(this)//包含自己
         for (renderer in rendererList) {
             renderer?.let { result.addAll(renderer.getRendererList()) }
         }
@@ -156,7 +172,6 @@ open class CanvasGroupRenderer : BaseRenderer() {
     private val rotateMatrix = Matrix()
     private val scaleMatrix = Matrix()
     private val invertRotateMatrix = Matrix()
-    private val _tempRect = RectF()
     private val _invertAnchorPoint = PointF()
 
     override fun applyScaleMatrix(

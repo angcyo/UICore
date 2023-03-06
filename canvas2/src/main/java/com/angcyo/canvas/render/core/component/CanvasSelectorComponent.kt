@@ -10,6 +10,7 @@ import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IComponent
 import com.angcyo.canvas.render.core.Reason
+import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasElementRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
@@ -100,7 +101,7 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
         showSizeRender(Reason.init, null)
     }
 
-    override fun render(canvas: Canvas) {
+    override fun renderOnOutside(canvas: Canvas, params: RendererParams) {
         if (isSelectorElement) {
             //绘制所有子元素的Rect
 

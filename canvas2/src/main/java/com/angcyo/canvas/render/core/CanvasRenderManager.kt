@@ -1,12 +1,10 @@
 package com.angcyo.canvas.render.core
 
 import android.graphics.Canvas
-import androidx.core.graphics.withSave
-import androidx.core.graphics.withTranslation
+import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasMonitorRenderer
 import com.angcyo.library.annotation.CallPoint
-import com.angcyo.library.ex.have
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -14,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/02/11
  */
-class CanvasRenderManager(val delegate: CanvasRenderDelegate) : IRenderer {
+class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispatch(), IRenderer {
 
     /**在[elementRendererList]之前绘制的渲染器集合*/
     val beforeRendererList = CopyOnWriteArrayList<BaseRenderer>()
@@ -28,40 +26,40 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : IRenderer {
     /**监测信息绘制*/
     var monitorRenderer = CanvasMonitorRenderer(delegate)
 
-    /**渲染入口点*/
-    @CallPoint
-    override fun render(canvas: Canvas) {
-        val renderViewBox = delegate.renderViewBox
-        val renderBounds = renderViewBox.renderBounds
-        val originPoint = renderViewBox.getOriginPoint()
-        canvas.withTranslation(renderBounds.left, renderBounds.top) {
-            clipRect(0f, 0f, renderBounds.width(), renderBounds.height())
-            translate(originPoint.x, originPoint.y)
-            //---
-            for (renderer in beforeRendererList) {
-                drawRenderer(canvas, renderer)
-            }
-            for (renderer in elementRendererList) {
-                drawRenderer(canvas, renderer)
-            }
-            for (renderer in afterRendererList) {
-                drawRenderer(canvas, renderer)
-            }
-        }
-        //---
-        monitorRenderer.render(canvas)
+    override var renderFlags: Int = 0xff
+
+    init {
+        /*renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
+            .remove(IRenderer.RENDERER_FLAG_ON_OUTSIDE)*/
     }
 
-    //绘制元素
-    private fun drawRenderer(canvas: Canvas, renderer: BaseRenderer) {
-        if (renderer.isVisible) {
-            canvas.withSave {
-                if (renderer.renderFlags.have(BaseRenderer.RENDERER_FLAG_BOX_MATRIX)) {
-                    concat(delegate.renderViewBox.renderMatrix)
-                }
-                renderer.render(canvas)
-            }
-        }
+    /**渲染入口点*/
+    @CallPoint
+    override fun renderOnView(canvas: Canvas, params: RendererParams) {
+        //---
+        renderOnView(canvas, beforeRendererList, params)
+        renderOnView(canvas, elementRendererList, params)
+        renderOnView(canvas, afterRendererList, params)
+        //---
+        monitorRenderer.renderOnView(canvas, params)
+    }
+
+    override fun renderOnInside(canvas: Canvas, params: RendererParams) {
+        //---
+        renderOnInside(canvas, beforeRendererList, params)
+        renderOnInside(canvas, elementRendererList, params)
+        renderOnInside(canvas, afterRendererList, params)
+        //---
+        monitorRenderer.renderOnInside(canvas, params)
+    }
+
+    override fun renderOnOutside(canvas: Canvas, params: RendererParams) {
+        //---
+        renderOnOutside(canvas, beforeRendererList, params)
+        renderOnOutside(canvas, elementRendererList, params)
+        renderOnOutside(canvas, afterRendererList, params)
+        //---
+        monitorRenderer.renderOnOutside(canvas, params)
     }
 
 }

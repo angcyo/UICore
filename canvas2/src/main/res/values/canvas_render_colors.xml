@@ -2,4 +2,6 @@
 <resources>
     <!--画布选择框颜色-->
     <color name="canvas_render_select">@color/colorAccent</color>
+    <!--异步加载进度颜色-->
+    <color name="canvas_render_async">@color/colorAccent</color>
 </resources>

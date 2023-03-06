@@ -7,8 +7,8 @@ import android.view.MotionEvent
 import android.view.View
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
+import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
-import com.angcyo.canvas.render.renderer.CanvasElementRenderer
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
 import com.angcyo.library.isMain
@@ -19,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/02/11
  */
-class CanvasRenderDelegate(val view: View) : ICanvasRenderView {
+class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRenderView {
 
     /**事件监听者列表*/
     val renderListenerList = CopyOnWriteArrayList<ICanvasRenderListener>()
@@ -45,6 +45,9 @@ class CanvasRenderDelegate(val view: View) : ICanvasRenderView {
     /**回退栈控制*/
     var undoManager = CanvasUndoManager(this)
 
+    /**渲染参数*/
+    var renderParams = RendererParams(this)
+
     //region---View视图方法---
 
     override fun computeScroll() {
@@ -66,13 +69,13 @@ class CanvasRenderDelegate(val view: View) : ICanvasRenderView {
 
     override fun onDraw(canvas: Canvas) {
         //刻度尺/网格
-        axisManager.render(canvas)
+        dispatchRender(canvas, axisManager, renderParams)
         //渲染器
-        renderManager.render(canvas)
+        dispatchRender(canvas, renderManager, renderParams)
         //选择控制器
-        selectorManager.render(canvas)
+        dispatchRender(canvas, selectorManager, renderParams)
         //控制点管理
-        controlManager.render(canvas)
+        dispatchRender(canvas, controlManager, renderParams)
     }
 
     /**是否在画板区域按下*/

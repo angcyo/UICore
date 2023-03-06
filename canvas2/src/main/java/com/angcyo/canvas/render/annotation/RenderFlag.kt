@@ -8,5 +8,5 @@ package com.angcyo.canvas.render.annotation
 
 @MustBeDocumented
 @Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.FUNCTION)
 annotation class RenderFlag

@@ -66,7 +66,8 @@ class RectElement : BaseElement() {
             val renderMatrix = property.getRenderMatrix(includeRotate = true)
             val path = Path()
             val rect = RectF(0f, 0f, property.width, property.height)
-            path.addRect(rect, Path.Direction.CW)
+            //path.addRect(rect, Path.Direction.CW)
+            path.addOval(rect, Path.Direction.CW)
             path.transform(renderMatrix)
 
             translate(-bounds.left, -bounds.top)

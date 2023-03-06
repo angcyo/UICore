@@ -4,10 +4,10 @@ import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
-import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.render.core.component.BaseTouchComponent
 import com.angcyo.canvas.render.core.component.CanvasMoveSelectorComponent
 import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
+import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.library.L
@@ -40,6 +40,8 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
     /**是否有选中的元素*/
     val isSelectorElement: Boolean
         get() = selectorComponent.isSelectorElement
+
+    override var renderFlags: Int = 0xf
 
     private val _tempPoint = PointF()
 
@@ -101,17 +103,12 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
         }
     }
 
-    override fun render(canvas: Canvas) {
-        val renderViewBox = delegate.renderViewBox
-        val renderBounds = renderViewBox.renderBounds
-        canvas.withTranslation(renderBounds.left, renderBounds.top) {
-            clipRect(0f, 0f, renderBounds.width(), renderBounds.height())
-            if (isSelectorElement && selectorComponent.isEnable) {
-                selectorComponent.render(this)
-            }
-            if (moveSelectorComponent.isEnable) {
-                moveSelectorComponent.render(this)
-            }
+    override fun renderOnOutside(canvas: Canvas, params: RendererParams) {
+        if (isSelectorElement && selectorComponent.isEnable) {
+            selectorComponent.renderOnOutside(canvas, params)
+        }
+        if (moveSelectorComponent.isEnable) {
+            moveSelectorComponent.renderOnOutside(canvas, params)
         }
     }
 

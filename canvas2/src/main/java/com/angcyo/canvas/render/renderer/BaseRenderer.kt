@@ -1,19 +1,23 @@
 package com.angcyo.canvas.render.renderer
 
-import android.graphics.Matrix
-import android.graphics.Path
-import android.graphics.PointF
-import android.graphics.RectF
+import android.graphics.*
+import android.graphics.drawable.Drawable
+import com.angcyo.canvas.render.R
+import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
 import com.angcyo.canvas.render.annotation.RenderFlag
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.element.IElement
+import com.angcyo.drawable.loading.CircleScaleLoadingDrawable
+import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.*
 
 /**
  * 绘制基类
+ * [com.angcyo.canvas.render.core.CanvasRenderManager]
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/02/17
  */
@@ -22,16 +26,11 @@ abstract class BaseRenderer : IRenderer {
     companion object {
 
         /**初始位*/
-        const val RENDERER_FLAG_NORMAL = 0b1
-
-        /**当前的[BaseRenderer]渲染时, 是否需要作用[renderMatrix]
-         * [com.angcyo.canvas.render.core.CanvasRenderViewBox.renderMatrix]*/
-        @RenderFlag
-        const val RENDERER_FLAG_BOX_MATRIX = RENDERER_FLAG_NORMAL shl 1
+        const val RENDERER_FLAG_NORMAL = 0b10000
 
         /**flag: 元素可见, 不可见不绘制*/
         @RenderFlag
-        const val RENDERER_FLAG_VISIBLE = RENDERER_FLAG_BOX_MATRIX shl 1
+        const val RENDERER_FLAG_VISIBLE = RENDERER_FLAG_NORMAL shl 1
 
         /**flag: 元素不锁定, 锁定后不允许touch操作*/
         @RenderFlag
@@ -40,26 +39,33 @@ abstract class BaseRenderer : IRenderer {
         /**flag: 锁定宽高比*/
         @RenderFlag
         const val RENDERER_FLAG_LOCK_SCALE = RENDERER_FLAG_UNLOCK shl 1
+
+        /**flag: 是否正在异步加载中*/
+        @RenderFlag
+        const val RENDERER_FLAG_ASYNC = RENDERER_FLAG_LOCK_SCALE shl 1
     }
 
     /**渲染器的唯一标识*/
     var uuid: String = uuid()
 
     /**当前类的flag标识位*/
-    var renderFlags: Int = 0xfffffff
+    override var renderFlags: Int = 0xfffffff
 
     /**渲染属性*/
     var renderProperty: CanvasRenderProperty? = null
 
+    /**异步加载的动画指示器*/
+    var renderAsyncDrawable: Drawable? = null
+
     //region---计算属性---
 
     /**渲染器是否可见, 不可见不绘制
-     * 由[CanvasRenderManager]控制是否绘制*/
+     * 由[com.angcyo.canvas.render.core.CanvasRenderManager]控制是否绘制*/
     val isVisible: Boolean
         get() = renderFlags.have(RENDERER_FLAG_VISIBLE)
 
     /**渲染器是否锁定, 锁定后无法touch操作
-     * 由[CanvasSelectorManager]控制是否能touch操作*/
+     * 由[com.angcyo.canvas.render.core.CanvasSelectorManager]控制是否能touch操作*/
     val isLock: Boolean
         get() = !renderFlags.have(RENDERER_FLAG_UNLOCK)
 
@@ -68,9 +74,62 @@ abstract class BaseRenderer : IRenderer {
     open val isLockScaleRatio: Boolean
         get() = renderFlags.have(RENDERER_FLAG_LOCK_SCALE)
 
+    /**是否正在异步加载中
+     * [updateAsync]*/
+    open val isAsync: Boolean
+        get() = renderFlags.have(RENDERER_FLAG_ASYNC)
+
     //endregion---计算属性---
 
+    //region---临时变量---
+
+    protected val _tempRect = RectF()
+
+    //endregion---临时变量---
+
+    init {
+        renderFlags = renderFlags.remove(RENDERER_FLAG_ASYNC)
+        updateAsync(true, Reason.init, null)//test
+    }
+
     //region---core---
+
+    /**外部调用的入口
+     * [com.angcyo.canvas.render.core.CanvasRenderManager.renderOnView]*/
+    @CallPoint
+    override fun renderOnInside(canvas: Canvas, params: RendererParams) {
+    }
+
+    override fun renderOnOutside(canvas: Canvas, params: RendererParams) {
+        if (isAsync) {
+            renderAsync(canvas, params)
+        }
+    }
+
+    @CanvasOutsideCoordinate
+    private fun renderAsync(canvas: Canvas, params: RendererParams) {
+        val renderViewBox = params.delegate?.renderViewBox ?: return
+        renderAsyncDrawable?.let { drawable ->
+            renderProperty?.let { property ->
+                val rect = property.getRenderRect(_tempRect)
+                renderViewBox.transformToOutside(rect)
+
+                val cx = rect.centerX()
+                val cy = rect.centerY()
+
+                val w = drawable.intrinsicWidth
+                val h = drawable.intrinsicHeight
+
+                drawable.setBounds(
+                    (cx - w / 2).toInt(), (cy - h / 2).toInt(),
+                    (cx + w / 2).toInt(), (cy + h / 2).toInt()
+                )
+                drawable.draw(canvas)
+
+                params.delegate.refresh()
+            }
+        }
+    }
 
     /**移除一个渲染标识*/
     open fun removeRenderFlag(flag: Int, reason: Reason, delegate: CanvasRenderDelegate?) {
@@ -139,8 +198,38 @@ abstract class BaseRenderer : IRenderer {
 
     //region---操作---
 
+    /**更新渲染器的异步状态
+     * [isLockScaleRatio]*/
+    @RenderFlag
+    open fun updateAsync(async: Boolean, reason: Reason, delegate: CanvasRenderDelegate?) {
+        if (async) {
+            if (renderAsyncDrawable == null) {
+                renderAsyncDrawable = CircleScaleLoadingDrawable().apply {
+                    circleFromColor = _color(R.color.canvas_render_async)
+                    fillStyle = true
+                    startLoading()
+                }
+            }
+            addRenderFlag(RENDERER_FLAG_ASYNC, reason, delegate)
+        } else {
+            removeRenderFlag(RENDERER_FLAG_ASYNC, reason, delegate)
+        }
+    }
+
+    /**更新渲染器的可见状态
+     * [isLockScaleRatio]*/
+    @RenderFlag
+    open fun updateVisible(visible: Boolean, reason: Reason, delegate: CanvasRenderDelegate?) {
+        if (visible) {
+            addRenderFlag(RENDERER_FLAG_VISIBLE, reason, delegate)
+        } else {
+            removeRenderFlag(RENDERER_FLAG_VISIBLE, reason, delegate)
+        }
+    }
+
     /**更新锁定宽高比的状态
      * [isLockScaleRatio]*/
+    @RenderFlag
     open fun updateLockScaleRatio(lock: Boolean, reason: Reason, delegate: CanvasRenderDelegate?) {
         if (lock) {
             addRenderFlag(RENDERER_FLAG_LOCK_SCALE, reason, delegate)
@@ -152,6 +241,7 @@ abstract class BaseRenderer : IRenderer {
     /**更新[renderProperty]时
      * [updateRenderProperty]
      * */
+    @RenderFlag
     open fun updateRenderProperty(
         target: CanvasRenderProperty?,
         reason: Reason,
@@ -169,7 +259,7 @@ abstract class BaseRenderer : IRenderer {
     /**平移操作结束之后, 需要将矩阵[matrix]作用到[renderProperty]
      * [applyTranslateMatrix]
      * [applyRotateMatrix]
-     * [applyScaleMatrixWithAnchor]
+     * [applyScaleMatrix]
      * */
     open fun applyTranslateMatrix(matrix: Matrix, reason: Reason, delegate: CanvasRenderDelegate?) {
         renderProperty?.applyTranslateMatrix(matrix)

@@ -3,9 +3,8 @@ package com.angcyo.canvas.render.core
 import android.graphics.*
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withSave
-import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.AxisPoint
-import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.unit.IRenderUnit
 import com.angcyo.canvas.render.unit.PxRenderUnit
 import com.angcyo.canvas.render.util.createRenderPaint
@@ -61,7 +60,11 @@ class CanvasAxisManager(val delegate: CanvasRenderDelegate) : IRenderer {
     /**是否要绘制刻度尺的横竖线*/
     var enableRenderBounds: Boolean = true
 
+    override var renderFlags: Int = 0xf
+
     init {
+        renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
+            .remove(IRenderer.RENDERER_FLAG_ON_OUTSIDE)
         delegate.renderListenerList.add(object : ICanvasRenderListener {
             override fun onRenderBoxBoundsUpdate(newBounds: RectF) {
                 super.onRenderBoxBoundsUpdate(newBounds)
@@ -80,7 +83,7 @@ class CanvasAxisManager(val delegate: CanvasRenderDelegate) : IRenderer {
         })
     }
 
-    override fun render(canvas: Canvas) {
+    override fun renderOnView(canvas: Canvas, params: RendererParams) {
         if (xAxisList.isEmpty() || yAxisList.isEmpty()) {
             updateAxisList()
         }
