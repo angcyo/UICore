@@ -3,4 +3,5 @@
     <string name="adapter_loading">Loading...</string>
     <string name="adapter_error">Load failed, click retry</string>
     <string name="adapter_no_data">No data</string>
+    <string name="not_support">not support</string>
 </resources>
