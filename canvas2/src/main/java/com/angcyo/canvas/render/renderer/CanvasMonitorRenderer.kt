@@ -23,10 +23,10 @@ class CanvasMonitorRenderer(val delegate: CanvasRenderDelegate) : IRenderer {
     override fun render(canvas: Canvas) {
         val renderViewBox = delegate.renderViewBox
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             paint.style = Paint.Style.STROKE
             canvas.drawRect(renderViewBox.renderBounds, paint)
-        }
+        }*/
 
         val text = "${(renderViewBox.getScale() * 100).roundToInt()}%"
         paint.style = Paint.Style.FILL

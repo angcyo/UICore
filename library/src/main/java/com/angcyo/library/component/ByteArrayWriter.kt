@@ -18,6 +18,8 @@ class ByteArrayWriter(
 
     val outputStream: ByteArrayOutputStream = ByteArrayOutputStream(initialSize)
 
+    fun size() = outputStream.size()
+
     fun toByteArray() = outputStream.toByteArray()
 
     /**写入一个指定字节长度的整数
@@ -25,11 +27,11 @@ class ByteArrayWriter(
      * [length] 字节数, 不够前面补0
      * */
     fun write(int: Int, length: Int) {
-        if (limitMaxSize >= 0 && outputStream.size() >= limitMaxSize) {
+        if (limitMaxSize >= 0 && size() >= limitMaxSize) {
             return
         } else {
             val size = if (limitMaxSize >= 0) {
-                min(length, limitMaxSize - outputStream.size())
+                min(length, limitMaxSize - size())
             } else {
                 length
             }
@@ -39,7 +41,7 @@ class ByteArrayWriter(
 
     /**[byte] 只写入1个字节*/
     fun write(byte: Int) {
-        if (limitMaxSize >= 0 && outputStream.size() >= limitMaxSize) {
+        if (limitMaxSize >= 0 && size() >= limitMaxSize) {
             return
         }
         outputStream.write(byte)
@@ -78,18 +80,18 @@ class ByteArrayWriter(
         if (bytes == null || bytes.isEmpty()) {
             return
         }
-        if (limitMaxSize >= 0 && outputStream.size() >= limitMaxSize) {
+        if (limitMaxSize >= 0 && size() >= limitMaxSize) {
             return
         }
         write(bytes, 0, bytes.size)
     }
 
     fun write(bytes: ByteArray, off: Int, len: Int) {
-        if (limitMaxSize >= 0 && outputStream.size() >= limitMaxSize) {
+        if (limitMaxSize >= 0 && size() >= limitMaxSize) {
             return
         } else {
             val size = if (limitMaxSize >= 0) {
-                min(len, limitMaxSize - outputStream.size())
+                min(len, limitMaxSize - size())
             } else {
                 len
             }
@@ -107,7 +109,7 @@ class ByteArrayWriter(
     /**垫满长度
      * [length] 需要填满到指定的字节长度*/
     fun padLength(length: Int) {
-        val size = outputStream.size()
+        val size = size()
         if (size >= length) {
             return
         }
