@@ -81,6 +81,10 @@ fun evaluateColor(fraction: Float, startValue: Int, endValue: Int): Int {
     return argbEvaluator.evaluate(fraction, startValue, endValue) as Int
 }
 
+/**[this~toValue] [progress]进度[0~1]比例进度
+ * [evaluateColor]*/
+fun Int.progressColor(progress: Float, toValue: Int) = evaluateColor(progress, this, toValue)
+
 /**从一个渐变颜色中获取颜色*/
 fun evaluateColor(fraction: Float, colors: IntArray, positions: FloatArray? = null): Int {
     if (fraction <= 0) {

@@ -45,7 +45,7 @@ class HSProgressDrawable : BaseSectionDrawable() {
         typedArray.recycle()
 
         if (isInEditMode) {
-            progress = 50
+            progress = 50f
         }
     }
 

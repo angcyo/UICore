@@ -42,8 +42,8 @@ class ArcLoadingHeaderBehavior(context: Context, attributeSet: AttributeSet? = n
             childView.find<ArcLoadingView>(R.id.lib_arc_loading_view)?.apply {
                 val bHeight = parentMeasuredHeight() - bottom
                 if (y >= bHeight) {
-                    val progress = (((y - bHeight) * 1f / (childView.mH())) * 100).toInt()
-                    this.progress = min(progress, 51)
+                    val progress = ((y - bHeight) * 1f / (childView.mH())) * 100
+                    this.progress = min(progress, 51f)
                 }
             }
         }
@@ -59,7 +59,7 @@ class ArcLoadingHeaderBehavior(context: Context, attributeSet: AttributeSet? = n
             } else {
                 endLoading()
                 if (to >= STATUS_FINISH) {
-                    progress = 50
+                    progress = 50f
                 }
             }
         }

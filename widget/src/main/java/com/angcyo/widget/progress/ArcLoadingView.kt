@@ -30,7 +30,8 @@ class ArcLoadingView(context: Context, attributeSet: AttributeSet? = null) :
 
     var autoStart = true
 
-    var progress: Int
+    /** [0~100f] */
+    var progress: Float
         set(value) {
             arcLoadingDrawable.progress = value
         }
@@ -63,8 +64,10 @@ class ArcLoadingView(context: Context, attributeSet: AttributeSet? = null) :
         duration =
             array.getInt(R.styleable.ArcLoadingView_arc_duration, duration.toInt()).toLong()
 
-        arcLoadingDrawable.progress =
-            array.getInt(R.styleable.ArcLoadingView_arc_progress, arcLoadingDrawable.progress)
+        arcLoadingDrawable.progress = array.getInt(
+            R.styleable.ArcLoadingView_arc_progress,
+            arcLoadingDrawable.progress.toInt()
+        ).toFloat()
 
         autoStart = array.getBoolean(R.styleable.ArcLoadingView_arc_auto_start, autoStart)
 
@@ -73,7 +76,7 @@ class ArcLoadingView(context: Context, attributeSet: AttributeSet? = null) :
         arcLoadingDrawable.callback = this
 
         if (isInEditMode) {
-            progress = 51
+            progress = 51f
         }
     }
 
@@ -138,7 +141,7 @@ class ArcLoadingView(context: Context, attributeSet: AttributeSet? = null) :
                 it.repeatMode = ValueAnimator.RESTART
             }
             onAnimatorUpdateValue = { _, fraction ->
-                progress = (fraction * 100).toInt()
+                progress = fraction * 100
             }
         }
     }

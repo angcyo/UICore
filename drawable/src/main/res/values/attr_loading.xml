@@ -3,12 +3,17 @@
 
     <attr name="r_loading_circle_radius" format="dimension" />
     <attr name="r_loading_circle_color" format="color" />
+    <attr name="r_loading_circle_from_color" format="color" />
+    <attr name="r_loading_circle_to_color" format="color" />
+    <attr name="r_loading_circle_fill_style" format="boolean" />
     <attr name="r_loading_step" format="integer" />
 
     <declare-styleable name="CircleScaleLoadingDrawable">
         <attr name="r_loading_circle_radius" />
-        <attr name="r_loading_circle_color" />
+        <attr name="r_loading_circle_from_color" />
+        <attr name="r_loading_circle_to_color" />
         <attr name="r_loading_step" />
+        <attr name="r_loading_circle_fill_style" />
     </declare-styleable>
 
     <attr name="r_loading_item_width" format="dimension" />

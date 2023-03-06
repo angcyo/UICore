@@ -3,8 +3,10 @@
 
     <declare-styleable name="CircleScaleLoadingView">
         <attr name="r_loading_circle_radius" />
-        <attr name="r_loading_circle_color" />
+        <attr name="r_loading_circle_from_color" />
+        <attr name="r_loading_circle_to_color" />
         <attr name="r_loading_step" />
+        <attr name="r_loading_circle_fill_style" />
     </declare-styleable>
 
     <declare-styleable name="PostLoadingView">

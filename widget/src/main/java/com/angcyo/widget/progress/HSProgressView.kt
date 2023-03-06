@@ -21,7 +21,7 @@ class HSProgressView(context: Context, attributeSet: AttributeSet? = null) :
 
     init {
         onAnimatorUpdate = {
-            firstDrawable<HSProgressDrawable>()?.progress = (it * 100).toInt()
+            firstDrawable<HSProgressDrawable>()?.progress = it * 100
         }
 
         onConfigAnimator = {
@@ -39,7 +39,7 @@ class HSProgressView(context: Context, attributeSet: AttributeSet? = null) :
         typedArray.recycle()
 
         if (isInEditMode) {
-            firstDrawable<HSProgressDrawable>()?.progress = 50
+            firstDrawable<HSProgressDrawable>()?.progress = 50f
         }
     }
 
@@ -49,6 +49,6 @@ class HSProgressView(context: Context, attributeSet: AttributeSet? = null) :
 
     override fun stopAnimator() {
         super.stopAnimator()
-        firstDrawable<HSProgressDrawable>()?.progress = 0
+        firstDrawable<HSProgressDrawable>()?.progress = 0f
     }
 }

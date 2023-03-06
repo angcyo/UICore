@@ -22,7 +22,7 @@ class CircleScaleLoadingView(context: Context, attributeSet: AttributeSet? = nul
         list.add(CircleScaleLoadingDrawable().apply {
             loading = true
             if (isInEditMode()) {
-                progress = 50
+                progress = 50f
             }
         })
     }

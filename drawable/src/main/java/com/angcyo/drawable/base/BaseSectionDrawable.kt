@@ -3,6 +3,7 @@ package com.angcyo.drawable.base
 import android.graphics.Canvas
 import android.view.animation.Interpolator
 import androidx.core.math.MathUtils.clamp
+import com.angcyo.library._refreshRateRatio
 import com.angcyo.library.annotation.OverridePoint
 
 /**
@@ -32,10 +33,11 @@ abstract class BaseSectionDrawable : AbsDslDrawable(), ILoadingDrawable {
 
     /**
      * 总进度, 100表示需要绘制path的全部, 这个值用来触发动画
+     * [0~100f]
      */
-    var progress = 100
+    var progress = 100f
         set(value) {
-            field = clamp(value, 0, 100)
+            field = clamp(value, 0f, 100f)
             invalidateSelf()
         }
 
@@ -141,11 +143,11 @@ abstract class BaseSectionDrawable : AbsDslDrawable(), ILoadingDrawable {
 
     open fun doLoading() {
         if (progress >= 100) {
-            progress = 0
+            progress = 0f
         } else {
-            progress += loadingStep
+            progress += loadingStep / _refreshRateRatio
             if (progress >= 100) {
-                progress = 100
+                progress = 100f
             }
         }
     }

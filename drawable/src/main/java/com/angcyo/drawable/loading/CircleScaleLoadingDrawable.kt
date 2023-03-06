@@ -9,6 +9,7 @@ import com.angcyo.drawable.base.BaseSectionDrawable
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.alphaRatio
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.progressColor
 
 /**
  * 圆形放大并且伴随透明度的动画
@@ -20,11 +21,17 @@ class CircleScaleLoadingDrawable : BaseSectionDrawable() {
     /**圆的半径*/
     var circleRadius: Int = 14 * dpi
 
-    /**颜色*/
-    var circleColor = _color(R.color.colorAccent)
+    /**渐变开始的颜色*/
+    var circleFromColor = _color(R.color.colorAccent)
+
+    /**渐变结束的颜色*/
+    var circleToColor = circleFromColor
 
     /**圆的宽度*/
     var circleWidth: Int = 2 * dpi
+
+    /**是否是填充的样式*/
+    var fillStyle: Boolean = false
 
     init {
         sections = floatArrayOf(1f)
@@ -36,9 +43,13 @@ class CircleScaleLoadingDrawable : BaseSectionDrawable() {
         super.initAttribute(context, attributeSet)
         val typedArray =
             context.obtainStyledAttributes(attributeSet, R.styleable.CircleScaleLoadingDrawable)
-        circleColor = typedArray.getColor(
-            R.styleable.CircleScaleLoadingDrawable_r_loading_circle_color,
-            circleColor
+        circleFromColor = typedArray.getColor(
+            R.styleable.CircleScaleLoadingDrawable_r_loading_circle_from_color,
+            circleFromColor
+        )
+        circleToColor = typedArray.getColor(
+            R.styleable.CircleScaleLoadingDrawable_r_loading_circle_to_color,
+            circleFromColor.alphaRatio(0.3f)
         )
         circleRadius = typedArray.getDimensionPixelOffset(
             R.styleable.CircleScaleLoadingDrawable_r_loading_circle_radius,
@@ -46,6 +57,11 @@ class CircleScaleLoadingDrawable : BaseSectionDrawable() {
         )
         loadingStep =
             typedArray.getInt(R.styleable.CircleScaleLoadingDrawable_r_loading_step, loadingStep)
+        fillStyle =
+            typedArray.getBoolean(
+                R.styleable.CircleScaleLoadingDrawable_r_loading_circle_fill_style,
+                fillStyle
+            )
         typedArray.recycle()
     }
 
@@ -63,9 +79,10 @@ class CircleScaleLoadingDrawable : BaseSectionDrawable() {
         val cx = bounds.centerX()
         val cy = bounds.centerY()
 
-        val color = circleColor.alphaRatio(1 - progress + 0.3f)
+        val color = circleFromColor.progressColor(progress, circleToColor)
         textPaint.color = color
         textPaint.strokeWidth = circleWidth.toFloat()
+        textPaint.style = if (fillStyle) Paint.Style.FILL else Paint.Style.STROKE
         canvas.drawCircle(cx.toFloat(), cy.toFloat(), radius, textPaint)
     }
 
