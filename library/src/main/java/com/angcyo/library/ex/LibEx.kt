@@ -278,6 +278,15 @@ fun <T> Collection<T>?.isChange(other: List<T>?): Boolean {
     return false
 }
 
+/**判断2个列表是否有共同的元素*/
+fun <T> Collection<T>?.isIntersect(other: List<T>?): Boolean {
+    if (other.isNullOrEmpty() || this.isNullOrEmpty()) {
+        return false
+    }
+    val find = find { other.contains(it) }
+    return find != null
+}
+
 /**判断列表中的数据是否都满足此条件*/
 fun <T> Iterable<T>.isAllMatch(predicate: (T) -> Boolean): Boolean {
     var isAllMatch = true
