@@ -15,11 +15,13 @@ import com.angcyo.library.ex.intersect
  */
 abstract class BaseElement : IElement {
 
-    /**描述的渲染属性*/
+    /**描述的渲染属性, 包含坐标/缩放/倾斜信息*/
     var renderProperty = CanvasRenderProperty()
 
-    /**需要渲染的[Drawable]*/
+    /**需要在界面上渲染的[Drawable]*/
     var renderDrawable: Drawable? = null
+
+    //region---core---
 
     override fun requestElementRenderProperty(): CanvasRenderProperty = renderProperty
 
@@ -42,6 +44,8 @@ abstract class BaseElement : IElement {
     override fun updateElementRenderProperty(property: CanvasRenderProperty) {
         property.copyTo(renderProperty)
     }
+
+    //endregion---core---
 
     //region---方法---
 

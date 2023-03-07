@@ -27,17 +27,16 @@ interface IRenderer {
         /**激活回调[renderOnOutside]*/
         @RenderFlag
         const val RENDERER_FLAG_ON_OUTSIDE = RENDERER_FLAG_ON_INSIDE shl 1
+
+        /**最后一个标识位*/
+        @RenderFlag
+        const val RENDERER_FLAG_LAST = RENDERER_FLAG_ON_OUTSIDE shl 1
     }
 
     /**当前类的flag标识位*/
     var renderFlags: Int
 
-    /**直接在[android.view.View]上绘制*/
-    @CallPoint
-    fun renderOnView(canvas: Canvas, params: RendererParams) {
-    }
-
-    /**在画板内部绘制, 相对于画板原点坐标系绘制
+    /**绘制顺序1: 在画板内部绘制, 相对于画板原点坐标系绘制
      * 受[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderBounds]影响
      * 受[com.angcyo.canvas.render.core.CanvasRenderViewBox.originGravity]影响
      * 受[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderMatrix]影响
@@ -49,7 +48,7 @@ interface IRenderer {
     fun renderOnInside(canvas: Canvas, params: RendererParams) {
     }
 
-    /**在画板上面, 相对于画板左上角坐标系绘制
+    /**绘制顺序2: 在画板上面, 相对于画板左上角坐标系绘制
      * 受[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderBounds]影响
      * 受[com.angcyo.canvas.render.core.CanvasRenderViewBox.originGravity]影响
      * 不受[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderMatrix]影响
@@ -60,4 +59,10 @@ interface IRenderer {
     @CanvasOutsideCoordinate
     fun renderOnOutside(canvas: Canvas, params: RendererParams) {
     }
+
+    /**绘制顺序3: 直接在[android.view.View]上绘制*/
+    @CallPoint
+    fun renderOnView(canvas: Canvas, params: RendererParams) {
+    }
+
 }

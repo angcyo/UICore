@@ -45,7 +45,7 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
             .remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
 
         delegate.touchManager.touchListenerList.add(this)
-        delegate.renderListenerList.add(this)
+        delegate.addCanvasRenderListener(this)
 
         //touch listener
         touchListenerList.add(deleteControlPoint)

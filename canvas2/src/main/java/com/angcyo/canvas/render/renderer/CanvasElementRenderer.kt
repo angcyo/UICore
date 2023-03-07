@@ -5,11 +5,13 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import androidx.core.graphics.withSave
+import com.angcyo.canvas.render.annotation.RenderFlag
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.element.IElement
+import com.angcyo.library.ex.ceilInt
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.remove
 
@@ -20,11 +22,16 @@ import com.angcyo.library.ex.remove
 class CanvasElementRenderer : BaseRenderer() {
 
     companion object {
+
         /**请求需要重新获取[IElement]的绘制属性*/
-        const val RENDERER_FLAG_REQUEST_PROPERTY = 0x100
+        const val RENDERER_FLAG_REQUEST_PROPERTY = BaseRenderer.RENDERER_FLAG_LAST
 
         /**请求需要重新获取[IElement]的绘制Drawable*/
         const val RENDERER_FLAG_REQUEST_DRAWABLE = RENDERER_FLAG_REQUEST_PROPERTY shl 1
+
+        /**最后一个标识位*/
+        @RenderFlag
+        const val RENDERER_FLAG_LAST = RENDERER_FLAG_REQUEST_DRAWABLE shl 1
     }
 
     /**需要绘制的元素*/
@@ -49,8 +56,14 @@ class CanvasElementRenderer : BaseRenderer() {
             _elementRenderDrawable?.let { drawable ->
                 val renderBounds = property.getRenderBounds()
                 canvas.withSave {
-                    translate(renderBounds.left, renderBounds.top)
-                    drawable.draw(canvas)
+                    translate(renderBounds.left, renderBounds.top)//平移到指定位置
+                    drawable.setBounds(
+                        0,
+                        0,
+                        renderBounds.width().ceilInt(),
+                        renderBounds.height().ceilInt()
+                    )//设置绘制的宽高
+                    drawable.draw(canvas)//绘制
                 }
             }
         }

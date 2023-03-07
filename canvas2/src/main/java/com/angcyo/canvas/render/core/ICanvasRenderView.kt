@@ -5,15 +5,17 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import android.view.MotionEvent
 import android.widget.OverScroller
+import androidx.annotation.WorkerThread
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.renderer.BaseRenderer
-import com.angcyo.canvas.render.renderer.CanvasElementRenderer
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/02/11
  */
+
+@WorkerThread
 interface ICanvasRenderView {
 
     //region---View视图方法---
@@ -33,13 +35,21 @@ interface ICanvasRenderView {
     /**重绘刷新*/
     fun refresh()
 
+    fun onAttachedToWindow()
+
+    fun onDetachedFromWindow()
+
     //endregion---View视图方法---
 
     //region---Base---
 
     /**分发回退/恢复栈发生改变
      * [CanvasUndoManager]*/
-    fun dispatchRenderUndoChange() {}
+    fun dispatchRenderUndoChange()
+
+    /**分发异步状态发生改变
+     * [CanvasAsyncManager]*/
+    fun dispatchAsyncStateChange(uuid: String, state: Int)
 
     //endregion---Base---
 
@@ -60,6 +70,18 @@ interface ICanvasRenderView {
     //endregion---CanvasRenderViewBox---
 
     //region---CanvasRenderer---
+
+    /**派发有元素添加/删除
+     * [com.angcyo.canvas.render.core.CanvasRenderManager.addRenderer]
+     * [from] 原有的集合
+     * [to] 改变后的集合
+     * [op] 操作的集合, 比如删除的元素集合/添加的元素集合
+     * */
+    fun dispatchRendererListChange(
+        from: List<BaseRenderer>,
+        to: List<BaseRenderer>,
+        op: List<BaseRenderer>
+    )
 
     /**选中的元素, 改变时回调*/
     fun dispatchSelectorRendererChange(

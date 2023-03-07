@@ -12,6 +12,7 @@ import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.library.L
 import com.angcyo.library.component.MainExecutor
+import com.angcyo.library.ex.isIntersect
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.size
 
@@ -47,6 +48,17 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
 
     init {
         delegate.touchManager.touchListenerList.add(this)
+        delegate.addCanvasRenderListener(object : ICanvasRenderListener {
+            override fun onRendererListChange(
+                from: List<BaseRenderer>,
+                to: List<BaseRenderer>,
+                op: List<BaseRenderer>
+            ) {
+                if (op.isIntersect(selectorComponent.rendererList)) {
+                    selectorComponent.updateRenderProperty()
+                }
+            }
+        })
     }
 
     //region---内部---
@@ -230,6 +242,16 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
             }
         }
         return result
+    }
+
+    /**[com.angcyo.canvas.render.core.component.CanvasSelectorComponent.resetSelectorRenderer]*/
+    fun resetSelectorRenderer(list: List<BaseRenderer>) {
+        selectorComponent.resetSelectorRenderer(list)
+    }
+
+    /**[com.angcyo.canvas.render.core.component.CanvasSelectorComponent.addSelectorRenderer]*/
+    fun addSelectorRenderer(renderer: BaseRenderer) {
+        selectorComponent.addSelectorRenderer(renderer)
     }
 
     //endregion---操作---

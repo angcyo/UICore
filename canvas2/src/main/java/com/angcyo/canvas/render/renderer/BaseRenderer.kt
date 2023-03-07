@@ -26,7 +26,7 @@ abstract class BaseRenderer : IRenderer {
     companion object {
 
         /**初始位*/
-        const val RENDERER_FLAG_NORMAL = 0b10000
+        const val RENDERER_FLAG_NORMAL = IRenderer.RENDERER_FLAG_LAST
 
         /**flag: 元素可见, 不可见不绘制*/
         @RenderFlag
@@ -43,6 +43,10 @@ abstract class BaseRenderer : IRenderer {
         /**flag: 是否正在异步加载中*/
         @RenderFlag
         const val RENDERER_FLAG_ASYNC = RENDERER_FLAG_LOCK_SCALE shl 1
+
+        /**最后一个标识位*/
+        @RenderFlag
+        const val RENDERER_FLAG_LAST = RENDERER_FLAG_ASYNC shl 1
     }
 
     /**渲染器的唯一标识*/
@@ -89,7 +93,7 @@ abstract class BaseRenderer : IRenderer {
 
     init {
         renderFlags = renderFlags.remove(RENDERER_FLAG_ASYNC)
-        updateAsync(true, Reason.init, null)//test
+        //updateAsync(true, Reason.init, null)//test
     }
 
     //region---core---
@@ -101,7 +105,7 @@ abstract class BaseRenderer : IRenderer {
     }
 
     override fun renderOnOutside(canvas: Canvas, params: RendererParams) {
-        if (isAsync) {
+        if (isAsync || params.delegate?.asyncManager?.hasAsyncTask(uuid) == true) {
             renderAsync(canvas, params)
         }
     }

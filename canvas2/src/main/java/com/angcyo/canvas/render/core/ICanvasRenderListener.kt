@@ -2,22 +2,27 @@ package com.angcyo.canvas.render.core
 
 import android.graphics.Matrix
 import android.graphics.RectF
+import androidx.annotation.WorkerThread
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.renderer.BaseRenderer
-import com.angcyo.canvas.render.renderer.CanvasElementRenderer
 
 /**
  * [ICanvasRenderView]相关事件通知
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/02/15
  */
+
+@WorkerThread
 interface ICanvasRenderListener {
 
     //region---Base---
 
     /**[CanvasUndoManager]*/
     fun onRenderUndoChange(undoManager: CanvasUndoManager) {}
+
+    /**[CanvasAsyncManager]*/
+    fun onAsyncStateChange(uuid: String, state: Int) {}
 
     //endregion---Base---
 
@@ -38,6 +43,14 @@ interface ICanvasRenderListener {
     //endregion---CanvasRenderViewBox---
 
     //region---CanvasRenderer---
+
+    /**当有元素添加/删除时*/
+    fun onRendererListChange(
+        from: List<BaseRenderer>,
+        to: List<BaseRenderer>,
+        op: List<BaseRenderer>
+    ) {
+    }
 
     /**选中的元素, 改变时回调*/
     fun onSelectorRendererChange(

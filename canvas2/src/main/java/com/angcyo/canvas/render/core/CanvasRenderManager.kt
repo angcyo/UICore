@@ -5,6 +5,7 @@ import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasMonitorRenderer
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.ex.resetAll
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -61,5 +62,61 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         //---
         monitorRenderer.renderOnOutside(canvas, params)
     }
+
+    //region---操作---
+
+    /**添加一个渲染器*/
+    fun addRenderer(render: BaseRenderer, selector: Boolean, strategy: Strategy) {
+        addRenderer(listOf(render), selector, strategy)
+    }
+
+    /**添加一个集合渲染器
+     * [selector] 是否要选中最新的元素*/
+    fun addRenderer(list: List<BaseRenderer>, selector: Boolean, strategy: Strategy) {
+        val from = elementRendererList.toList()
+        elementRendererList.addAll(list)
+        val to = elementRendererList.toList()
+
+        delegate.undoManager.addAndRedo(strategy, true, {
+            elementRendererList.resetAll(from)
+            delegate.dispatchRendererListChange(to, from, list)
+            delegate.refresh()
+        }) {
+            elementRendererList.resetAll(to)
+            delegate.dispatchRendererListChange(from, to, list)
+            delegate.refresh()
+        }
+
+        if (selector) {
+            delegate.selectorManager.resetSelectorRenderer(list)
+        }
+    }
+
+    /**删除一个渲染器*/
+    fun removeRenderer(render: BaseRenderer, strategy: Strategy) {
+        removeRenderer(listOf(render), strategy)
+    }
+
+    /**添加一个集合渲染器*/
+    fun removeRenderer(list: List<BaseRenderer>, strategy: Strategy) {
+        val from = elementRendererList.toList()
+        elementRendererList.removeAll(list)
+        val to = elementRendererList.toList()
+
+        delegate.undoManager.addAndRedo(strategy, true, {
+            elementRendererList.resetAll(from)
+            delegate.dispatchRendererListChange(to, from, list)
+            delegate.refresh()
+        }) {
+            elementRendererList.resetAll(to)
+            delegate.dispatchRendererListChange(from, to, list)
+            delegate.refresh()
+        }
+    }
+
+    /**通过[uuid]查询对应的渲染器*/
+    fun findRenderer(uuid: String): BaseRenderer? = elementRendererList.find { it.uuid == uuid }
+
+    //endregion---操作---
 
 }

@@ -70,7 +70,7 @@ class CanvasUndoManager(val delegate: CanvasRenderDelegate) {
      * [redoIt] 是否要立即执行[redo]*/
     fun addAndRedo(
         strategy: Strategy,
-        redoIt: Boolean = true,
+        redoIt: Boolean,
         undo: (strategy: Strategy) -> Unit,
         redo: (strategy: Strategy) -> Unit
     ): ICanvasStep? {

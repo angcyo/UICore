@@ -140,11 +140,15 @@ data class CanvasRenderProperty(
         return result
     }
 
+    val _baseRect = RectF()
+    val _baseMatrix = Matrix()
+    val _centerPoint = PointF()
+
     /**获取渲染目标时的中点坐标*/
     @CanvasInsideCoordinate
     fun getRenderCenter(result: PointF = PointF()): PointF {
-        val rect = getBaseRect()
-        val matrix = getBaseMatrix()
+        val rect = getBaseRect(_baseRect)
+        val matrix = getBaseMatrix(_baseMatrix)
         matrix.mapRect(rect) //先计算出目标的宽高
 
         result.set(anchorX + rect.width() / 2, anchorY + rect.height() / 2)
@@ -197,17 +201,27 @@ data class CanvasRenderProperty(
         return result
     }
 
-    /**获取对应的的矩阵
+    /**获取对应的的矩阵, 偏移到了[anchorX] [anchorY]
      * [includeRotate] 是否需要包含旋转信息, 否则就是缩放和倾斜信息描述的矩阵*/
     fun getRenderMatrix(result: Matrix = Matrix(), includeRotate: Boolean = true): Matrix {
         getBaseMatrix(result)
-        val centerPoint = getRenderCenter()
+        val centerPoint = getRenderCenter(_centerPoint)
         if (includeRotate) {
             result.postRotate(angle)
         }
-
-        //关键
+        //关键, 平移到指定位置
         translateMatrixCenterTo(result, centerPoint.x, centerPoint.y)
+        return result
+    }
+
+    val _boundsRect = RectF()
+
+    /**获取在[0,0]位置可以直接渲染的矩阵
+     * [getRenderMatrix]*/
+    fun getDrawMatrix(result: Matrix = Matrix(), includeRotate: Boolean = true): Matrix {
+        getRenderBounds(_boundsRect, false)
+        getRenderMatrix(result, includeRotate)
+        result.postTranslate(-_boundsRect.left, -_boundsRect.top)
         return result
     }
 

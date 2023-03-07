@@ -7,6 +7,7 @@ import android.graphics.RectF
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.render.R
+import com.angcyo.canvas.render.annotation.RenderFlag
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IComponent
 import com.angcyo.canvas.render.core.Reason
@@ -32,7 +33,7 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
     companion object {
 
         /**多个元素时:是否要绘制子元素的边框*/
-        const val RENDERER_FLAG_DRAW_FRAME_RECT = 0x10000
+        const val RENDERER_FLAG_DRAW_FRAME_RECT = CanvasElementRenderer.RENDERER_FLAG_LAST
 
         /**是否要绘制选中的边框*/
         const val RENDERER_FLAG_DRAW_FRAME_SELECTOR_RECT = RENDERER_FLAG_DRAW_FRAME_RECT shl 1
@@ -51,6 +52,10 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
 
         /**是否要绘制旋转角度*/
         const val RENDERER_FLAG_DRAW_FRAME_ROTATE = RENDERER_FLAG_DRAW_FRAME_LOCATION shl 1
+
+        /**最后一个标识位*/
+        @RenderFlag
+        const val RENDERER_FLAG_LAST = RENDERER_FLAG_DRAW_FRAME_ROTATE shl 1
     }
 
     override var isEnable: Boolean = true
@@ -293,25 +298,25 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
     }
 
     /**[resetSelectorRenderer]*/
-    fun resetSelectorRenderer(elementRenderer: BaseRenderer?) {
-        if (elementRenderer == null) {
+    fun resetSelectorRenderer(renderer: BaseRenderer?) {
+        if (renderer == null) {
             resetSelectorRenderer(emptyList())
         } else {
-            resetSelectorRenderer(listOf(elementRenderer))
+            resetSelectorRenderer(listOf(renderer))
         }
     }
 
     /**重置所有选中的元素*/
     fun resetSelectorRenderer(list: List<BaseRenderer>) {
         val old = rendererList.toList()
-        resetRendererList(list)
+        resetGroupRendererList(list)
         _onSelectorRendererChange(old)
     }
 
     /**添加一个元素到选择器*/
-    fun addSelectorRenderer(elementRenderer: BaseRenderer) {
+    fun addSelectorRenderer(renderer: BaseRenderer) {
         val old = rendererList.toList()
-        addRenderer(elementRenderer)
+        addGroupRenderer(renderer)
         _onSelectorRendererChange(old)
     }
 

@@ -45,9 +45,11 @@ class CanvasRenderView(context: Context, attributeSet: AttributeSet? = null) :
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        delegate.onAttachedToWindow()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        delegate.onDetachedFromWindow()
     }
 }

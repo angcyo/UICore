@@ -22,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRenderView {
 
     /**事件监听者列表*/
-    val renderListenerList = CopyOnWriteArrayList<ICanvasRenderListener>()
+    private val renderListenerList = CopyOnWriteArrayList<ICanvasRenderListener>()
 
     /**绘制区域设置, 坐标映射处理*/
     var renderViewBox = CanvasRenderViewBox(this)
@@ -47,6 +47,9 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
 
     /**渲染参数*/
     var renderParams = RendererParams(this)
+
+    /**异步加载管理*/
+    var asyncManager = CanvasAsyncManager(this)
 
     //region---View视图方法---
 
@@ -133,6 +136,14 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         }
     }
 
+    override fun onAttachedToWindow() {
+        asyncManager.startAsync()
+    }
+
+    override fun onDetachedFromWindow() {
+        asyncManager.releaseAsync()
+    }
+
     //endregion---View视图方法---
 
     //region---ICanvasRenderView---
@@ -167,9 +178,25 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         }
     }
 
+    override fun dispatchAsyncStateChange(uuid: String, state: Int) {
+        for (listener in renderListenerList) {
+            listener.onAsyncStateChange(uuid, state)
+        }
+    }
+
     //endregion---ICanvasRenderView---
 
     //region---CanvasRenderer---
+
+    override fun dispatchRendererListChange(
+        from: List<BaseRenderer>,
+        to: List<BaseRenderer>,
+        op: List<BaseRenderer>
+    ) {
+        for (listener in renderListenerList) {
+            listener.onRendererListChange(from, to, op)
+        }
+    }
 
     override fun dispatchSelectorRendererChange(
         selectorComponent: CanvasSelectorComponent,
@@ -204,5 +231,19 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     }
 
     //endregion---CanvasRenderer---
+
+    //region---操作---
+
+    /**添加一个事件监听*/
+    fun addCanvasRenderListener(listener: ICanvasRenderListener) {
+        renderListenerList.add(listener)
+    }
+
+    /**移除一个事件监听*/
+    fun removeCanvasRenderListener(listener: ICanvasRenderListener) {
+        renderListenerList.remove(listener)
+    }
+
+    //endregion---操作---
 
 }

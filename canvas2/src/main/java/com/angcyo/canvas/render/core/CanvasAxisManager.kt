@@ -5,6 +5,7 @@ import androidx.core.graphics.withRotation
 import androidx.core.graphics.withSave
 import com.angcyo.canvas.render.data.AxisPoint
 import com.angcyo.canvas.render.data.RendererParams
+import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.unit.IRenderUnit
 import com.angcyo.canvas.render.unit.PxRenderUnit
 import com.angcyo.canvas.render.util.createRenderPaint
@@ -65,7 +66,7 @@ class CanvasAxisManager(val delegate: CanvasRenderDelegate) : IRenderer {
     init {
         renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
             .remove(IRenderer.RENDERER_FLAG_ON_OUTSIDE)
-        delegate.renderListenerList.add(object : ICanvasRenderListener {
+        delegate.addCanvasRenderListener(object : ICanvasRenderListener {
             override fun onRenderBoxBoundsUpdate(newBounds: RectF) {
                 super.onRenderBoxBoundsUpdate(newBounds)
                 updateAxisList()

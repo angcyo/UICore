@@ -270,14 +270,14 @@ open class CanvasGroupRenderer : BaseRenderer() {
     }
 
     /**重置所有的元素*/
-    open fun resetRendererList(list: List<BaseRenderer>) {
+    open fun resetGroupRendererList(list: List<BaseRenderer>) {
         rendererList.clear()
         rendererList.addAll(list)
         updateRenderProperty()
     }
 
     /**添加一个元素到组内*/
-    open fun addRenderer(elementRenderer: BaseRenderer) {
+    open fun addGroupRenderer(elementRenderer: BaseRenderer) {
         rendererList.add(elementRenderer)
         updateRenderProperty()
     }
