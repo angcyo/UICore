@@ -20,7 +20,7 @@ import kotlin.math.absoluteValue
 class CanvasScaleComponent(val delegate: CanvasRenderDelegate) : BaseTouchComponent() {
 
     /**当手指缩放/放大的距离大于此值, 是否有效的缩放*/
-    var scaleThreshold = 5 * dp
+    var scaleThreshold = 10 * dp
 
     /**双击时, 需要放大的比例*/
     var doubleScaleValue = 1.5f
