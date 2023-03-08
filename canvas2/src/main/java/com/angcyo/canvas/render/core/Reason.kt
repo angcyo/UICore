@@ -18,6 +18,20 @@ data class Reason(
      * [REASON_PREVIEW]
      * */
     val reason: Int = REASON_USER,
+
+    /**渲染标识[com.angcyo.canvas.render.core.IRenderer.renderFlags]*/
+    var renderFlag: Int? = null,
+
+    /**控制类型, 不同的控制类型标识, 进行不同的操作处理
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_DELETE]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_ROTATE]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_SCALE]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_LOCK]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_WIDTH]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_HEIGHT]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_KEEP_GROUP_PROPERTY]
+     * */
+    var controlType: Int? = null
 ) {
     companion object {
 

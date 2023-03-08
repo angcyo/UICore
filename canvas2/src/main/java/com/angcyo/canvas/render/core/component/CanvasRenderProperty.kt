@@ -17,6 +17,7 @@ import kotlin.math.tan
  * @since 2023/02/11
  */
 data class CanvasRenderProperty(
+
     //region ---矩形描述---
 
     /**锚点[anchorX]的位置*/
@@ -125,14 +126,14 @@ data class CanvasRenderProperty(
         return result
     }
 
-    //region---操作方法---
+    //region---方法---
 
-    fun getBaseRect(result: RectF = RectF()): RectF {
+    fun getBaseRect(result: RectF = _baseRect): RectF {
         result.set(0f, 0f, width, height)
         return result
     }
 
-    fun getBaseMatrix(result: Matrix = Matrix()): Matrix {
+    fun getBaseMatrix(result: Matrix = _baseMatrix): Matrix {
         result.setSkew(tan(skewX.toRadians()), tan(skewY.toRadians()))
         val scaleX = scaleX
         val scaleY = scaleY
@@ -140,15 +141,15 @@ data class CanvasRenderProperty(
         return result
     }
 
-    val _baseRect = RectF()
-    val _baseMatrix = Matrix()
-    val _centerPoint = PointF()
+    private val _baseRect = RectF()
+    private val _baseMatrix = Matrix()
+    private val _centerPoint = PointF()
 
     /**获取渲染目标时的中点坐标*/
     @CanvasInsideCoordinate
-    fun getRenderCenter(result: PointF = PointF()): PointF {
-        val rect = getBaseRect(_baseRect)
-        val matrix = getBaseMatrix(_baseMatrix)
+    fun getRenderCenter(result: PointF = _centerPoint): PointF {
+        val rect = getBaseRect()
+        val matrix = getBaseMatrix()
         matrix.mapRect(rect) //先计算出目标的宽高
 
         result.set(anchorX + rect.width() / 2, anchorY + rect.height() / 2)
@@ -163,11 +164,14 @@ data class CanvasRenderProperty(
         return result
     }
 
+    private val _renderRect = RectF()
+    private val _renderBounds = RectF()
+
     /**获取渲染的矩形位置, 包含了缩放和倾斜, 但是不包含旋转
      * [includeRotate] 是否要包含旋转矩阵, 包含后就等于[getRenderBounds]了*/
     @Pixel
     @CanvasInsideCoordinate
-    fun getRenderRect(result: RectF = RectF(), includeRotate: Boolean = false): RectF {
+    fun getRenderRect(result: RectF = _renderRect, includeRotate: Boolean = false): RectF {
         val matrix = getRenderMatrix(includeRotate = includeRotate)
         getBaseRect(result)
         matrix.mapRect(result)
@@ -186,7 +190,7 @@ data class CanvasRenderProperty(
      * */
     @Pixel
     @CanvasInsideCoordinate
-    fun getRenderBounds(result: RectF = RectF(), afterRotate: Boolean = false): RectF {
+    fun getRenderBounds(result: RectF = _renderBounds, afterRotate: Boolean = false): RectF {
         if (afterRotate) {
             getRenderRect(result)
             _tempMatrix.reset()
@@ -201,9 +205,11 @@ data class CanvasRenderProperty(
         return result
     }
 
+    private val _renderMatrix = Matrix()
+
     /**获取对应的的矩阵, 偏移到了[anchorX] [anchorY]
      * [includeRotate] 是否需要包含旋转信息, 否则就是缩放和倾斜信息描述的矩阵*/
-    fun getRenderMatrix(result: Matrix = Matrix(), includeRotate: Boolean = true): Matrix {
+    fun getRenderMatrix(result: Matrix = _renderMatrix, includeRotate: Boolean = true): Matrix {
         getBaseMatrix(result)
         val centerPoint = getRenderCenter(_centerPoint)
         if (includeRotate) {
@@ -214,21 +220,10 @@ data class CanvasRenderProperty(
         return result
     }
 
-    val _boundsRect = RectF()
-
-    /**获取在[0,0]位置可以直接渲染的矩阵
-     * [getRenderMatrix]*/
-    fun getDrawMatrix(result: Matrix = Matrix(), includeRotate: Boolean = true): Matrix {
-        getRenderBounds(_boundsRect, false)
-        getRenderMatrix(result, includeRotate)
-        result.postTranslate(-_boundsRect.left, -_boundsRect.top)
-        return result
-    }
-
     /**移动[matrix]矩阵作用矩形后的中心坐标到[anchorX] [anchorY]
      * 相当于给[matrix]加了偏移量, 使其和描述的[anchorX] [anchorY]对齐
      * */
-    fun translateMatrixCenterTo(matrix: Matrix, centerX: Float, centerY: Float) {
+    private fun translateMatrixCenterTo(matrix: Matrix, centerX: Float, centerY: Float) {
         val rect = getBaseRect()
         matrix.mapRect(rect)
 
@@ -236,6 +231,22 @@ data class CanvasRenderProperty(
         val dy = centerY - rect.centerY()
         matrix.postTranslate(dx, dy)
     }
+
+    private val _boundsRect = RectF()
+    private val _drawMatrix = Matrix()
+
+    /**获取在[0,0]位置可以直接渲染的矩阵
+     * [getRenderMatrix]*/
+    fun getDrawMatrix(result: Matrix = _drawMatrix, includeRotate: Boolean = true): Matrix {
+        getRenderBounds(_boundsRect, false)
+        getRenderMatrix(result, includeRotate)
+        result.postTranslate(-_boundsRect.left, -_boundsRect.top)
+        return result
+    }
+
+    //endregion---方法---
+
+    //region---core---
 
     /**应用一个平移矩阵*/
     fun applyTranslateMatrix(matrix: Matrix) {
@@ -324,7 +335,7 @@ data class CanvasRenderProperty(
      * https://rosettacode.org/wiki/QR_decomposition#Java
      *
      * */
-    fun qrDecomposition(matrix: Matrix) {
+    private fun qrDecomposition(matrix: Matrix) {
         val angle = atan2(matrix.getSkewY(), matrix.getScaleX()).toDegrees()
         val denom = Math.pow(matrix.getScaleX().toDouble(), 2.0) +
                 Math.pow(matrix.getSkewY().toDouble(), 2.0)
@@ -347,6 +358,12 @@ data class CanvasRenderProperty(
         this.skewY = skewY
     }
 
-    //endregion---操作方法---
+    /**应用一个翻转参数*/
+    fun applyFlip(flipX: Boolean, flipY: Boolean) {
+        this.flipX = flipX
+        this.flipY = flipY
+    }
+
+    //endregion---core---
 
 }

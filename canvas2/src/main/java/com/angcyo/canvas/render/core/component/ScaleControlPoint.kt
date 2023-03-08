@@ -125,7 +125,7 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
 
     /**在按下的基础上, 缩放了多少*/
     private fun scale(sx: Float, sy: Float) {
-        L.i("缩放元素:sx:$sx sy:$sy")
+        L.d("缩放元素:sx:$sx sy:$sy")
         controlRendererInfo?.let {
             it.state.renderProperty?.let { property ->
                 isControlHappen = true
@@ -139,7 +139,7 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
     override fun endControl() {
         if (isControlHappen) {
             controlRendererInfo?.let {
-                applyScale(Reason.user, controlManager.delegate)
+                applyScale(endControlReason, controlManager.delegate)
             }
         }
         super.endControl()

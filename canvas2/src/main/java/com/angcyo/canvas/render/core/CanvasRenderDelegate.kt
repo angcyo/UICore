@@ -217,6 +217,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         for (listener in renderListenerList) {
             listener.onRendererFlagsChange(renderer, oldFlags, newFlags, reason)
         }
+        refresh()
     }
 
     override fun dispatchRendererPropertyChange(
@@ -228,6 +229,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         for (listener in renderListenerList) {
             listener.onRendererPropertyChange(renderer, fromProperty, toProperty, reason)
         }
+        refresh()
     }
 
     //endregion---CanvasRenderer---

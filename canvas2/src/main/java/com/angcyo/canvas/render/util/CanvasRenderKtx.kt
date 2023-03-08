@@ -2,6 +2,11 @@ package com.angcyo.canvas.render.util
 
 import android.graphics.*
 import android.text.TextPaint
+import android.view.Gravity
+import com.angcyo.canvas.render.core.CanvasRenderDelegate
+import com.angcyo.canvas.render.core.Reason
+import com.angcyo.canvas.render.core.Strategy
+import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.library.ex.decimal
 import com.angcyo.library.ex.dp
 import kotlin.math.sqrt
@@ -84,3 +89,32 @@ fun midPoint(p1: PointF, p2: PointF, result: PointF) {
 }
 
 //endregion---util---
+
+//region---operate---
+
+/**将渲染器在[bounds]内对齐*/
+fun BaseRenderer.alignInBounds(
+    delegate: CanvasRenderDelegate?,
+    bounds: RectF,
+    align: Int = Gravity.CENTER,
+    strategy: Strategy = Strategy.normal
+) {
+    renderProperty?.let {
+        val itemBounds = it.getRenderBounds()
+        val dx = when (align) {
+            Gravity.CENTER -> bounds.centerX() - itemBounds.centerX()
+            Gravity.LEFT -> bounds.left - itemBounds.left
+            Gravity.RIGHT -> bounds.right - itemBounds.right
+            else -> 0f
+        }
+        val dy = when (align) {
+            Gravity.CENTER -> bounds.centerY() - itemBounds.centerY()
+            Gravity.TOP -> bounds.top - itemBounds.top
+            Gravity.BOTTOM -> bounds.bottom - itemBounds.bottom
+            else -> 0f
+        }
+        translate(dx, dy, Reason.user, strategy, delegate)
+    }
+}
+
+//endregion---operate---

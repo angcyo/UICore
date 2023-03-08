@@ -4,12 +4,11 @@ import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
-import com.angcyo.canvas.render.core.component.BaseTouchComponent
-import com.angcyo.canvas.render.core.component.CanvasMoveSelectorComponent
-import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
+import com.angcyo.canvas.render.core.component.*
 import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.library.L
 import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex.isIntersect
@@ -55,7 +54,22 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
                 op: List<BaseRenderer>
             ) {
                 if (op.isIntersect(selectorComponent.rendererList)) {
-                    selectorComponent.updateRenderProperty()
+                    selectorComponent.updateGroupRenderProperty(Reason.code, delegate)
+                }
+            }
+
+            override fun onRendererPropertyChange(
+                renderer: BaseRenderer,
+                fromProperty: CanvasRenderProperty?,
+                toProperty: CanvasRenderProperty?,
+                reason: Reason
+            ) {
+                if (reason.reason == Reason.REASON_USER) {
+                    if (selectorComponent.rendererList.contains(renderer)) {
+                        if (!BaseControlPoint.isKeepGroupPropertyType(reason.controlType)) {
+                            selectorComponent.updateGroupRenderProperty(reason, delegate)
+                        }
+                    }
                 }
             }
         })
@@ -73,7 +87,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
                 touchSelectorInfo = null
 
                 if (selectorInfo != null && selectorInfo.touchRendererList.size() > 1) {
-                    L.i("选中多个元素...")
+                    L.d("选中多个元素...")
                 }
             }
         }
@@ -137,20 +151,20 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
         _tempPoint.set(eventX, eventY)
         delegate.renderViewBox.transformToInside(_tempPoint)
 
-        if (selectorComponent.rendererContainsPoint(_tempPoint)) {
+        if (isSelectorElement && selectorComponent.rendererContainsPoint(_tempPoint)) {
             //重复选中
-            _onTouchDownSelectRenderer()
+            onSelfTouchDownSelectRenderer()
             return
         }
 
         val list = findRendererList(_tempPoint, true)
 
-        L.i("TouchSelector:x:${_tempPoint.x} y:${_tempPoint.y} ev:${eventX} ey:${eventY} ${list.size()} ${_downPointList.size()}")
+        L.d("TouchSelector:x:${_tempPoint.x} y:${_tempPoint.y} ev:${eventX} ey:${eventY} ${list.size()} ${_downPointList.size()}")
 
         if (_downPointList.size() > 1) {
             //多指touch
             if (list.isNotEmpty()) {
-                selectorComponent.addSelectorRenderer(list.first())
+                selectorComponent.addSelectorRenderer(list.first(), Reason.preview)
                 delegate.refresh()
             }
         } else {
@@ -170,9 +184,9 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
                 if (selectorComponent.rendererList.contains(first)) {
                     //重复选中
                 } else {
-                    selectorComponent.resetSelectorRenderer(first)
+                    selectorComponent.resetSelectorRenderer(first, Reason.preview)
                 }
-                _onTouchDownSelectRenderer()
+                onSelfTouchDownSelectRenderer()
                 delegate.refresh()
             }
         }
@@ -183,7 +197,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
 
     fun delayCancelSelectRenderer() {
         delayCancelRendererRunnable = Runnable {
-            selectorComponent.resetSelectorRenderer(null)
+            selectorComponent.resetSelectorRenderer(null, Reason.preview)
             delegate.refresh()
         }
         MainExecutor.delay(delayCancelRendererRunnable!!, _delayCancelTime)
@@ -197,7 +211,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
 
     /**在选中的元素上按下, 或者在一个新的元素上按下.
      * 此时, 应该需要进行移动元素操作*/
-    fun _onTouchDownSelectRenderer() {
+    private fun onSelfTouchDownSelectRenderer() {
         moveSelectorComponent.ignoreHandle = true
         isTouchInSelectorRenderer = true
         selectorComponent.showLocationRender(Reason.preview, null)
@@ -245,13 +259,34 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
     }
 
     /**[com.angcyo.canvas.render.core.component.CanvasSelectorComponent.resetSelectorRenderer]*/
-    fun resetSelectorRenderer(list: List<BaseRenderer>) {
-        selectorComponent.resetSelectorRenderer(list)
+    fun resetSelectorRenderer(list: List<BaseRenderer>, reason: Reason) {
+        selectorComponent.resetSelectorRenderer(list, reason)
     }
 
     /**[com.angcyo.canvas.render.core.component.CanvasSelectorComponent.addSelectorRenderer]*/
-    fun addSelectorRenderer(renderer: BaseRenderer) {
-        selectorComponent.addSelectorRenderer(renderer)
+    fun addSelectorRenderer(renderer: BaseRenderer, reason: Reason) {
+        selectorComponent.addSelectorRenderer(renderer, reason)
+    }
+
+    /**获取选中的目标操作元素
+     * 如果选择了多个元素, 则返回[selectorComponent]
+     * 否则返回单个元素渲染器[com.angcyo.canvas.render.renderer.CanvasElementRenderer]或者群组渲染器[CanvasGroupRenderer]
+     * */
+    fun getTargetSelectorRenderer(): BaseRenderer? {
+        if (selectorComponent.isSelectorElement) {
+            return if (selectorComponent.rendererList.size() == 1) {
+                selectorComponent.rendererList.lastOrNull()
+            } else {
+                selectorComponent
+            }
+        }
+        return null
+    }
+
+    /**锁定缩放比
+     * [com.angcyo.canvas.render.core.component.CanvasSelectorComponent.updateLockScaleRatio]*/
+    fun updateLockScaleRatio(lock: Boolean, reason: Reason, delegate: CanvasRenderDelegate?) {
+        this.delegate.controlManager.updateLockScaleRatio(lock, reason, delegate)
     }
 
     //endregion---操作---

@@ -51,11 +51,16 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
     @CanvasInsideCoordinate
     protected var touchMovePointInside = PointF()
 
+    protected val endControlReason: Reason
+        get() = Reason.user.apply {
+            controlType = BaseControlPoint.CONTROL_TYPE_KEEP_GROUP_PROPERTY
+        }
+
     override fun dispatchTouchEvent(event: MotionEvent) {
         /*val actionIndex = event.actionIndex //当前事件手指的索引, 第几个手指
         val id = event.getPointerId(actionIndex) //当前手指对应的id, 保存此id, 可以获取单独每个手指的对应数据
         val idIndex = event.findPointerIndex(id) //id对应的索引
-        L.i("$actionIndex $id $idIndex ${event.findPointerIndex(firstTouchPointerId)}")*/
+        L.d("$actionIndex $id $idIndex ${event.findPointerIndex(firstTouchPointerId)}")*/
         //event.getX(idIndex)
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
@@ -99,16 +104,22 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
 
     //region---core---
 
+    private fun Reason.needToStack() = reason == Reason.REASON_CODE || reason == Reason.REASON_USER
+
     /**平移编辑*/
     protected fun applyTranslate(reason: Reason, delegate: CanvasRenderDelegate?) {
         controlRendererInfo?.let { controlInfo ->
             controlInfo.restoreState(reason, delegate)
             controlInfo.controlRenderer.applyTranslateMatrix(controlMatrix, reason, delegate)
-            controlManager.delegate.refresh()
 
             //自动加入回退栈
-            if (reason.reason == Reason.REASON_USER) {
-                controlManager.delegate.undoManager.addToStack(controlInfo)
+            if (reason.needToStack()) {
+                controlManager.delegate.undoManager.addToStack(
+                    controlInfo,
+                    false,
+                    Reason.user,
+                    Strategy.normal
+                )
             }
         }
     }
@@ -118,11 +129,15 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
         controlRendererInfo?.let { controlInfo ->
             controlInfo.restoreState(reason, delegate)
             controlInfo.controlRenderer.applyRotateMatrix(controlMatrix, reason, delegate)
-            controlManager.delegate.refresh()
 
             //自动加入回退栈
-            if (reason.reason == Reason.REASON_USER) {
-                controlManager.delegate.undoManager.addToStack(controlInfo)
+            if (reason.needToStack()) {
+                controlManager.delegate.undoManager.addToStack(
+                    controlInfo,
+                    false,
+                    Reason.user,
+                    Strategy.normal
+                )
             }
         }
     }
@@ -133,11 +148,15 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
             controlInfo.restoreState(reason, delegate)
             val controlRenderer = controlInfo.controlRenderer
             controlRenderer.applyScaleMatrix(controlMatrix, reason, delegate)
-            controlManager.delegate.refresh()
 
             //自动加入回退栈
-            if (reason.reason == Reason.REASON_USER) {
-                controlManager.delegate.undoManager.addToStack(controlInfo)
+            if (reason.needToStack()) {
+                controlManager.delegate.undoManager.addToStack(
+                    controlInfo,
+                    false,
+                    Reason.user,
+                    Strategy.normal
+                )
             }
         }
     }

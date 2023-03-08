@@ -29,14 +29,6 @@ class LockControlPoint(controlManager: CanvasControlManager) : BaseControlPoint(
 
     override fun onClickControlPoint() {
         super.onClickControlPoint()
-        isLockScaleRatio = !isLockScaleRatio
-        //---
-        val delegate = controlManager.delegate
-        controlManager.scaleControlPoint.isLockScaleRatio = isLockScaleRatio
-        delegate.selectorManager.selectorComponent.updateLockScaleRatio(
-            isLockScaleRatio,
-            Reason.user,
-            delegate
-        )
+        controlManager.updateLockScaleRatio(!isLockScaleRatio, Reason.user, controlManager.delegate)
     }
 }

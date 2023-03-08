@@ -59,7 +59,7 @@ class RotateControlPoint(controlManager: CanvasControlManager) : BaseControlPoin
 
     /**直接从原始位置, 旋转多少角度*/
     private fun rotate(angle: Float) {
-        L.i("旋转元素:angle:$angle")
+        L.d("旋转元素:angle:$angle")
         controlRendererInfo?.let {
             isControlHappen = true
             controlMatrix.setRotate(angle, centerPointInside.x, centerPointInside.y)
@@ -71,7 +71,7 @@ class RotateControlPoint(controlManager: CanvasControlManager) : BaseControlPoin
     override fun endControl() {
         if (isControlHappen) {
             controlRendererInfo?.let {
-                applyRotate(Reason.user, controlManager.delegate)
+                applyRotate(endControlReason, controlManager.delegate)
             }
         }
         super.endControl()

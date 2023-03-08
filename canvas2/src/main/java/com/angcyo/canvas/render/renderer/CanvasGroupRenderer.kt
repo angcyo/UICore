@@ -60,7 +60,6 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
     override fun getRendererList(): List<BaseRenderer> {
         val result = mutableListOf<BaseRenderer>()
-        result.add(this)//包含自己
         for (renderer in rendererList) {
             renderer?.let { result.addAll(renderer.getRendererList()) }
         }
@@ -227,6 +226,19 @@ open class CanvasGroupRenderer : BaseRenderer() {
         }
     }
 
+    /**同步映射到子元素中, 如果需要单独控制, 请主动遍历子元素并设置*/
+    override fun applyFlip(
+        flipX: Boolean,
+        flipY: Boolean,
+        reason: Reason,
+        delegate: CanvasRenderDelegate?
+    ) {
+        super.applyFlip(flipX, flipY, reason, delegate)
+        for (renderer in rendererList) {
+            renderer.applyFlip(flipX, flipY, reason, delegate)
+        }
+    }
+
     fun getGroupRenderProperty(): CanvasRenderProperty {
         val result = CanvasRenderProperty()
         if (rendererList.size() == 1) {
@@ -261,25 +273,30 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
     /**根据[rendererList]确定能包裹所有选中元素的渲染信息
      * [CanvasRenderProperty]*/
-    fun updateRenderProperty() {
-        if (rendererList.isEmpty()) {
-            renderProperty = null
-            return
-        }
-        renderProperty = getGroupRenderProperty()
+    fun updateGroupRenderProperty(reason: Reason, delegate: CanvasRenderDelegate?) {
+        val target = if (rendererList.isEmpty()) null else getGroupRenderProperty()
+        updateRenderProperty(target, reason, delegate)
     }
 
     /**重置所有的元素*/
-    open fun resetGroupRendererList(list: List<BaseRenderer>) {
+    open fun resetGroupRendererList(
+        list: List<BaseRenderer>,
+        reason: Reason,
+        delegate: CanvasRenderDelegate?
+    ) {
         rendererList.clear()
         rendererList.addAll(list)
-        updateRenderProperty()
+        updateGroupRenderProperty(reason, delegate)
     }
 
     /**添加一个元素到组内*/
-    open fun addGroupRenderer(elementRenderer: BaseRenderer) {
+    open fun addGroupRenderer(
+        elementRenderer: BaseRenderer,
+        reason: Reason,
+        delegate: CanvasRenderDelegate?
+    ) {
         rendererList.add(elementRenderer)
-        updateRenderProperty()
+        updateGroupRenderProperty(reason, delegate)
     }
 
     //endregion---操作---

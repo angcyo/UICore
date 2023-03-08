@@ -11,7 +11,7 @@ import kotlin.math.absoluteValue
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/02/23
  */
-class RendererTranslateControl(controlManager: CanvasControlManager) : BaseControl(controlManager) {
+class TranslateRendererControl(controlManager: CanvasControlManager) : BaseControl(controlManager) {
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
@@ -36,7 +36,7 @@ class RendererTranslateControl(controlManager: CanvasControlManager) : BaseContr
     /**直接将渲染器移动多少距离
      * [tx] [ty] 如果是手指触发的, 那么距离应该是移动的位置减去首次按下时的距离*/
     private fun translate(tx: Float, ty: Float) {
-        L.i("移动元素:tx:$tx ty:$ty")
+        L.d("移动元素:tx:$tx ty:$ty")
         controlRendererInfo?.let {
             isControlHappen = true
             controlMatrix.setTranslate(tx, ty)
@@ -51,7 +51,7 @@ class RendererTranslateControl(controlManager: CanvasControlManager) : BaseContr
     override fun endControl() {
         if (isControlHappen) {
             controlRendererInfo?.let {
-                applyTranslate(Reason.user, controlManager.delegate)
+                applyTranslate(endControlReason, controlManager.delegate)
             }
         }
         super.endControl()

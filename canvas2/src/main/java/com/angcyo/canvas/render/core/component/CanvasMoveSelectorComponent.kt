@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.core.CanvasSelectorManager
 import com.angcyo.canvas.render.core.IRenderer
+import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.util.createRenderPaint
 import com.angcyo.library.ex._color
@@ -34,7 +35,7 @@ class CanvasMoveSelectorComponent(val selectorManager: CanvasSelectorManager) :
     var paintColor: Int = _color(R.color.canvas_render_select)
 
     override var isEnable: Boolean = true
-    
+
     override var renderFlags: Int = 0xf
 
     private val selectRect = emptyRectF()
@@ -84,7 +85,7 @@ class CanvasMoveSelectorComponent(val selectorManager: CanvasSelectorManager) :
                     selectorManager.delegate.renderViewBox.transformToInside(selectRect, _tempRect)
 
                     val list = selectorManager.findRendererList(_tempRect, true)
-                    selectorManager.selectorComponent.resetSelectorRenderer(list)
+                    selectorManager.selectorComponent.resetSelectorRenderer(list, Reason.preview)
                     selectorManager.delegate.refresh()
                 }
             }

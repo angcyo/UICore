@@ -10,6 +10,7 @@ import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
 import com.angcyo.canvas.render.core.CanvasControlManager
 import com.angcyo.canvas.render.core.IRenderer
+import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.util.createRenderPaint
 import com.angcyo.library.ex.*
@@ -34,6 +35,23 @@ abstract class BaseControlPoint(controlManager: CanvasControlManager) : BaseCont
 
         /**控制点类型: 锁定宽高比[LockControlPoint]*/
         const val CONTROL_TYPE_LOCK = CONTROL_TYPE_SCALE shl 1
+
+        /**控制点类型: 宽度调整*/
+        const val CONTROL_TYPE_WIDTH = CONTROL_TYPE_LOCK shl 1
+
+        /**控制点类型: 高度调整*/
+        const val CONTROL_TYPE_HEIGHT = CONTROL_TYPE_WIDTH shl 1
+
+        /**控制点类型: 保持Group的渲染属性*/
+        const val CONTROL_TYPE_KEEP_GROUP_PROPERTY = CONTROL_TYPE_HEIGHT shl 1
+
+        /**哪些属性操作改变后, 需要保持[com.angcyo.canvas.render.renderer.CanvasGroupRenderer]的渲染属性*/
+        fun isKeepGroupPropertyType(type: Int?): Boolean {
+            if (type == CONTROL_TYPE_KEEP_GROUP_PROPERTY) {
+                return true
+            }
+            return false
+        }
     }
 
     /**控制点的类型*/

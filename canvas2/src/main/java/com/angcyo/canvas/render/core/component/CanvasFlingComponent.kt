@@ -36,7 +36,7 @@ class CanvasFlingComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
 
     init {
         val configuration = ViewConfiguration.get(delegate.view.context)
-        minimumFlingVelocity = 1000 //configuration.scaledMinimumFlingVelocity
+        minimumFlingVelocity = 3000 //configuration.scaledMinimumFlingVelocity
         maximumFlingVelocity = configuration.scaledMaximumFlingVelocity
     }
 

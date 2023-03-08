@@ -32,7 +32,7 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
     var lockControlPoint = LockControlPoint(this)
 
     /**平移操作*/
-    var translateControl = RendererTranslateControl(this)
+    var translateControl = TranslateRendererControl(this)
 
     /**当前按下的控制点*/
     val touchControlPoint: BaseControlPoint?
@@ -245,6 +245,14 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
         val bottom = centerPoint.y + size
 
         controlPoint.bounds.set(left, top, right, bottom)
+    }
+
+    /**锁定缩放比
+     * [com.angcyo.canvas.render.core.component.CanvasSelectorComponent.updateLockScaleRatio]*/
+    fun updateLockScaleRatio(lock: Boolean, reason: Reason, delegate: CanvasRenderDelegate?) {
+        this.delegate.controlManager.lockControlPoint.isLockScaleRatio = lock
+        this.delegate.controlManager.scaleControlPoint.isLockScaleRatio = lock
+        this.delegate.selectorManager.selectorComponent.updateLockScaleRatio(lock, reason, delegate)
     }
 
     //endregion---操作---

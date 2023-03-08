@@ -8,6 +8,7 @@ import com.angcyo.canvas.render.annotation.RenderFlag
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.core.Reason
+import com.angcyo.canvas.render.core.Strategy
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RendererParams
 import com.angcyo.canvas.render.element.IElement
@@ -137,12 +138,16 @@ abstract class BaseRenderer : IRenderer {
 
     /**移除一个渲染标识*/
     open fun removeRenderFlag(flag: Int, reason: Reason, delegate: CanvasRenderDelegate?) {
-        updateRenderFlag(renderFlags.remove(flag), reason, delegate)
+        updateRenderFlag(renderFlags.remove(flag), reason.apply {
+            this.renderFlag = flag
+        }, delegate)
     }
 
     /**添加一个渲染标识*/
     open fun addRenderFlag(flag: Int, reason: Reason, delegate: CanvasRenderDelegate?) {
-        updateRenderFlag(renderFlags.add(flag), reason, delegate)
+        updateRenderFlag(renderFlags.add(flag), reason.apply {
+            this.renderFlag = flag
+        }, delegate)
     }
 
     /**更新一个新的渲染标识*/
@@ -195,6 +200,9 @@ abstract class BaseRenderer : IRenderer {
      * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_ROTATE]
      * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_SCALE]
      * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_LOCK]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_WIDTH]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_HEIGHT]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_KEEP_GROUP_PROPERTY]
      * */
     open fun isSupportControlPoint(type: Int): Boolean = true
 
@@ -301,6 +309,134 @@ abstract class BaseRenderer : IRenderer {
         renderProperty?.applyScaleMatrixWithCenter(matrix)
         addRenderFlag(CanvasElementRenderer.RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
         updateRenderProperty(renderProperty, reason, delegate)
+    }
+
+    /**[com.angcyo.canvas.render.core.component.CanvasRenderProperty.applyFlip]*/
+    open fun applyFlip(
+        flipX: Boolean,
+        flipY: Boolean,
+        reason: Reason,
+        delegate: CanvasRenderDelegate?
+    ) {
+        renderProperty?.applyFlip(flipX, flipY)
+        addRenderFlag(CanvasElementRenderer.RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
+        updateRenderProperty(renderProperty, reason, delegate)
+    }
+
+    /**平移元素[dx] [dy]本次的偏移量
+     * [applyTranslateMatrix]*/
+    fun translate(
+        dx: Float,
+        dy: Float,
+        reason: Reason,
+        strategy: Strategy,
+        delegate: CanvasRenderDelegate?
+    ) {
+        val matrix = Matrix()
+        matrix.setTranslate(dx, dy)
+        delegate?.undoManager?.addToStack(this, false, reason, strategy) {
+            applyTranslateMatrix(matrix, reason, delegate)
+        }
+    }
+
+    /**缩放元素[sx] [sy]本次的缩放比例
+     * [applyScaleMatrix]*/
+    fun scale(
+        sx: Float,
+        sy: Float,
+        reason: Reason,
+        strategy: Strategy,
+        delegate: CanvasRenderDelegate?
+    ) {
+        val px = renderProperty?.anchorX ?: 0f
+        val py = renderProperty?.anchorY ?: 0f
+        val matrix = Matrix()
+        matrix.setScale(sx, sy, px, py)
+        delegate?.undoManager?.addToStack(this, false, reason, strategy) {
+            applyScaleMatrix(matrix, reason, delegate)
+        }
+    }
+
+    /**直接设置旋转多少度, 角度单位
+     * [rotateBy]*/
+    fun rotate(
+        value: Float,
+        reason: Reason,
+        strategy: Strategy,
+        delegate: CanvasRenderDelegate?
+    ) {
+        val by = value - (renderProperty?.angle ?: 0f)
+        rotateBy(by, reason, strategy, delegate)
+    }
+
+    /**在原有的基础上, 额外旋转多少度, 角度单位
+     * [applyRotateMatrix]*/
+    fun rotateBy(
+        value: Float,
+        reason: Reason,
+        strategy: Strategy,
+        delegate: CanvasRenderDelegate?
+    ) {
+        val center = renderProperty?.getRenderCenter()
+        val px = center?.x ?: 0f
+        val py = center?.y ?: 0f
+        val matrix = Matrix()
+        matrix.setRotate(value, px, py)
+        delegate?.undoManager?.addToStack(this, false, reason, strategy) {
+            applyRotateMatrix(matrix, reason, delegate)
+        }
+    }
+
+    /**翻转元素
+     * [applyFlip]
+     * [flip]
+     * [flipX]
+     * [flipY]
+     * */
+    fun flip(
+        flipX: Boolean = renderProperty?.flipX ?: false,
+        flipY: Boolean = renderProperty?.flipY ?: false,
+        reason: Reason,
+        strategy: Strategy,
+        delegate: CanvasRenderDelegate?
+    ) {
+        delegate?.undoManager?.addToStack(this, false, reason, strategy) {
+            applyFlip(flipX, flipY, reason, delegate)
+        }
+    }
+
+    /**单独翻转x轴, 遍历所有子元素, 互斥修改
+     * [flip]
+     * [flipX]
+     * [flipY]
+     * */
+    fun flipX(reason: Reason, strategy: Strategy, delegate: CanvasRenderDelegate?) {
+        val list = getRendererList()
+        if (list.isEmpty()) return
+        delegate?.undoManager?.addToStack(this, false, reason, strategy) {
+            for (renderer in list) {
+                val flipX: Boolean = renderer.renderProperty?.flipX ?: false
+                val flipY: Boolean = renderer.renderProperty?.flipY ?: false
+                renderer.applyFlip(!flipX, flipY, reason, delegate)
+            }
+        }
+    }
+
+    /**单独翻转y轴, 遍历所有子元素, 互斥修改
+     * [flip]
+     * [flipX]
+     * [flipY]
+     * */
+    fun flipY(reason: Reason, strategy: Strategy, delegate: CanvasRenderDelegate?) {
+        val list = getRendererList()
+        if (list.isEmpty()) return
+        delegate?.undoManager?.addToStack(this, false, reason, strategy) {
+            for (renderer in list) {
+                val flipX: Boolean = renderer.renderProperty?.flipX ?: false
+                val flipY: Boolean = renderer.renderProperty?.flipY ?: false
+                renderer.applyFlip(flipX, !flipY, reason, delegate)
+            }
+        }
     }
 
     //endregion---操作---

@@ -147,7 +147,7 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
                     if (renderFlags.have(RENDERER_FLAG_DRAW_FRAME_SIZE)) {
                         drawFrameSizeText(
                             this,
-                            selectorRenderRect,
+                            selectorRenderBounds,//selectorRenderRect
                             selectorRenderDrawRect,
                             property.angle
                         )
@@ -189,6 +189,7 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
         canvas.drawRoundRect(_textBgBounds, 4 * dp, 4 * dp, textBgPaint)
     }
 
+    /**在[drawRect]上绘制文本信息*/
     private fun _drawFrameText(
         canvas: Canvas,
         text: CharSequence,
@@ -212,6 +213,8 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
         }
     }
 
+    /**[bounds] 数值提供矩形
+     * [drawRect]文本定位矩形*/
     private fun drawFrameSizeText(canvas: Canvas, bounds: RectF, drawRect: RectF, rotate: Float) {
         val widthValue = valueUnit.convertPixelToValue(bounds.width())
         val widthUnit = valueUnit.formatValue(widthValue, true, true)
@@ -254,7 +257,9 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
         }
     }
 
-    /**[isLockScaleRatio]*/
+    /**[isLockScaleRatio]
+     * [renderFlags]
+     * */
     override fun updateLockScaleRatio(
         lock: Boolean,
         reason: Reason,
@@ -298,29 +303,30 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
     }
 
     /**[resetSelectorRenderer]*/
-    fun resetSelectorRenderer(renderer: BaseRenderer?) {
+    fun resetSelectorRenderer(renderer: BaseRenderer?, reason: Reason) {
         if (renderer == null) {
-            resetSelectorRenderer(emptyList())
+            resetSelectorRenderer(emptyList(), reason)
         } else {
-            resetSelectorRenderer(listOf(renderer))
+            resetSelectorRenderer(listOf(renderer), reason)
         }
     }
 
     /**重置所有选中的元素*/
-    fun resetSelectorRenderer(list: List<BaseRenderer>) {
+    fun resetSelectorRenderer(list: List<BaseRenderer>, reason: Reason) {
         val old = rendererList.toList()
-        resetGroupRendererList(list)
-        _onSelectorRendererChange(old)
+        resetGroupRendererList(list, reason, delegate)
+        onSelfSelectorRendererChange(old)
     }
 
     /**添加一个元素到选择器*/
-    fun addSelectorRenderer(renderer: BaseRenderer) {
+    fun addSelectorRenderer(renderer: BaseRenderer, reason: Reason) {
         val old = rendererList.toList()
-        addGroupRenderer(renderer)
-        _onSelectorRendererChange(old)
+        addGroupRenderer(renderer, reason, delegate)
+        onSelfSelectorRendererChange(old)
     }
 
-    private fun _onSelectorRendererChange(old: List<BaseRenderer>) {
+    /**选中的渲染器改变*/
+    private fun onSelfSelectorRendererChange(old: List<BaseRenderer>) {
         delegate.controlManager.updateControlPointLocation()
         delegate.dispatchSelectorRendererChange(this, old, rendererList)
     }

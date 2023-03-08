@@ -88,7 +88,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         }
 
         if (selector) {
-            delegate.selectorManager.resetSelectorRenderer(list)
+            delegate.selectorManager.resetSelectorRenderer(list, Reason.init)
         }
     }
 
