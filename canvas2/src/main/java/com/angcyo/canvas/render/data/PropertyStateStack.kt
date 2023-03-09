@@ -2,6 +2,8 @@ package com.angcyo.canvas.render.data
 
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
+import com.angcyo.canvas.render.core.Strategy
+import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.library.ex.resetAll
@@ -38,14 +40,23 @@ open class PropertyStateStack : IStateStack {
     }
 
     /**恢复状态*/
-    override fun restoreState(reason: Reason, delegate: CanvasRenderDelegate?) {
+    override fun restoreState(reason: Reason, strategy: Strategy, delegate: CanvasRenderDelegate?) {
         map.forEach { entry ->
             val state = entry.value
             val renderer = state.renderer
 
             if (renderer is CanvasGroupRenderer) {
                 state.rendererList?.let { list ->
-                    renderer.rendererList.resetAll(list)
+                    if (renderer is CanvasSelectorComponent &&
+                        (strategy.type == Strategy.STRATEGY_TYPE_UNDO || strategy.type == Strategy.STRATEGY_TYPE_REDO)
+                    ) {
+                        //通知选中元素改变
+                        val from = renderer.rendererList.toList()
+                        renderer.rendererList.resetAll(list)
+                        delegate?.dispatchSelectorRendererChange(from, list)
+                    } else {
+                        renderer.rendererList.resetAll(list)
+                    }
                 }
             }
 

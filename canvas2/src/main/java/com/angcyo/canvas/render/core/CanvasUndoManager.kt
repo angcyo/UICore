@@ -109,9 +109,9 @@ class CanvasUndoManager(val delegate: CanvasRenderDelegate) {
         action()//run
         val redoState = ControlRendererInfo(renderer)
         addAndRedo(strategy, redoIt, {
-            undoState.restoreState(reason, delegate)
+            undoState.restoreState(reason, it, delegate)
         }) {
-            redoState.restoreState(reason, delegate)
+            redoState.restoreState(reason, it, delegate)
         }
     }
 
@@ -130,9 +130,9 @@ class CanvasUndoManager(val delegate: CanvasRenderDelegate) {
         //重做的状态
         val redoState = ControlRendererInfo(oldControlInfo.controlRenderer)
         addAndRedo(strategy, redoIt, {
-            undoState.restoreState(reason, delegate)
+            undoState.restoreState(reason, it, delegate)
         }) {
-            redoState.restoreState(reason, delegate)
+            redoState.restoreState(reason, it, delegate)
         }
     }
 
@@ -147,9 +147,9 @@ class CanvasUndoManager(val delegate: CanvasRenderDelegate) {
         strategy: Strategy
     ) {
         addAndRedo(strategy, redoIt, {
-            undoState.restoreState(reason, delegate)
+            undoState.restoreState(reason, it, delegate)
         }) {
-            redoState.restoreState(reason, delegate)
+            redoState.restoreState(reason, it, delegate)
         }
     }
 
