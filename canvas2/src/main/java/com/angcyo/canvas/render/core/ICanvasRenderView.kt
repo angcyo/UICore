@@ -7,7 +7,6 @@ import android.view.MotionEvent
 import android.widget.OverScroller
 import androidx.annotation.WorkerThread
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
-import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.renderer.BaseRenderer
 
 /**
@@ -84,11 +83,7 @@ interface ICanvasRenderView {
     )
 
     /**选中的元素, 改变时回调*/
-    fun dispatchSelectorRendererChange(
-        selectorComponent: CanvasSelectorComponent,
-        from: List<BaseRenderer>,
-        to: List<BaseRenderer>
-    )
+    fun dispatchSelectorRendererChange(from: List<BaseRenderer>, to: List<BaseRenderer>)
 
     /**[com.angcyo.canvas.render.renderer.BaseRenderer.renderFlags]改变时触发的回调*/
     fun dispatchRendererFlagsChange(

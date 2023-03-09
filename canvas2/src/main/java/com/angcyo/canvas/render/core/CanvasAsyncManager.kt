@@ -24,6 +24,9 @@ class CanvasAsyncManager(val delegate: CanvasRenderDelegate) {
 
         /**状态, 结束一个异步任务*/
         const val STATE_END = STATE_START shl 1
+
+        /**状态, 失败一个异步任务*/
+        const val STATE_ERROR = STATE_END shl 1
     }
 
     private var thread: HandlerThread? = null
@@ -36,11 +39,22 @@ class CanvasAsyncManager(val delegate: CanvasRenderDelegate) {
         if (tasks.isEmpty()) return
         tasks.peek()?.apply {
             delegate.dispatchAsyncStateChange(uuid, STATE_START)
-            run() // 运行
+
+            var exception: Exception? = null
+            try {
+                run() // 运行
+            } catch (e: Exception) {
+                e.printStackTrace()
+                exception = e
+            }
+
             tasks.poll() //移除第一个元素
             updateAsync(uuid, false)
-            delegate.dispatchAsyncStateChange(uuid, STATE_END)
-            sendEmptyMessage()
+            delegate.dispatchAsyncStateChange(
+                uuid,
+                if (exception == null) STATE_END else STATE_ERROR
+            )
+            sendEmptyMessage() //next
         }
     }
 

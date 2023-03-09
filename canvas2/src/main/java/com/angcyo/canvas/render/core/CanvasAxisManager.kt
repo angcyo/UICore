@@ -4,8 +4,7 @@ import android.graphics.*
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withSave
 import com.angcyo.canvas.render.data.AxisPoint
-import com.angcyo.canvas.render.data.RendererParams
-import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.unit.IRenderUnit
 import com.angcyo.canvas.render.unit.PxRenderUnit
 import com.angcyo.canvas.render.util.createRenderPaint
@@ -84,7 +83,7 @@ class CanvasAxisManager(val delegate: CanvasRenderDelegate) : IRenderer {
         })
     }
 
-    override fun renderOnView(canvas: Canvas, params: RendererParams) {
+    override fun renderOnView(canvas: Canvas, params: RenderParams) {
         if (xAxisList.isEmpty() || yAxisList.isEmpty()) {
             updateAxisList()
         }

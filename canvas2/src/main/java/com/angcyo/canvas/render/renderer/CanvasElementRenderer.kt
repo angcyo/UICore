@@ -1,17 +1,12 @@
 package com.angcyo.canvas.render.renderer
 
-import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
-import android.graphics.drawable.Drawable
-import androidx.core.graphics.withSave
-import com.angcyo.canvas.render.annotation.RenderFlag
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
-import com.angcyo.canvas.render.data.RendererParams
+import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement
-import com.angcyo.library.ex.ceilInt
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.remove
 
@@ -21,91 +16,48 @@ import com.angcyo.library.ex.remove
  */
 class CanvasElementRenderer : BaseRenderer() {
 
-    companion object {
-
-        /**请求需要重新获取[IElement]的绘制属性*/
-        const val RENDERER_FLAG_REQUEST_PROPERTY = BaseRenderer.RENDERER_FLAG_LAST
-
-        /**请求需要重新获取[IElement]的绘制Drawable*/
-        const val RENDERER_FLAG_REQUEST_DRAWABLE = RENDERER_FLAG_REQUEST_PROPERTY shl 1
-
-        /**最后一个标识位*/
-        @RenderFlag
-        const val RENDERER_FLAG_LAST = RENDERER_FLAG_REQUEST_DRAWABLE shl 1
-    }
-
     /**需要绘制的元素*/
-    var element: IElement? = null
+    var renderElement: IElement? = null
         set(value) {
             field = value
-            updateRenderIfNeed()
+            renderProperty = value?.requestElementRenderProperty()
         }
-
-    //region---缓存---
-
-    var _elementRenderDrawable: Drawable? = null
-
-    //endregion---缓存---
 
     //region---core---
 
-    override fun renderOnInside(canvas: Canvas, params: RendererParams) {
-        element ?: return
-        updateRenderIfNeed()
-        renderProperty?.let { property ->
-            _elementRenderDrawable?.let { drawable ->
-                val renderBounds = property.getRenderBounds()
-                canvas.withSave {
-                    translate(renderBounds.left, renderBounds.top)//平移到指定位置
-                    drawable.setBounds(
-                        0,
-                        0,
-                        renderBounds.width().ceilInt(),
-                        renderBounds.height().ceilInt()
-                    )//设置绘制的宽高
-                    drawable.draw(canvas)//绘制
-                }
-            }
-        }
-    }
-
     /**更新渲染时, 需要的一些数据*/
-    fun updateRenderIfNeed() {
-        val element = element ?: return
-        if (renderProperty == null || renderFlags.have(RENDERER_FLAG_REQUEST_PROPERTY)) {
+    override fun readyRenderIfNeed(params: RenderParams?) {
+        super.readyRenderIfNeed(params)
+        val element = renderElement ?: return
+
+        val requestProperty = renderFlags.have(RENDERER_FLAG_REQUEST_PROPERTY)
+        if (renderProperty == null || requestProperty) {
             renderProperty = element.requestElementRenderProperty()
-            renderFlags.remove(RENDERER_FLAG_REQUEST_PROPERTY)
+            renderFlags = renderFlags.remove(RENDERER_FLAG_REQUEST_PROPERTY)
         }
 
-        if (_elementRenderDrawable == null || renderFlags.have(RENDERER_FLAG_REQUEST_DRAWABLE)) {
-            _elementRenderDrawable = element.requestElementRenderDrawable()
-            renderFlags.remove(RENDERER_FLAG_REQUEST_DRAWABLE)
-        }
-    }
-
-    override fun updateRenderFlag(newFlag: Int, reason: Reason, delegate: CanvasRenderDelegate?) {
-        val old = renderFlags
-        super.updateRenderFlag(newFlag, reason, delegate)
-        if (old != renderFlags) {
-            updateRenderIfNeed()
+        val requestDrawable = renderFlags.have(RENDERER_FLAG_REQUEST_DRAWABLE)
+        if (renderDrawable == null || requestProperty || requestDrawable) {
+            renderDrawable = element.requestElementRenderDrawable(params)
+            renderFlags = renderFlags.remove(RENDERER_FLAG_REQUEST_DRAWABLE)
         }
     }
 
     /**[com.angcyo.canvas.render.element.IElement.elementContainsPoint]*/
     override fun rendererContainsPoint(point: PointF): Boolean =
-        element?.elementContainsPoint(point) == true
+        renderElement?.elementContainsPoint(point) == true
 
     /**[com.angcyo.canvas.render.element.IElement.elementContainsRect]*/
     override fun rendererContainsRect(rect: RectF): Boolean =
-        element?.elementContainsRect(rect) == true
+        renderElement?.elementContainsRect(rect) == true
 
     /**[com.angcyo.canvas.render.element.IElement.elementIntersectRect]*/
     override fun rendererIntersectRect(rect: RectF): Boolean =
-        element?.elementIntersectRect(rect) == true
+        renderElement?.elementIntersectRect(rect) == true
 
     override fun getElementList(): List<IElement> {
         val result = mutableListOf<IElement>()
-        element?.let { result.add(it) }
+        renderElement?.let { result.add(it) }
         return result
     }
 
@@ -115,7 +67,7 @@ class CanvasElementRenderer : BaseRenderer() {
         delegate: CanvasRenderDelegate?
     ) {
         super.updateRenderProperty(target, reason, delegate)
-        target?.let { element?.updateElementRenderProperty(it) }
+        target?.let { renderElement?.updateElementRenderProperty(it) }
     }
 
     //endregion---core---

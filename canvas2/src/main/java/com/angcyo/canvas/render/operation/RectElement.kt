@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.BaseElement
 import com.angcyo.canvas.render.util.PictureRenderDrawable
 import com.angcyo.canvas.render.util.withPicture
@@ -54,7 +55,7 @@ class RectElement : BaseElement() {
         }
     }
 
-    override fun requestElementRenderDrawable(): Drawable? {
+    override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? {
         val bounds = RectF()
         val property = requestElementRenderProperty()
         property.getRenderBounds(bounds, false)

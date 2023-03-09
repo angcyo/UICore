@@ -1,7 +1,7 @@
 package com.angcyo.canvas.render.core
 
 import android.graphics.Canvas
-import com.angcyo.canvas.render.data.RendererParams
+import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasMonitorRenderer
 import com.angcyo.library.annotation.CallPoint
@@ -36,7 +36,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
 
     /**渲染入口点*/
     @CallPoint
-    override fun renderOnView(canvas: Canvas, params: RendererParams) {
+    override fun renderOnView(canvas: Canvas, params: RenderParams) {
         //---
         renderOnView(canvas, beforeRendererList, params)
         renderOnView(canvas, elementRendererList, params)
@@ -45,7 +45,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         monitorRenderer.renderOnView(canvas, params)
     }
 
-    override fun renderOnInside(canvas: Canvas, params: RendererParams) {
+    override fun renderOnInside(canvas: Canvas, params: RenderParams) {
         //---
         renderOnInside(canvas, beforeRendererList, params)
         renderOnInside(canvas, elementRendererList, params)
@@ -54,7 +54,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         monitorRenderer.renderOnInside(canvas, params)
     }
 
-    override fun renderOnOutside(canvas: Canvas, params: RendererParams) {
+    override fun renderOnOutside(canvas: Canvas, params: RenderParams) {
         //---
         renderOnOutside(canvas, beforeRendererList, params)
         renderOnOutside(canvas, elementRendererList, params)

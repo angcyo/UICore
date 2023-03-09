@@ -6,7 +6,9 @@ import android.view.Gravity
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.Strategy
+import com.angcyo.canvas.render.element.IElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.renderer.CanvasElementRenderer
 import com.angcyo.library.ex.decimal
 import com.angcyo.library.ex.dp
 import kotlin.math.sqrt
@@ -53,6 +55,13 @@ fun createRenderTextPaint(
 }
 
 //endregion---1---
+
+//region---render---
+
+val BaseRenderer.renderElement: IElement?
+    get() = if (this is CanvasElementRenderer) renderElement else null
+
+//endregion---render---
 
 //region---util---
 

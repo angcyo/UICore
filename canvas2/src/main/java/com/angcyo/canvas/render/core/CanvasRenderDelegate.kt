@@ -6,8 +6,7 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
-import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
-import com.angcyo.canvas.render.data.RendererParams
+import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
@@ -46,7 +45,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     var undoManager = CanvasUndoManager(this)
 
     /**渲染参数*/
-    var renderParams = RendererParams(this)
+    var renderParams = RenderParams(this)
 
     /**异步加载管理*/
     var asyncManager = CanvasAsyncManager(this)
@@ -198,13 +197,9 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         }
     }
 
-    override fun dispatchSelectorRendererChange(
-        selectorComponent: CanvasSelectorComponent,
-        from: List<BaseRenderer>,
-        to: List<BaseRenderer>
-    ) {
+    override fun dispatchSelectorRendererChange(from: List<BaseRenderer>, to: List<BaseRenderer>) {
         for (listener in renderListenerList) {
-            listener.onSelectorRendererChange(selectorComponent, from, to)
+            listener.onSelectorRendererChange(selectorManager.selectorComponent, from, to)
         }
     }
 

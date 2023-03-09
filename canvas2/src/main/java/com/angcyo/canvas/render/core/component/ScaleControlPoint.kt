@@ -139,7 +139,10 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
     override fun endControl() {
         if (isControlHappen) {
             controlRendererInfo?.let {
-                applyScale(endControlReason, controlManager.delegate)
+                applyScale(Reason.user.apply {
+                    controlType = CONTROL_TYPE_KEEP_GROUP_PROPERTY or
+                            CONTROL_TYPE_SCALE
+                }, controlManager.delegate)
             }
         }
         super.endControl()

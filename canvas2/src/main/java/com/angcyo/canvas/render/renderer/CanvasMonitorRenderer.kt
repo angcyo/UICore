@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IRenderer
-import com.angcyo.canvas.render.data.RendererParams
+import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.util.createRenderPaint
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.textWidth
@@ -22,7 +22,7 @@ class CanvasMonitorRenderer(val delegate: CanvasRenderDelegate) : IRenderer {
 
     override var renderFlags: Int = 0xf
 
-    override fun renderOnView(canvas: Canvas, params: RendererParams) {
+    override fun renderOnView(canvas: Canvas, params: RenderParams) {
         val renderViewBox = delegate.renderViewBox
 
         /*if (BuildConfig.DEBUG) {

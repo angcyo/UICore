@@ -1,10 +1,12 @@
 package com.angcyo.canvas.render.element
 
-import android.graphics.Path
-import android.graphics.PointF
-import android.graphics.RectF
+import android.graphics.*
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.data.RenderParams
+import com.angcyo.canvas.render.util.PictureRenderDrawable
+import com.angcyo.canvas.render.util.withPicture
+import com.angcyo.library.ex.ceilInt
 import com.angcyo.library.ex.contains
 import com.angcyo.library.ex.intersect
 
@@ -25,7 +27,8 @@ abstract class BaseElement : IElement {
 
     override fun requestElementRenderProperty(): CanvasRenderProperty = renderProperty
 
-    override fun requestElementRenderDrawable(): Drawable? = renderDrawable
+    override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? =
+        renderDrawable
 
     override fun elementContainsPoint(point: PointF): Boolean {
         var result = getElementBoundsPath().contains(point)
@@ -58,6 +61,25 @@ abstract class BaseElement : IElement {
         result.addRect(rect, Path.Direction.CW)
         result.transform(renderMatrix)
         return result
+    }
+
+    /**根据当前的属性, 绘制一个[bitmap]
+     * [overrideWidth] [overrideHeight] 需要覆盖输出的宽度
+     * */
+    fun createBitmapDrawable(
+        bitmap: Bitmap,
+        paint: Paint,
+        overrideWidth: Float?,
+        overrideHeight: Float?
+    ): Drawable {
+        return PictureRenderDrawable(
+            withPicture(
+                renderProperty.width.ceilInt(),
+                renderProperty.height.ceilInt()
+            ) {
+                val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
+                drawBitmap(bitmap, renderMatrix, paint)
+            })
     }
 
     //endregion---方法---

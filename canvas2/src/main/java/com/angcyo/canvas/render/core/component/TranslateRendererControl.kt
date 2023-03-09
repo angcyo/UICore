@@ -3,6 +3,8 @@ package com.angcyo.canvas.render.core.component
 import android.view.MotionEvent
 import com.angcyo.canvas.render.core.CanvasControlManager
 import com.angcyo.canvas.render.core.Reason
+import com.angcyo.canvas.render.core.component.BaseControlPoint.Companion.CONTROL_TYPE_KEEP_GROUP_PROPERTY
+import com.angcyo.canvas.render.core.component.BaseControlPoint.Companion.CONTROL_TYPE_TRANSLATE
 import com.angcyo.library.L
 import kotlin.math.absoluteValue
 
@@ -51,7 +53,9 @@ class TranslateRendererControl(controlManager: CanvasControlManager) : BaseContr
     override fun endControl() {
         if (isControlHappen) {
             controlRendererInfo?.let {
-                applyTranslate(endControlReason, controlManager.delegate)
+                applyTranslate(Reason.user.apply {
+                    controlType = CONTROL_TYPE_KEEP_GROUP_PROPERTY or CONTROL_TYPE_TRANSLATE
+                }, controlManager.delegate)
             }
         }
         super.endControl()

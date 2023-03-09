@@ -11,7 +11,7 @@ import com.angcyo.canvas.render.annotation.RenderFlag
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IComponent
 import com.angcyo.canvas.render.core.Reason
-import com.angcyo.canvas.render.data.RendererParams
+import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasElementRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
@@ -33,7 +33,7 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
     companion object {
 
         /**多个元素时:是否要绘制子元素的边框*/
-        const val RENDERER_FLAG_DRAW_FRAME_RECT = CanvasElementRenderer.RENDERER_FLAG_LAST
+        const val RENDERER_FLAG_DRAW_FRAME_RECT = BaseRenderer.RENDERER_FLAG_LAST
 
         /**是否要绘制选中的边框*/
         const val RENDERER_FLAG_DRAW_FRAME_SELECTOR_RECT = RENDERER_FLAG_DRAW_FRAME_RECT shl 1
@@ -106,7 +106,7 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
         showSizeRender(Reason.init, null)
     }
 
-    override fun renderOnOutside(canvas: Canvas, params: RendererParams) {
+    override fun renderOnOutside(canvas: Canvas, params: RenderParams) {
         if (isSelectorElement) {
             //绘制所有子元素的Rect
 
@@ -328,7 +328,7 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
     /**选中的渲染器改变*/
     private fun onSelfSelectorRendererChange(old: List<BaseRenderer>) {
         delegate.controlManager.updateControlPointLocation()
-        delegate.dispatchSelectorRendererChange(this, old, rendererList)
+        delegate.dispatchSelectorRendererChange(old, rendererList)
     }
 
     //endregion---操作---

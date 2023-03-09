@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
 import com.angcyo.canvas.render.annotation.RenderFlag
-import com.angcyo.canvas.render.data.RendererParams
+import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.library.annotation.CallPoint
 
 /**
@@ -45,7 +45,7 @@ interface IRenderer {
      * */
     @CallPoint
     @CanvasInsideCoordinate
-    fun renderOnInside(canvas: Canvas, params: RendererParams) {
+    fun renderOnInside(canvas: Canvas, params: RenderParams) {
     }
 
     /**绘制顺序2: 在画板上面, 相对于画板左上角坐标系绘制
@@ -57,12 +57,12 @@ interface IRenderer {
      * */
     @CallPoint
     @CanvasOutsideCoordinate
-    fun renderOnOutside(canvas: Canvas, params: RendererParams) {
+    fun renderOnOutside(canvas: Canvas, params: RenderParams) {
     }
 
     /**绘制顺序3: 直接在[android.view.View]上绘制*/
     @CallPoint
-    fun renderOnView(canvas: Canvas, params: RendererParams) {
+    fun renderOnView(canvas: Canvas, params: RenderParams) {
     }
 
 }

@@ -7,7 +7,7 @@ import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.core.CanvasSelectorManager
 import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.core.Reason
-import com.angcyo.canvas.render.data.RendererParams
+import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.util.createRenderPaint
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.alpha
@@ -41,7 +41,7 @@ class CanvasMoveSelectorComponent(val selectorManager: CanvasSelectorManager) :
     private val selectRect = emptyRectF()
     private val _tempRect = emptyRectF()
 
-    override fun renderOnOutside(canvas: Canvas, params: RendererParams) {
+    override fun renderOnOutside(canvas: Canvas, params: RenderParams) {
         if (isHandleTouch) {
             paint.style = Paint.Style.FILL
             paint.color = paintColor.alpha(32)

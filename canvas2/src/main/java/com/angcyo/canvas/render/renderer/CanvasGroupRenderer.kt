@@ -7,12 +7,9 @@ import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.CanvasRenderViewBox
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
-import com.angcyo.canvas.render.data.RendererParams
+import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement
-import com.angcyo.library.ex.getScaleX
-import com.angcyo.library.ex.getScaleY
-import com.angcyo.library.ex.mapPoint
-import com.angcyo.library.ex.size
+import com.angcyo.library.ex.*
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.max
 import kotlin.math.min
@@ -29,21 +26,30 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
     //region---core---
 
-    override fun renderOnOutside(canvas: Canvas, params: RendererParams) {
+    /**更新渲染时, 需要的一些数据*/
+    override fun readyRenderIfNeed(params: RenderParams?) {
+        super.readyRenderIfNeed(params)
+        if (renderProperty == null || renderFlags.have(RENDERER_FLAG_REQUEST_PROPERTY)) {
+            updateGroupRenderProperty(Reason.code, null)
+            renderFlags = renderFlags.remove(RENDERER_FLAG_REQUEST_PROPERTY)
+        }
+    }
+
+    override fun renderOnOutside(canvas: Canvas, params: RenderParams) {
         super.renderOnOutside(canvas, params)
         for (renderer in rendererList) {
             renderer.renderOnOutside(canvas, params)
         }
     }
 
-    override fun renderOnView(canvas: Canvas, params: RendererParams) {
+    override fun renderOnView(canvas: Canvas, params: RenderParams) {
         super.renderOnView(canvas, params)
         for (renderer in rendererList) {
             renderer.renderOnView(canvas, params)
         }
     }
 
-    override fun renderOnInside(canvas: Canvas, params: RendererParams) {
+    override fun renderOnInside(canvas: Canvas, params: RenderParams) {
         super.renderOnInside(canvas, params)
         for (renderer in rendererList) {
             renderer.renderOnInside(canvas, params)

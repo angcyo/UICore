@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.renderer
 
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import androidx.core.graphics.withSave
 import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
 import com.angcyo.canvas.render.annotation.RenderFlag
@@ -10,7 +11,7 @@ import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.Strategy
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
-import com.angcyo.canvas.render.data.RendererParams
+import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement
 import com.angcyo.drawable.loading.CircleScaleLoadingDrawable
 import com.angcyo.library.annotation.CallPoint
@@ -45,9 +46,17 @@ abstract class BaseRenderer : IRenderer {
         @RenderFlag
         const val RENDERER_FLAG_ASYNC = RENDERER_FLAG_LOCK_SCALE shl 1
 
+        /**请求需要重新获取[IElement]的绘制属性*/
+        @RenderFlag
+        const val RENDERER_FLAG_REQUEST_PROPERTY = RENDERER_FLAG_ASYNC shl 1
+
+        /**请求需要重新获取[IElement]的绘制Drawable*/
+        @RenderFlag
+        const val RENDERER_FLAG_REQUEST_DRAWABLE = RENDERER_FLAG_REQUEST_PROPERTY shl 1
+
         /**最后一个标识位*/
         @RenderFlag
-        const val RENDERER_FLAG_LAST = RENDERER_FLAG_ASYNC shl 1
+        const val RENDERER_FLAG_LAST = RENDERER_FLAG_REQUEST_DRAWABLE shl 1
     }
 
     /**渲染器的唯一标识*/
@@ -61,6 +70,9 @@ abstract class BaseRenderer : IRenderer {
 
     /**异步加载的动画指示器*/
     var renderAsyncDrawable: Drawable? = null
+
+    /**需要渲染的[Drawable]*/
+    var renderDrawable: Drawable? = null
 
     //region---计算属性---
 
@@ -99,20 +111,55 @@ abstract class BaseRenderer : IRenderer {
 
     //region---core---
 
-    /**外部调用的入口
-     * [com.angcyo.canvas.render.core.CanvasRenderManager.renderOnView]*/
-    @CallPoint
-    override fun renderOnInside(canvas: Canvas, params: RendererParams) {
+    /**渲染之前的准备工作*/
+    protected open fun readyRenderIfNeed(params: RenderParams?) {
+
     }
 
-    override fun renderOnOutside(canvas: Canvas, params: RendererParams) {
-        if (isAsync || params.delegate?.asyncManager?.hasAsyncTask(uuid) == true) {
-            renderAsync(canvas, params)
+    /**
+     * [com.angcyo.canvas.render.core.CanvasRenderManager.renderOnInside]
+     * [com.angcyo.canvas.render.core.CanvasRenderManager.renderOnOutside]
+     * [com.angcyo.canvas.render.core.CanvasRenderManager.renderOnView]
+     * */
+    @CallPoint
+    override fun renderOnInside(canvas: Canvas, params: RenderParams) {
+        readyRenderIfNeed(params)
+        renderProperty?.let { property ->
+            renderDrawable?.let { drawable ->
+                val renderBounds = property.getRenderBounds()
+                canvas.withSave {
+                    translate(renderBounds.left, renderBounds.top)//平移到指定位置
+                    drawable.setBounds(
+                        0,
+                        0,
+                        renderBounds.width().ceilInt(),
+                        renderBounds.height().ceilInt()
+                    )//设置绘制的宽高
+                    drawable.draw(canvas)//绘制
+                }
+            }
         }
     }
 
+    /**
+     * [com.angcyo.canvas.render.core.CanvasRenderManager.renderOnInside]
+     * [com.angcyo.canvas.render.core.CanvasRenderManager.renderOnOutside]
+     * [com.angcyo.canvas.render.core.CanvasRenderManager.renderOnView]
+     * */
+    override fun renderOnOutside(canvas: Canvas, params: RenderParams) {
+        readyRenderIfNeed(params)
+        if (isAsync || params.delegate?.asyncManager?.hasAsyncTask(uuid) == true) {
+            renderAsyncLoading(canvas, params)
+        }
+    }
+
+    override fun renderOnView(canvas: Canvas, params: RenderParams) {
+        readyRenderIfNeed(params)
+    }
+
+    /**异步动画绘制*/
     @CanvasOutsideCoordinate
-    private fun renderAsync(canvas: Canvas, params: RendererParams) {
+    private fun renderAsyncLoading(canvas: Canvas, params: RenderParams) {
         val renderViewBox = params.delegate?.renderViewBox ?: return
         renderAsyncDrawable?.let { drawable ->
             renderProperty?.let { property ->
@@ -131,7 +178,7 @@ abstract class BaseRenderer : IRenderer {
                 )
                 drawable.draw(canvas)
 
-                params.delegate.refresh()
+                params.delegate?.refresh()
             }
         }
     }
@@ -188,7 +235,7 @@ abstract class BaseRenderer : IRenderer {
     /**获取渲染器对应的元素列表*/
     open fun getElementList(): List<IElement> = emptyList()
 
-    /**获取所有渲染器*/
+    /**获取所有渲染器, 不包含[CanvasGroupRenderer]自身*/
     open fun getRendererList(): List<BaseRenderer> {
         val result = mutableListOf<BaseRenderer>()
         result.add(this)
@@ -264,8 +311,18 @@ abstract class BaseRenderer : IRenderer {
         } else {
             target?.copyTo(renderProperty)
         }
-        addRenderFlag(CanvasElementRenderer.RENDERER_FLAG_REQUEST_PROPERTY, reason, delegate)
+        addRenderFlag(RENDERER_FLAG_REQUEST_PROPERTY, reason, delegate)
         delegate?.dispatchRendererPropertyChange(this, null, target, reason)
+    }
+
+    /**请求更新[renderDrawable], 通知对应的状态发生了改变*/
+    open fun requestUpdateDrawable(reason: Reason, delegate: CanvasRenderDelegate?) {
+        addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
+    }
+
+    /**请求更新[renderProperty], 通知对应的状态发生了改变*/
+    open fun requestUpdateProperty(reason: Reason, delegate: CanvasRenderDelegate?) {
+        addRenderFlag(RENDERER_FLAG_REQUEST_PROPERTY, reason, delegate)
     }
 
     /**平移操作结束之后, 需要将矩阵[matrix]作用到[renderProperty]
@@ -285,7 +342,7 @@ abstract class BaseRenderer : IRenderer {
      * */
     open fun applyRotateMatrix(matrix: Matrix, reason: Reason, delegate: CanvasRenderDelegate?) {
         renderProperty?.applyRotateMatrix(matrix)
-        addRenderFlag(CanvasElementRenderer.RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
+        addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
         updateRenderProperty(renderProperty, reason, delegate)
     }
 
@@ -296,7 +353,7 @@ abstract class BaseRenderer : IRenderer {
      * */
     open fun applyScaleMatrix(matrix: Matrix, reason: Reason, delegate: CanvasRenderDelegate?) {
         renderProperty?.applyScaleMatrixWithValue(matrix)
-        addRenderFlag(CanvasElementRenderer.RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
+        addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
         updateRenderProperty(renderProperty, reason, delegate)
     }
 
@@ -307,7 +364,7 @@ abstract class BaseRenderer : IRenderer {
         delegate: CanvasRenderDelegate?
     ) {
         renderProperty?.applyScaleMatrixWithCenter(matrix)
-        addRenderFlag(CanvasElementRenderer.RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
+        addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
         updateRenderProperty(renderProperty, reason, delegate)
     }
 
@@ -319,7 +376,7 @@ abstract class BaseRenderer : IRenderer {
         delegate: CanvasRenderDelegate?
     ) {
         renderProperty?.applyFlip(flipX, flipY)
-        addRenderFlag(CanvasElementRenderer.RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
+        addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
         updateRenderProperty(renderProperty, reason, delegate)
     }
 

@@ -1,6 +1,7 @@
 package com.angcyo.canvas.render.core
 
 import com.angcyo.canvas.render.data.ControlRendererInfo
+import com.angcyo.canvas.render.data.IStateStack
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import java.util.*
 
@@ -128,6 +129,23 @@ class CanvasUndoManager(val delegate: CanvasRenderDelegate) {
         val undoState = oldControlInfo
         //重做的状态
         val redoState = ControlRendererInfo(oldControlInfo.controlRenderer)
+        addAndRedo(strategy, redoIt, {
+            undoState.restoreState(reason, delegate)
+        }) {
+            redoState.restoreState(reason, delegate)
+        }
+    }
+
+    /**自动进行状态保存和恢复
+     * [undoState] 用来撤销的状态存储
+     * [redoState] 用来重做的状态存储*/
+    fun addToStack(
+        undoState: IStateStack,
+        redoState: IStateStack,
+        redoIt: Boolean,
+        reason: Reason,
+        strategy: Strategy
+    ) {
         addAndRedo(strategy, redoIt, {
             undoState.restoreState(reason, delegate)
         }) {

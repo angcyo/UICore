@@ -6,7 +6,7 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.canvas.render.core.component.*
-import com.angcyo.canvas.render.data.RendererParams
+import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.library.ex.mapPoint
 import com.angcyo.library.ex.remove
@@ -84,7 +84,7 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
         scaleControlPoint.isLockScaleRatio = selectorRenderer.isLockScaleRatio
     }
 
-    override fun renderOnOutside(canvas: Canvas, params: RendererParams) {
+    override fun renderOnOutside(canvas: Canvas, params: RenderParams) {
         if (delegate.selectorManager.isSelectorElement &&
             !delegate.selectorManager.isTouchInSelectorRenderer
         ) {

@@ -4,6 +4,7 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.data.RenderParams
 
 /**
  * 单个元素, 或者多个元素
@@ -19,7 +20,7 @@ interface IElement {
 
     /**请求获取用来渲染在界面的[Drawable]
      * 当前的[Drawable]应该是相对于[0,0]位置绘制的*/
-    fun requestElementRenderDrawable(): Drawable?
+    fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable?
 
     /**元素的bounds是否完全包含point
      * [com.angcyo.canvas.render.renderer.BaseRenderer.rendererContainsPoint]*/

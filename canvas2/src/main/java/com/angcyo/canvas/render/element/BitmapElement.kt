@@ -3,9 +3,7 @@ package com.angcyo.canvas.render.element
 import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
-import com.angcyo.canvas.render.util.PictureRenderDrawable
-import com.angcyo.canvas.render.util.withPicture
-import com.angcyo.library.ex.ceilInt
+import com.angcyo.canvas.render.data.RenderParams
 
 /**
  * 用来绘制[Bitmap]元素的对象
@@ -14,25 +12,27 @@ import com.angcyo.library.ex.ceilInt
  */
 open class BitmapElement : BaseElement() {
 
-    val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    protected var bitmap: Bitmap? = null
+    /**1:1 原始图片*/
+    var originBitmap: Bitmap? = null
 
-    override fun requestElementRenderDrawable(): Drawable? {
-        val bitmap = bitmap ?: return null
-        return PictureRenderDrawable(
-            withPicture(
-                renderProperty.width.ceilInt(),
-                renderProperty.height.ceilInt()
-            ) {
-                val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
-                drawBitmap(bitmap, renderMatrix, paint)
-            })
+    /**[originBitmap]1:1修改后渲染的图片, 界面上看到的图片*/
+    var renderBitmap: Bitmap? = null
+
+    override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? {
+        val bitmap = renderBitmap ?: originBitmap ?: return null
+        return createBitmapDrawable(
+            bitmap,
+            paint,
+            renderParams?.overrideWidth,
+            renderParams?.overrideHeight
+        )
     }
 
-    /**使用[bitmap]更新对象*/
-    fun updateBitmap(bitmap: Bitmap) {
-        this.bitmap = bitmap
+    /**使用[bitmap]初始化对象*/
+    fun initOriginBitmap(bitmap: Bitmap) {
+        this.originBitmap = bitmap
         renderProperty.apply {
             width = bitmap.width.toFloat()
             height = bitmap.height.toFloat()

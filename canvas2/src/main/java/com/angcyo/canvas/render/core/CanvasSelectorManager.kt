@@ -5,7 +5,7 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.canvas.render.core.component.*
-import com.angcyo.canvas.render.data.RendererParams
+import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
@@ -54,7 +54,9 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
                 op: List<BaseRenderer>
             ) {
                 if (op.isIntersect(selectorComponent.rendererList)) {
-                    selectorComponent.updateGroupRenderProperty(Reason.code, delegate)
+                    val list = selectorComponent.rendererList.toMutableList()
+                    list.removeAll(op)
+                    selectorComponent.resetSelectorRenderer(list, Reason.code)
                 }
             }
 
@@ -129,7 +131,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
         }
     }
 
-    override fun renderOnOutside(canvas: Canvas, params: RendererParams) {
+    override fun renderOnOutside(canvas: Canvas, params: RenderParams) {
         if (isSelectorElement && selectorComponent.isEnable) {
             selectorComponent.renderOnOutside(canvas, params)
         }

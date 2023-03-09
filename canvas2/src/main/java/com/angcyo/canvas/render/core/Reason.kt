@@ -31,7 +31,7 @@ data class Reason(
      * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_HEIGHT]
      * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_KEEP_GROUP_PROPERTY]
      * */
-    var controlType: Int? = null
+    var controlType: Int? = null,
 ) {
     companion object {
 

@@ -3,7 +3,7 @@ package com.angcyo.canvas.render.core
 import android.graphics.Canvas
 import androidx.core.graphics.withMatrix
 import androidx.core.graphics.withTranslation
-import com.angcyo.canvas.render.data.RendererParams
+import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.have
@@ -19,7 +19,7 @@ abstract class BaseRenderDispatch {
 
     private val _tempList = CopyOnWriteArrayList<IRenderer>()
 
-    fun dispatchRender(canvas: Canvas, renderer: IRenderer, params: RendererParams) {
+    fun dispatchRender(canvas: Canvas, renderer: IRenderer, params: RenderParams) {
         _tempList.clear()
         _tempList.add(renderer)
         dispatchRender(canvas, _tempList, params)
@@ -30,7 +30,7 @@ abstract class BaseRenderDispatch {
     fun dispatchRender(
         canvas: Canvas,
         rendererList: List<IRenderer>,
-        params: RendererParams
+        params: RenderParams
     ) {
         dispatchRenderOnInside(
             canvas,
@@ -53,7 +53,7 @@ abstract class BaseRenderDispatch {
     protected fun dispatchRenderOnInside(
         canvas: Canvas,
         list: List<IRenderer>,
-        params: RendererParams
+        params: RenderParams
     ) {
         val renderViewBox = params.delegate?.renderViewBox ?: return
         if (list.isEmpty()) return
@@ -79,7 +79,7 @@ abstract class BaseRenderDispatch {
     protected fun dispatchRenderOnOutside(
         canvas: Canvas,
         list: List<IRenderer>,
-        params: RendererParams
+        params: RenderParams
     ) {
         val renderViewBox = params.delegate?.renderViewBox ?: return
         if (list.isEmpty()) return
@@ -100,7 +100,7 @@ abstract class BaseRenderDispatch {
     protected fun dispatchRenderOnView(
         canvas: Canvas,
         list: List<IRenderer>,
-        params: RendererParams
+        params: RenderParams
     ) {
         if (list.isEmpty()) return
 
@@ -109,7 +109,7 @@ abstract class BaseRenderDispatch {
         }
     }
 
-    fun renderOnView(canvas: Canvas, list: List<IRenderer>, params: RendererParams) {
+    fun renderOnView(canvas: Canvas, list: List<IRenderer>, params: RenderParams) {
         for (renderer in list) {
             if (renderer is BaseRenderer && !renderer.isVisible) {
                 //不可见
@@ -122,7 +122,7 @@ abstract class BaseRenderDispatch {
         }
     }
 
-    fun renderOnInside(canvas: Canvas, list: List<IRenderer>, params: RendererParams) {
+    fun renderOnInside(canvas: Canvas, list: List<IRenderer>, params: RenderParams) {
         for (renderer in list) {
             if (renderer is BaseRenderer && !renderer.isVisible) {
                 //不可见
@@ -135,7 +135,7 @@ abstract class BaseRenderDispatch {
         }
     }
 
-    fun renderOnOutside(canvas: Canvas, list: List<IRenderer>, params: RendererParams) {
+    fun renderOnOutside(canvas: Canvas, list: List<IRenderer>, params: RenderParams) {
         for (renderer in list) {
             if (renderer is BaseRenderer && !renderer.isVisible) {
                 //不可见

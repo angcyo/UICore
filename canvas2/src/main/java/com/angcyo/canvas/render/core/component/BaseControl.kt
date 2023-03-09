@@ -51,11 +51,6 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
     @CanvasInsideCoordinate
     protected var touchMovePointInside = PointF()
 
-    protected val endControlReason: Reason
-        get() = Reason.user.apply {
-            controlType = BaseControlPoint.CONTROL_TYPE_KEEP_GROUP_PROPERTY
-        }
-
     override fun dispatchTouchEvent(event: MotionEvent) {
         /*val actionIndex = event.actionIndex //当前事件手指的索引, 第几个手指
         val id = event.getPointerId(actionIndex) //当前手指对应的id, 保存此id, 可以获取单独每个手指的对应数据
