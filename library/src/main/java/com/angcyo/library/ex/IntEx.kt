@@ -18,12 +18,17 @@ import kotlin.math.min
  */
 
 /**整型数中, 是否包含另一个整数*/
-fun Int.have(value: Int): Boolean = if (this == 0 || value == 0) {
-    false
-} else if (this == 0 && value == 0) {
-    true
-} else {
-    ((this > 0 && value > 0) || (this < 0 && value < 0)) && this and value == value
+fun Int?.have(value: Int): Boolean {
+    this ?: return false
+    return if (this == 0 && value == 0) {
+        true
+    } else if (this == 0 || value == 0) {
+        false
+    } else if ((this > 0 && value < 0) || (this < 0 && value > 0)) {
+        false
+    } else {
+        this and value == value
+    }
 }
 
 /**and 逻辑与, x */
