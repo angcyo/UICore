@@ -57,7 +57,7 @@ abstract class BaseControlPoint(controlManager: CanvasControlManager) : BaseCont
 
         /**哪些属性操作改变后, 需要保持[com.angcyo.canvas.render.renderer.CanvasGroupRenderer]的渲染属性*/
         fun isKeepGroupPropertyType(type: Int?): Boolean {
-            if (type?.have(CONTROL_TYPE_KEEP_GROUP_PROPERTY) == true) {
+            if (type.have(CONTROL_TYPE_KEEP_GROUP_PROPERTY)) {
                 return true
             }
             return false
