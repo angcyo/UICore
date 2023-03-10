@@ -46,11 +46,13 @@ abstract class BaseRenderer : IRenderer {
         @RenderFlag
         const val RENDERER_FLAG_ASYNC = RENDERER_FLAG_LOCK_SCALE shl 1
 
-        /**请求需要重新获取[IElement]的绘制属性*/
+        /**请求需要重新获取[IElement]的绘制属性
+         * 此标识会额外触发[com.angcyo.canvas.render.core.ICanvasRenderView.dispatchRendererPropertyChange]
+         * */
         @RenderFlag
         const val RENDERER_FLAG_REQUEST_PROPERTY = RENDERER_FLAG_ASYNC shl 1
 
-        /**请求需要重新获取[IElement]的绘制Drawable*/
+        /**请求需要重新获取[IElement]的绘制Drawable */
         @RenderFlag
         const val RENDERER_FLAG_REQUEST_DRAWABLE = RENDERER_FLAG_REQUEST_PROPERTY shl 1
 

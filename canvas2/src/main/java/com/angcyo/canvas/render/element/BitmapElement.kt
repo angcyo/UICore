@@ -1,9 +1,9 @@
 package com.angcyo.canvas.render.element
 
 import android.graphics.Bitmap
-import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.data.RenderParams
+import com.angcyo.canvas.render.util.createRenderPaint
 
 /**
  * 用来绘制[Bitmap]元素的对象
@@ -12,7 +12,7 @@ import com.angcyo.canvas.render.data.RenderParams
  */
 open class BitmapElement : BaseElement() {
 
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    protected val paint = createRenderPaint()
 
     /**1:1 原始图片*/
     var originBitmap: Bitmap? = null
@@ -37,6 +37,13 @@ open class BitmapElement : BaseElement() {
             width = bitmap.width.toFloat()
             height = bitmap.height.toFloat()
         }
+    }
+
+    /**更新原始的[bitmap]对象, 并保持可视化的宽高一致
+     * [updateOriginWidthHeight]*/
+    fun updateOriginBitmap(bitmap: Bitmap) {
+        this.originBitmap = bitmap
+        updateOriginWidthHeight(bitmap.width.toFloat(), bitmap.height.toFloat())
     }
 
 }

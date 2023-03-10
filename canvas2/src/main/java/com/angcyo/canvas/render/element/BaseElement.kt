@@ -4,8 +4,10 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
+import com.angcyo.canvas.render.util.CanvasRenderHelper
 import com.angcyo.canvas.render.util.PictureRenderDrawable
 import com.angcyo.canvas.render.util.withPicture
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.ceilInt
 import com.angcyo.library.ex.contains
 import com.angcyo.library.ex.intersect
@@ -63,6 +65,21 @@ abstract class BaseElement : IElement {
         return result
     }
 
+    /**更新原始数据的宽高, 并且保持看起来的宽高一直*/
+    @Pixel
+    fun updateOriginWidthHeight(newWidth: Float, newHeight: Float) {
+        val oldWidth = renderProperty.width
+        val oldHeight = renderProperty.height
+
+        renderProperty.width = newWidth
+        renderProperty.height = newHeight
+
+        if (oldWidth > 0 && oldHeight > 0) {
+            renderProperty.scaleX *= oldWidth / newWidth
+            renderProperty.scaleY *= oldHeight / newHeight
+        }
+    }
+
     /**根据当前的属性, 绘制一个[bitmap]
      * [overrideWidth] [overrideHeight] 需要覆盖输出的宽度
      * */
@@ -79,6 +96,31 @@ abstract class BaseElement : IElement {
             ) {
                 val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
                 drawBitmap(bitmap, renderMatrix, paint)
+            })
+    }
+
+    /**[createBitmapDrawable] */
+    fun createPathDrawable(
+        pathList: List<Path>?,
+        paint: Paint,
+        overrideWidth: Float?,
+        overrideHeight: Float?
+    ): Drawable {
+        return PictureRenderDrawable(
+            withPicture(
+                renderProperty.width.ceilInt(),
+                renderProperty.height.ceilInt()
+            ) {
+                if (pathList.isNullOrEmpty()) {
+                    //
+                } else {
+                    val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
+                    val newPathList = CanvasRenderHelper.translateToOrigin(pathList)
+                    for (path in newPathList!!) {
+                        path.transform(renderMatrix)
+                        drawPath(path, paint)
+                    }
+                }
             })
     }
 
