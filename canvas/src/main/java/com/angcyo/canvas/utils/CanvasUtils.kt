@@ -1,10 +1,7 @@
 package com.angcyo.canvas.utils
 
 import android.graphics.*
-import android.os.Build
 import android.text.Layout
-import android.text.StaticLayout
-import android.text.TextPaint
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_BOLD
 import com.angcyo.canvas.items.data.DataTextItem.Companion.TEXT_STYLE_DELETE_LINE
@@ -17,6 +14,7 @@ import com.angcyo.library.app
 import com.angcyo.library.ex.*
 import com.angcyo.svg.Svg
 import com.angcyo.svg.Svg.loadSvgPathDrawable
+import com.angcyo.widget.base.createPaint
 import com.pixplicity.sharp.SharpDrawable
 import kotlin.math.max
 
@@ -26,54 +24,6 @@ import kotlin.math.max
  */
 
 //<editor-fold desc="canvas">
-
-/**创建一个画笔*/
-fun createPaint(color: Int = Color.GRAY, style: Paint.Style = Paint.Style.STROKE) =
-    Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        this.color = color
-        this.style = style
-        strokeWidth = 1f
-        strokeJoin = Paint.Join.ROUND
-        strokeCap = Paint.Cap.ROUND
-    }
-
-fun createTextPaint(color: Int = Color.BLACK, textSize: Float = 12 * dp) =
-    TextPaint(createPaint(color, Paint.Style.FILL)).apply {
-        this.textSize = textSize
-        this.textAlign = Paint.Align.LEFT
-    }
-
-/**[StaticLayout]*/
-fun createStaticLayout(
-    source: CharSequence,
-    paint: TextPaint,
-    width: Int,
-    align: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL // Layout.Alignment.ALIGN_OPPOSITE
-): StaticLayout {
-    val layout: StaticLayout
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        layout = StaticLayout.Builder.obtain(
-            source,
-            0,
-            source.length,
-            paint,
-            width
-        ).setAlignment(align).build()
-    } else {
-        layout = StaticLayout(
-            source,
-            0,
-            source.length,
-            paint,
-            width,
-            align,
-            1f,
-            0f,
-            false
-        )
-    }
-    return layout
-}
 
 /**排序规则从上到下, 从左到右
  * 比较它的两个参数的顺序。

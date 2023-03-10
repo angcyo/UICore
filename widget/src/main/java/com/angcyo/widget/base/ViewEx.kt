@@ -4,6 +4,9 @@ import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.text.Layout
+import android.text.StaticLayout
+import android.text.TextPaint
 import android.util.TypedValue
 import android.view.*
 import android.widget.*
@@ -39,6 +42,59 @@ import com.angcyo.widget.recycler.getLastVelocity
  * @date 2019/12/20
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+//---
+
+/**创建一个画笔*/
+fun createPaint(color: Int = Color.GRAY, style: Paint.Style = Paint.Style.STROKE) =
+    Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        this.color = color
+        this.style = style
+        strokeWidth = 1f
+        strokeJoin = Paint.Join.ROUND
+        strokeCap = Paint.Cap.ROUND
+    }
+
+fun createTextPaint(color: Int = Color.BLACK, textSize: Float = 12 * dp) =
+    TextPaint(createPaint(color, Paint.Style.FILL)).apply {
+        this.textSize = textSize
+        this.textAlign = Paint.Align.LEFT
+    }
+
+/**[StaticLayout]*/
+fun createStaticLayout(
+    source: CharSequence,
+    paint: TextPaint,
+    width: Int,
+    align: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL // Layout.Alignment.ALIGN_OPPOSITE
+): StaticLayout {
+    val layout: StaticLayout
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        layout = StaticLayout.Builder.obtain(
+            source,
+            0,
+            source.length,
+            paint,
+            width
+        ).setAlignment(align).build()
+    } else {
+        layout = StaticLayout(
+            source,
+            0,
+            source.length,
+            paint,
+            width,
+            align,
+            1f,
+            0f,
+            false
+        )
+    }
+    return layout
+}
+
+//---
+
 /**设置[Behavior]*/
 fun View?.setBehavior(behavior: CoordinatorLayout.Behavior<*>?) {
     this?.layoutParams?.coordinatorParams {
@@ -49,7 +105,6 @@ fun View?.setBehavior(behavior: CoordinatorLayout.Behavior<*>?) {
 fun View?.behavior(): CoordinatorLayout.Behavior<*>? {
     return (this?.layoutParams as? CoordinatorLayout.LayoutParams?)?.run { this.behavior }
 }
-
 
 /**设置r背景*/
 fun View.setRBgDrawable(drawable: Drawable?) {
@@ -87,7 +142,6 @@ fun View.mHOrMeasure(): Int {
     measure(atMost(_screenWidth), atMost(_screenHeight))
     return measuredHeight
 }
-
 
 fun Context.viewOf(
     @LayoutRes id: Int,
@@ -268,7 +322,6 @@ fun View.watchClickCount(count: Int, action: () -> Unit) {
 
 //</editor-fold desc="事件扩展">
 
-
 //<editor-fold desc="其他">
 
 /**查找[RecyclerView]*/
@@ -392,7 +445,6 @@ fun Any?.stopScroll() {
     }
 }
 
-
 /**获取[View]在指定[parent]中的矩形坐标*/
 fun View.getLocationInParent(parentView: View? = null, result: Rect = Rect()): Rect {
     val parent: View? = parentView ?: (parent as? View)
@@ -445,7 +497,6 @@ fun View.padWithDisplayCutout() {
         insets
     }
 }
-
 
 //<editor-fold desc="截图">
 

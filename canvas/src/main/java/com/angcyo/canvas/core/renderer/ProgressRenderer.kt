@@ -6,7 +6,7 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
 import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
-import com.angcyo.canvas.utils.createPaint
+import com.angcyo.widget.base.createPaint
 import com.angcyo.library._refreshRateRatio
 import com.angcyo.library.ex.*
 

@@ -18,7 +18,7 @@ import com.angcyo.canvas.core.renderer.BaseRenderer
 import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.graphics.IEngraveProvider
 import com.angcyo.canvas.items.BaseItem
-import com.angcyo.canvas.utils.createTextPaint
+import com.angcyo.widget.base.createTextPaint
 import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel

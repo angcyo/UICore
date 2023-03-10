@@ -14,7 +14,7 @@ import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.ICanvasListener
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.RenderParams
-import com.angcyo.canvas.utils.createTextPaint
+import com.angcyo.widget.base.createTextPaint
 import com.angcyo.canvas.utils.getMaxLineWidth
 import com.angcyo.library.ex.*
 import com.angcyo.library.unit.InchValueUnit

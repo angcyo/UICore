@@ -7,7 +7,7 @@ import android.graphics.RectF
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.data.LimitDataInfo
-import com.angcyo.canvas.utils.createPaint
+import com.angcyo.widget.base.createPaint
 import com.angcyo.library.annotation.Private
 import com.angcyo.library.ex.computePathBounds
 
