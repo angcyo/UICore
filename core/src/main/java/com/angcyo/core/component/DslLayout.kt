@@ -23,7 +23,7 @@ import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
 
 /**
- * 另一种方式显示[DslToast], 会包含在状态栏下
+ * 另一种方式显示[[com.angcyo.library.DslToast]], 会包含在状态栏下
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2022/12/20
@@ -210,6 +210,7 @@ data class LayoutConfig(
 
 //---dsl---
 
+/**[com.angcyo.library.toastQQ]*/
 @AnyThread
 fun layoutQQ(
     text: CharSequence?,
@@ -237,6 +238,7 @@ fun layoutQQ(
     }
 }
 
+/**[[com.angcyo.library.toastWX]]*/
 @AnyThread
 fun layoutWX(
     text: CharSequence?,

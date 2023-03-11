@@ -206,7 +206,7 @@ fun DslGroupHelper.appendItem(
 /**跳转app权限管理页
  * https://www.jianshu.com/p/b5c494dba0bc
  * */
-fun Context.toAppPermissionsDetail(packageName: String = this.packageName) {
+fun Context.toAppPermissionsDetail(packageName: String = this.packageName): Boolean {
     try {
         if (RomUtil.isEmui()) {
             Intent().apply {
@@ -286,5 +286,7 @@ fun Context.toAppPermissionsDetail(packageName: String = this.packageName) {
         }
     } catch (e: Exception) {
         e.printStackTrace()
+        return false
     }
+    return true
 }
