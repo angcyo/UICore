@@ -67,6 +67,9 @@ object LibLpHawkKeys {
     var c1Width: Int by HawkPropertyValue<Any, Int>(400)
     var c1Height: Int by HawkPropertyValue<Any, Int>(420)
 
+    /**C1加长版的尺寸*/
+    var c1LHeight: Int by HawkPropertyValue<Any, Int>(800)
+
     //---
 
     /**滚动轴(z轴)模式下, 最大的y值
