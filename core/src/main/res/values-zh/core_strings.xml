@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="ui_back">返回</string>
+    <string name="ui_enable_permission">开启权限</string>
 </resources>
