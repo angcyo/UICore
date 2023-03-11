@@ -243,23 +243,32 @@ fun CanvasDelegate.addTextRender(
 
 /**添加 功率 深度, 雕刻参数对照表. 耗时操作, 建议在子线程中执行
  * [bounds] 限制显示的区域
- * [gridCount] 格子横纵数量
+ * [gridCount] 格子横纵各个的数量
  * [powerDepth] 阈值, 当 功率*深度 <= this 时才需要添加到参数表
  * */
 @WorkerThread
 fun CanvasDelegate.addParameterComparisonTable(
     @Pixel bounds: RectF,
     gridCount: Int,
-    powerDepth: Int
+    powerDepth: Int,
+    @MM
+    lastGridMargin: Int,
+    @MM
+    lastFontSize: Int,
 ) {
     val padding = 5f.toPixel()
 
-    val gridMargin = (2f / (gridCount / 10f)).toPixel()
+    val gridMargin = if (lastGridMargin > 0) lastGridMargin.toFloat()
+        .toPixel() else (2f / (gridCount / 10f)).toPixel()
     val textMargin = 1f.toPixel()
 
     val numberTextItem = DataTextItem(CanvasProjectItemBean().apply {
         text = "100"
-        fontSize = 3f / (gridCount / 10f)
+        fontSize = if (lastFontSize > 0) {
+            lastFontSize.toFloat()
+        } else {
+            ((bounds.width() - gridCount * padding) / gridCount).toMm() / 2
+        }
         charSpacing = 0.2f
 
         //参数, 使用最后一次的默认
@@ -269,7 +278,11 @@ fun CanvasDelegate.addParameterComparisonTable(
     //功率/深度文本的宽高
     val powerTextItem = DataTextItem(CanvasProjectItemBean().apply {
         mtype = CanvasConstant.DATA_TYPE_TEXT
-        fontSize = 5f
+        fontSize = if (lastFontSize > 0) {
+            lastFontSize.toFloat()
+        } else {
+            numberTextItem.dataBean.fontSize * 2
+        }
         text = "Power(%)"
 
         printPrecision = numberTextItem.dataBean.printPrecision
