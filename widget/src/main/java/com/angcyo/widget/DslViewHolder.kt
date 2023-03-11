@@ -15,10 +15,10 @@ import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.angcyo.library.L
+import com.angcyo.library.ex.motionEvent
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.base.ThrottleClickListener
 import com.angcyo.widget.base.ThrottleClickListener.Companion.DEFAULT_THROTTLE_INTERVAL
-import com.angcyo.library.ex.motionEvent
 import java.lang.ref.WeakReference
 
 /**
@@ -425,7 +425,7 @@ open class DslViewHolder(
         }
         if (view is ViewGroup && recursive) {
             for (i in 0 until view.childCount) {
-                enable(view.getChildAt(i), _enable, recursive)
+                enable(view.getChildAt(i), _enable, true)
             }
         }
         if (view.isEnabled != _enable) {
