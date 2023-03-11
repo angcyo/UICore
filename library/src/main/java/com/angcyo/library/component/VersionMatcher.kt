@@ -41,7 +41,10 @@ object VersionMatcher {
         return list
     }
 
-    /**当前的版本[version]适配满足配置的规则[min~max]*/
+    /**当前的版本[version]适配满足配置的规则[min~max]
+     * [version] 当前的版本 比如:678
+     * [config] 版本配置 比如:xxx~xxx ~xxx xxx~
+     * */
     fun matches(version: Int, config: String?, def: Boolean = true): Boolean {
         val versionRangeList = parseRange(config)
         if (versionRangeList.isEmpty()) {
