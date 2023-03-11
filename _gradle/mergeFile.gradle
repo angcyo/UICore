@@ -15,6 +15,7 @@ _mergeFile.doFirst {
 
     pathListZh += "./UICore/crop/src/main/res/values-zh/crop_strings.xml"
     pathListZh += "./UICore/doodle/src/main/res/values-zh/doodle_strings.xml"
+    pathListZh += "./UICore/canvas/src/main/res/values-zh/canvas_strings.xml"
 
     pathListZh += "./UICoreEx/canvas_lp/src/main/res/values-zh/canvas_strings.xml"
     pathListZh += "./UICoreEx/engrave/src/main/res/values-zh/engrave_strings.xml"
@@ -26,6 +27,7 @@ _mergeFile.doFirst {
 
     pathListEn += "./UICore/crop/src/main/res/values/crop_strings.xml"
     pathListEn += "./UICore/doodle/src/main/res/values/doodle_strings.xml"
+    pathListEn += "./UICore/canvas/src/main/res/values/canvas_strings.xml"
 
     pathListEn += "./UICoreEx/canvas_lp/src/main/res/values/canvas_strings.xml"
     pathListEn += "./UICoreEx/engrave/src/main/res/values/engrave_strings.xml"
