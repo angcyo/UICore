@@ -52,8 +52,10 @@ abstract class BaseTabFragment : BaseFragment() {
         fragmentLayoutId = R.layout.lib_tab_fragment
 
         //tab 在上面的布局
-        //fragmentLayoutId = R.layout.lib_top_tab_fragment
+        R.layout.lib_top_tab_fragment
     }
+
+    //region---init---
 
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
@@ -86,16 +88,32 @@ abstract class BaseTabFragment : BaseFragment() {
         }
     }
 
+    override fun onFragmentShow(bundle: Bundle?) {
+        super.onFragmentShow(bundle)
+        bundle?.getInt(KEY_TAB_INDEX)?.let {
+            changeTabIndex(it)
+        }
+    }
+
+    //endregion---init---
+
+    //region---api---
+
     var _fragmentList: MutableList<Class<out Fragment>> = mutableListOf()
 
     /**添加tab item
      * 请在[initTabLayout]之后调用
+     *
+     * [fragment] 需要切换到的界面
+     * [text] tab item上的文本
+     * [imageResId] tab item上的图标资源
+     * [itemViewInitAction] item的初始化
      * */
     open fun addTabItem(
         fragment: Class<out Fragment>,
         text: CharSequence,
         @DrawableRes imageResId: Int,
-        action: View.() -> Unit = {}
+        itemViewInitAction: View.() -> Unit = {}
     ) {
         _fragmentList.add(fragment)
         _vh.tab(R.id.lib_tab_layout)?.apply {
@@ -105,7 +123,7 @@ abstract class BaseTabFragment : BaseFragment() {
                         setWidthHeight(it)
                     }
                 }
-                action()
+                itemViewInitAction()
             }
             updateTabLayout()
         }
@@ -126,12 +144,7 @@ abstract class BaseTabFragment : BaseFragment() {
         }
     }
 
-    override fun onFragmentShow(bundle: Bundle?) {
-        super.onFragmentShow(bundle)
-        bundle?.getInt(KEY_TAB_INDEX)?.let {
-            changeTabIndex(it)
-        }
-    }
+    //endregion---api---
 }
 
 fun ViewGroup.appendTabItem(

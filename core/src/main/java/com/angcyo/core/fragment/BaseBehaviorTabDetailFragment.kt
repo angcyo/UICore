@@ -42,7 +42,7 @@ abstract class BaseBehaviorTabDetailFragment : BasePagerFragment() {
         fragmentLayoutId = R.layout.lib_behavior_tab_detail_layout
         contentLayoutId = -1
         tabItemLayoutId = R.layout.lib_behavior_detail_tab_item_layout
-        pages
+        pageList
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

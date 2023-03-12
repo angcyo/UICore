@@ -28,6 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/lib_dpi"
         android:gravity="center"
+        android:textSize="@dimen/lib_tab_text_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="@id/lib_tab_image_view"
         app:layout_constraintRight_toRightOf="@id/lib_tab_image_view"

@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textColor="@color/lib_main_to_theme_colors"
+        android:textSize="@dimen/lib_tab_text_size"
         android:textStyle="bold"
         tools:text="测试" />
 
