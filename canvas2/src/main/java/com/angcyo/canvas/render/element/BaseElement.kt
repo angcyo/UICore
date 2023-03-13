@@ -68,6 +68,9 @@ abstract class BaseElement : IElement {
     /**更新原始数据的宽高, 并且保持看起来的宽高一直*/
     @Pixel
     fun updateOriginWidthHeight(newWidth: Float, newHeight: Float) {
+        if (newWidth == 0f || newHeight == 0f) {
+            return
+        }
         val oldWidth = renderProperty.width
         val oldHeight = renderProperty.height
 
