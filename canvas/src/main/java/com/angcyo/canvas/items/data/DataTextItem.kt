@@ -47,7 +47,7 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
 
         //---
 
-        /**斜体的倾斜角度*/
+        /**斜体的倾斜系数*/
         const val ITALIC_SKEW = -0.25f
     }
 
@@ -73,7 +73,7 @@ class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
             it.color = dataBean.textColor?.toColor() ?: Color.BLACK
 
             typefaceInfo?.typeface?.let { typeface ->
-                itemPaint.typeface = typeface
+                it.typeface = typeface
             }
         }
         return itemPaint
