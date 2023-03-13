@@ -285,6 +285,21 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
         return null
     }
 
+    /**获取选中的元素列表,
+     * [dissolveGroup] 是否要解组
+     * [com.angcyo.canvas.core.renderer.GroupRenderer]*/
+    fun getSelectorRendererList(dissolveGroup: Boolean): List<BaseRenderer> {
+        return if (dissolveGroup) {
+            val result = mutableListOf<BaseRenderer>()
+            for (renderer in selectorComponent.rendererList) {
+                result.addAll(renderer.getRendererList())
+            }
+            result
+        } else {
+            selectorComponent.rendererList
+        }
+    }
+
     /**锁定缩放比
      * [com.angcyo.canvas.render.core.component.CanvasSelectorComponent.updateLockScaleRatio]*/
     fun updateLockScaleRatio(lock: Boolean, reason: Reason, delegate: CanvasRenderDelegate?) {
