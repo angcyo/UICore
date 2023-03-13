@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.unit
 
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.unit.unitDecimal
+import kotlin.math.nextDown
 
 /**
  * 渲染的单位毫米(mm) 英寸(inch)
@@ -30,6 +31,9 @@ interface IRenderUnit {
 
     //region---绘制相关方法---
 
+    /**获取描述的单位字符串*/
+    fun getUnit(): String
+
     /**在指定的缩放比例[scale]情况下, 每个刻度之间的间隙像素值*/
     @Pixel
     fun getGap(scale: Float): Float
@@ -43,9 +47,6 @@ interface IRenderUnit {
         }
     }
 
-    /**获取描述的单位字符串*/
-    fun getUnit(): String
-
     //endregion---绘制相关方法---
 
     //region---转换相关方法---
@@ -55,7 +56,14 @@ interface IRenderUnit {
     fun convertValueToPixel(value: Float): Float
 
     /**将像素值,转换成对应的值*/
-    fun convertPixelToValue(@Pixel pixel: Float): Float
+    fun convertPixelToValue(@Pixel pixel: Float): Float {
+        val unit = convertValueToPixel(1.0f)
+        val result = pixel / unit
+        if (result.isFinite()) {
+            return result
+        }
+        return result.nextDown()
+    }
 
     /**格式化值[value]
      * [ensureInt] 是否要确保整数, 比如: 15.0 转换成 15

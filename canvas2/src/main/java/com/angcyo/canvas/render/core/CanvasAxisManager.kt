@@ -6,7 +6,7 @@ import androidx.core.graphics.withSave
 import com.angcyo.canvas.render.data.AxisPoint
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.unit.IRenderUnit
-import com.angcyo.canvas.render.unit.PxRenderUnit
+import com.angcyo.canvas.render.unit.MmRenderUnit
 import com.angcyo.canvas.render.util.createRenderPaint
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
@@ -19,7 +19,7 @@ import com.angcyo.library.ex.*
 class CanvasAxisManager(val delegate: CanvasRenderDelegate) : IRenderer {
 
     /**渲染刻度尺的单位*/
-    var renderUnit: IRenderUnit = PxRenderUnit()
+    var renderUnit: IRenderUnit = MmRenderUnit()
 
     /**X轴刻度在View中的绘制坐标*/
     @Pixel
@@ -65,7 +65,7 @@ class CanvasAxisManager(val delegate: CanvasRenderDelegate) : IRenderer {
     init {
         renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
             .remove(IRenderer.RENDERER_FLAG_ON_OUTSIDE)
-        delegate.addCanvasRenderListener(object : ICanvasRenderListener {
+        delegate.addCanvasRenderListener(object : BaseCanvasRenderListener() {
             override fun onRenderBoxBoundsUpdate(newBounds: RectF) {
                 super.onRenderBoxBoundsUpdate(newBounds)
                 updateAxisList()
@@ -330,4 +330,22 @@ class CanvasAxisManager(val delegate: CanvasRenderDelegate) : IRenderer {
     }
 
     //endregion---计算---
+
+    //region---操作---
+
+    /**更新渲染的刻度尺单位
+     * [IRenderUnit]*/
+    fun updateRenderUnit(unit: IRenderUnit) {
+        if (renderUnit == unit) {
+            return
+        }
+        val old = renderUnit
+        renderUnit = unit
+        updateAxisList()
+        delegate.dispatchRenderUnitChange(old, unit)
+        delegate.refresh()
+    }
+
+    //endregion---操作---
+
 }

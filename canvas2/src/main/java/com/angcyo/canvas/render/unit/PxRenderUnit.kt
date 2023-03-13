@@ -7,6 +7,8 @@ package com.angcyo.canvas.render.unit
  */
 class PxRenderUnit : IRenderUnit {
 
+    override fun getUnit(): String = "px"
+
     override fun getGap(scale: Float): Float {
         val base = convertValueToPixel(10f)
         return if (scale >= 4) {
@@ -23,8 +25,6 @@ class PxRenderUnit : IRenderUnit {
             base
         }
     }
-
-    override fun getUnit(): String = "px"
 
     override fun convertPixelToValue(pixel: Float): Float = pixel
 

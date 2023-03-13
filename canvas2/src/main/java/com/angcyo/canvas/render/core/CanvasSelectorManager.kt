@@ -47,7 +47,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
 
     init {
         delegate.touchManager.touchListenerList.add(this)
-        delegate.addCanvasRenderListener(object : ICanvasRenderListener {
+        delegate.addCanvasRenderListener(object : BaseCanvasRenderListener() {
             override fun onRendererListChange(
                 from: List<BaseRenderer>,
                 to: List<BaseRenderer>,

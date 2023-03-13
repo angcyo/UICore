@@ -6,6 +6,7 @@ import androidx.annotation.WorkerThread
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.unit.IRenderUnit
 
 /**
  * [ICanvasRenderView]相关事件通知
@@ -23,6 +24,9 @@ interface ICanvasRenderListener {
 
     /**[CanvasAsyncManager]*/
     fun onAsyncStateChange(uuid: String, state: Int) {}
+
+    /**[CanvasAxisManager]*/
+    fun onRenderUnitChange(from: IRenderUnit, to: IRenderUnit) {}
 
     //endregion---Base---
 

@@ -8,6 +8,7 @@ import android.view.View
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.unit.IRenderUnit
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
 import com.angcyo.library.isMain
@@ -180,6 +181,12 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     override fun dispatchAsyncStateChange(uuid: String, state: Int) {
         for (listener in renderListenerList) {
             listener.onAsyncStateChange(uuid, state)
+        }
+    }
+
+    override fun dispatchRenderUnitChange(from: IRenderUnit, to: IRenderUnit) {
+        for (listener in renderListenerList) {
+            listener.onRenderUnitChange(from, to)
         }
     }
 

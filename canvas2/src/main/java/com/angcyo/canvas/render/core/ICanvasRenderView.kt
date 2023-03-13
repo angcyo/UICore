@@ -8,6 +8,7 @@ import android.widget.OverScroller
 import androidx.annotation.WorkerThread
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.unit.IRenderUnit
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -49,6 +50,10 @@ interface ICanvasRenderView {
     /**分发异步状态发生改变
      * [CanvasAsyncManager]*/
     fun dispatchAsyncStateChange(uuid: String, state: Int)
+
+    /**分发渲染单位发生改变
+     * [CanvasUndoManager]*/
+    fun dispatchRenderUnitChange(from: IRenderUnit, to: IRenderUnit)
 
     //endregion---Base---
 
