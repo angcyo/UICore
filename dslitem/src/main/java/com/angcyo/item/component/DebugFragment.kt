@@ -70,6 +70,7 @@ open class DebugFragment : BaseDslFragment() {
             add(DebugAction(LogFile.log, LogFile.log.toLogFilePath()))
             add(DebugAction(LogFile.http, LogFile.http.toLogFilePath()))
             add(DebugAction(LogFile.error, LogFile.error.toLogFilePath()))
+            add(DebugAction(LogFile.perf, LogFile.perf.toLogFilePath()))
         }
 
         /**

@@ -36,6 +36,9 @@ object LogFile {
 
     /**http日志*/
     const val http = "http.log"
+
+    /**性能相关的日志*/
+    const val perf = "perf.log"
 }
 
 /**log文件名转全路径*/

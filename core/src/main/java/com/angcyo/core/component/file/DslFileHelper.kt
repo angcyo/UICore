@@ -138,8 +138,8 @@ fun FileTextData?.writeToCache(
     return FileUtils.writeExternal(libCacheFile, this, append, recycle)
 }
 
-/**将日志写入到指定的日志文件[logLevel.log], 默认在[logLevel]文件夹下
- * [logLevel] 是否还需要输出到控制台
+/**将日志写入到指定的日志文件[log.log], 默认在[log]文件夹下
+ * [logLevel] 同时输出到控制台的日志级别
  * [log/log.log]
  * [com.angcyo.library.utils.Constant.LOG_FOLDER_NAME]*/
 fun String.writeToLog(name: String = LogFile.log, logLevel: Int = L.NONE): String {
@@ -149,7 +149,7 @@ fun String.writeToLog(name: String = LogFile.log, logLevel: Int = L.NONE): Strin
 }
 
 /**将日志写入到[error.log]
- * [log] 是否还需要输出到控制台
+ * [logLevel] 同时输出到控制台的日志级别
  * [log/error.log]
  * */
 fun String.writeErrorLog(logLevel: Int = L.NONE): String {
@@ -158,10 +158,19 @@ fun String.writeErrorLog(logLevel: Int = L.NONE): String {
 }
 
 /**将日志写入到[http.log]
- * [log] 是否还需要输出到控制台
+ * [logLevel] 同时输出到控制台的日志级别
  * [log/http.log]
  * */
 fun String.writeHttpLog(logLevel: Int = L.NONE): String {
     writeToLog(LogFile.http, logLevel)
+    return this
+}
+
+/**将日志写入到[perf.log]
+ * [logLevel] 同时输出到控制台的日志级别
+ * [log/perf.log]
+ * */
+fun String.writePerfLog(logLevel: Int = L.INFO): String {
+    writeToLog(LogFile.perf, logLevel)
     return this
 }
