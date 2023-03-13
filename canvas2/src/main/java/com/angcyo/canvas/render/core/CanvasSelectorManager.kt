@@ -4,13 +4,17 @@ import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
-import com.angcyo.canvas.render.core.component.*
+import com.angcyo.canvas.render.core.component.BaseControlPoint
+import com.angcyo.canvas.render.core.component.BaseTouchComponent
+import com.angcyo.canvas.render.core.component.CanvasMoveSelectorComponent
+import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.library.L
 import com.angcyo.library.component.MainExecutor
+import com.angcyo.library.ex.have
 import com.angcyo.library.ex.isIntersect
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.size
@@ -60,16 +64,18 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
                 }
             }
 
-            override fun onRendererPropertyChange(
+            override fun onRendererFlagsChange(
                 renderer: BaseRenderer,
-                fromProperty: CanvasRenderProperty?,
-                toProperty: CanvasRenderProperty?,
+                oldFlags: Int,
+                newFlags: Int,
                 reason: Reason
             ) {
                 if (reason.reason == Reason.REASON_USER) {
-                    if (selectorComponent.rendererList.contains(renderer)) {
-                        if (!BaseControlPoint.isKeepGroupPropertyType(reason.controlType)) {
-                            selectorComponent.updateGroupRenderProperty(reason, delegate)
+                    if (newFlags.have(BaseRenderer.RENDERER_FLAG_REQUEST_PROPERTY)) {
+                        if (selectorComponent.rendererList.contains(renderer)) {
+                            if (!BaseControlPoint.isKeepGroupPropertyType(reason.controlType)) {
+                                selectorComponent.updateGroupRenderProperty(reason, delegate)
+                            }
                         }
                     }
                 }
@@ -104,9 +110,19 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
             //在控制点上按下
             return
         }
+
+        //是否是多指多选意图
+        var isTouchMultiSelectIntent = false
         if (delegate.touchManager.haveInterceptTarget) {
             //事件被拦截
-            return
+            if (event.actionMasked == MotionEvent.ACTION_POINTER_DOWN) {
+                if (enableTouchMultiSelect && isTouchInSelectorRenderer) {
+                    isTouchMultiSelectIntent = true
+                }
+            }
+            if (!isTouchMultiSelectIntent) {
+                return
+            }
         }
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {

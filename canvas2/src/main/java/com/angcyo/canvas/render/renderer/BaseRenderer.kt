@@ -327,6 +327,15 @@ abstract class BaseRenderer : IRenderer {
         addRenderFlag(RENDERER_FLAG_REQUEST_PROPERTY, reason, delegate)
     }
 
+    /**同时更新[renderDrawable] 和 [renderProperty]*/
+    open fun requestUpdateDrawableAndProperty(reason: Reason, delegate: CanvasRenderDelegate?) {
+        addRenderFlag(
+            RENDERER_FLAG_REQUEST_DRAWABLE or RENDERER_FLAG_REQUEST_PROPERTY,
+            reason,
+            delegate
+        )
+    }
+
     /**平移操作结束之后, 需要将矩阵[matrix]作用到[renderProperty]
      * [applyTranslateMatrix]
      * [applyRotateMatrix]

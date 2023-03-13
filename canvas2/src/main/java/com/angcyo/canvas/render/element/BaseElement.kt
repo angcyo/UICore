@@ -65,9 +65,14 @@ abstract class BaseElement : IElement {
         return result
     }
 
-    /**更新原始数据的宽高, 并且保持看起来的宽高一直*/
+    /**更新原始数据的宽高, 并且保持看起来的宽高一直
+     * [keepVisibleSize] 是否要保持可见的大小一致*/
     @Pixel
-    fun updateOriginWidthHeight(newWidth: Float, newHeight: Float) {
+    fun updateOriginWidthHeight(
+        newWidth: Float,
+        newHeight: Float,
+        keepVisibleSize: Boolean = true
+    ) {
         if (newWidth == 0f || newHeight == 0f) {
             return
         }
@@ -77,54 +82,102 @@ abstract class BaseElement : IElement {
         renderProperty.width = newWidth
         renderProperty.height = newHeight
 
-        if (oldWidth > 0 && oldHeight > 0) {
+        if (keepVisibleSize && oldWidth > 0 && oldHeight > 0) {
             renderProperty.scaleX *= oldWidth / newWidth
             renderProperty.scaleY *= oldHeight / newHeight
         }
     }
 
+    protected val _overrideMatrix = Matrix()
+
+    /**创建一个输出指定大小的[Canvas] [Picture]*/
+    protected fun createOverrideCanvas(
+        overrideWidth: Float?,
+        overrideHeight: Float?,
+        block: Canvas.() -> Unit
+    ): Picture {
+        //原始目标需要绘制的大小
+        val bounds = renderProperty.getRenderBounds()
+        val originWidth = bounds.width()
+        val originHeight = bounds.height()
+
+        var sx = 1f
+        var sy = 1f
+
+        //覆盖大小需要进行的缩放
+        if (overrideWidth != null) {
+            sx = overrideWidth / originWidth
+        }
+        if (overrideHeight != null) {
+            sy = overrideHeight / originHeight
+        }
+
+        //目标输出的大小
+        val width = originWidth * sx
+        val height = originWidth * sx
+
+        _overrideMatrix.setScale(sx, sy)
+        return withPicture(width.ceilInt(), height.ceilInt()) {
+            concat(_overrideMatrix)
+            block()
+        }
+    }
+
+    /** [overrideWidth] [overrideHeight] 需要覆盖输出的宽度 */
+    protected fun createPictureDrawable(
+        overrideWidth: Float?,
+        overrideHeight: Float?,
+        block: Canvas.() -> Unit
+    ): Drawable {
+        return PictureRenderDrawable(createOverrideCanvas(overrideWidth, overrideHeight, block))
+    }
+
+    /**[createPictureDrawable]*/
+    protected fun createPictureDrawable(
+        renderParams: RenderParams?,
+        block: Canvas.() -> Unit
+    ): Drawable {
+        return createPictureDrawable(
+            renderParams?.overrideWidth,
+            renderParams?.overrideHeight,
+            block
+        )
+    }
+
     /**根据当前的属性, 绘制一个[bitmap]
      * [overrideWidth] [overrideHeight] 需要覆盖输出的宽度
      * */
-    fun createBitmapDrawable(
+    protected fun createBitmapDrawable(
         bitmap: Bitmap,
         paint: Paint,
         overrideWidth: Float?,
         overrideHeight: Float?
     ): Drawable {
-        return PictureRenderDrawable(
-            withPicture(
-                renderProperty.width.ceilInt(),
-                renderProperty.height.ceilInt()
-            ) {
-                val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
-                drawBitmap(bitmap, renderMatrix, paint)
-            })
+        return createPictureDrawable(overrideWidth, overrideHeight) {
+            val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
+            drawBitmap(bitmap, renderMatrix, paint)
+        }
     }
 
     /**[createBitmapDrawable] */
-    fun createPathDrawable(
+    protected fun createPathDrawable(
         pathList: List<Path>?,
         paint: Paint,
         overrideWidth: Float?,
         overrideHeight: Float?
     ): Drawable {
-        return PictureRenderDrawable(
-            withPicture(
-                renderProperty.width.ceilInt(),
-                renderProperty.height.ceilInt()
-            ) {
-                if (pathList.isNullOrEmpty()) {
-                    //
-                } else {
-                    val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
-                    val newPathList = CanvasRenderHelper.translateToOrigin(pathList)
-                    for (path in newPathList!!) {
-                        path.transform(renderMatrix)
-                        drawPath(path, paint)
-                    }
+        return createPictureDrawable(overrideWidth, overrideHeight) {
+            if (pathList.isNullOrEmpty()) {
+                //
+            } else {
+                val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
+                val newPathList = CanvasRenderHelper.translateToOrigin(pathList)
+                for (path in newPathList!!) {
+                    path.transform(renderMatrix)
+                    drawPath(path, paint)
                 }
-            })
+            }
+        }
     }
 
     //endregion---方法---

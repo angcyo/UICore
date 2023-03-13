@@ -7,6 +7,7 @@ import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.Strategy
 import com.angcyo.canvas.render.element.IElement
+import com.angcyo.canvas.render.element.TextElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasElementRenderer
 import com.angcyo.library.ex.decimal
@@ -60,6 +61,15 @@ fun createRenderTextPaint(
 
 val BaseRenderer.renderElement: IElement?
     get() = if (this is CanvasElementRenderer) renderElement else null
+
+val BaseRenderer.textElement: TextElement?
+    get() {
+        val element = renderElement
+        if (element is TextElement) {
+            return element
+        }
+        return null
+    }
 
 //endregion---render---
 

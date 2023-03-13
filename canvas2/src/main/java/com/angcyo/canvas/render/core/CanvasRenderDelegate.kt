@@ -5,7 +5,9 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
+import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.data.IStateStack
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.unit.IRenderUnit
@@ -246,6 +248,20 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     /**移除一个事件监听*/
     fun removeCanvasRenderListener(listener: ICanvasRenderListener) {
         renderListenerList.remove(listener)
+    }
+
+    /**自动添加一个状态到回退栈*/
+    fun addStateToStack(
+        undoState: IStateStack,
+        redoState: IStateStack,
+        redoIt: Boolean = false,
+        reason: Reason = Reason.user.apply {
+            controlType = BaseControlPoint.CONTROL_TYPE_KEEP_GROUP_PROPERTY or
+                    BaseControlPoint.CONTROL_TYPE_DATA
+        },
+        strategy: Strategy = Strategy.normal
+    ) {
+        undoManager.addToStack(undoState, redoState, redoIt, reason, strategy)
     }
 
     //endregion---操作---
