@@ -9,9 +9,10 @@ import com.angcyo.canvas.render.core.component.BaseControl
 import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.core.component.LimitMatrixComponent
-import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.data.RenderParams
+import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.unit.IRenderUnit
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
@@ -212,14 +213,27 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         }
     }
 
-    override fun dispatchApplyMatrix(
-        delegate: CanvasRenderDelegate,
-        renderer: BaseRenderer,
-        matrix: Matrix,
-        controlType: Int
+    override fun dispatchApplyMatrix(renderer: BaseRenderer, matrix: Matrix, controlType: Int) {
+        for (listener in renderListenerList) {
+            listener.onApplyMatrix(this, renderer, matrix, controlType)
+        }
+    }
+
+    override fun dispatchSelectorRendererList(
+        selectorManager: CanvasSelectorManager,
+        selectorInfo: TouchSelectorInfo
     ) {
         for (listener in renderListenerList) {
-            listener.onApplyMatrix(delegate, renderer, matrix, controlType)
+            listener.onSelectorRendererList(selectorManager, selectorInfo)
+        }
+    }
+
+    override fun dispatchDoubleTapItem(
+        selectorManager: CanvasSelectorManager,
+        renderer: BaseRenderer
+    ) {
+        for (listener in renderListenerList) {
+            listener.onDoubleTapItem(selectorManager, renderer)
         }
     }
 

@@ -8,6 +8,7 @@ import android.widget.OverScroller
 import androidx.annotation.WorkerThread
 import com.angcyo.canvas.render.core.component.BaseControl
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.unit.IRenderUnit
 
@@ -88,11 +89,21 @@ interface ICanvasRenderView {
      * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_ROTATE]
      * */
     fun dispatchApplyMatrix(
-        delegate: CanvasRenderDelegate,
         renderer: BaseRenderer,
         matrix: Matrix,
         controlType: Int
     )
+
+    /**点击选择时, 底部有多个元素被选中的回调
+     * [com.angcyo.canvas.render.data.TouchSelectorInfo.touchRendererList]*/
+    fun dispatchSelectorRendererList(
+        selectorManager: CanvasSelectorManager,
+        selectorInfo: TouchSelectorInfo
+    )
+
+    /**双击选中某个渲染器[renderer]
+     * [com.angcyo.canvas.render.data.TouchSelectorInfo.touchRendererList]*/
+    fun dispatchDoubleTapItem(selectorManager: CanvasSelectorManager, renderer: BaseRenderer)
 
     //endregion---Base---
 

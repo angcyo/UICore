@@ -114,7 +114,10 @@ abstract class BaseRenderer : IRenderer {
 
     //region---core---
 
-    /**渲染之前的准备工作*/
+    /**渲染之前的准备工作
+     * [com.angcyo.canvas.render.element.IElement.requestElementRenderProperty]
+     * [com.angcyo.canvas.render.element.IElement.requestElementRenderDrawable]
+     * */
     protected open fun readyRenderIfNeed(params: RenderParams?) {
 
     }
@@ -344,7 +347,6 @@ abstract class BaseRenderer : IRenderer {
      * */
     open fun applyTranslateMatrix(matrix: Matrix, reason: Reason, delegate: CanvasRenderDelegate?) {
         delegate?.dispatchApplyMatrix(
-            delegate,
             this,
             matrix,
             BaseControlPoint.CONTROL_TYPE_TRANSLATE
@@ -359,7 +361,7 @@ abstract class BaseRenderer : IRenderer {
      * [applyScaleMatrix]
      * */
     open fun applyRotateMatrix(matrix: Matrix, reason: Reason, delegate: CanvasRenderDelegate?) {
-        delegate?.dispatchApplyMatrix(delegate, this, matrix, BaseControlPoint.CONTROL_TYPE_ROTATE)
+        delegate?.dispatchApplyMatrix(this, matrix, BaseControlPoint.CONTROL_TYPE_ROTATE)
         renderProperty?.applyRotateMatrix(matrix)
         addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
         updateRenderProperty(renderProperty, reason, delegate)
@@ -372,7 +374,6 @@ abstract class BaseRenderer : IRenderer {
      * */
     open fun applyScaleMatrix(matrix: Matrix, reason: Reason, delegate: CanvasRenderDelegate?) {
         delegate?.dispatchApplyMatrix(
-            delegate,
             this,
             matrix,
             BaseControlPoint.CONTROL_TYPE_SCALE
@@ -389,7 +390,7 @@ abstract class BaseRenderer : IRenderer {
         reason: Reason,
         delegate: CanvasRenderDelegate?
     ) {
-        delegate?.dispatchApplyMatrix(delegate, this, matrix, BaseControlPoint.CONTROL_TYPE_SCALE)
+        delegate?.dispatchApplyMatrix(this, matrix, BaseControlPoint.CONTROL_TYPE_SCALE)
         renderProperty?.applyScaleMatrixWithCenter(matrix, useQr)
         addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
         updateRenderProperty(renderProperty, reason, delegate)

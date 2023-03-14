@@ -18,6 +18,7 @@ import com.angcyo.library.ex.have
 import com.angcyo.library.ex.isIntersect
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.size
+import com.angcyo.library.gesture.DoubleGestureDetector2
 
 /**
  * 元素选择管理
@@ -40,6 +41,16 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
 
     /**标识是否在选中的渲染器上按下*/
     var isTouchInSelectorRenderer = false
+
+    /**双击元素检测*/
+    val doubleGestureDetector = DoubleGestureDetector2(delegate.view.context) {
+        val first = findRendererList(_tempPoint, true).firstOrNull()
+        if (first != null && first == selectorComponent.rendererList.firstOrNull()) {
+            L.d("双击渲染器:${first}")
+            delegate.touchManager.scaleComponent.ignoreHandle = true //忽略双击放大画板
+            delegate.dispatchDoubleTapItem(this, first)
+        }
+    }
 
     /**是否有选中的元素*/
     val isSelectorElement: Boolean
@@ -87,6 +98,10 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
 
     override fun dispatchTouchEvent(event: MotionEvent) {
         super.dispatchTouchEvent(event)
+
+        //双击检测
+        doubleGestureDetector.onTouchEvent(event)
+
         when (event.actionMasked) {
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 isTouchInSelectorRenderer = false
@@ -94,8 +109,10 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
                 val selectorInfo = touchSelectorInfo
                 touchSelectorInfo = null
 
-                if (selectorInfo != null && selectorInfo.touchRendererList.size() > 1) {
-                    L.d("选中多个元素...")
+                val size = selectorInfo?.touchRendererList.size()
+                if (size > 1) {
+                    delegate.dispatchSelectorRendererList(this, selectorInfo!!)
+                    L.d("选中多个元素[${size}]")
                 }
             }
         }
@@ -124,6 +141,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
                 return
             }
         }
+
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 removeDelayCancelSelectRenderer()

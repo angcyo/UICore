@@ -6,6 +6,7 @@ import androidx.annotation.WorkerThread
 import com.angcyo.canvas.render.core.component.BaseControl
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
+import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.unit.IRenderUnit
 
@@ -45,24 +46,6 @@ interface ICanvasRenderListener {
     /**当[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderMatrix]更新时回调*/
     fun onRenderBoxMatrixChange(fromMatrix: Matrix, toMatrix: Matrix) {}
 
-    /**[com.angcyo.canvas.render.core.ICanvasRenderView.dispatchApplyControlMatrix]*/
-    fun onApplyControlMatrix(
-        control: BaseControl,
-        controlRenderer: BaseRenderer,
-        controlMatrix: Matrix,
-        controlType: Int
-    ) {
-    }
-
-    /**[com.angcyo.canvas.render.core.ICanvasRenderView.dispatchApplyMatrix]*/
-    fun onApplyMatrix(
-        delegate: CanvasRenderDelegate,
-        renderer: BaseRenderer,
-        matrix: Matrix,
-        controlType: Int
-    ) {
-    }
-
     //endregion---CanvasRenderViewBox---
 
     //region---CanvasRenderer---
@@ -99,6 +82,35 @@ interface ICanvasRenderListener {
         toProperty: CanvasRenderProperty?,
         reason: Reason
     ) {
+    }
+
+    /**[com.angcyo.canvas.render.core.ICanvasRenderView.dispatchApplyControlMatrix]*/
+    fun onApplyControlMatrix(
+        control: BaseControl,
+        controlRenderer: BaseRenderer,
+        controlMatrix: Matrix,
+        controlType: Int
+    ) {
+    }
+
+    /**[com.angcyo.canvas.render.core.ICanvasRenderView.dispatchApplyMatrix]*/
+    fun onApplyMatrix(
+        delegate: CanvasRenderDelegate,
+        renderer: BaseRenderer,
+        matrix: Matrix,
+        controlType: Int
+    ) {
+    }
+
+    /**点击选择时, 底部有多个元素被选中的回调*/
+    fun onSelectorRendererList(
+        selectorManager: CanvasSelectorManager,
+        selectorInfo: TouchSelectorInfo
+    ) {
+    }
+
+    /**双击选中某个渲染器[renderer] */
+    fun onDoubleTapItem(selectorManager: CanvasSelectorManager, renderer: BaseRenderer) {
     }
 
     //endregion---CanvasRenderer---
