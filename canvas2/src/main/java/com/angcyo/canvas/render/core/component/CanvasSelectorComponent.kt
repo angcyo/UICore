@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import androidx.core.graphics.withRotation
+import androidx.core.graphics.withScale
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.annotation.RenderFlag
@@ -249,10 +250,10 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
 
     /**镜像翻转, 如果旋转的角度达到某个值时, 文本镜像一下*/
     private fun Canvas.withTextScale(rotate: Float, textBounds: RectF, block: Canvas.() -> Unit) {
-        if (rotate >= -90 && rotate <= 90) {
-            block()
+        val angle = (rotate + 360) % 360
+        if (angle > 90 && angle < 270) {
+            withScale(-1f, -1f, textBounds.centerX(), textBounds.centerY(), block)
         } else {
-            //withScale(-1f, -1f, textBounds.centerX(), textBounds.centerY(), block)
             block()
         }
     }
