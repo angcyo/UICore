@@ -8,6 +8,7 @@ import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
 import kotlin.math.atan2
+import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.math.tan
 
@@ -128,16 +129,27 @@ data class CanvasRenderProperty(
 
     //region---方法---
 
-    fun getBaseRect(result: RectF = _baseRect): RectF {
+    /**基础矩形*/
+    private fun getBaseRect(result: RectF = _baseRect): RectF {
         result.set(0f, 0f, width, height)
         return result
     }
 
-    fun getBaseMatrix(result: Matrix = _baseMatrix): Matrix {
+    /**基础矩阵, 无旋转
+     * [includeFlip] 是否需要翻转*/
+    private fun getBaseMatrix(result: Matrix = _baseMatrix, includeFlip: Boolean): Matrix {
         result.setSkew(tan(skewX.toRadians()), tan(skewY.toRadians()))
-        val scaleX = scaleX
-        val scaleY = scaleY
-        result.postScale(if (flipX) -scaleX else scaleX, if (flipY) -scaleY else scaleY)
+        if (includeFlip) {
+            result.postScale(if (flipX) -scaleX else scaleX, if (flipY) -scaleY else scaleY)
+        } else {
+            result.postScale(scaleX, scaleY)
+        }
+        return result
+    }
+
+    /**翻转矩阵*/
+    private fun flipMatrix(result: Matrix): Matrix {
+        result.postScale(if (flipX) -1f else 1f, if (flipY) -1f else 1f)
         return result
     }
 
@@ -147,9 +159,9 @@ data class CanvasRenderProperty(
 
     /**获取渲染目标时的中点坐标*/
     @CanvasInsideCoordinate
-    fun getRenderCenter(result: PointF = _centerPoint): PointF {
+    fun getRenderCenter(result: PointF = _centerPoint, includeFlip: Boolean = true): PointF {
         val rect = getBaseRect()
-        val matrix = getBaseMatrix()
+        val matrix = getBaseMatrix(_baseMatrix, includeFlip)
         matrix.mapRect(rect) //先计算出目标的宽高
 
         result.set(anchorX + rect.width() / 2, anchorY + rect.height() / 2)
@@ -209,8 +221,12 @@ data class CanvasRenderProperty(
 
     /**获取对应的的矩阵, 偏移到了[anchorX] [anchorY]
      * [includeRotate] 是否需要包含旋转信息, 否则就是缩放和倾斜信息描述的矩阵*/
-    fun getRenderMatrix(result: Matrix = _renderMatrix, includeRotate: Boolean = true): Matrix {
-        getBaseMatrix(result)
+    fun getRenderMatrix(
+        result: Matrix = _renderMatrix,
+        includeRotate: Boolean = true,
+        includeFlip: Boolean = true
+    ): Matrix {
+        getBaseMatrix(result, includeFlip)
         val centerPoint = getRenderCenter(_centerPoint)
         if (includeRotate) {
             result.postRotate(angle)
@@ -269,18 +285,22 @@ data class CanvasRenderProperty(
      * [applyScaleMatrixWithAnchor]
      * [applyScaleMatrixWithCenter]
      * */
-    fun applyScaleMatrixWithAnchor(matrix: Matrix) {
-        val target = getRenderMatrix(Matrix(), true)
-        target.postConcat(matrix)
+    fun applyScaleMatrixWithAnchor(matrix: Matrix, useQr: Boolean) {
+        if (useQr) {
+            val target = getRenderMatrix(includeRotate = true, includeFlip = false)
+            target.postConcat(matrix)
 
-        _tempPoint.set(anchorX, anchorY)
-        val anchor = _tempPoint
-        matrix.mapPoint(anchor)
+            _tempPoint.set(anchorX, anchorY)
+            val anchor = _tempPoint
+            matrix.mapPoint(anchor)
 
-        this.anchorX = anchor.x
-        this.anchorY = anchor.y
+            this.anchorX = anchor.x
+            this.anchorY = anchor.y
 
-        qrDecomposition(target)
+            qrDecomposition(target)
+        } else {
+            applyScaleMatrixWithValue(matrix)
+        }
     }
 
     /**应用一个缩放矩阵[matrix], 并调整对应的属性
@@ -293,8 +313,9 @@ data class CanvasRenderProperty(
      * [applyScaleMatrixWithCenter]
      *
      * [matrix] 当前缩放的控制矩阵
+     * [useQr] 是否要使用qr算法, 一般在群组操作时, 内部元素才需要使用qr
      * */
-    fun applyScaleMatrixWithCenter(matrix: Matrix) {
+    fun applyScaleMatrixWithCenter(matrix: Matrix, useQr: Boolean) {
         getRenderCenter(_tempPoint)
         matrix.mapPoint(_tempPoint)
 
@@ -302,9 +323,13 @@ data class CanvasRenderProperty(
         val targetCenterX = _tempPoint.x
         val targetCenterY = _tempPoint.y
 
-        val target = getRenderMatrix(Matrix(), true)
-        target.postConcat(matrix)
-        qrDecomposition(target)
+        if (useQr) {
+            val target = getRenderMatrix(includeRotate = true, includeFlip = false)
+            target.postConcat(matrix)
+            qrDecomposition(target)
+        } else {
+            applyScaleMatrixWithValue(matrix)
+        }
 
         //qr后的元素中点
         getRenderCenter(_tempPoint)
@@ -321,10 +346,10 @@ data class CanvasRenderProperty(
         this.anchorX = anchor.x
         this.anchorY = anchor.y
 
-        this.angle = (this.angle + matrix.getRotateDegrees() + 360) % 360
+        updateAngle(this.angle + matrix.getRotateDegrees())
     }
 
-    /**将[matrix]拆解成[CanvasProperty]
+    /**将[matrix]拆解成[CanvasRenderProperty]
      * QR分解
      * https://stackoverflow.com/questions/5107134/find-the-rotation-and-skew-of-a-matrix-transformation
      *
@@ -337,25 +362,28 @@ data class CanvasRenderProperty(
      * */
     private fun qrDecomposition(matrix: Matrix) {
         val angle = atan2(matrix.getSkewY(), matrix.getScaleX()).toDegrees()
-        val denom = Math.pow(matrix.getScaleX().toDouble(), 2.0) +
-                Math.pow(matrix.getSkewY().toDouble(), 2.0)
+        val denom = matrix.getScaleX().pow(2f) + matrix.getSkewY().pow(2f)
 
         val scaleX = sqrt(denom)
         val scaleY = (matrix.getScaleX() * matrix.getScaleY() -
                 matrix.getSkewX() * matrix.getSkewY()) / scaleX
 
         val skewX = atan2(
-            (matrix.getScaleX() * matrix.getSkewX() +
-                    matrix.getSkewY() * matrix.getScaleY()).toDouble(),
+            (matrix.getScaleX() * matrix.getSkewX() + matrix.getSkewY() * matrix.getScaleY()),
             denom
         ) //x倾斜的角度, 弧度单位
         val skewY = 0.0f//y倾斜的角度, 弧度单位
 
-        this.angle = angle
-        this.scaleX = scaleX.toFloat()
-        this.scaleY = scaleY.toFloat()
-        this.skewX = skewX.toDegrees().toFloat()
+        updateAngle(angle)
+        this.scaleX = scaleX
+        this.scaleY = scaleY
+        this.skewX = skewX.toDegrees()
         this.skewY = skewY
+    }
+
+    /**更新旋转角度, 强制正数*/
+    private fun updateAngle(angle: Float) {
+        this.angle = (angle + 360) % 360
     }
 
     /**应用一个翻转参数*/

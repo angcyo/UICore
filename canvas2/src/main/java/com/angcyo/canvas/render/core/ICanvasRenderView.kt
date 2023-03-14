@@ -6,6 +6,7 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import android.widget.OverScroller
 import androidx.annotation.WorkerThread
+import com.angcyo.canvas.render.core.component.BaseControl
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.unit.IRenderUnit
@@ -54,6 +55,44 @@ interface ICanvasRenderView {
     /**分发渲染单位发生改变
      * [CanvasUndoManager]*/
     fun dispatchRenderUnitChange(from: IRenderUnit, to: IRenderUnit)
+
+    /**当操作控制矩阵需要应用到属性时触发, 可以通过修改[controlMatrix]达到修改的目的
+     *
+     * [control] 当前的控制对象
+     * [controlRenderer] 当前操作的对象
+     * [controlMatrix] 当前操作的矩阵
+     *
+     * [com.angcyo.canvas.render.core.component.BaseControl.applyTranslate]
+     * [com.angcyo.canvas.render.core.component.BaseControl.applyRotate]
+     * [com.angcyo.canvas.render.core.component.BaseControl.applyScale]
+     *
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_TRANSLATE]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_WIDTH]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_HEIGHT]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_SCALE]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_ROTATE]
+     * */
+    fun dispatchApplyControlMatrix(
+        control: BaseControl,
+        controlRenderer: BaseRenderer,
+        controlMatrix: Matrix,
+        controlType: Int
+    )
+
+    /** 当需要将[matrix]应用到[renderer]时触发, 可以在此回调用进行限制操作
+     * [controlType] 控制类型
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_TRANSLATE]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_WIDTH]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_HEIGHT]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_SCALE]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_ROTATE]
+     * */
+    fun dispatchApplyMatrix(
+        delegate: CanvasRenderDelegate,
+        renderer: BaseRenderer,
+        matrix: Matrix,
+        controlType: Int
+    )
 
     //endregion---Base---
 

@@ -3,6 +3,7 @@ package com.angcyo.canvas.render.core
 import android.graphics.Matrix
 import android.graphics.RectF
 import androidx.annotation.WorkerThread
+import com.angcyo.canvas.render.core.component.BaseControl
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.renderer.BaseRenderer
@@ -43,6 +44,24 @@ interface ICanvasRenderListener {
 
     /**当[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderMatrix]更新时回调*/
     fun onRenderBoxMatrixChange(fromMatrix: Matrix, toMatrix: Matrix) {}
+
+    /**[com.angcyo.canvas.render.core.ICanvasRenderView.dispatchApplyControlMatrix]*/
+    fun onApplyControlMatrix(
+        control: BaseControl,
+        controlRenderer: BaseRenderer,
+        controlMatrix: Matrix,
+        controlType: Int
+    ) {
+    }
+
+    /**[com.angcyo.canvas.render.core.ICanvasRenderView.dispatchApplyMatrix]*/
+    fun onApplyMatrix(
+        delegate: CanvasRenderDelegate,
+        renderer: BaseRenderer,
+        matrix: Matrix,
+        controlType: Int
+    ) {
+    }
 
     //endregion---CanvasRenderViewBox---
 

@@ -5,8 +5,10 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
+import com.angcyo.canvas.render.core.component.BaseControl
 import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.core.component.LimitMatrixComponent
 import com.angcyo.canvas.render.data.IStateStack
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
@@ -52,6 +54,13 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
 
     /**异步加载管理*/
     var asyncManager = CanvasAsyncManager(this)
+
+    /**限制组件*/
+    var limitMatrixComponent: LimitMatrixComponent = LimitMatrixComponent()
+
+    init {
+        renderListenerList.add(limitMatrixComponent)
+    }
 
     //region---View视图方法---
 
@@ -189,6 +198,28 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     override fun dispatchRenderUnitChange(from: IRenderUnit, to: IRenderUnit) {
         for (listener in renderListenerList) {
             listener.onRenderUnitChange(from, to)
+        }
+    }
+
+    override fun dispatchApplyControlMatrix(
+        control: BaseControl,
+        controlRenderer: BaseRenderer,
+        controlMatrix: Matrix,
+        controlType: Int
+    ) {
+        for (listener in renderListenerList) {
+            listener.onApplyControlMatrix(control, controlRenderer, controlMatrix, controlType)
+        }
+    }
+
+    override fun dispatchApplyMatrix(
+        delegate: CanvasRenderDelegate,
+        renderer: BaseRenderer,
+        matrix: Matrix,
+        controlType: Int
+    ) {
+        for (listener in renderListenerList) {
+            listener.onApplyMatrix(delegate, renderer, matrix, controlType)
         }
     }
 

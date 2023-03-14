@@ -105,7 +105,15 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
     protected fun applyTranslate(reason: Reason, delegate: CanvasRenderDelegate?) {
         controlRendererInfo?.let { controlInfo ->
             controlInfo.restoreState(reason, Strategy.preview, delegate)
-            controlInfo.controlRenderer.applyTranslateMatrix(controlMatrix, reason, delegate)
+
+            val controlRenderer = controlInfo.controlRenderer
+            delegate?.dispatchApplyControlMatrix(
+                this,
+                controlRenderer,
+                controlMatrix,
+                BaseControlPoint.CONTROL_TYPE_TRANSLATE
+            )
+            controlRenderer.applyTranslateMatrix(controlMatrix, reason, delegate)
 
             //自动加入回退栈
             if (reason.needToStack()) {
@@ -123,7 +131,15 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
     protected fun applyRotate(reason: Reason, delegate: CanvasRenderDelegate?) {
         controlRendererInfo?.let { controlInfo ->
             controlInfo.restoreState(reason, Strategy.preview, delegate)
-            controlInfo.controlRenderer.applyRotateMatrix(controlMatrix, reason, delegate)
+
+            val controlRenderer = controlInfo.controlRenderer
+            delegate?.dispatchApplyControlMatrix(
+                this,
+                controlRenderer,
+                controlMatrix,
+                BaseControlPoint.CONTROL_TYPE_ROTATE
+            )
+            controlRenderer.applyRotateMatrix(controlMatrix, reason, delegate)
 
             //自动加入回退栈
             if (reason.needToStack()) {
@@ -141,7 +157,14 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
     protected fun applyScale(reason: Reason, delegate: CanvasRenderDelegate?) {
         controlRendererInfo?.let { controlInfo ->
             controlInfo.restoreState(reason, Strategy.preview, delegate)
+
             val controlRenderer = controlInfo.controlRenderer
+            delegate?.dispatchApplyControlMatrix(
+                this,
+                controlRenderer,
+                controlMatrix,
+                BaseControlPoint.CONTROL_TYPE_SCALE
+            )
             controlRenderer.applyScaleMatrix(controlMatrix, reason, delegate)
 
             //自动加入回退栈

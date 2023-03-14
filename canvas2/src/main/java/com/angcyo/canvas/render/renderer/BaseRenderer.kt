@@ -10,6 +10,7 @@ import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.Strategy
+import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement
@@ -342,6 +343,12 @@ abstract class BaseRenderer : IRenderer {
      * [applyScaleMatrix]
      * */
     open fun applyTranslateMatrix(matrix: Matrix, reason: Reason, delegate: CanvasRenderDelegate?) {
+        delegate?.dispatchApplyMatrix(
+            delegate,
+            this,
+            matrix,
+            BaseControlPoint.CONTROL_TYPE_TRANSLATE
+        )
         renderProperty?.applyTranslateMatrix(matrix)
         updateRenderProperty(renderProperty, reason, delegate)
     }
@@ -352,6 +359,7 @@ abstract class BaseRenderer : IRenderer {
      * [applyScaleMatrix]
      * */
     open fun applyRotateMatrix(matrix: Matrix, reason: Reason, delegate: CanvasRenderDelegate?) {
+        delegate?.dispatchApplyMatrix(delegate, this, matrix, BaseControlPoint.CONTROL_TYPE_ROTATE)
         renderProperty?.applyRotateMatrix(matrix)
         addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
         updateRenderProperty(renderProperty, reason, delegate)
@@ -363,6 +371,12 @@ abstract class BaseRenderer : IRenderer {
      * [applyScaleMatrix]
      * */
     open fun applyScaleMatrix(matrix: Matrix, reason: Reason, delegate: CanvasRenderDelegate?) {
+        delegate?.dispatchApplyMatrix(
+            delegate,
+            this,
+            matrix,
+            BaseControlPoint.CONTROL_TYPE_SCALE
+        )
         renderProperty?.applyScaleMatrixWithValue(matrix)
         addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
         updateRenderProperty(renderProperty, reason, delegate)
@@ -371,10 +385,12 @@ abstract class BaseRenderer : IRenderer {
     /**[applyScaleMatrix]*/
     open fun applyScaleMatrixWithCenter(
         matrix: Matrix,
+        useQr: Boolean,
         reason: Reason,
         delegate: CanvasRenderDelegate?
     ) {
-        renderProperty?.applyScaleMatrixWithCenter(matrix)
+        delegate?.dispatchApplyMatrix(delegate, this, matrix, BaseControlPoint.CONTROL_TYPE_SCALE)
+        renderProperty?.applyScaleMatrixWithCenter(matrix, useQr)
         addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
         updateRenderProperty(renderProperty, reason, delegate)
     }

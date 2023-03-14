@@ -199,6 +199,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 _invertAnchorPoint.y
             )
 
+            //子元素因为需要qr计算, 所以需要重新生成新的适用于子元素的矩阵
             elementMatrix.set(invertRotateMatrix)
             elementMatrix.postConcat(scaleMatrix)
             elementMatrix.postConcat(rotateMatrix)
@@ -208,14 +209,10 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
             //sub
             for (renderer in rendererList) {
-                if (renderer is CanvasGroupRenderer) {
+                if (renderer is CanvasGroupRenderer || rendererList.size() <= 1) {
                     renderer.applyScaleMatrix(matrix, reason, delegate)
                 } else {
-                    renderer.applyScaleMatrixWithCenter(
-                        elementMatrix,
-                        reason,
-                        delegate
-                    )
+                    renderer.applyScaleMatrixWithCenter(elementMatrix, true, reason, delegate)
                 }
             }
         }
@@ -223,12 +220,14 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
     override fun applyScaleMatrixWithCenter(
         matrix: Matrix,
+        useQr: Boolean,
         reason: Reason,
         delegate: CanvasRenderDelegate?
     ) {
-        super.applyScaleMatrixWithCenter(matrix, reason, delegate)
+        super.applyScaleMatrixWithCenter(matrix, false, reason, delegate)
         for (renderer in rendererList) {
-            renderer.applyScaleMatrixWithCenter(matrix, reason, delegate)
+            //所有子元素, 需要使用qr
+            renderer.applyScaleMatrixWithCenter(matrix, true, reason, delegate)
         }
     }
 

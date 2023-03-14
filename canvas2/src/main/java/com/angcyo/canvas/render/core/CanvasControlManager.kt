@@ -8,7 +8,6 @@ import android.view.MotionEvent
 import com.angcyo.canvas.render.core.component.*
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
-import com.angcyo.canvas.render.unit.IRenderUnit
 import com.angcyo.library.ex.mapPoint
 import com.angcyo.library.ex.remove
 
