@@ -76,12 +76,20 @@ val BaseRenderer.textElement: TextElement?
 //region---util---
 
 /**保留小数点后几位*/
-fun Float.canvasDecimal(digit: Int = 2, fadedUp: Boolean = true): String {
-    return this.toDouble().decimal(digit, fadedUp)
+fun Float.canvasDecimal(
+    digit: Int = 2,
+    fadedUp: Boolean = true,
+    ensureInt: Boolean = true
+): String {
+    return decimal(digit, ensureInt, fadedUp)
 }
 
-fun Double.canvasDecimal(digit: Int = 2, fadedUp: Boolean = true): String {
-    return decimal(digit, fadedUp)
+fun Double.canvasDecimal(
+    digit: Int = 2,
+    fadedUp: Boolean = true,
+    ensureInt: Boolean = true
+): String {
+    return decimal(digit, ensureInt, fadedUp)
 }
 
 /**获取2个点之间的距离, 勾股定律*/
