@@ -4,7 +4,9 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.data.RenderParams
+import com.angcyo.canvas.render.renderer.BaseRenderer
 
 /**
  * 单个元素, 或者多个元素
@@ -14,6 +16,9 @@ import com.angcyo.canvas.render.data.RenderParams
 interface IElement {
 
     //region---core---
+
+    /**存档一个元素的状态, 后续用来恢复/重做*/
+    fun createStateStack(renderer: BaseRenderer): IStateStack
 
     /**请求获取元素渲染时, 相关的属性信息*/
     fun requestElementRenderProperty(): CanvasRenderProperty

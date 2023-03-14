@@ -1,6 +1,8 @@
 package com.angcyo.canvas.render.data
 
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.state.PropertyStateStack
+import com.angcyo.canvas.render.state.RendererState
 
 /**
  * 平移/旋转/缩放控制渲染器时的存档信息

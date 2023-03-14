@@ -1,45 +1,42 @@
-package com.angcyo.canvas.render.data
+package com.angcyo.canvas.render.state
 
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.Strategy
-import com.angcyo.canvas.render.element.TextElement
+import com.angcyo.canvas.render.element.BitmapElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.util.renderElement
 
 /**
- * 文本状态存储
+ * 图片状态存储, 用来恢复/重做
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
- * @since 2023/03/13
+ * @since 2023/03/14
  */
-open class TextStateStack(val renderer: BaseRenderer) : PropertyStateStack(), IStateStack {
+open class BitmapStateStack(val renderer: BaseRenderer) : PropertyStateStack() {
 
-    protected val element: TextElement?
+    protected val bitmapElement: BitmapElement?
         get() {
             val element = renderer.renderElement
-            if (element is TextElement) {
+            if (element is BitmapElement) {
                 return element
             }
             return null
         }
 
-    /**保存的文本属性数据*/
-    var textProperty: TextProperty? = null
+    var operateBitmap = bitmapElement?.originBitmap
 
-    init {
-        saveState(renderer)
-    }
+    var renderBitmap = bitmapElement?.renderBitmap
 
     override fun saveState(renderer: BaseRenderer) {
         super.saveState(renderer)
-        textProperty = element?.textProperty?.copy()
+        operateBitmap = bitmapElement?.originBitmap
+        renderBitmap = bitmapElement?.renderBitmap
     }
 
     override fun restoreState(reason: Reason, strategy: Strategy, delegate: CanvasRenderDelegate?) {
-        textProperty?.let {
-            element?.textProperty = it
-        }
+        bitmapElement?.originBitmap = operateBitmap
+        bitmapElement?.renderBitmap = renderBitmap
         super.restoreState(reason, strategy, delegate)
-        renderer.requestUpdateDrawableAndProperty(reason, delegate)
     }
+
 }

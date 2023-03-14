@@ -6,9 +6,10 @@ import android.widget.LinearLayout
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.component.BaseControlPoint
+import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TextProperty
-import com.angcyo.canvas.render.data.TextStateStack
+import com.angcyo.canvas.render.state.TextStateStack
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.util.createRenderTextPaint
 import com.angcyo.library.annotation.Pixel
@@ -71,6 +72,8 @@ open class TextElement : BaseElement() {
     /**获取每一行的文本*/
     protected fun String?.lineTextList(): List<String> = this?.lines() ?: emptyList()
 
+    override fun createStateStack(renderer: BaseRenderer): IStateStack = TextStateStack(renderer)
+
     override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? {
         updatePaint()
         return createPictureDrawable(renderParams) {
@@ -114,7 +117,7 @@ open class TextElement : BaseElement() {
     //region---操作---
 
     /**更新文本, 并保持可视化的宽高不变*/
-    fun updateOriginText(text: String?, keepVisibleSize: Boolean = false) {
+    open fun updateOriginText(text: String?, keepVisibleSize: Boolean = false) {
         textProperty.text = text
         updateOriginWidthHeight(calcLineTextWidth(text), calcLineTextHeight(text), keepVisibleSize)
     }
@@ -129,7 +132,7 @@ open class TextElement : BaseElement() {
     ) {
         renderer ?: return
         //用来恢复的状态
-        val undoState = TextStateStack(renderer)
+        val undoState = createStateStack(renderer)
 
         textProperty.block()//do
 
@@ -145,7 +148,7 @@ open class TextElement : BaseElement() {
             }
         }
 
-        val redoState = TextStateStack(renderer)
+        val redoState = createStateStack(renderer)
         renderer.requestUpdateDrawableAndProperty(reason, delegate)
         delegate?.addStateToStack(undoState, redoState, reason = reason)
     }
