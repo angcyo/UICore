@@ -420,8 +420,9 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     fun preview(
         @Pixel bounds: RectF? = null,
         overrideSize: Float? = null,
-        rendererList: List<BaseRenderer> = renderManager.elementRendererList
-    ): Bitmap {
+        rendererList: List<BaseRenderer>? = renderManager.elementRendererList
+    ): Bitmap? {
+        rendererList ?: return null
         val rect = RectF(Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE)
         if (bounds == null) {
             for (renderer in rendererList) {
