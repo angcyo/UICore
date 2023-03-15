@@ -242,6 +242,12 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         }
     }
 
+    override fun dispatchControlHappen(controlPoint: BaseControl, end: Boolean) {
+        for (listener in renderListenerList) {
+            listener.onControlHappen(controlPoint, end)
+        }
+    }
+
     //endregion---ICanvasRenderView---
 
     //region---CanvasRenderer---

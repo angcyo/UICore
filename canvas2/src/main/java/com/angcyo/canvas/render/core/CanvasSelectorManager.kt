@@ -4,10 +4,7 @@ import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
-import com.angcyo.canvas.render.core.component.BaseControlPoint
-import com.angcyo.canvas.render.core.component.BaseTouchComponent
-import com.angcyo.canvas.render.core.component.CanvasMoveSelectorComponent
-import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
+import com.angcyo.canvas.render.core.component.*
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
@@ -60,9 +57,23 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
 
     private val _tempPoint = PointF()
 
+    /**是否移动过元素*/
+    private var _isTranslateRenderer = false
+
     init {
         delegate.touchManager.touchListenerList.add(this)
         delegate.addCanvasRenderListener(object : BaseCanvasRenderListener() {
+
+            override fun onControlHappen(controlPoint: BaseControl, end: Boolean) {
+                if (controlPoint is TranslateRendererControl) {
+                    _isTranslateRenderer = if (end) {
+                        controlPoint.isControlHappen
+                    } else {
+                        false
+                    }
+                }
+            }
+
             override fun onElementRendererListChange(
                 from: List<BaseRenderer>,
                 to: List<BaseRenderer>,
@@ -91,8 +102,9 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
                     } else if (reason.renderFlag.have(BaseRenderer.RENDERER_FLAG_UNLOCK) ||
                         reason.renderFlag.have(BaseRenderer.RENDERER_FLAG_VISIBLE)
                     ) {
+                        //锁定元素/隐藏元素后
                         if (selectorComponent.rendererList.contains(renderer)) {
-                            selectorComponent.updateGroupRenderProperty(reason, delegate)
+                            selectorComponent.removeSelectorRenderer(renderer, reason)
                         }
                     }
                 }
@@ -116,7 +128,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
                 touchSelectorInfo = null
 
                 val size = selectorInfo?.touchRendererList.size()
-                if (size > 1 && !delegate.controlManager.translateControl.isControlHappen) {
+                if (size > 1 && !_isTranslateRenderer) {
                     delegate.dispatchSelectorRendererList(this, selectorInfo!!)
                     L.d("选中多个元素[${size}]")
                 }

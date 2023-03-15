@@ -30,6 +30,9 @@ interface ICanvasRenderListener {
     /**[CanvasAxisManager]*/
     fun onRenderUnitChange(from: IRenderUnit, to: IRenderUnit) {}
 
+    /**[CanvasControlManager]*/
+    fun onControlHappen(controlPoint: BaseControl, end: Boolean) {}
+
     //endregion---Base---
 
     //region---CanvasRenderViewBox---

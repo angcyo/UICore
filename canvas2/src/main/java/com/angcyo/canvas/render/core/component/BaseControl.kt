@@ -188,10 +188,12 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
         controlMatrix.reset()
         handleControl = true
         controlRendererInfo = ControlRendererInfo(render)
+        controlManager.delegate.dispatchControlHappen(this, false)
     }
 
     /**结束控制*/
     open fun endControl() {
+        controlManager.delegate.dispatchControlHappen(this, true)
         handleControl = false
         isControlHappen = false
         controlRendererInfo = null

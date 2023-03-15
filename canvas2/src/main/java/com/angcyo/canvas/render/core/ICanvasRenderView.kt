@@ -105,6 +105,18 @@ interface ICanvasRenderView {
      * [com.angcyo.canvas.render.data.TouchSelectorInfo.touchRendererList]*/
     fun dispatchDoubleTapItem(selectorManager: CanvasSelectorManager, renderer: BaseRenderer)
 
+    /**
+     * 当有触发了控制点时
+     *
+     * [controlPoint] 对应的控制点
+     * [end] 是否控制结束
+     *
+     * [RotateControlPoint]
+     * [ScaleControlPoint]
+     * [TranslateRendererControl]
+     * */
+    fun dispatchControlHappen(controlPoint: BaseControl, end: Boolean)
+
     //endregion---Base---
 
     //region---CanvasRenderViewBox---
