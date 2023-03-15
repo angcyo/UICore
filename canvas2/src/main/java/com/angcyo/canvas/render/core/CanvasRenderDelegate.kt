@@ -1,8 +1,12 @@
 package com.angcyo.canvas.render.core
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
+import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.core.component.BaseControl
 import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
@@ -10,15 +14,14 @@ import com.angcyo.canvas.render.core.component.LimitMatrixComponent
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.unit.IRenderUnit
-import com.angcyo.canvas.render.util.createOverrideBitmapCanvas
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
 import com.angcyo.library.isMain
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -313,17 +316,20 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
 
     /**将画板移动到可以完全显示出[rect]
      * [rect] 坐标系中的矩形坐标
-     * [scale] 是否要缩放, 以适应过大的矩形
-     * [lockScale] 锁定缩放的比例
+     * [zoomIn]  当矩形很小的时候, 是否要放大.
+     * [zoomOut] 当矩形很大的时候, 是否要缩小.
+     * [lockScale] 锁定缩放的比例, 等比
      * [margin] 边缘额外显示的距离
      * [offsetRectTop] 自动偏移到[rect]的顶部
      * [offsetX] 额外偏移的x
      * [offsetY] 额外偏移的y
      * */
     fun showRectBounds(
+        @CanvasInsideCoordinate
         rect: RectF,
         margin: Float = 4f * dp,
-        scale: Boolean = true,
+        zoomIn: Boolean = true,
+        zoomOut: Boolean = true,
         lockScale: Boolean = true,
         anim: Boolean = true,
         offsetRectTop: Boolean = false,
@@ -337,7 +343,8 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
                 showRectBounds(
                     rect,
                     margin,
-                    scale,
+                    zoomIn,
+                    zoomOut,
                     lockScale,
                     anim,
                     offsetRectTop,
@@ -349,14 +356,15 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
             return
         }
 
-        val centerPoint = Point()
-        renderViewBox.getRenderCenterInside()
-        /*
+        val contentWidth = renderViewBox.renderBounds.width()
+        val contentHeight = renderViewBox.renderBounds.height()
+        val centerX = contentWidth / 2
+        val centerY = contentHeight / 2
+        val originPoint = renderViewBox.getOriginPoint()
+
         //先将坐标系移动到view的中心
-        val coordinateTranslateX =
-            renderViewBox.getContentCenterX() - renderViewBox.getCoordinateSystemX()
-        val coordinateTranslateY =
-            renderViewBox.getContentCenterY() - renderViewBox.getCoordinateSystemY()
+        val coordinateTranslateX = centerX - originPoint.x
+        val coordinateTranslateY = centerY - originPoint.y
 
         //再计算目标中心需要偏移的距离量
         val translateX = coordinateTranslateX - rect.centerX()
@@ -369,36 +377,29 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         val width = rect.width() + margin * 2
         val height = rect.height() + margin * 2
 
-        val contentWidth = renderViewBox.getContentWidth()
-        val contentHeight = renderViewBox.getContentHeight()
-
         var scaleX = 1f
         var scaleY = 1f
 
-        if (width > contentWidth || height > contentHeight) {
-            if (scale) {
-                //自动缩放
-                val scaleCenterX = renderViewBox.getContentCenterX()
-                val scaleCenterY = renderViewBox.getContentCenterY()
+        if (((width > contentWidth || height > contentHeight) && zoomOut) ||
+            (width < contentWidth || height < contentHeight) && zoomIn
+        ) {
+            scaleX = (contentWidth - margin * 2) / rect.width()
+            scaleY = (contentHeight - margin * 2) / rect.height()
 
-                scaleX = (contentWidth - margin * 2) / rect.width()
-                scaleY = (contentHeight - margin * 2) / rect.height()
-
-                if (lockScale) {
-                    val targetScale = min(scaleX, scaleY)
-                    scaleX = targetScale
-                    scaleY = targetScale
-                }
-                matrix.postScale(
-                    scaleX,
-                    scaleY,
-                    scaleCenterX,
-                    scaleCenterY
-                )
+            if (lockScale) {
+                scaleX = min(scaleX, scaleY)
+                scaleY = scaleX
             }
-        } else {
-            //不处理自动放大的情况, 只处理平移
         }
+
+        //自动缩小
+        //自动放大
+        matrix.postScale(
+            scaleX,
+            scaleY,
+            centerX,
+            centerY
+        )
 
         //偏移量的平移
         matrix.postTranslate(offsetX, offsetY)
@@ -409,7 +410,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         }
 
         //更新
-        renderViewBox.changeRenderMatrix(matrix, anim, finish)*/
+        renderViewBox.changeRenderMatrix(matrix, anim, finish)
     }
 
     /**创建一个预览图
@@ -422,28 +423,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         overrideSize: Float? = null,
         rendererList: List<BaseRenderer>? = renderManager.elementRendererList
     ): Bitmap? {
-        rendererList ?: return null
-        val rect = RectF(Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE)
-        if (bounds == null) {
-            for (renderer in rendererList) {
-                renderer.renderProperty?.getRenderBounds()?.let {
-                    rect.set(
-                        min(it.left, rect.left),
-                        min(it.top, rect.top),
-                        max(it.right, rect.right),
-                        max(it.bottom, rect.bottom)
-                    )
-                }
-            }
-        } else {
-            rect.set(bounds)
-        }
-        return createOverrideBitmapCanvas(rect.width(), rect.height(), overrideSize) {
-            translate(-rect.left, -rect.top)
-            for (renderer in rendererList) {
-                renderer.renderOnInside(this, RenderParams())
-            }
-        }
+        return CanvasGroupRenderer.createGroupRenderBitmap(rendererList, overrideSize, bounds)
     }
 
     //endregion---操作---

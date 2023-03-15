@@ -27,6 +27,7 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
 
     /**这个矩形表示当前的绘制, 需要在View的这个位置进行.
      * 超过这个位置的像素都应该被clip
+     * 在[View]的这个位置绘制
      * [updateRenderBounds] 请使用此方法进行数据更新*/
     @Pixel
     val renderBounds: RectF = RectF(0f, 0f, 0f, 0f)

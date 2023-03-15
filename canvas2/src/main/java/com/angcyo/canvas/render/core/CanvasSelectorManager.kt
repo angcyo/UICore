@@ -88,6 +88,12 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
                                 selectorComponent.updateGroupRenderProperty(reason, delegate)
                             }
                         }
+                    } else if (reason.renderFlag.have(BaseRenderer.RENDERER_FLAG_UNLOCK) ||
+                        reason.renderFlag.have(BaseRenderer.RENDERER_FLAG_VISIBLE)
+                    ) {
+                        if (selectorComponent.rendererList.contains(renderer)) {
+                            selectorComponent.updateGroupRenderProperty(reason, delegate)
+                        }
                     }
                 }
             }

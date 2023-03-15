@@ -6,6 +6,7 @@ import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.util.CanvasRenderHelper
 import com.angcyo.canvas.render.util.PictureRenderDrawable
+import com.angcyo.canvas.render.util.createOverridePictureCanvas
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.contains
 import com.angcyo.library.ex.intersect
@@ -93,7 +94,7 @@ abstract class BaseElement : IElement {
         val bounds = renderProperty.getRenderBounds()
         val originWidth = bounds.width()
         val originHeight = bounds.height()
-        return com.angcyo.canvas.render.util.createOverridePictureCanvas(
+        return createOverridePictureCanvas(
             originWidth,
             originHeight,
             overrideSize,

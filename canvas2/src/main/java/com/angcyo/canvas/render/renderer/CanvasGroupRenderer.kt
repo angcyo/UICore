@@ -1,6 +1,7 @@
 package com.angcyo.canvas.render.renderer
 
 import android.graphics.*
+import android.graphics.drawable.Drawable
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withSave
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
@@ -9,6 +10,10 @@ import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement
+import com.angcyo.canvas.render.util.PictureRenderDrawable
+import com.angcyo.canvas.render.util.createOverrideBitmapCanvas
+import com.angcyo.canvas.render.util.createOverridePictureCanvas
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.max
@@ -21,10 +26,93 @@ import kotlin.math.min
  */
 open class CanvasGroupRenderer : BaseRenderer() {
 
+    companion object {
+
+        /**计算[rendererList]的bounds范围
+         * [bounds] 强制指定, 指定后不计算*/
+        fun computeBounds(rendererList: List<BaseRenderer>?, @Pixel bounds: RectF? = null): RectF {
+            if (bounds == null) {
+                if (rendererList == null) {
+                    return RectF(0f, 0f, 0f, 0f)
+                }
+                val rect =
+                    RectF(Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE)
+                var isSet = false
+                for (renderer in rendererList) {
+                    renderer.renderProperty?.getRenderBounds()?.let {
+                        isSet = true
+                        rect.set(
+                            min(it.left, rect.left),
+                            min(it.top, rect.top),
+                            max(it.right, rect.right),
+                            max(it.bottom, rect.bottom)
+                        )
+                    }
+                }
+                if (!isSet) {
+                    rect.set(0f, 0f, 0f, 0f)
+                }
+                return rect
+            } else {
+                return bounds
+            }
+        }
+
+        /**[rendererList] 需要绘制的渲染器
+         * [overrideSize] 需要等比覆盖输出的大小
+         * [bounds] 指定输出的绘制位置*/
+        fun createGroupRenderDrawable(
+            rendererList: List<BaseRenderer>?,
+            overrideSize: Float? = null,
+            @Pixel bounds: RectF? = null
+        ): Drawable? {
+            rendererList ?: return null
+            val rect = computeBounds(rendererList, bounds)
+            return PictureRenderDrawable(createOverridePictureCanvas(
+                rect.width(),
+                rect.height(),
+                overrideSize
+            ) {
+                translate(-rect.left, -rect.top)
+                val params = RenderParams()
+                for (renderer in rendererList) {
+                    renderer.renderOnInside(this, params)
+                }
+            })
+        }
+
+        /**[rendererList] 需要绘制的渲染器
+         * [overrideSize] 需要等比覆盖输出的大小
+         * [bounds] 指定输出的绘制位置*/
+        fun createGroupRenderBitmap(
+            rendererList: List<BaseRenderer>?,
+            overrideSize: Float? = null,
+            @Pixel bounds: RectF? = null
+        ): Bitmap? {
+            rendererList ?: return null
+            val rect = computeBounds(rendererList, bounds)
+            return createOverrideBitmapCanvas(rect.width(), rect.height(), overrideSize) {
+                translate(-rect.left, -rect.top)
+                val params = RenderParams()
+                for (renderer in rendererList) {
+                    renderer.renderOnInside(this, params)
+                }
+            }
+        }
+
+    }
+
     /**组内所有渲染器*/
     val rendererList = CopyOnWriteArrayList<BaseRenderer>()
 
     //region---core---
+
+    override fun requestRenderDrawable(renderParams: RenderParams?): Drawable? {
+        if (renderDrawable == null) {
+            renderDrawable = createGroupRenderDrawable(rendererList, renderParams?.overrideSize)
+        }
+        return renderDrawable
+    }
 
     /**更新渲染时, 需要的一些数据*/
     override fun readyRenderIfNeed(params: RenderParams?) {
@@ -270,6 +358,20 @@ open class CanvasGroupRenderer : BaseRenderer() {
             result.initWithRect(rect, 0f)
         }
         return result
+    }
+
+    override fun updateLock(lock: Boolean, reason: Reason, delegate: CanvasRenderDelegate?) {
+        super.updateLock(lock, reason, delegate)
+        for (renderer in rendererList) {
+            renderer.updateLock(lock, reason, delegate)
+        }
+    }
+
+    override fun updateVisible(visible: Boolean, reason: Reason, delegate: CanvasRenderDelegate?) {
+        super.updateVisible(visible, reason, delegate)
+        for (renderer in rendererList) {
+            renderer.updateVisible(visible, reason, delegate)
+        }
     }
 
     //endregion---core---

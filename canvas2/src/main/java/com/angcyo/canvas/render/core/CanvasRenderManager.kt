@@ -5,6 +5,7 @@ import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasMonitorRenderer
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.ex.isChange
 import com.angcyo.library.ex.resetAll
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -154,6 +155,48 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
             result
         } else {
             elementRendererList
+        }
+    }
+
+    /**排序[elementRendererList] [rendererList] 最后的顺序结果*/
+    fun arrangeSort(rendererList: List<BaseRenderer>, strategy: Strategy) {
+        val newList = rendererList.toList()
+        val oldList = elementRendererList.toList()
+        if (oldList.isChange(newList)) {
+            //数据改变过
+            delegate.undoManager.addAndRedo(strategy, true, {
+                elementRendererList.resetAll(oldList)
+                delegate.dispatchElementRendererListChange(newList, oldList, rendererList)
+                delegate.refresh()
+            }) {
+                elementRendererList.resetAll(newList)
+                delegate.dispatchElementRendererListChange(oldList, newList, rendererList)
+                delegate.refresh()
+            }
+        }
+    }
+
+    /**更新渲染器的可见性*/
+    fun updateRendererVisible(
+        rendererList: List<BaseRenderer>,
+        Visible: Boolean,
+        reason: Reason,
+        delegate: CanvasRenderDelegate?
+    ) {
+        for (renderer in rendererList) {
+            renderer.updateVisible(Visible, reason, delegate)
+        }
+    }
+
+    /**更新渲染器的锁定性*/
+    fun updateRendererLock(
+        rendererList: List<BaseRenderer>,
+        lock: Boolean,
+        reason: Reason,
+        delegate: CanvasRenderDelegate?
+    ) {
+        for (renderer in rendererList) {
+            renderer.updateLock(lock, reason, delegate)
         }
     }
 

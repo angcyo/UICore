@@ -119,7 +119,15 @@ abstract class BaseRenderer : IRenderer {
      * [com.angcyo.canvas.render.element.IElement.requestElementRenderDrawable]
      * */
     protected open fun readyRenderIfNeed(params: RenderParams?) {
+        val requestProperty = renderFlags.have(RENDERER_FLAG_REQUEST_PROPERTY)
+        if (requestProperty) {
+            renderProperty = null
+        }
 
+        val requestDrawable = renderFlags.have(RENDERER_FLAG_REQUEST_DRAWABLE)
+        if (requestDrawable) {
+            renderDrawable = null
+        }
     }
 
     /**
@@ -258,6 +266,9 @@ abstract class BaseRenderer : IRenderer {
      * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_KEEP_GROUP_PROPERTY]
      * */
     open fun isSupportControlPoint(type: Int): Boolean = true
+
+    /**获取渲染器用来渲染的[Drawable]*/
+    open fun requestRenderDrawable(renderParams: RenderParams?): Drawable? = renderDrawable
 
     //endregion---core---
 
