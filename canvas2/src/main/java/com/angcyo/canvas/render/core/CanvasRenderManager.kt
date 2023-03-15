@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.core
 
 import android.graphics.Canvas
 import com.angcyo.canvas.render.data.RenderParams
+import com.angcyo.canvas.render.element.IElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasMonitorRenderer
 import com.angcyo.library.annotation.CallPoint
@@ -67,13 +68,23 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     //region---操作---
 
     /**添加一个渲染器*/
-    fun addElementRenderer(render: BaseRenderer, selector: Boolean, strategy: Strategy) {
-        addElementRenderer(listOf(render), selector, strategy)
+    fun addElementRenderer(
+        render: BaseRenderer,
+        selector: Boolean,
+        reason: Reason,
+        strategy: Strategy
+    ) {
+        addElementRenderer(listOf(render), selector, reason, strategy)
     }
 
     /**添加一个集合渲染器
      * [selector] 是否要选中最新的元素*/
-    fun addElementRenderer(list: List<BaseRenderer>, selector: Boolean, strategy: Strategy) {
+    fun addElementRenderer(
+        list: List<BaseRenderer>,
+        selector: Boolean,
+        reason: Reason,
+        strategy: Strategy
+    ) {
         val from = elementRendererList.toList()
         elementRendererList.addAll(list)
         val to = elementRendererList.toList()
@@ -89,7 +100,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         }
 
         if (selector) {
-            delegate.selectorManager.resetSelectorRenderer(list, Reason.init)
+            delegate.selectorManager.resetSelectorRenderer(list, reason)
         }
     }
 
@@ -156,6 +167,16 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         } else {
             elementRendererList
         }
+    }
+
+    /**获取所有渲染器对应的元素列表 */
+    fun getAllElementList(): List<IElement> {
+        val result = mutableListOf<IElement>()
+        val rendererList = getAllElementRendererList(true)
+        for (renderer in rendererList) {
+            result.addAll(renderer.getElementList())
+        }
+        return result
     }
 
     /**排序[elementRendererList] [rendererList] 最后的顺序结果*/

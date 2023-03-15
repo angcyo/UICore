@@ -19,19 +19,19 @@ import com.angcyo.library.ex.remove
 class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispatch(),
     ICanvasRenderListener, ICanvasTouchListener, IRenderer {
 
-    /**删除控制点*/
+    /**元素删除控制点*/
     var deleteControlPoint = DeleteControlPoint(this)
 
-    /**旋转控制点*/
+    /**元素旋转控制点*/
     var rotateControlPoint = RotateControlPoint(this)
 
-    /**缩放控制点*/
+    /**元素缩放控制点*/
     var scaleControlPoint = ScaleControlPoint(this)
 
-    /**锁定控制点*/
+    /**元素锁定控制点*/
     var lockControlPoint = LockControlPoint(this)
 
-    /**平移操作*/
+    /**元素平移操作*/
     var translateControl = TranslateRendererControl(this)
 
     /**当前按下的控制点*/

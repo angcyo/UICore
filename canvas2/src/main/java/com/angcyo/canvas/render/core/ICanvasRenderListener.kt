@@ -58,14 +58,6 @@ interface ICanvasRenderListener {
     ) {
     }
 
-    /**选中的元素, 改变时回调*/
-    fun onSelectorRendererChange(
-        selectorComponent: CanvasSelectorComponent,
-        from: List<BaseRenderer>,
-        to: List<BaseRenderer>
-    ) {
-    }
-
     /**[com.angcyo.canvas.render.renderer.BaseRenderer.renderFlags]改变时触发的回调*/
     fun onRendererFlagsChange(
         renderer: BaseRenderer,
@@ -99,6 +91,14 @@ interface ICanvasRenderListener {
         renderer: BaseRenderer,
         matrix: Matrix,
         controlType: Int
+    ) {
+    }
+
+    /**选中的元素, 改变时回调*/
+    fun onSelectorRendererChange(
+        selectorComponent: CanvasSelectorComponent,
+        from: List<BaseRenderer>,
+        to: List<BaseRenderer>
     ) {
     }
 

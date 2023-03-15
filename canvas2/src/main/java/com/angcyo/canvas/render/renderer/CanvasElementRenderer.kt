@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.renderer
 
 import android.graphics.PointF
 import android.graphics.RectF
+import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
@@ -24,6 +25,10 @@ class CanvasElementRenderer : BaseRenderer() {
         }
 
     //region---core---
+
+    override fun requestRenderDrawable(renderParams: RenderParams?): Drawable? {
+        return renderElement?.requestElementRenderDrawable(renderParams)
+    }
 
     /**更新渲染时, 需要的一些数据*/
     override fun readyRenderIfNeed(params: RenderParams?) {

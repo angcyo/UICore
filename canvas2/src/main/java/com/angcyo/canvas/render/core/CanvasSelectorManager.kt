@@ -116,7 +116,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
                 touchSelectorInfo = null
 
                 val size = selectorInfo?.touchRendererList.size()
-                if (size > 1) {
+                if (size > 1 && !delegate.controlManager.translateControl.isControlHappen) {
                     delegate.dispatchSelectorRendererList(this, selectorInfo!!)
                     L.d("选中多个元素[${size}]")
                 }
