@@ -10,8 +10,8 @@ import com.angcyo.canvas.render.element.IElement
 import com.angcyo.canvas.render.element.TextElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasElementRenderer
-import com.angcyo.library.ex.decimal
-import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.*
+import kotlin.math.min
 import kotlin.math.sqrt
 
 /**一些工具扩展
@@ -19,7 +19,85 @@ import kotlin.math.sqrt
  * @since 2023/02/11
  */
 
-//region---1---
+//region---Canvas---
+
+private val _overrideMatrix = Matrix()
+
+/**创建一个输出等比指定大小的矩阵
+ * [overrideWidth] 输出的宽度
+ * [overrideHeight] 输出的高度
+ * 宽高同时指定时, 则任意比例缩放. 只指定1个时, 等比缩放
+ * */
+fun createOverrideMatrix(
+    originWidth: Float,
+    originHeight: Float,
+    overrideWidth: Float?,
+    overrideHeight: Float? = null,
+    result: Matrix = _overrideMatrix
+): Matrix {
+    var sx = 1f
+    var sy = 1f
+    //覆盖大小需要进行的缩放
+    if (overrideWidth != null && overrideHeight != null) {
+        //任意比例
+        sx = overrideWidth / originWidth
+        sy = overrideHeight / originHeight
+    } else if (overrideWidth != null || overrideHeight != null) {
+        //等比
+        val overrideSize = overrideWidth ?: overrideHeight
+        if (overrideSize != null) {
+            sx = overrideSize / originWidth
+            sy = overrideSize / originHeight
+
+            sx = min(sx, sy)
+            sy = sx//等比
+        }
+    } else {
+        //no op
+    }
+    result.setScale(sx, sy)
+    return result
+}
+
+/**创建一个输出指定大小的[Canvas] [Picture]
+ * [createOverrideMatrix]
+ * */
+fun createOverridePictureCanvas(
+    originWidth: Float,
+    originHeight: Float,
+    overrideWidth: Float?,
+    overrideHeight: Float? = null,
+    block: Canvas.() -> Unit
+): Picture {
+    val matrix = createOverrideMatrix(originWidth, originHeight, overrideWidth, overrideHeight)
+    //目标输出的大小
+    val width = originWidth * matrix.getScaleX()
+    val height = originHeight * matrix.getScaleY()
+    return withPicture(width.ceilInt(), height.ceilInt()) {
+        concat(_overrideMatrix)
+        block()
+    }
+}
+
+/**创建一个输出指定大小的[Canvas] [Bitmap]
+ * [createOverrideMatrix]
+ */
+fun createOverrideBitmapCanvas(
+    originWidth: Float,
+    originHeight: Float,
+    overrideWidth: Float?,
+    overrideHeight: Float? = null,
+    block: Canvas.() -> Unit
+): Bitmap {
+    val matrix = createOverrideMatrix(originWidth, originHeight, overrideWidth, overrideHeight)
+    //目标输出的大小
+    val width = originWidth * matrix.getScaleX()
+    val height = originHeight * matrix.getScaleY()
+    return withBitmap(width.ceilInt(), height.ceilInt()) {
+        concat(_overrideMatrix)
+        block()
+    }
+}
 
 /**创建一个[Picture]对象*/
 fun withPicture(width: Int, height: Int, block: Canvas.() -> Unit): Picture {
@@ -28,6 +106,19 @@ fun withPicture(width: Int, height: Int, block: Canvas.() -> Unit): Picture {
         canvas.block()
         //结束
         endRecording()
+    }
+}
+
+/**创建一个[Bitmap]对象*/
+fun withBitmap(
+    width: Int,
+    height: Int,
+    config: Bitmap.Config = Bitmap.Config.ARGB_8888,
+    block: Canvas.() -> Unit
+): Bitmap {
+    return Bitmap.createBitmap(width, height, config).apply {
+        val canvas = Canvas(this)
+        canvas.block()
     }
 }
 
@@ -55,7 +146,7 @@ fun createRenderTextPaint(
     strokeCap = Paint.Cap.ROUND
 }
 
-//endregion---1---
+//endregion---Canvas---
 
 //region---render---
 

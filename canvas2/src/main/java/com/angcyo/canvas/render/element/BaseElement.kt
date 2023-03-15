@@ -6,12 +6,9 @@ import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.util.CanvasRenderHelper
 import com.angcyo.canvas.render.util.PictureRenderDrawable
-import com.angcyo.canvas.render.util.withPicture
 import com.angcyo.library.annotation.Pixel
-import com.angcyo.library.ex.ceilInt
 import com.angcyo.library.ex.contains
 import com.angcyo.library.ex.intersect
-import kotlin.math.min
 
 /**
  * 元素的基类
@@ -89,8 +86,6 @@ abstract class BaseElement : IElement {
         }
     }
 
-    protected val _overrideMatrix = Matrix()
-
     /**创建一个输出指定大小的[Canvas] [Picture]
      * [overrideSize] 等比输出到这个大小*/
     protected fun createOverrideCanvas(overrideSize: Float?, block: Canvas.() -> Unit): Picture {
@@ -98,28 +93,13 @@ abstract class BaseElement : IElement {
         val bounds = renderProperty.getRenderBounds()
         val originWidth = bounds.width()
         val originHeight = bounds.height()
-
-        var sx = 1f
-        var sy = 1f
-
-        //覆盖大小需要进行的缩放
-        if (overrideSize != null) {
-            sx = overrideSize / originWidth
-            sy = overrideSize / originHeight
-
-            sx = min(sx, sy)
-            sy = sx//等比
-        }
-
-        //目标输出的大小
-        val width = originWidth * sx
-        val height = originWidth * sy
-
-        _overrideMatrix.setScale(sx, sy)
-        return withPicture(width.ceilInt(), height.ceilInt()) {
-            concat(_overrideMatrix)
-            block()
-        }
+        return com.angcyo.canvas.render.util.createOverridePictureCanvas(
+            originWidth,
+            originHeight,
+            overrideSize,
+            null,
+            block
+        )
     }
 
     /** [overrideWidth] [overrideHeight] 需要覆盖输出的宽度 */

@@ -1,9 +1,6 @@
 package com.angcyo.canvas.render.core
 
-import android.graphics.Canvas
-import android.graphics.Matrix
-import android.graphics.Point
-import android.graphics.RectF
+import android.graphics.*
 import android.view.MotionEvent
 import android.view.View
 import com.angcyo.canvas.render.core.component.BaseControl
@@ -15,10 +12,14 @@ import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.unit.IRenderUnit
+import com.angcyo.canvas.render.util.createOverrideBitmapCanvas
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
 import com.angcyo.library.isMain
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * 渲染控制代理, 入口核心类
@@ -350,7 +351,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
 
         val centerPoint = Point()
         renderViewBox.getRenderCenterInside()
-/*
+        /*
         //先将坐标系移动到view的中心
         val coordinateTranslateX =
             renderViewBox.getContentCenterX() - renderViewBox.getCoordinateSystemX()
@@ -409,6 +410,39 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
 
         //更新
         renderViewBox.changeRenderMatrix(matrix, anim, finish)*/
+    }
+
+    /**创建一个预览图
+     * [bounds] 需要预览的范围
+     * [overrideSize] 需要等比输出的大小
+     * [rendererList] 指定需要渲染的渲染器, 默认所有渲染器
+     * */
+    fun preview(
+        @Pixel bounds: RectF? = null,
+        overrideSize: Float? = null,
+        rendererList: List<BaseRenderer> = renderManager.elementRendererList
+    ): Bitmap {
+        val rect = RectF(Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE)
+        if (bounds == null) {
+            for (renderer in rendererList) {
+                renderer.renderProperty?.getRenderBounds()?.let {
+                    rect.set(
+                        min(it.left, rect.left),
+                        min(it.top, rect.top),
+                        max(it.right, rect.right),
+                        max(it.bottom, rect.bottom)
+                    )
+                }
+            }
+        } else {
+            rect.set(bounds)
+        }
+        return createOverrideBitmapCanvas(rect.width(), rect.height(), overrideSize) {
+            translate(-rect.left, -rect.top)
+            for (renderer in rendererList) {
+                renderer.renderOnInside(this, RenderParams())
+            }
+        }
     }
 
     //endregion---操作---
