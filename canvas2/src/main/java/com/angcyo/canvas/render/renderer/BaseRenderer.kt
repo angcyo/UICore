@@ -282,13 +282,24 @@ abstract class BaseRenderer : IRenderer {
     }
 
     /**更新渲染器的可见状态
-     * [isLockScaleRatio]*/
+     * [isVisible]*/
     @RenderFlag
     open fun updateVisible(visible: Boolean, reason: Reason, delegate: CanvasRenderDelegate?) {
         if (visible) {
             addRenderFlag(RENDERER_FLAG_VISIBLE, reason, delegate)
         } else {
             removeRenderFlag(RENDERER_FLAG_VISIBLE, reason, delegate)
+        }
+    }
+
+    /**更新渲染器的可见状态
+     * [isLock]*/
+    @RenderFlag
+    open fun updateLock(lock: Boolean, reason: Reason, delegate: CanvasRenderDelegate?) {
+        if (lock) {
+            removeRenderFlag(RENDERER_FLAG_UNLOCK, reason, delegate)
+        } else {
+            addRenderFlag(RENDERER_FLAG_UNLOCK, reason, delegate)
         }
     }
 

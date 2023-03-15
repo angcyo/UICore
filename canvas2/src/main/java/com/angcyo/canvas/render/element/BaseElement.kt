@@ -11,6 +11,7 @@ import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.ceilInt
 import com.angcyo.library.ex.contains
 import com.angcyo.library.ex.intersect
+import kotlin.math.min
 
 /**
  * 元素的基类
@@ -90,12 +91,9 @@ abstract class BaseElement : IElement {
 
     protected val _overrideMatrix = Matrix()
 
-    /**创建一个输出指定大小的[Canvas] [Picture]*/
-    protected fun createOverrideCanvas(
-        overrideWidth: Float?,
-        overrideHeight: Float?,
-        block: Canvas.() -> Unit
-    ): Picture {
+    /**创建一个输出指定大小的[Canvas] [Picture]
+     * [overrideSize] 等比输出到这个大小*/
+    protected fun createOverrideCanvas(overrideSize: Float?, block: Canvas.() -> Unit): Picture {
         //原始目标需要绘制的大小
         val bounds = renderProperty.getRenderBounds()
         val originWidth = bounds.width()
@@ -105,16 +103,17 @@ abstract class BaseElement : IElement {
         var sy = 1f
 
         //覆盖大小需要进行的缩放
-        if (overrideWidth != null) {
-            sx = overrideWidth / originWidth
-        }
-        if (overrideHeight != null) {
-            sy = overrideHeight / originHeight
+        if (overrideSize != null) {
+            sx = overrideSize / originWidth
+            sy = overrideSize / originHeight
+
+            sx = min(sx, sy)
+            sy = sx//等比
         }
 
         //目标输出的大小
         val width = originWidth * sx
-        val height = originWidth * sx
+        val height = originWidth * sy
 
         _overrideMatrix.setScale(sx, sy)
         return withPicture(width.ceilInt(), height.ceilInt()) {
@@ -124,12 +123,8 @@ abstract class BaseElement : IElement {
     }
 
     /** [overrideWidth] [overrideHeight] 需要覆盖输出的宽度 */
-    protected fun createPictureDrawable(
-        overrideWidth: Float?,
-        overrideHeight: Float?,
-        block: Canvas.() -> Unit
-    ): Drawable {
-        return PictureRenderDrawable(createOverrideCanvas(overrideWidth, overrideHeight, block))
+    protected fun createPictureDrawable(overrideSize: Float?, block: Canvas.() -> Unit): Drawable {
+        return PictureRenderDrawable(createOverrideCanvas(overrideSize, block))
     }
 
     /**[createPictureDrawable]*/
@@ -137,11 +132,7 @@ abstract class BaseElement : IElement {
         renderParams: RenderParams?,
         block: Canvas.() -> Unit
     ): Drawable {
-        return createPictureDrawable(
-            renderParams?.overrideWidth,
-            renderParams?.overrideHeight,
-            block
-        )
+        return createPictureDrawable(renderParams?.overrideSize, block)
     }
 
     /**根据当前的属性, 绘制一个[bitmap]
@@ -150,10 +141,9 @@ abstract class BaseElement : IElement {
     protected fun createBitmapDrawable(
         bitmap: Bitmap,
         paint: Paint,
-        overrideWidth: Float?,
-        overrideHeight: Float?
+        overrideSize: Float?
     ): Drawable {
-        return createPictureDrawable(overrideWidth, overrideHeight) {
+        return createPictureDrawable(overrideSize) {
             val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
             drawBitmap(bitmap, renderMatrix, paint)
         }
@@ -163,10 +153,9 @@ abstract class BaseElement : IElement {
     protected fun createPathDrawable(
         pathList: List<Path>?,
         paint: Paint,
-        overrideWidth: Float?,
-        overrideHeight: Float?
+        overrideSize: Float?
     ): Drawable {
-        return createPictureDrawable(overrideWidth, overrideHeight) {
+        return createPictureDrawable(overrideSize) {
             if (pathList.isNullOrEmpty()) {
                 //
             } else {

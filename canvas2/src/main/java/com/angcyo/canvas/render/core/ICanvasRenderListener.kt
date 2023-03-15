@@ -51,7 +51,7 @@ interface ICanvasRenderListener {
     //region---CanvasRenderer---
 
     /**当有元素添加/删除时*/
-    fun onRendererListChange(
+    fun onElementRendererListChange(
         from: List<BaseRenderer>,
         to: List<BaseRenderer>,
         op: List<BaseRenderer>

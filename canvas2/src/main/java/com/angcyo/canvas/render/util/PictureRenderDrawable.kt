@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.util
 
 import android.graphics.Canvas
 import android.graphics.Picture
+import android.graphics.Rect
 import android.graphics.drawable.PictureDrawable
 
 /**
@@ -14,5 +15,17 @@ class PictureRenderDrawable(picture: Picture?) : PictureDrawable(picture) {
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
+    }
+
+    override fun setBounds(bounds: Rect) {
+        super.setBounds(bounds)
+    }
+
+    override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
+        super.setBounds(left, top, right, bottom)
+    }
+
+    override fun onBoundsChange(bounds: Rect) {
+        super.onBoundsChange(bounds)
     }
 }

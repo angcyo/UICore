@@ -6,6 +6,8 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.view.Gravity
 import androidx.annotation.AnyThread
+import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
+import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
 import kotlin.math.max
@@ -16,6 +18,10 @@ import kotlin.math.max
  * @since 2023/02/11
  */
 class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
+
+    /**是否初始化了*/
+    val isCanvasInit: Boolean
+        get() = !renderBounds.isEmpty
 
     //region---限制---
 
@@ -281,6 +287,7 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
     //region---操作---
 
     /**获取当前相对于画板左上角的中点坐标, 映射到画板内部后的坐标*/
+    @CanvasInsideCoordinate
     fun getRenderCenterInside(result: PointF = _tempPoint): PointF {
         result.set(renderBounds.width() / 2, renderBounds.height() / 2)
         transformToInside(result)
@@ -288,6 +295,7 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
     }
 
     /**获取当前画板原点, 相对于画板左上角的坐标*/
+    @CanvasOutsideCoordinate
     fun getOriginPointOutside(result: PointF = _tempPoint): PointF {
         result.set(0f, 0f)
         transformToOutside(result)

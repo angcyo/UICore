@@ -27,21 +27,7 @@ open class BitmapElement : BaseElement() {
 
     override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? {
         val bitmap = renderBitmap ?: originBitmap ?: return null
-        return createBitmapDrawable(
-            bitmap,
-            paint,
-            renderParams?.overrideWidth,
-            renderParams?.overrideHeight
-        )
-    }
-
-    /**使用[bitmap]初始化对象*/
-    fun initOriginBitmap(bitmap: Bitmap) {
-        this.originBitmap = bitmap
-        renderProperty.apply {
-            width = bitmap.width.toFloat()
-            height = bitmap.height.toFloat()
-        }
+        return createBitmapDrawable(bitmap, paint, renderParams?.overrideSize)
     }
 
     /**更新原始的[bitmap]对象, 并保持可视化的宽高一致

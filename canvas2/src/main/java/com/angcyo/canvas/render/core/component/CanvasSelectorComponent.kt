@@ -322,7 +322,14 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
     /**添加一个元素到选择器*/
     fun addSelectorRenderer(renderer: BaseRenderer, reason: Reason) {
         val old = rendererList.toList()
-        addGroupRenderer(renderer, reason, delegate)
+        addRendererToGroup(renderer, reason, delegate)
+        onSelfSelectorRendererChange(old)
+    }
+
+    /**从选择器中移除一个元素*/
+    fun removeSelectorRenderer(renderer: BaseRenderer, reason: Reason) {
+        val old = rendererList.toList()
+        removeRendererFromGroup(renderer, reason, delegate)
         onSelfSelectorRendererChange(old)
     }
 

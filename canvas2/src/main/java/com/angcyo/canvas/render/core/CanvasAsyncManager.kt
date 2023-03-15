@@ -63,7 +63,7 @@ class CanvasAsyncManager(val delegate: CanvasRenderDelegate) {
     }
 
     private fun updateAsync(uuid: String, async: Boolean) {
-        updateAsync(delegate.renderManager.findRenderer(uuid), async)
+        updateAsync(delegate.renderManager.findElementRenderer(uuid), async)
     }
 
     private fun updateAsync(renderer: BaseRenderer?, async: Boolean) {
@@ -87,6 +87,11 @@ class CanvasAsyncManager(val delegate: CanvasRenderDelegate) {
     fun releaseAsync() {
         asyncHandler = null
         thread?.quit()
+    }
+
+    /**移除一个异步任务*/
+    fun removeAsyncTask(uuid: String): Boolean {
+        return tasks.removeAll { it.uuid == uuid }
     }
 
     /**添加一个异步任务*/

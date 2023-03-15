@@ -126,12 +126,12 @@ interface ICanvasRenderView {
     //region---CanvasRenderer---
 
     /**派发有元素添加/删除
-     * [com.angcyo.canvas.render.core.CanvasRenderManager.addRenderer]
+     * [com.angcyo.canvas.render.core.CanvasRenderManager.addElementRenderer]
      * [from] 原有的集合
      * [to] 改变后的集合
      * [op] 操作的集合, 比如删除的元素集合/添加的元素集合
      * */
-    fun dispatchRendererListChange(
+    fun dispatchElementRendererListChange(
         from: List<BaseRenderer>,
         to: List<BaseRenderer>,
         op: List<BaseRenderer>

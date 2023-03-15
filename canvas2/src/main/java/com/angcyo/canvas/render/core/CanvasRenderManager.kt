@@ -66,24 +66,24 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     //region---操作---
 
     /**添加一个渲染器*/
-    fun addRenderer(render: BaseRenderer, selector: Boolean, strategy: Strategy) {
-        addRenderer(listOf(render), selector, strategy)
+    fun addElementRenderer(render: BaseRenderer, selector: Boolean, strategy: Strategy) {
+        addElementRenderer(listOf(render), selector, strategy)
     }
 
     /**添加一个集合渲染器
      * [selector] 是否要选中最新的元素*/
-    fun addRenderer(list: List<BaseRenderer>, selector: Boolean, strategy: Strategy) {
+    fun addElementRenderer(list: List<BaseRenderer>, selector: Boolean, strategy: Strategy) {
         val from = elementRendererList.toList()
         elementRendererList.addAll(list)
         val to = elementRendererList.toList()
 
         delegate.undoManager.addAndRedo(strategy, true, {
             elementRendererList.resetAll(from)
-            delegate.dispatchRendererListChange(to, from, list)
+            delegate.dispatchElementRendererListChange(to, from, list)
             delegate.refresh()
         }) {
             elementRendererList.resetAll(to)
-            delegate.dispatchRendererListChange(from, to, list)
+            delegate.dispatchElementRendererListChange(from, to, list)
             delegate.refresh()
         }
 
@@ -92,30 +92,70 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         }
     }
 
+    /**移除所有渲染元素*/
+    fun removeAllElementRenderer(strategy: Strategy) {
+        removeElementRenderer(elementRendererList.toList(), strategy)
+    }
+
     /**删除一个渲染器*/
-    fun removeRenderer(render: BaseRenderer, strategy: Strategy) {
-        removeRenderer(listOf(render), strategy)
+    fun removeElementRenderer(render: BaseRenderer, strategy: Strategy) {
+        removeElementRenderer(listOf(render), strategy)
     }
 
     /**添加一个集合渲染器*/
-    fun removeRenderer(list: List<BaseRenderer>, strategy: Strategy) {
+    fun removeElementRenderer(list: List<BaseRenderer>, strategy: Strategy) {
         val from = elementRendererList.toList()
         elementRendererList.removeAll(list)
         val to = elementRendererList.toList()
 
         delegate.undoManager.addAndRedo(strategy, true, {
             elementRendererList.resetAll(from)
-            delegate.dispatchRendererListChange(to, from, list)
+            delegate.dispatchElementRendererListChange(to, from, list)
             delegate.refresh()
         }) {
             elementRendererList.resetAll(to)
-            delegate.dispatchRendererListChange(from, to, list)
+            delegate.dispatchElementRendererListChange(from, to, list)
+            delegate.refresh()
+        }
+    }
+
+    /**重置所有元素渲染器*/
+    fun resetElementRenderer(list: List<BaseRenderer>, strategy: Strategy) {
+        val from = elementRendererList.toList()
+        elementRendererList.resetAll(list)
+        val to = elementRendererList.toList()
+
+        delegate.undoManager.addAndRedo(strategy, true, {
+            elementRendererList.resetAll(from)
+            delegate.dispatchElementRendererListChange(to, from, list)
+            delegate.refresh()
+        }) {
+            elementRendererList.resetAll(to)
+            delegate.dispatchElementRendererListChange(from, to, list)
             delegate.refresh()
         }
     }
 
     /**通过[uuid]查询对应的渲染器*/
-    fun findRenderer(uuid: String): BaseRenderer? = elementRendererList.find { it.uuid == uuid }
+    fun findElementRenderer(uuid: String): BaseRenderer? =
+        elementRendererList.find { it.uuid == uuid }
+
+    /**
+     * 获取所有的元素渲染器
+     * [dissolveGroup] 是否要拆组
+     * [com.angcyo.canvas.render.core.CanvasSelectorManager.getSelectorRendererList]
+     * */
+    fun getAllElementRendererList(dissolveGroup: Boolean): List<BaseRenderer> {
+        return if (dissolveGroup) {
+            val result = mutableListOf<BaseRenderer>()
+            for (renderer in elementRendererList) {
+                result.addAll(renderer.getRendererList())
+            }
+            result
+        } else {
+            elementRendererList
+        }
+    }
 
     //endregion---操作---
 

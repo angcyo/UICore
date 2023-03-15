@@ -295,12 +295,22 @@ open class CanvasGroupRenderer : BaseRenderer() {
     }
 
     /**添加一个元素到组内*/
-    open fun addGroupRenderer(
+    open fun addRendererToGroup(
         elementRenderer: BaseRenderer,
         reason: Reason,
         delegate: CanvasRenderDelegate?
     ) {
         rendererList.add(elementRenderer)
+        updateGroupRenderProperty(reason, delegate)
+    }
+
+    /**从组内移除一个元素*/
+    open fun removeRendererFromGroup(
+        elementRenderer: BaseRenderer,
+        reason: Reason,
+        delegate: CanvasRenderDelegate?
+    ) {
+        rendererList.remove(elementRenderer)
         updateGroupRenderProperty(reason, delegate)
     }
 

@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.core
 
 import android.graphics.Canvas
 import android.graphics.Matrix
+import android.graphics.Point
 import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
@@ -241,13 +242,13 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
 
     //region---CanvasRenderer---
 
-    override fun dispatchRendererListChange(
+    override fun dispatchElementRendererListChange(
         from: List<BaseRenderer>,
         to: List<BaseRenderer>,
         op: List<BaseRenderer>
     ) {
         for (listener in renderListenerList) {
-            listener.onRendererListChange(from, to, op)
+            listener.onElementRendererListChange(from, to, op)
         }
     }
 
@@ -307,6 +308,107 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         strategy: Strategy = Strategy.normal
     ) {
         undoManager.addToStack(undoState, redoState, redoIt, reason, strategy)
+    }
+
+    /**将画板移动到可以完全显示出[rect]
+     * [rect] 坐标系中的矩形坐标
+     * [scale] 是否要缩放, 以适应过大的矩形
+     * [lockScale] 锁定缩放的比例
+     * [margin] 边缘额外显示的距离
+     * [offsetRectTop] 自动偏移到[rect]的顶部
+     * [offsetX] 额外偏移的x
+     * [offsetY] 额外偏移的y
+     * */
+    fun showRectBounds(
+        rect: RectF,
+        margin: Float = 4f * dp,
+        scale: Boolean = true,
+        lockScale: Boolean = true,
+        anim: Boolean = true,
+        offsetRectTop: Boolean = false,
+        offsetX: Float = 0f,
+        offsetY: Float = 0f,
+        finish: (isCancel: Boolean) -> Unit = {}
+    ) {
+        val renderViewBox = renderViewBox
+        if (!renderViewBox.isCanvasInit) {
+            view.post {
+                showRectBounds(
+                    rect,
+                    margin,
+                    scale,
+                    lockScale,
+                    anim,
+                    offsetRectTop,
+                    offsetX,
+                    offsetY,
+                    finish
+                )
+            }
+            return
+        }
+
+        val centerPoint = Point()
+        renderViewBox.getRenderCenterInside()
+/*
+        //先将坐标系移动到view的中心
+        val coordinateTranslateX =
+            renderViewBox.getContentCenterX() - renderViewBox.getCoordinateSystemX()
+        val coordinateTranslateY =
+            renderViewBox.getContentCenterY() - renderViewBox.getCoordinateSystemY()
+
+        //再计算目标中心需要偏移的距离量
+        val translateX = coordinateTranslateX - rect.centerX()
+        val translateY = coordinateTranslateY - rect.centerY()
+
+        val matrix = Matrix()
+        //平移
+        matrix.setTranslate(translateX, translateY)
+
+        val width = rect.width() + margin * 2
+        val height = rect.height() + margin * 2
+
+        val contentWidth = renderViewBox.getContentWidth()
+        val contentHeight = renderViewBox.getContentHeight()
+
+        var scaleX = 1f
+        var scaleY = 1f
+
+        if (width > contentWidth || height > contentHeight) {
+            if (scale) {
+                //自动缩放
+                val scaleCenterX = renderViewBox.getContentCenterX()
+                val scaleCenterY = renderViewBox.getContentCenterY()
+
+                scaleX = (contentWidth - margin * 2) / rect.width()
+                scaleY = (contentHeight - margin * 2) / rect.height()
+
+                if (lockScale) {
+                    val targetScale = min(scaleX, scaleY)
+                    scaleX = targetScale
+                    scaleY = targetScale
+                }
+                matrix.postScale(
+                    scaleX,
+                    scaleY,
+                    scaleCenterX,
+                    scaleCenterY
+                )
+            }
+        } else {
+            //不处理自动放大的情况, 只处理平移
+        }
+
+        //偏移量的平移
+        matrix.postTranslate(offsetX, offsetY)
+
+        if (offsetRectTop) {
+            val offset = (renderViewBox.renderBounds.height() - rect.height() * scaleY) / 2 - margin
+            matrix.postTranslate(0f, -offset)
+        }
+
+        //更新
+        renderViewBox.changeRenderMatrix(matrix, anim, finish)*/
     }
 
     //endregion---操作---
