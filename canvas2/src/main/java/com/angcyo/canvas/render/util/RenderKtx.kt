@@ -151,17 +151,21 @@ fun createRenderTextPaint(
 
 //region---render---
 
+/**渲染元素*/
 val BaseRenderer.renderElement: IElement?
     get() = if (this is CanvasElementRenderer) renderElement else null
 
 val BaseRenderer.textElement: TextElement?
-    get() {
-        val element = renderElement
-        if (element is TextElement) {
-            return element
-        }
-        return null
+    get() = element()
+
+/**获取指定类型的元素[IElement]*/
+inline fun <reified T : IElement> BaseRenderer.element(): T? {
+    val element = renderElement
+    if (element is T) {
+        return element
     }
+    return null
+}
 
 //endregion---render---
 

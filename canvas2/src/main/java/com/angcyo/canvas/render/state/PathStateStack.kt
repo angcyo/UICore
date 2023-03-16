@@ -6,34 +6,31 @@ import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.Strategy
 import com.angcyo.canvas.render.element.PathElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
-import com.angcyo.canvas.render.util.renderElement
+import com.angcyo.canvas.render.util.element
 
 /**
  * 路径的状态存储
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/03/16
  */
-open class PathStateStack(val renderer: BaseRenderer) : PropertyStateStack() {
-
-    protected val pathElement: PathElement?
-        get() {
-            val element = renderer.renderElement
-            if (element is PathElement) {
-                return element
-            }
-            return null
-        }
+open class PathStateStack : PropertyStateStack() {
 
     var pathList: List<Path>? = null
 
     override fun saveState(renderer: BaseRenderer) {
         super.saveState(renderer)
-        pathList = pathElement?.pathList
+        pathList = renderer.element<PathElement>()?.pathList
     }
 
-    override fun restoreState(reason: Reason, strategy: Strategy, delegate: CanvasRenderDelegate?) {
-        pathElement?.pathList = pathList
-        super.restoreState(reason, strategy, delegate)
+    override fun restoreState(
+        renderer: BaseRenderer,
+        reason: Reason,
+        strategy: Strategy,
+        delegate: CanvasRenderDelegate?
+    ) {
+        renderer.element<PathElement>()?.pathList = pathList
+        super.restoreState(renderer, reason, strategy, delegate)
+        renderer.requestUpdateDrawableAndProperty(reason, delegate)
     }
 
 }

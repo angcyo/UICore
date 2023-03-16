@@ -23,7 +23,7 @@ open class PropertyStateStack : IStateStack {
     operator fun get(renderer: BaseRenderer): RendererState? = get(renderer.uuid)
 
     /**保存状态*/
-    open fun saveState(renderer: BaseRenderer) {
+    override fun saveState(renderer: BaseRenderer) {
         val key = renderer.uuid
 
         val state = RendererState(
@@ -41,27 +41,32 @@ open class PropertyStateStack : IStateStack {
     }
 
     /**恢复状态*/
-    override fun restoreState(reason: Reason, strategy: Strategy, delegate: CanvasRenderDelegate?) {
+    override fun restoreState(
+        renderer: BaseRenderer,
+        reason: Reason,
+        strategy: Strategy,
+        delegate: CanvasRenderDelegate?
+    ) {
         map.forEach { entry ->
             val state = entry.value
-            val renderer = state.renderer
+            val stateRenderer = state.renderer
 
-            if (renderer is CanvasGroupRenderer) {
+            if (stateRenderer is CanvasGroupRenderer) {
                 state.rendererList?.let { list ->
-                    if (renderer is CanvasSelectorComponent &&
+                    if (stateRenderer is CanvasSelectorComponent &&
                         (strategy.type == Strategy.STRATEGY_TYPE_UNDO || strategy.type == Strategy.STRATEGY_TYPE_REDO)
                     ) {
                         //通知选中元素改变
-                        val from = renderer.rendererList.toList()
-                        renderer.rendererList.resetAll(list)
+                        val from = stateRenderer.rendererList.toList()
+                        stateRenderer.rendererList.resetAll(list)
                         delegate?.dispatchSelectorRendererChange(from, list)
                     } else {
-                        renderer.rendererList.resetAll(list)
+                        stateRenderer.rendererList.resetAll(list)
                     }
                 }
             }
 
-            renderer.updateRenderProperty(state.renderProperty, reason, delegate)
+            stateRenderer.updateRenderProperty(state.renderProperty, reason, delegate)
         }
     }
 }

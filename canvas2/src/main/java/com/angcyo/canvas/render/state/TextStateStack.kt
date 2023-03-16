@@ -6,41 +6,33 @@ import com.angcyo.canvas.render.core.Strategy
 import com.angcyo.canvas.render.data.TextProperty
 import com.angcyo.canvas.render.element.TextElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
-import com.angcyo.canvas.render.util.renderElement
+import com.angcyo.canvas.render.util.element
 
 /**
  * 文本状态存储
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/03/13
  */
-open class TextStateStack(val renderer: BaseRenderer) : PropertyStateStack(), IStateStack {
-
-    protected val textElement: TextElement?
-        get() {
-            val element = renderer.renderElement
-            if (element is TextElement) {
-                return element
-            }
-            return null
-        }
+open class TextStateStack : PropertyStateStack(), IStateStack {
 
     /**保存的文本属性数据*/
     var textProperty: TextProperty? = null
 
-    init {
-        saveState(renderer)
-    }
-
     override fun saveState(renderer: BaseRenderer) {
         super.saveState(renderer)
-        textProperty = textElement?.textProperty?.copy()
+        textProperty = renderer.element<TextElement>()?.textProperty?.copy()
     }
 
-    override fun restoreState(reason: Reason, strategy: Strategy, delegate: CanvasRenderDelegate?) {
+    override fun restoreState(
+        renderer: BaseRenderer,
+        reason: Reason,
+        strategy: Strategy,
+        delegate: CanvasRenderDelegate?
+    ) {
         textProperty?.let {
-            textElement?.textProperty = it
+            renderer.element<TextElement>()?.textProperty = it
         }
-        super.restoreState(reason, strategy, delegate)
+        super.restoreState(renderer, reason, strategy, delegate)
         renderer.requestUpdateDrawableAndProperty(reason, delegate)
     }
 }

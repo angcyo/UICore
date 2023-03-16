@@ -4,8 +4,8 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
-import com.angcyo.canvas.render.util.RenderHelper
 import com.angcyo.canvas.render.util.PictureRenderDrawable
+import com.angcyo.canvas.render.util.RenderHelper
 import com.angcyo.canvas.render.util.createOverridePictureCanvas
 import com.angcyo.canvas.render.util.createRenderTextPaint
 import com.angcyo.library.annotation.Pixel

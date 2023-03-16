@@ -104,9 +104,9 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
     /**平移编辑*/
     protected fun applyTranslate(reason: Reason, delegate: CanvasRenderDelegate?) {
         controlRendererInfo?.let { controlInfo ->
-            controlInfo.restoreState(reason, Strategy.preview, delegate)
-
             val controlRenderer = controlInfo.controlRenderer
+            controlInfo.restoreState(controlRenderer, reason, Strategy.preview, delegate)
+
             delegate?.dispatchApplyControlMatrix(
                 this,
                 controlRenderer,
@@ -130,9 +130,9 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
     /**旋转编辑*/
     protected fun applyRotate(reason: Reason, delegate: CanvasRenderDelegate?) {
         controlRendererInfo?.let { controlInfo ->
-            controlInfo.restoreState(reason, Strategy.preview, delegate)
-
             val controlRenderer = controlInfo.controlRenderer
+            controlInfo.restoreState(controlRenderer, reason, Strategy.preview, delegate)
+
             delegate?.dispatchApplyControlMatrix(
                 this,
                 controlRenderer,
@@ -156,9 +156,9 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
     /**缩放编辑*/
     protected fun applyScale(reason: Reason, delegate: CanvasRenderDelegate?) {
         controlRendererInfo?.let { controlInfo ->
-            controlInfo.restoreState(reason, Strategy.preview, delegate)
-
             val controlRenderer = controlInfo.controlRenderer
+            controlInfo.restoreState(controlRenderer, reason, Strategy.preview, delegate)
+
             delegate?.dispatchApplyControlMatrix(
                 this,
                 controlRenderer,

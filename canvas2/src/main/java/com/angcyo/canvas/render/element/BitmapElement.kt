@@ -3,7 +3,6 @@ package com.angcyo.canvas.render.element
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.data.RenderParams
-import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.state.BitmapStateStack
 import com.angcyo.canvas.render.state.IStateStack
 
@@ -20,7 +19,7 @@ open class BitmapElement : BaseElement() {
     /**[originBitmap]1:1修改后渲染的图片, 界面上看到的图片*/
     var renderBitmap: Bitmap? = null
 
-    override fun createStateStack(renderer: BaseRenderer): IStateStack = BitmapStateStack(renderer)
+    override fun createStateStack(): IStateStack = BitmapStateStack()
 
     override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? {
         val bitmap = renderBitmap ?: originBitmap ?: return null

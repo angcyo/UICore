@@ -200,14 +200,14 @@ abstract class BaseRenderer : IRenderer {
     /**移除一个渲染标识*/
     open fun removeRenderFlag(flag: Int, reason: Reason, delegate: CanvasRenderDelegate?) {
         updateRenderFlag(renderFlags.remove(flag), reason.apply {
-            this.renderFlag = flag
+            renderFlag = (renderFlag ?: 0).add(flag)
         }, delegate)
     }
 
     /**添加一个渲染标识*/
     open fun addRenderFlag(flag: Int, reason: Reason, delegate: CanvasRenderDelegate?) {
         updateRenderFlag(renderFlags.add(flag), reason.apply {
-            this.renderFlag = flag
+            renderFlag = (renderFlag ?: 0).add(flag)
         }, delegate)
     }
 

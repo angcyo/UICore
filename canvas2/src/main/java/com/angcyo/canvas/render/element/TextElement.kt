@@ -69,7 +69,7 @@ open class TextElement : BaseElement() {
     /**获取每一行的文本*/
     protected fun String?.lineTextList(): List<String> = this?.lines() ?: emptyList()
 
-    override fun createStateStack(renderer: BaseRenderer): IStateStack = TextStateStack(renderer)
+    override fun createStateStack(): IStateStack = TextStateStack()
 
     override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? {
         updatePaint()
@@ -127,15 +127,6 @@ open class TextElement : BaseElement() {
         keepVisibleSize: Boolean = false,
         block: TextProperty.() -> Unit
     ) {
-        renderer ?: return
-        //用来恢复的状态
-        val undoState = createStateStack(renderer)
-
-        textProperty.block()//do
-
-        updatePaint()
-        updateOriginText(textProperty.text, keepVisibleSize)//重新计算宽高
-
         val reason: Reason = Reason.user.apply {
             controlType = if (keepGroupProperty) {
                 BaseControlPoint.CONTROL_TYPE_KEEP_GROUP_PROPERTY or
@@ -144,10 +135,11 @@ open class TextElement : BaseElement() {
                 BaseControlPoint.CONTROL_TYPE_DATA
             }
         }
-
-        val redoState = createStateStack(renderer)
-        renderer.requestUpdateDrawableAndProperty(reason, delegate)
-        delegate?.addStateToStack(undoState, redoState, reason = reason)
+        updateElement(renderer, delegate, reason) {
+            textProperty.block()//do
+            updatePaint()
+            updateOriginText(textProperty.text, keepVisibleSize)//重新计算宽高
+        }
     }
 
     /**更新字体*/

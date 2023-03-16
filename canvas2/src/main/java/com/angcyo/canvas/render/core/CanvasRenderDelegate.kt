@@ -308,6 +308,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
 
     /**自动添加一个状态到回退栈*/
     fun addStateToStack(
+        renderer: BaseRenderer,
         undoState: IStateStack,
         redoState: IStateStack,
         redoIt: Boolean = false,
@@ -317,7 +318,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         },
         strategy: Strategy = Strategy.normal
     ) {
-        undoManager.addToStack(undoState, redoState, redoIt, reason, strategy)
+        undoManager.addToStack(renderer, undoState, redoState, redoIt, reason, strategy)
     }
 
     /**将画板移动到可以完全显示出[rect]

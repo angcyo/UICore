@@ -23,7 +23,7 @@ open class PathElement : BaseElement() {
         paint.style = Paint.Style.STROKE
     }
 
-    override fun createStateStack(renderer: BaseRenderer): IStateStack = PathStateStack(renderer)
+    override fun createStateStack(): IStateStack = PathStateStack()
 
     override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? {
         val pathList = pathList ?: return null

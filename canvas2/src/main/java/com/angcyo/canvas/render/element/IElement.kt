@@ -3,10 +3,13 @@ package com.angcyo.canvas.render.element
 import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import com.angcyo.canvas.render.core.CanvasRenderDelegate
+import com.angcyo.canvas.render.core.Reason
+import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
-import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.state.IStateStack
 
 /**
  * 单个元素, 或者多个元素
@@ -17,8 +20,28 @@ interface IElement {
 
     //region---core---
 
-    /**存档一个元素的状态, 后续用来恢复/重做*/
-    fun createStateStack(renderer: BaseRenderer): IStateStack
+    /**存档一个元素的状态, 后续用来恢复/重做 */
+    fun createStateStack(): IStateStack
+
+    /**更新元素, 并且支持回退*/
+    fun updateElement(
+        renderer: BaseRenderer?,
+        delegate: CanvasRenderDelegate?,
+        reason: Reason = Reason.user.apply {
+            controlType = BaseControlPoint.CONTROL_TYPE_DATA
+        },
+        block: IElement.() -> Unit
+    ) {
+        renderer ?: return
+        //用来恢复的状态
+        val undoState = createStateStack()
+        undoState.saveState(renderer)
+        block()
+        val redoState = createStateStack()
+        redoState.saveState(renderer)
+        renderer.requestUpdateDrawableAndProperty(reason, delegate)
+        delegate?.addStateToStack(renderer, undoState, redoState, reason = reason)
+    }
 
     /**请求获取元素渲染时, 相关的属性信息*/
     fun requestElementRenderProperty(): CanvasRenderProperty

@@ -1,8 +1,8 @@
 package com.angcyo.canvas.render.core
 
 import com.angcyo.canvas.render.data.ControlRendererInfo
-import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.state.IStateStack
 import java.util.*
 
 /**
@@ -109,9 +109,9 @@ class CanvasUndoManager(val delegate: CanvasRenderDelegate) {
         action()//run
         val redoState = ControlRendererInfo(renderer)
         addAndRedo(strategy, redoIt, {
-            undoState.restoreState(reason, it, delegate)
+            undoState.restoreState(renderer, reason, it, delegate)
         }) {
-            redoState.restoreState(reason, it, delegate)
+            redoState.restoreState(renderer, reason, it, delegate)
         }
     }
 
@@ -130,9 +130,9 @@ class CanvasUndoManager(val delegate: CanvasRenderDelegate) {
         //重做的状态
         val redoState = ControlRendererInfo(oldControlInfo.controlRenderer)
         addAndRedo(strategy, redoIt, {
-            undoState.restoreState(reason, it, delegate)
+            undoState.restoreState(oldControlInfo.controlRenderer, reason, it, delegate)
         }) {
-            redoState.restoreState(reason, it, delegate)
+            redoState.restoreState(oldControlInfo.controlRenderer, reason, it, delegate)
         }
     }
 
@@ -140,6 +140,7 @@ class CanvasUndoManager(val delegate: CanvasRenderDelegate) {
      * [undoState] 用来撤销的状态存储
      * [redoState] 用来重做的状态存储*/
     fun addToStack(
+        renderer: BaseRenderer,
         undoState: IStateStack,
         redoState: IStateStack,
         redoIt: Boolean,
@@ -147,9 +148,9 @@ class CanvasUndoManager(val delegate: CanvasRenderDelegate) {
         strategy: Strategy
     ) {
         addAndRedo(strategy, redoIt, {
-            undoState.restoreState(reason, it, delegate)
+            undoState.restoreState(renderer, reason, it, delegate)
         }) {
-            redoState.restoreState(reason, it, delegate)
+            redoState.restoreState(renderer, reason, it, delegate)
         }
     }
 
