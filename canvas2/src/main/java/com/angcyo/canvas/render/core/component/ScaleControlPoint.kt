@@ -61,7 +61,7 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
     var minSizeThreshold = 10
 
     init {
-        controlType = CONTROL_TYPE_SCALE
+        controlPointType = CONTROL_TYPE_SCALE
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

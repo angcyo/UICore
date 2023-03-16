@@ -23,6 +23,7 @@ abstract class BaseControlPoint(controlManager: CanvasControlManager) : BaseCont
     IRenderer {
 
     companion object {
+
         /**控制点类型: 删除[DeleteControlPoint]*/
         const val CONTROL_TYPE_DELETE = 0x1
 
@@ -47,7 +48,7 @@ abstract class BaseControlPoint(controlManager: CanvasControlManager) : BaseCont
         /**控制点类型: 保持Group的渲染属性*/
         const val CONTROL_TYPE_KEEP_GROUP_PROPERTY = CONTROL_TYPE_HEIGHT shl 1
 
-        /**控制点类型: 数据发生了改变, 影响数据改变的因素包括
+        /**控制点类型: 数据发生了改变, 影响数据改变的因素包括, 其他一些图形算法, 变形操作等
          * [CONTROL_TYPE_ROTATE]
          * [CONTROL_TYPE_SCALE]
          * [CONTROL_TYPE_WIDTH]
@@ -64,8 +65,13 @@ abstract class BaseControlPoint(controlManager: CanvasControlManager) : BaseCont
         }
     }
 
-    /**控制点的类型*/
-    var controlType: Int = 0
+    /**控制点的类型
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_DELETE]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_ROTATE]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_SCALE]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_LOCK]
+     * */
+    var controlPointType: Int = 0
 
     /**控制点的位置, 相对于画板左上角*/
     @CanvasOutsideCoordinate

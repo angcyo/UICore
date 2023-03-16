@@ -14,7 +14,7 @@ class DeleteControlPoint(controlManager: CanvasControlManager) : BaseControlPoin
 
     init {
         drawable = _drawable(R.drawable.canvas_render_control_point_delete)
-        controlType = CONTROL_TYPE_DELETE
+        controlPointType = CONTROL_TYPE_DELETE
     }
 
     override fun onClickControlPoint() {

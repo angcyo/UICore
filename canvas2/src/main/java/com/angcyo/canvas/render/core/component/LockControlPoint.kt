@@ -24,7 +24,7 @@ class LockControlPoint(controlManager: CanvasControlManager) : BaseControlPoint(
         }
 
     init {
-        controlType = CONTROL_TYPE_LOCK
+        controlPointType = CONTROL_TYPE_LOCK
     }
 
     override fun onClickControlPoint() {

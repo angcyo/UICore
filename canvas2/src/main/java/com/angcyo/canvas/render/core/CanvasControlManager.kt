@@ -120,15 +120,19 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
     fun updateControlPointLocation() {
         val selectorRenderer = delegate.selectorManager.selectorComponent
 
+        //激活状态
         deleteControlPoint.isEnable =
-            selectorRenderer.isSupportControlPoint(BaseControlPoint.CONTROL_TYPE_DELETE)
+            selectorRenderer.isSupportControlPoint(deleteControlPoint.controlPointType)
         rotateControlPoint.isEnable =
-            selectorRenderer.isSupportControlPoint(BaseControlPoint.CONTROL_TYPE_ROTATE)
+            selectorRenderer.isSupportControlPoint(rotateControlPoint.controlPointType)
         scaleControlPoint.isEnable =
-            selectorRenderer.isSupportControlPoint(BaseControlPoint.CONTROL_TYPE_SCALE)
+            selectorRenderer.isSupportControlPoint(scaleControlPoint.controlPointType)
         lockControlPoint.isEnable =
-            selectorRenderer.isSupportControlPoint(BaseControlPoint.CONTROL_TYPE_LOCK)
+            selectorRenderer.isSupportControlPoint(lockControlPoint.controlPointType)
+        translateControl.isEnable =
+            selectorRenderer.isSupportControlPoint(BaseControlPoint.CONTROL_TYPE_TRANSLATE)
 
+        //控制点位置
         selectorRenderer.renderProperty?.let {
             it.getRenderRect(_tempRect)
             updateDeleteControlPointLocation(_tempRect, it)

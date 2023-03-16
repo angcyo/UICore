@@ -23,7 +23,7 @@ class RotateControlPoint(controlManager: CanvasControlManager) : BaseControlPoin
 
     init {
         drawable = _drawable(R.drawable.canvas_render_control_point_rotate)
-        controlType = CONTROL_TYPE_ROTATE
+        controlPointType = CONTROL_TYPE_ROTATE
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

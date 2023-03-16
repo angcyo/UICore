@@ -11,6 +11,7 @@ import com.angcyo.canvas.render.core.Reason.Companion.REASON_USER
  * @since 2023-2-24
  */
 data class Reason(
+
     /**更新数据的原因
      * [REASON_INIT]
      * [REASON_USER]
@@ -35,6 +36,7 @@ data class Reason(
      * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_WIDTH]
      * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_HEIGHT]
      * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_KEEP_GROUP_PROPERTY]
+     * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_DATA]
      * */
     var controlType: Int? = null,
 ) {
