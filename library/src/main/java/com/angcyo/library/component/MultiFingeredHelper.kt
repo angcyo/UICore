@@ -9,7 +9,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * 多指操作助手
+ * 多指操作助手, 多指捏合, 多指散开等操作
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2022/07/03
