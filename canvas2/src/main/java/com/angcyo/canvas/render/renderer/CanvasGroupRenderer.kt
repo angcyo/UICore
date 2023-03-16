@@ -61,7 +61,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
         /**[rendererList] 需要绘制的渲染器
          * [overrideSize] 需要等比覆盖输出的大小
          * [bounds] 指定输出的绘制位置*/
-        fun createGroupRenderDrawable(
+        fun createRenderDrawable(
             rendererList: List<BaseRenderer>?,
             overrideSize: Float? = null,
             @Pixel bounds: RectF? = null
@@ -84,7 +84,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
         /**[rendererList] 需要绘制的渲染器
          * [overrideSize] 需要等比覆盖输出的大小
          * [bounds] 指定输出的绘制位置*/
-        fun createGroupRenderBitmap(
+        fun createRenderBitmap(
             rendererList: List<BaseRenderer>?,
             overrideSize: Float? = null,
             @Pixel bounds: RectF? = null
@@ -99,20 +99,12 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 }
             }
         }
-
     }
 
     /**组内所有渲染器*/
     val rendererList = CopyOnWriteArrayList<BaseRenderer>()
 
     //region---core---
-
-    override fun requestRenderDrawable(renderParams: RenderParams?): Drawable? {
-        if (renderDrawable == null) {
-            renderDrawable = createGroupRenderDrawable(rendererList, renderParams?.overrideSize)
-        }
-        return renderDrawable
-    }
 
     /**更新渲染时, 需要的一些数据*/
     override fun readyRenderIfNeed(params: RenderParams?) {

@@ -303,6 +303,11 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
         this.delegate.refresh()
     }
 
+    /**清除选中元素*/
+    fun clearSelectorRenderer(reason: Reason) {
+        resetSelectorRenderer(null, reason)
+    }
+
     /**[resetSelectorRenderer]*/
     fun resetSelectorRenderer(renderer: BaseRenderer?, reason: Reason) {
         if (renderer == null) {

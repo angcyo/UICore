@@ -14,6 +14,8 @@ import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement
+import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRenderBitmap
+import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRenderDrawable
 import com.angcyo.drawable.loading.CircleScaleLoadingDrawable
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.*
@@ -267,8 +269,20 @@ abstract class BaseRenderer : IRenderer {
      * */
     open fun isSupportControlPoint(type: Int): Boolean = true
 
-    /**获取渲染器用来渲染的[Drawable]*/
-    open fun requestRenderDrawable(renderParams: RenderParams?): Drawable? = renderDrawable
+    /**获取渲染器用来渲染的[Drawable]
+     * [requestRenderBitmap]*/
+    open fun requestRenderDrawable(renderParams: RenderParams?): Drawable? {
+        if (renderDrawable == null) {
+            renderDrawable = createRenderDrawable(getRendererList(), renderParams?.overrideSize)
+        }
+        return renderDrawable
+    }
+
+    /**获取渲染器用来渲染的[Bitmap]
+     * [requestRenderDrawable]
+     * */
+    open fun requestRenderBitmap(renderParams: RenderParams?): Bitmap? =
+        createRenderBitmap(getRendererList(), renderParams?.overrideSize)
 
     //endregion---core---
 

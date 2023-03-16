@@ -249,9 +249,9 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
     private var delayCancelRendererRunnable: Runnable? = null
     private var _delayCancelTime = 160L
 
-    fun delayCancelSelectRenderer() {
+    private fun delayCancelSelectRenderer() {
         delayCancelRendererRunnable = Runnable {
-            selectorComponent.resetSelectorRenderer(null, Reason.preview)
+            selectorComponent.clearSelectorRenderer(Reason.preview)
             delegate.refresh()
         }
         MainExecutor.delay(delayCancelRendererRunnable!!, _delayCancelTime)

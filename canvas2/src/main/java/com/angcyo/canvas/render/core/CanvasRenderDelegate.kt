@@ -430,7 +430,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         overrideSize: Float? = null,
         rendererList: List<BaseRenderer>? = renderManager.elementRendererList
     ): Bitmap? {
-        return CanvasGroupRenderer.createGroupRenderBitmap(rendererList, overrideSize, bounds)
+        return CanvasGroupRenderer.createRenderBitmap(rendererList, overrideSize, bounds)
     }
 
     //endregion---操作---

@@ -69,12 +69,41 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
 
     /**添加一个渲染器*/
     fun addElementRenderer(
-        render: BaseRenderer,
+        renderer: BaseRenderer,
         selector: Boolean,
         reason: Reason,
         strategy: Strategy
     ) {
-        addElementRenderer(listOf(render), selector, reason, strategy)
+        addElementRenderer(listOf(renderer), selector, reason, strategy)
+    }
+
+    /**替换一个渲染器
+     * [renderer] 需要被替换的渲染器, 会保持位置不变
+     * [newRendererList] 新的渲染器集合*/
+    fun replaceElementRenderer(
+        renderer: BaseRenderer,
+        newRendererList: List<BaseRenderer>,
+        selector: Boolean,
+        reason: Reason,
+        strategy: Strategy
+    ) {
+
+        val index = elementRendererList.indexOf(renderer)
+        if (index == -1) {
+            //未找到旧的, 则直接添加新的
+            addElementRenderer(newRendererList, selector, reason, strategy)
+        } else {
+            val from = elementRendererList.toList()
+            elementRendererList.remove(renderer)
+            elementRendererList.addAll(index, newRendererList)//在指定位置添加所有
+            val to = elementRendererList.toList()
+
+            changeElementRenderer(from, to, newRendererList, strategy)
+
+            if (selector) {
+                delegate.selectorManager.resetSelectorRenderer(newRendererList, reason)
+            }
+        }
     }
 
     /**添加一个集合渲染器
@@ -89,18 +118,45 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         elementRendererList.addAll(list)
         val to = elementRendererList.toList()
 
+        changeElementRenderer(from, to, list, strategy)
+
+        if (selector) {
+            delegate.selectorManager.resetSelectorRenderer(list, reason)
+        }
+    }
+
+    /**改变集合渲染器从[from]到[to]
+     * [list] 操作的源头数据结构*/
+    fun changeElementRenderer(
+        from: List<BaseRenderer>,
+        to: List<BaseRenderer>,
+        list: List<BaseRenderer>,
+        strategy: Strategy
+    ) {
         delegate.undoManager.addAndRedo(strategy, true, {
             elementRendererList.resetAll(from)
             delegate.dispatchElementRendererListChange(to, from, list)
+            checkClearSelectorRenderer()
             delegate.refresh()
         }) {
             elementRendererList.resetAll(to)
             delegate.dispatchElementRendererListChange(from, to, list)
+            checkClearSelectorRenderer()
             delegate.refresh()
         }
+    }
 
-        if (selector) {
-            delegate.selectorManager.resetSelectorRenderer(list, reason)
+    /**检查是否需要清除选中元素*/
+    fun checkClearSelectorRenderer() {
+        if (!delegate.selectorManager.isSelectorElement) {
+            return
+        }
+        //当前选中的元素列表
+        val selectorRendererList = delegate.selectorManager.getSelectorRendererList()
+        if (elementRendererList.containsAll(selectorRendererList)) {
+            //已有的渲染元素, 包含所有的选中元素, 则不进行取消
+        } else {
+            delegate.selectorManager.selectorComponent.clearSelectorRenderer(Reason.code)
         }
     }
 
