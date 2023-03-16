@@ -142,6 +142,7 @@ fun createRenderTextPaint(
     this.color = color
     this.style = style
     textSize = 9 * dp
+    strokeWidth = 1f
     strokeJoin = Paint.Join.ROUND
     strokeCap = Paint.Cap.ROUND
 }

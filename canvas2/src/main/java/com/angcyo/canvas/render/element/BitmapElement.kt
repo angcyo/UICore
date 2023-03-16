@@ -6,7 +6,6 @@ import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.state.BitmapStateStack
 import com.angcyo.canvas.render.state.IStateStack
-import com.angcyo.canvas.render.util.createRenderPaint
 
 /**
  * 用来绘制[Bitmap]元素的对象
@@ -14,8 +13,6 @@ import com.angcyo.canvas.render.util.createRenderPaint
  * @since 2023/03/06
  */
 open class BitmapElement : BaseElement() {
-
-    protected val paint = createRenderPaint()
 
     /**1:1 原始图片*/
     var originBitmap: Bitmap? = null

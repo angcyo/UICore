@@ -11,7 +11,7 @@ import com.angcyo.library.ex.computePathBounds
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/03/10
  */
-object CanvasRenderHelper {
+object RenderHelper {
 
     private val _boundsRect = RectF()
     private val _matrix = Matrix()

@@ -9,6 +9,7 @@ import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.library.ex.resetAll
 
 /**
+ * 绘制属性的状态存储和恢复
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/03/09
  */

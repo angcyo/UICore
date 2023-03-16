@@ -6,12 +6,11 @@ import android.widget.LinearLayout
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.component.BaseControlPoint
-import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TextProperty
-import com.angcyo.canvas.render.state.TextStateStack
 import com.angcyo.canvas.render.renderer.BaseRenderer
-import com.angcyo.canvas.render.util.createRenderTextPaint
+import com.angcyo.canvas.render.state.IStateStack
+import com.angcyo.canvas.render.state.TextStateStack
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.FontManager
 import com.angcyo.library.ex.*
@@ -67,8 +66,6 @@ open class TextElement : BaseElement() {
 
     //endregion---属性---
 
-    val textPaint = createRenderTextPaint()
-
     /**获取每一行的文本*/
     protected fun String?.lineTextList(): List<String> = this?.lines() ?: emptyList()
 
@@ -88,7 +85,7 @@ open class TextElement : BaseElement() {
         //字体加载
         val loadTypefaceInfo = FontManager.loadTypefaceInfo(textProperty.fontFamily)
         val typefaceInfo = loadTypefaceInfo ?: FontManager.getSystemFontList().firstOrNull()
-        textPaint.let {
+        paint.let {
             //删除线
             it.isStrikeThruText = textProperty.isStrikeThruText
             //下划线
@@ -212,7 +209,7 @@ open class TextElement : BaseElement() {
     protected val _textHeightList = mutableListOf<Float>()
 
     /**绘制普通文本*/
-    protected fun drawNormalText(canvas: Canvas, paint: Paint = textPaint) {
+    protected fun drawNormalText(canvas: Canvas, paint: Paint = this.paint) {
         val oldUnderLine = paint.isUnderlineText
         val oldDeleteLine = paint.isStrikeThruText
 
@@ -381,7 +378,7 @@ open class TextElement : BaseElement() {
 
     /**计算多行文本的宽度*/
     @Pixel
-    protected fun calcLineTextWidth(text: String?, paint: Paint = textPaint): Float {
+    protected fun calcLineTextWidth(text: String?, paint: Paint = this.paint): Float {
         var result = 0f
         val lineTextList = text.lineTextList()
         if (textProperty.orientation == LinearLayout.HORIZONTAL) {
@@ -411,7 +408,7 @@ open class TextElement : BaseElement() {
 
     /**计算多行文本的高度*/
     @Pixel
-    protected fun calcLineTextHeight(text: String?, paint: Paint = textPaint): Float {
+    protected fun calcLineTextHeight(text: String?, paint: Paint = this.paint): Float {
         var result = 0f
         val lineTextList = text.lineTextList()
         if (textProperty.orientation == LinearLayout.HORIZONTAL) {
@@ -441,7 +438,7 @@ open class TextElement : BaseElement() {
     protected var _skewWidth: Float = 0f
 
     /**单行文本字符的宽度*/
-    protected fun measureTextWidth(text: String, paint: Paint = textPaint): Float {
+    protected fun measureTextWidth(text: String, paint: Paint = this.paint): Float {
         if (textProperty.isCompactText) {
             if (text.isBlank()) {
                 //空格
@@ -474,7 +471,7 @@ open class TextElement : BaseElement() {
     }
 
     /**单个文本字符的高度*/
-    protected fun measureTextHeight(text: String, paint: Paint = textPaint): Float {
+    protected fun measureTextHeight(text: String, paint: Paint = this.paint): Float {
         if (textProperty.isCompactText) {
             if (text.isBlank()) {
                 //空格
@@ -492,7 +489,7 @@ open class TextElement : BaseElement() {
     }
 
     /**下沉的距离*/
-    protected fun measureTextDescent(text: String, paint: Paint = textPaint): Float {
+    protected fun measureTextDescent(text: String, paint: Paint = this.paint): Float {
         return if (textProperty.isCompactText) {
             paint.textBounds(text).bottom.toFloat()
         } else {
@@ -520,22 +517,3 @@ fun String?.toPaintAlign(): Paint.Align = when (this) {
     TextElement.TEXT_ALIGN_RIGHT -> Paint.Align.RIGHT
     else -> Paint.Align.LEFT
 }
-
-//---
-
-/**文本样式*/
-fun Paint.Style.toPaintStyleInt(): Int = when (this) {
-    Paint.Style.FILL -> 0
-    Paint.Style.STROKE -> 1
-    Paint.Style.FILL_AND_STROKE -> 2
-    else -> 0
-}
-
-fun Int?.toPaintStyle(): Paint.Style = when (this) {
-    0 -> Paint.Style.FILL
-    1 -> Paint.Style.STROKE
-    2 -> Paint.Style.FILL_AND_STROKE
-    else -> Paint.Style.FILL
-}
-
-//---
