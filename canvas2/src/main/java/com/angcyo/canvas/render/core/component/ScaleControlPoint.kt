@@ -11,6 +11,7 @@ import com.angcyo.canvas.render.core.Reason
 import com.angcyo.library.L
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.distance
+import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.mapPoint
 import kotlin.math.absoluteValue
 
@@ -31,11 +32,6 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
                 _drawable(R.drawable.canvas_render_control_point_scale_any)
             }
         }
-
-    /**是否要支持反向缩放, 即缩放比例是否允许变成负值
-     * 如果关闭方向缩放, 则缩放到反反向时, 不会触发apply
-     * */
-    var enableReverseScale: Boolean = true
 
     /**锚点坐标, 旋转后的坐标*/
     @CanvasInsideCoordinate
@@ -58,7 +54,7 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
     private val rendererBounds = RectF()
 
     /**当元素过小时, 缩放倍数直接使用理想值*/
-    var minSizeThreshold = 10
+    var minSizeThreshold = 10 * dp
 
     init {
         controlPointType = CONTROL_TYPE_SCALE
@@ -101,9 +97,10 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
                             //等比缩放, 使用C边的长度计算, 返回的长度一定是正值
                             val oldC = distance(touchDownPointInside, anchorPoint)
                             val newC = distance(touchMovePointInside, anchorPoint)
-                            var s = if (rendererBounds.width() <= minSizeThreshold ||
+                            var s = if (rendererBounds.width() <= minSizeThreshold &&
                                 rendererBounds.height() <= minSizeThreshold
                             ) {
+                                //如果宽高都小于一个很小的值, 则倍数要很大的值才理想
                                 newC.toFloat()
                             } else {
                                 (newC / oldC).toFloat()
@@ -117,7 +114,7 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
                             val yReverse =
                                 if (touchDownPointInside.y > anchorPoint.y) touchMovePointInside.y < anchorPoint.y else touchMovePointInside.y > anchorPoint.y
 
-                            if (xReverse && yReverse) {
+                            if (xReverse || yReverse) {
                                 //拖动到反方为了
                                 s = -s
                             }
@@ -158,9 +155,7 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
                             targetSx = sx
                             targetSy = sy
                         }
-                        if (enableReverseScale || (targetSx > 0 && targetSy > 0)) {
-                            scale(targetSx, targetSy)
-                        }
+                        scale(targetSx, targetSy)
                     }
                 }
             }

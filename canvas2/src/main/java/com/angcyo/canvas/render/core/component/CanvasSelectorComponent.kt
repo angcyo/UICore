@@ -107,6 +107,13 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
         showSizeRender(Reason.init, null)
     }
 
+    override fun isSupportControlPoint(type: Int): Boolean {
+        if (rendererList.size() == 1) {
+            return rendererList.last().isSupportControlPoint(type)
+        }
+        return super.isSupportControlPoint(type)
+    }
+
     override fun renderOnOutside(canvas: Canvas, params: RenderParams) {
         if (isSelectorElement) {
             //绘制所有子元素的Rect

@@ -2,12 +2,12 @@ package com.angcyo.canvas.render.element
 
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.util.*
 import com.angcyo.library.annotation.Pixel
-import com.angcyo.library.ex.contains
-import com.angcyo.library.ex.intersect
+import com.angcyo.library.unit.toPixel
 
 /**
  * 元素的基类
@@ -32,20 +32,6 @@ abstract class BaseElement : IElement {
     override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? =
         renderDrawable
 
-    override fun elementContainsPoint(point: PointF): Boolean {
-        var result = getElementBoundsPath().contains(point)
-        if (!result) {
-            val tempRect = RectF()
-            tempRect.set(point.x, point.y, point.x + 1, point.y + 1)
-            result = elementIntersectRect(tempRect) //此时使用1像素的矩形,进行碰撞
-        }
-        return result
-    }
-
-    override fun elementContainsRect(rect: RectF): Boolean = getElementBoundsPath().contains(rect)
-
-    override fun elementIntersectRect(rect: RectF): Boolean = getElementBoundsPath().intersect(rect)
-
     override fun updateElementRenderProperty(property: CanvasRenderProperty) {
         property.copyTo(renderProperty)
     }
@@ -54,11 +40,17 @@ abstract class BaseElement : IElement {
 
     //region---方法---
 
-    /**获取元素用来碰撞检测的[Path]范围*/
-    fun getElementBoundsPath(result: Path = Path()): Path {
+    override fun getElementBounds(delegate: CanvasRenderDelegate?, result: RectF): RectF {
+        val property = renderProperty
+        result.set(0f, 0f, property.width, property.height)
+        return result
+    }
+
+    override fun getElementBoundsPath(delegate: CanvasRenderDelegate?, result: Path): Path {
         val property = renderProperty
         val renderMatrix = property.getRenderMatrix(includeRotate = true)
-        val rect = RectF(0f, 0f, property.width, property.height)
+        getElementBounds(delegate, IElement.elementTempRect)
+        val rect = IElement.elementTempRect
         result.rewind()
         result.addRect(rect, Path.Direction.CW)
         result.transform(renderMatrix)
@@ -90,7 +82,14 @@ abstract class BaseElement : IElement {
 
     /**创建一个输出指定大小的[Canvas] [Picture]
      * [overrideSize] 等比输出到这个大小*/
-    protected fun createOverrideCanvas(overrideSize: Float?, block: Canvas.() -> Unit): Picture {
+    protected fun createOverrideCanvas(
+        overrideSize: Float?,
+        @Pixel
+        minWidth: Float = 1f,
+        @Pixel
+        minHeight: Float = 1f,
+        block: Canvas.() -> Unit
+    ): Picture {
         //原始目标需要绘制的大小
         val bounds = renderProperty.getRenderBounds()
         val originWidth = bounds.width()
@@ -100,13 +99,22 @@ abstract class BaseElement : IElement {
             originHeight,
             overrideSize,
             null,
+            minWidth,
+            minHeight,
             block
         )
     }
 
     /** [overrideWidth] [overrideHeight] 需要覆盖输出的宽度 */
-    protected fun createPictureDrawable(overrideSize: Float?, block: Canvas.() -> Unit): Drawable {
-        return PictureRenderDrawable(createOverrideCanvas(overrideSize, block))
+    protected fun createPictureDrawable(
+        overrideSize: Float?,
+        @Pixel
+        minWidth: Float = 1f, /*最小宽度*/
+        @Pixel
+        minHeight: Float = 1f,
+        block: Canvas.() -> Unit
+    ): Drawable {
+        return PictureRenderDrawable(createOverrideCanvas(overrideSize, minWidth, minHeight, block))
     }
 
     /**[createPictureDrawable]*/
@@ -114,7 +122,12 @@ abstract class BaseElement : IElement {
         renderParams: RenderParams?,
         block: Canvas.() -> Unit
     ): Drawable {
-        return createPictureDrawable(renderParams?.overrideSize, block)
+        return createPictureDrawable(
+            renderParams?.overrideSize,
+            (renderParams ?: RenderParams()).drawMinWidth,
+            (renderParams ?: RenderParams()).drawMinHeight,
+            block
+        )
     }
 
     /**根据当前的属性, 绘制一个[bitmap]
@@ -131,24 +144,56 @@ abstract class BaseElement : IElement {
         }
     }
 
-    /**[createBitmapDrawable] */
+    /**[createBitmapDrawable]
+     * [isLinePath] 是否线段
+     * */
     protected fun createPathDrawable(
         pathList: List<Path>?,
         paint: Paint,
-        overrideSize: Float?
+        overrideSize: Float?,
+        @Pixel
+        minWidth: Float, /*最小宽度*/
+        @Pixel
+        minHeight: Float,
+        isLinePath: Boolean
     ): Drawable {
-        return createPictureDrawable(overrideSize) {
+        return createPictureDrawable(overrideSize, minWidth, minHeight) {
             if (pathList.isNullOrEmpty()) {
                 //
             } else {
                 val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
                 val newPathList = pathList.translateToOrigin()
+
+                val oldStyle = paint.style
+                val oldPathEffect = paint.pathEffect
                 for (path in newPathList!!) {
                     path.transform(renderMatrix)
+                    if (isLinePath) {
+                        //画线必须使用STROKE模式, 否则画不出
+                        paint.style = Paint.Style.STROKE
+
+                        if (oldStyle == Paint.Style.STROKE) {
+                            //描边的线段, 使用虚线绘制
+                            paint.pathEffect = createDashPathEffect() //虚线
+                        } else {
+                            paint.pathEffect = null //实线
+                        }
+                    }
+
+                    //draw
                     drawPath(path, paint)
                 }
+                paint.style = oldStyle
+                paint.pathEffect = oldPathEffect
             }
         }
+    }
+
+    /**创建一个虚线效果*/
+    protected open fun createDashPathEffect(): PathEffect {
+        val dashWidth = 1f.toPixel()
+        val dashGap = dashWidth
+        return DashPathEffect(floatArrayOf(dashWidth, dashGap), 0f)
     }
 
     //endregion---方法---

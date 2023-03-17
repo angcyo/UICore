@@ -26,6 +26,11 @@ class CanvasElementRenderer : BaseRenderer() {
         return renderElement?.requestElementRenderDrawable(renderParams)
     }
 
+    override fun isSupportControlPoint(type: Int): Boolean {
+        return renderElement?.isElementSupportControlPoint(type)
+            ?: super.isSupportControlPoint(type)
+    }
+
     /**更新渲染时, 需要的一些数据*/
     override fun readyRenderIfNeed(params: RenderParams?) {
         super.readyRenderIfNeed(params)
@@ -45,16 +50,16 @@ class CanvasElementRenderer : BaseRenderer() {
     }
 
     /**[com.angcyo.canvas.render.element.IElement.elementContainsPoint]*/
-    override fun rendererContainsPoint(point: PointF): Boolean =
-        renderElement?.elementContainsPoint(point) == true
+    override fun rendererContainsPoint(delegate: CanvasRenderDelegate?, point: PointF): Boolean =
+        renderElement?.elementContainsPoint(delegate, point) == true
 
     /**[com.angcyo.canvas.render.element.IElement.elementContainsRect]*/
-    override fun rendererContainsRect(rect: RectF): Boolean =
-        renderElement?.elementContainsRect(rect) == true
+    override fun rendererContainsRect(delegate: CanvasRenderDelegate?, rect: RectF): Boolean =
+        renderElement?.elementContainsRect(delegate, rect) == true
 
     /**[com.angcyo.canvas.render.element.IElement.elementIntersectRect]*/
-    override fun rendererIntersectRect(rect: RectF): Boolean =
-        renderElement?.elementIntersectRect(rect) == true
+    override fun rendererIntersectRect(delegate: CanvasRenderDelegate?, rect: RectF): Boolean =
+        renderElement?.elementIntersectRect(delegate, rect) == true
 
     override fun getElementList(): List<IElement> {
         val result = mutableListOf<IElement>()

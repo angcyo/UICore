@@ -19,6 +19,7 @@ import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRen
 import com.angcyo.drawable.loading.CircleScaleLoadingDrawable
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.*
+import kotlin.math.max
 
 /**
  * 绘制基类
@@ -145,13 +146,12 @@ abstract class BaseRenderer : IRenderer {
                 val renderBounds = property.getRenderBounds()
                 canvas.withSave {
                     translate(renderBounds.left, renderBounds.top)//平移到指定位置
-                    drawable.setBounds(
-                        0,
-                        0,
-                        renderBounds.width().ceilInt(),
-                        renderBounds.height().ceilInt()
-                    )//设置绘制的宽高
+                    val width = max(renderBounds.width(), params.drawMinWidth).ceilInt()
+                    val height = max(renderBounds.height(), params.drawMinHeight).ceilInt()
+                    drawable.setBounds(0, 0, width, height)//设置绘制的宽高
+                    params.delegate?.dispatchRenderDrawable(this@BaseRenderer, params, false)
                     drawable.draw(canvas)//绘制
+                    params.delegate?.dispatchRenderDrawable(this@BaseRenderer, params, true)
                 }
             }
         }
@@ -224,21 +224,21 @@ abstract class BaseRenderer : IRenderer {
 
     /**目标点[point]是否在渲染器bounds范围内
      * [point] 点位坐标, 画板内部的坐标*/
-    open fun rendererContainsPoint(point: PointF): Boolean =
-        getRendererBoundsPath()?.contains(point) == true
+    open fun rendererContainsPoint(delegate: CanvasRenderDelegate?, point: PointF): Boolean =
+        getRendererBoundsPath(delegate)?.contains(point) == true
 
     /**渲染器bounds是否完全包含矩形[rect]
      * [rect] 矩形坐标, 画板内部的坐标*/
-    open fun rendererContainsRect(rect: RectF): Boolean =
-        getRendererBoundsPath()?.contains(rect) == true
+    open fun rendererContainsRect(delegate: CanvasRenderDelegate?, rect: RectF): Boolean =
+        getRendererBoundsPath(delegate)?.contains(rect) == true
 
     /**目标矩形[rect]是否与渲染器bounds相交
      * [rect] 矩形坐标, 画板内部的坐标*/
-    open fun rendererIntersectRect(rect: RectF): Boolean =
-        getRendererBoundsPath()?.intersect(rect) == true
+    open fun rendererIntersectRect(delegate: CanvasRenderDelegate?, rect: RectF): Boolean =
+        getRendererBoundsPath(delegate)?.intersect(rect) == true
 
     /**获取元素用来碰撞检测的[Path]范围*/
-    open fun getRendererBoundsPath(result: Path = Path()): Path? {
+    open fun getRendererBoundsPath(delegate: CanvasRenderDelegate?, result: Path = Path()): Path? {
         val property = renderProperty ?: return null
         val renderMatrix = property.getRenderMatrix(includeRotate = true)
         val rect = RectF(0f, 0f, property.width, property.height)
@@ -353,7 +353,7 @@ abstract class BaseRenderer : IRenderer {
         } else {
             target?.copyTo(renderProperty)
         }
-        addRenderFlag(RENDERER_FLAG_REQUEST_PROPERTY, reason, delegate)
+        requestUpdateDrawableAndProperty(reason, delegate)
         delegate?.dispatchRendererPropertyChange(this, null, target, reason)
     }
 
@@ -399,7 +399,6 @@ abstract class BaseRenderer : IRenderer {
     open fun applyRotateMatrix(matrix: Matrix, reason: Reason, delegate: CanvasRenderDelegate?) {
         delegate?.dispatchApplyMatrix(this, matrix, BaseControlPoint.CONTROL_TYPE_ROTATE)
         renderProperty?.applyRotateMatrix(matrix)
-        addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
         updateRenderProperty(renderProperty, reason, delegate)
     }
 
@@ -415,7 +414,6 @@ abstract class BaseRenderer : IRenderer {
             BaseControlPoint.CONTROL_TYPE_SCALE
         )
         renderProperty?.applyScaleMatrixWithValue(matrix)
-        addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
         updateRenderProperty(renderProperty, reason, delegate)
     }
 
@@ -428,7 +426,6 @@ abstract class BaseRenderer : IRenderer {
     ) {
         delegate?.dispatchApplyMatrix(this, matrix, BaseControlPoint.CONTROL_TYPE_SCALE)
         renderProperty?.applyScaleMatrixWithCenter(matrix, useQr)
-        addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
         updateRenderProperty(renderProperty, reason, delegate)
     }
 
@@ -440,7 +437,6 @@ abstract class BaseRenderer : IRenderer {
         delegate: CanvasRenderDelegate?
     ) {
         renderProperty?.applyFlip(flipX, flipY)
-        addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
         updateRenderProperty(renderProperty, reason, delegate)
     }
 

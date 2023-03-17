@@ -4,7 +4,6 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.data.RenderParams
-import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.state.PathStateStack
 import com.angcyo.canvas.render.util.RenderHelper
@@ -27,7 +26,14 @@ open class PathElement : BaseElement() {
 
     override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? {
         val pathList = pathList ?: return null
-        return createPathDrawable(pathList, paint, renderParams?.overrideSize)
+        return createPathDrawable(
+            pathList,
+            paint,
+            renderParams?.overrideSize,
+            (renderParams ?: RenderParams()).drawMinWidth,
+            (renderParams ?: RenderParams()).drawMinHeight,
+            false
+        )
     }
 
     /**更新原始的[pathList]对象, 并保持可视化的宽高一致

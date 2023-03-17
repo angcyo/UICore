@@ -74,7 +74,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 overrideSize
             ) {
                 translate(-rect.left, -rect.top)
-                val params = RenderParams()
+                val params = RenderParams(renderDst = this)
                 for (renderer in rendererList) {
                     renderer.renderOnInside(this, params)
                 }
@@ -93,7 +93,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
             val rect = computeBounds(rendererList, bounds)
             return createOverrideBitmapCanvas(rect.width(), rect.height(), overrideSize) {
                 translate(-rect.left, -rect.top)
-                val params = RenderParams()
+                val params = RenderParams(renderDst = this)
                 for (renderer in rendererList) {
                     renderer.renderOnInside(this, params)
                 }

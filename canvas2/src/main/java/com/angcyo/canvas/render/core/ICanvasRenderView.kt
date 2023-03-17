@@ -8,6 +8,7 @@ import android.widget.OverScroller
 import androidx.annotation.WorkerThread
 import com.angcyo.canvas.render.core.component.BaseControl
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.unit.IRenderUnit
@@ -116,6 +117,10 @@ interface ICanvasRenderView {
      * [TranslateRendererControl]
      * */
     fun dispatchControlHappen(controlPoint: BaseControl, end: Boolean)
+
+    /**当要渲染[renderer]时, 触发
+     * [endDraw] false:表示在draw之前, true:表示在draw之后*/
+    fun dispatchRenderDrawable(renderer: BaseRenderer, params: RenderParams, endDraw: Boolean)
 
     //endregion---Base---
 

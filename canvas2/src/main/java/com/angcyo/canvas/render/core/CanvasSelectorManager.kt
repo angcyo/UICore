@@ -205,7 +205,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
         _tempPoint.set(eventX, eventY)
         delegate.renderViewBox.transformToInside(_tempPoint)
 
-        if (isSelectorElement && selectorComponent.rendererContainsPoint(_tempPoint)) {
+        if (isSelectorElement && selectorComponent.rendererContainsPoint(delegate, _tempPoint)) {
             //重复选中
             onSelfTouchDownSelectRenderer()
             return
@@ -288,7 +288,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
             if (element.isLock || !element.isVisible) {
                 continue
             }
-            if (element.rendererContainsPoint(point)) {
+            if (element.rendererContainsPoint(delegate, point)) {
                 result.add(element)
             }
         }
@@ -305,7 +305,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
             if (element.isLock || !element.isVisible) {
                 continue
             }
-            if (element.rendererIntersectRect(rect)) {
+            if (element.rendererIntersectRect(delegate, rect)) {
                 result.add(element)
             }
         }

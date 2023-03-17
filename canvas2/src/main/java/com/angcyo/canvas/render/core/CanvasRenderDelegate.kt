@@ -56,7 +56,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     var undoManager = CanvasUndoManager(this)
 
     /**渲染参数*/
-    var renderParams = RenderParams(this)
+    var renderParams = RenderParams(this, this)
 
     /**异步加载管理*/
     var asyncManager = CanvasAsyncManager(this)
@@ -245,6 +245,16 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     override fun dispatchControlHappen(controlPoint: BaseControl, end: Boolean) {
         for (listener in renderListenerList) {
             listener.onControlHappen(controlPoint, end)
+        }
+    }
+
+    override fun dispatchRenderDrawable(
+        renderer: BaseRenderer,
+        params: RenderParams,
+        endDraw: Boolean
+    ) {
+        for (listener in renderListenerList) {
+            listener.onRenderDrawable(renderer, params, endDraw)
         }
     }
 

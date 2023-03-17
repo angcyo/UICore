@@ -10,7 +10,9 @@ import com.angcyo.canvas.render.element.IElement
 import com.angcyo.canvas.render.element.TextElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasElementRenderer
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 
@@ -38,19 +40,30 @@ fun createOverrideMatrix(
     var sx = 1f
     var sy = 1f
     //覆盖大小需要进行的缩放
+
     if (overrideWidth != null && overrideHeight != null) {
         //任意比例
-        sx = overrideWidth / originWidth
-        sy = overrideHeight / originHeight
+        if (originWidth > 0) {
+            sx = overrideWidth / originWidth
+        }
+        if (originHeight > 0) {
+            sy = overrideHeight / originHeight
+        }
     } else if (overrideWidth != null || overrideHeight != null) {
         //等比
         val overrideSize = overrideWidth ?: overrideHeight
         if (overrideSize != null) {
-            sx = overrideSize / originWidth
-            sy = overrideSize / originHeight
+            if (originWidth > 0) {
+                sx = overrideSize / originWidth
+            }
+            if (originHeight > 0) {
+                sy = overrideSize / originHeight
+            }
 
-            sx = min(sx, sy)
-            sy = sx//等比
+            if (originWidth > 0 && originHeight > 0) {
+                sx = min(sx, sy)
+                sy = sx//等比
+            }
         }
     } else {
         //no op
@@ -63,18 +76,30 @@ fun createOverrideMatrix(
  * [createOverrideMatrix]
  * */
 fun createOverridePictureCanvas(
+    @Pixel
     originWidth: Float,
+    @Pixel
     originHeight: Float,
-    overrideWidth: Float?,
+    @Pixel
+    overrideWidth: Float?, /*要缩放到的宽度*/
+    @Pixel
     overrideHeight: Float? = null,
+    @Pixel
+    minWidth: Float = 1f, /*最小宽度*/
+    @Pixel
+    minHeight: Float = 1f,
     block: Canvas.() -> Unit
 ): Picture {
     val matrix = createOverrideMatrix(originWidth, originHeight, overrideWidth, overrideHeight)
     //目标输出的大小
     val width = originWidth * matrix.getScaleX()
     val height = originHeight * matrix.getScaleY()
-    return withPicture(width.ceilInt(), height.ceilInt()) {
-        concat(_overrideMatrix)
+
+    val w = max(width, minWidth).ceilInt()
+    val h = max(height, minHeight).ceilInt()
+
+    return withPicture(w, h) {
+        concat(matrix)
         block()
     }
 }
@@ -94,7 +119,7 @@ fun createOverrideBitmapCanvas(
     val width = originWidth * matrix.getScaleX()
     val height = originHeight * matrix.getScaleY()
     return withBitmap(width.ceilInt(), height.ceilInt()) {
-        concat(_overrideMatrix)
+        concat(matrix)
         block()
     }
 }

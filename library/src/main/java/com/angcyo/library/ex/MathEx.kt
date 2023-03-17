@@ -121,6 +121,9 @@ fun Double.decimal(
     ensureInt: Boolean,
     fadedUp: Boolean,
 ): String {
+    if (!isFinite()) {
+        return "NaN"
+    }
     if (ensureInt) {
         val int = if (fadedUp) roundToInt() else toInt()
         val intD = int.toDouble()
@@ -163,6 +166,9 @@ fun Float.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
 
 /**保留小数点后几位*/
 fun Float.decimal(digit: Int, ensureInt: Boolean, fadedUp: Boolean): String {
+    if (!isFinite()) {
+        return "NaN"
+    }
     if (ensureInt) {
         val int = if (fadedUp) roundToInt() else toInt()
         val intF = int.toFloat()
