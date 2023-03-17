@@ -120,7 +120,7 @@ abstract class BaseRenderer : IRenderer {
      * [com.angcyo.canvas.render.element.IElement.requestElementRenderProperty]
      * [com.angcyo.canvas.render.element.IElement.requestElementRenderDrawable]
      * */
-    protected open fun readyRenderIfNeed(params: RenderParams?) {
+    open fun readyRenderIfNeed(params: RenderParams?) {
         val requestProperty = renderFlags.have(RENDERER_FLAG_REQUEST_PROPERTY)
         if (requestProperty) {
             renderProperty = null

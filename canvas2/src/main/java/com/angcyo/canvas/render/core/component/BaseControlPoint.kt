@@ -127,7 +127,9 @@ abstract class BaseControlPoint(controlManager: CanvasControlManager) : BaseCont
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
         if (isEnable) {
-            if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+            if (event.actionMasked == MotionEvent.ACTION_DOWN &&
+                controlManager.delegate.selectorManager.isSelectorElement
+            ) {
                 handleControl = bounds.contains(event.x, event.y)
             }
         }

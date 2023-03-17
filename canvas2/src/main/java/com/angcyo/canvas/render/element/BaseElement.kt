@@ -4,10 +4,7 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
-import com.angcyo.canvas.render.util.PictureRenderDrawable
-import com.angcyo.canvas.render.util.RenderHelper
-import com.angcyo.canvas.render.util.createOverridePictureCanvas
-import com.angcyo.canvas.render.util.createRenderTextPaint
+import com.angcyo.canvas.render.util.*
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.contains
 import com.angcyo.library.ex.intersect
@@ -145,7 +142,7 @@ abstract class BaseElement : IElement {
                 //
             } else {
                 val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
-                val newPathList = RenderHelper.translateToOrigin(pathList)
+                val newPathList = pathList.translateToOrigin()
                 for (path in newPathList!!) {
                     path.transform(renderMatrix)
                     drawPath(path, paint)
