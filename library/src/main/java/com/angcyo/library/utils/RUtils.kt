@@ -671,6 +671,9 @@ else
     result
 }
 
+/**从字符串中获取回去http地址, url地址*/
+fun String?.getUrlList(regex: String = PATTERN_URL): List<String>? = this?.patternList(regex)
+
 //region ---canvas---
 
 /**是否是GCode内容*/
