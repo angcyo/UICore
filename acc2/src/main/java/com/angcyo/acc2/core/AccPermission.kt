@@ -1,6 +1,7 @@
 package com.angcyo.acc2.core
 
 import android.accessibilityservice.AccessibilityServiceInfo
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -58,10 +59,21 @@ object AccPermission {
 
     /**打开悬浮窗设置页面*/
     fun openOverlaysActivity(context: Context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+            if (context is Activity) {
+                context.startActivityForResult(intent, 9)
+            } else {
+                context.startActivity(intent)
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
             intent.data = Uri.parse("package:" + context.packageName)
-            context.startActivity(intent)
+            if (context is Activity) {
+                context.startActivityForResult(intent, 9)
+            } else {
+                context.startActivity(intent)
+            }
         } else {
             SettingsCompat.manageDrawOverlays(context)
         }
