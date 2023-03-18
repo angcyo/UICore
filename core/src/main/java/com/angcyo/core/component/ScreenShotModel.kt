@@ -30,7 +30,31 @@ import java.util.*
 
 
 /**
- * 截屏通知
+ * 截屏通知, 截图分享
+ *
+ * ```
+ * //截图分享
+ *  vmApp<ScreenShotModel>().apply {
+ *    startListen()
+ *    screenShotPathData.observeForever { path->
+ *       if (!path.isNullOrBlank() && !RBackground.isBackground()) {
+ *              renderLayout(R.layout.core_screen_shot_share_layout) {
+ *                  renderLayoutAction = {
+ *                      img(R.id.lib_image_view)?.loadImage(path)
+ *                      click(R.id.lib_close_view) {
+ *                      DslLayout.hide(this@renderLayout)
+ *                   }
+ *                 clickItem {
+ *                    DslLayout.hide(this@renderLayout)
+ *                    shareEngraveLog()
+ *                 }
+ *               }
+ *           }
+ *       }
+ *     }
+ *  }
+ * ```
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2022/11/12
