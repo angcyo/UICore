@@ -267,6 +267,7 @@ fun layoutWX(
 }
 
 /**在[Activity]中渲染一个布局*/
+@AnyThread
 fun renderLayout(@LayoutRes layoutId: Int, action: LayoutConfig.() -> Unit = {}) {
     LayoutConfig().apply {
         this.layoutId = layoutId
