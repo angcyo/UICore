@@ -128,6 +128,32 @@ interface Api {
         @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<ResponseBody>>
+
+    /*------------以下是[PATCH]请求-----------------*/
+
+    @PATCH
+    fun patch(
+        @Url url: String,
+        @Body json: JsonElement? = null,
+        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
+    ): Observable<Response<JsonElement>>
+
+    @PATCH
+    fun patchBody(
+        @Url url: String,
+        @Body body: RequestBody?,
+        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
+    ): Observable<Response<JsonElement>>
+
+    @PATCH
+    fun patch2Body(
+        @Url url: String,
+        @Body json: JsonElement? = null,
+        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
+    ): Observable<Response<ResponseBody>>
 }
 
 //</editor-fold desc="通用网络接口">
@@ -348,6 +374,23 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
                 )
             }
         }
+        PATCH -> {
+            if (requestConfig.requestBody == null) {
+                dslHttp(Api::class.java)?.patch(
+                    requestConfig.url,
+                    requestConfig.body,
+                    requestConfig.query,
+                    requestConfig.header
+                )
+            } else {
+                dslHttp(Api::class.java)?.patchBody(
+                    requestConfig.url,
+                    requestConfig.requestBody,
+                    requestConfig.query,
+                    requestConfig.header
+                )
+            }
+        }
         POST_FORM -> {
             dslHttp(Api::class.java)?.postForm(
                 requestConfig.url,
@@ -544,6 +587,13 @@ fun post(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
     }
 }
 
+fun patch(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
+    return http {
+        method = PATCH
+        this.config()
+    }
+}
+
 fun put(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
     return http {
         method = PUT
@@ -712,6 +762,7 @@ inline fun <reified Bean> Response<JsonElement>.toBean(parseError: Boolean = fal
 const val GET = 1
 const val POST = 2
 const val PUT = 3
+const val PATCH = 4
 
 //如果[formMap]有数据, 则会优先使用[POST_FORM]
 const val POST_FORM = 22

@@ -3,16 +3,12 @@ package com.angcyo.core.component
 import android.os.Build
 import com.angcyo.core.lifecycle.LifecycleViewModel
 import com.angcyo.core.vmApp
-import com.angcyo.http.base.HttpCallback
-import com.angcyo.http.base.JsonBuilder
-import com.angcyo.http.base.jsonObject
-import com.angcyo.http.base.mapType
-import com.angcyo.http.post
+import com.angcyo.http.*
+import com.angcyo.http.base.*
 import com.angcyo.http.rx.observe
-import com.angcyo.http.toApi
-import com.angcyo.http.toBean
 import com.angcyo.library.L
 import com.angcyo.library.ex.nowTimeString
+import com.angcyo.library.model.Page
 import com.google.gson.JsonElement
 
 /**
@@ -26,6 +22,10 @@ import com.google.gson.JsonElement
  * ---
  *
  * Gitee gits
+ *
+ * https://gitee.com/
+ *
+ * https://gitee.com/angcyo/dashboard
  *
  * https://gitee.com/angcyo/dashboard/codes
  *
@@ -52,10 +52,66 @@ class GitModel : LifecycleViewModel() {
 
     //<editor-fold desc="gist codes 代码片段操作">
 
-    /**创建一个代码片段*/
+    /**获取单条代码片段
+     * https://gitee.com/api/v5/swagger#/getV5GistsId
+     * */
+    fun getGist(id: String, result: HttpCallback<Map<String, Any>>? = null) {
+        get {
+            url = "gists/${id}".toApi(GIT_OPEN_API_URL)
+            query = hashMapOf("access_token" to ACCESS_TOKEN)
+            codeKey = null
+        }.observe { data, error ->
+            val map = data?.toBean<Map<String, Any>>(mapType(String::class.java, Any::class.java))
+            L.i(map)
+            result?.invoke(map, error)
+        }
+    }
+
+    /**获取代码片段分页列表
+     * https://gitee.com/api/v5/swagger#/getV5Gists
+     * */
+    fun getGistList(page: Page, result: HttpCallback<List<Any>>? = null) {
+        get {
+            url = "gists".toApi(GIT_OPEN_API_URL)
+            query = hashMapOf(
+                "access_token" to ACCESS_TOKEN,
+                "page" to page.requestPageIndex,
+                "per_page" to page.requestPageSize
+            )
+            codeKey = null
+        }.observe { data, error ->
+            val list = data?.toBean<List<Any>>(listType(Any::class.java))
+            L.i(list)
+            result?.invoke(list, error)
+        }
+    }
+
+    /**创建一个代码片段
+     * https://gitee.com/api/v5/swagger#/postV5Gists
+     * */
     fun postGist(body: JsonElement, result: HttpCallback<Map<String, Any>>? = null) {
         post {
             url = "gists".toApi(GIT_OPEN_API_URL)
+            this.body = body
+            codeKey = null
+        }.observe { data, error ->
+            val map = data?.toBean<Map<String, Any>>(mapType(String::class.java, Any::class.java))
+            L.i(map)
+            result?.invoke(map, error)
+        }
+    }
+
+    /**
+     * 修改代码片段
+     *
+     * [id] 要修改的片段id
+     * [body] 内容可以包括 [files] 和 [description] 字段
+     *
+     * https://gitee.com/api/v5/swagger#/patchV5GistsId
+     * */
+    fun patchGist(id: String, body: JsonElement, result: HttpCallback<Map<String, Any>>? = null) {
+        patch {
+            url = "gists/${id}".toApi(GIT_OPEN_API_URL)
             this.body = body
             codeKey = null
         }.observe { data, error ->
@@ -71,14 +127,14 @@ class GitModel : LifecycleViewModel() {
 /**
  *
  * {
- * "access_token": "xxx",
- * "files": {
- * "file1.txt": {
- * "content": "String file contents"
- * }
- * },
- * "description": "2021-12-22",
- * "public": "false"
+ *   "access_token": "xxx",
+ *   "files": {
+ *     "file1.txt": {
+ *       "content": "String file contents"
+ *       }
+ *   },
+ *   "description": "2021-12-22",
+ *   "public": "false"
  * }
  *
  * [description] 判断的描述, 也是标题
