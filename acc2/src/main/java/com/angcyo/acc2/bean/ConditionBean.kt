@@ -16,7 +16,7 @@ data class ConditionBean(
     var random: Boolean = false,
 
     /**当[com.angcyo.acc2.bean.TaskBean.textMap]包含指定key对应的值时. 列表中均要满足
-     * 空字符也满足.
+     * 空字符不满足情况,空列表也不满足
      * 则满足条件!*/
     var textMapList: List<String>? = null,
 

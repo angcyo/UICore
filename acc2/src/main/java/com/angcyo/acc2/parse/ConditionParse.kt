@@ -97,7 +97,10 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
                 for (key in textMapList!!) {
                     val value = accControl._taskBean?.textListMap?.get(key)
                         ?: accControl._taskBean?.textMap?.get(key)
-                    if (value == null) {
+                    if (value == null
+                        || (value is String && value.isBlank())
+                        || (value is List<*> && value.isEmpty())
+                    ) {
                         //指定key对应的value没有值, 则条件不满足
                         result = false
                         break
