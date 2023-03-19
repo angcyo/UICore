@@ -92,15 +92,23 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
 
             val or = condition.or
 
+            /**任务中是否配置了对应的文本*/
+            fun haveTextMapKey(key: String): Boolean {
+                val value = accControl._taskBean?.textListMap?.get(key)
+                    ?: accControl._taskBean?.textMap?.get(key)
+                if (value == null
+                    || (value is String && value.isBlank())
+                    || (value is List<*> && value.isEmpty())
+                ) {
+                    return false
+                }
+                return true
+            }
+
             //textMapList
             if (result && !textMapList.isNullOrEmpty()) {
                 for (key in textMapList!!) {
-                    val value = accControl._taskBean?.textListMap?.get(key)
-                        ?: accControl._taskBean?.textMap?.get(key)
-                    if (value == null
-                        || (value is String && value.isBlank())
-                        || (value is List<*> && value.isEmpty())
-                    ) {
+                    if (!haveTextMapKey(key)) {
                         //指定key对应的value没有值, 则条件不满足
                         result = false
                         break
@@ -115,9 +123,7 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
             //noTextMapList
             if (result && !noTextMapList.isNullOrEmpty()) {
                 for (key in noTextMapList!!) {
-                    val value = accControl._taskBean?.textListMap?.get(key)
-                        ?: accControl._taskBean?.textMap?.get(key)
-                    if (value != null) {
+                    if (haveTextMapKey(key)) {
                         //指定key对应的value有值, 则条件不满足
                         result = false
                         break
@@ -284,7 +290,13 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
 
             //actionJumpList
             if (result && !actionJumpList.isNullOrEmpty()) {
-                for (expression in actionJumpList!!) {
+                for (text in actionJumpList!!) {
+                    //文本解析
+                    val expression = accParse.textParse.parse(text).firstOrNull()
+                    if (expression.isNullOrEmpty()) {
+                        //表达式为空, 则直接下一个
+                        continue
+                    }
 
                     var actionId = -1L
                     val check = checkCount(expression) {
