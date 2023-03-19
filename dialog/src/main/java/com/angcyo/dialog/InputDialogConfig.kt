@@ -86,6 +86,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
      * [InputType.TYPE_CLASS_TEXT]
      * [InputType.TYPE_CLASS_NUMBER]
      * [InputType.TYPE_NUMBER_FLAG_DECIMAL]
+     * [InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL]
      * */
     var inputType = InputType.TYPE_CLASS_TEXT
 
