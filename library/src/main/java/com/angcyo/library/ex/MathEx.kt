@@ -20,21 +20,43 @@ import kotlin.math.*
  */
 
 /**计算两点之间的距离*/
-fun distance(point1: PointF, point2: PointF): Double {
-    return c(point1.x.toDouble(), point1.y.toDouble(), point2.x.toDouble(), point2.y.toDouble())
+fun distance(point1: PointF, point2: PointF, abs: Boolean = true): Double {
+    return c(
+        point1.x.toDouble(),
+        point1.y.toDouble(),
+        point2.x.toDouble(),
+        point2.y.toDouble(),
+        abs
+    )
 }
 
 /**勾股定理 C边的长度*/
-fun c(x1: Double, y1: Double, x2: Double, y2: Double): Double {
-    val a = (x2 - x1).absoluteValue
-    val b = (y2 - y1).absoluteValue
-    return c(a, b)
+fun c(x1: Double, y1: Double, x2: Double, y2: Double, abs: Boolean = true): Double {
+    val a = x2 - x1
+    val b = y2 - y1
+    var c = c(a, b)
+    if (a < 0 && b < 0) {
+        //反向
+        c = -c.absoluteValue
+    }
+    if (abs) {
+        c = c.absoluteValue
+    }
+    return c
 }
 
-fun c(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-    val a = (x2 - x1).absoluteValue
-    val b = (y2 - y1).absoluteValue
-    return c(a, b).toFloat()
+fun c(x1: Float, y1: Float, x2: Float, y2: Float, abs: Boolean = true): Float {
+    val a = x2 - x1
+    val b = y2 - y1
+    var c = c(a, b).toFloat()
+    if (a < 0 && b < 0) {
+        //反向
+        c = -c.absoluteValue
+    }
+    if (abs) {
+        c = c.absoluteValue
+    }
+    return c
 }
 
 /**勾股定律*/
