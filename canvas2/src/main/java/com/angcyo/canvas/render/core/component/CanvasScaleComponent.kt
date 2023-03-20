@@ -56,7 +56,7 @@ class CanvasScaleComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
     }
 
     /**处理缩放意图*/
-    fun handleScaleIntent() {
+    private fun handleScaleIntent() {
         if (_movePointList.size() < 2) {
             return
         }
@@ -82,6 +82,11 @@ class CanvasScaleComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
             //delegate.renderViewBox.transformToInside(_tempPoint)
             delegate.renderViewBox.offsetToOrigin(_tempPoint)
             scaleBy(sx, sy, _tempPoint.x, _tempPoint.y)
+            //缩放画布时, 关闭元素手势
+            val target = delegate.controlManager._interceptTarget
+            if (target is BaseControl) {
+                target.handleControl = false
+            }
         }
     }
 

@@ -69,7 +69,7 @@ class RotateControlPoint(controlManager: CanvasControlManager) : BaseControlPoin
     }
 
     override fun endControl() {
-        if (isControlHappen) {
+        if (isNeedApply()) {
             controlRendererInfo?.let {
                 applyRotate(Reason.user.apply {
                     controlType = CONTROL_TYPE_KEEP_GROUP_PROPERTY or

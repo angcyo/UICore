@@ -97,6 +97,21 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
         return true
     }
 
+    /**获取手势在画布内移动的距离*/
+    @CanvasInsideCoordinate
+    fun getTouchTranslateX() = touchMovePointInside.x - touchDownPointInside.x
+
+    @CanvasInsideCoordinate
+    fun getTouchTranslateY() = touchMovePointInside.y - touchDownPointInside.y
+
+    /**结束控制之后, 是否需要应用改变*/
+    fun isNeedApply() = isControlHappen && handleControl
+
+    /**控制是否产生了*/
+    fun updateControlHappen(happen: Boolean) {
+        isControlHappen = happen
+    }
+
     //region---core---
 
     private fun Reason.needToStack() = reason == Reason.REASON_CODE || reason == Reason.REASON_USER

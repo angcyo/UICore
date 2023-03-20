@@ -8,6 +8,8 @@ import com.angcyo.canvas.render.core.IComponent
 import com.angcyo.canvas.render.element.BaseElement
 import com.angcyo.canvas.render.element.IElement
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.contains
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.intersect
@@ -20,7 +22,6 @@ class ElementHitComponent(val element: IElement) : IComponent {
 
     companion object {
         val elementBoundsPath = Path()
-        val elementTempRect = RectF()
     }
 
     override var isEnable: Boolean = true
@@ -40,9 +41,10 @@ class ElementHitComponent(val element: IElement) : IComponent {
     fun elementContainsPoint(delegate: CanvasRenderDelegate?, point: PointF): Boolean {
         var result = getElementBoundsPath(delegate, elementBoundsPath).contains(point)
         if (!result) {
-            val tempRect = elementTempRect
+            val tempRect = acquireTempRectF()
             tempRect.set(point.x, point.y, point.x + 1, point.y + 1)
             result = elementIntersectRect(delegate, tempRect) //此时使用1像素的矩形,进行碰撞
+            tempRect.release()
         }
         return result
     }
@@ -64,13 +66,13 @@ class ElementHitComponent(val element: IElement) : IComponent {
     fun getElementBoundsPath(delegate: CanvasRenderDelegate?, result: Path): Path {
         val property = if (element is BaseElement) element.renderProperty else null
         val renderMatrix = property?.getRenderMatrix(includeRotate = true)
-        getElementBounds(delegate, elementTempRect)
-        val rect = elementTempRect
+        val rect = getElementBounds(delegate, acquireTempRectF())
         result.rewind()
         result.addRect(rect, Path.Direction.CW)
         if (renderMatrix != null) {
             result.transform(renderMatrix)
         }
+        rect.release()
         return result
     }
 

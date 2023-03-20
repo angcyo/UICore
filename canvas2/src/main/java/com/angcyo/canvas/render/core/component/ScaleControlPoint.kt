@@ -82,8 +82,9 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
                 }
             }
             MotionEvent.ACTION_MOVE -> {
-                val tx = touchMovePointInside.x - touchDownPointInside.x
-                val ty = touchMovePointInside.y - touchDownPointInside.y
+                val tx = getTouchTranslateX()
+                val ty = getTouchTranslateY()
+
                 if (isControlHappen ||
                     tx.absoluteValue >= translateThreshold ||
                     ty.absoluteValue >= translateThreshold
@@ -155,7 +156,7 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
         L.d("缩放元素:sx:$sx sy:$sy")
         controlRendererInfo?.let {
             it.state.renderProperty?.let { property ->
-                isControlHappen = true
+                updateControlHappen(true)
                 controlMatrix.setScale(sx, sy, property.anchorX, property.anchorY)
 
                 applyScale(Reason.preview, controlManager.delegate)
@@ -164,7 +165,7 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
     }
 
     override fun endControl() {
-        if (isControlHappen) {
+        if (isNeedApply()) {
             controlRendererInfo?.let {
                 applyScale(Reason.user.apply {
                     controlType = CONTROL_TYPE_KEEP_GROUP_PROPERTY or

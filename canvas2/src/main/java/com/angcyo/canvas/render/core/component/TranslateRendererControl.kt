@@ -21,8 +21,9 @@ class TranslateRendererControl(controlManager: CanvasControlManager) : BaseContr
             MotionEvent.ACTION_MOVE -> {
                 if (event.pointerCount <= 1) {
                     //单指才能移动元素
-                    val tx = touchMovePointInside.x - touchDownPointInside.x
-                    val ty = touchMovePointInside.y - touchDownPointInside.y
+                    val tx = getTouchTranslateX()
+                    val ty = getTouchTranslateY()
+
                     if (isControlHappen ||
                         tx.absoluteValue >= translateThreshold ||
                         ty.absoluteValue >= translateThreshold
@@ -56,7 +57,7 @@ class TranslateRendererControl(controlManager: CanvasControlManager) : BaseContr
 
     /**结束平移控制*/
     override fun endControl() {
-        if (isControlHappen && handleControl) {
+        if (isNeedApply()) {
             controlRendererInfo?.let {
                 applyTranslate(Reason.user.apply {
                     controlType = CONTROL_TYPE_KEEP_GROUP_PROPERTY or CONTROL_TYPE_TRANSLATE
