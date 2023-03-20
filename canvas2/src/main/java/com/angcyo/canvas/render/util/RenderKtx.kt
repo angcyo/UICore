@@ -6,10 +6,12 @@ import android.view.Gravity
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.Strategy
+import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.element.IElement
 import com.angcyo.canvas.render.element.TextElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasElementRenderer
+import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
 import kotlin.math.max
@@ -264,5 +266,11 @@ fun BaseRenderer.alignInBounds(
         translate(dx, dy, Reason.user, strategy, delegate)
     }
 }
+
+/**判断当前的渲染器是否是选择组件*/
+fun BaseRenderer?.isSelectorGroupRenderer() = this is CanvasSelectorComponent
+
+/**判断当前的渲染器是否是群组渲染器, 但是不是选择群组渲染器*/
+fun BaseRenderer?.isOnlyGroupRenderer() = !isSelectorGroupRenderer() && this is CanvasGroupRenderer
 
 //endregion---operate---
