@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.core.component
 
 import android.graphics.PointF
 import android.view.MotionEvent
+import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.ICanvasTouchListener
 import com.angcyo.canvas.render.core.IComponent
 
@@ -91,6 +92,14 @@ abstract class BaseTouchComponent : ICanvasTouchListener, IComponent {
     fun updateDownPointList(list: List<PointF> = _movePointList) {
         _downPointList.clear()
         _downPointList.addAll(list)
+    }
+
+    /**禁止元素的控制手势*/
+    fun disableControlHandle(delegate: CanvasRenderDelegate) {
+        val target = delegate.controlManager._interceptTarget
+        if (target is BaseControl) {
+            target.handleControl = false
+        }
     }
 
     //endregion---辅助---

@@ -18,6 +18,9 @@ class TranslateRendererControl(controlManager: CanvasControlManager) : BaseContr
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
         when (event.actionMasked) {
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                handleControl = isControlHappen
+            }
             MotionEvent.ACTION_MOVE -> {
                 if (event.pointerCount <= 1) {
                     //单指才能移动元素
