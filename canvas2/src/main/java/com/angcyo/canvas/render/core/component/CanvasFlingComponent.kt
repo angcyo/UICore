@@ -5,6 +5,7 @@ import android.view.VelocityTracker
 import android.view.ViewConfiguration
 import android.widget.OverScroller
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
+import com.angcyo.canvas.render.core.Reason
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.abs
@@ -58,7 +59,8 @@ class CanvasFlingComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
             delegate.renderViewBox.translateTo(
                 overScroller.currX.toFloat(),
                 overScroller.currY.toFloat(),
-                false
+                false,
+                Reason.user
             )
             delegate.refresh()
         }

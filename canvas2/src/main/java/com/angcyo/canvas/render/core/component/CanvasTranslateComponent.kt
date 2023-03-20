@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.core.component
 
 import android.view.MotionEvent
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
+import com.angcyo.canvas.render.core.Reason
 import com.angcyo.library.L
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.size
@@ -60,7 +61,7 @@ class CanvasTranslateComponent(val delegate: CanvasRenderDelegate) : BaseTouchCo
 
     private fun translateBy(dx: Float, dy: Float, anim: Boolean = false) {
         L.d("平移手势:dx:${dx} dy:${dy}")
-        delegate.renderViewBox.translateBy(dx, dy, anim)
+        delegate.renderViewBox.translateBy(dx, dy, anim, Reason.user)
         isHandleTouch = true
         updateDownPointList()
     }

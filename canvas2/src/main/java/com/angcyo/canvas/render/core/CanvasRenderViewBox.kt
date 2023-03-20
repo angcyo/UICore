@@ -8,6 +8,7 @@ import android.view.Gravity
 import androidx.annotation.AnyThread
 import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
+import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
 import kotlin.math.max
@@ -155,13 +156,13 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
     /**更新box的渲染矩阵[renderMatrix]
      * [anim] 是否需要动画*/
     @AnyThread
-    fun updateRenderMatrix(target: Matrix, finish: Boolean) {
+    fun updateRenderMatrix(target: Matrix, finish: Boolean, reason: Reason) {
         limitRenderMatrix(target)
 
         renderMatrix.set(target)
         renderMatrix.invert(renderInvertMatrix)
 
-        delegate.dispatchRenderBoxMatrixUpdate(target, finish)
+        delegate.dispatchRenderBoxMatrixUpdate(target, reason, finish)
 
         delegate.refresh()
     }
@@ -172,7 +173,8 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
     @AnyThread
     fun changeRenderMatrix(
         target: Matrix,
-        anim: Boolean = true,
+        anim: Boolean,
+        reason: Reason,
         finish: ((isCancel: Boolean) -> Unit)? = null
     ) {
         _changeAnimator?.cancel()
@@ -181,18 +183,18 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
         if (anim) {
             _changeAnimator = matrixAnimator(from, target, finish = { isCancel ->
                 _changeAnimator = null
-                updateRenderMatrix(target, true)
+                updateRenderMatrix(target, true, reason)
                 finish?.invoke(isCancel)//
 
-                delegate.dispatchRenderBoxMatrixChange(from, target)
+                delegate.dispatchRenderBoxMatrixChange(from, target, reason)
             }) {
-                updateRenderMatrix(it, false)
+                updateRenderMatrix(it, false, reason)
             }
         } else {
-            updateRenderMatrix(target, true)
+            updateRenderMatrix(target, true, reason)
             finish?.invoke(false)//
 
-            delegate.dispatchRenderBoxMatrixChange(from, target)
+            delegate.dispatchRenderBoxMatrixChange(from, target, reason)
         }
     }
 
@@ -306,32 +308,36 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
     //---
 
     /**增量平移画布*/
-    fun translateBy(dx: Float, dy: Float, anim: Boolean) {
+    fun translateBy(dx: Float, dy: Float, anim: Boolean, reason: Reason) {
         val matrix = Matrix(renderMatrix)
         matrix.postTranslate(dx, dy)
-        changeRenderMatrix(matrix, anim)
+        changeRenderMatrix(matrix, anim, reason.apply {
+            controlType = (controlType ?: 0).add(BaseControlPoint.CONTROL_TYPE_TRANSLATE)
+        })
     }
 
     /**直接平移画布*/
-    fun translateTo(tx: Float, ty: Float, anim: Boolean) {
+    fun translateTo(tx: Float, ty: Float, anim: Boolean, reason: Reason) {
         val matrix = Matrix(renderMatrix)
         matrix.updateTranslate(tx, ty)
-        changeRenderMatrix(matrix, anim)
+        changeRenderMatrix(matrix, anim, reason.apply {
+            controlType = (controlType ?: 0).add(BaseControlPoint.CONTROL_TYPE_TRANSLATE)
+        })
     }
 
     //---
 
     /**增量缩放画布*/
-    fun scaleBy(sx: Float, sy: Float, anim: Boolean) {
+    fun scaleBy(sx: Float, sy: Float, anim: Boolean, reason: Reason) {
         //默认用画板的中点进行缩放
         val center = getRenderCenterInside()
-        scaleBy(sx, sy, center.x, center.y, anim)
+        scaleBy(sx, sy, center.x, center.y, anim, reason)
     }
 
     /**增量缩放画布, 已经达到了最大或/最小还想要继续操作, 则忽略.
      * 如果不忽略, 则会有[translate]的效果
      * */
-    fun scaleBy(sx: Float, sy: Float, px: Float, py: Float, anim: Boolean) {
+    fun scaleBy(sx: Float, sy: Float, px: Float, py: Float, anim: Boolean, reason: Reason) {
         val matrix = Matrix(renderMatrix)
         matrix.postScale(sx, sy, px, py)
 
@@ -348,14 +354,18 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
             return
         }
 
-        changeRenderMatrix(matrix, anim)
+        changeRenderMatrix(matrix, anim, reason.apply {
+            controlType = (controlType ?: 0).add(BaseControlPoint.CONTROL_TYPE_SCALE)
+        })
     }
 
     /**直接缩放画布*/
-    fun scaleTo(sx: Float, sy: Float, anim: Boolean) {
+    fun scaleTo(sx: Float, sy: Float, anim: Boolean, reason: Reason) {
         val matrix = Matrix(renderMatrix)
         matrix.updateScale(sx, sy)
-        changeRenderMatrix(matrix, anim)
+        changeRenderMatrix(matrix, anim, reason.apply {
+            controlType = (controlType ?: 0).add(BaseControlPoint.CONTROL_TYPE_SCALE)
+        })
     }
 
     //endregion---操作---

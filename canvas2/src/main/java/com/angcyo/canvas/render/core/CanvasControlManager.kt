@@ -57,7 +57,7 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
 
     //region---core---
 
-    override fun onRenderBoxMatrixUpdate(newMatrix: Matrix, finish: Boolean) {
+    override fun onRenderBoxMatrixUpdate(newMatrix: Matrix, reason: Reason, finish: Boolean) {
         if (delegate.selectorManager.isSelectorElement) {
             updateControlPointLocation()
         }

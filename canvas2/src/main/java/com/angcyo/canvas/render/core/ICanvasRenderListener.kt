@@ -48,10 +48,10 @@ interface ICanvasRenderListener {
     fun onRenderBoxOriginGravityUpdate(newGravity: Int) {}
 
     /**当[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderMatrix]更新时回调*/
-    fun onRenderBoxMatrixUpdate(newMatrix: Matrix, finish: Boolean) {}
+    fun onRenderBoxMatrixUpdate(newMatrix: Matrix, reason: Reason, finish: Boolean) {}
 
     /**当[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderMatrix]更新时回调*/
-    fun onRenderBoxMatrixChange(fromMatrix: Matrix, toMatrix: Matrix) {}
+    fun onRenderBoxMatrixChange(fromMatrix: Matrix, toMatrix: Matrix, reason: Reason) {}
 
     //endregion---CanvasRenderViewBox---
 

@@ -3,6 +3,7 @@ package com.angcyo.canvas.render.core.component
 import android.graphics.PointF
 import android.view.MotionEvent
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
+import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.util.midPoint
 import com.angcyo.canvas.render.util.spacing
 import com.angcyo.library.L
@@ -38,7 +39,8 @@ class CanvasScaleComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
                 doubleScaleValue,
                 _tempPoint.x,
                 _tempPoint.y,
-                true
+                true,
+                Reason.user
             )
             L.d("双击缩放手势:sx:${doubleScaleValue} sy:${doubleScaleValue} px:${_tempPoint.x} py:${_tempPoint.y}")
         }
@@ -85,7 +87,7 @@ class CanvasScaleComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
 
     private fun scaleBy(sx: Float, sy: Float, px: Float, py: Float, anim: Boolean = false) {
         L.d("缩放手势:sx:${sx} sy:${sy} px:${px} py:${py}")
-        delegate.renderViewBox.scaleBy(sx, sy, px, py, anim)
+        delegate.renderViewBox.scaleBy(sx, sy, px, py, anim, Reason.user)
         isHandleTouch = true
         updateDownPointList()
     }

@@ -67,17 +67,18 @@ class CanvasAxisManager(val delegate: CanvasRenderDelegate) : IRenderer {
             .remove(IRenderer.RENDERER_FLAG_ON_OUTSIDE)
         delegate.addCanvasRenderListener(object : BaseCanvasRenderListener() {
             override fun onRenderBoxBoundsUpdate(newBounds: RectF) {
-                super.onRenderBoxBoundsUpdate(newBounds)
                 updateAxisList()
             }
 
             override fun onRenderBoxOriginGravityUpdate(newGravity: Int) {
-                super.onRenderBoxOriginGravityUpdate(newGravity)
                 updateAxisList()
             }
 
-            override fun onRenderBoxMatrixUpdate(newMatrix: Matrix, finish: Boolean) {
-                super.onRenderBoxMatrixUpdate(newMatrix, finish)
+            override fun onRenderBoxMatrixUpdate(
+                newMatrix: Matrix,
+                reason: Reason,
+                finish: Boolean
+            ) {
                 updateAxisList()
             }
         })

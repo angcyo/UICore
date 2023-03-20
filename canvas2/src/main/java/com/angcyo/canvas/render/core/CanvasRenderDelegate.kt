@@ -177,15 +177,19 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         }
     }
 
-    override fun dispatchRenderBoxMatrixUpdate(newMatrix: Matrix, finish: Boolean) {
+    override fun dispatchRenderBoxMatrixUpdate(newMatrix: Matrix, reason: Reason, finish: Boolean) {
         for (listener in renderListenerList) {
-            listener.onRenderBoxMatrixUpdate(newMatrix, finish)
+            listener.onRenderBoxMatrixUpdate(newMatrix, reason, finish)
         }
     }
 
-    override fun dispatchRenderBoxMatrixChange(fromMatrix: Matrix, toMatrix: Matrix) {
+    override fun dispatchRenderBoxMatrixChange(
+        fromMatrix: Matrix,
+        toMatrix: Matrix,
+        reason: Reason
+    ) {
         for (listener in renderListenerList) {
-            listener.onRenderBoxMatrixChange(fromMatrix, toMatrix)
+            listener.onRenderBoxMatrixChange(fromMatrix, toMatrix, reason)
         }
     }
 
@@ -427,7 +431,10 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         }
 
         //更新
-        renderViewBox.changeRenderMatrix(matrix, anim, finish)
+        renderViewBox.changeRenderMatrix(matrix, anim, Reason.user.apply {
+            controlType =
+                BaseControlPoint.CONTROL_TYPE_SCALE or BaseControlPoint.CONTROL_TYPE_TRANSLATE
+        }, finish)
     }
 
     /**创建一个预览图

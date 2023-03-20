@@ -133,10 +133,10 @@ interface ICanvasRenderView {
     fun dispatchRenderBoxOriginGravityUpdate(newGravity: Int)
 
     /**当[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderMatrix]更新时回调*/
-    fun dispatchRenderBoxMatrixUpdate(newMatrix: Matrix, finish: Boolean)
+    fun dispatchRenderBoxMatrixUpdate(newMatrix: Matrix, reason: Reason, finish: Boolean)
 
     /**当[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderMatrix]更新时回调*/
-    fun dispatchRenderBoxMatrixChange(fromMatrix: Matrix, toMatrix: Matrix)
+    fun dispatchRenderBoxMatrixChange(fromMatrix: Matrix, toMatrix: Matrix, reason: Reason)
 
     //endregion---CanvasRenderViewBox---
 
