@@ -49,7 +49,7 @@ class LimitMatrixComponent : BaseCanvasRenderListener(), IComponent {
     private fun limitScale(renderer: BaseRenderer, matrix: Matrix) {
         var sx = matrix.getScaleX()
         var sy = matrix.getScaleY()
-        
+
         val renderBounds = renderer.renderProperty?.getRenderBounds()
         if (renderBounds == null) {
             //必须是正值
@@ -69,16 +69,6 @@ class LimitMatrixComponent : BaseCanvasRenderListener(), IComponent {
 
             val minSx = if (width == 0f) 1f else 1 / width
             val minSy = if (height == 0f) 1f else 1 / height
-
-            if (sx < 0) {
-                //x反向了
-                sx = minSx
-            }
-
-            if (sy < 0) {
-                //y反向了
-                sy = minSy
-            }
 
             sx = max(minSx, sx)
             sy = max(minSy, sy)

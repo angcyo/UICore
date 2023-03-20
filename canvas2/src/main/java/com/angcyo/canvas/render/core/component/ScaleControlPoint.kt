@@ -95,9 +95,11 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
 
                         if (isLockScaleRatio) {
                             //等比缩放, 使用C边的长度计算, 返回的长度一定是正值
-                            val oldC = distance(touchDownPointInside, anchorPoint)
-                            val newC = distance(touchMovePointInside, anchorPoint)
-                            var s = if (rendererBounds.width() <= minSizeThreshold &&
+                            val oldC = distance(anchorPoint, touchDownPointInside, false)
+                            val newC = distance(anchorPoint, touchMovePointInside, false)
+
+                            //负值表示反向了
+                            val s = if (rendererBounds.width() <= minSizeThreshold &&
                                 rendererBounds.height() <= minSizeThreshold
                             ) {
                                 //如果宽高都小于一个很小的值, 则倍数要很大的值才理想
@@ -106,7 +108,7 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
                                 (newC / oldC).toFloat()
                             }
 
-                            //x轴是否反向
+                            /*//x轴是否反向
                             val xReverse =
                                 if (touchDownPointInside.x > anchorPoint.x) touchMovePointInside.x < anchorPoint.x else touchMovePointInside.x > anchorPoint.x
 
@@ -117,7 +119,8 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
                             if (xReverse || yReverse) {
                                 //拖动到反方为了
                                 s = -s
-                            }
+                            }*/
+
                             targetSx = s
                             targetSy = s
                         } else {
@@ -130,27 +133,11 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
                             val newWidth = invertTouchMovePoint.x - invertAnchorPoint.x
                             val newHeight = invertTouchMovePoint.y - invertAnchorPoint.y
 
+                            //负数即表示反向了
                             val sx =
                                 if (rendererBounds.width() <= minSizeThreshold) newWidth else newWidth / oldWidth
                             val sy =
                                 if (rendererBounds.height() <= minSizeThreshold) newHeight else newHeight / oldHeight
-
-                            /*//x轴是否反向
-                            val xReverse =
-                                if (invertTouchDownPoint.x > invertAnchorPoint.x) invertTouchMovePoint.x < invertAnchorPoint.x else invertTouchMovePoint.x > invertAnchorPoint.x
-
-                            //y轴是否反向
-                            val yReverse =
-                                if (invertTouchDownPoint.y > invertAnchorPoint.y) invertTouchMovePoint.y < invertAnchorPoint.y else invertTouchMovePoint.y > invertAnchorPoint.y
-
-                            if (xReverse) {
-                                //拖动到反方为了
-                                sx = -sx
-                            }
-                            if (yReverse) {
-                                //拖动到反方为了
-                                sy = -sy
-                            }*/
 
                             targetSx = sx
                             targetSy = sy
