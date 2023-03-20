@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="@dimen/lib_sdpi"
-            android:text="@string/app_name"
+            android:text="@string/core_screen_shot_text"
             android:textColor="@color/lib_white" />
     </LinearLayout>
 

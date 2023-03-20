@@ -2,4 +2,5 @@
 <resources>
     <string name="ui_back">Back</string>
     <string name="ui_enable_permission">Enable permission</string>
+    <string name="core_screen_shot_text">Feedback</string>
 </resources>

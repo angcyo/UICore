@@ -2,4 +2,5 @@
 <resources>
     <string name="ui_back">返回</string>
     <string name="ui_enable_permission">开启权限</string>
+    <string name="core_screen_shot_text">反馈问题</string>
 </resources>
