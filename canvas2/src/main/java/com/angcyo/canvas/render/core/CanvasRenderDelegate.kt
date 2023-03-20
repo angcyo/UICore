@@ -349,8 +349,8 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         @CanvasInsideCoordinate
         rect: RectF,
         margin: Float = 4f * dp,
-        zoomIn: Boolean = true,
-        zoomOut: Boolean = true,
+        zoomIn: Boolean = true /*自动放大*/,
+        zoomOut: Boolean = true /*自动缩小*/,
         lockScale: Boolean = true,
         anim: Boolean = true,
         offsetRectTop: Boolean = false,

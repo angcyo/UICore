@@ -24,6 +24,9 @@ abstract class BaseControlPoint(controlManager: CanvasControlManager) : BaseCont
 
     companion object {
 
+        /**默认的控制点大小*/
+        var DEFAULT_CONTROL_POINT_SIZE = 24 * dp
+
         /**控制点类型: 删除[DeleteControlPoint]*/
         const val CONTROL_TYPE_DELETE = 0x1
 
@@ -84,7 +87,7 @@ abstract class BaseControlPoint(controlManager: CanvasControlManager) : BaseCont
     var controlPointPadding: Int = 4 * dpi
 
     /**控制点的大小, 背景圆的直径*/
-    var controlPointSize = 24 * dp
+    var controlPointSize = DEFAULT_CONTROL_POINT_SIZE
 
     /**相对于目标点的偏移距离
      * 正数向外偏移, 负数向内偏移.
