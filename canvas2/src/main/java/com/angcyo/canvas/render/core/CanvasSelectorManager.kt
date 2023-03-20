@@ -11,10 +11,7 @@ import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.library.L
 import com.angcyo.library.component.MainExecutor
-import com.angcyo.library.ex.have
-import com.angcyo.library.ex.isIntersect
-import com.angcyo.library.ex.nowTime
-import com.angcyo.library.ex.size
+import com.angcyo.library.ex.*
 import com.angcyo.library.gesture.DoubleGestureDetector2
 
 /**
@@ -80,9 +77,15 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
                 op: List<BaseRenderer>
             ) {
                 if (op.isIntersect(selectorComponent.rendererList)) {
+                    //当有选中的元素, 此时渲染的数据列表又改变了
                     val list = selectorComponent.rendererList.toMutableList()
-                    list.removeAll(op)
-                    selectorComponent.resetSelectorRenderer(list, Reason.code)
+                    list.removeOutOf(to)
+
+                    if (list.isChange(selectorComponent.rendererList)) {
+                        selectorComponent.resetSelectorRenderer(list, Reason.code)
+                    } else {
+                        selectorComponent.updateGroupRenderProperty(Reason.code, delegate)
+                    }
                 }
             }
 

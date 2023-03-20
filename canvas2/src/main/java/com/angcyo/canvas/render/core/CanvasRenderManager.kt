@@ -1,6 +1,7 @@
 package com.angcyo.canvas.render.core
 
 import android.graphics.Canvas
+import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
@@ -16,6 +17,32 @@ import java.util.concurrent.CopyOnWriteArrayList
  * @since 2023/02/11
  */
 class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispatch(), IRenderer {
+
+    companion object {
+        /**前进, 图层上移*/
+        const val ARRANGE_FORWARD: Int = 1
+
+        /**后退, 图层下移*/
+        const val ARRANGE_BACKWARD: Int = 2
+
+        /**置顶*/
+        const val ARRANGE_FRONT: Int = 3
+
+        /**置底*/
+        const val ARRANGE_BACK: Int = 4
+
+        /**所有手势*/
+        const val TOUCH_FLAG_ALL = 0xFF
+
+        /**支持手势缩放画布, 包括双击放大*/
+        const val TOUCH_FLAG_SCALE = 0x01
+
+        /**支持手势移动画布*/
+        const val TOUCH_FLAG_TRANSLATE = 0x02
+
+        /**支持手势多选*/
+        const val TOUCH_FLAG_MULTI_SELECT = 0x04
+    }
 
     /**在[elementRendererList]之前绘制的渲染器集合*/
     val beforeRendererList = CopyOnWriteArrayList<BaseRenderer>()
@@ -235,24 +262,6 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         return result
     }
 
-    /**排序[elementRendererList] [rendererList] 最后的顺序结果*/
-    fun arrangeSort(rendererList: List<BaseRenderer>, strategy: Strategy) {
-        val newList = rendererList.toList()
-        val oldList = elementRendererList.toList()
-        if (oldList.isChange(newList)) {
-            //数据改变过
-            delegate.undoManager.addAndRedo(strategy, true, {
-                elementRendererList.resetAll(oldList)
-                delegate.dispatchElementRendererListChange(newList, oldList, rendererList)
-                delegate.refresh()
-            }) {
-                elementRendererList.resetAll(newList)
-                delegate.dispatchElementRendererListChange(oldList, newList, rendererList)
-                delegate.refresh()
-            }
-        }
-    }
-
     /**更新渲染器的可见性*/
     fun updateRendererVisible(
         rendererList: List<BaseRenderer>,
@@ -278,5 +287,120 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     }
 
     //endregion---操作---
+
+    //region---排序操作---
+
+    /**排序[elementRendererList] [rendererList] 最后的顺序结果*/
+    fun arrangeElementSortWith(rendererList: List<BaseRenderer>, strategy: Strategy) {
+        val newList = rendererList.toList()
+        val oldList = elementRendererList.toList()
+        if (oldList.isChange(newList)) {
+            //数据改变过
+            delegate.undoManager.addAndRedo(strategy, true, {
+                elementRendererList.resetAll(oldList)
+                delegate.dispatchElementRendererListChange(newList, oldList, rendererList)
+                delegate.refresh()
+            }) {
+                elementRendererList.resetAll(newList)
+                delegate.dispatchElementRendererListChange(oldList, newList, rendererList)
+                delegate.refresh()
+            }
+        }
+    }
+
+    /**排序, 将[rendererList], 放到指定的位置[to] */
+    fun arrangeElementSort(rendererList: List<BaseRenderer>, to: Int, strategy: Strategy) {
+        val first = rendererList.firstOrNull() ?: return
+        val last = rendererList.lastOrNull() ?: return
+
+        val firstIndex = elementRendererList.indexOf(first)
+        val lastIndex = elementRendererList.indexOf(last)
+
+        if (firstIndex == -1 || lastIndex == -1) {
+            return
+        }
+
+        elementRendererList.getOrNull(to) ?: return
+        val newList = mutableListOf<BaseRenderer>()
+        newList.addAll(elementRendererList)
+
+        newList.removeAll(rendererList)
+        if (to <= firstIndex) {
+            //往前移动
+            newList.addAll(to, rendererList)
+        } else {
+            //往后移
+            newList.addAll(to - (rendererList.size - 1), rendererList)
+        }
+
+        arrangeElementSortWith(newList, strategy)
+    }
+
+    /**检查[renderer]是否可以执行指定的排序操作
+     * [arrangeElement]*/
+    fun elementCanArrange(renderer: BaseRenderer, type: Int): Boolean {
+        val list = mutableListOf<BaseRenderer>()
+
+        if (renderer is CanvasSelectorComponent) {
+            list.addAll(renderer.rendererList)
+        } else {
+            list.add(renderer)
+        }
+        val first = list.firstOrNull() ?: return false
+        val firstIndex = elementRendererList.indexOf(first)
+        if (firstIndex == -1) {
+            return false
+        }
+
+        val last = list.lastOrNull() ?: return false
+        val lastIndex = elementRendererList.indexOf(last)
+        if (lastIndex == -1) {
+            return false
+        }
+
+        return when (type) {
+            //后退, 图层下移
+            ARRANGE_BACKWARD, ARRANGE_BACK -> firstIndex != 0
+            //前进, 图层上移
+            else -> lastIndex != elementRendererList.lastIndex
+        }
+    }
+
+    /**安排排序
+     * [elementCanArrange]
+     * [arrangeElementSortWith]*/
+    fun arrangeElement(renderer: BaseRenderer, type: Int, strategy: Strategy) {
+        val list = mutableListOf<BaseRenderer>()
+
+        if (renderer is CanvasSelectorComponent) {
+            list.addAll(renderer.rendererList)
+        } else {
+            list.add(renderer)
+        }
+        val first = list.firstOrNull() ?: return
+        val firstIndex = elementRendererList.indexOf(first)
+        if (firstIndex == -1) {
+            return
+        }
+
+        val last = list.lastOrNull() ?: return
+        val lastIndex = elementRendererList.indexOf(last)
+        if (lastIndex == -1) {
+            return
+        }
+
+        val toIndex = when (type) {
+            //前进, 图层上移
+            ARRANGE_BACKWARD -> firstIndex - 1
+            ARRANGE_FORWARD -> lastIndex + 1
+            ARRANGE_BACK -> 0
+            else -> elementRendererList.lastIndex
+        }
+
+        arrangeElementSort(list, toIndex, strategy)
+    }
+
+    //endregion---排序操作---
+
 
 }

@@ -556,6 +556,21 @@ fun <T> MutableList<T>.replace(element: T, newElement: T?): Boolean {
     return false
 }
 
+/**在当前的列表[this]中, 移除[list]中没有的元素
+ * @return 返回移除的数据量 */
+fun <T> MutableList<T>.removeOutOf(list: List<T>): Int {
+    val removeList = mutableListOf<T>()
+    for (element in this) {
+        if (!list.contains(element)) {
+            removeList.add(element)
+        }
+    }
+    if (removeList.isNotEmpty()) {
+        removeAll(removeList)
+    }
+    return removeList.size()
+}
+
 /**枚举[SimpleArrayMap]*/
 fun <K, V> SimpleArrayMap<K, V>.each(action: (key: K, value: V?) -> Unit) {
     val size = size()
