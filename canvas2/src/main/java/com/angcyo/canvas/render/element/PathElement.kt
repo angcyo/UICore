@@ -10,6 +10,14 @@ import com.angcyo.canvas.render.util.RenderHelper
 
 /**
  * 路径元素
+ *
+ * [com.angcyo.canvas.render.util.RenderHelper]
+ * [com.angcyo.canvas.render.util.RenderHelperKt.translateToOrigin(java.util.List<? extends android.graphics.Path>)]
+ * [com.angcyo.canvas.render.util.RenderHelperKt.scaleToSize(java.util.List<? extends android.graphics.Path>, float, float)]
+ *
+ * [Path.translateToOrigin]
+ * [Path.scaleToSize]
+ *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/03/16
  */
