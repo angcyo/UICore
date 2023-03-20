@@ -51,15 +51,15 @@ class CanvasElementRenderer : BaseRenderer() {
 
     /**[com.angcyo.canvas.render.element.IElement.elementContainsPoint]*/
     override fun rendererContainsPoint(delegate: CanvasRenderDelegate?, point: PointF): Boolean =
-        renderElement?.elementContainsPoint(delegate, point) == true
+        renderElement?.elementHitComponent?.elementContainsPoint(delegate, point) == true
 
     /**[com.angcyo.canvas.render.element.IElement.elementContainsRect]*/
     override fun rendererContainsRect(delegate: CanvasRenderDelegate?, rect: RectF): Boolean =
-        renderElement?.elementContainsRect(delegate, rect) == true
+        renderElement?.elementHitComponent?.elementContainsRect(delegate, rect) == true
 
     /**[com.angcyo.canvas.render.element.IElement.elementIntersectRect]*/
     override fun rendererIntersectRect(delegate: CanvasRenderDelegate?, rect: RectF): Boolean =
-        renderElement?.elementIntersectRect(delegate, rect) == true
+        renderElement?.elementHitComponent?.elementIntersectRect(delegate, rect) == true
 
     override fun getElementList(): List<IElement> {
         val result = mutableListOf<IElement>()

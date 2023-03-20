@@ -2,8 +2,8 @@ package com.angcyo.canvas.render.element
 
 import android.graphics.*
 import android.graphics.drawable.Drawable
-import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.core.component.ElementHitComponent
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.util.*
 import com.angcyo.library.annotation.Pixel
@@ -25,6 +25,8 @@ abstract class BaseElement : IElement {
     /**需要在界面上渲染的[Drawable]*/
     var renderDrawable: Drawable? = null
 
+    override var elementHitComponent: ElementHitComponent = ElementHitComponent(this)
+
     //region---core---
 
     override fun requestElementRenderProperty(): CanvasRenderProperty = renderProperty
@@ -39,23 +41,6 @@ abstract class BaseElement : IElement {
     //endregion---core---
 
     //region---方法---
-
-    override fun getElementBounds(delegate: CanvasRenderDelegate?, result: RectF): RectF {
-        val property = renderProperty
-        result.set(0f, 0f, property.width, property.height)
-        return result
-    }
-
-    override fun getElementBoundsPath(delegate: CanvasRenderDelegate?, result: Path): Path {
-        val property = renderProperty
-        val renderMatrix = property.getRenderMatrix(includeRotate = true)
-        getElementBounds(delegate, IElement.elementTempRect)
-        val rect = IElement.elementTempRect
-        result.rewind()
-        result.addRect(rect, Path.Direction.CW)
-        result.transform(renderMatrix)
-        return result
-    }
 
     /**更新原始数据的宽高, 并且保持看起来的宽高一直
      * [keepVisibleSize] 是否要保持可见的大小一致*/
