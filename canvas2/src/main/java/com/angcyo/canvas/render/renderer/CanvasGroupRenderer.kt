@@ -169,11 +169,16 @@ open class CanvasGroupRenderer : BaseRenderer() {
     protected fun drawElementRect(
         canvas: Canvas,
         renderViewBox: CanvasRenderViewBox,
-        paint: Paint
+        paint: Paint,
+        dissolveGroup: Boolean,
+        list: List<BaseRenderer> = rendererList
     ) {
-        for (renderer in rendererList) {
+        for (renderer in list) {
             renderer.renderProperty?.let { property ->
                 drawElementRect(canvas, renderViewBox, property, paint)
+            }
+            if (dissolveGroup && renderer is CanvasGroupRenderer) {
+                drawElementRect(canvas, renderViewBox, paint, true, renderer.rendererList)
             }
         }
     }
@@ -207,11 +212,16 @@ open class CanvasGroupRenderer : BaseRenderer() {
     protected fun drawElementBounds(
         canvas: Canvas,
         renderViewBox: CanvasRenderViewBox,
-        paint: Paint
+        paint: Paint,
+        dissolveGroup: Boolean,
+        list: List<BaseRenderer> = rendererList
     ) {
-        for (renderer in rendererList) {
+        for (renderer in list) {
             renderer.renderProperty?.let { property ->
                 drawElementBounds(canvas, renderViewBox, property, paint)
+            }
+            if (dissolveGroup && renderer is CanvasGroupRenderer) {
+                drawElementBounds(canvas, renderViewBox, paint, true, renderer.rendererList)
             }
         }
     }
@@ -350,7 +360,13 @@ open class CanvasGroupRenderer : BaseRenderer() {
     fun getGroupRenderProperty(): CanvasRenderProperty {
         val result = CanvasRenderProperty()
         for (renderer in rendererList) {
-            renderer.readyRenderIfNeed(null)
+            if (renderer is CanvasElementRenderer) {
+                if (renderer.renderProperty == null) {
+                    renderer.renderProperty = renderer.renderElement?.requestElementRenderProperty()
+                }
+            } else {
+                renderer.readyRenderIfNeed(null)
+            }
         }
         if (rendererList.size() == 1) {
             //只有一个元素

@@ -34,19 +34,19 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
     companion object {
 
         /**多个元素时:是否要绘制子元素的边框*/
-        const val RENDERER_FLAG_DRAW_FRAME_RECT = BaseRenderer.RENDERER_FLAG_LAST
+        const val RENDERER_FLAG_DRAW_ELEMENT_RECT = BaseRenderer.RENDERER_FLAG_LAST
 
         /**是否要绘制选中的边框*/
-        const val RENDERER_FLAG_DRAW_FRAME_SELECTOR_RECT = RENDERER_FLAG_DRAW_FRAME_RECT shl 1
+        const val RENDERER_FLAG_DRAW_SELECTOR_RECT = RENDERER_FLAG_DRAW_ELEMENT_RECT shl 1
 
         /**多个元素时:是否要绘制子元素的边框, 贴合的bounds*/
-        const val RENDERER_FLAG_DRAW_FRAME_BOUNDS = RENDERER_FLAG_DRAW_FRAME_SELECTOR_RECT shl 1
+        const val RENDERER_FLAG_DRAW_ELEMENT_BOUNDS = RENDERER_FLAG_DRAW_SELECTOR_RECT shl 1
 
         /**是否要绘制选中的边框, 贴合的bounds*/
-        const val RENDERER_FLAG_DRAW_FRAME_SELECTOR_BOUNDS = RENDERER_FLAG_DRAW_FRAME_BOUNDS shl 1
+        const val RENDERER_FLAG_DRAW_SELECTOR_BOUNDS = RENDERER_FLAG_DRAW_ELEMENT_BOUNDS shl 1
 
         /**是否要绘制宽高*/
-        const val RENDERER_FLAG_DRAW_FRAME_SIZE = RENDERER_FLAG_DRAW_FRAME_SELECTOR_BOUNDS shl 1
+        const val RENDERER_FLAG_DRAW_FRAME_SIZE = RENDERER_FLAG_DRAW_SELECTOR_BOUNDS shl 1
 
         /**是否要绘制xy起始点*/
         const val RENDERER_FLAG_DRAW_FRAME_LOCATION = RENDERER_FLAG_DRAW_FRAME_SIZE shl 1
@@ -76,6 +76,9 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
     /**距离bounds的偏移量*/
     var textOffset = 2 * dp
 
+    /**是否要解组Group中的元素,绘制Rect/Bounds*/
+    var dissolveGroupElementDrawBounds = false
+
     /**是否有选中的元素*/
     val isSelectorElement: Boolean
         get() = rendererList.find { it.isVisible && !it.isLock } != null
@@ -101,8 +104,8 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
     protected val selectorRenderDrawBounds = RectF()
 
     init {
-        //removeRenderFlag(RENDERER_FLAG_DRAW_FRAME_RECT, null)
-        removeRenderFlag(RENDERER_FLAG_DRAW_FRAME_BOUNDS, Reason.init, null)
+        removeRenderFlag(RENDERER_FLAG_DRAW_ELEMENT_RECT, Reason.init, null)
+        //removeRenderFlag(RENDERER_FLAG_DRAW_FRAME_BOUNDS, Reason.init, null)
         //removeRenderFlag(RENDERER_FLAG_DRAW_FRAME_SELECTOR_BOUNDS, Reason.init, null)
         showSizeRender(Reason.init, null)
     }
@@ -118,12 +121,22 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
         if (isSelectorElement) {
             //绘制所有子元素的Rect
 
-            if (rendererList.size() > 1) {
-                if (renderFlags.have(RENDERER_FLAG_DRAW_FRAME_RECT)) {
-                    drawElementRect(canvas, delegate.renderViewBox, boundsPaint)
+            if (getSingleRendererList().size() > 1) {
+                if (renderFlags.have(RENDERER_FLAG_DRAW_ELEMENT_RECT)) {
+                    drawElementRect(
+                        canvas,
+                        delegate.renderViewBox,
+                        boundsPaint,
+                        dissolveGroupElementDrawBounds
+                    )
                 }
-                if (renderFlags.have(RENDERER_FLAG_DRAW_FRAME_BOUNDS)) {
-                    drawElementBounds(canvas, delegate.renderViewBox, boundsPaint)
+                if (renderFlags.have(RENDERER_FLAG_DRAW_ELEMENT_BOUNDS)) {
+                    drawElementBounds(
+                        canvas,
+                        delegate.renderViewBox,
+                        boundsPaint,
+                        dissolveGroupElementDrawBounds
+                    )
                 }
             }
 
@@ -140,8 +153,8 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
                     selectorRenderDrawBounds
                 )
                 if (rendererList.size() == 1) {
-                    if (renderFlags.have(RENDERER_FLAG_DRAW_FRAME_SELECTOR_BOUNDS)) {
-                        drawElementBounds(canvas, delegate.renderViewBox, boundsPaint)
+                    if (renderFlags.have(RENDERER_FLAG_DRAW_SELECTOR_BOUNDS)) {
+                        drawElementBounds(canvas, delegate.renderViewBox, boundsPaint, false)
                     }
                 }
                 canvas.withRotation(
@@ -149,7 +162,7 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
                     selectorRenderDrawRect.centerX(),
                     selectorRenderDrawRect.centerY()
                 ) {
-                    if (renderFlags.have(RENDERER_FLAG_DRAW_FRAME_SELECTOR_RECT)) {
+                    if (renderFlags.have(RENDERER_FLAG_DRAW_SELECTOR_RECT)) {
                         canvas.drawRect(selectorRenderDrawRect, boundsPaint)
                     }
                     if (renderFlags.have(RENDERER_FLAG_DRAW_FRAME_SIZE)) {

@@ -14,7 +14,7 @@ import com.angcyo.library.ex.resetAll
  * @since 2023/03/09
  */
 open class PropertyStateStack : IStateStack {
-    
+
     /**存档信息*/
     protected val stateMap = hashMapOf<String, RendererState>()
 
@@ -50,21 +50,24 @@ open class PropertyStateStack : IStateStack {
         strategy: Strategy,
         delegate: CanvasRenderDelegate?
     ) {
+        val apply =
+            strategy.type == Strategy.STRATEGY_TYPE_UNDO || strategy.type == Strategy.STRATEGY_TYPE_REDO
         stateMap.forEach { entry ->
             val state = entry.value
             val stateRenderer = state.renderer
 
             if (stateRenderer is CanvasGroupRenderer) {
-                state.rendererList?.let { list ->
-                    if (stateRenderer is CanvasSelectorComponent &&
-                        (strategy.type == Strategy.STRATEGY_TYPE_UNDO || strategy.type == Strategy.STRATEGY_TYPE_REDO)
-                    ) {
+                state.rendererList?.also { list ->
+                    if (stateRenderer is CanvasSelectorComponent && apply) {
                         //通知选中元素改变
                         val from = stateRenderer.rendererList.toList()
                         stateRenderer.rendererList.resetAll(list)
                         delegate?.dispatchSelectorRendererChange(from, list)
                     } else {
                         stateRenderer.rendererList.resetAll(list)
+                        if (apply) {
+                            stateRenderer.updateGroupRenderProperty(Reason.code, null)
+                        }
                     }
                 }
             }

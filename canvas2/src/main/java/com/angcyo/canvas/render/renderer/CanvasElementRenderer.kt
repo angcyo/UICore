@@ -19,6 +19,10 @@ class CanvasElementRenderer : BaseRenderer() {
 
     /**需要绘制的元素*/
     var renderElement: IElement? = null
+        set(value) {
+            field = value
+            renderProperty = value?.requestElementRenderProperty()
+        }
 
     //region---core---
 

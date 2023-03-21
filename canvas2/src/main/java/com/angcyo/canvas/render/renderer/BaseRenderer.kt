@@ -273,7 +273,8 @@ abstract class BaseRenderer : IRenderer {
      * [requestRenderBitmap]*/
     open fun requestRenderDrawable(renderParams: RenderParams?): Drawable? {
         if (renderDrawable == null) {
-            renderDrawable = createRenderDrawable(getSingleRendererList(), renderParams?.overrideSize)
+            renderDrawable =
+                createRenderDrawable(getSingleRendererList(), renderParams?.overrideSize)
         }
         return renderDrawable
     }
@@ -349,10 +350,9 @@ abstract class BaseRenderer : IRenderer {
         delegate: CanvasRenderDelegate?
     ) {
         if (renderProperty == null) {
-            renderProperty = target
-        } else {
-            target?.copyTo(renderProperty)
+            renderProperty = CanvasRenderProperty()
         }
+        target?.copyTo(renderProperty)
         requestUpdateDrawableAndProperty(reason, delegate)
         delegate?.dispatchRendererPropertyChange(this, null, target, reason)
     }
