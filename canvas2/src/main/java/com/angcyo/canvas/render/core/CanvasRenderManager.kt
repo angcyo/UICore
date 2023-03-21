@@ -244,7 +244,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         return if (dissolveGroup) {
             val result = mutableListOf<BaseRenderer>()
             for (renderer in elementRendererList) {
-                result.addAll(renderer.getRendererList())
+                result.addAll(renderer.getSingleRendererList())
             }
             result
         } else {
@@ -253,11 +253,11 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     }
 
     /**获取所有渲染器对应的元素列表 */
-    fun getAllElementList(): List<IElement> {
+    fun getAllSingleElementList(): List<IElement> {
         val result = mutableListOf<IElement>()
         val rendererList = getAllElementRendererList(true)
         for (renderer in rendererList) {
-            result.addAll(renderer.getElementList())
+            result.addAll(renderer.getSingleElementList())
         }
         return result
     }

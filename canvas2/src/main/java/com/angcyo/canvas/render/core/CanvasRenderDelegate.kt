@@ -306,6 +306,18 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         refresh()
     }
 
+    override fun dispatchRendererSaveState(renderer: BaseRenderer, stateStack: IStateStack) {
+        for (listener in renderListenerList) {
+            listener.onRendererSaveState(renderer, stateStack)
+        }
+    }
+
+    override fun dispatchRendererRestoreState(renderer: BaseRenderer, stateStack: IStateStack) {
+        for (listener in renderListenerList) {
+            listener.onRendererRestoreState(renderer, stateStack)
+        }
+    }
+
     //endregion---CanvasRenderer---
 
     //region---操作---

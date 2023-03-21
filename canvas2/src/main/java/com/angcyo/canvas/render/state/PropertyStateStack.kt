@@ -14,16 +14,16 @@ import com.angcyo.library.ex.resetAll
  * @since 2023/03/09
  */
 open class PropertyStateStack : IStateStack {
-
+    
     /**存档信息*/
-    protected val map = hashMapOf<String, RendererState>()
+    protected val stateMap = hashMapOf<String, RendererState>()
 
-    operator fun get(uuid: String): RendererState? = map[uuid]
+    operator fun get(uuid: String): RendererState? = stateMap[uuid]
 
     operator fun get(renderer: BaseRenderer): RendererState? = get(renderer.uuid)
 
     /**保存状态*/
-    override fun saveState(renderer: BaseRenderer) {
+    override fun saveState(renderer: BaseRenderer, delegate: CanvasRenderDelegate?) {
         val key = renderer.uuid
 
         val state = RendererState(
@@ -32,12 +32,15 @@ open class PropertyStateStack : IStateStack {
             if (renderer is CanvasGroupRenderer) renderer.rendererList.toList() else null
         )
 
-        map[key] = state
+        stateMap[key] = state
         if (renderer is CanvasGroupRenderer) {
             for (sub in renderer.rendererList) {
-                saveState(sub)
+                saveState(sub, delegate) //子元素也要触发回调
             }
         }
+
+        //save state
+        delegate?.dispatchRendererSaveState(renderer, this)
     }
 
     /**恢复状态*/
@@ -47,7 +50,7 @@ open class PropertyStateStack : IStateStack {
         strategy: Strategy,
         delegate: CanvasRenderDelegate?
     ) {
-        map.forEach { entry ->
+        stateMap.forEach { entry ->
             val state = entry.value
             val stateRenderer = state.renderer
 
@@ -65,6 +68,9 @@ open class PropertyStateStack : IStateStack {
                     }
                 }
             }
+
+            //restore state
+            delegate?.dispatchRendererRestoreState(stateRenderer, this)//子元素也要触发回调
 
             stateRenderer.updateRenderProperty(state.renderProperty, reason, delegate)
         }

@@ -11,6 +11,7 @@ import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.unit.IRenderUnit
 
 /**
@@ -172,6 +173,12 @@ interface ICanvasRenderView {
         toProperty: CanvasRenderProperty?,
         reason: Reason
     )
+
+    /**当有渲染器需要保存状态时, 触发*/
+    fun dispatchRendererSaveState(renderer: BaseRenderer, stateStack: IStateStack)
+
+    /**当有渲染器需要恢复状态时, 触发*/
+    fun dispatchRendererRestoreState(renderer: BaseRenderer, stateStack: IStateStack)
 
     //endregion---CanvasRenderer---
 

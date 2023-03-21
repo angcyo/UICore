@@ -61,7 +61,7 @@ class CanvasElementRenderer : BaseRenderer() {
     override fun rendererIntersectRect(delegate: CanvasRenderDelegate?, rect: RectF): Boolean =
         renderElement?.elementHitComponent?.elementIntersectRect(delegate, rect) == true
 
-    override fun getElementList(): List<IElement> {
+    override fun getSingleElementList(): List<IElement> {
         val result = mutableListOf<IElement>()
         renderElement?.let { result.add(it) }
         return result

@@ -18,8 +18,8 @@ open class TextStateStack : PropertyStateStack(), IStateStack {
     /**保存的文本属性数据*/
     var textProperty: TextProperty? = null
 
-    override fun saveState(renderer: BaseRenderer) {
-        super.saveState(renderer)
+    override fun saveState(renderer: BaseRenderer, delegate: CanvasRenderDelegate?) {
+        super.saveState(renderer, delegate)
         textProperty = renderer.element<TextElement>()?.textProperty?.copy()
     }
 

@@ -84,7 +84,7 @@ class CanvasMoveSelectorComponent(val selectorManager: CanvasSelectorManager) :
                 if (isHandleTouch) {
                     selectorManager.delegate.renderViewBox.transformToInside(selectRect, _tempRect)
 
-                    val list = selectorManager.findRendererList(_tempRect, true)
+                    val list = selectorManager.findRendererList(_tempRect)
                     selectorManager.selectorComponent.resetSelectorRenderer(list, Reason.preview)
                     selectorManager.delegate.refresh()
                 }

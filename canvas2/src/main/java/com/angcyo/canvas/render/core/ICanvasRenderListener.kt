@@ -9,6 +9,7 @@ import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.unit.IRenderUnit
 
 /**
@@ -119,6 +120,13 @@ interface ICanvasRenderListener {
     /**双击选中某个渲染器[renderer] */
     fun onDoubleTapItem(selectorManager: CanvasSelectorManager, renderer: BaseRenderer) {
     }
+
+
+    /**[com.angcyo.canvas.render.core.ICanvasRenderView.dispatchRendererSaveState]*/
+    fun onRendererSaveState(renderer: BaseRenderer, stateStack: IStateStack) {}
+
+    /**[com.angcyo.canvas.render.core.ICanvasRenderView.dispatchRendererRestoreState]*/
+    fun onRendererRestoreState(renderer: BaseRenderer, stateStack: IStateStack) {}
 
     //endregion---CanvasRenderer---
 

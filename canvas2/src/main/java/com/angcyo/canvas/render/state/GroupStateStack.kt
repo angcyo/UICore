@@ -1,28 +1,31 @@
 package com.angcyo.canvas.render.state
 
-import android.graphics.Bitmap
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.Strategy
-import com.angcyo.canvas.render.element.BitmapElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
-import com.angcyo.canvas.render.util.element
 
 /**
- * 图片状态存储, 用来恢复/重做
+ * 群组状态
+ *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
- * @since 2023/03/14
+ * @since 2023/03/21
  */
-open class BitmapStateStack : PropertyStateStack() {
+class GroupStateStack : PropertyStateStack() {
 
-    var operateBitmap: Bitmap? = null
+    /**群组数据的存储*/
+    val valueMap = hashMapOf<String, Any>()
 
-    var renderBitmap: Bitmap? = null
+    val stateRendererList = mutableListOf<BaseRenderer>()
 
     override fun saveState(renderer: BaseRenderer, delegate: CanvasRenderDelegate?) {
         super.saveState(renderer, delegate)
-        operateBitmap = renderer.element<BitmapElement>()?.originBitmap
-        renderBitmap = renderer.element<BitmapElement>()?.renderBitmap
+
+        //所有元素
+        stateRendererList.clear()
+        delegate?.renderManager?.elementRendererList?.let {
+            stateRendererList.addAll(it)
+        }
     }
 
     override fun restoreState(
@@ -31,10 +34,9 @@ open class BitmapStateStack : PropertyStateStack() {
         strategy: Strategy,
         delegate: CanvasRenderDelegate?
     ) {
-        renderer.element<BitmapElement>()?.originBitmap = operateBitmap
-        renderer.element<BitmapElement>()?.renderBitmap = renderBitmap
         super.restoreState(renderer, reason, strategy, delegate)
-        renderer.requestUpdateDrawableAndProperty(reason, delegate)
+        delegate?.renderManager?.resetElementRenderer(stateRendererList, Strategy.preview)
+        delegate?.selectorManager?.resetSelectorRenderer(stateRendererList, reason)
     }
 
 }

@@ -249,10 +249,10 @@ abstract class BaseRenderer : IRenderer {
     }
 
     /**获取渲染器对应的元素列表*/
-    open fun getElementList(): List<IElement> = emptyList()
+    open fun getSingleElementList(): List<IElement> = emptyList()
 
     /**获取所有渲染器, 不包含[CanvasGroupRenderer]自身*/
-    open fun getRendererList(): List<BaseRenderer> {
+    open fun getSingleRendererList(): List<BaseRenderer> {
         val result = mutableListOf<BaseRenderer>()
         result.add(this)
         return result
@@ -273,7 +273,7 @@ abstract class BaseRenderer : IRenderer {
      * [requestRenderBitmap]*/
     open fun requestRenderDrawable(renderParams: RenderParams?): Drawable? {
         if (renderDrawable == null) {
-            renderDrawable = createRenderDrawable(getRendererList(), renderParams?.overrideSize)
+            renderDrawable = createRenderDrawable(getSingleRendererList(), renderParams?.overrideSize)
         }
         return renderDrawable
     }
@@ -282,7 +282,7 @@ abstract class BaseRenderer : IRenderer {
      * [requestRenderDrawable]
      * */
     open fun requestRenderBitmap(renderParams: RenderParams?): Bitmap? =
-        createRenderBitmap(getRendererList(), renderParams?.overrideSize)
+        createRenderBitmap(getSingleRendererList(), renderParams?.overrideSize)
 
     //endregion---core---
 
@@ -528,7 +528,7 @@ abstract class BaseRenderer : IRenderer {
      * [flipY]
      * */
     fun flipX(reason: Reason, strategy: Strategy, delegate: CanvasRenderDelegate?) {
-        val list = getRendererList()
+        val list = getSingleRendererList()
         if (list.isEmpty()) return
         delegate?.undoManager?.addToStack(this, false, reason, strategy) {
             for (renderer in list) {
@@ -545,7 +545,7 @@ abstract class BaseRenderer : IRenderer {
      * [flipY]
      * */
     fun flipY(reason: Reason, strategy: Strategy, delegate: CanvasRenderDelegate?) {
-        val list = getRendererList()
+        val list = getSingleRendererList()
         if (list.isEmpty()) return
         delegate?.undoManager?.addToStack(this, false, reason, strategy) {
             for (renderer in list) {

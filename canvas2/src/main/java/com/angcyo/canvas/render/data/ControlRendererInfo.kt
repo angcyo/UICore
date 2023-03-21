@@ -16,6 +16,6 @@ class ControlRendererInfo(val controlRenderer: BaseRenderer) : PropertyStateStac
         get() = get(controlRenderer)!!
 
     init {
-        saveState(controlRenderer)
+        saveState(controlRenderer, null)
     }
 }

@@ -32,7 +32,7 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
     var firstTouchPointerId: Int = -1
 
     /**手指移动多少距离后, 才算作移动了*/
-    var translateThreshold = 3 * dp
+    var translateThreshold = 5 * dp
 
     override var isEnable: Boolean = true
 

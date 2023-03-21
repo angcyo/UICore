@@ -38,11 +38,11 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
 
     /**双击元素检测*/
     val doubleGestureDetector = DoubleGestureDetector2(delegate.view.context) {
-        val first = findRendererList(_tempPoint, true).firstOrNull()
-        if (first != null && first == selectorComponent.rendererList.firstOrNull()) {
-            L.d("双击渲染器:${first}")
+        val last = findRendererList(_tempPoint).lastOrNull()
+        if (last != null && last == selectorComponent.rendererList.lastOrNull()) {
+            L.d("双击渲染器:${last}")
             delegate.touchManager.scaleComponent.ignoreHandle = true //忽略双击放大画板
-            delegate.dispatchDoubleTapItem(this, first)
+            delegate.dispatchDoubleTapItem(this, last)
         }
     }
 
@@ -214,14 +214,14 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
             return
         }
 
-        val list = findRendererList(_tempPoint, true)
+        val list = findRendererList(_tempPoint)
 
         L.d("TouchSelector:x:${_tempPoint.x} y:${_tempPoint.y} ev:${eventX} ey:${eventY} ${list.size()} ${_downPointList.size()}")
 
         if (_downPointList.size() > 1) {
             //多指touch
             if (list.isNotEmpty()) {
-                selectorComponent.addSelectorRenderer(list.first(), Reason.preview)
+                selectorComponent.addSelectorRenderer(list.last(), Reason.preview)
                 delegate.refresh()
             }
         } else {
@@ -237,11 +237,11 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
                 _touchDownTime = time
             } else {
                 touchSelectorInfo = TouchSelectorInfo(PointF(eventX, eventY), list.toList())
-                val first = list.first()
-                if (selectorComponent.rendererList.contains(first)) {
+                val last = list.last()
+                if (selectorComponent.rendererList.contains(last)) {
                     //重复选中
                 } else {
-                    selectorComponent.resetSelectorRenderer(first, Reason.preview)
+                    selectorComponent.resetSelectorRenderer(last, Reason.preview)
                 }
                 onSelfTouchDownSelectRenderer()
                 delegate.refresh()
@@ -283,11 +283,10 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
 
     /**通过相对于画板原点的点[point], 查找画板内部符合条件的渲染器
      * [reverse] 是否要反序元素, true:最上层的元素优先, false:最下层的元素优先*/
-    private fun findRendererList(point: PointF, reverse: Boolean): List<BaseRenderer> {
+    private fun findRendererList(point: PointF): List<BaseRenderer> {
         val result = mutableListOf<BaseRenderer>()
         val elementRendererList = delegate.renderManager.elementRendererList
-        val list = if (reverse) elementRendererList.reversed() else elementRendererList
-        for (element in list) {
+        for (element in elementRendererList) {
             if (element.isLock || !element.isVisible) {
                 continue
             }
@@ -300,11 +299,10 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
 
     /**[findRendererList]
      * [rect] 相对于画板原点的坐标*/
-    fun findRendererList(rect: RectF, reverse: Boolean): List<BaseRenderer> {
+    fun findRendererList(rect: RectF): List<BaseRenderer> {
         val result = mutableListOf<BaseRenderer>()
         val elementRendererList = delegate.renderManager.elementRendererList
-        val list = if (reverse) elementRendererList.reversed() else elementRendererList
-        for (element in list) {
+        for (element in elementRendererList) {
             if (element.isLock || !element.isVisible) {
                 continue
             }
@@ -357,7 +355,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
         return if (dissolveGroup) {
             val result = mutableListOf<BaseRenderer>()
             for (renderer in selectorComponent.rendererList) {
-                result.addAll(renderer.getRendererList())
+                result.addAll(renderer.getSingleRendererList())
             }
             result
         } else {

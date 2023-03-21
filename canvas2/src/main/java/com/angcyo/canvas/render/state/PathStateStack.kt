@@ -17,8 +17,8 @@ open class PathStateStack : PropertyStateStack() {
 
     var pathList: List<Path>? = null
 
-    override fun saveState(renderer: BaseRenderer) {
-        super.saveState(renderer)
+    override fun saveState(renderer: BaseRenderer, delegate: CanvasRenderDelegate?) {
+        super.saveState(renderer, delegate)
         pathList = renderer.element<PathElement>()?.pathList
     }
 

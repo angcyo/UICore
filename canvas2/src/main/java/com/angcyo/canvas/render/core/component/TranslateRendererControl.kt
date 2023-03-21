@@ -18,19 +18,13 @@ class TranslateRendererControl(controlManager: CanvasControlManager) : BaseContr
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
         when (event.actionMasked) {
-            MotionEvent.ACTION_POINTER_DOWN -> {
-                handleControl = isControlHappen
-            }
             MotionEvent.ACTION_MOVE -> {
-                if (event.pointerCount <= 1) {
+                if (event.pointerCount <= 1 && handleControl) {
                     //单指才能移动元素
                     val tx = getTouchTranslateX()
                     val ty = getTouchTranslateY()
 
-                    if (isControlHappen ||
-                        tx.absoluteValue >= translateThreshold ||
-                        ty.absoluteValue >= translateThreshold
-                    ) {
+                    if (tx.absoluteValue >= translateThreshold || ty.absoluteValue >= translateThreshold) {
                         //已经发生过移动, 或者移动距离大于阈值
                         if (tx != 0f && ty != 0f) {
                             translate(tx, ty)

@@ -14,6 +14,7 @@ import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement
+import com.angcyo.canvas.render.state.GroupStateStack
 import com.angcyo.canvas.render.state.PropertyStateStack
 import com.angcyo.canvas.render.util.PictureRenderDrawable
 import com.angcyo.canvas.render.util.createOverrideBitmapCanvas
@@ -143,18 +144,18 @@ open class CanvasGroupRenderer : BaseRenderer() {
         }
     }
 
-    override fun getElementList(): List<IElement> {
+    override fun getSingleElementList(): List<IElement> {
         val result = mutableListOf<IElement>()
         for (renderer in rendererList) {
-            renderer?.let { result.addAll(renderer.getElementList()) }
+            renderer?.let { result.addAll(renderer.getSingleElementList()) }
         }
         return result
     }
 
-    override fun getRendererList(): List<BaseRenderer> {
+    override fun getSingleRendererList(): List<BaseRenderer> {
         val result = mutableListOf<BaseRenderer>()
         for (renderer in rendererList) {
-            renderer?.let { result.addAll(renderer.getRendererList()) }
+            renderer?.let { result.addAll(renderer.getSingleRendererList()) }
         }
         return result
     }
@@ -295,13 +296,28 @@ open class CanvasGroupRenderer : BaseRenderer() {
             super.applyScaleMatrix(matrix, reason, delegate)
 
             //sub
-            for (renderer in rendererList) {
-                if (renderer is CanvasGroupRenderer || rendererList.size() <= 1) {
-                    renderer.applyScaleMatrix(matrix, reason, delegate)
-                } else {
-                    renderer.applyScaleMatrixWithCenter(elementMatrix, true, reason, delegate)
-                }
+            applyGroupScaleMatrix(this, elementMatrix, reason, delegate)
+        }
+    }
+
+    /**group内的其他元素需要特殊处理*/
+    private fun applyGroupScaleMatrix(
+        renderer: BaseRenderer,
+        elementMatrix: Matrix,
+        reason: Reason,
+        delegate: CanvasRenderDelegate?
+    ) {
+        //sub
+        if (renderer is CanvasGroupRenderer) {
+            for (subRenderer in renderer.rendererList) {
+                applyGroupScaleMatrix(subRenderer, elementMatrix, reason, delegate)
             }
+            if (this != renderer) {
+                renderer.updateGroupRenderProperty(Reason.code, null)
+            }
+        } else {
+            //element
+            renderer.applyScaleMatrixWithCenter(elementMatrix, true, reason, delegate)
         }
     }
 
@@ -393,8 +409,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
         reason: Reason,
         delegate: CanvasRenderDelegate?
     ) {
-        rendererList.clear()
-        rendererList.addAll(list)
+        rendererList.resetAll(list)
         updateGroupRenderProperty(reason, delegate)
     }
 
@@ -531,7 +546,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
         //保存一个状态
         val undoState = PropertyStateStack()
-        undoState.saveState(this)
+        undoState.saveState(this, delegate)
 
         val anchorBounds = anchorItemRenderer!!.renderProperty?.getRenderBounds() ?: return
         for (item in list) {
@@ -568,10 +583,10 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
         //保存一个状态
         val redoState = PropertyStateStack()
-        redoState.saveState(this)
+        redoState.saveState(this, delegate)
 
         //回退栈
-        delegate?.undoManager?.addToStack(this, undoState, redoState, false, reason, strategy)
+        delegate?.addStateToStack(this, undoState, redoState, false, reason, strategy)
     }
 
     /**水平分布/垂直分布*/
@@ -617,7 +632,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
         //保存一个状态
         val undoState = PropertyStateStack()
-        undoState.saveState(this)
+        undoState.saveState(this, delegate)
 
         sortList.forEachIndexed { index, renderer ->
             if (renderer != first && renderer != last) {
@@ -651,10 +666,94 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
         //保存一个状态
         val redoState = PropertyStateStack()
-        redoState.saveState(this)
+        redoState.saveState(this, delegate)
 
         //回退栈
-        delegate?.undoManager?.addToStack(this, undoState, redoState, false, reason, strategy)
+        delegate?.addStateToStack(this, undoState, redoState, false, reason, strategy)
+    }
+
+    /**创建组合
+     * @return 返回一个新的群组渲染器*/
+    fun groupRendererGroup(
+        delegate: CanvasRenderDelegate?,
+        reason: Reason,
+        strategy: Strategy,
+    ): BaseRenderer {
+        delegate ?: return this
+
+        if (rendererList.size() <= 1) {
+            return this
+        }
+
+        //将所有子元素渲染器, 放在一个新的群组中
+        val subRendererList = getSingleRendererList()
+        val index = delegate.renderManager.elementRendererList.indexOf(rendererList.first()) //保持位置
+
+        val groupRenderer = CanvasGroupRenderer()
+        groupRenderer.resetGroupRendererList(subRendererList, Reason.init, null)
+
+        val undoState = GroupStateStack()
+        undoState.saveState(this, delegate)
+
+        //新的数据渲染器集合
+        val newElementRendererList = delegate.renderManager.elementRendererList.toMutableList()
+        newElementRendererList.add(
+            if (index == -1) newElementRendererList.size() else index,
+            groupRenderer
+        )
+        newElementRendererList.remove(this)
+        newElementRendererList.removeAll(rendererList)
+
+        //通知
+        delegate.renderManager.resetElementRenderer(newElementRendererList, Strategy.preview)
+
+        val redoState = GroupStateStack()
+        redoState.saveState(this, delegate)
+
+        //回退
+        delegate.addStateToStack(this, undoState, redoState, false, reason, strategy)
+
+        //重新选中元素
+        delegate.selectorManager.resetSelectorRenderer(listOf(groupRenderer), Reason.user)
+
+        return groupRenderer
+    }
+
+    /**解散组合
+     * @return 返回解散后渲染器集合*/
+    fun groupRendererDissolve(
+        delegate: CanvasRenderDelegate?,
+        reason: Reason,
+        strategy: Strategy,
+    ): List<BaseRenderer> {
+        val subRendererList = getSingleRendererList()
+        delegate ?: return subRendererList
+        val index = delegate.renderManager.elementRendererList.indexOf(this) //保持位置
+
+        val undoState = GroupStateStack()
+        undoState.saveState(this, delegate)
+
+        //新的数据渲染器集合
+        val newElementRendererList = delegate.renderManager.elementRendererList.toMutableList()
+        newElementRendererList.addAll(
+            if (index == -1) newElementRendererList.size() else index,
+            subRendererList
+        )
+        newElementRendererList.remove(this)
+
+        //通知
+        delegate.renderManager.resetElementRenderer(newElementRendererList, Strategy.preview)
+
+        val redoState = GroupStateStack()
+        redoState.saveState(this, delegate)
+
+        //回退
+        delegate.addStateToStack(this, undoState, redoState, false, reason, strategy)
+
+        //重新选中元素
+        delegate.selectorManager.resetSelectorRenderer(subRendererList, Reason.user)
+
+        return subRendererList
     }
 
     //endregion---操作---

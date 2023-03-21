@@ -37,10 +37,10 @@ interface IElement {
         renderer ?: return
         //用来恢复的状态
         val undoState = createStateStack()
-        undoState.saveState(renderer)
+        undoState.saveState(renderer, delegate)
         block()
         val redoState = createStateStack()
-        redoState.saveState(renderer)
+        redoState.saveState(renderer, delegate)
         renderer.requestUpdateDrawableAndProperty(reason, delegate)
         delegate?.addStateToStack(renderer, undoState, redoState, reason = reason)
     }

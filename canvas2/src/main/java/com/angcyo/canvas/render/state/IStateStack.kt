@@ -13,7 +13,7 @@ import com.angcyo.canvas.render.renderer.BaseRenderer
 interface IStateStack {
 
     /**保存状态当前的状态*/
-    fun saveState(renderer: BaseRenderer)
+    fun saveState(renderer: BaseRenderer, delegate: CanvasRenderDelegate?)
 
     /**恢复状态
      * [reason] 恢复的原因, 用户操作/代码操作/预览操作等
