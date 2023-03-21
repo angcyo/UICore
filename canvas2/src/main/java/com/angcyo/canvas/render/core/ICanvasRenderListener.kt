@@ -9,6 +9,7 @@ import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.unit.IRenderUnit
 
@@ -127,6 +128,14 @@ interface ICanvasRenderListener {
 
     /**[com.angcyo.canvas.render.core.ICanvasRenderView.dispatchRendererRestoreState]*/
     fun onRendererRestoreState(renderer: BaseRenderer, stateStack: IStateStack) {}
+
+    /**[com.angcyo.canvas.render.core.ICanvasRenderView.dispatchRendererGroupChange]*/
+    fun onRendererGroupChange(
+        groupRenderer: CanvasGroupRenderer,
+        subRendererList: List<BaseRenderer>,
+        groupType: Int
+    ) {
+    }
 
     //endregion---CanvasRenderer---
 

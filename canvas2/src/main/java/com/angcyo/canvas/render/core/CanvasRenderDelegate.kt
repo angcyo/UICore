@@ -262,6 +262,16 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         }
     }
 
+    override fun dispatchRendererGroupChange(
+        groupRenderer: CanvasGroupRenderer,
+        subRendererList: List<BaseRenderer>,
+        groupType: Int
+    ) {
+        for (listener in renderListenerList) {
+            listener.onRendererGroupChange(groupRenderer, subRendererList, groupType)
+        }
+    }
+
     //endregion---ICanvasRenderView---
 
     //region---CanvasRenderer---

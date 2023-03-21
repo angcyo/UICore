@@ -14,7 +14,7 @@ import com.angcyo.canvas.render.renderer.BaseRenderer
 class GroupStateStack : PropertyStateStack() {
 
     /**群组数据的存储*/
-    val valueMap = hashMapOf<String, Any>()
+    val valueMap = hashMapOf<String, Any?>()
 
     val stateRendererList = mutableListOf<BaseRenderer>()
 

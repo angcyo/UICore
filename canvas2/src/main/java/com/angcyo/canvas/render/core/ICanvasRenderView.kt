@@ -11,6 +11,7 @@ import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.unit.IRenderUnit
 
@@ -179,6 +180,19 @@ interface ICanvasRenderView {
 
     /**当有渲染器需要恢复状态时, 触发*/
     fun dispatchRendererRestoreState(renderer: BaseRenderer, stateStack: IStateStack)
+
+    /**元素分组/拆组变化时回调
+     * [groupRenderer] 群组渲染器
+     * [subRendererList] 组合的子元素或者拆组的子元素
+     * [groupType]
+     * [com.angcyo.canvas.render.renderer.CanvasGroupRenderer.GROUP_TYPE_GROUP] 群组操作
+     * [com.angcyo.canvas.render.renderer.CanvasGroupRenderer.GROUP_TYPE_DISSOLVE] 解组操作
+     * */
+    fun dispatchRendererGroupChange(
+        groupRenderer: CanvasGroupRenderer,
+        subRendererList: List<BaseRenderer>,
+        groupType: Int
+    )
 
     //endregion---CanvasRenderer---
 

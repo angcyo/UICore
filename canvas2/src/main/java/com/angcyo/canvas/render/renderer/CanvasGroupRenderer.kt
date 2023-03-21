@@ -36,6 +36,12 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
     companion object {
 
+        /**群组*/
+        const val GROUP_TYPE_GROUP = 1
+
+        /**解组*/
+        const val GROUP_TYPE_DISSOLVE = 2
+
         /**计算[rendererList]的bounds范围
          * [bounds] 强制指定, 指定后不计算*/
         fun computeBounds(rendererList: List<BaseRenderer>?, @Pixel bounds: RectF? = null): RectF {
@@ -361,8 +367,8 @@ open class CanvasGroupRenderer : BaseRenderer() {
         val result = CanvasRenderProperty()
         if (rendererList.size() == 1) {
             //只有一个元素
-            val element = rendererList.first()
-            element.renderProperty?.let {
+            val renderer = rendererList.first()
+            renderer.renderProperty?.let {
                 it.copyTo(result)
                 /*val rect = it.getRenderRect()
                 result.initWithRect(rect, it.angle)*/
@@ -711,6 +717,9 @@ open class CanvasGroupRenderer : BaseRenderer() {
         newElementRendererList.remove(this)
         newElementRendererList.removeAll(rendererList)
 
+        //回调
+        delegate.dispatchRendererGroupChange(groupRenderer, subRendererList, GROUP_TYPE_GROUP)
+
         //通知
         delegate.renderManager.resetElementRenderer(newElementRendererList, Strategy.preview)
 
@@ -747,6 +756,9 @@ open class CanvasGroupRenderer : BaseRenderer() {
             subRendererList
         )
         newElementRendererList.remove(this)
+
+        //回调
+        delegate.dispatchRendererGroupChange(this, subRendererList, GROUP_TYPE_DISSOLVE)
 
         //通知
         delegate.renderManager.resetElementRenderer(newElementRendererList, Strategy.preview)
