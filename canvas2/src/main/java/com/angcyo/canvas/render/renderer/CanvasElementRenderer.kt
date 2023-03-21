@@ -71,6 +71,7 @@ class CanvasElementRenderer : BaseRenderer() {
         return result
     }
 
+    /**将渲染属性, 同步更新到[IElement]*/
     override fun updateRenderProperty(
         target: CanvasRenderProperty?,
         reason: Reason,

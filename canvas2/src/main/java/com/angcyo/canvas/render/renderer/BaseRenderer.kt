@@ -340,7 +340,7 @@ abstract class BaseRenderer : IRenderer {
         }
     }
 
-    /**更新[renderProperty]时
+    /**更新[renderProperty]时触发
      * [updateRenderProperty]
      * */
     @RenderFlag

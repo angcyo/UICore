@@ -359,15 +359,6 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
     fun getGroupRenderProperty(): CanvasRenderProperty {
         val result = CanvasRenderProperty()
-        for (renderer in rendererList) {
-            if (renderer is CanvasElementRenderer) {
-                if (renderer.renderProperty == null) {
-                    renderer.renderProperty = renderer.renderElement?.requestElementRenderProperty()
-                }
-            } else {
-                renderer.readyRenderIfNeed(null)
-            }
-        }
         if (rendererList.size() == 1) {
             //只有一个元素
             val element = rendererList.first()

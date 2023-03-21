@@ -52,7 +52,6 @@ interface IElement {
      * 当前的[Drawable]应该是相对于[0,0]位置绘制的*/
     fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable?
 
-
     /**当编辑/操作完成后, 需要更新到对应的元素属性中*/
     fun updateElementRenderProperty(property: CanvasRenderProperty)
 

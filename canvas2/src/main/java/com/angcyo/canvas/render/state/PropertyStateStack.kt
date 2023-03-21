@@ -65,9 +65,6 @@ open class PropertyStateStack : IStateStack {
                         delegate?.dispatchSelectorRendererChange(from, list)
                     } else {
                         stateRenderer.rendererList.resetAll(list)
-                        if (apply) {
-                            stateRenderer.updateGroupRenderProperty(Reason.code, null)
-                        }
                     }
                 }
             }
