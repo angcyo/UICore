@@ -18,6 +18,7 @@ import com.angcyo.widget.R
  */
 open class DslAttrBadgeDrawable : DslBadgeDrawable() {
 
+    /**是否要绘制角标*/
     var drawBadge: Boolean = true
 
     override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
@@ -71,6 +72,7 @@ open class DslAttrBadgeDrawable : DslBadgeDrawable() {
             R.styleable.DslAttrBadgeDrawable_r_badge_padding_bottom,
             0
         )
+        //脚本文本内容
         badgeText = typedArray.getString(R.styleable.DslAttrBadgeDrawable_r_badge_text)
         badgeTextSize = typedArray.getDimensionPixelOffset(
             R.styleable.DslAttrBadgeDrawable_r_badge_text_size,
