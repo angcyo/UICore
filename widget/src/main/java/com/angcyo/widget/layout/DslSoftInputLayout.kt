@@ -213,19 +213,20 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
-        if (isEnabled) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-                _isBottomWindowInset = insets.systemWindowInsetBottom > 0
-                if (insets.systemWindowInsetBottom > 0) {
-                    //需要显示键盘
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            _isBottomWindowInset = insets.systemWindowInsetBottom > 0
+            if (insets.systemWindowInsetBottom > 0) {
+                //需要显示键盘
+                if (isEnabled) { //显示键盘的时候判断, 阻止显示流程
                     removeDelayHandle()
                     delayHandle(ACTION_SHOW_SOFT_INPUT, insets.systemWindowInsetBottom)
-                } else if (insets.systemWindowInsetBottom == 0) {
-                    //可能是隐藏键盘, 也可能是显示表情布局
-                    if (_action != ACTION_SHOW_EMOJI) {
-                        removeDelayHandle()
-                        delayHandle(ACTION_HIDE_SOFT_INPUT, insets.systemWindowInsetBottom)
-                    }
+                }
+            } else if (insets.systemWindowInsetBottom == 0) {
+                //可能是隐藏键盘, 也可能是显示表情布局
+                if (_action != ACTION_SHOW_EMOJI) {
+                    removeDelayHandle()
+                    delayHandle(ACTION_HIDE_SOFT_INPUT, insets.systemWindowInsetBottom)
                 }
             }
         }
