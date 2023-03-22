@@ -5,6 +5,7 @@ import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.canvas.render.renderer.CanvasMonitorRenderer
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.isChange
@@ -234,6 +235,23 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     /**通过[uuid]查询对应的渲染器*/
     fun findElementRenderer(uuid: String): BaseRenderer? =
         elementRendererList.find { it.uuid == uuid }
+
+    /**查找[subRenderer] 所对应的[CanvasGroupRenderer]*/
+    fun findElementGroupRenderer(
+        subRenderer: BaseRenderer,
+        rendererList: List<BaseRenderer> = elementRendererList
+    ): CanvasGroupRenderer? {
+        for (renderer in rendererList) {
+            if (renderer is CanvasGroupRenderer) {
+                return if (renderer.rendererList.contains(subRenderer)) {
+                    renderer
+                } else {
+                    findElementGroupRenderer(subRenderer, renderer.rendererList)
+                }
+            }
+        }
+        return null
+    }
 
     /**
      * 获取所有的元素渲染器

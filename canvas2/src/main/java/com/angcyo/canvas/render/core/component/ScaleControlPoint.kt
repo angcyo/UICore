@@ -168,8 +168,7 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
         if (isNeedApply()) {
             controlRendererInfo?.let {
                 applyScale(Reason.user.apply {
-                    controlType = CONTROL_TYPE_KEEP_GROUP_PROPERTY or
-                            CONTROL_TYPE_SCALE
+                    controlType = CONTROL_TYPE_SCALE
                 }, controlManager.delegate)
             }
         }

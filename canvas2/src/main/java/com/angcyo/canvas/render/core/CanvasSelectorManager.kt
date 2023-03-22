@@ -97,12 +97,11 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
             ) {
                 if (reason.reason == Reason.REASON_USER) {
                     if (newFlags.have(BaseRenderer.RENDERER_FLAG_REQUEST_PROPERTY)) {
-                        if (selectorComponent.rendererList.contains(renderer)) {
-                            if (!BaseControlPoint.isKeepGroupPropertyType(reason.controlType)) {
-                                selectorComponent.updateGroupRenderProperty(reason, delegate)
-                            }
+                        if (selectorComponent.containsRenderer(renderer, true)) {
+                            selectorComponent.updateGroupRenderProperty(reason, delegate)
                         }
-                    } else if (reason.renderFlag.have(BaseRenderer.RENDERER_FLAG_UNLOCK) ||
+                    }
+                    if (reason.renderFlag.have(BaseRenderer.RENDERER_FLAG_UNLOCK) ||
                         reason.renderFlag.have(BaseRenderer.RENDERER_FLAG_VISIBLE)
                     ) {
                         //锁定元素/隐藏元素后

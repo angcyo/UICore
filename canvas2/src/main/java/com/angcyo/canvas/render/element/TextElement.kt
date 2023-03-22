@@ -123,17 +123,11 @@ open class TextElement : BaseElement() {
     fun updateTextProperty(
         renderer: BaseRenderer?,
         delegate: CanvasRenderDelegate?,
-        keepGroupProperty: Boolean = false,
         keepVisibleSize: Boolean = false,
         block: TextProperty.() -> Unit
     ) {
         val reason: Reason = Reason.user.apply {
-            controlType = if (keepGroupProperty) {
-                BaseControlPoint.CONTROL_TYPE_KEEP_GROUP_PROPERTY or
-                        BaseControlPoint.CONTROL_TYPE_DATA
-            } else {
-                BaseControlPoint.CONTROL_TYPE_DATA
-            }
+            controlType = BaseControlPoint.CONTROL_TYPE_DATA
         }
         updateElement(renderer, delegate, reason) {
             textProperty.block()//do

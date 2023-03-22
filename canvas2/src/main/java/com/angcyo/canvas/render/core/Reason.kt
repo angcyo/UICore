@@ -45,16 +45,16 @@ data class Reason(
         //---reason
 
         /**初始化操作*/
-        const val REASON_INIT = 1
+        const val REASON_INIT = 1 //1
 
         /**用户主动操作*/
-        const val REASON_USER = REASON_INIT shl 1
+        const val REASON_USER = REASON_INIT shl 1 //2
 
         /**代码操作*/
-        const val REASON_CODE = REASON_USER shl 1
+        const val REASON_CODE = REASON_USER shl 1 //4
 
         /**预览操作, 比如正在进行的操作*/
-        const val REASON_PREVIEW = REASON_CODE shl 1
+        const val REASON_PREVIEW = REASON_CODE shl 1 //8
 
         //val
 

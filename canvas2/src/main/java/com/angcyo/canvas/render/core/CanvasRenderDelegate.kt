@@ -349,8 +349,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         redoState: IStateStack,
         redoIt: Boolean = false,
         reason: Reason = Reason.user.apply {
-            controlType = BaseControlPoint.CONTROL_TYPE_KEEP_GROUP_PROPERTY or
-                    BaseControlPoint.CONTROL_TYPE_DATA
+            controlType = BaseControlPoint.CONTROL_TYPE_DATA
         },
         strategy: Strategy = Strategy.normal
     ) {

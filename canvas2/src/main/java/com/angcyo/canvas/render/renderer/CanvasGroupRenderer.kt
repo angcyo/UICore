@@ -21,6 +21,8 @@ import com.angcyo.canvas.render.util.createOverrideBitmapCanvas
 import com.angcyo.canvas.render.util.createOverridePictureCanvas
 import com.angcyo.drawable.*
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.absoluteValue
@@ -180,11 +182,19 @@ open class CanvasGroupRenderer : BaseRenderer() {
         list: List<BaseRenderer> = rendererList
     ) {
         for (renderer in list) {
-            renderer.renderProperty?.let { property ->
-                drawElementRect(canvas, renderViewBox, property, paint)
-            }
-            if (dissolveGroup && renderer is CanvasGroupRenderer) {
-                drawElementRect(canvas, renderViewBox, paint, true, renderer.rendererList)
+            if (dissolveGroup) {
+                //拆组, 那么自身不绘制
+                if (renderer is CanvasGroupRenderer) {
+                    drawElementRect(canvas, renderViewBox, paint, true, renderer.rendererList)
+                } else {
+                    renderer.renderProperty?.let { property ->
+                        drawElementRect(canvas, renderViewBox, property, paint)
+                    }
+                }
+            } else {
+                renderer.renderProperty?.let { property ->
+                    drawElementRect(canvas, renderViewBox, property, paint)
+                }
             }
         }
     }
@@ -223,11 +233,19 @@ open class CanvasGroupRenderer : BaseRenderer() {
         list: List<BaseRenderer> = rendererList
     ) {
         for (renderer in list) {
-            renderer.renderProperty?.let { property ->
-                drawElementBounds(canvas, renderViewBox, property, paint)
-            }
-            if (dissolveGroup && renderer is CanvasGroupRenderer) {
-                drawElementBounds(canvas, renderViewBox, paint, true, renderer.rendererList)
+            if (dissolveGroup) {
+                //拆组, 那么自身不绘制
+                if (renderer is CanvasGroupRenderer) {
+                    drawElementBounds(canvas, renderViewBox, paint, true, renderer.rendererList)
+                } else {
+                    renderer.renderProperty?.let { property ->
+                        drawElementBounds(canvas, renderViewBox, property, paint)
+                    }
+                }
+            } else {
+                renderer.renderProperty?.let { property ->
+                    drawElementBounds(canvas, renderViewBox, property, paint)
+                }
             }
         }
     }
@@ -271,10 +289,12 @@ open class CanvasGroupRenderer : BaseRenderer() {
         reason: Reason,
         delegate: CanvasRenderDelegate?
     ) {
-        super.applyRotateMatrix(matrix, reason, delegate)
-        for (renderer in rendererList) {
+        super.applyRotateMatrix(matrix, reason, delegate)//自身
+        for (renderer in rendererList) {//所有子元素
             renderer.applyRotateMatrix(matrix, reason, delegate)
         }
+        //2023-3-22 旋转之后, 需要摆正角度到0度, 方便Bounds的计算及显示
+        checkUpdateGroupRenderProperty(reason, delegate)
     }
 
     private val elementMatrix = Matrix()
@@ -329,11 +349,11 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 applyGroupScaleMatrix(subRenderer, elementMatrix, reason, delegate)
             }
             if (this != renderer) {
-                renderer.updateGroupRenderProperty(Reason.code, null)
+                renderer.updateGroupRenderProperty(reason, delegate)
             }
         } else {
             //element
-            renderer.applyScaleMatrixWithCenter(elementMatrix, true, reason, delegate)
+            renderer.applyScaleMatrixWithCenter(elementMatrix, true, Reason.code, null)
         }
     }
 
@@ -361,34 +381,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
         for (renderer in rendererList) {
             renderer.applyFlip(flipX, flipY, reason, delegate)
         }
-    }
-
-    fun getGroupRenderProperty(): CanvasRenderProperty {
-        val result = CanvasRenderProperty()
-        if (rendererList.size() == 1) {
-            //只有一个元素
-            val renderer = rendererList.first()
-            renderer.renderProperty?.let {
-                it.copyTo(result)
-                /*val rect = it.getRenderRect()
-                result.initWithRect(rect, it.angle)*/
-            }
-        } else {
-            //多个元素
-            val rect = RectF(Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE)
-            for (renderer in rendererList) {
-                renderer.renderProperty?.let {
-                    val bounds = it.getRenderBounds()
-                    //val bounds = it.getRenderBounds(afterRotate = true)
-                    rect.left = min(rect.left, bounds.left)
-                    rect.top = min(rect.top, bounds.top)
-                    rect.right = max(rect.right, bounds.right)
-                    rect.bottom = max(rect.bottom, bounds.bottom)
-                }
-            }
-            result.initWithRect(rect, 0f)
-        }
-        return result
+        checkUpdateGroupRenderProperty(reason, delegate)
     }
 
     override fun updateLock(lock: Boolean, reason: Reason, delegate: CanvasRenderDelegate?) {
@@ -402,6 +395,74 @@ open class CanvasGroupRenderer : BaseRenderer() {
         super.updateVisible(visible, reason, delegate)
         for (renderer in rendererList) {
             renderer.updateVisible(visible, reason, delegate)
+        }
+    }
+
+    /**当前的渲染器是否包含指定的渲染器
+     * [renderer] 判断的目标
+     * [recursively] 是否递归判断
+     * */
+    fun containsRenderer(
+        renderer: BaseRenderer,
+        recursively: Boolean,
+        list: List<BaseRenderer> = rendererList
+    ): Boolean {
+        var result = false
+        for (sub in list) {
+            result = when (sub) {
+                renderer -> true
+                is CanvasGroupRenderer -> if (recursively) sub.containsRenderer(
+                    renderer,
+                    true,
+                    sub.rendererList
+                ) else false
+                else -> false
+            }
+            if (result) {
+                break
+            }
+        }
+        return result
+    }
+
+    /**临时变量*/
+    private val _tempGroupRenderProperty = CanvasRenderProperty()
+
+    /**重新计算渲染属性*/
+    fun getGroupRenderProperty(result: CanvasRenderProperty = _tempGroupRenderProperty): CanvasRenderProperty {
+        result.reset()
+        if (rendererList.size() == 1) {
+            //只有一个元素
+            val renderer = rendererList.first()
+            renderer.renderProperty?.let {
+                it.copyTo(result)
+                /*val rect = it.getRenderRect()
+                result.initWithRect(rect, it.angle)*/
+            }
+        } else {
+            //多个元素
+            val rect = acquireTempRectF()
+            rect.set(Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE)
+            for (renderer in rendererList) {
+                renderer.renderProperty?.let {
+                    val bounds = it.getRenderBounds()
+                    //val bounds = it.getRenderBounds(afterRotate = true)
+                    rect.left = min(rect.left, bounds.left)
+                    rect.top = min(rect.top, bounds.top)
+                    rect.right = max(rect.right, bounds.right)
+                    rect.bottom = max(rect.bottom, bounds.bottom)
+                }
+            }
+            result.initWithRect(rect, 0f)
+            rect.release()
+        }
+        return result
+    }
+
+    /**摆正角度到0度, 方便Bounds的计算及显示*/
+    protected fun checkUpdateGroupRenderProperty(reason: Reason, delegate: CanvasRenderDelegate?) {
+        if (reason.reason == Reason.REASON_USER) {
+            updateGroupRenderProperty(reason, delegate)
         }
     }
 
@@ -751,11 +812,12 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
         //新的数据渲染器集合
         val newElementRendererList = delegate.renderManager.elementRendererList.toMutableList()
+        newElementRendererList.remove(this)
+        newElementRendererList.removeAll(rendererList)
         newElementRendererList.addAll(
             if (index == -1) newElementRendererList.size() else index,
             subRendererList
         )
-        newElementRendererList.remove(this)
 
         //回调
         delegate.dispatchRendererGroupChange(this, subRendererList, GROUP_TYPE_DISSOLVE)

@@ -7,10 +7,7 @@ import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
-import kotlin.math.atan2
-import kotlin.math.pow
-import kotlin.math.sqrt
-import kotlin.math.tan
+import kotlin.math.*
 
 /**
  * 渲染的核心矩阵数据
@@ -100,6 +97,23 @@ data class CanvasRenderProperty(
         this.angle = angle
         this.width = rect.width()
         this.height = rect.height()
+    }
+
+    /**重置属性*/
+    fun reset() {
+        originX = "left"
+        originY = "top"
+        anchorX = 0f
+        anchorY = anchorX
+        width = 0f
+        height = width
+        angle = 0f
+        scaleX = 1f
+        scaleY = scaleX
+        flipX = false
+        flipY = false
+        skewX = 0f
+        skewY = skewX
     }
 
     /**复制属性到[target]对象*/
@@ -227,7 +241,7 @@ data class CanvasRenderProperty(
         includeFlip: Boolean = true
     ): Matrix {
         getBaseMatrix(result, includeFlip)
-        val centerPoint = getRenderCenter(_centerPoint)
+        val centerPoint = getRenderCenter(_centerPoint, includeFlip)
         if (includeRotate) {
             result.postRotate(angle)
         }
@@ -324,7 +338,7 @@ data class CanvasRenderProperty(
         val targetCenterY = _tempPoint.y
 
         if (useQr) {
-            val target = getRenderMatrix(includeRotate = true, includeFlip = false)
+            val target = getRenderMatrix(includeRotate = true, includeFlip = true)
             target.postConcat(matrix)
             qrDecomposition(target)
         } else {
@@ -375,8 +389,8 @@ data class CanvasRenderProperty(
         val skewY = 0.0f//y倾斜的角度, 弧度单位
 
         updateAngle(angle)
-        this.scaleX = scaleX
-        this.scaleY = scaleY
+        this.scaleX = scaleX.absoluteValue  //flip单独控制
+        this.scaleY = scaleY.absoluteValue  //flip单独控制
         this.skewX = skewX.toDegrees()
         this.skewY = skewY
     }
@@ -384,6 +398,7 @@ data class CanvasRenderProperty(
     /**更新旋转角度, 强制正数*/
     private fun updateAngle(angle: Float) {
         this.angle = (angle + 360) % 360
+        //this.angle = angle
     }
 
     /**应用一个翻转参数*/

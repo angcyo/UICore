@@ -60,9 +60,11 @@ open class PropertyStateStack : IStateStack {
                 state.rendererList?.also { list ->
                     if (stateRenderer is CanvasSelectorComponent && apply) {
                         //通知选中元素改变
-                        val from = stateRenderer.rendererList.toList()
+                        /*val from = stateRenderer.rendererList.toList()
                         stateRenderer.rendererList.resetAll(list)
-                        delegate?.dispatchSelectorRendererChange(from, list)
+                        stateRenderer.updateGroupRenderProperty(Reason.code, null)
+                        delegate?.dispatchSelectorRendererChange(from, list)*/
+                        delegate?.selectorManager?.resetSelectorRenderer(list, reason)
                     } else {
                         stateRenderer.rendererList.resetAll(list)
                     }

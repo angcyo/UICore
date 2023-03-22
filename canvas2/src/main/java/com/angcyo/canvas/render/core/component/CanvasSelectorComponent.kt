@@ -64,6 +64,12 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
     /**边框画笔*/
     val boundsPaint = createRenderPaint(_color(R.color.canvas_render_select), 1 * dp)
 
+    /**元素边框的颜色*/
+    var elementBoundsColor = _color(R.color.canvas_render_select)
+
+    /**整体bounds的颜色*/
+    var boundsColor = Color.RED
+
     /**文本画笔*/
     val textPaint = createRenderTextPaint(Color.WHITE)
 
@@ -77,7 +83,7 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
     var textOffset = 2 * dp
 
     /**是否要解组Group中的元素,绘制Rect/Bounds*/
-    var dissolveGroupElementDrawBounds = false
+    var dissolveGroupElementDrawBounds = true
 
     /**是否有选中的元素*/
     val isSelectorElement: Boolean
@@ -104,9 +110,10 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
     protected val selectorRenderDrawBounds = RectF()
 
     init {
-        removeRenderFlag(RENDERER_FLAG_DRAW_ELEMENT_RECT, Reason.init, null)
-        //removeRenderFlag(RENDERER_FLAG_DRAW_FRAME_BOUNDS, Reason.init, null)
-        //removeRenderFlag(RENDERER_FLAG_DRAW_FRAME_SELECTOR_BOUNDS, Reason.init, null)
+        //removeRenderFlag(RENDERER_FLAG_DRAW_ELEMENT_RECT, Reason.init, null)
+        removeRenderFlag(RENDERER_FLAG_DRAW_ELEMENT_BOUNDS, Reason.init, null)
+        //removeRenderFlag(RENDERER_FLAG_DRAW_SELECTOR_RECT, Reason.init, null)
+        //removeRenderFlag(RENDERER_FLAG_DRAW_SELECTOR_BOUNDS, Reason.init, null)
         showSizeRender(Reason.init, null)
     }
 
@@ -122,7 +129,9 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
             //绘制所有子元素的Rect
 
             if (getSingleRendererList().size() > 1) {
+                //元素旋转的矩形
                 if (renderFlags.have(RENDERER_FLAG_DRAW_ELEMENT_RECT)) {
+                    boundsPaint.color = elementBoundsColor
                     drawElementRect(
                         canvas,
                         delegate.renderViewBox,
@@ -130,7 +139,9 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
                         dissolveGroupElementDrawBounds
                     )
                 }
+                //bounds边界范围
                 if (renderFlags.have(RENDERER_FLAG_DRAW_ELEMENT_BOUNDS)) {
+                    boundsPaint.color = elementBoundsColor
                     drawElementBounds(
                         canvas,
                         delegate.renderViewBox,
@@ -143,7 +154,11 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
             //绘制选择框的Rect
             renderProperty?.let { property ->
                 property.getRenderRect(selectorRenderRect)
-                property.getRenderBounds(selectorRenderBounds)
+                //property.getRenderBounds(selectorRenderBounds)
+
+                val groupRenderProperty = getGroupRenderProperty()
+                groupRenderProperty.getRenderBounds(selectorRenderBounds)
+
                 delegate.renderViewBox.transformToOutside(
                     selectorRenderRect,
                     selectorRenderDrawRect
@@ -152,10 +167,10 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
                     selectorRenderBounds,
                     selectorRenderDrawBounds
                 )
-                if (rendererList.size() == 1) {
-                    if (renderFlags.have(RENDERER_FLAG_DRAW_SELECTOR_BOUNDS)) {
-                        drawElementBounds(canvas, delegate.renderViewBox, boundsPaint, false)
-                    }
+                //元素的bounds范围
+                if (renderFlags.have(RENDERER_FLAG_DRAW_SELECTOR_BOUNDS)) {
+                    boundsPaint.color = boundsColor
+                    canvas.drawRect(selectorRenderDrawBounds, boundsPaint)
                 }
                 canvas.withRotation(
                     property.angle,
@@ -163,6 +178,7 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
                     selectorRenderDrawRect.centerY()
                 ) {
                     if (renderFlags.have(RENDERER_FLAG_DRAW_SELECTOR_RECT)) {
+                        boundsPaint.color = elementBoundsColor
                         canvas.drawRect(selectorRenderDrawRect, boundsPaint)
                     }
                     if (renderFlags.have(RENDERER_FLAG_DRAW_FRAME_SIZE)) {

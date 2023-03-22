@@ -353,6 +353,7 @@ abstract class BaseRenderer : IRenderer {
             renderProperty = CanvasRenderProperty()
         }
         target?.copyTo(renderProperty)
+        
         requestUpdateDrawableAndProperty(reason, delegate)
         delegate?.dispatchRendererPropertyChange(this, null, target, reason)
     }
@@ -382,6 +383,8 @@ abstract class BaseRenderer : IRenderer {
      * [applyScaleMatrix]
      * */
     open fun applyTranslateMatrix(matrix: Matrix, reason: Reason, delegate: CanvasRenderDelegate?) {
+        reason.controlType = (reason.controlType
+            ?: 0).add(BaseControlPoint.CONTROL_TYPE_DATA or BaseControlPoint.CONTROL_TYPE_TRANSLATE)
         delegate?.dispatchApplyMatrix(
             this,
             matrix,
@@ -397,6 +400,8 @@ abstract class BaseRenderer : IRenderer {
      * [applyScaleMatrix]
      * */
     open fun applyRotateMatrix(matrix: Matrix, reason: Reason, delegate: CanvasRenderDelegate?) {
+        reason.controlType = (reason.controlType
+            ?: 0).add(BaseControlPoint.CONTROL_TYPE_DATA or BaseControlPoint.CONTROL_TYPE_ROTATE)
         delegate?.dispatchApplyMatrix(this, matrix, BaseControlPoint.CONTROL_TYPE_ROTATE)
         renderProperty?.applyRotateMatrix(matrix)
         updateRenderProperty(renderProperty, reason, delegate)
@@ -408,6 +413,8 @@ abstract class BaseRenderer : IRenderer {
      * [applyScaleMatrix]
      * */
     open fun applyScaleMatrix(matrix: Matrix, reason: Reason, delegate: CanvasRenderDelegate?) {
+        reason.controlType = (reason.controlType
+            ?: 0).add(BaseControlPoint.CONTROL_TYPE_DATA or BaseControlPoint.CONTROL_TYPE_SCALE)
         delegate?.dispatchApplyMatrix(
             this,
             matrix,
@@ -424,6 +431,8 @@ abstract class BaseRenderer : IRenderer {
         reason: Reason,
         delegate: CanvasRenderDelegate?
     ) {
+        reason.controlType = (reason.controlType
+            ?: 0).add(BaseControlPoint.CONTROL_TYPE_DATA or BaseControlPoint.CONTROL_TYPE_ROTATE)
         delegate?.dispatchApplyMatrix(this, matrix, BaseControlPoint.CONTROL_TYPE_SCALE)
         renderProperty?.applyScaleMatrixWithCenter(matrix, useQr)
         updateRenderProperty(renderProperty, reason, delegate)
@@ -436,6 +445,8 @@ abstract class BaseRenderer : IRenderer {
         reason: Reason,
         delegate: CanvasRenderDelegate?
     ) {
+        reason.controlType = (reason.controlType
+            ?: 0).add(BaseControlPoint.CONTROL_TYPE_DATA or BaseControlPoint.CONTROL_TYPE_FLIP)
         renderProperty?.applyFlip(flipX, flipY)
         updateRenderProperty(renderProperty, reason, delegate)
     }

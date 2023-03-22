@@ -72,8 +72,7 @@ class RotateControlPoint(controlManager: CanvasControlManager) : BaseControlPoin
         if (isNeedApply()) {
             controlRendererInfo?.let {
                 applyRotate(Reason.user.apply {
-                    controlType = CONTROL_TYPE_KEEP_GROUP_PROPERTY or
-                            CONTROL_TYPE_ROTATE
+                    controlType = CONTROL_TYPE_ROTATE
                 }, controlManager.delegate)
             }
         }
