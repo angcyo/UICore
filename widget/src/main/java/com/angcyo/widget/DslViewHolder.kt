@@ -12,10 +12,12 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.angcyo.library.L
 import com.angcyo.library.ex.motionEvent
+import com.angcyo.library.ex.replace
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.base.ThrottleClickListener
 import com.angcyo.widget.base.ThrottleClickListener.Companion.DEFAULT_THROTTLE_INTERVAL
@@ -43,6 +45,8 @@ open class DslViewHolder(
         const val EVENT_TYPE_LONG_PRESS = 2
     }
 
+    //<editor-fold desc="属性">
+
     val context get() = itemView.context
 
     /**
@@ -56,12 +60,18 @@ open class DslViewHolder(
     /**自定义的一些Flag*/
     var flag: Int = 0
 
+    //</editor-fold desc="属性">
+
+    //<editor-fold desc="基础">
+
     /**
      * 清理缓存
      */
     fun clear() {
         sparseArray.clear()
     }
+
+    //</editor-fold desc="基础">
 
     //<editor-fold desc="事件处理">
 
@@ -672,5 +682,23 @@ open class DslViewHolder(
     }
 
     //</editor-fold desc="属性控制">
+
+    //<editor-fold desc="ViewGroup">
+
+    /**将[itemView]的所有内容替换成新的布局[layoutId]*/
+    fun replace(@LayoutRes layoutId: Int, attachToRoot: Boolean = true) {
+        replace(itemView, layoutId, attachToRoot)
+    }
+
+    /**[replace]*/
+    fun replace(rootView: View?, @LayoutRes layoutId: Int, attachToRoot: Boolean = true) {
+        if (rootView is ViewGroup) {
+            clear()
+            rootView.replace(layoutId, attachToRoot)
+        }
+    }
+
+
+    //</editor-fold desc="ViewGroup">
 
 }
