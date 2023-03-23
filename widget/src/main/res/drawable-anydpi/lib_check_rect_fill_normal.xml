@@ -1,0 +1,9 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/lib_check_box_ico_size"
+    android:height="@dimen/lib_check_box_ico_size"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <path
+        android:fillColor="@color/lib_icon_color"
+        android:pathData="M910.2,113.8v796.4H113.8V113.8h796.4m0,-113.8H113.8C51.2,0 0,51.2 0,113.8v796.4c0,62.6 51.2,113.8 113.8,113.8h796.4c62.6,0 113.8,-51.2 113.8,-113.8V113.8c0,-62.6 -51.2,-113.8 -113.8,-113.8z" />
+</vector>

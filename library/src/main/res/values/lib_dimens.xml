@@ -46,4 +46,8 @@
 
     <dimen name="lib_spacing_extra">4dp</dimen>
 
+    <!--CheckBox图标大小, ico与文本的距离可以通过paddingLeft控制, 而不是drawablePadding-->
+    <dimen name="lib_check_box_ico_size">18dp</dimen>
+    <dimen name="lib_check_box_ico_padding">6dp</dimen>
+
 </resources>
