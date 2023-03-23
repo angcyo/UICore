@@ -698,7 +698,6 @@ open class DslViewHolder(
         }
     }
 
-
     //</editor-fold desc="ViewGroup">
 
 }
