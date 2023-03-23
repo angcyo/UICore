@@ -172,13 +172,19 @@ fun updateLoadingProgress(progress: String?) {
  * [view] 要操作的视图
  * [progress] 进度文本*/
 fun updateLoadingProgress(view: View?, progress: String?) {
-    view?.isVisible = progress != null
+    view.updateProgress(progress)
+}
+
+/**[updateLoadingProgress]*/
+fun View?.updateProgress(progress: String?) {
+    val view = this ?: return
+    view.isVisible = progress != null
     if (view is TextView) {
         view.text = progress
     } else if (view is DslProgressBar) {
         view.setProgress(progress.getLongNum()?.toFloat() ?: 0f)
     } else {
-        val background = view?.background
+        val background = view.background
         if (background is BaseProgressDrawable) {
             val p = progress?.toIntOrNull()
             if (p != null) {
@@ -188,7 +194,6 @@ fun updateLoadingProgress(view: View?, progress: String?) {
         }
     }
 }
-
 
 //</editor-fold desc="隐藏对话框">
 
