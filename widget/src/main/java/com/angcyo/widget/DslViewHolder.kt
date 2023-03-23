@@ -690,6 +690,16 @@ open class DslViewHolder(
         replace(itemView, layoutId, attachToRoot)
     }
 
+    /**将[itemView]的所有内容替换成新的布局[layoutId]
+     * [groupViewId] group的布局id*/
+    fun replace(
+        @IdRes groupViewId: Int,
+        @LayoutRes layoutId: Int,
+        attachToRoot: Boolean = true
+    ) {
+        replace(view(groupViewId), layoutId, attachToRoot)
+    }
+
     /**[replace]*/
     fun replace(rootView: View?, @LayoutRes layoutId: Int, attachToRoot: Boolean = true) {
         if (rootView is ViewGroup) {
