@@ -55,8 +55,11 @@ def _replaceRes(path, map) {
     def count = 0
     map.each { key, val ->
         if (key != null && !key.isEmpty()) {
-            originText = originText.replaceAll(">${key}<", val)//替换资源
-            count++
+            def resKey = ">${key}<"
+            if (originText.contains(resKey)) {
+                originText = originText.replaceAll(resKey, ">${val}<")//替换资源
+                count++
+            }
         }
     }
     pathFile.write(originText)//重写文件
