@@ -31,6 +31,7 @@ object NetUtils {
 
     /**
      * Get local Ip address.
+     * [/192.168.2.109]
      */
     val localIPAddress: InetAddress?
         get() {
