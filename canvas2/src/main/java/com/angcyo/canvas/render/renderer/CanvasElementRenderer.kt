@@ -8,8 +8,6 @@ import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement
-import com.angcyo.library.ex.have
-import com.angcyo.library.ex.remove
 
 /**用来绘制具体元素的类
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -26,8 +24,10 @@ class CanvasElementRenderer : BaseRenderer() {
 
     //region---core---
 
-    override fun requestRenderDrawable(renderParams: RenderParams?): Drawable? {
-        return renderElement?.requestElementRenderDrawable(renderParams)
+    override fun requestRenderDrawable(overrideSize: Float?): Drawable? {
+        return renderElement?.requestElementRenderDrawable(RenderParams().apply {
+            this.overrideSize = overrideSize
+        })
     }
 
     override fun isSupportControlPoint(type: Int): Boolean {
@@ -35,33 +35,27 @@ class CanvasElementRenderer : BaseRenderer() {
             ?: super.isSupportControlPoint(type)
     }
 
-    /**更新渲染时, 需要的一些数据*/
-    override fun readyRenderIfNeed(params: RenderParams?) {
-        super.readyRenderIfNeed(params)
+    override fun updateRenderProperty() {
+        super.updateRenderProperty()
         val element = renderElement ?: return
-
-        val requestProperty = renderFlags.have(RENDERER_FLAG_REQUEST_PROPERTY)
-        if (renderProperty == null || requestProperty) {
-            renderProperty = element.requestElementRenderProperty()
-            renderFlags = renderFlags.remove(RENDERER_FLAG_REQUEST_PROPERTY)
-        }
-
-        val requestDrawable = renderFlags.have(RENDERER_FLAG_REQUEST_DRAWABLE)
-        if (renderDrawable == null || requestProperty || requestDrawable) {
-            renderDrawable = element.requestElementRenderDrawable(params)
-            renderFlags = renderFlags.remove(RENDERER_FLAG_REQUEST_DRAWABLE)
-        }
+        renderProperty = element.requestElementRenderProperty()
     }
 
-    /**[com.angcyo.canvas.render.element.IElement.elementContainsPoint]*/
+    override fun updateRenderDrawable(params: RenderParams?) {
+        super.updateRenderDrawable(params)
+        val element = renderElement ?: return
+        renderDrawable = element.requestElementRenderDrawable(params)
+    }
+
+    /**[com.angcyo.canvas.render.core.component.ElementHitComponent.elementContainsPoint]*/
     override fun rendererContainsPoint(delegate: CanvasRenderDelegate?, point: PointF): Boolean =
         renderElement?.elementHitComponent?.elementContainsPoint(delegate, point) == true
 
-    /**[com.angcyo.canvas.render.element.IElement.elementContainsRect]*/
+    /**[com.angcyo.canvas.render.core.component.ElementHitComponent.elementContainsRect]*/
     override fun rendererContainsRect(delegate: CanvasRenderDelegate?, rect: RectF): Boolean =
         renderElement?.elementHitComponent?.elementContainsRect(delegate, rect) == true
 
-    /**[com.angcyo.canvas.render.element.IElement.elementIntersectRect]*/
+    /**[com.angcyo.canvas.render.core.component.ElementHitComponent.elementIntersectRect]*/
     override fun rendererIntersectRect(delegate: CanvasRenderDelegate?, rect: RectF): Boolean =
         renderElement?.elementHitComponent?.elementIntersectRect(delegate, rect) == true
 
@@ -72,12 +66,12 @@ class CanvasElementRenderer : BaseRenderer() {
     }
 
     /**将渲染属性, 同步更新到[IElement]*/
-    override fun updateRenderProperty(
+    override fun updateRenderPropertyTo(
         target: CanvasRenderProperty?,
         reason: Reason,
         delegate: CanvasRenderDelegate?
     ) {
-        super.updateRenderProperty(target, reason, delegate)
+        super.updateRenderPropertyTo(target, reason, delegate)
         target?.let { renderElement?.updateElementRenderProperty(it) }
     }
 

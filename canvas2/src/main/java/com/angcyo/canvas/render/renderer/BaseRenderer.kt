@@ -123,14 +123,24 @@ abstract class BaseRenderer : IRenderer {
      * */
     open fun readyRenderIfNeed(params: RenderParams?) {
         val requestProperty = renderFlags.have(RENDERER_FLAG_REQUEST_PROPERTY)
-        if (requestProperty) {
-            renderProperty = null
+        if (renderProperty == null || requestProperty) {
+            updateRenderProperty()
         }
 
         val requestDrawable = renderFlags.have(RENDERER_FLAG_REQUEST_DRAWABLE)
-        if (requestDrawable) {
-            renderDrawable = null
+        if (renderDrawable == null || requestProperty || requestDrawable) {
+            updateRenderDrawable(params)
         }
+    }
+
+    /**更新[renderProperty]属性*/
+    open fun updateRenderProperty() {
+        renderFlags = renderFlags.remove(RENDERER_FLAG_REQUEST_PROPERTY)
+    }
+
+    /**更新[renderDrawable]属性*/
+    open fun updateRenderDrawable(params: RenderParams?) {
+        renderFlags = renderFlags.remove(RENDERER_FLAG_REQUEST_DRAWABLE)
     }
 
     /**
@@ -271,19 +281,14 @@ abstract class BaseRenderer : IRenderer {
 
     /**获取渲染器用来渲染的[Drawable]
      * [requestRenderBitmap]*/
-    open fun requestRenderDrawable(renderParams: RenderParams?): Drawable? {
-        if (renderDrawable == null) {
-            renderDrawable =
-                createRenderDrawable(getSingleRendererList(), renderParams?.overrideSize)
-        }
-        return renderDrawable
-    }
+    open fun requestRenderDrawable(overrideSize: Float? = null): Drawable? =
+        createRenderDrawable(getSingleRendererList(), overrideSize)
 
     /**获取渲染器用来渲染的[Bitmap]
      * [requestRenderDrawable]
      * */
-    open fun requestRenderBitmap(renderParams: RenderParams?): Bitmap? =
-        createRenderBitmap(getSingleRendererList(), renderParams?.overrideSize)
+    open fun requestRenderBitmap(overrideSize: Float? = null): Bitmap? =
+        createRenderBitmap(getSingleRendererList(), overrideSize)
 
     //endregion---core---
 
@@ -341,10 +346,10 @@ abstract class BaseRenderer : IRenderer {
     }
 
     /**更新[renderProperty]时触发
-     * [updateRenderProperty]
+     * [updateRenderPropertyTo]
      * */
     @RenderFlag
-    open fun updateRenderProperty(
+    open fun updateRenderPropertyTo(
         target: CanvasRenderProperty?,
         reason: Reason,
         delegate: CanvasRenderDelegate?
@@ -353,23 +358,26 @@ abstract class BaseRenderer : IRenderer {
             renderProperty = CanvasRenderProperty()
         }
         target?.copyTo(renderProperty)
-        
-        requestUpdateDrawableAndProperty(reason, delegate)
+
+        requestUpdateDrawableAndPropertyFlag(reason, delegate)
         delegate?.dispatchRendererPropertyChange(this, null, target, reason)
     }
 
     /**请求更新[renderDrawable], 通知对应的状态发生了改变*/
-    open fun requestUpdateDrawable(reason: Reason, delegate: CanvasRenderDelegate?) {
+    @RenderFlag
+    open fun requestUpdateDrawableFlag(reason: Reason, delegate: CanvasRenderDelegate?) {
         addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
     }
 
     /**请求更新[renderProperty], 通知对应的状态发生了改变*/
-    open fun requestUpdateProperty(reason: Reason, delegate: CanvasRenderDelegate?) {
+    @RenderFlag
+    open fun requestUpdatePropertyFlag(reason: Reason, delegate: CanvasRenderDelegate?) {
         addRenderFlag(RENDERER_FLAG_REQUEST_PROPERTY, reason, delegate)
     }
 
     /**同时更新[renderDrawable] 和 [renderProperty]*/
-    open fun requestUpdateDrawableAndProperty(reason: Reason, delegate: CanvasRenderDelegate?) {
+    @RenderFlag
+    open fun requestUpdateDrawableAndPropertyFlag(reason: Reason, delegate: CanvasRenderDelegate?) {
         addRenderFlag(
             RENDERER_FLAG_REQUEST_DRAWABLE or RENDERER_FLAG_REQUEST_PROPERTY,
             reason,
@@ -391,7 +399,7 @@ abstract class BaseRenderer : IRenderer {
             BaseControlPoint.CONTROL_TYPE_TRANSLATE
         )
         renderProperty?.applyTranslateMatrix(matrix)
-        updateRenderProperty(renderProperty, reason, delegate)
+        updateRenderPropertyTo(renderProperty, reason, delegate)
     }
 
     /**旋转操作结束之后, 需要将矩阵[matrix]作用到[renderProperty]
@@ -404,7 +412,7 @@ abstract class BaseRenderer : IRenderer {
             ?: 0).add(BaseControlPoint.CONTROL_TYPE_DATA or BaseControlPoint.CONTROL_TYPE_ROTATE)
         delegate?.dispatchApplyMatrix(this, matrix, BaseControlPoint.CONTROL_TYPE_ROTATE)
         renderProperty?.applyRotateMatrix(matrix)
-        updateRenderProperty(renderProperty, reason, delegate)
+        updateRenderPropertyTo(renderProperty, reason, delegate)
     }
 
     /**缩放操作结束之后, 需要将矩阵[matrix]作用到[renderProperty]
@@ -421,7 +429,7 @@ abstract class BaseRenderer : IRenderer {
             BaseControlPoint.CONTROL_TYPE_SCALE
         )
         renderProperty?.applyScaleMatrixWithValue(matrix)
-        updateRenderProperty(renderProperty, reason, delegate)
+        updateRenderPropertyTo(renderProperty, reason, delegate)
     }
 
     /**[applyScaleMatrix]*/
@@ -435,7 +443,7 @@ abstract class BaseRenderer : IRenderer {
             ?: 0).add(BaseControlPoint.CONTROL_TYPE_DATA or BaseControlPoint.CONTROL_TYPE_ROTATE)
         delegate?.dispatchApplyMatrix(this, matrix, BaseControlPoint.CONTROL_TYPE_SCALE)
         renderProperty?.applyScaleMatrixWithCenter(matrix, useQr)
-        updateRenderProperty(renderProperty, reason, delegate)
+        updateRenderPropertyTo(renderProperty, reason, delegate)
     }
 
     /**[com.angcyo.canvas.render.core.component.CanvasRenderProperty.applyFlip]*/
@@ -448,8 +456,10 @@ abstract class BaseRenderer : IRenderer {
         reason.controlType = (reason.controlType
             ?: 0).add(BaseControlPoint.CONTROL_TYPE_DATA or BaseControlPoint.CONTROL_TYPE_FLIP)
         renderProperty?.applyFlip(flipX, flipY)
-        updateRenderProperty(renderProperty, reason, delegate)
+        updateRenderPropertyTo(renderProperty, reason, delegate)
     }
+
+    //---
 
     /**平移元素[dx] [dy]本次的偏移量
      * [applyTranslateMatrix]*/

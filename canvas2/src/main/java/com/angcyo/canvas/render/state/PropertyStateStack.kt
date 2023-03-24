@@ -74,7 +74,7 @@ open class PropertyStateStack : IStateStack {
             //restore state
             delegate?.dispatchRendererRestoreState(stateRenderer, this)//子元素也要触发回调
 
-            stateRenderer.updateRenderProperty(state.renderProperty, reason, delegate)
+            stateRenderer.updateRenderPropertyTo(state.renderProperty, reason, delegate)
         }
     }
 }

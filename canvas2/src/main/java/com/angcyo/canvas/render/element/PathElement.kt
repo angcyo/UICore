@@ -7,6 +7,7 @@ import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.state.PathStateStack
 import com.angcyo.canvas.render.util.RenderHelper
+import kotlin.math.max
 
 /**
  * 路径元素
@@ -34,12 +35,16 @@ open class PathElement : BaseElement() {
 
     override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? {
         val pathList = pathList ?: return null
+        paint.strokeWidth = 1f
+        renderParams?.updateDrawPathPaintStrokeWidth(paint)
+        val minWidth = max((renderParams ?: RenderParams()).drawMinWidth, paint.strokeWidth)
+        val minHeight = max((renderParams ?: RenderParams()).drawMinHeight, paint.strokeWidth)
         return createPathDrawable(
             pathList,
             paint,
             renderParams?.overrideSize,
-            (renderParams ?: RenderParams()).drawMinWidth,
-            (renderParams ?: RenderParams()).drawMinHeight,
+            minWidth,
+            minHeight,
             false
         )
     }

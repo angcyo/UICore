@@ -299,7 +299,7 @@ data class CanvasRenderProperty(
      * [applyScaleMatrixWithAnchor]
      * [applyScaleMatrixWithCenter]
      * */
-    fun applyScaleMatrixWithAnchor(matrix: Matrix, useQr: Boolean) {
+    private fun applyScaleMatrixWithAnchor(matrix: Matrix, useQr: Boolean) {
         if (useQr) {
             val target = getRenderMatrix(includeRotate = true, includeFlip = false)
             target.postConcat(matrix)
@@ -389,8 +389,14 @@ data class CanvasRenderProperty(
         val skewY = 0.0f//y倾斜的角度, 弧度单位
 
         updateAngle(angle)
+        flipX = scaleX < 0
+        flipY = scaleY < 0
         this.scaleX = scaleX.absoluteValue  //flip单独控制
         this.scaleY = scaleY.absoluteValue  //flip单独控制
+        /*flipX = false
+        flipY = false
+        this.scaleX = scaleX
+        this.scaleY = scaleY*/
         this.skewX = skewX.toDegrees()
         this.skewY = skewY
     }

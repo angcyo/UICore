@@ -34,7 +34,7 @@ open class BitmapStateStack : PropertyStateStack() {
         renderer.element<BitmapElement>()?.originBitmap = operateBitmap
         renderer.element<BitmapElement>()?.renderBitmap = renderBitmap
         super.restoreState(renderer, reason, strategy, delegate)
-        renderer.requestUpdateDrawableAndProperty(reason, delegate)
+        renderer.requestUpdateDrawableAndPropertyFlag(reason, delegate)
     }
 
 }

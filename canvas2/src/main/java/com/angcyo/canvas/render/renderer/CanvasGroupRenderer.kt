@@ -19,6 +19,7 @@ import com.angcyo.canvas.render.state.PropertyStateStack
 import com.angcyo.canvas.render.util.PictureRenderDrawable
 import com.angcyo.canvas.render.util.createOverrideBitmapCanvas
 import com.angcyo.canvas.render.util.createOverridePictureCanvas
+import com.angcyo.canvas.render.util.isOnlyGroupRenderer
 import com.angcyo.drawable.*
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -90,9 +91,16 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 overrideSize
             ) {
                 translate(-rect.left, -rect.top)
-                val params = RenderParams(renderDst = this)
+                val params = RenderParams()
+                params.apply {
+                    if (overrideSize != null) {
+                        renderDst = overrideSize / rect.width()
+                    }
+                }
                 for (renderer in rendererList) {
+                    renderer.updateRenderDrawable(params) //更新绘制内容
                     renderer.renderOnInside(this, params)
+                    renderer.requestUpdateDrawableFlag(Reason.code, null)//清除缓存
                 }
             })
         }
@@ -107,11 +115,22 @@ open class CanvasGroupRenderer : BaseRenderer() {
         ): Bitmap? {
             rendererList ?: return null
             val rect = computeBounds(rendererList, bounds)
-            return createOverrideBitmapCanvas(rect.width(), rect.height(), overrideSize) {
+            return createOverrideBitmapCanvas(
+                rect.width(),
+                rect.height(),
+                overrideSize
+            ) {
                 translate(-rect.left, -rect.top)
-                val params = RenderParams(renderDst = this)
+                val params = RenderParams()
+                params.apply {
+                    if (overrideSize != null) {
+                        renderDst = overrideSize / rect.width()
+                    }
+                }
                 for (renderer in rendererList) {
+                    renderer.updateRenderDrawable(params) //更新绘制内容
                     renderer.renderOnInside(this, params)
+                    renderer.requestUpdateDrawableFlag(Reason.code, null)
                 }
             }
         }
@@ -122,12 +141,48 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
     //region---core---
 
-    /**更新渲染时, 需要的一些数据*/
-    override fun readyRenderIfNeed(params: RenderParams?) {
-        super.readyRenderIfNeed(params)
-        if (renderProperty == null || renderFlags.have(RENDERER_FLAG_REQUEST_PROPERTY)) {
-            updateGroupRenderProperty(Reason.code, null)
-            renderFlags = renderFlags.remove(RENDERER_FLAG_REQUEST_PROPERTY)
+    override fun updateRenderProperty() {
+        super.updateRenderProperty()
+        for (renderer in rendererList) {
+            renderer.updateRenderProperty()
+        }
+        updateGroupRenderProperty(Reason.code, null)
+    }
+
+    override fun updateRenderDrawable(params: RenderParams?) {
+        super.updateRenderDrawable(params)
+        for (renderer in rendererList) {
+            renderer.updateRenderDrawable(params)
+        }
+    }
+
+    override fun requestUpdateDrawableFlag(reason: Reason, delegate: CanvasRenderDelegate?) {
+        super.requestUpdateDrawableFlag(reason, delegate)
+        if (isOnlyGroupRenderer()) {
+            for (renderer in rendererList) {
+                renderer.requestUpdateDrawableFlag(reason, delegate)
+            }
+        }
+    }
+
+    override fun requestUpdatePropertyFlag(reason: Reason, delegate: CanvasRenderDelegate?) {
+        super.requestUpdatePropertyFlag(reason, delegate)
+        if (isOnlyGroupRenderer()) {
+            for (renderer in rendererList) {
+                renderer.requestUpdatePropertyFlag(reason, delegate)
+            }
+        }
+    }
+
+    override fun requestUpdateDrawableAndPropertyFlag(
+        reason: Reason,
+        delegate: CanvasRenderDelegate?
+    ) {
+        super.requestUpdateDrawableAndPropertyFlag(reason, delegate)
+        if (isOnlyGroupRenderer()) {
+            for (renderer in rendererList) {
+                renderer.requestUpdateDrawableAndPropertyFlag(reason, delegate)
+            }
         }
     }
 
@@ -265,12 +320,12 @@ open class CanvasGroupRenderer : BaseRenderer() {
     }
 
     /**[renderProperty]更新时, 不需要同步到Child*/
-    override fun updateRenderProperty(
+    override fun updateRenderPropertyTo(
         target: CanvasRenderProperty?,
         reason: Reason,
         delegate: CanvasRenderDelegate?,
     ) {
-        super.updateRenderProperty(target, reason, delegate)
+        super.updateRenderPropertyTo(target, reason, delegate)
     }
 
     override fun applyTranslateMatrix(
@@ -474,7 +529,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
      * [CanvasRenderProperty]*/
     fun updateGroupRenderProperty(reason: Reason, delegate: CanvasRenderDelegate?) {
         val target = if (rendererList.isEmpty()) null else getGroupRenderProperty()
-        updateRenderProperty(target, reason, delegate)
+        updateRenderPropertyTo(target, reason, delegate)
     }
 
     /**重置所有的元素*/

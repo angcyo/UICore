@@ -41,7 +41,7 @@ interface IElement {
         block()
         val redoState = createStateStack()
         redoState.saveState(renderer, delegate)
-        renderer.requestUpdateDrawableAndProperty(reason, delegate)
+        renderer.requestUpdateDrawableAndPropertyFlag(reason, delegate)
         delegate?.addStateToStack(renderer, undoState, redoState, reason = reason)
     }
 

@@ -168,7 +168,7 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
                     selectorRenderDrawBounds
                 )
                 //元素的bounds范围
-                if (renderFlags.have(RENDERER_FLAG_DRAW_SELECTOR_BOUNDS)) {
+                if (property.angle != 0f && renderFlags.have(RENDERER_FLAG_DRAW_SELECTOR_BOUNDS)) {
                     boundsPaint.color = boundsColor
                     canvas.drawRect(selectorRenderDrawBounds, boundsPaint)
                 }

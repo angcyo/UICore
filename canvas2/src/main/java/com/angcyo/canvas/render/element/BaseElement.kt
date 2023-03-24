@@ -65,6 +65,22 @@ abstract class BaseElement : IElement {
         }
     }
 
+    protected fun getOverrideMatrix(
+        overrideWidth: Float?,
+        overrideHeight: Float? = null
+    ): Matrix {
+        //原始目标需要绘制的大小
+        val bounds = renderProperty.getRenderBounds()
+        val originWidth = bounds.width()
+        val originHeight = bounds.height()
+        return createOverrideMatrix(
+            originWidth,
+            originHeight,
+            overrideWidth,
+            overrideHeight
+        )
+    }
+
     /**创建一个输出指定大小的[Canvas] [Picture]
      * [overrideSize] 等比输出到这个大小*/
     protected fun createOverrideCanvas(
