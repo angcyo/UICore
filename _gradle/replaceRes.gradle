@@ -11,15 +11,24 @@ _replaceRes.doFirst {
     def csvPath = file("res.csv").absolutePath
 
     def pathListZh = []
-    pathListZh += "./UICore/crop/src/main/res/values-zh/crop_strings.xml"
+    //pathListZh += "./UICore/crop/src/main/res/values-zh/crop_strings.xml"
     pathListZh += "./UICore/doodle/src/main/res/values-zh/doodle_strings.xml"
     pathListZh += "./UICore/canvas/src/main/res/values-zh/canvas_strings.xml"
 
     pathListZh += "./UICoreEx/canvas_lp/src/main/res/values-zh/canvas_strings.xml"
-    pathListZh += "./UICoreEx/engrave/src/main/res/values-zh/engrave_strings.xml"
+    //pathListZh += "./UICoreEx/engrave/src/main/res/values-zh/engrave_strings.xml"
     pathListZh += "./UICoreEx/fsc/src/main/res/values-zh/fsc_strings.xml"
 
-    _replaceResList(pathListZh, _readCsvMap(csvPath))
+    def pathOutListZh = []
+    //pathOutListZh += "./UICore/crop/src/main/res/values-ja/crop_strings.xml"
+    pathOutListZh += "./UICore/doodle/src/main/res/values-ja/doodle_strings.xml"
+    pathOutListZh += "./UICore/canvas/src/main/res/values-ja/canvas_strings.xml"
+
+    pathOutListZh += "./UICoreEx/canvas_lp/src/main/res/values-ja/canvas_strings.xml"
+    //pathOutListZh += "./UICoreEx/engrave/src/main/res/values-ja/engrave_strings.xml"
+    pathOutListZh += "./UICoreEx/fsc/src/main/res/values-ja/fsc_strings.xml"
+
+    _replaceResList(pathListZh, pathOutListZh, _readCsvMap(csvPath))
 }
 
 /**读取csv文件, 返回对应的map*/
@@ -36,17 +45,18 @@ def _readCsvMap(path) {
     return result
 }
 
-def _replaceResList(pathList, map) {
-    for (path in pathList) {
-        _replaceRes(path, map)
+def _replaceResList(pathList, outPathList, map) {
+    pathList.eachWithIndex { path, index ->
+        _replaceRes(path, outPathList[index], map)
     }
 }
 
 /**替换资源
  * [path] 需要替换的文件路径
+ * [outPath] 替换后的输出文件路径
  * [map] 需要替换的键值对映射表
  * */
-def _replaceRes(path, map) {
+def _replaceRes(path, outPath, map) {
     def pathFile = file(path)
     if (!pathFile.exists()) {
         return
@@ -62,6 +72,11 @@ def _replaceRes(path, map) {
             }
         }
     }
-    pathFile.write(originText)//重写文件
-    System.err.println "替换完成:${path}↓\n共:${count}"
+    def outPathFile = file(outPath)
+    if (!outPathFile.exists()) {
+        outPathFile.parentFile.mkdirs()
+        outPathFile.createNewFile()
+    }
+    outPathFile.write(originText)//重写文件
+    System.err.println "替换完成:${pathFile.absolutePath}↓\n->${outPathFile.absolutePath} 共:${count}"
 }
