@@ -1,0 +1,64 @@
+/**
+ * 2023-3-24
+ * 替换xml文件中的字符串资源
+ * */
+
+task _replaceRes(group: 'angcyo', description: '替换xml文件中的字符串资源') {
+    //配置任务
+}
+
+_replaceRes.doFirst {
+    def csvPath = file("res.csv").absolutePath
+
+    def pathListZh = []
+    pathListZh += "./UICore/crop/src/main/res/values-zh/crop_strings.xml"
+    pathListZh += "./UICore/doodle/src/main/res/values-zh/doodle_strings.xml"
+    pathListZh += "./UICore/canvas/src/main/res/values-zh/canvas_strings.xml"
+
+    pathListZh += "./UICoreEx/canvas_lp/src/main/res/values-zh/canvas_strings.xml"
+    pathListZh += "./UICoreEx/engrave/src/main/res/values-zh/engrave_strings.xml"
+    pathListZh += "./UICoreEx/fsc/src/main/res/values-zh/fsc_strings.xml"
+
+    _replaceResList(pathListZh, _readCsvMap(csvPath))
+}
+
+/**读取csv文件, 返回对应的map*/
+def _readCsvMap(path) {
+    def pathFile = file(path)
+    def lines = pathFile.text.readLines()
+    def result = [:]
+    lines.forEach { line ->
+        def lineList = line.split(",")
+        if (lineList.size() >= 2) {
+            result[lineList[0]] = lineList[1]
+        }
+    }
+    return result
+}
+
+def _replaceResList(pathList, map) {
+    for (path in pathList) {
+        _replaceRes(path, map)
+    }
+}
+
+/**替换资源
+ * [path] 需要替换的文件路径
+ * [map] 需要替换的键值对映射表
+ * */
+def _replaceRes(path, map) {
+    def pathFile = file(path)
+    if (!pathFile.exists()) {
+        return
+    }
+    def originText = pathFile.text //原始文件内容
+    def count = 0
+    map.each { key, val ->
+        if (key != null && !key.isEmpty()) {
+            originText = originText.replaceAll(">${key}<", val)//替换资源
+            count++
+        }
+    }
+    pathFile.write(originText)//重写文件
+    System.err.println "替换完成:${path}↓\n共:${count}"
+}

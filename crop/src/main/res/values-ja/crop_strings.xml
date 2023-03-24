@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="crop_title">カット</string>
+    <string name="crop_rotate">ローテーション</string>
+    <string name="crop_horizontal_flip">水平フリップ</string>
+    <string name="crop_vertical_flip">垂直フリップ</string>
+    <string name="crop_ratio_free">フリースケール</string>
+    <string name="crop_type_circle">円形</string>
+    <string name="crop_auto_side">オートクロップ</string>
+
+    <string name="crop_horizontal">水平</string>
+    <string name="crop_vertical">垂直</string>
+</resources>
