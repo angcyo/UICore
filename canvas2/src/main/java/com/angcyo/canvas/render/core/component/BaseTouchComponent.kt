@@ -41,10 +41,10 @@ abstract class BaseTouchComponent : ICanvasTouchListener, IComponent {
     //region---继承---
 
     /**是否激活组件*/
-    override var isEnable: Boolean = true
+    override var isEnableComponent: Boolean = true
 
     override fun dispatchTouchEvent(event: MotionEvent) {
-        if (isEnable && !ignoreHandle) {
+        if (isEnableComponent && !ignoreHandle) {
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> obtainPointList(
                     event,

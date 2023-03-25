@@ -28,7 +28,7 @@ class CanvasScaleComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
 
     /**双击检测*/
     private val doubleGestureDetector = DoubleGestureDetector2(delegate.view.context) { event ->
-        if (isEnable && !ignoreHandle) {
+        if (isEnableComponent && !ignoreHandle) {
             isHandleTouch = true
             //双击
             _tempPoint.set(event.x, event.y)

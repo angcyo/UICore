@@ -59,7 +59,7 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
         const val RENDERER_FLAG_LAST = RENDERER_FLAG_DRAW_FRAME_ROTATE shl 1
     }
 
-    override var isEnable: Boolean = true
+    override var isEnableComponent: Boolean = true
 
     /**边框画笔*/
     val boundsPaint = createRenderPaint(_color(R.color.canvas_render_select), 1 * dp)

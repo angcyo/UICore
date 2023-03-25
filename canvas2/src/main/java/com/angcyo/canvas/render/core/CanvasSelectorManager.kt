@@ -178,7 +178,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
         if (enableMoveMultiSelect) {
             if (touchSelectorInfo?.touchRendererList.isNullOrEmpty()) {
                 //在空白区域滑动, 则进行滑动多选
-                if (moveSelectorComponent.isEnable) {
+                if (moveSelectorComponent.isEnableComponent) {
                     moveSelectorComponent.dispatchTouchEvent(event)
                 }
             }
@@ -186,10 +186,10 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
     }
 
     override fun renderOnOutside(canvas: Canvas, params: RenderParams) {
-        if (isSelectorElement && selectorComponent.isEnable) {
+        if (isSelectorElement && selectorComponent.isEnableComponent) {
             selectorComponent.renderOnOutside(canvas, params)
         }
-        if (moveSelectorComponent.isEnable) {
+        if (moveSelectorComponent.isEnableComponent) {
             moveSelectorComponent.renderOnOutside(canvas, params)
         }
     }

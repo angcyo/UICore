@@ -99,7 +99,7 @@ abstract class BaseControlPoint(controlManager: CanvasControlManager) : BaseCont
     protected val _tempPoint = PointF()
 
     override fun renderOnOutside(canvas: Canvas, params: RenderParams) {
-        if (isEnable) {
+        if (isEnableComponent) {
             drawable?.let {
 
                 //控制点的背景绘制
@@ -122,7 +122,7 @@ abstract class BaseControlPoint(controlManager: CanvasControlManager) : BaseCont
     }
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-        if (isEnable) {
+        if (isEnableComponent) {
             if (event.actionMasked == MotionEvent.ACTION_DOWN &&
                 controlManager.delegate.selectorManager.isSelectorElement
             ) {

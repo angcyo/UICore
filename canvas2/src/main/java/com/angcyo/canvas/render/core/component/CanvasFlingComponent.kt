@@ -54,7 +54,7 @@ class CanvasFlingComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
     /**fling需要此方法配合使用*/
     @CallPoint
     fun onComputeScroll() {
-        if (isEnable && isFlingHappen && overScroller.computeScrollOffset()) {
+        if (isEnableComponent && isFlingHappen && overScroller.computeScrollOffset()) {
             //fling支持
             delegate.renderViewBox.translateTo(
                 overScroller.currX.toFloat(),

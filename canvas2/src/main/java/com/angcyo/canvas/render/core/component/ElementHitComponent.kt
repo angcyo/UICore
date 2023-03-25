@@ -24,7 +24,7 @@ class ElementHitComponent(val element: IElement) : IComponent {
         val elementBoundsPath = Path()
     }
 
-    override var isEnable: Boolean = true
+    override var isEnableComponent: Boolean = true
 
     /**是否激活碰撞增益, 在元素很小的时候, 自动放大处理*/
     var enableHitGain = true

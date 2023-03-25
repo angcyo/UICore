@@ -34,7 +34,7 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
     /**手指移动多少距离后, 才算作移动了*/
     var translateThreshold = 5 * dp
 
-    override var isEnable: Boolean = true
+    override var isEnableComponent: Boolean = true
 
     /**当前正在控制的渲染器信息*/
     protected var controlRendererInfo: ControlRendererInfo? = null
@@ -73,7 +73,7 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
         }
     }
 
-    override fun onInterceptTouchEvent(event: MotionEvent): Boolean = isEnable && handleControl
+    override fun onInterceptTouchEvent(event: MotionEvent): Boolean = isEnableComponent && handleControl
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.actionMasked) {
@@ -89,7 +89,7 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                if (isEnable) {
+                if (isEnableComponent) {
                     endControl()
                 }
             }

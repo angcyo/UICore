@@ -484,6 +484,13 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         return CanvasGroupRenderer.createRenderBitmap(rendererList, overrideSize, bounds)
     }
 
+    /**是否禁用所有能够编辑元素的手势
+     * [disable] 禁用 or 启动*/
+    fun disableEditTouchGesture(disable: Boolean) {
+        controlManager.isEnableComponent = !disable
+        refresh()
+    }
+
     //endregion---操作---
 
 }

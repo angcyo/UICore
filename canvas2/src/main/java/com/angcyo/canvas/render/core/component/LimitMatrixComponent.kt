@@ -18,7 +18,7 @@ import kotlin.math.max
  */
 class LimitMatrixComponent : BaseCanvasRenderListener(), IComponent {
 
-    override var isEnable: Boolean = true
+    override var isEnableComponent: Boolean = true
 
     override fun onApplyControlMatrix(
         control: BaseControl,
@@ -26,7 +26,7 @@ class LimitMatrixComponent : BaseCanvasRenderListener(), IComponent {
         controlMatrix: Matrix,
         controlType: Int
     ) {
-        if (isEnable) {
+        if (isEnableComponent) {
             if (controlType == BaseControlPoint.CONTROL_TYPE_SCALE) {
                 limitScale(controlRenderer, controlMatrix)
             }
@@ -39,7 +39,7 @@ class LimitMatrixComponent : BaseCanvasRenderListener(), IComponent {
         matrix: Matrix,
         controlType: Int
     ) {
-        if (isEnable) {
+        if (isEnableComponent) {
             if (controlType == BaseControlPoint.CONTROL_TYPE_SCALE) {
                 limitScale(renderer, matrix)
             }

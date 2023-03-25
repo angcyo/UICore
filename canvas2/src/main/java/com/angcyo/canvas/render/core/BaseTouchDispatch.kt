@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/02/23
  */
-abstract class BaseTouchDispatch {
+abstract class BaseTouchDispatch : IComponent {
 
     /**事件监听列表*/
     val touchListenerList = CopyOnWriteArrayList<ICanvasTouchListener>()
@@ -25,9 +25,13 @@ abstract class BaseTouchDispatch {
     val haveInterceptTarget: Boolean
         get() = _interceptTarget != null
 
+    override var isEnableComponent: Boolean = true
+
     @CanvasOutsideCoordinate
     @CallPoint
     open fun dispatchTouchEventDelegate(event: MotionEvent): Boolean {
+        if (!isEnableComponent) return false
+
         val action = event.actionMasked
 
         //init
@@ -41,7 +45,7 @@ abstract class BaseTouchDispatch {
         val size = touchListenerList.size
         for (i in size - 1 downTo 0) {
             val listener = touchListenerList[i]
-            if (listener is IComponent && !listener.isEnable) {
+            if (listener is IComponent && !listener.isEnableComponent) {
                 continue
             }
             listener.dispatchTouchEvent(event)
@@ -55,7 +59,7 @@ abstract class BaseTouchDispatch {
             //2:onInterceptTouchEvent
             for (i in size - 1 downTo 0) {
                 val listener = touchListenerList[i]
-                if (listener is IComponent && !listener.isEnable) {
+                if (listener is IComponent && !listener.isEnableComponent) {
                     continue
                 }
 
@@ -73,7 +77,7 @@ abstract class BaseTouchDispatch {
         } else {
             //3:onTouchEvent
 
-            if (target is IComponent && target.isEnable) {
+            if (target is IComponent && target.isEnableComponent) {
                 handle = target.onTouchEvent(event)
             }
         }

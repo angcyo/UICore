@@ -8,6 +8,6 @@ package com.angcyo.canvas.render.core
 interface IComponent {
 
     /**组件是否激活*/
-    var isEnable: Boolean
+    var isEnableComponent: Boolean
 
 }

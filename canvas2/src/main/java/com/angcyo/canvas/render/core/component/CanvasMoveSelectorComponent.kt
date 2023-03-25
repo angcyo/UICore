@@ -34,7 +34,7 @@ class CanvasMoveSelectorComponent(val selectorManager: CanvasSelectorManager) :
     /**选择框的颜色*/
     var paintColor: Int = _color(R.color.canvas_render_select)
 
-    override var isEnable: Boolean = true
+    override var isEnableComponent: Boolean = true
 
     override var renderFlags: Int = 0xf
 

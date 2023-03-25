@@ -40,6 +40,7 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
 
     override var renderFlags: Int = 0xff
 
+
     init {
         renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_VIEW)
             .remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
@@ -85,13 +86,15 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
     }
 
     override fun renderOnOutside(canvas: Canvas, params: RenderParams) {
-        if (delegate.selectorManager.isSelectorElement &&
-            !delegate.selectorManager.isTouchInSelectorRenderer
-        ) {
-            deleteControlPoint.renderOnOutside(canvas, params)
-            rotateControlPoint.renderOnOutside(canvas, params)
-            scaleControlPoint.renderOnOutside(canvas, params)
-            lockControlPoint.renderOnOutside(canvas, params)
+        if (isEnableComponent) {
+            if (delegate.selectorManager.isSelectorElement &&
+                !delegate.selectorManager.isTouchInSelectorRenderer
+            ) {
+                deleteControlPoint.renderOnOutside(canvas, params)
+                rotateControlPoint.renderOnOutside(canvas, params)
+                scaleControlPoint.renderOnOutside(canvas, params)
+                lockControlPoint.renderOnOutside(canvas, params)
+            }
         }
     }
 
@@ -121,15 +124,15 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
         val selectorRenderer = delegate.selectorManager.selectorComponent
 
         //激活状态
-        deleteControlPoint.isEnable =
+        deleteControlPoint.isEnableComponent =
             selectorRenderer.isSupportControlPoint(deleteControlPoint.controlPointType)
-        rotateControlPoint.isEnable =
+        rotateControlPoint.isEnableComponent =
             selectorRenderer.isSupportControlPoint(rotateControlPoint.controlPointType)
-        scaleControlPoint.isEnable =
+        scaleControlPoint.isEnableComponent =
             selectorRenderer.isSupportControlPoint(scaleControlPoint.controlPointType)
-        lockControlPoint.isEnable =
+        lockControlPoint.isEnableComponent =
             selectorRenderer.isSupportControlPoint(lockControlPoint.controlPointType)
-        translateControl.isEnable =
+        translateControl.isEnableComponent =
             selectorRenderer.isSupportControlPoint(BaseControlPoint.CONTROL_TYPE_TRANSLATE)
 
         //控制点位置
@@ -144,7 +147,7 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
 
     /**删除控制点, 在左上角*/
     private fun updateDeleteControlPointLocation(bounds: RectF, property: CanvasRenderProperty) {
-        if (!deleteControlPoint.isEnable) return
+        if (!deleteControlPoint.isEnableComponent) return
 
         _centerPoint.set(bounds.left, bounds.top)
         delegate.renderViewBox.transformToOutside(_centerPoint)
@@ -166,7 +169,7 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
 
     /**旋转控制点, 在右上角*/
     private fun updateRotateControlPointLocation(bounds: RectF, property: CanvasRenderProperty) {
-        if (!rotateControlPoint.isEnable) return
+        if (!rotateControlPoint.isEnableComponent) return
 
         _centerPoint.set(bounds.right, bounds.top)
         delegate.renderViewBox.transformToOutside(_centerPoint)
@@ -188,7 +191,7 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
 
     /**缩放控制点, 在右下角*/
     private fun updateScaleControlPointLocation(bounds: RectF, property: CanvasRenderProperty) {
-        if (!scaleControlPoint.isEnable) return
+        if (!scaleControlPoint.isEnableComponent) return
         _centerPoint.set(bounds.right, bounds.bottom)
         delegate.renderViewBox.transformToOutside(_centerPoint)
 
@@ -209,7 +212,7 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
 
     /**锁定控制点, 在左下角*/
     private fun updateLockControlPointLocation(bounds: RectF, property: CanvasRenderProperty) {
-        if (!lockControlPoint.isEnable) return
+        if (!lockControlPoint.isEnableComponent) return
         _centerPoint.set(bounds.left, bounds.bottom)
         delegate.renderViewBox.transformToOutside(_centerPoint)
 
