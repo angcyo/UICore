@@ -8,6 +8,7 @@ import android.widget.OverScroller
 import androidx.annotation.WorkerThread
 import com.angcyo.canvas.render.core.component.BaseControl
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.core.component.PointTouchComponent
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
@@ -123,6 +124,13 @@ interface ICanvasRenderView {
     /**当要渲染[renderer]时, 触发
      * [endDraw] false:表示在draw之前, true:表示在draw之后*/
     fun dispatchRenderDrawable(renderer: BaseRenderer, params: RenderParams, endDraw: Boolean)
+
+    /**范围点击事件
+     * [type] 事件类型
+     * [PointTouchComponent.TOUCH_TYPE_CLICK]
+     * [PointTouchComponent.TOUCH_TYPE_LONG_PRESS]
+     * */
+    fun dispatchPointTouchEvent(component: PointTouchComponent, type: Int)
 
     //endregion---Base---
 

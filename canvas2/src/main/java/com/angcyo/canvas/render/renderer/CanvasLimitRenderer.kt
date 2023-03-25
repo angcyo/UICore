@@ -41,6 +41,9 @@ class CanvasLimitRenderer(val delegate: CanvasRenderDelegate) : IRenderer {
         }
     }
 
+    /**find [LimitInfo]*/
+    fun findLimitInfo(predicate: (LimitInfo) -> Boolean): LimitInfo? = limitList.find(predicate)
+
     /**重置所有渲染数据*/
     fun resetLimit(block: MutableList<LimitInfo>.() -> Unit) {
         clear()

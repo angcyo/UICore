@@ -198,6 +198,16 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
         }
     }
 
+    /**恢复到默认状态*/
+    fun reset(
+        anim: Boolean = true,
+        reason: Reason = Reason.user,
+        finish: ((isCancel: Boolean) -> Unit)? = null
+    ) {
+        val newMatrix = Matrix()
+        changeRenderMatrix(newMatrix, anim, reason, finish)
+    }
+
     /**当前缩放的参考值*/
     fun getScale() = max(getScaleX(), getScaleY())
 
@@ -308,7 +318,7 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
     //---
 
     /**增量平移画布*/
-    fun translateBy(dx: Float, dy: Float, anim: Boolean, reason: Reason) {
+    fun translateBy(dx: Float, dy: Float, anim: Boolean = true, reason: Reason = Reason.user) {
         val matrix = Matrix(renderMatrix)
         matrix.postTranslate(dx, dy)
         changeRenderMatrix(matrix, anim, reason.apply {
@@ -317,7 +327,7 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
     }
 
     /**直接平移画布*/
-    fun translateTo(tx: Float, ty: Float, anim: Boolean, reason: Reason) {
+    fun translateTo(tx: Float, ty: Float, anim: Boolean = true, reason: Reason = Reason.user) {
         val matrix = Matrix(renderMatrix)
         matrix.updateTranslate(tx, ty)
         changeRenderMatrix(matrix, anim, reason.apply {
@@ -328,7 +338,7 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
     //---
 
     /**增量缩放画布*/
-    fun scaleBy(sx: Float, sy: Float, anim: Boolean, reason: Reason) {
+    fun scaleBy(sx: Float, sy: Float, anim: Boolean = true, reason: Reason = Reason.user) {
         //默认用画板的中点进行缩放
         val center = getRenderCenterInside()
         scaleBy(sx, sy, center.x, center.y, anim, reason)
@@ -337,7 +347,14 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
     /**增量缩放画布, 已经达到了最大或/最小还想要继续操作, 则忽略.
      * 如果不忽略, 则会有[translate]的效果
      * */
-    fun scaleBy(sx: Float, sy: Float, px: Float, py: Float, anim: Boolean, reason: Reason) {
+    fun scaleBy(
+        sx: Float,
+        sy: Float,
+        px: Float,
+        py: Float,
+        anim: Boolean = true,
+        reason: Reason = Reason.user
+    ) {
         val matrix = Matrix(renderMatrix)
         matrix.postScale(sx, sy, px, py)
 
@@ -360,7 +377,7 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
     }
 
     /**直接缩放画布*/
-    fun scaleTo(sx: Float, sy: Float, anim: Boolean, reason: Reason) {
+    fun scaleTo(sx: Float, sy: Float, anim: Boolean = true, reason: Reason = Reason.user) {
         val matrix = Matrix(renderMatrix)
         matrix.updateScale(sx, sy)
         changeRenderMatrix(matrix, anim, reason.apply {

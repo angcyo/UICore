@@ -6,6 +6,7 @@ import androidx.annotation.WorkerThread
 import com.angcyo.canvas.render.core.component.BaseControl
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
+import com.angcyo.canvas.render.core.component.PointTouchComponent
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
@@ -38,6 +39,9 @@ interface ICanvasRenderListener {
 
     /**[CanvasRenderDelegate]*/
     fun onRenderDrawable(renderer: BaseRenderer, params: RenderParams, endDraw: Boolean) {}
+
+    /**[com.angcyo.canvas.render.core.component.PointTouchComponent]*/
+    fun onPointTouchEvent(component: PointTouchComponent, type: Int) {}
 
     //endregion---Base---
 

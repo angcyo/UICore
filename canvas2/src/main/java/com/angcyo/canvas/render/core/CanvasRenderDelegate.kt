@@ -7,10 +7,7 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
 import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
-import com.angcyo.canvas.render.core.component.BaseControl
-import com.angcyo.canvas.render.core.component.BaseControlPoint
-import com.angcyo.canvas.render.core.component.CanvasRenderProperty
-import com.angcyo.canvas.render.core.component.LimitMatrixComponent
+import com.angcyo.canvas.render.core.component.*
 import com.angcyo.canvas.render.data.LimitInfo
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
@@ -65,8 +62,18 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     /**限制组件*/
     var limitMatrixComponent: LimitMatrixComponent = LimitMatrixComponent()
 
+    val pointTouchComponentList = mutableListOf<PointTouchComponent>()
+
+    /**左上角点位事件触发组件*/
+    val initialPointComponent = PointTouchComponent(this).apply {
+        pointTag = PointTouchComponent.TAG_INITIAL
+    }
+
     init {
         renderListenerList.add(limitMatrixComponent)
+
+        //左上角点位
+        pointTouchComponentList.add(initialPointComponent)
     }
 
     //region---View视图方法---
@@ -86,6 +93,11 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
             )
         )
         axisManager.updateAxisBounds(size, 0, 0, w, h)
+
+        //initialPointComponent
+        val right = axisManager.xAxisBounds.height()
+        val bottom = axisManager.yAxisBounds.width()
+        initialPointComponent.pointRect.set(0f, 0f, right, bottom)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -103,6 +115,12 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     var _isTouchDownInCanvas = false
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        //提前处理事件
+        for (pointTouch in pointTouchComponentList) {
+            pointTouch.dispatchTouchEvent(event)
+        }
+
+        //inner
         val renderBounds = renderViewBox.renderBounds
 
         val eventX = event.x
@@ -270,6 +288,12 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     ) {
         for (listener in renderListenerList) {
             listener.onRendererGroupChange(groupRenderer, subRendererList, groupType)
+        }
+    }
+
+    override fun dispatchPointTouchEvent(component: PointTouchComponent, type: Int) {
+        for (listener in renderListenerList) {
+            listener.onPointTouchEvent(component, type)
         }
     }
 
@@ -489,6 +513,12 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     fun disableEditTouchGesture(disable: Boolean) {
         controlManager.isEnableComponent = !disable
         refresh()
+    }
+
+    /**移除所有元素渲染器
+     * [CanvasRenderManager]*/
+    fun removeAllElementRenderer(strategy: Strategy = Strategy.normal) {
+        renderManager.removeAllElementRenderer(strategy)
     }
 
     //endregion---操作---
