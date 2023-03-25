@@ -6,6 +6,7 @@ import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
+import com.angcyo.canvas.render.renderer.CanvasLimitRenderer
 import com.angcyo.canvas.render.renderer.CanvasMonitorRenderer
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.isChange
@@ -54,6 +55,9 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     /**在[elementRendererList]之后绘制的渲染器集合*/
     val afterRendererList = CopyOnWriteArrayList<BaseRenderer>()
 
+    /**限制提示线的渲染器*/
+    var limitRenderer = CanvasLimitRenderer(delegate)
+
     /**监测信息绘制*/
     var monitorRenderer = CanvasMonitorRenderer(delegate)
 
@@ -72,6 +76,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         renderOnView(canvas, elementRendererList, params)
         renderOnView(canvas, afterRendererList, params)
         //---
+        limitRenderer.renderOnView(canvas, params)
         monitorRenderer.renderOnView(canvas, params)
     }
 
@@ -81,6 +86,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         renderOnInside(canvas, elementRendererList, params)
         renderOnInside(canvas, afterRendererList, params)
         //---
+        limitRenderer.renderOnInside(canvas, params)
         monitorRenderer.renderOnInside(canvas, params)
     }
 
@@ -90,6 +96,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         renderOnOutside(canvas, elementRendererList, params)
         renderOnOutside(canvas, afterRendererList, params)
         //---
+        limitRenderer.renderOnOutside(canvas, params)
         monitorRenderer.renderOnOutside(canvas, params)
     }
 

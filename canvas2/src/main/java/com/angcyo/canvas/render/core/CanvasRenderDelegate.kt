@@ -11,6 +11,7 @@ import com.angcyo.canvas.render.core.component.BaseControl
 import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.core.component.LimitMatrixComponent
+import com.angcyo.canvas.render.data.LimitInfo
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
@@ -354,6 +355,18 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         strategy: Strategy = Strategy.normal
     ) {
         undoManager.addToStack(renderer, undoState, redoState, redoIt, reason, strategy)
+    }
+
+    /**[com.angcyo.canvas.render.core.CanvasRenderManager.limitRenderer]*/
+    fun resetLimitRender(list: List<LimitInfo>) {
+        renderManager.limitRenderer.resetLimit {
+            addAll(list)
+        }
+    }
+
+    /**[com.angcyo.canvas.render.core.CanvasRenderManager.limitRenderer]*/
+    fun clearLimitRender() {
+        renderManager.limitRenderer.clear()
     }
 
     /**将画板移动到可以完全显示出[rect]
