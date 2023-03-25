@@ -786,19 +786,22 @@ class AccSchedule(val accControl: AccControl) {
                         //debug模式下, 直接激活. 方便测试
                         return action.enable
                     }
-                    action.enable = if (action.randomAmount.isNullOrEmpty()) {
+                    val randomAmount =
+                        accControl.accSchedule.accParse.textParse.parse(action.randomAmount)
+                            .firstOrNull()
+                    action.enable = if (randomAmount.isNullOrEmpty()) {
                         //未指定随机概率
                         nextBoolean()
                     } else {
                         //指定了随机的概率
-                        factor = nextInt(1, 101) //[1-100]
+                        factor = nextInt(1, 101) //[1-100] 随机数
                         accParse.expParse.parseAndCompute(
-                            action.randomAmount,
+                            randomAmount,
                             inputValue = factor.toFloat()
                         )
                     }
                     printActionLog(
-                        "${pLog}${action.actionLog()}随机[${factor}][${action.randomAmount}]激活:[${action.enable}]",
+                        "${pLog}${action.actionLog()}随机[${factor}][${randomAmount}]激活:[${action.enable}]",
                         action,
                         isPrimaryAction
                     )

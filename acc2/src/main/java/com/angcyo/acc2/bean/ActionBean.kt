@@ -109,7 +109,7 @@ data class ActionBean(
     /**需要先[enable]才会有,随机激活[ActionBean]*/
     var randomEnable: Boolean = false,
 
-    /**指定随机的概率
+    /**指定随机的概率, 支持文本变量
      * [0-100]
      * [=1] 0.01的概率
      * [<=30] 30%的概率*/
