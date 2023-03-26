@@ -583,11 +583,28 @@ class FindParse(val accParse: AccParse) : BaseParse() {
         //枚举
         originList.forEach { rootNode ->
             val rootResult = mutableListOf<AccessibilityNodeInfoCompat>()
-            val rootMatchMap = hashMapOf<String?, Boolean>()
+            val rootMatchMap = hashMapOf<String?, Boolean>() //匹配到的文本
+
+            /*所有的key是否全部匹配到了在[list]中*/
+            fun isAllMatch(): Boolean {
+                var resultMatch = true
+                for (key in list) {
+                    if (!key.isNullOrBlank()) {
+                        val match = rootMatchMap[key]
+                        if (match == true) {
+                            //匹配到
+                        } else {
+                            //未匹配
+                            resultMatch = false
+                            break
+                        }
+                    }
+                }
+                return resultMatch
+            }
 
             //枚举节点
             rootNode.eachChildDepth { node, depth ->
-
                 //枚举条件
                 list.forEachIndexed { index, str ->
                     if (matchNode(controlContext, node, findBean, index)) {
@@ -605,7 +622,8 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                         }
                     }
                 }
-                checkFindLimit(rootResult, findBean, depth)
+                checkFindLimit(rootResult, findBean, depth) ||
+                        (!findBean.or && findBean.findBreak && isAllMatch())
             }
 
             if (findBean.or) {
@@ -613,21 +631,7 @@ class FindParse(val accParse: AccParse) : BaseParse() {
                 result.addAll(rootResult)
             } else {
                 //必须全部命中
-                var allMatch = true
-                for (key in list) {
-                    if (!key.isNullOrBlank()) {
-                        val match = rootMatchMap[key]
-                        if (match == true) {
-                            //匹配到
-                        } else {
-                            //未匹配
-                            allMatch = false
-                            break
-                        }
-                    }
-                }
-
-                if (allMatch) {
+                if (isAllMatch()) {
                     result.addAll(rootResult)
                 }
             }

@@ -47,6 +47,9 @@ data class FindBean(
      * 否则需要全部匹配才行.*/
     var or: Boolean = false,
 
+    /**在[or]等于false的情况下, 是否找到了匹配的元素, 就立即中断find, 提升枚举Node的效率*/
+    var findBreak: Boolean = false,
+
     /**单独存在时, 通过文本获取节点, 所有文本都命中节点时才有效.
      * 同时存在时, 需要一一对应全部满足匹配
      * 支持文本变量 从[TaskBean]中获取值
