@@ -17,8 +17,11 @@ import kotlin.math.roundToInt
 interface IValueUnit {
 
     companion object {
-        /**毫米单位计算*/
+        /**毫米单位计算, Canvas*/
         val MM_UNIT = MmValueUnit()
+
+        /**毫米单位计算, Canvas2*/
+        val MM_RENDER_UNIT = MmRenderUnit()
     }
 
     //region---刻度相关方法---
