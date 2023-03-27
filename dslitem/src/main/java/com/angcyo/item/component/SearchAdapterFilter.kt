@@ -38,14 +38,16 @@ class SearchAdapterFilter {
 
     companion object {
 
-        /**过滤[list]*/
+        /**过滤[list]
+         * [withHide] 是否使用隐藏的方式进行过滤处理*/
         fun filterItemList(
             list: List<DslAdapterItem>,
             filterText: String,
-            filterItemAction: FilterItemAction? = null
+            filterItemAction: FilterItemAction? = null, /*返回true, 表示需要当前的item*/
+            withHide: Boolean = false
         ): List<DslAdapterItem> {
             return list.filter { item ->
-                var filter = false
+                var need = false
                 when (item) {
                     is ITextItem -> {
                         //ITextItem
@@ -53,7 +55,7 @@ class SearchAdapterFilter {
                         item.itemText?.removeSpan(ForegroundColorSpan::class.java)
                         if (item.itemText?.have(filterText) == true) {
                             item.itemText = item.itemText?.highlight(filterText)
-                            filter = true
+                            need = true
                         }
                     }
                     is IDesItem -> {
@@ -62,7 +64,7 @@ class SearchAdapterFilter {
                         item.itemDes?.removeSpan(ForegroundColorSpan::class.java)
                         if (item.itemDes?.have(filterText) == true) {
                             item.itemDes = item.itemDes?.highlight(filterText)
-                            filter = true
+                            need = true
                         }
                     }
                     is IToText -> {
@@ -70,21 +72,26 @@ class SearchAdapterFilter {
                         val itemText = item.toText()
                         itemText?.removeSpan(ForegroundColorSpan::class.java)
                         if (itemText?.have(filterText) == true) {
-                            filter = true
+                            need = true
                         }
                     }
                     is IFilterItem -> {
                         //IFilterItem
                         if (item.containsFilterText(filterText)) {
-                            filter = true
+                            need = true
                         }
                     }
                 }
                 //result
-                if (filter) true else filterItemAction?.invoke(item) ?: false
+                need = if (need) true else filterItemAction?.invoke(item) ?: false
+                if (withHide) {
+                    item.itemHidden = !need
+                    true
+                } else {
+                    need
+                }
             }
         }
-
     }
 
     /**额外的过滤条件判断回调, 用来过滤[DslAdapterItem]
@@ -165,10 +172,15 @@ class SearchAdapterFilter {
 fun DslAdapter.filterItem(
     filterText: String,
     useFilterList: Boolean = false,
-    filterItemAction: FilterItemAction? = null
+    filterItemAction: FilterItemAction? = null,
+    withHide: Boolean = true
 ) {
-    val list =
-        SearchAdapterFilter.filterItemList(getDataList(useFilterList), filterText, filterItemAction)
+    val list = SearchAdapterFilter.filterItemList(
+        if (withHide) dataItems else getDataList(useFilterList),
+        filterText,
+        filterItemAction,
+        withHide
+    )
     changeDataItems {
         it.resetAll(list)
     }
