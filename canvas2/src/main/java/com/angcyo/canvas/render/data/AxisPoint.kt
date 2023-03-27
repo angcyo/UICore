@@ -1,6 +1,6 @@
 package com.angcyo.canvas.render.data
 
-import com.angcyo.canvas.render.unit.IRenderUnit
+import com.angcyo.library.unit.IRenderUnit
 import com.angcyo.library.annotation.Pixel
 
 /**刻度尺的描述信息

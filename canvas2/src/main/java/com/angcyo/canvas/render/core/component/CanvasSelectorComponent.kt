@@ -16,7 +16,7 @@ import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasElementRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
-import com.angcyo.canvas.render.unit.IRenderUnit
+import com.angcyo.library.unit.IRenderUnit
 import com.angcyo.canvas.render.util.canvasDecimal
 import com.angcyo.canvas.render.util.createRenderPaint
 import com.angcyo.canvas.render.util.createRenderTextPaint
