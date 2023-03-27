@@ -124,7 +124,7 @@ fun ViewGroup.eachChild(recursively: Boolean = false, map: (index: Int, child: V
         val childAt = getChildAt(index)
         map.invoke(index, childAt)
         if (recursively && childAt is ViewGroup) {
-            childAt.eachChild(recursively, map)
+            childAt.eachChild(true, map)
         }
     }
 }

@@ -159,10 +159,12 @@ class SearchAdapterFilter {
     }
 }
 
-/**直接过滤现有的[DslAdapterItem]*/
+/**直接过滤现有的[DslAdapterItem]
+ * [useFilterList] 是否使用过滤后的数据, true:多次过滤会无效
+ * */
 fun DslAdapter.filterItem(
     filterText: String,
-    useFilterList: Boolean = true,
+    useFilterList: Boolean = false,
     filterItemAction: FilterItemAction? = null
 ) {
     val list =

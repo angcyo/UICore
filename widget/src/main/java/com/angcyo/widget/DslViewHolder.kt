@@ -16,6 +16,7 @@ import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.angcyo.library.L
+import com.angcyo.library.ex.each
 import com.angcyo.library.ex.motionEvent
 import com.angcyo.library.ex.replace
 import com.angcyo.library.utils.getMember
@@ -117,6 +118,24 @@ open class DslViewHolder(
         }
     }
 
+    /**依次点击child view
+     * [recursively] 是否递归所有 ViewGroup */
+    fun clickChild(
+        @IdRes groupId: Int,
+        recursively: Boolean = false,
+        action: (childView: View) -> Unit
+    ) {
+        val view = view(groupId)
+        if (view is ViewGroup) {
+            view.each(recursively) {
+                click(it, action)
+            }
+        } else {
+            click(view, action)
+        }
+    }
+
+    /**点击元素, 顺便设置选中状态*/
     fun selectorClick(
         @IdRes id: Int,
         listener: (selected: Boolean) -> Boolean = { false /*不拦截默认处理*/ }
