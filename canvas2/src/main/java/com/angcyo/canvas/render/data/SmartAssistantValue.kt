@@ -14,11 +14,6 @@ data class SmartAssistantReferenceValue(
     @CanvasInsideCoordinate
     val value: Float,
 
-    /**[value]给出的参考[bounds], 绘制提示线的时候, 可以参考这个
-     * 不指定时使用[com.angcyo.canvas.render.core.CanvasRenderViewBox.visibleBoundsInside]作为绘制的参考*/
-    @CanvasInsideCoordinate
-    val bounds: RectF?,
-
     /**这个值, 来自那个对象, 可以是对象, 也可以是刻度尺
      * [com.angcyo.canvas.render.core.IRenderer]
      * [com.angcyo.canvas.render.core.CanvasAxisManager]

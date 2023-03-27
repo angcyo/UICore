@@ -28,11 +28,7 @@ class SmartAssistantValueProvider(val delegate: CanvasRenderDelegate) :
             axisManager.xAxisList.forEach { axisPoint ->
                 if (axisPoint.isMasterRule) {
                     translateXRefList.add(
-                        SmartAssistantReferenceValue(
-                            axisPoint.value,
-                            null,
-                            axisManager
-                        )
+                        SmartAssistantReferenceValue(axisPoint.value, axisManager)
                     )
                 }
             }
@@ -60,11 +56,7 @@ class SmartAssistantValueProvider(val delegate: CanvasRenderDelegate) :
             axisManager.yAxisList.forEach { axisPoint ->
                 if (axisPoint.isMasterRule) {
                     translateYRefList.add(
-                        SmartAssistantReferenceValue(
-                            axisPoint.value,
-                            null,
-                            axisManager
-                        )
+                        SmartAssistantReferenceValue(axisPoint.value, axisManager)
                     )
                 }
             }
@@ -88,17 +80,13 @@ class SmartAssistantValueProvider(val delegate: CanvasRenderDelegate) :
         rotateRefList.clear()
 
         for (i in 0 until 360 step rotateSmartAngle) {
-            rotateRefList.add(SmartAssistantReferenceValue(i.toFloat(), null, null))
+            rotateRefList.add(SmartAssistantReferenceValue(i.toFloat(), null))
         }
         eachRenderer { renderer ->
             renderer.renderProperty?.apply {
                 if (angle != 0f) {
                     rotateRefList.add(
-                        SmartAssistantReferenceValue(
-                            angle,
-                            getRenderBounds(),
-                            renderer
-                        )
+                        SmartAssistantReferenceValue(angle, renderer)
                     )
                 }
             }
@@ -124,13 +112,13 @@ class SmartAssistantValueProvider(val delegate: CanvasRenderDelegate) :
         obj: Any?
     ) {
         list.add(
-            SmartAssistantReferenceValue(bounds.left, null, obj)
+            SmartAssistantReferenceValue(bounds.left, obj)
         )
         list.add(
-            SmartAssistantReferenceValue(bounds.centerX(), null, obj)
+            SmartAssistantReferenceValue(bounds.centerX(), obj)
         )
         list.add(
-            SmartAssistantReferenceValue(bounds.right, null, obj)
+            SmartAssistantReferenceValue(bounds.right, obj)
         )
     }
 
@@ -139,15 +127,9 @@ class SmartAssistantValueProvider(val delegate: CanvasRenderDelegate) :
         bounds: RectF,
         obj: Any?
     ) {
-        list.add(
-            SmartAssistantReferenceValue(bounds.top, null, obj)
-        )
-        list.add(
-            SmartAssistantReferenceValue(bounds.centerY(), null, obj)
-        )
-        list.add(
-            SmartAssistantReferenceValue(bounds.bottom, null, obj)
-        )
+        list.add(SmartAssistantReferenceValue(bounds.top, obj))
+        list.add(SmartAssistantReferenceValue(bounds.centerY(), obj))
+        list.add(SmartAssistantReferenceValue(bounds.bottom, obj))
     }
 
     //endregion ---辅助方法---

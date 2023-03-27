@@ -288,7 +288,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
 
         lastSmartXValue?.let { ref ->
             //边界
-            val bounds = ref.bounds ?: ref.refElementBounds ?: visibleBoundsInside
+            val bounds = ref.refElementBounds ?: visibleBoundsInside
             val startY = min(elementBounds.top, bounds.top)
             val stopY = max(elementBounds.bottom, bounds.bottom)
 
@@ -316,7 +316,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
 
         lastSmartYValue?.let { ref ->
             //边界
-            val bounds = ref.bounds ?: ref.refElementBounds ?: visibleBoundsInside
+            val bounds = ref.refElementBounds ?: visibleBoundsInside
             val startX = min(elementBounds.left, bounds.left)
             val stopX = max(elementBounds.right, bounds.right)
 
@@ -369,7 +369,12 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
                     textPaint
                 )
             } else {
-                canvas.drawText(text, point.x + distanceTextOffset, point.y, textPaint)
+                canvas.drawText(
+                    text,
+                    point.x + distanceTextOffset,
+                    point.y + textPaint.descent(),
+                    textPaint
+                )
             }
         }
         point.release()
