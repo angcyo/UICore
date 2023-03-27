@@ -82,8 +82,8 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
                 }
             }
             MotionEvent.ACTION_MOVE -> {
-                val tx = getTouchTranslateX()
-                val ty = getTouchTranslateY()
+                val tx = getTouchTranslateDxInside()
+                val ty = getTouchTranslateDyInside()
 
                 if (isControlHappen ||
                     tx.absoluteValue >= translateThreshold ||

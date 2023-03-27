@@ -32,18 +32,6 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
 
         /**置底*/
         const val ARRANGE_BACK: Int = 4
-
-        /**所有手势*/
-        const val TOUCH_FLAG_ALL = 0xFF
-
-        /**支持手势缩放画布, 包括双击放大*/
-        const val TOUCH_FLAG_SCALE = 0x01
-
-        /**支持手势移动画布*/
-        const val TOUCH_FLAG_TRANSLATE = 0x02
-
-        /**支持手势多选*/
-        const val TOUCH_FLAG_MULTI_SELECT = 0x04
     }
 
     /**在[elementRendererList]之前绘制的渲染器集合*/
@@ -263,13 +251,17 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     /**
      * 获取所有的元素渲染器
      * [dissolveGroup] 是否要拆组
+     * [includeGroup] 是否要包含[CanvasGroupRenderer]自身, 只在[dissolveGroup]=true的情况下有效
      * [com.angcyo.canvas.render.core.CanvasSelectorManager.getSelectorRendererList]
      * */
-    fun getAllElementRendererList(dissolveGroup: Boolean): List<BaseRenderer> {
+    fun getAllElementRendererList(
+        dissolveGroup: Boolean,
+        includeGroup: Boolean
+    ): List<BaseRenderer> {
         return if (dissolveGroup) {
             val result = mutableListOf<BaseRenderer>()
             for (renderer in elementRendererList) {
-                result.addAll(renderer.getSingleRendererList())
+                result.addAll(renderer.getSingleRendererList(includeGroup))
             }
             result
         } else {
@@ -280,7 +272,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     /**获取所有渲染器对应的元素列表 */
     fun getAllSingleElementList(): List<IElement> {
         val result = mutableListOf<IElement>()
-        val rendererList = getAllElementRendererList(true)
+        val rendererList = getAllElementRendererList(true, false)
         for (renderer in rendererList) {
             result.addAll(renderer.getSingleElementList())
         }

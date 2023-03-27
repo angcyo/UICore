@@ -14,11 +14,12 @@ import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.canvas.render.state.IStateStack
-import com.angcyo.library.unit.IRenderUnit
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.longFeedback
 import com.angcyo.library.isMain
+import com.angcyo.library.unit.IRenderUnit
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.min
 
@@ -178,6 +179,11 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
 
     override fun onDetachedFromWindow() {
         asyncManager.releaseAsync()
+    }
+
+    /**长按事件反馈提示*/
+    fun longFeedback() {
+        view.longFeedback()
     }
 
     //endregion---View视图方法---

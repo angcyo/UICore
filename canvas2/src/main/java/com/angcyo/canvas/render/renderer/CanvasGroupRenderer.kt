@@ -215,10 +215,13 @@ open class CanvasGroupRenderer : BaseRenderer() {
         return result
     }
 
-    override fun getSingleRendererList(): List<BaseRenderer> {
+    override fun getSingleRendererList(includeGroup: Boolean): List<BaseRenderer> {
         val result = mutableListOf<BaseRenderer>()
+        if (includeGroup && isOnlyGroupRenderer()) {
+            result.add(this)
+        }
         for (renderer in rendererList) {
-            renderer?.let { result.addAll(renderer.getSingleRendererList()) }
+            renderer?.let { result.addAll(renderer.getSingleRendererList(includeGroup)) }
         }
         return result
     }
@@ -815,7 +818,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
         }
 
         //将所有子元素渲染器, 放在一个新的群组中
-        val subRendererList = getSingleRendererList()
+        val subRendererList = getSingleRendererList(false)
         val index = delegate.renderManager.elementRendererList.indexOf(rendererList.first()) //保持位置
 
         val groupRenderer = CanvasGroupRenderer()
@@ -858,7 +861,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
         reason: Reason,
         strategy: Strategy,
     ): List<BaseRenderer> {
-        val subRendererList = getSingleRendererList()
+        val subRendererList = getSingleRendererList(false)
         delegate ?: return subRendererList
         val index = delegate.renderManager.elementRendererList.indexOf(this) //保持位置
 

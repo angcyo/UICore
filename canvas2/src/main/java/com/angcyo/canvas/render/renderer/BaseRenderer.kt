@@ -261,8 +261,10 @@ abstract class BaseRenderer : IRenderer {
     /**获取渲染器对应的元素列表*/
     open fun getSingleElementList(): List<IElement> = emptyList()
 
-    /**获取所有渲染器, 不包含[CanvasGroupRenderer]自身*/
-    open fun getSingleRendererList(): List<BaseRenderer> {
+    /**获取所有渲染器
+     * [includeGroup] 是否要包含[CanvasGroupRenderer]自身
+     * */
+    open fun getSingleRendererList(includeGroup: Boolean): List<BaseRenderer> {
         val result = mutableListOf<BaseRenderer>()
         result.add(this)
         return result
@@ -282,13 +284,13 @@ abstract class BaseRenderer : IRenderer {
     /**获取渲染器用来渲染的[Drawable]
      * [requestRenderBitmap]*/
     open fun requestRenderDrawable(overrideSize: Float? = null): Drawable? =
-        createRenderDrawable(getSingleRendererList(), overrideSize)
+        createRenderDrawable(getSingleRendererList(false), overrideSize)
 
     /**获取渲染器用来渲染的[Bitmap]
      * [requestRenderDrawable]
      * */
     open fun requestRenderBitmap(overrideSize: Float? = null): Bitmap? =
-        createRenderBitmap(getSingleRendererList(), overrideSize)
+        createRenderBitmap(getSingleRendererList(false), overrideSize)
 
     //endregion---core---
 
@@ -549,7 +551,7 @@ abstract class BaseRenderer : IRenderer {
      * [flipY]
      * */
     fun flipX(reason: Reason, strategy: Strategy, delegate: CanvasRenderDelegate?) {
-        val list = getSingleRendererList()
+        val list = getSingleRendererList(false)
         if (list.isEmpty()) return
         delegate?.undoManager?.addToStack(this, false, reason, strategy) {
             for (renderer in list) {
@@ -566,7 +568,7 @@ abstract class BaseRenderer : IRenderer {
      * [flipY]
      * */
     fun flipY(reason: Reason, strategy: Strategy, delegate: CanvasRenderDelegate?) {
-        val list = getSingleRendererList()
+        val list = getSingleRendererList(false)
         if (list.isEmpty()) return
         delegate?.undoManager?.addToStack(this, false, reason, strategy) {
             for (renderer in list) {

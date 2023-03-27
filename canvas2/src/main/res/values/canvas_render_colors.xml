@@ -4,4 +4,6 @@
     <color name="canvas_render_select">@color/colorAccent</color>
     <!--异步加载进度颜色-->
     <color name="canvas_render_async">@color/colorAccent</color>
+    <!--提示线颜色-->
+    <color name="canvas_render_assistant">#8200f1</color>
 </resources>

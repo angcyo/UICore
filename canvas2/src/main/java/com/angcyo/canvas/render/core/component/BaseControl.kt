@@ -39,17 +39,30 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
     /**当前正在控制的渲染器信息*/
     protected var controlRendererInfo: ControlRendererInfo? = null
 
+    /**当前手势按下时的点位*/
     @CanvasOutsideCoordinate
     protected var touchDownPoint = PointF()
 
     @CanvasInsideCoordinate
     protected var touchDownPointInside = PointF()
 
+    /**当前手势移动时的点位*/
     @CanvasOutsideCoordinate
     protected var touchMovePoint = PointF()
 
     @CanvasInsideCoordinate
     protected var touchMovePointInside = PointF()
+
+    /**上一次移动的点位*/
+    @CanvasOutsideCoordinate
+    protected var lastTouchMovePoint = PointF()
+
+    /**上一次移动的点位, inside*/
+    @CanvasInsideCoordinate
+    protected var lastTouchMovePointInside = PointF()
+
+    val delegate: CanvasRenderDelegate
+        get() = controlManager.delegate
 
     override fun dispatchTouchEvent(event: MotionEvent) {
         /*val actionIndex = event.actionIndex //当前事件手指的索引, 第几个手指
@@ -66,6 +79,9 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
                     touchDownPoint,
                     touchDownPointInside
                 )
+
+                lastTouchMovePoint.set(touchDownPoint)
+                lastTouchMovePointInside.set(touchDownPointInside)
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
                 //controlMatrix.reset()
@@ -73,7 +89,8 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
         }
     }
 
-    override fun onInterceptTouchEvent(event: MotionEvent): Boolean = isEnableComponent && handleControl
+    override fun onInterceptTouchEvent(event: MotionEvent): Boolean =
+        isEnableComponent && handleControl
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.actionMasked) {
@@ -86,6 +103,9 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
                         touchMovePoint,
                         touchMovePointInside
                     )
+                    onTouchMoveEvent(event)//wrap
+                    lastTouchMovePoint.set(touchMovePoint)
+                    lastTouchMovePointInside.set(touchMovePointInside)
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -97,12 +117,24 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
         return true
     }
 
+    /**手势移动事件, 自动处理[touchMovePoint] [lastTouchMovePoint]*/
+    open fun onTouchMoveEvent(event: MotionEvent) {
+
+    }
+
+    /**当前手势移动了多少距离*/
+    @CanvasOutsideCoordinate
+    fun getTouchMoveDx() = touchMovePoint.x - lastTouchMovePoint.x
+
+    @CanvasOutsideCoordinate
+    fun getTouchMoveDy() = touchMovePoint.y - lastTouchMovePoint.y
+
     /**获取手势在画布内移动的距离*/
     @CanvasInsideCoordinate
-    fun getTouchTranslateX() = touchMovePointInside.x - touchDownPointInside.x
+    fun getTouchTranslateDxInside() = touchMovePointInside.x - touchDownPointInside.x
 
     @CanvasInsideCoordinate
-    fun getTouchTranslateY() = touchMovePointInside.y - touchDownPointInside.y
+    fun getTouchTranslateDyInside() = touchMovePointInside.y - touchDownPointInside.y
 
     /**结束控制之后, 是否需要应用改变*/
     fun isNeedApply() = isControlHappen && handleControl
@@ -203,11 +235,15 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
         controlMatrix.reset()
         handleControl = true
         controlRendererInfo = ControlRendererInfo(render)
+        if (delegate.controlManager.smartAssistantComponent.isEnableComponent) {
+            delegate.controlManager.smartAssistantComponent.initSmartAssistant()
+        }
         controlManager.delegate.dispatchControlHappen(this, false)
     }
 
     /**结束控制*/
     open fun endControl() {
+        delegate.controlManager.smartAssistantComponent.clearSmartAssistant()
         controlManager.delegate.dispatchControlHappen(this, true)
         handleControl = false
         isControlHappen = false

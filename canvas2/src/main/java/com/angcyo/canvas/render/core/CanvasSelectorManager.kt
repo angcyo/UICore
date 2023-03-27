@@ -327,9 +327,6 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
         selectorComponent.removeSelectorRenderer(renderer, reason)
     }
 
-    /**获取选中的元素列表*/
-    fun getSelectorRendererList(): List<BaseRenderer> = selectorComponent.rendererList
-
     /**获取选中的目标操作元素
      * 如果选择了多个元素, 则返回[selectorComponent]
      * 否则返回单个元素渲染器[com.angcyo.canvas.render.renderer.CanvasElementRenderer]或者群组渲染器[CanvasGroupRenderer]
@@ -350,11 +347,14 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
      * [com.angcyo.canvas.core.renderer.GroupRenderer]
      * [com.angcyo.canvas.render.core.CanvasRenderManager.getAllElementRendererList]
      * */
-    fun getSelectorRendererList(dissolveGroup: Boolean): List<BaseRenderer> {
+    fun getSelectorRendererList(
+        dissolveGroup: Boolean = false,
+        includeGroup: Boolean = false
+    ): List<BaseRenderer> {
         return if (dissolveGroup) {
             val result = mutableListOf<BaseRenderer>()
             for (renderer in selectorComponent.rendererList) {
-                result.addAll(renderer.getSingleRendererList())
+                result.addAll(renderer.getSingleRendererList(includeGroup))
             }
             result
         } else {

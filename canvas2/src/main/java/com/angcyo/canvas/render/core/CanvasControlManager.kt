@@ -34,16 +34,18 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
     /**元素平移操作*/
     var translateControl = TranslateRendererControl(this)
 
+    /**智能推荐*/
+    var smartAssistantComponent = SmartAssistantComponent(this)
+
     /**当前按下的控制点*/
     val touchControlPoint: BaseControlPoint?
         get() = if (_interceptTarget is BaseControlPoint) _interceptTarget as BaseControlPoint else null
 
     override var renderFlags: Int = 0xff
 
-
     init {
         renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_VIEW)
-            .remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
+        //.remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
 
         delegate.touchManager.touchListenerList.add(this)
         delegate.addCanvasRenderListener(this)
@@ -85,6 +87,14 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
         scaleControlPoint.isLockScaleRatio = selectorRenderer.isLockScaleRatio
     }
 
+    override fun renderOnInside(canvas: Canvas, params: RenderParams) {
+        if (isEnableComponent) {
+            if (smartAssistantComponent.isEnableComponent) {
+                smartAssistantComponent.renderOnInside(canvas, params)
+            }
+        }
+    }
+
     override fun renderOnOutside(canvas: Canvas, params: RenderParams) {
         if (isEnableComponent) {
             if (delegate.selectorManager.isSelectorElement &&
@@ -94,6 +104,9 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
                 rotateControlPoint.renderOnOutside(canvas, params)
                 scaleControlPoint.renderOnOutside(canvas, params)
                 lockControlPoint.renderOnOutside(canvas, params)
+            }
+            if (smartAssistantComponent.isEnableComponent) {
+                smartAssistantComponent.renderOnOutside(canvas, params)
             }
         }
     }

@@ -31,9 +31,21 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
      * 在[View]的这个位置绘制
      * [updateRenderBounds] 请使用此方法进行数据更新*/
     @Pixel
+    @CanvasOutsideCoordinate
     val renderBounds: RectF = RectF(0f, 0f, 0f, 0f)
 
-    /**更新可以用来渲染的区域[renderBounds]*/
+    /**当前[renderBounds]范围, 在坐标系中的范围*/
+    @CanvasInsideCoordinate
+    val visibleBoundsInside: RectF
+        get() {
+            _tempRect.set(0f, 0f, renderBounds.width(), renderBounds.height())
+            transformToInside(_tempRect)
+            return _tempRect
+        }
+
+    /**更新可以用来渲染的区域[renderBounds]
+     * [com.angcyo.canvas.render.core.CanvasRenderDelegate.onSizeChanged]
+     * */
     fun updateRenderBounds(newBounds: RectF) {
         renderBounds.set(newBounds)
 

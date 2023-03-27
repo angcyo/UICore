@@ -14,25 +14,37 @@ import kotlin.math.absoluteValue
  */
 class TranslateRendererControl(controlManager: CanvasControlManager) : BaseControl(controlManager) {
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        super.onTouchEvent(event)
-        when (event.actionMasked) {
-            MotionEvent.ACTION_MOVE -> {
-                if (event.pointerCount <= 1 && handleControl) {
-                    //单指才能移动元素
-                    val tx = getTouchTranslateX()
-                    val ty = getTouchTranslateY()
+    override fun onTouchMoveEvent(event: MotionEvent) {
+        if (event.pointerCount <= 1 && handleControl) {
+            //单指才能移动元素
+            var tx = getTouchTranslateDxInside()
+            var ty = getTouchTranslateDyInside()
 
-                    if (tx.absoluteValue >= translateThreshold || ty.absoluteValue >= translateThreshold) {
-                        //已经发生过移动, 或者移动距离大于阈值
-                        if (tx != 0f && ty != 0f) {
-                            translate(tx, ty)
-                        }
-                    }
+            val smartAssistantComponent = controlManager.smartAssistantComponent
+            if (smartAssistantComponent.isEnableComponent) {
+                smartAssistantComponent.findSmartDx(
+                    controlRendererInfo?.state?.renderProperty?.getRenderBounds(),
+                    tx,
+                    getTouchMoveDx()
+                )?.let {
+                    tx = it
+                }
+                smartAssistantComponent.findSmartDy(
+                    controlRendererInfo?.state?.renderProperty?.getRenderBounds(),
+                    ty,
+                    getTouchMoveDy()
+                )?.let {
+                    ty = it
+                }
+            }
+
+            if (tx.absoluteValue >= translateThreshold || ty.absoluteValue >= translateThreshold) {
+                //已经发生过移动, 或者移动距离大于阈值
+                if (tx != 0f && ty != 0f) {
+                    translate(tx, ty)
                 }
             }
         }
-        return true
     }
 
     /**直接将渲染器移动多少距离

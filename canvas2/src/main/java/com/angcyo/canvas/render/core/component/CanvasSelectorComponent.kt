@@ -16,12 +16,12 @@ import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasElementRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
-import com.angcyo.library.unit.IRenderUnit
 import com.angcyo.canvas.render.util.canvasDecimal
 import com.angcyo.canvas.render.util.createRenderPaint
 import com.angcyo.canvas.render.util.createRenderTextPaint
 import com.angcyo.library.component.DrawText
 import com.angcyo.library.ex.*
+import com.angcyo.library.unit.IRenderUnit
 
 /**
  * [CanvasElementRenderer]元素选中后的绘制
@@ -128,7 +128,7 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
         if (isSelectorElement) {
             //绘制所有子元素的Rect
 
-            if (getSingleRendererList().size() > 1) {
+            if (getSingleRendererList(false).size() > 1) {
                 //元素旋转的矩形
                 if (renderFlags.have(RENDERER_FLAG_DRAW_ELEMENT_RECT)) {
                     boundsPaint.color = elementBoundsColor
