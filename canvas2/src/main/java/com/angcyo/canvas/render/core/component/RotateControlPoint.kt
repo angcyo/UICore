@@ -39,7 +39,7 @@ class RotateControlPoint(controlManager: CanvasControlManager) : BaseControlPoin
                 }
             }
             MotionEvent.ACTION_MOVE -> {
-                val angle = calculateAngleBetweenLines(
+                var angle = calculateAngleBetweenLines(
                     centerPointInside.x,
                     centerPointInside.y,
                     touchDownPointInside.x,
@@ -50,6 +50,12 @@ class RotateControlPoint(controlManager: CanvasControlManager) : BaseControlPoin
                     touchMovePointInside.y,
                 )
                 if (angle != 0f) {
+                    if (smartAssistantComponent.isEnableComponent) {
+                        val originAngle = controlRendererAngle ?: 0f
+                        smartAssistantComponent.findSmartRotate(originAngle + angle)?.let {
+                            angle = it - originAngle
+                        }
+                    }
                     rotate(angle)
                 }
             }
@@ -57,7 +63,9 @@ class RotateControlPoint(controlManager: CanvasControlManager) : BaseControlPoin
         return true
     }
 
-    /**直接从原始位置, 旋转多少角度*/
+    /**直接从原始位置, 旋转多少角度
+     * 非旋转到多少度
+     * [angle] 当前旋转了多少度*/
     private fun rotate(angle: Float) {
         L.d("旋转元素:angle:$angle")
         controlRendererInfo?.let {

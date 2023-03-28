@@ -3,6 +3,7 @@ package com.angcyo.canvas.render.core.component
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.widget.LinearLayout
+import androidx.core.graphics.withRotation
 import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.core.CanvasControlManager
@@ -171,6 +172,42 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
         return null
     }
 
+    /**找到智能推荐的角度
+     * [angle] 当前旋转的角度, to的角度, 非by的角度
+     * @return 返回要旋转to的角度
+     * */
+    fun findSmartRotate(angle: Float): Float? {
+        var result: SmartAssistantReferenceValue? = null
+        val referenceValue = lastSmartRotateValue
+
+        result = if (referenceValue == null) {
+            //之前没有推荐值, 则查找推荐值
+            findSmartRotateValue(angle)?.apply {
+                longFeedback()
+                logSmartValue("智能推荐角度", angle, this)
+            }
+        } else {
+            //已有推荐值, 则判断是否要吸附
+            if ((referenceValue.value - angle).absoluteValue <= rotateAdsorbThreshold) {
+                referenceValue.apply {
+                    logSmartValue("智能吸附角度", angle, this)
+                }
+            } else {
+                //查找最新的推荐值
+                findSmartRotateValue(angle)?.apply {
+                    if (value != referenceValue.value) {
+                        longFeedback()
+                        logSmartValue("智能推荐角度", angle, this)
+                    } else {
+                        logSmartValue("相同推荐角度", angle, this)
+                    }
+                }
+            }
+        }
+        lastSmartRotateValue = result
+        return result?.value
+    }
+
     /**查找智能推荐的x值
      * [x] 当前元素的x坐标
      * [tx] 当前元素原本要移动的距离
@@ -314,6 +351,25 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
         return null
     }
 
+    /**[findSmartRotate]*/
+    private fun findSmartRotateValue(angle: Float): SmartAssistantReferenceValue? {
+        var result: SmartAssistantReferenceValue? = null
+        val wrapAngle = wrapAngle(angle)
+        for (ref in valueProvider.rotateRefList) {
+            val refValue = (wrapAngle(ref.value))
+            if (result == null || (refValue - wrapAngle).absoluteValue < (result.value - wrapAngle).absoluteValue) {
+                result = ref
+            }
+        }
+        if (result != null && (result.value - wrapAngle).absoluteValue <= rotateAdsorbThreshold) {
+            return result
+        }
+        return null
+    }
+
+    /**扶正角度*/
+    private fun wrapAngle(angle: Float) = (angle + 360) % 360
+
     /**上一次推荐的值*/
     private var lastSmartXValue: SmartAssistantReferenceValue? = null
     private var lastSmartYValue: SmartAssistantReferenceValue? = null
@@ -391,8 +447,28 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
             }
         }
 
-        lastSmartRotateValue?.let {
+        lastSmartRotateValue?.let { ref ->
+            paint.color = smartAssistantColor
 
+            ref.refElementBounds?.let {
+                val centerX = it.centerX()
+                val centerY = it.centerY()
+                canvas.withRotation(ref.value, centerX, centerY) {
+                    val diagonalLine = it.diagonalLine()
+                    val startX = centerX - diagonalLine / 2
+                    val endX = centerX + diagonalLine / 2
+                    canvas.drawLine(startX, centerY, endX, centerY, paint)
+                }
+            }
+
+            val centerX = elementBounds.centerX()
+            val centerY = elementBounds.centerY()
+            canvas.withRotation(ref.value, centerX, centerY) {
+                val diagonalLine = visibleBoundsInside.diagonalLine()
+                val startX = centerX - diagonalLine / 2
+                val endX = centerX + diagonalLine / 2
+                canvas.drawLine(startX, centerY, endX, centerY, paint)
+            }
         }
     }
 

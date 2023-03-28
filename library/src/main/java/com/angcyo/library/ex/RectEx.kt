@@ -203,6 +203,9 @@ fun RectF.limitInRect(limitRect: Rect, result: RectF = this): RectF {
     return result
 }
 
+/**矩形对角线的长度*/
+fun RectF.diagonalLine(): Float = c(left, top, right, bottom, true)
+
 //</editor-fold desc="base">
 
 //<editor-fold desc="rect size">
