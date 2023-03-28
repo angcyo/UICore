@@ -20,22 +20,15 @@ class TranslateRendererControl(controlManager: CanvasControlManager) : BaseContr
             var tx = getTouchTranslateDxInside()
             var ty = getTouchTranslateDyInside()
 
-            val smartAssistantComponent = controlManager.smartAssistantComponent
             if (smartAssistantComponent.isEnableComponent) {
-                smartAssistantComponent.findSmartDx(
-                    controlRendererInfo?.state?.renderProperty?.getRenderBounds(),
-                    tx,
-                    getTouchMoveDx()
-                )?.let {
-                    tx = it
-                }
-                smartAssistantComponent.findSmartDy(
-                    controlRendererInfo?.state?.renderProperty?.getRenderBounds(),
-                    ty,
-                    getTouchMoveDy()
-                )?.let {
-                    ty = it
-                }
+                smartAssistantComponent.findSmartDx(controlRendererBounds, tx, getTouchMoveDx())
+                    ?.let {
+                        tx = it
+                    }
+                smartAssistantComponent.findSmartDy(controlRendererBounds, ty, getTouchMoveDy())
+                    ?.let {
+                        ty = it
+                    }
             }
 
             if (tx.absoluteValue >= translateThreshold || ty.absoluteValue >= translateThreshold) {

@@ -53,6 +53,9 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
 
     private val rendererBounds = RectF()
 
+    @CanvasInsideCoordinate
+    private val tempMovePointInside = PointF()
+
     /**当元素过小时, 缩放倍数直接使用理想值*/
     var minSizeThreshold = 10 * dp
 
@@ -81,74 +84,119 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
                     invertRotateMatrix.mapPoint(invertTouchDownPoint)
                 }
             }
-            MotionEvent.ACTION_MOVE -> {
-                val tx = getTouchTranslateDxInside()
-                val ty = getTouchTranslateDyInside()
-
-                if (isControlHappen ||
-                    tx.absoluteValue >= translateThreshold ||
-                    ty.absoluteValue >= translateThreshold
-                ) {
-                    //已经发生过移动, 或者移动距离大于阈值
-                    if (tx != 0f && ty != 0f) {
-                        var targetSx = 1f
-                        var targetSy = 1f
-
-                        if (isLockScaleRatio) {
-                            //等比缩放, 使用C边的长度计算, 返回的长度一定是正值
-                            val oldC = distance(anchorPoint, touchDownPointInside, false)
-                            val newC = distance(anchorPoint, touchMovePointInside, false)
-
-                            //负值表示反向了
-                            val s = if (rendererBounds.width() <= minSizeThreshold &&
-                                rendererBounds.height() <= minSizeThreshold
-                            ) {
-                                //如果宽高都小于一个很小的值, 则倍数要很大的值才理想
-                                newC.toFloat()
-                            } else {
-                                (newC / oldC).toFloat()
-                            }
-
-                            /*//x轴是否反向
-                            val xReverse =
-                                if (touchDownPointInside.x > anchorPoint.x) touchMovePointInside.x < anchorPoint.x else touchMovePointInside.x > anchorPoint.x
-
-                            //y轴是否反向
-                            val yReverse =
-                                if (touchDownPointInside.y > anchorPoint.y) touchMovePointInside.y < anchorPoint.y else touchMovePointInside.y > anchorPoint.y
-
-                            if (xReverse || yReverse) {
-                                //拖动到反方为了
-                                s = -s
-                            }*/
-
-                            targetSx = s
-                            targetSy = s
-                        } else {
-                            invertTouchMovePoint.set(touchMovePointInside)
-                            invertRotateMatrix.mapPoint(invertTouchMovePoint)
-
-                            val oldWidth = invertTouchDownPoint.x - invertAnchorPoint.x
-                            val oldHeight = invertTouchDownPoint.y - invertAnchorPoint.y
-
-                            val newWidth = invertTouchMovePoint.x - invertAnchorPoint.x
-                            val newHeight = invertTouchMovePoint.y - invertAnchorPoint.y
-
-                            //负数即表示反向了
-                            val sx =
-                                if (rendererBounds.width() <= minSizeThreshold) newWidth else newWidth / oldWidth
-                            val sy =
-                                if (rendererBounds.height() <= minSizeThreshold) newHeight else newHeight / oldHeight
-
-                            targetSx = sx
-                            targetSy = sy
-                        }
-                        scale(targetSx, targetSy)
-                    }
-                }
-            }
         }
         return true
+    }
+
+    override fun onTouchMoveEvent(event: MotionEvent) {
+        val tx = getTouchTranslateDxInside()
+        val ty = getTouchTranslateDyInside()
+
+        if (isControlHappen ||
+            tx.absoluteValue >= translateThreshold ||
+            ty.absoluteValue >= translateThreshold
+        ) {
+            //已经发生过移动, 或者移动距离大于阈值
+            if (tx != 0f && ty != 0f) {
+                var targetSx = 1f
+                var targetSy = 1f
+
+                tempMovePointInside.set(touchMovePointInside)
+                var newSmartWidth: Float? = null
+                var newSmartHeight: Float? = null
+                if (smartAssistantComponent.isEnableComponent &&
+                    controlRendererAngle == 0f && /*未旋转时才推荐宽高*/
+                    (touchMovePointInside.x > anchorPoint.x && touchMovePointInside.y > anchorPoint.y) /*正向拖拽才有宽高提示*/
+                ) {
+                    smartAssistantComponent.findSmartWidth(
+                        controlRendererBounds,
+                        tx,
+                        getTouchMoveDx()
+                    )?.let {
+                        newSmartWidth = it
+                    }
+                    if (!isLockScaleRatio) {
+                        //不等比的情况下, 才推荐高度
+                        smartAssistantComponent.findSmartHeight(
+                            controlRendererBounds,
+                            ty,
+                            getTouchMoveDy()
+                        )?.let {
+                            newSmartHeight = it
+                        }
+                    }
+                }
+
+                if (isLockScaleRatio) {
+                    //等比缩放, 使用C边的长度计算, 返回的长度一定是正值
+                    val oldC = distance(anchorPoint, touchDownPointInside, false)
+                    val newC = distance(anchorPoint, tempMovePointInside, false)
+
+                    //负值表示反向了
+                    var s = if (rendererBounds.width() <= minSizeThreshold &&
+                        rendererBounds.height() <= minSizeThreshold
+                    ) {
+                        //如果宽高都小于一个很小的值, 则倍数要很大的值才理想
+                        newC.toFloat()
+                    } else {
+                        (newC / oldC).toFloat()
+                    }
+
+                    //智能调整
+                    if (newSmartWidth != null) {
+                        s = if (rendererBounds.width() <= minSizeThreshold) newSmartWidth!!
+                        else newSmartWidth!! / rendererBounds.width()
+                    }
+
+                    /*//x轴是否反向
+                    val xReverse =
+                        if (touchDownPointInside.x > anchorPoint.x) touchMovePointInside.x < anchorPoint.x else touchMovePointInside.x > anchorPoint.x
+
+                    //y轴是否反向
+                    val yReverse =
+                        if (touchDownPointInside.y > anchorPoint.y) touchMovePointInside.y < anchorPoint.y else touchMovePointInside.y > anchorPoint.y
+
+                    if (xReverse || yReverse) {
+                        //拖动到反方为了
+                        s = -s
+                    }*/
+
+                    targetSx = s
+                    targetSy = s
+                } else {
+                    invertTouchMovePoint.set(tempMovePointInside)
+                    invertRotateMatrix.mapPoint(invertTouchMovePoint)
+
+                    val oldWidth = invertTouchDownPoint.x - invertAnchorPoint.x
+                    val oldHeight = invertTouchDownPoint.y - invertAnchorPoint.y
+
+                    val newWidth = invertTouchMovePoint.x - invertAnchorPoint.x
+                    val newHeight = invertTouchMovePoint.y - invertAnchorPoint.y
+
+                    //负数即表示反向了
+                    var sx = if (rendererBounds.width() <= minSizeThreshold) newWidth
+                    else newWidth / oldWidth
+                    var sy = if (rendererBounds.height() <= minSizeThreshold) newHeight
+                    else newHeight / oldHeight
+
+                    //智能调整
+                    if (newSmartWidth != null) {
+                        sx = if (rendererBounds.width() <= minSizeThreshold) newSmartWidth!!
+                        else newSmartWidth!! / rendererBounds.width()
+                    }
+                    if (newSmartHeight != null) {
+                        sy =
+                            if (rendererBounds.height() <= minSizeThreshold) newSmartHeight!!
+                            else newSmartHeight!! / rendererBounds.height()
+                    }
+
+                    targetSx = sx
+                    targetSy = sy
+                }
+                scale(targetSx, targetSy)
+            }
+        }
+
     }
 
     /**在按下的基础上, 缩放了多少*/

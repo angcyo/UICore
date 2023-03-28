@@ -140,6 +140,17 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
         return null
     }
 
+    /**查找智能推荐的宽度, 返回推荐的宽度
+     * [findSmartDx]*/
+    fun findSmartWidth(elementBounds: RectF?, tx: Float, dx: Float): Float? {
+        elementBounds ?: return null
+        val requestValue = elementBounds.right
+        findSmartX(requestValue, tx, dx)?.let { ref ->
+            return ref.value - elementBounds.left
+        }
+        return null
+    }
+
     /**[findSmartDx]*/
     @Pixel
     @CanvasInsideCoordinate
@@ -147,6 +158,17 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
         elementBounds ?: return null
         val ref = findSmartY(elementBounds.top, ty, dy) ?: return null
         return ref.value - elementBounds.top
+    }
+
+    /**查找智能推荐的高度, 返回推荐的高度
+     * [findSmartDy]*/
+    fun findSmartHeight(elementBounds: RectF?, ty: Float, dy: Float): Float? {
+        elementBounds ?: return null
+        val requestValue = elementBounds.bottom
+        findSmartY(requestValue, ty, dy)?.let { ref ->
+            return ref.value - elementBounds.top
+        }
+        return null
     }
 
     /**查找智能推荐的x值
@@ -169,15 +191,19 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
             }
         } else {
             //已有推荐值, 则判断是否要吸附
-            if ((referenceValue.value - newX).absoluteValue <= _translateAdsorbThreshold) {
+            if (dx == 0f /*未移动时*/ && (referenceValue.value - newX).absoluteValue <= _translateAdsorbThreshold) {
                 referenceValue.apply {
                     logSmartValue("吸附x[${dx}]", x, this)
                 }
             } else {
                 //查找最新的推荐值
                 findSmartXValue(newX, dx)?.apply {
-                    longFeedback()
-                    logSmartValue("智能推荐x[$dx]", x, this)
+                    if (value != referenceValue.value) {
+                        longFeedback()
+                        logSmartValue("智能推荐x[$dx]", x, this)
+                    } else {
+                        logSmartValue("相同推荐x[$dx]", x, this)
+                    }
                 }
             }
         }
@@ -204,15 +230,19 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
             }
         } else {
             //已有推荐值, 则判断是否要吸附
-            if ((referenceValue.value - newY).absoluteValue <= _translateAdsorbThreshold) {
+            if (dy == 0f /*未移动时*/ || (referenceValue.value - newY).absoluteValue <= _translateAdsorbThreshold) {
                 referenceValue.apply {
                     logSmartValue("吸附y[${dy}]", y, this)
                 }
             } else {
                 //查找最新的推荐值
                 findSmartYValue(newY, dy)?.apply {
-                    longFeedback()
-                    logSmartValue("智能推荐y[$dy]", y, this)
+                    if (value != referenceValue.value) {
+                        longFeedback()
+                        logSmartValue("智能推荐y[$dy]", y, this)
+                    } else {
+                        logSmartValue("相同推荐y[$dy]", y, this)
+                    }
                 }
             }
         }

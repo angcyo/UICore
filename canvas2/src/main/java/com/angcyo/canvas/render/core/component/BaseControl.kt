@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.core.component
 
 import android.graphics.Matrix
 import android.graphics.PointF
+import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
@@ -63,6 +64,17 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
 
     val delegate: CanvasRenderDelegate
         get() = controlManager.delegate
+
+    val smartAssistantComponent: SmartAssistantComponent
+        get() = controlManager.smartAssistantComponent
+
+    /**当前控制元素的边界*/
+    val controlRendererBounds: RectF?
+        get() = controlRendererInfo?.state?.renderProperty?.getRenderBounds()
+
+    /**当前控制元素的边界*/
+    val controlRendererAngle: Float?
+        get() = controlRendererInfo?.state?.renderProperty?.angle
 
     override fun dispatchTouchEvent(event: MotionEvent) {
         /*val actionIndex = event.actionIndex //当前事件手指的索引, 第几个手指
