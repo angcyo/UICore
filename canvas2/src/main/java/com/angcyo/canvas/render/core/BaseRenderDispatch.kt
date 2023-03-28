@@ -129,6 +129,13 @@ abstract class BaseRenderDispatch {
                 continue
             }
             if (!renderer.renderFlags.have(IRenderer.RENDERER_FLAG_ON_INSIDE)) {
+                //不需要此绘制回调
+                continue
+            }
+            if (renderer is BaseRenderer &&
+                !renderer.isVisibleInRender(params.delegate, false, true)
+            ) {
+                //超出了绘制范围, 则不绘制
                 continue
             }
             renderer.renderOnInside(canvas, params)

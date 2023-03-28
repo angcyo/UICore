@@ -18,9 +18,7 @@ import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.release
-import com.angcyo.library.ex._color
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.textWidth
+import com.angcyo.library.ex.*
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
@@ -79,7 +77,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
      *
      * 当距离推荐值, 小于等于这个值, 就选取这个推荐值
      * */
-    var translateAdsorbThreshold: Float = 10f * dp
+    var translateAdsorbThreshold: Float = 3f * dp
 
     /**旋转吸附角度, 当和目标角度小于这个值时, 自动吸附到目标*/
     var rotateAdsorbThreshold: Float = 5f
@@ -121,8 +119,25 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
     @CanvasInsideCoordinate
     fun findSmartDx(elementBounds: RectF?, tx: Float, dx: Float): Float? {
         elementBounds ?: return null
-        val ref = findSmartX(elementBounds.left, tx, dx) ?: return null
-        return ref.value - elementBounds.left
+        var requestValue = if (tx > 0) {
+            //向右移动, 优先使用 right
+            elementBounds.right
+        } else {
+            //向左移动, 优先使用 left
+            elementBounds.left
+        }
+
+        findSmartX(requestValue, tx, dx)?.let { ref ->
+            return ref.value - requestValue
+        }
+
+        //如果还未找到, 则使用中点再次查询
+        requestValue = elementBounds.centerX()
+        findSmartX(requestValue, tx, dx)?.let { ref ->
+            return ref.value - requestValue
+        }
+
+        return null
     }
 
     /**[findSmartDx]*/
@@ -154,7 +169,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
             }
         } else {
             //已有推荐值, 则判断是否要吸附
-            if (dx == 0f || (referenceValue.value - newX).absoluteValue <= _translateAdsorbThreshold) {
+            if ((referenceValue.value - newX).absoluteValue <= _translateAdsorbThreshold) {
                 referenceValue.apply {
                     logSmartValue("吸附x[${dx}]", x, this)
                 }
@@ -189,7 +204,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
             }
         } else {
             //已有推荐值, 则判断是否要吸附
-            if (dy == 0f || (referenceValue.value - newY).absoluteValue <= _translateAdsorbThreshold) {
+            if ((referenceValue.value - newY).absoluteValue <= _translateAdsorbThreshold) {
                 referenceValue.apply {
                     logSmartValue("吸附y[${dy}]", y, this)
                 }
@@ -286,9 +301,11 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
         val elementBounds = selectorElementBounds ?: return
         paint.strokeWidth = 1f * dp / renderScale
 
+        //绘制提示竖线
         lastSmartXValue?.let { ref ->
             //边界
-            val bounds = ref.refElementBounds ?: visibleBoundsInside
+            val refElementBounds = ref.refElementBounds
+            val bounds = refElementBounds ?: visibleBoundsInside
             val startY = min(elementBounds.top, bounds.top)
             val stopY = max(elementBounds.bottom, bounds.bottom)
 
@@ -298,7 +315,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
             //上边距
             if (bounds.bottom < elementBounds.top) {
                 drawXDistanceLine(canvas, ref.value, bounds.bottom, elementBounds.top)
-            } else if (bounds.centerY() < elementBounds.top) {
+            } else if (refElementBounds != null && bounds.centerY() < elementBounds.top) {
                 drawXDistanceLine(canvas, ref.value, bounds.centerY(), elementBounds.top)
             } else if (bounds.top < elementBounds.top) {
                 drawXDistanceLine(canvas, ref.value, bounds.top, elementBounds.top)
@@ -307,16 +324,18 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
             //下边距
             if (bounds.top > elementBounds.bottom) {
                 drawXDistanceLine(canvas, ref.value, bounds.top, elementBounds.bottom)
-            } else if (bounds.centerY() > elementBounds.bottom) {
+            } else if (refElementBounds != null && bounds.centerY() > elementBounds.bottom) {
                 drawXDistanceLine(canvas, ref.value, bounds.centerY(), elementBounds.bottom)
             } else if (bounds.bottom > elementBounds.bottom) {
                 drawXDistanceLine(canvas, ref.value, bounds.bottom, elementBounds.bottom)
             }
         }
 
+        //绘制提示横线
         lastSmartYValue?.let { ref ->
             //边界
-            val bounds = ref.refElementBounds ?: visibleBoundsInside
+            val refElementBounds = ref.refElementBounds
+            val bounds = refElementBounds ?: visibleBoundsInside
             val startX = min(elementBounds.left, bounds.left)
             val stopX = max(elementBounds.right, bounds.right)
 
@@ -326,7 +345,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
             //左边距
             if (bounds.right < elementBounds.left) {
                 drawYDistanceLine(canvas, ref.value, bounds.right, elementBounds.left)
-            } else if (bounds.centerX() < elementBounds.left) {
+            } else if (refElementBounds != null && bounds.centerX() < elementBounds.left) {
                 drawYDistanceLine(canvas, ref.value, bounds.centerX(), elementBounds.left)
             } else if (bounds.left < elementBounds.left) {
                 drawYDistanceLine(canvas, ref.value, bounds.left, elementBounds.left)
@@ -335,7 +354,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
             //右边距
             if (bounds.left > elementBounds.right) {
                 drawYDistanceLine(canvas, ref.value, bounds.left, elementBounds.right)
-            } else if (bounds.centerX() > elementBounds.right) {
+            } else if (refElementBounds != null && bounds.centerX() > elementBounds.right) {
                 drawYDistanceLine(canvas, ref.value, bounds.centerX(), elementBounds.right)
             } else if (bounds.right > elementBounds.right) {
                 drawYDistanceLine(canvas, ref.value, bounds.right, elementBounds.right)
@@ -362,16 +381,34 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
             renderViewBox.transformToOutside(point)
 
             if (distanceTextData.orientation == LinearLayout.HORIZONTAL) {
+                //绘制横线距离
+                var textDrawY = point.y - distanceTextOffset
+                val textTop = textDrawY - textPaint.textHeight()
+
+                if (textTop <= visibleBoundsInside.height() / 3) {
+                    //如果文本的顶部, 在头部1/3的位置, 则文本向下偏移绘制
+                    textDrawY = point.y + textPaint.textDrawHeight() + distanceTextOffset
+                }
+
                 canvas.drawText(
                     text,
                     point.x - textPaint.textWidth(text) / 2,
-                    point.y - distanceTextOffset,
+                    textDrawY,
                     textPaint
                 )
             } else {
+                //绘制纵向距离
+                var textDrawX = point.x + distanceTextOffset
+                val textRight = textDrawX + textPaint.textWidth(text)
+
+                if (textRight >= visibleBoundsInside.width() * 2 / 3) {
+                    //如果文本的右边, 在右侧的2/3的位置, 则文本向左偏移绘制
+                    textDrawX = point.x - textPaint.textWidth(text) - distanceTextOffset
+                }
+
                 canvas.drawText(
                     text,
-                    point.x + distanceTextOffset,
+                    textDrawX,
                     point.y + textPaint.descent(),
                     textPaint
                 )

@@ -18,6 +18,7 @@ import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRen
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRenderDrawable
 import com.angcyo.drawable.loading.CircleScaleLoadingDrawable
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
 import kotlin.math.max
 
@@ -63,6 +64,13 @@ abstract class BaseRenderer : IRenderer {
         /**最后一个标识位*/
         @RenderFlag
         const val RENDERER_FLAG_LAST = RENDERER_FLAG_REQUEST_DRAWABLE shl 1
+
+        /**渲染器的最小宽高*/
+        @Pixel
+        const val MIN_WIDTH = 1f
+
+        @Pixel
+        const val MIN_HEIGHT = 1f
     }
 
     /**渲染器的唯一标识*/
@@ -291,6 +299,24 @@ abstract class BaseRenderer : IRenderer {
      * */
     open fun requestRenderBitmap(overrideSize: Float? = null): Bitmap? =
         createRenderBitmap(getSingleRendererList(false), overrideSize)
+
+    /**是否在当前的可视坐标范围内可见
+     * [fullIn] 是否要全部可见, 否则露出一部分也视为可见*/
+    fun isVisibleInRender(
+        delegate: CanvasRenderDelegate?,
+        fullIn: Boolean = false,
+        def: Boolean = true
+    ): Boolean {
+        delegate ?: return def
+        val bounds = renderProperty?.getRenderBounds() ?: return false
+        val visibleBoundsInside = delegate.renderViewBox.visibleBoundsInside
+        return if (fullIn) {
+            //需要全部可见
+            visibleBoundsInside.contains(bounds) //全包含
+        } else {
+            visibleBoundsInside.intersect(bounds) //相交即可
+        }
+    }
 
     //endregion---core---
 
