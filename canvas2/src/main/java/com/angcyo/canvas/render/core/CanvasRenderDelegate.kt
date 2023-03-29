@@ -15,12 +15,16 @@ import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.longFeedback
+import com.angcyo.library.ex.size
 import com.angcyo.library.isMain
 import com.angcyo.library.unit.IRenderUnit
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -525,6 +529,47 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
      * [CanvasRenderManager]*/
     fun removeAllElementRenderer(strategy: Strategy = Strategy.normal) {
         renderManager.removeAllElementRenderer(strategy)
+    }
+
+    /**[com.angcyo.canvas.render.core.CanvasRenderManager.getAllElementRendererList]*/
+    fun getSingleElementRendererListIn(
+        rendererList: List<BaseRenderer>?,
+        dissolveGroup: Boolean,
+        includeGroup: Boolean
+    ): List<BaseRenderer> {
+        val result = mutableListOf<BaseRenderer>()
+        rendererList ?: return result
+        for (renderer in rendererList) {
+            if (renderer is CanvasSelectorComponent) {
+                continue
+            } else if (renderer is CanvasGroupRenderer) {
+                if (includeGroup) {
+                    result.add(renderer)
+                }
+                if (dissolveGroup) {
+                    result.addAll(
+                        getSingleElementRendererListIn(renderer.rendererList, true, includeGroup)
+                    )
+                }
+            } else {
+                result.add(renderer)
+            }
+        }
+        return result
+    }
+
+    /**获取选中的元素, 如果没有进入选中状态, 则返回所有元素
+     * [com.angcyo.canvas.render.core.CanvasRenderManager.getAllElementRendererList]*/
+    fun getSelectorOrAllElementRendererList(
+        dissolveGroup: Boolean,
+        includeGroup: Boolean
+    ): List<BaseRenderer> {
+        val list = if (selectorManager.isSelectorElement) {
+            selectorManager.selectorComponent.rendererList
+        } else {
+            renderManager.getAllElementRendererList(dissolveGroup, includeGroup)
+        }
+        return getSingleElementRendererListIn(list, dissolveGroup, includeGroup)
     }
 
     //endregion---操作---
