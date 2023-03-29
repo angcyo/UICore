@@ -13,6 +13,10 @@ import android.graphics.drawable.PictureDrawable
  */
 class PictureRenderDrawable(picture: Picture?) : PictureDrawable(picture) {
 
+    init {
+        picture?.let { setBounds(0, 0, it.width, it.height) }
+    }
+
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
     }

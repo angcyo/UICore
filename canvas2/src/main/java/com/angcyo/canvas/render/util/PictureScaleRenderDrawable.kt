@@ -17,6 +17,10 @@ class PictureScaleRenderDrawable(picture: Picture?) : PictureDrawable(picture) {
     private var scaleX = 1f
     private var scaleY = 1f
 
+    init {
+        picture?.let { setBounds(0, 0, it.width, it.height) }
+    }
+
     override fun draw(canvas: Canvas) {
         //super.draw(canvas)
         picture?.let { picture ->
