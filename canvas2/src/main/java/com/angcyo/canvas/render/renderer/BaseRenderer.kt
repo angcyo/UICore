@@ -269,7 +269,7 @@ abstract class BaseRenderer : IRenderer {
     /**获取渲染器对应的元素列表*/
     open fun getSingleElementList(): List<IElement> = emptyList()
 
-    /**获取所有渲染器
+    /**获取所有渲染器, 会包含所有的渲染器. 可见的, 不可见的, 锁定的.
      * [includeGroup] 是否要包含[CanvasGroupRenderer]自身
      * */
     open fun getSingleRendererList(includeGroup: Boolean): List<BaseRenderer> {
