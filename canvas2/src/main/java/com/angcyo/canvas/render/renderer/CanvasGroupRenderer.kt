@@ -134,6 +134,43 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 }
             }
         }
+
+        /**获取一组渲染器对应的边界矩形
+         * [CanvasRenderProperty]*/
+        fun getRendererListRenderProperty(
+            rendererList: List<BaseRenderer>,
+            result: CanvasRenderProperty = CanvasRenderProperty()
+        ): CanvasRenderProperty {
+            result.reset()
+            if (rendererList.size() == 1) {
+                //只有一个元素
+                val renderer = rendererList.first()
+                renderer.renderProperty?.let {
+                    it.copyTo(result)
+                    /*val rect = it.getRenderRect()
+                    result.initWithRect(rect, it.angle)*/
+                }
+            } else {
+                //多个元素
+                val rect = acquireTempRectF()
+                val tempBounds = acquireTempRectF()
+                rect.set(Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE)
+                for (renderer in rendererList) {
+                    renderer.renderProperty?.let {
+                        val bounds = it.getRenderBounds(tempBounds)
+                        //val bounds = it.getRenderBounds(afterRotate = true)
+                        rect.left = min(rect.left, bounds.left)
+                        rect.top = min(rect.top, bounds.top)
+                        rect.right = max(rect.right, bounds.right)
+                        rect.bottom = max(rect.bottom, bounds.bottom)
+                    }
+                }
+                result.initWithRect(rect, 0f)
+                rect.release()
+                tempBounds.release()
+            }
+            return result
+        }
     }
 
     /**组内所有渲染器*/
@@ -488,33 +525,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
     /**重新计算渲染属性*/
     fun getGroupRenderProperty(result: CanvasRenderProperty = _tempGroupRenderProperty): CanvasRenderProperty {
-        result.reset()
-        if (rendererList.size() == 1) {
-            //只有一个元素
-            val renderer = rendererList.first()
-            renderer.renderProperty?.let {
-                it.copyTo(result)
-                /*val rect = it.getRenderRect()
-                result.initWithRect(rect, it.angle)*/
-            }
-        } else {
-            //多个元素
-            val rect = acquireTempRectF()
-            rect.set(Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE)
-            for (renderer in rendererList) {
-                renderer.renderProperty?.let {
-                    val bounds = it.getRenderBounds()
-                    //val bounds = it.getRenderBounds(afterRotate = true)
-                    rect.left = min(rect.left, bounds.left)
-                    rect.top = min(rect.top, bounds.top)
-                    rect.right = max(rect.right, bounds.right)
-                    rect.bottom = max(rect.bottom, bounds.bottom)
-                }
-            }
-            result.initWithRect(rect, 0f)
-            rect.release()
-        }
-        return result
+        return getRendererListRenderProperty(rendererList, result)
     }
 
     /**摆正角度到0度, 方便Bounds的计算及显示*/
