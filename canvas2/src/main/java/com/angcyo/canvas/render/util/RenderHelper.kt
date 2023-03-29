@@ -3,6 +3,7 @@ package com.angcyo.canvas.render.util
 import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.RectF
+import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.computePathBounds
 
@@ -23,6 +24,20 @@ object RenderHelper {
         pathList.computePathBounds(bounds, LibHawkKeys.enablePathBoundsExact)
         return bounds
     }
+
+    /**将原始[pathList]数据, 转换成目标位置(旋转/缩放/倾斜)的数据*/
+    fun translateToRender(
+        pathList: List<Path>?,
+        renderProperty: CanvasRenderProperty
+    ): List<Path>? {
+        val list = pathList ?: return null
+        val newPathList = list.translateToOrigin()
+        val renderMatrix = renderProperty.getRenderMatrix()
+        for (path in newPathList!!) {
+            path.transform(renderMatrix)
+        }
+        return newPathList
+    }
 }
 
 /**[translateToOrigin]*/
@@ -31,7 +46,7 @@ fun Path?.translateToOrigin(): Path? {
     return listOf(this).translateToOrigin()?.lastOrNull()
 }
 
-/**将所有[this]平移到[0,0]的位置*/
+/**将所有[this]平移到相对于[0,0]的位置*/
 fun List<Path>?.translateToOrigin(): List<Path>? {
     val pathList = this ?: return null
     val bounds = RenderHelper.computePathBounds(pathList)
