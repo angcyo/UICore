@@ -7,6 +7,7 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
 import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
+import com.angcyo.canvas.render.annotation.RenderFlag
 import com.angcyo.canvas.render.core.component.*
 import com.angcyo.canvas.render.data.LimitInfo
 import com.angcyo.canvas.render.data.RenderParams
@@ -15,16 +16,12 @@ import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.library.annotation.Pixel
-import com.angcyo.library.component.pool.acquireTempRectF
-import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.longFeedback
-import com.angcyo.library.ex.size
 import com.angcyo.library.isMain
 import com.angcyo.library.unit.IRenderUnit
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -570,6 +567,25 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
             renderManager.getAllElementRendererList(dissolveGroup, includeGroup)
         }
         return getSingleElementRendererListIn(list, dissolveGroup, includeGroup)
+    }
+
+    /**为所有的简单渲染器触发一个flag更新通知
+     * [flag]
+     * [reason]
+     * */
+    @RenderFlag
+    fun dispatchAddAllRendererFlag(flag: Int, reason: Reason) {
+        val allRendererList = renderManager.getAllElementRendererList(true, false)
+        for (renderer in allRendererList) {
+            renderer.addRenderFlag(flag, reason, this)
+        }
+    }
+
+    /**为所有的简单渲染器触发一个数据改变的控制通知 */
+    @RenderFlag
+    fun dispatchAllRendererDataChange(reason: Reason = Reason.user) {
+        reason.controlType = reason.controlType ?: BaseControlPoint.CONTROL_TYPE_DATA
+        dispatchAddAllRendererFlag(BaseRenderer.RENDERER_FLAG_NORMAL, reason)
     }
 
     //endregion---操作---
