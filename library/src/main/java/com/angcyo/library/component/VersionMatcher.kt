@@ -13,7 +13,7 @@ object VersionMatcher {
     internal const val RS = " "
     internal const val VS = "~"
 
-    /**解析范围, 格式 [ x~ ~x xxx~xxx xxx~xxx]*/
+    /**解析范围, 格式 [ x x~ ~x xxx~xxx xxx~xxx]*/
     fun parseRange(config: String?): List<VersionRange> {
         val rangeStringList = config?.split(RS)
         val list = mutableListOf<VersionRange>()
@@ -28,12 +28,17 @@ object VersionMatcher {
                         )
                     )
                 } else {
-                    if (range.startsWith(VS)) {
-                        //[~xxx] 的格式
-                        list.add(VersionRange(Int.MIN_VALUE, min))
+                    if (range.contains(VS)) {
+                        if (range.startsWith(VS)) {
+                            //[~xxx] 的格式
+                            list.add(VersionRange(Int.MIN_VALUE, min))
+                        } else {
+                            //[x~] [x] 的格式
+                            list.add(VersionRange(min, Int.MAX_VALUE))
+                        }
                     } else {
-                        //[x~] [x] 的格式
-                        list.add(VersionRange(min, Int.MAX_VALUE))
+                        //不包含 ~
+                        list.add(VersionRange(min, min))
                     }
                 }
             }
