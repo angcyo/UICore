@@ -451,3 +451,11 @@ fun Bitmap.eachColorChannel(
     }
 }
 
+/**给图片添加一个背景颜色*/
+fun Bitmap.addBgColor(bgColor: Int): Bitmap {
+    val bitmap = Bitmap.createBitmap(width, height, config)
+    val canvas = Canvas(bitmap)
+    canvas.drawColor(bgColor)
+    canvas.drawBitmap(this, 0f, 0f, Paint(Paint.ANTI_ALIAS_FLAG))
+    return bitmap
+}
