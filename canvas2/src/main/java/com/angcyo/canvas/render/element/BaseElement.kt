@@ -146,6 +146,8 @@ abstract class BaseElement : IElement {
     }
 
     /**[createBitmapDrawable]
+     *
+     * [pathList] 未经过任何处理的原始数据
      * [isLinePath] 是否线段
      * */
     protected fun createPathDrawable(
