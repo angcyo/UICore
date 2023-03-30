@@ -415,4 +415,24 @@ data class CanvasRenderProperty(
 
     //endregion---core---
 
+    //region---other---
+
+    fun toShortString(): String {
+        return buildString {
+            append("anchorX:$anchorX ")
+            append("anchorY:$anchorY ")
+            append("width:$width ")
+            append("height:$height ")
+            append("angle:$angle ")
+            append("scaleX:$scaleX ")
+            append("scaleY:$scaleY ")
+            append("flipX:$flipX ")
+            append("flipY:$flipY ")
+            append("skewX:$skewX ")
+            append("skewY:$skewY ")
+        }
+    }
+
+    //endregion---other---
+
 }

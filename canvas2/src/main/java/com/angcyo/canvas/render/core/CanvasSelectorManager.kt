@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
+import com.angcyo.canvas.render.BuildConfig
 import com.angcyo.canvas.render.core.component.*
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
@@ -206,6 +207,11 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
         val eventY = event.getY(event.actionIndex)
         _tempPoint.set(eventX, eventY)
         delegate.renderViewBox.transformToInside(_tempPoint)
+
+        if (BuildConfig.DEBUG) {
+            L.d("按下:[${_tempPoint}]")
+            delegate.logRendererProperty()
+        }
 
         if (isSelectorElement && selectorComponent.rendererContainsPoint(delegate, _tempPoint)) {
             //重复选中

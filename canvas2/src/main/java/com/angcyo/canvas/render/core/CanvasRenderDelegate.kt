@@ -15,10 +15,12 @@ import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.canvas.render.state.IStateStack
+import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.longFeedback
+import com.angcyo.library.ex.size
 import com.angcyo.library.isMain
 import com.angcyo.library.unit.IRenderUnit
 import java.util.concurrent.CopyOnWriteArrayList
@@ -586,6 +588,27 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     fun dispatchAllRendererDataChange(reason: Reason = Reason.user) {
         reason.controlType = reason.controlType ?: BaseControlPoint.CONTROL_TYPE_DATA
         dispatchAddAllRendererFlag(BaseRenderer.RENDERER_FLAG_NORMAL, reason)
+    }
+
+    /**打印渲染器的日志*/
+    fun logRendererProperty(rendererList: List<BaseRenderer>? = renderManager.elementRendererList): String? {
+        rendererList ?: return null
+        val list = getSingleElementRendererListIn(rendererList, true, false)
+        val log = buildString {
+            append("共:${list.size()}↓")
+            for (renderer in list) {
+                appendLine()
+                append(renderer.hashCode())
+                append(":")
+                append(renderer.renderProperty?.toShortString() ?: "null")
+                renderer.renderProperty?.let {
+                    append(" ")
+                    append(it.getRenderBounds())
+                }
+            }
+        }
+        L.i(log)
+        return log
     }
 
     //endregion---操作---
