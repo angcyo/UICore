@@ -264,6 +264,7 @@ fun Collection<Any?>?.isListEmpty(): Boolean {
 fun Collection<*>?.size() = this?.size ?: 0
 fun Array<*>?.size() = this?.size ?: 0
 fun ByteArray?.size() = this?.size ?: 0
+fun <T> T.toListOf() = listOf(this)
 
 /**判断2个列表中的数据是否改变过*/
 fun <T> Collection<T>?.isChange(other: List<T>?): Boolean {
