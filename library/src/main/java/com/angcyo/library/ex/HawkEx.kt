@@ -176,6 +176,18 @@ fun String?.hawkGetInt(def: Int = -1): Int {
     return result
 }
 
+fun String?.hawkGetLong(def: Long = -1): Long {
+    var result = def
+    this?.let {
+        try {
+            result = Hawk.get(it, def)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    return result
+}
+
 fun String?.hawkGetFloat(def: Float = -1f): Float {
     var result = def
     this?.let {
