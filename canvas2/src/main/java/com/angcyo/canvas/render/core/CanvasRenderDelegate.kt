@@ -459,6 +459,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
 
         val contentWidth = renderViewBox.renderBounds.width()
         val contentHeight = renderViewBox.renderBounds.height()
+
         val centerX = contentWidth / 2
         val centerY = contentHeight / 2
         val originPoint = renderViewBox.getOriginPoint()
@@ -481,10 +482,13 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         var scaleX = renderViewBox.renderMatrix.getScaleX()
         var scaleY = renderViewBox.renderMatrix.getScaleY()
 
+        val visibleWidth = renderViewBox.visibleBoundsInside.width()
+        val visibleHeight = renderViewBox.visibleBoundsInside.height()
+
         if (zoomOut) {
             //需要自动缩小
-            if (width > contentWidth || height > contentHeight) {
-                //目标的宽高, 大于画布的宽高
+            if (width > visibleWidth || height > visibleHeight) {
+                //目标的宽高, 大于画布当前可见的宽高
                 scaleX = (contentWidth - margin * 2) / rect.width()
                 scaleY = (contentHeight - margin * 2) / rect.height()
             }
@@ -492,8 +496,8 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
 
         if (zoomIn) {
             //需要自动放大
-            if (width < contentWidth || height < contentHeight) {
-                //目标的宽高, 小于画布的宽高
+            if (width < visibleWidth || height < visibleHeight) {
+                //目标的宽高, 小于画布当前可见的宽高
                 scaleX = (contentWidth - margin * 2) / rect.width()
                 scaleY = (contentHeight - margin * 2) / rect.height()
             }
