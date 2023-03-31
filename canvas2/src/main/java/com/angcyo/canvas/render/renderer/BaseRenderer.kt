@@ -219,23 +219,23 @@ abstract class BaseRenderer : IRenderer {
 
     /**移除一个渲染标识*/
     open fun removeRenderFlag(flag: Int, reason: Reason, delegate: CanvasRenderDelegate?) {
-        updateRenderFlag(renderFlags.remove(flag), reason.apply {
+        updateRenderFlags(renderFlags.remove(flag), reason.apply {
             renderFlag = (renderFlag ?: 0).add(flag)
         }, delegate)
     }
 
     /**添加一个渲染标识*/
     open fun addRenderFlag(flag: Int, reason: Reason, delegate: CanvasRenderDelegate?) {
-        updateRenderFlag(renderFlags.add(flag), reason.apply {
+        updateRenderFlags(renderFlags.add(flag), reason.apply {
             renderFlag = (renderFlag ?: 0).add(flag)
         }, delegate)
     }
 
     /**更新一个新的渲染标识*/
-    open fun updateRenderFlag(newFlag: Int, reason: Reason, delegate: CanvasRenderDelegate?) {
+    open fun updateRenderFlags(newFlags: Int, reason: Reason, delegate: CanvasRenderDelegate?) {
         val old = renderFlags
-        renderFlags = newFlag
-        if (old != renderFlags) {
+        renderFlags = newFlags
+        if (old != renderFlags || reason.controlType != null) {
             delegate?.dispatchRendererFlagsChange(this, old, renderFlags, reason)
         }
     }
