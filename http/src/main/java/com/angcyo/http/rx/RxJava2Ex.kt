@@ -4,7 +4,6 @@ import com.angcyo.http.rx.Rx.rxErrorHandlerOnceList
 import com.angcyo.library.L
 import com.angcyo.library.ex.size
 import com.angcyo.library.isMain
-import com.angcyo.library.toastQQ
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -49,7 +48,6 @@ object Rx {
     fun init(block: (Throwable) -> Unit = {}) {
         if (!RxJavaPlugins.isLockdown()) {
             RxJavaPlugins.setErrorHandler { error ->
-                toastQQ(error.message)
                 L.e("Rx异常[${rxErrorHandlerOnceList.size()}]:$error")
                 error.printStackTrace()
                 if (rxErrorHandlerOnceList.isNotEmpty()) {

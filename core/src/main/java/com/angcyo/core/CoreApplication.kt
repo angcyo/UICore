@@ -15,6 +15,7 @@ import com.angcyo.core.component.interceptor.LogFileInterceptor
 import com.angcyo.core.component.model.LanguageModel
 import com.angcyo.core.dslitem.DslLastDeviceInfoItem
 import com.angcyo.coroutine.CoroutineErrorHandler
+import com.angcyo.dialog.hideLoading
 import com.angcyo.http.DslHttp
 import com.angcyo.http.addInterceptorEx
 import com.angcyo.http.interceptor.LogInterceptor
@@ -26,6 +27,7 @@ import com.angcyo.library.LibApplication
 import com.angcyo.library.annotation.CallComplianceAfter
 import com.angcyo.library.ex.*
 import com.angcyo.library.getAppString
+import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.LogFile
 import com.angcyo.library.utils.toLogFilePath
 import com.angcyo.library.utils.writeTo
@@ -106,11 +108,13 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
         //rx error
         Rx.init { exception ->
             "Rx异常:${exception.string()}".writeErrorLog(L.NONE)
+            onThreadException(exception)
         }
 
         //coroutine error
         CoroutineErrorHandler.globalCoroutineExceptionHandler = { _, exception ->
             "协程异常:${exception.string()}".writeErrorLog(L.NONE)
+            onThreadException(exception)
         }
 
         DslHttp.config {
@@ -204,6 +208,17 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
             return ""
         }
         return HttpConfigDialog.appBaseUrl.connectUrl(path)
+    }
+
+    /**线程/协程内发生了异常*/
+    open fun onThreadException(exception: Throwable) {
+        val tip = if (isDebug()) {
+            exception.message
+        } else {
+            _string(R.string.core_thread_error_tip)
+        }
+        toastQQ(tip)
+        hideLoading(tip)
     }
 
     //<editor-fold desc="hold">
