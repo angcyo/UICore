@@ -667,6 +667,15 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         return log
     }
 
+    /**指定的渲染器是否被选中*/
+    fun isRendererSelector(renderer: BaseRenderer?): Boolean {
+        return getSingleElementRendererListIn(
+            selectorManager.selectorComponent.rendererList,
+            true,
+            true
+        ).contains(renderer)
+    }
+
     //endregion---操作---
 
 }
