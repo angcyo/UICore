@@ -557,7 +557,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
     }
 
     private fun logSmartValue(tag: String, fromValue: Float, ref: SmartAssistantReferenceValue) {
-        L.i("智能提示:$tag ${fromValue}->${ref.value}")
+        L.d("智能提示:$tag ${fromValue}->${ref.value}")
     }
 
     //endregion ---render---
