@@ -31,7 +31,7 @@ class TranslateRendererControl(controlManager: CanvasControlManager) : BaseContr
                     }
             }
 
-            if (tx.absoluteValue >= translateThreshold || ty.absoluteValue >= translateThreshold) {
+            if (isControlHappen || tx.absoluteValue >= translateThreshold || ty.absoluteValue >= translateThreshold) {
                 //已经发生过移动, 或者移动距离大于阈值
                 if (tx != 0f && ty != 0f) {
                     translate(tx, ty)
