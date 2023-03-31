@@ -552,7 +552,8 @@ open class CanvasGroupRenderer : BaseRenderer() {
         reason: Reason,
         delegate: CanvasRenderDelegate?
     ) {
-        rendererList.resetAll(list)
+        val elementRendererList = delegate?.getElementRendererListOf(list) ?: list
+        rendererList.resetAll(elementRendererList)
         updateGroupRenderProperty(reason, delegate)
     }
 

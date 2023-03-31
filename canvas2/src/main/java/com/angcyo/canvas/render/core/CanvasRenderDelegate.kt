@@ -530,6 +530,18 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         renderManager.removeAllElementRenderer(strategy)
     }
 
+    /**将[rendererList]中的渲染器, 过滤筛选成对应的元素渲染器
+     * 主要解决, [rendererList]有可能只是其中一个[CanvasGroupRenderer]的子元素*/
+    fun getElementRendererListOf(rendererList: List<BaseRenderer>?): List<BaseRenderer>? {
+        rendererList ?: return null
+        val result = mutableListOf<BaseRenderer>()
+        for (renderer in rendererList) {
+            val elementRenderer = renderManager.findElementGroupRenderer(renderer) ?: renderer
+            result.add(elementRenderer)
+        }
+        return result
+    }
+
     /**[com.angcyo.canvas.render.core.CanvasRenderManager.getAllElementRendererList]*/
     fun getSingleElementRendererListIn(
         rendererList: List<BaseRenderer>?,
@@ -555,6 +567,22 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
             }
         }
         return result
+    }
+
+    /**获取简单的选中元素列表*/
+    fun getSelectorSingleElementRendererList(
+        dissolveGroup: Boolean = false,
+        includeGroup: Boolean = false
+    ): List<BaseRenderer>? {
+        return if (selectorManager.isSelectorElement) {
+            getSingleElementRendererListIn(
+                selectorManager.selectorComponent.rendererList,
+                dissolveGroup,
+                includeGroup
+            )
+        } else {
+            null
+        }
     }
 
     /**获取选中的元素, 如果没有进入选中状态, 则返回所有元素

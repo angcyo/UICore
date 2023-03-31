@@ -245,6 +245,9 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     ): CanvasGroupRenderer? {
         for (renderer in rendererList) {
             if (renderer is CanvasGroupRenderer) {
+                if (renderer == subRenderer) {
+                    return renderer
+                }
                 return if (renderer.rendererList.contains(subRenderer)) {
                     renderer
                 } else {
