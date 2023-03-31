@@ -1,9 +1,6 @@
 package com.angcyo.library.ex
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.widget.LinearLayout
 import androidx.annotation.ColorInt
 import com.angcyo.library.component.hawk.LibHawkKeys
@@ -456,6 +453,6 @@ fun Bitmap.addBgColor(bgColor: Int): Bitmap {
     val bitmap = Bitmap.createBitmap(width, height, config)
     val canvas = Canvas(bitmap)
     canvas.drawColor(bgColor)
-    canvas.drawBitmap(this, 0f, 0f, Paint(Paint.ANTI_ALIAS_FLAG))
+    canvas.drawBitmap(this, null, Rect(0, 0, width, height), Paint(Paint.ANTI_ALIAS_FLAG))
     return bitmap
 }
