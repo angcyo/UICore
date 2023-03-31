@@ -17,10 +17,7 @@ import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
-import com.angcyo.library.ex.disableParentInterceptTouchEvent
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.longFeedback
-import com.angcyo.library.ex.size
+import com.angcyo.library.ex.*
 import com.angcyo.library.isMain
 import com.angcyo.library.unit.IRenderUnit
 import java.util.concurrent.CopyOnWriteArrayList
@@ -402,6 +399,22 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         renderManager.limitRenderer.clear()
     }
 
+    /**[showRectBounds]*/
+    fun showRendererBounds(
+        renderer: BaseRenderer?,
+        zoomIn: Boolean = false /*自动放大*/,
+        zoomOut: Boolean = true /*自动缩小*/,
+        margin: Float = BaseControlPoint.DEFAULT_CONTROL_POINT_SIZE
+    ) {
+        renderer?.let {
+            if (it.isVisible) {
+                it.renderProperty?.getRenderBounds()?.let { bounds ->
+                    showRectBounds(bounds, margin, zoomIn, zoomOut)
+                }
+            }
+        }
+    }
+
     /**将画板移动到可以完全显示出[rect]
      * [rect] 坐标系中的矩形坐标
      * [zoomIn]  当矩形很小的时候, 是否要放大.
@@ -465,19 +478,30 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         val width = rect.width() + margin * 2
         val height = rect.height() + margin * 2
 
-        var scaleX = 1f
-        var scaleY = 1f
+        var scaleX = renderViewBox.renderMatrix.getScaleX()
+        var scaleY = renderViewBox.renderMatrix.getScaleY()
 
-        if (((width > contentWidth || height > contentHeight) && zoomOut) ||
-            (width < contentWidth || height < contentHeight) && zoomIn
-        ) {
-            scaleX = (contentWidth - margin * 2) / rect.width()
-            scaleY = (contentHeight - margin * 2) / rect.height()
-
-            if (lockScale) {
-                scaleX = min(scaleX, scaleY)
-                scaleY = scaleX
+        if (zoomOut) {
+            //需要自动缩小
+            if (width > contentWidth || height > contentHeight) {
+                //目标的宽高, 大于画布的宽高
+                scaleX = (contentWidth - margin * 2) / rect.width()
+                scaleY = (contentHeight - margin * 2) / rect.height()
             }
+        }
+
+        if (zoomIn) {
+            //需要自动放大
+            if (width < contentWidth || height < contentHeight) {
+                //目标的宽高, 小于画布的宽高
+                scaleX = (contentWidth - margin * 2) / rect.width()
+                scaleY = (contentHeight - margin * 2) / rect.height()
+            }
+        }
+
+        if (lockScale) {
+            scaleX = min(scaleX, scaleY)
+            scaleY = scaleX
         }
 
         //自动缩小
