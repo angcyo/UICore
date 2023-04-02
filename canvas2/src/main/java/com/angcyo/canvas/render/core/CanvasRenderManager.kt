@@ -118,13 +118,20 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         strategy: Strategy
     ) {
 
-        val index = elementRendererList.indexOf(renderer)
+        val originRendererList = mutableListOf<BaseRenderer>()
+        if (renderer is CanvasSelectorComponent) {
+            originRendererList.addAll(renderer.rendererList)
+        } else {
+            originRendererList.add(renderer)
+        }
+
+        val index = elementRendererList.indexOf(originRendererList.firstOrNull())
         if (index == -1) {
             //未找到旧的, 则直接添加新的
             addElementRenderer(newRendererList, selector, reason, strategy)
         } else {
             val from = elementRendererList.toList()
-            elementRendererList.remove(renderer)
+            elementRendererList.removeAll(originRendererList)
             elementRendererList.addAll(index, newRendererList)//在指定位置添加所有
             val to = elementRendererList.toList()
 
