@@ -1,7 +1,7 @@
 package com.angcyo.canvas.items.data
 
 import com.angcyo.canvas.Strategy
-import com.angcyo.canvas.data.CanvasProjectItemBean
+import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.unit.toMm
 import com.angcyo.library.unit.toPixel
@@ -11,7 +11,7 @@ import com.angcyo.library.unit.toPixel
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/23
  */
-class DataShapeItem(bean: CanvasProjectItemBean) : DataPathItem(bean) {
+class DataShapeItem(bean: LPElementBean) : DataPathItem(bean) {
 
     /**更新边数*/
     fun updateSide(

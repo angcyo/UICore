@@ -7,6 +7,7 @@ dependencies {
 
     //json
     implementation project(allModule.http)
+    implementation project(allModule.lpDevice)
 
     api project(allModule.vector)
 

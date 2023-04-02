@@ -3,10 +3,11 @@ package com.angcyo.canvas.utils
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.core.renderer.GroupRenderer
 import com.angcyo.canvas.core.renderer.SelectGroupRenderer
-import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
+import com.angcyo.laserpacker.LPDataConstant
+import com.angcyo.laserpacker.bean.LPElementBean
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -29,7 +30,7 @@ fun BaseItem.isLineShape(): Boolean {
     return false
 }
 
-fun CanvasProjectItemBean.isLineShape(): Boolean = mtype == CanvasConstant.DATA_TYPE_LINE
+fun LPElementBean.isLineShape(): Boolean = mtype == LPDataConstant.DATA_TYPE_LINE
 
 /**获取所有依赖的渲染器, 拆组后的所有渲染器*/
 fun Collection<BaseItemRenderer<*>>.getAllDependRendererList(): List<BaseItemRenderer<*>> {

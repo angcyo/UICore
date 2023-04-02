@@ -1,11 +1,11 @@
 package com.angcyo.canvas.graphics
 
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataPathItem
-import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.gcode.GCodeHelper
+import com.angcyo.laserpacker.LPDataConstant
+import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.library.unit.toMm
 
 /**
@@ -15,8 +15,8 @@ import com.angcyo.library.unit.toMm
  */
 class GCodeGraphicsParser : PathGraphicsParser() {
 
-    override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
-        if (bean.mtype == CanvasConstant.DATA_TYPE_GCODE) {
+    override fun parse(bean: LPElementBean, canvasView: ICanvasView?): DataItem? {
+        if (bean.mtype == LPDataConstant.DATA_TYPE_GCODE) {
             val data = bean.data
             if (!data.isNullOrEmpty()) {
                 val item = DataPathItem(bean)

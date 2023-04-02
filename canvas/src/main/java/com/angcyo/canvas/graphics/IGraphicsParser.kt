@@ -5,10 +5,10 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import androidx.core.graphics.withScale
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.data.DataItem
-import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.isLineShape
+import com.angcyo.laserpacker.LPDataConstant
+import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -24,7 +24,7 @@ interface IGraphicsParser {
 
     companion object {
         /**是否需要使用gcode填充path*/
-        fun isNeedGCodeFill(bean: CanvasProjectItemBean?): Boolean {
+        fun isNeedGCodeFill(bean: LPElementBean?): Boolean {
             bean ?: return false
             return !bean.isLineShape() &&
                     bean.gcodeFillStep > 0
@@ -33,7 +33,7 @@ interface IGraphicsParser {
 
     /**解析数据*/
     @CallPoint
-    fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? = null
+    fun parse(bean: LPElementBean, canvasView: ICanvasView?): DataItem? = null
 
     //---
 
@@ -75,11 +75,11 @@ interface IGraphicsParser {
     }
 
     /**简单的初始化一下数据模式*/
-    fun initDataModeWithPaintStyle(bean: CanvasProjectItemBean, paint: Paint) {
+    fun initDataModeWithPaintStyle(bean: LPElementBean, paint: Paint) {
         bean._dataMode = if (paint.style == Paint.Style.STROKE) {
-            CanvasConstant.DATA_MODE_GCODE
+            LPDataConstant.DATA_MODE_GCODE
         } else {
-            CanvasConstant.DATA_MODE_BLACK_WHITE
+            LPDataConstant.DATA_MODE_BLACK_WHITE
         }
     }
 

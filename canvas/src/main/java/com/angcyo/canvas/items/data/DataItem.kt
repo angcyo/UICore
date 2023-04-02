@@ -10,19 +10,20 @@ import androidx.core.graphics.scale
 import com.angcyo.canvas.Reason
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.RenderParams
-import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.canvas.data.toPaintStyle
-import com.angcyo.canvas.data.toPaintStyleInt
-import com.angcyo.canvas.data.toTypeNameString
+import com.angcyo.canvas.data.updateToRenderBounds
 import com.angcyo.canvas.graphics.GraphicsHelper
 import com.angcyo.canvas.graphics.IEngraveProvider
 import com.angcyo.canvas.graphics.flipEngraveBitmap
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.items.renderer.IItemRenderer
-import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.CanvasDataHandleOperate
 import com.angcyo.gcode.GCodeHelper
+import com.angcyo.laserpacker.LPDataConstant
+import com.angcyo.laserpacker.bean.LPElementBean
+import com.angcyo.laserpacker.toPaintStyle
+import com.angcyo.laserpacker.toPaintStyleInt
+import com.angcyo.laserpacker.toTypeNameString
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
@@ -30,11 +31,11 @@ import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 import com.angcyo.library.unit.toPixel
 
 /**
- * [com.angcyo.canvas.data.CanvasProjectItemBean]
+ * [com.angcyo.laserpacker.bean.LPElementBean]
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/21
  */
-open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveProvider {
+open class DataItem(val dataBean: LPElementBean) : BaseItem(), IEngraveProvider {
 
     companion object {
 
@@ -93,7 +94,7 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
             return reason.reason == Reason.REASON_USER && reason.flag.have(Reason.REASON_FLAG_BOUNDS)
         }
         if (this is DataBitmapItem) {
-            if (dataBean.imageFilter == CanvasConstant.DATA_MODE_GCODE /*||
+            if (dataBean.imageFilter == LPDataConstant.DATA_MODE_GCODE /*||
                 dataBean.imageFilter == CanvasConstant.DATA_MODE_DITHERING*/ /*抖动数据也要实时更新*/) {
                 //2022-12-12 抖动图预览的时候是灰度图, 所以不需要实时刷新数据
                 return reason.reason == Reason.REASON_USER && reason.flag.have(Reason.REASON_FLAG_BOUNDS)
@@ -289,15 +290,15 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
 
     /**栅格化*/
     fun itemRasterize(renderer: DataItemRenderer, strategy: Strategy = Strategy.normal) {
-        if (dataBean.mtype != CanvasConstant.DATA_TYPE_BITMAP) {
+        if (dataBean.mtype != LPDataConstant.DATA_TYPE_BITMAP) {
             val oldType = dataBean.mtype
             renderer.canvasView.getCanvasUndoManager().addAndRedo(strategy, {
                 dataBean.mtype = oldType
                 updateRenderItem(renderer)
                 renderer.canvasView.dispatchItemTypeChanged(renderer)
             }) {
-                dataBean.mtype = CanvasConstant.DATA_TYPE_BITMAP
-                dataBean.imageFilter = CanvasConstant.DATA_MODE_BLACK_WHITE
+                dataBean.mtype = LPDataConstant.DATA_TYPE_BITMAP
+                dataBean.imageFilter = LPDataConstant.DATA_MODE_BLACK_WHITE
                 dataBean.imageOriginal = getEngraveBitmap(
                     RenderParams(
                         isFromRenderer = true,
@@ -322,8 +323,8 @@ open class DataItem(val dataBean: CanvasProjectItemBean) : BaseItem(), IEngraveP
     fun _getEngraveBitmap(renderParams: RenderParams): Bitmap? {
         val item = this
         val bitmap = if (item is DataBitmapItem) {
-            if (item.dataBean.mtype == CanvasConstant.DATA_TYPE_BITMAP &&
-                item.dataBean.imageFilter == CanvasConstant.DATA_MODE_DITHERING
+            if (item.dataBean.mtype == LPDataConstant.DATA_TYPE_BITMAP &&
+                item.dataBean.imageFilter == LPDataConstant.DATA_MODE_DITHERING
             ) {
                 //如果是抖动数据, 则返回的依旧是原始图片
                 item.originBitmap?.flipEngraveBitmap(item.dataBean)

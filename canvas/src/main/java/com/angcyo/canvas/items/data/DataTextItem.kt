@@ -6,9 +6,12 @@ import android.graphics.Rect
 import android.graphics.Typeface
 import android.widget.LinearLayout
 import com.angcyo.canvas.Strategy
-import com.angcyo.canvas.data.*
+import com.angcyo.canvas.data.setTextStyle
+import com.angcyo.canvas.data.textStyle
 import com.angcyo.canvas.graphics.TextGraphicsParser
 import com.angcyo.canvas.graphics.lineTextList
+import com.angcyo.laserpacker.*
+import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.FontManager
@@ -24,7 +27,7 @@ import kotlin.math.tan
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/22
  */
-class DataTextItem(bean: CanvasProjectItemBean) : DataItem(bean) {
+class DataTextItem(bean: LPElementBean) : DataItem(bean) {
 
     companion object {
 

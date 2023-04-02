@@ -3,10 +3,11 @@ package com.angcyo.canvas.items.data
 import android.graphics.Bitmap
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.renderer.ICanvasStep
-import com.angcyo.canvas.data.CanvasProjectItemBean
+import com.angcyo.canvas.data.updateScale
 import com.angcyo.canvas.data.updateWidthHeightByOriginImage
-import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.gcode.GCodeDrawable
+import com.angcyo.laserpacker.LPDataConstant
+import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.equalError
 import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
@@ -18,7 +19,7 @@ import com.angcyo.library.unit.toMm
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/21
  */
-class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
+class DataBitmapItem(bean: LPElementBean) : DataItem(bean) {
 
     //region ---属性---
 
@@ -193,13 +194,13 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
     }
 
     /**未缩放情况下, 图片转GCode, 或者GCode转图片切换*/
-    fun CanvasProjectItemBean.isGCodeFilterHandle(oldMode: Int, newMode: Int): Boolean {
+    fun LPElementBean.isGCodeFilterHandle(oldMode: Int, newMode: Int): Boolean {
         val sx = _scaleX
         val sy = _scaleY
         if (sx.equalError(1f) && sy.equalError(1f)) {
             //未缩放
             if (oldMode != newMode) {
-                if (oldMode == CanvasConstant.DATA_MODE_GCODE || newMode == CanvasConstant.DATA_MODE_GCODE) {
+                if (oldMode == LPDataConstant.DATA_MODE_GCODE || newMode == LPDataConstant.DATA_MODE_GCODE) {
                     return true
                 }
             }
@@ -273,7 +274,7 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         dataBean.imageFilter = newMode
         dataBean.src = src
 
-        if (newMode == CanvasConstant.DATA_MODE_GCODE) {
+        if (newMode == LPDataConstant.DATA_MODE_GCODE) {
             //GCode数据放这里
             dataBean.data = src
         }
@@ -281,7 +282,7 @@ class DataBitmapItem(bean: CanvasProjectItemBean) : DataItem(bean) {
         //bounds
         if (dataBean.isGCodeFilterHandle(oldMode, newMode)) {
             //未缩放, 切换到GCode, 重置宽高, 使用数据本身的宽高
-            if (newMode == CanvasConstant.DATA_MODE_GCODE) {
+            if (newMode == LPDataConstant.DATA_MODE_GCODE) {
                 //GCode数据的宽高
                 dataBean.width = width.toMm()
                 dataBean.height = height.toMm()

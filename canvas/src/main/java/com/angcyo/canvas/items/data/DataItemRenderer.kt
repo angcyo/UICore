@@ -13,9 +13,11 @@ import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.SmartAssistant
-import com.angcyo.canvas.data.CanvasProjectItemBean
+import com.angcyo.canvas.data.copyBean
+import com.angcyo.canvas.data.updateByBounds
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.isLineShape
+import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.library.L
 import com.angcyo.library.ex.getScale
 import com.angcyo.library.ex.isNoSize
@@ -23,7 +25,7 @@ import com.angcyo.library.ex.isNoSize
 /**
  * 数据渲染器
  *
- * [com.angcyo.canvas.data.CanvasProjectItemBean]
+ * [com.angcyo.laserpacker.bean.LPElementBean]
  *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/21
@@ -182,7 +184,7 @@ class DataItemRenderer(canvasView: ICanvasView) : BaseItemRenderer<DataItem>(can
         getRendererRenderItem()?.updateLock(to, this, Strategy.preview)
     }
 
-    override fun copyItemRendererData(strategy: Strategy): List<CanvasProjectItemBean>? {
+    override fun copyItemRendererData(strategy: Strategy): List<LPElementBean>? {
         return dataItem?.dataBean?.copyBean()?.run { listOf(this) }
     }
 

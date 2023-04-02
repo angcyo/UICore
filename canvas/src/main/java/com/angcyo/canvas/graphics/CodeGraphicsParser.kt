@@ -3,10 +3,10 @@ package com.angcyo.canvas.graphics
 import android.graphics.Bitmap
 import android.graphics.Paint
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.canvas.data.toPaintStyle
 import com.angcyo.canvas.items.data.DataItem
-import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.laserpacker.LPDataConstant
+import com.angcyo.laserpacker.bean.LPElementBean
+import com.angcyo.laserpacker.toPaintStyle
 import com.angcyo.library.unit.toMm
 import com.angcyo.qrcode.createBarCode
 import com.angcyo.qrcode.createQRCode
@@ -23,14 +23,14 @@ import com.google.zxing.BarcodeFormat
  */
 class CodeGraphicsParser : IGraphicsParser {
 
-    override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
+    override fun parse(bean: LPElementBean, canvasView: ICanvasView?): DataItem? {
         if (!bean.text.isNullOrEmpty()) {
-            if (bean.mtype == CanvasConstant.DATA_TYPE_QRCODE) {
+            if (bean.mtype == LPDataConstant.DATA_TYPE_QRCODE) {
                 bean.text?.createQRCode()?.let { bitmap ->
                     bean.coding = "${BarcodeFormat.QR_CODE}".lowercase()
                     return handleBitmap(bean, bitmap.flipEngraveBitmap(bean))
                 }
-            } else if (bean.mtype == CanvasConstant.DATA_TYPE_BARCODE) {
+            } else if (bean.mtype == LPDataConstant.DATA_TYPE_BARCODE) {
                 bean.text?.createBarCode()?.let { bitmap ->
                     bean.coding = "${BarcodeFormat.CODE_128}".lowercase()
                     return handleBitmap(bean, bitmap.flipEngraveBitmap(bean))
@@ -41,7 +41,7 @@ class CodeGraphicsParser : IGraphicsParser {
     }
 
     /**处理图片*/
-    fun handleBitmap(bean: CanvasProjectItemBean, bitmap: Bitmap): DataItem {
+    fun handleBitmap(bean: LPElementBean, bitmap: Bitmap): DataItem {
         val item = DataItem(bean)
         wrapBitmapDrawable(item, bitmap)
 
@@ -54,9 +54,9 @@ class CodeGraphicsParser : IGraphicsParser {
 
         if (bean.paintStyle.toPaintStyle() == Paint.Style.STROKE) {
             //GCode
-            bean._dataMode = CanvasConstant.DATA_MODE_GCODE
+            bean._dataMode = LPDataConstant.DATA_MODE_GCODE
         } else {
-            bean._dataMode = CanvasConstant.DATA_MODE_BLACK_WHITE
+            bean._dataMode = LPDataConstant.DATA_MODE_BLACK_WHITE
         }
 
         return item

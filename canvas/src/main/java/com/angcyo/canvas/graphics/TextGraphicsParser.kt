@@ -6,10 +6,11 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.widget.LinearLayout
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.data.CanvasProjectItemBean
+import com.angcyo.canvas.data.updateToRenderBounds
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataTextItem
-import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.laserpacker.LPDataConstant
+import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -29,8 +30,8 @@ import com.angcyo.library.unit.toPixel
  */
 class TextGraphicsParser : IGraphicsParser {
 
-    override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
-        if (bean.mtype == CanvasConstant.DATA_TYPE_TEXT && !bean.text.isNullOrEmpty()) {
+    override fun parse(bean: LPElementBean, canvasView: ICanvasView?): DataItem? {
+        if (bean.mtype == LPDataConstant.DATA_TYPE_TEXT && !bean.text.isNullOrEmpty()) {
             val item = DataTextItem(bean)
             updateTextDrawable(item)
             return item

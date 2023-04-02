@@ -8,13 +8,13 @@ import androidx.annotation.WorkerThread
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.IRenderer
-import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.canvas.data.toPaintStyleInt
 import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.data.DataTextItem
-import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.ShapesHelper
 import com.angcyo.gcode.GCodeWriteHandler
+import com.angcyo.laserpacker.LPDataConstant
+import com.angcyo.laserpacker.bean.LPElementBean
+import com.angcyo.laserpacker.toPaintStyleInt
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.flip
@@ -39,8 +39,8 @@ import kotlin.random.Random.Default.nextInt
  * [length] 线的长度
  * */
 fun CanvasDelegate.addLineRender(@Pixel length: Float = ShapesHelper.defaultWidth): DataItemRenderer? {
-    val bean = CanvasProjectItemBean()
-    bean.mtype = CanvasConstant.DATA_TYPE_LINE
+    val bean = LPElementBean()
+    bean.mtype = LPDataConstant.DATA_TYPE_LINE
     bean.width = length.toMm()
     return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
@@ -50,8 +50,8 @@ fun CanvasDelegate.addOvalRender(
     @Pixel width: Float = ShapesHelper.defaultWidth,
     @Pixel height: Float = ShapesHelper.defaultHeight
 ): DataItemRenderer? {
-    val bean = CanvasProjectItemBean()
-    bean.mtype = CanvasConstant.DATA_TYPE_OVAL
+    val bean = LPElementBean()
+    bean.mtype = LPDataConstant.DATA_TYPE_OVAL
     bean.width = width.toMm()
     bean.height = height.toMm()
     bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
@@ -67,8 +67,8 @@ fun CanvasDelegate.addRectRender(
     @Pixel width: Float = ShapesHelper.defaultWidth,
     @Pixel height: Float = ShapesHelper.defaultHeight
 ): DataItemRenderer? {
-    val bean = CanvasProjectItemBean()
-    bean.mtype = CanvasConstant.DATA_TYPE_RECT
+    val bean = LPElementBean()
+    bean.mtype = LPDataConstant.DATA_TYPE_RECT
     bean.width = width.toMm()
     bean.height = height.toMm()
     bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
@@ -80,13 +80,13 @@ fun CanvasDelegate.addRectRender(
 }
 
 /**添加一个多边形, 支持任意边数
- * [com.angcyo.canvas.data.CanvasProjectItemBean.side]*/
+ * [com.angcyo.laserpacker.bean.LPElementBean.side]*/
 fun CanvasDelegate.addPolygonRender(
     @Pixel width: Float = ShapesHelper.defaultWidth,
     @Pixel height: Float = ShapesHelper.defaultHeight
 ): DataItemRenderer? {
-    val bean = CanvasProjectItemBean()
-    bean.mtype = CanvasConstant.DATA_TYPE_POLYGON
+    val bean = LPElementBean()
+    bean.mtype = LPDataConstant.DATA_TYPE_POLYGON
     bean.width = width.toMm()
     bean.height = height.toMm()
     bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
@@ -98,15 +98,15 @@ fun CanvasDelegate.addPolygonRender(
 }
 
 /**添加一个星星, 支持任意边数, 和深度
- * [com.angcyo.canvas.data.CanvasProjectItemBean.side]
- * [com.angcyo.canvas.data.CanvasProjectItemBean.depth]
+ * [com.angcyo.laserpacker.bean.LPElementBean.side]
+ * [com.angcyo.laserpacker.bean.LPElementBean.depth]
  * */
 fun CanvasDelegate.addPentagramRender(
     @Pixel width: Float = ShapesHelper.defaultWidth,
     @Pixel height: Float = ShapesHelper.defaultHeight
 ): DataItemRenderer? {
-    val bean = CanvasProjectItemBean()
-    bean.mtype = CanvasConstant.DATA_TYPE_PENTAGRAM
+    val bean = LPElementBean()
+    bean.mtype = LPDataConstant.DATA_TYPE_PENTAGRAM
     bean.width = width.toMm()
     bean.height = height.toMm()
     bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
@@ -124,8 +124,8 @@ fun CanvasDelegate.addLoveRender(
     @Pixel width: Float = ShapesHelper.defaultWidth,
     @Pixel height: Float = ShapesHelper.defaultHeight
 ): DataItemRenderer? {
-    val bean = CanvasProjectItemBean()
-    bean.mtype = CanvasConstant.DATA_TYPE_LOVE
+    val bean = LPElementBean()
+    bean.mtype = LPDataConstant.DATA_TYPE_LOVE
     bean.width = width.toMm()
     bean.height = height.toMm()
     bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
@@ -136,11 +136,11 @@ fun CanvasDelegate.addLoveRender(
 
 //region ---矢量---
 
-/**SVG数据转[CanvasProjectItemBean]*/
-fun String?.toSvgItemData(): CanvasProjectItemBean? {
+/**SVG数据转[LPElementBean]*/
+fun String?.toSvgItemData(): LPElementBean? {
     this ?: return null
-    val bean = CanvasProjectItemBean()
-    bean.mtype = CanvasConstant.DATA_TYPE_SVG
+    val bean = LPElementBean()
+    bean.mtype = LPDataConstant.DATA_TYPE_SVG
     bean.data = this
     bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
     return bean
@@ -150,11 +150,11 @@ fun String?.toSvgItemData(): CanvasProjectItemBean? {
 fun CanvasDelegate.addSvgRender(svg: String?) =
     GraphicsHelper.addRenderItemDataBean(this, svg.toSvgItemData())
 
-/**GCode数据转[CanvasProjectItemBean]*/
-fun String?.toGCodeItemData(): CanvasProjectItemBean? {
+/**GCode数据转[LPElementBean]*/
+fun String?.toGCodeItemData(): LPElementBean? {
     this ?: return null
-    val bean = CanvasProjectItemBean()
-    bean.mtype = CanvasConstant.DATA_TYPE_GCODE
+    val bean = LPElementBean()
+    bean.mtype = LPDataConstant.DATA_TYPE_GCODE
     bean.data = this
     bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
     return bean
@@ -169,16 +169,16 @@ fun CanvasDelegate.addGCodeRender(gcode: String?) =
 //region ---算法---
 
 /**翻转图片*/
-fun Bitmap.flipEngraveBitmap(bean: CanvasProjectItemBean) = flip(bean._flipScaleX, bean._flipScaleY)
+fun Bitmap.flipEngraveBitmap(bean: LPElementBean) = flip(bean._flipScaleX, bean._flipScaleY)
 
 /**翻转Path*/
-fun Path.flipEngravePath(bean: CanvasProjectItemBean) = flip(bean._flipScaleX, bean._flipScaleY)
+fun Path.flipEngravePath(bean: LPElementBean) = flip(bean._flipScaleX, bean._flipScaleY)
 
-fun List<Path>.flipEngravePath(bean: CanvasProjectItemBean) =
+fun List<Path>.flipEngravePath(bean: LPElementBean) =
     flip(bean._flipScaleX, bean._flipScaleY)
 
 /**数据索引
- * [com.angcyo.canvas.data.CanvasProjectItemBean.index]*/
+ * [com.angcyo.laserpacker.bean.LPElementBean.index]*/
 val IRenderer.dataItemIndex: Int?
     get() = if (this is DataItemRenderer) {
         this.rendererItem?.dataBean?.index
@@ -190,10 +190,10 @@ val IRenderer.dataItemIndex: Int?
 
 //region ---图/文---
 
-fun Bitmap?.toBitmapItemData(action: CanvasProjectItemBean.() -> Unit = {}): CanvasProjectItemBean? {
+fun Bitmap?.toBitmapItemData(action: LPElementBean.() -> Unit = {}): LPElementBean? {
     this ?: return null
-    val bean = CanvasProjectItemBean()
-    bean.mtype = CanvasConstant.DATA_TYPE_BITMAP
+    val bean = LPElementBean()
+    bean.mtype = LPDataConstant.DATA_TYPE_BITMAP
     bean.imageOriginal = toBase64Data()
     bean.action()
     return bean
@@ -202,7 +202,7 @@ fun Bitmap?.toBitmapItemData(action: CanvasProjectItemBean.() -> Unit = {}): Can
 /**添加一个[bitmap]数据渲染*/
 fun CanvasDelegate.addBitmapRender(
     bitmap: Bitmap?,
-    action: CanvasProjectItemBean.() -> Unit = {}
+    action: LPElementBean.() -> Unit = {}
 ): DataItemRenderer? {
     bitmap ?: return null
     val bean = bitmap.toBitmapItemData(action) ?: return null
@@ -210,10 +210,10 @@ fun CanvasDelegate.addBitmapRender(
     return GraphicsHelper.addRenderItemDataBean(this, bean)
 }
 
-fun CharSequence?.toTextItemData(): CanvasProjectItemBean? {
+fun CharSequence?.toTextItemData(): LPElementBean? {
     this ?: return null
-    val bean = CanvasProjectItemBean()
-    bean.mtype = CanvasConstant.DATA_TYPE_TEXT
+    val bean = LPElementBean()
+    bean.mtype = LPDataConstant.DATA_TYPE_TEXT
     bean.text = "$this"
     bean.paintStyle = Paint.Style.FILL.toPaintStyleInt()
     return bean
@@ -221,16 +221,16 @@ fun CharSequence?.toTextItemData(): CanvasProjectItemBean? {
 
 /**添加一个[text]数据渲染
  *
- * [CanvasConstant.DATA_TYPE_TEXT]
- * [CanvasConstant.DATA_TYPE_BARCODE]
- * [CanvasConstant.DATA_TYPE_QRCODE]
+ * [LPDataConstant.DATA_TYPE_TEXT]
+ * [LPDataConstant.DATA_TYPE_BARCODE]
+ * [LPDataConstant.DATA_TYPE_QRCODE]
  * */
 fun CanvasDelegate.addTextRender(
     text: CharSequence?,
-    type: Int = CanvasConstant.DATA_TYPE_TEXT
+    type: Int = LPDataConstant.DATA_TYPE_TEXT
 ): DataItemRenderer? {
     text ?: return null
-    val bean = CanvasProjectItemBean()
+    val bean = LPElementBean()
     bean.mtype = type
     bean.text = "$text"
     bean.paintStyle = Paint.Style.FILL.toPaintStyleInt()
@@ -262,7 +262,7 @@ fun CanvasDelegate.addParameterComparisonTable(
         .toPixel() else (2f / (gridCount / 10f)).toPixel()
     val textMargin = 1f.toPixel()
 
-    val numberTextItem = DataTextItem(CanvasProjectItemBean().apply {
+    val numberTextItem = DataTextItem(LPElementBean().apply {
         text = "100"
         fontSize = if (lastFontSize > 0) {
             lastFontSize.toFloat()
@@ -276,8 +276,8 @@ fun CanvasDelegate.addParameterComparisonTable(
     })
 
     //功率/深度文本的宽高
-    val powerTextItem = DataTextItem(CanvasProjectItemBean().apply {
-        mtype = CanvasConstant.DATA_TYPE_TEXT
+    val powerTextItem = DataTextItem(LPElementBean().apply {
+        mtype = LPDataConstant.DATA_TYPE_TEXT
         fontSize = if (lastFontSize > 0) {
             lastFontSize.toFloat()
         } else {
@@ -288,8 +288,8 @@ fun CanvasDelegate.addParameterComparisonTable(
         printPrecision = numberTextItem.dataBean.printPrecision
         printCount = numberTextItem.dataBean.printCount
     })
-    val depthTextItem = DataTextItem(CanvasProjectItemBean().apply {
-        mtype = CanvasConstant.DATA_TYPE_TEXT
+    val depthTextItem = DataTextItem(LPElementBean().apply {
+        mtype = LPDataConstant.DATA_TYPE_TEXT
         fontSize = powerTextItem.dataBean.fontSize
         text = "Depth(%)"
         angle = -90f
@@ -298,9 +298,9 @@ fun CanvasDelegate.addParameterComparisonTable(
         printCount = numberTextItem.dataBean.printCount
     })
 
-    //CanvasProjectItemBean
-    fun createItemBean(): CanvasProjectItemBean = CanvasProjectItemBean().apply {
-        mtype = CanvasConstant.DATA_TYPE_TEXT
+    //LPElementBean
+    fun createItemBean(): LPElementBean = LPElementBean().apply {
+        mtype = LPDataConstant.DATA_TYPE_TEXT
         fontSize = numberTextItem.dataBean.fontSize
         charSpacing = numberTextItem.dataBean.charSpacing
 
@@ -331,10 +331,10 @@ fun CanvasDelegate.addParameterComparisonTable(
     val gridHeight = gridHeightSum / gridCount
 
     //最终结果
-    val beanList = mutableListOf<CanvasProjectItemBean>()
+    val beanList = mutableListOf<LPElementBean>()
 
     //---数值
-    val numberBeanList = mutableListOf<CanvasProjectItemBean>()
+    val numberBeanList = mutableListOf<LPElementBean>()
 
     //横竖线
     @Pixel
@@ -384,8 +384,8 @@ fun CanvasDelegate.addParameterComparisonTable(
             val powerValue = (power + 1) * step
             val depthValue = (depth + 1) * step
             if (powerValue * depthValue <= powerDepth) {
-                beanList.add(CanvasProjectItemBean().apply {
-                    mtype = CanvasConstant.DATA_TYPE_RECT
+                beanList.add(LPElementBean().apply {
+                    mtype = LPDataConstant.DATA_TYPE_RECT
                     paintStyle = Paint.Style.FILL.toPaintStyleInt()
                     width = (gridWidth - gridMargin * 2).toMm()
                     height = (gridHeight - gridMargin * 2).toMm()
@@ -431,7 +431,7 @@ fun CanvasDelegate.addParameterComparisonTable(
 
     val gcode = gCodeWriter.toString()
     beanList.add(createItemBean().apply {
-        mtype = CanvasConstant.DATA_TYPE_GCODE
+        mtype = LPDataConstant.DATA_TYPE_GCODE
         paintStyle = Paint.Style.STROKE.toPaintStyleInt()
         data = gcode
         left = gridLeft.toMm()
@@ -472,8 +472,8 @@ fun CanvasDelegate.addMultiplicationTable(@Pixel bounds: RectF) {
      val textWidth = textWidthSum / count
      val textHeight = textHeightSum / count*/
 
-    val textItem = DataTextItem(CanvasProjectItemBean().apply {
-        mtype = CanvasConstant.DATA_TYPE_TEXT
+    val textItem = DataTextItem(LPElementBean().apply {
+        mtype = LPDataConstant.DATA_TYPE_TEXT
         text = "9 × 9=81"
         fontSize = 4f
         charSpacing = 0.2f
@@ -489,16 +489,16 @@ fun CanvasDelegate.addMultiplicationTable(@Pixel bounds: RectF) {
     val textLeft = bounds.left + padding
     val textTop = bounds.centerY() - (textHeight * count + verticalGap * (count - 1)) / 2
 
-    //CanvasProjectItemBean
-    fun createItemBean(): CanvasProjectItemBean = CanvasProjectItemBean().apply {
-        mtype = CanvasConstant.DATA_TYPE_TEXT
+    //LPElementBean
+    fun createItemBean(): LPElementBean = LPElementBean().apply {
+        mtype = LPDataConstant.DATA_TYPE_TEXT
         fontSize = textItem.dataBean.fontSize
         charSpacing = textItem.dataBean.charSpacing
         width = textItem.dataBean.width
         height = textItem.dataBean.height
     }
 
-    val beanList = mutableListOf<CanvasProjectItemBean>()
+    val beanList = mutableListOf<LPElementBean>()
     for (x in 1..count) { //1~9 列
         val left = textLeft + (x - 1) * (textWidth + horizontalGap)
         for (y in x..count) { //x~9 行
@@ -557,8 +557,8 @@ fun CanvasDelegate.addVisualChart(@Pixel bounds: RectF) {
         return angleList.last()
     }
 
-    val textItem = DataTextItem(CanvasProjectItemBean().apply {
-        mtype = CanvasConstant.DATA_TYPE_TEXT
+    val textItem = DataTextItem(LPElementBean().apply {
+        mtype = LPDataConstant.DATA_TYPE_TEXT
         text = "E"
         fontSize = minFontSize
 
@@ -573,9 +573,9 @@ fun CanvasDelegate.addVisualChart(@Pixel bounds: RectF) {
     val textAllWidth = lastLineSize * textItem.getTextWidth() + (lastLineSize - 1) * horizontalGap
     textLeft = bounds.centerX() - textAllWidth / 2
 
-    //CanvasProjectItemBean
-    fun createItemBean(): CanvasProjectItemBean = CanvasProjectItemBean().apply {
-        mtype = CanvasConstant.DATA_TYPE_TEXT
+    //LPElementBean
+    fun createItemBean(): LPElementBean = LPElementBean().apply {
+        mtype = LPDataConstant.DATA_TYPE_TEXT
         fontSize = textItem.dataBean.fontSize
         text = textItem.dataBean.text
         angle = randomAngle()
@@ -583,7 +583,7 @@ fun CanvasDelegate.addVisualChart(@Pixel bounds: RectF) {
         height = textItem.dataBean.height
     }
 
-    val beanList = mutableListOf<CanvasProjectItemBean>()
+    val beanList = mutableListOf<LPElementBean>()
     for (line in 0 until lineCount) {
         val lineSize = lineSizeList[line]
         val lineTop = textTop

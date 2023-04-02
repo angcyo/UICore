@@ -3,8 +3,9 @@ package com.angcyo.canvas.items.data
 import android.graphics.Color
 import android.graphics.Path
 import com.angcyo.canvas.LinePath
-import com.angcyo.canvas.data.CanvasProjectItemBean
-import com.angcyo.canvas.data.toPaintStyle
+import com.angcyo.canvas.data.updateToRenderBounds
+import com.angcyo.laserpacker.bean.LPElementBean
+import com.angcyo.laserpacker.toPaintStyle
 import com.angcyo.library.L
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -18,7 +19,7 @@ import com.angcyo.library.ex.toColor
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/23
  */
-open class DataPathItem(bean: CanvasProjectItemBean) : DataItem(bean) {
+open class DataPathItem(bean: LPElementBean) : DataItem(bean) {
 
     //region ---属性---
 

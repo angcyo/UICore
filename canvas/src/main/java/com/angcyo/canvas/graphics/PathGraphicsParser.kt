@@ -6,11 +6,11 @@ import android.graphics.PathEffect
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataPathItem
-import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.isLineShape
+import com.angcyo.laserpacker.LPDataConstant
+import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.ScalePictureDrawable
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -37,10 +37,10 @@ open class PathGraphicsParser : IGraphicsParser {
         const val MIN_PATH_SIZE = 1.0f
     }
 
-    override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
-        if (bean.mtype == CanvasConstant.DATA_TYPE_SINGLE_WORD /*单线字*/ ||
-            bean.mtype == CanvasConstant.DATA_TYPE_PEN /*钢笔*/ ||
-            (bean.mtype == CanvasConstant.DATA_TYPE_SVG && bean.data.isNullOrEmpty())/*svg*/
+    override fun parse(bean: LPElementBean, canvasView: ICanvasView?): DataItem? {
+        if (bean.mtype == LPDataConstant.DATA_TYPE_SINGLE_WORD /*单线字*/ ||
+            bean.mtype == LPDataConstant.DATA_TYPE_PEN /*钢笔*/ ||
+            (bean.mtype == LPDataConstant.DATA_TYPE_SVG && bean.data.isNullOrEmpty())/*svg*/
         ) {
             //
             val data = bean.path
@@ -53,7 +53,7 @@ open class PathGraphicsParser : IGraphicsParser {
 
     /**svg 纯路径数据, MXXX LXXX*/
     fun parsePathItem(
-        bean: CanvasProjectItemBean,
+        bean: LPElementBean,
         data: String,
         canvasView: ICanvasView?
     ): DataPathItem? {
@@ -195,7 +195,7 @@ open class PathGraphicsParser : IGraphicsParser {
     }
 
     /**创建一个虚线效果*/
-    fun createDashPathEffect(itemDataBean: CanvasProjectItemBean): PathEffect {
+    fun createDashPathEffect(itemDataBean: LPElementBean): PathEffect {
         val dashWidth = MM_UNIT.convertValueToPixel(itemDataBean.dashWidth)
         val dashGap = MM_UNIT.convertValueToPixel(itemDataBean.dashGap)
         return DashPathEffect(floatArrayOf(dashWidth, dashGap), 0f)

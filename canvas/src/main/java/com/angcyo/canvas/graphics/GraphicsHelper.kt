@@ -9,7 +9,9 @@ import com.angcyo.canvas.Strategy
 import com.angcyo.canvas.core.CanvasViewBox
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.renderer.GroupRenderer
-import com.angcyo.canvas.data.CanvasProjectItemBean
+import com.angcyo.canvas.data.generateNameByRenderer
+import com.angcyo.canvas.data.updateToRenderBounds
+import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.canvas.graphics.PathGraphicsParser.Companion.MIN_PATH_SIZE
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.data.DataItem
@@ -29,7 +31,7 @@ import com.angcyo.library.toastQQ
 import com.angcyo.library.unit.toMm
 
 /**
- * 用来解析[CanvasProjectItemBean]
+ * 用来解析[LPElementBean]
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/21
  */
@@ -64,7 +66,7 @@ object GraphicsHelper {
     var assignLocationBounds: RectF? = null
 
     /**最小位置分配, 应该为设备最佳预览范围的左上角
-     * [com.angcyo.engrave.model.FscDeviceModel.initDevice]*/
+     * [com.angcyo.laserpacker.device.model.FscDeviceModel.initDevice]*/
     @MM
     var _minLeft = 0f
 
@@ -95,7 +97,7 @@ object GraphicsHelper {
     var POSITION_CUT_TOP = 30f * 5
 
     /**分配一个位置, 和智能调整缩放*/
-    fun assignLocation(canvasViewBox: CanvasViewBox, bean: CanvasProjectItemBean) {
+    fun assignLocation(canvasViewBox: CanvasViewBox, bean: LPElementBean) {
         if (_lastLeft > POSITION_CUT_LEFT) {
             //换行
             _lastLeft = 0f
@@ -156,7 +158,7 @@ object GraphicsHelper {
      * */
     @CallPoint
     @AnyThread
-    fun parseRenderItemFrom(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
+    fun parseRenderItemFrom(bean: LPElementBean, canvasView: ICanvasView?): DataItem? {
         initParser()
         var result: DataItem? = null
         for (parser in _parserList) {
@@ -181,7 +183,7 @@ object GraphicsHelper {
     @AnyThread
     fun renderItemDataBean(
         canvasView: ICanvasView,
-        bean: CanvasProjectItemBean,
+        bean: LPElementBean,
         selected: Boolean,
         assignLocation: Boolean = false,
         strategy: Strategy = Strategy.normal
@@ -211,7 +213,7 @@ object GraphicsHelper {
     @AnyThread
     fun renderItemDataBeanList(
         canvasView: ICanvasView,
-        beanList: List<CanvasProjectItemBean>,
+        beanList: List<LPElementBean>,
         selected: Boolean,
         strategy: Strategy
     ): List<BaseItemRenderer<*>> {
@@ -271,7 +273,7 @@ object GraphicsHelper {
     @AnyThread
     fun addRenderItemDataBean(
         canvasView: ICanvasView?,
-        bean: CanvasProjectItemBean?
+        bean: LPElementBean?
     ): DataItemRenderer? {
         return if (bean == null || canvasView == null) {
             null
@@ -291,7 +293,7 @@ object GraphicsHelper {
      * */
     @CallPoint
     @AnyThread
-    fun updateRenderItem(renderer: DataItemRenderer, bean: CanvasProjectItemBean, reason: Reason) {
+    fun updateRenderItem(renderer: DataItemRenderer, bean: LPElementBean, reason: Reason) {
         doBack(true) {
             L.w("更新渲染数据:[${bean.index}]${reason}")
             renderer.renderItemDataChanged(reason)
@@ -314,7 +316,7 @@ object GraphicsHelper {
 
     /**根据[bean]提供的参数, 更新[renderer]相关属性*/
     @AnyThread
-    fun updateRendererProperty(renderer: BaseItemRenderer<*>, bean: CanvasProjectItemBean) {
+    fun updateRendererProperty(renderer: BaseItemRenderer<*>, bean: LPElementBean) {
         //可见性
         renderer._visible = bean.isVisible
 

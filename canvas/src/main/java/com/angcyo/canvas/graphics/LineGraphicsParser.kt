@@ -2,10 +2,10 @@ package com.angcyo.canvas.graphics
 
 import com.angcyo.canvas.LinePath
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataShapeItem
-import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.laserpacker.LPDataConstant
+import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.library.unit.toPixel
 
 /**
@@ -15,8 +15,8 @@ import com.angcyo.library.unit.toPixel
  */
 class LineGraphicsParser : PathGraphicsParser() {
 
-    override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
-        if (bean.mtype == CanvasConstant.DATA_TYPE_LINE) {
+    override fun parse(bean: LPElementBean, canvasView: ICanvasView?): DataItem? {
+        if (bean.mtype == LPDataConstant.DATA_TYPE_LINE) {
             val item = DataShapeItem(bean)
             item.updatePaint()
 
@@ -38,7 +38,7 @@ class LineGraphicsParser : PathGraphicsParser() {
             } else {
                 CanvasConstant.DATA_MODE_GCODE
             }*/
-            bean._dataMode = CanvasConstant.DATA_MODE_GCODE //强制使用GCode
+            bean._dataMode = LPDataConstant.DATA_MODE_GCODE //强制使用GCode
             return item
         }
         return super.parse(bean, canvasView)

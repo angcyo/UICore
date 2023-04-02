@@ -1,11 +1,11 @@
 package com.angcyo.canvas.graphics
 
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataShapeItem
-import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.ShapesHelper
+import com.angcyo.laserpacker.LPDataConstant
+import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.library.unit.toPixel
 
 /**
@@ -15,8 +15,8 @@ import com.angcyo.library.unit.toPixel
  */
 class PentagramGraphicsParser : PathGraphicsParser() {
 
-    override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
-        if (bean.mtype == CanvasConstant.DATA_TYPE_PENTAGRAM && bean.side >= 3) {
+    override fun parse(bean: LPElementBean, canvasView: ICanvasView?): DataItem? {
+        if (bean.mtype == LPDataConstant.DATA_TYPE_PENTAGRAM && bean.side >= 3) {
             val item = DataShapeItem(bean)
             item.updatePaint()
 

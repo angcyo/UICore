@@ -8,8 +8,6 @@ import androidx.core.graphics.*
 import com.angcyo.canvas.core.*
 import com.angcyo.canvas.core.component.*
 import com.angcyo.canvas.core.renderer.*
-import com.angcyo.canvas.data.CanvasProjectBean
-import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.LimitDataInfo
 import com.angcyo.canvas.graphics.GraphicsHelper
 import com.angcyo.canvas.graphics.dataItemIndex
@@ -25,6 +23,8 @@ import com.angcyo.canvas.utils.limitMaxWidthHeight
 import com.angcyo.http.base.json
 import com.angcyo.http.base.jsonArray
 import com.angcyo.http.base.toJson
+import com.angcyo.laserpacker.bean.LPElementBean
+import com.angcyo.laserpacker.bean.LPProjectBean
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -751,7 +751,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
         outWidth: Int = -1,
         outHeight: Int = -1,
         renderList: List<BaseItemRenderer<*>>? = itemsRendererList
-    ): CanvasProjectBean {
+    ): LPProjectBean {
         projectName = fileName ?: projectName
 
         val bitmap = getBitmap(true, outWidth, outHeight, renderList)
@@ -774,7 +774,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
                 }
             }
         }.toString()
-        return CanvasProjectBean(
+        return LPProjectBean(
             width,
             height,
             bitmap?.toBase64Data(),
@@ -1030,7 +1030,7 @@ class CanvasDelegate(val view: View) : ICanvasView {
 
     /**复制一组item*/
     fun copyItemRenderer(list: List<BaseItemRenderer<*>>, strategy: Strategy) {
-        val copyDataList = mutableListOf<CanvasProjectItemBean>()
+        val copyDataList = mutableListOf<LPElementBean>()
         list.forEach { renderer ->
             renderer.copyItemRendererData(strategy)?.let { copyDataList.addAll(it) }
         }

@@ -1,10 +1,10 @@
 package com.angcyo.canvas.graphics
 
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataShapeItem
-import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.laserpacker.LPDataConstant
+import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.library.ex.adjustWidthHeight
 import com.angcyo.library.unit.toPixel
 import com.pixplicity.sharp.Sharp
@@ -16,8 +16,8 @@ import com.pixplicity.sharp.Sharp
  */
 class LoveGraphicsParser : PathGraphicsParser() {
 
-    override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
-        if (bean.mtype == CanvasConstant.DATA_TYPE_LOVE) {
+    override fun parse(bean: LPElementBean, canvasView: ICanvasView?): DataItem? {
+        if (bean.mtype == LPDataConstant.DATA_TYPE_LOVE) {
             val item = DataShapeItem(bean)
             item.updatePaint()
 

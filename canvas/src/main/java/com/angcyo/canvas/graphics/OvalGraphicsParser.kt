@@ -4,10 +4,10 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.os.Build
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.data.DataShapeItem
-import com.angcyo.canvas.utils.CanvasConstant
+import com.angcyo.laserpacker.LPDataConstant
+import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.library.unit.toPixel
 import com.angcyo.vector.VectorWriteHandler
 
@@ -18,8 +18,8 @@ import com.angcyo.vector.VectorWriteHandler
  */
 class OvalGraphicsParser : PathGraphicsParser() {
 
-    override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
-        if (bean.mtype == CanvasConstant.DATA_TYPE_OVAL) {
+    override fun parse(bean: LPElementBean, canvasView: ICanvasView?): DataItem? {
+        if (bean.mtype == LPDataConstant.DATA_TYPE_OVAL) {
             val item = DataShapeItem(bean)
             item.updatePaint()
 

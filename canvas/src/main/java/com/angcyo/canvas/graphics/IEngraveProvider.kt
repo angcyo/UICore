@@ -21,7 +21,7 @@ interface IEngraveProvider {
     /**获取[DataItem]的渲染器, 如果有*/
     fun getEngraveRenderer(): IItemRenderer<*>? = null
 
-    /**[com.angcyo.canvas.data.CanvasProjectItemBean]解析到内存中的数据*/
+    /**[com.angcyo.laserpacker.bean.LPElementBean]解析到内存中的数据*/
     fun getEngraveDataItem(): DataItem? = null
 
     /**获取用于直接雕刻的图片, 返回的图片应该已经进行了缩放和旋转 */

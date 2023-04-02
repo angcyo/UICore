@@ -4,12 +4,13 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import com.angcyo.bitmap.handle.BitmapHandle
 import com.angcyo.canvas.core.ICanvasView
-import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.items.data.DataBitmapItem
 import com.angcyo.canvas.items.data.DataItem
-import com.angcyo.canvas.utils.CanvasConstant
 import com.angcyo.canvas.utils.parseGCode
 import com.angcyo.gcode.GCodeHelper
+import com.angcyo.laserpacker.LPDataConstant
+import com.angcyo.laserpacker.bean.LPElementBean
+import com.angcyo.laserpacker.device.HawkEngraveKeys
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.app
@@ -32,7 +33,7 @@ class BitmapGraphicsParser : IGraphicsParser {
     companion object {
 
         /**处理图片抖动*/
-        fun handleDithering(bitmap: Bitmap, bean: CanvasProjectItemBean) = handleDithering(
+        fun handleDithering(bitmap: Bitmap, bean: LPElementBean) = handleDithering(
             bitmap,
             bean.inverse,
             bean.contrast.toDouble(),
@@ -67,11 +68,11 @@ class BitmapGraphicsParser : IGraphicsParser {
         }
     }
 
-    override fun parse(bean: CanvasProjectItemBean, canvasView: ICanvasView?): DataItem? {
-        if (bean.mtype == CanvasConstant.DATA_TYPE_BITMAP && !bean.imageOriginal.isNullOrEmpty()) {
+    override fun parse(bean: LPElementBean, canvasView: ICanvasView?): DataItem? {
+        if (bean.mtype == LPDataConstant.DATA_TYPE_BITMAP && !bean.imageOriginal.isNullOrEmpty()) {
             try {
                 val originBitmap = bean.imageOriginal?.toBitmapOfBase64() ?: return null
-                return if (bean.imageFilter == CanvasConstant.DATA_MODE_GCODE) {
+                return if (bean.imageFilter == LPDataConstant.DATA_MODE_GCODE) {
                     //图片转成了GCode
                     _parseBitmapGCode(bean, originBitmap)
                 } else {
@@ -87,7 +88,7 @@ class BitmapGraphicsParser : IGraphicsParser {
     }
 
     /**初始化数据的宽高属性, 如果之前没有宽高数据*/
-    fun CanvasProjectItemBean.initBeanWidthHeight(@Pixel width: Int, @Pixel height: Int) {
+    fun LPElementBean.initBeanWidthHeight(@Pixel width: Int, @Pixel height: Int) {
         if (_width <= 0) {
             this.width = width.toMm()
         }
@@ -97,7 +98,7 @@ class BitmapGraphicsParser : IGraphicsParser {
     }
 
     /**图片转GCode处理*/
-    fun _parseBitmapGCode(bean: CanvasProjectItemBean, originBitmap: Bitmap?): DataItem? {
+    fun _parseBitmapGCode(bean: LPElementBean, originBitmap: Bitmap?): DataItem? {
         var gcode = bean.data ?: bean.src
         if (gcode.isNullOrBlank() && originBitmap != null) {
             //自动应用算法
@@ -147,16 +148,16 @@ class BitmapGraphicsParser : IGraphicsParser {
                 gcodeDrawable.draw(this)
             }
 
-            bean._dataMode = CanvasConstant.DATA_MODE_GCODE
+            bean._dataMode = LPDataConstant.DATA_MODE_GCODE
 
             return item
         }
     }
 
     /**图片其他算法那*/
-    fun _parseBitmap(bean: CanvasProjectItemBean, originBitmap: Bitmap?): DataItem? {
+    fun _parseBitmap(bean: LPElementBean, originBitmap: Bitmap?): DataItem? {
         //其他算法处理后的图片
-        /*if (bean.imageFilter == CanvasConstant.DATA_MODE_DITHERING) {
+        /*if (bean.imageFilter == LPDataConstant.DATA_MODE_DITHERING) {
             //抖动数据需要实时更新
             if (originBitmap != null) {
                 //com.angcyo.canvas.laser.pecker.CanvasBitmapHandler.handleDithering
@@ -169,13 +170,13 @@ class BitmapGraphicsParser : IGraphicsParser {
         } else*/ if (bean.src.isNullOrBlank() && originBitmap != null) {
             //只有原图, 没有算法处理后的图片, 则需要主动应用算法处理图片
             bean.src = when (bean.imageFilter) {
-                CanvasConstant.DATA_MODE_BLACK_WHITE -> BitmapHandle.toBlackWhiteHandle(
+                LPDataConstant.DATA_MODE_BLACK_WHITE -> BitmapHandle.toBlackWhiteHandle(
                     originBitmap,
                     bean.blackThreshold.toInt(),
                     bean.inverse
                 )
                 /*originBitmap.toBlackWhiteHandle( bean.blackThreshold.toInt(), bean.inverse )*/
-                CanvasConstant.DATA_MODE_SEAL -> OpenCV.bitmapToSeal(
+                LPDataConstant.DATA_MODE_SEAL -> OpenCV.bitmapToSeal(
                     app(),
                     BitmapHandle.toBlackWhiteHandle(
                         originBitmap,
@@ -188,7 +189,7 @@ class BitmapGraphicsParser : IGraphicsParser {
                     )*/,
                     bean.sealThreshold.toInt()
                 )
-                CanvasConstant.DATA_MODE_GREY, CanvasConstant.DATA_MODE_DITHERING -> BitmapHandle.toGrayHandle(
+                LPDataConstant.DATA_MODE_GREY, LPDataConstant.DATA_MODE_DITHERING -> BitmapHandle.toGrayHandle(
                     originBitmap,
                     bean.inverse,
                     bean.contrast,
@@ -196,7 +197,7 @@ class BitmapGraphicsParser : IGraphicsParser {
                     alphaThreshold = 1
                 )
                 /*originBitmap.toGrayHandle( bean.inverse, bean.contrast, bean.brightness, alphaThreshold = 1 //透明颜色识别阈值 )*/
-                CanvasConstant.DATA_MODE_PRINT -> OpenCV.bitmapToPrint(
+                LPDataConstant.DATA_MODE_PRINT -> OpenCV.bitmapToPrint(
                     app(),
                     originBitmap,
                     bean.printsThreshold.toInt()
@@ -214,8 +215,8 @@ class BitmapGraphicsParser : IGraphicsParser {
         if (bean.isMesh) {
             item.meshBitmap = ImageProcess.imageMesh(
                 originBitmap,
-                bean.minDiameter,
-                bean.maxDiameter,
+                bean.minDiameter ?: HawkEngraveKeys.lastMinDiameterPixel,
+                bean.maxDiameter ?: HawkEngraveKeys.lastDiameterPixel,
                 bean.meshShape ?: "CONE"
             )?.flipEngraveBitmap(bean)
         }
@@ -225,9 +226,9 @@ class BitmapGraphicsParser : IGraphicsParser {
         wrapBitmapDrawable(item, bitmap)
 
         bean._dataMode = when (bean.imageFilter) {
-            CanvasConstant.DATA_MODE_DITHERING -> CanvasConstant.DATA_MODE_DITHERING
-            CanvasConstant.DATA_MODE_GREY -> CanvasConstant.DATA_MODE_GREY //灰度
-            else -> CanvasConstant.DATA_MODE_BLACK_WHITE
+            LPDataConstant.DATA_MODE_DITHERING -> LPDataConstant.DATA_MODE_DITHERING
+            LPDataConstant.DATA_MODE_GREY -> LPDataConstant.DATA_MODE_GREY //灰度
+            else -> LPDataConstant.DATA_MODE_BLACK_WHITE
         }
         return item
     }

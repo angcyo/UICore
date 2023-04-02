@@ -7,14 +7,14 @@ import android.graphics.RectF
 import android.view.Gravity
 import com.angcyo.gcode.GCodeAdjust
 import com.angcyo.gcode.GCodeWriteHandler
+import com.angcyo.laserpacker.device.DeviceHelper._defaultGCodeOutputFile
+import com.angcyo.laserpacker.device.DeviceHelper._defaultSvgOutputFile
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.*
 import com.angcyo.library.libCacheFile
 import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
-import com.angcyo.library.utils.fileNameTime
-import com.angcyo.library.utils.filePath
 import com.angcyo.svg.SvgWriteHandler
 import java.io.File
 import java.io.FileOutputStream
@@ -26,31 +26,6 @@ import kotlin.math.max
  * @since 2022/05/25
  */
 object CanvasDataHandleOperate {
-
-    //region ---文件输出信息---
-
-    /**gcode文件输出*/
-    fun _defaultGCodeOutputFile() =
-        filePath(
-            CanvasConstant.VECTOR_FILE_FOLDER,
-            fileNameTime(suffix = CanvasConstant.GCODE_EXT)
-        ).file()
-
-    /**svg文件输出*/
-    fun _defaultSvgOutputFile() =
-        filePath(
-            CanvasConstant.VECTOR_FILE_FOLDER,
-            fileNameTime(suffix = CanvasConstant.SVG_EXT)
-        ).file()
-
-    /**工程文件输出
-     * [ensureExt] 是否要保证后缀为[CanvasConstant.PROJECT_EXT]*/
-    fun _defaultProjectOutputFile(name: String, ensureExt: Boolean = true) = filePath(
-        CanvasConstant.PROJECT_FILE_FOLDER,
-        if (ensureExt) name.ensureName(CanvasConstant.PROJECT_EXT) else name
-    ).file()
-
-    //endregion ---文件输出信息---
 
     //region ---GCode---
 

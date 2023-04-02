@@ -17,7 +17,6 @@ import com.angcyo.canvas.core.OffsetItemData
 import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.ControlPoint
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
-import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.data.RendererBounds
 import com.angcyo.canvas.items.SelectGroupItem
 import com.angcyo.canvas.items.data.DataItem
@@ -26,6 +25,7 @@ import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.getAllDependRendererList
 import com.angcyo.canvas.utils.isJustGroupRenderer
 import com.angcyo.drawable.*
+import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
@@ -137,8 +137,8 @@ open class GroupRenderer(canvasView: CanvasDelegate) :
         return result
     }
 
-    override fun copyItemRendererData(strategy: Strategy): List<CanvasProjectItemBean>? {
-        val result = mutableListOf<CanvasProjectItemBean>()
+    override fun copyItemRendererData(strategy: Strategy): List<LPElementBean>? {
+        val result = mutableListOf<LPElementBean>()
         val groupId = uuid()
         for (sub in getDependRendererList()) {
             sub.copyItemRendererData(strategy)?.let { list ->

@@ -15,11 +15,10 @@ import com.angcyo.canvas.core.ItemsOperateHandler
 import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.control.ScaleControlPoint
 import com.angcyo.canvas.core.renderer.BaseRenderer
-import com.angcyo.canvas.data.CanvasProjectItemBean
 import com.angcyo.canvas.graphics.IEngraveProvider
 import com.angcyo.canvas.items.BaseItem
-import com.angcyo.widget.base.createTextPaint
 import com.angcyo.canvas.utils.isLineShape
+import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.ScalePictureDrawable
@@ -28,6 +27,7 @@ import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.gesture.RectScaleGestureHandler
 import com.angcyo.library.isInEditMode
+import com.angcyo.widget.base.createTextPaint
 
 /**
  *
@@ -541,7 +541,7 @@ abstract class BaseItemRenderer<T : BaseItem>(canvasView: ICanvasView) :
     //<editor-fold desc="Api">
 
     /**复制数据*/
-    open fun copyItemRendererData(strategy: Strategy): List<CanvasProjectItemBean>? = null
+    open fun copyItemRendererData(strategy: Strategy): List<LPElementBean>? = null
 
     /**获取相关的渲染器, 这样就支持1对N, 支持组合的功能*/
     open fun getDependRendererList(): List<BaseItemRenderer<*>> = listOf(this)
