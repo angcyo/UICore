@@ -30,13 +30,6 @@ import kotlin.math.max
 
 //---
 
-/**构建元素的名称*/
-fun List<LPElementBean>.generateName() {
-    forEach {
-        it.generateName(this)
-    }
-}
-
 /**使用原始图片, 更新bean内的宽高*/
 fun LPElementBean.updateWidthHeightByOriginImage() {
     val originBitmap = imageOriginal?.toBitmapOfBase64()
