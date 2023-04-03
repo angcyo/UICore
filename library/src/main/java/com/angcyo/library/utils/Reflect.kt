@@ -304,6 +304,8 @@ fun Any.toMap(): Map<String, String> {
             val o = f[this]
             if (o is String || o is Number) {
                 map[name] = o.toString()
+            } else {
+                L.d("不支持的类型[${name}]:${o?.javaClass?.name}")
             }
         } catch (e: IllegalAccessException) {
             e.printStackTrace()
