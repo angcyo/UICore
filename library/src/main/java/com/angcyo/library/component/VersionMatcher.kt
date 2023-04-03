@@ -58,15 +58,27 @@ object VersionMatcher {
      * [version] 当前的版本 比如:678
      * [config] 版本配置 比如:xxx~xxx ~xxx xxx~
      *
-     * [def] 默认值, 当版本号[version]未指定时, 或者匹配范围未指定时, 返回的默认值
+     * [defOrNull] 默认值, 当版本号[version]未指定时, 或者匹配范围未指定时, 返回的默认值
+     * [defOrEmpty] 当匹配范围为空时的默认值
      * */
-    fun matches(version: Int?, config: String?, def: Boolean = true): Boolean {
-        version ?: return def
+    fun matches(
+        version: Int?,
+        config: String?,
+        defOrNull: Boolean = false,
+        defOrEmpty: Boolean = true
+    ): Boolean {
+        version ?: return defOrNull
+        config ?: return defOrNull
+
+        if (config.isBlank()) {
+            //无规则, 则返回默认值
+            return defOrEmpty
+        }
 
         val versionRangeList = parseRange(config)
         if (versionRangeList.isEmpty()) {
             //无规则, 则返回默认值
-            return def
+            return defOrEmpty
         }
 
         var targetRange: VersionRange? = null //匹配到的固件版本范围
