@@ -600,6 +600,14 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         return result
     }
 
+    /**获取所有简单的渲染器*/
+    fun getAllSingleElementRendererList(
+        dissolveGroup: Boolean = true,
+        includeGroup: Boolean = false
+    ): List<BaseRenderer> {
+        return renderManager.getAllElementRendererList(dissolveGroup, includeGroup)
+    }
+
     /**获取简单的选中元素列表*/
     fun getSelectorSingleElementRendererList(
         dissolveGroup: Boolean = false,

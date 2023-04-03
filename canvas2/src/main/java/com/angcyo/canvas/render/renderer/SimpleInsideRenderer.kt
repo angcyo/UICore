@@ -3,6 +3,7 @@ package com.angcyo.canvas.render.renderer
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
@@ -22,6 +23,14 @@ class SimpleInsideRenderer(bounds: RectF, drawable: Drawable?) : BaseRenderer() 
         renderDrawable = drawable
         renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_OUTSIDE)
             .remove(IRenderer.RENDERER_FLAG_ON_VIEW)
+    }
+
+    override fun isVisibleInRender(
+        delegate: CanvasRenderDelegate?,
+        fullIn: Boolean,
+        def: Boolean
+    ): Boolean {
+        return super.isVisibleInRender(delegate, fullIn, def)
     }
 
     override fun renderOnInside(canvas: Canvas, params: RenderParams) {

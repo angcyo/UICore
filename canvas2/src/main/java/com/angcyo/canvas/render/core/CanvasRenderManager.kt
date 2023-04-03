@@ -97,6 +97,12 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         delegate.refresh()
     }
 
+    /**添加一个在[elementRendererList]之后绘制的渲染器*/
+    fun addAfterRendererList(renderer: BaseRenderer) {
+        afterRendererList.add(renderer)
+        delegate.refresh()
+    }
+
     /**添加一个渲染器*/
     fun addElementRenderer(
         renderer: BaseRenderer,

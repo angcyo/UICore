@@ -115,6 +115,8 @@ abstract class BaseRenderer : IRenderer {
     //region---临时变量---
 
     protected val _tempRect = RectF()
+    protected val _renderBounds = RectF()
+    protected val _renderRect = RectF()
 
     //endregion---临时变量---
 
@@ -124,6 +126,14 @@ abstract class BaseRenderer : IRenderer {
     }
 
     //region---core---
+
+    /**[com.angcyo.canvas.render.core.component.CanvasRenderProperty.getRenderRect]*/
+    open fun getRenderRect(result: RectF = _renderRect, includeRotate: Boolean = false) =
+        renderProperty?.getRenderRect(result, includeRotate)
+
+    /**[com.angcyo.canvas.render.core.component.CanvasRenderProperty.getRenderBounds]*/
+    open fun getRenderBounds(result: RectF = _renderBounds) =
+        renderProperty?.getRenderBounds(result)
 
     /**渲染之前的准备工作
      * [com.angcyo.canvas.render.element.IElement.requestElementRenderProperty]
@@ -302,7 +312,7 @@ abstract class BaseRenderer : IRenderer {
 
     /**是否在当前的可视坐标范围内可见
      * [fullIn] 是否要全部可见, 否则露出一部分也视为可见*/
-    fun isVisibleInRender(
+    open fun isVisibleInRender(
         delegate: CanvasRenderDelegate?,
         fullIn: Boolean = false,
         def: Boolean = true
