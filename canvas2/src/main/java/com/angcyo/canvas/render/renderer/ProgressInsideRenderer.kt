@@ -84,13 +84,13 @@ class ProgressInsideRenderer(val delegate: CanvasRenderDelegate?) : BaseRenderer
 
     /**绘制边框*/
     private fun _drawBorderMode(canvas: Canvas, renderer: BaseRenderer) {
-        val visualBounds = renderer.getRenderBounds() ?: return
+        val visualBounds = renderer.getRendererBounds() ?: return
         drawBorder(canvas, visualBounds)
     }
 
     /**绘制进度模式*/
     private fun _drawProgressMode(canvas: Canvas, renderer: BaseRenderer) {
-        val visualBounds = renderer.getRenderBounds() ?: return
+        val visualBounds = renderer.getRendererBounds() ?: return
         drawProgress(canvas, visualBounds)
     }
 

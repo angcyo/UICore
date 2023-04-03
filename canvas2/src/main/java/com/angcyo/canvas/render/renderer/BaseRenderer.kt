@@ -130,22 +130,22 @@ abstract class BaseRenderer : IRenderer {
 
     /**[com.angcyo.canvas.render.core.component.CanvasRenderProperty.getRenderRect]*/
     @CanvasInsideCoordinate
-    open fun getRenderRect(result: RectF = _renderRect, includeRotate: Boolean = false) =
+    open fun getRendererRect(result: RectF = _renderRect, includeRotate: Boolean = false) =
         renderProperty?.getRenderRect(result, includeRotate)
 
     /**[com.angcyo.canvas.render.core.component.CanvasRenderProperty.getRenderBounds]*/
     @CanvasInsideCoordinate
-    open fun getRenderBounds(result: RectF = _renderBounds) =
+    open fun getRendererBounds(result: RectF = _renderBounds) =
         renderProperty?.getRenderBounds(result)
 
-    /**[getRenderBounds]*/
+    /**[getRendererBounds]*/
     @CanvasOutsideCoordinate
-    open fun getRenderBoundsOutside(
+    open fun getRendererBoundsOutside(
         delegate: CanvasRenderDelegate?,
         result: RectF = _renderBounds
     ): RectF? {
         val renderViewBox = delegate?.renderViewBox ?: return null
-        val renderBounds = getRenderBounds(result) ?: return null
+        val renderBounds = getRendererBounds(result) ?: return null
         renderViewBox.transformToOutside(renderBounds, result)
         return result
     }
