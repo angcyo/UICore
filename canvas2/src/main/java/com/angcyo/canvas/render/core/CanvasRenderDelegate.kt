@@ -551,6 +551,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     /**是否禁用所有能够编辑元素的手势
      * [disable] 禁用 or 启动*/
     fun disableEditTouchGesture(disable: Boolean) {
+        selectorManager.isEnableComponent = !disable
         controlManager.isEnableComponent = !disable
         refresh()
     }

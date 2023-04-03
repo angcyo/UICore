@@ -120,20 +120,21 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
     override fun dispatchTouchEvent(event: MotionEvent) {
         super.dispatchTouchEvent(event)
 
-        //双击检测
-        doubleGestureDetector.onTouchEvent(event)
+        if (isEnableComponent && !ignoreHandle) {
+            //双击检测
+            doubleGestureDetector.onTouchEvent(event)
+            when (event.actionMasked) {
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    isTouchInSelectorRenderer = false
+                    selectorComponent.showSizeRender(Reason.code, null)
+                    val selectorInfo = touchSelectorInfo
+                    touchSelectorInfo = null
 
-        when (event.actionMasked) {
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                isTouchInSelectorRenderer = false
-                selectorComponent.showSizeRender(Reason.code, null)
-                val selectorInfo = touchSelectorInfo
-                touchSelectorInfo = null
-
-                val size = selectorInfo?.touchRendererList.size()
-                if (size > 1 && !_isTranslateRenderer) {
-                    delegate.dispatchSelectorRendererList(this, selectorInfo!!)
-                    L.d("选中多个元素[${size}]")
+                    val size = selectorInfo?.touchRendererList.size()
+                    if (size > 1 && !_isTranslateRenderer) {
+                        delegate.dispatchSelectorRendererList(this, selectorInfo!!)
+                        L.d("选中多个元素[${size}]")
+                    }
                 }
             }
         }
