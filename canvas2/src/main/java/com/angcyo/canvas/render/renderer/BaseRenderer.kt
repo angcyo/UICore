@@ -4,6 +4,7 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import androidx.core.graphics.withSave
 import com.angcyo.canvas.render.R
+import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
 import com.angcyo.canvas.render.annotation.RenderFlag
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
@@ -128,12 +129,26 @@ abstract class BaseRenderer : IRenderer {
     //region---core---
 
     /**[com.angcyo.canvas.render.core.component.CanvasRenderProperty.getRenderRect]*/
+    @CanvasInsideCoordinate
     open fun getRenderRect(result: RectF = _renderRect, includeRotate: Boolean = false) =
         renderProperty?.getRenderRect(result, includeRotate)
 
     /**[com.angcyo.canvas.render.core.component.CanvasRenderProperty.getRenderBounds]*/
+    @CanvasInsideCoordinate
     open fun getRenderBounds(result: RectF = _renderBounds) =
         renderProperty?.getRenderBounds(result)
+
+    /**[getRenderBounds]*/
+    @CanvasOutsideCoordinate
+    open fun getRenderBoundsOutside(
+        delegate: CanvasRenderDelegate?,
+        result: RectF = _renderBounds
+    ): RectF? {
+        val renderViewBox = delegate?.renderViewBox ?: return null
+        val renderBounds = getRenderBounds(result) ?: return null
+        renderViewBox.transformToOutside(renderBounds, result)
+        return result
+    }
 
     /**渲染之前的准备工作
      * [com.angcyo.canvas.render.element.IElement.requestElementRenderProperty]
