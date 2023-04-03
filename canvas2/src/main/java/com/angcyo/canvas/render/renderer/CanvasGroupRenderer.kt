@@ -411,6 +411,10 @@ open class CanvasGroupRenderer : BaseRenderer() {
             _invertAnchorPoint.set(property.anchorX, property.anchorY)
             invertRotateMatrix.mapPoint(_invertAnchorPoint)
 
+            //self
+            super.applyScaleMatrix(matrix, reason, delegate)
+
+            //applyScaleMatrix 可能会被limit修改
             scaleMatrix.setScale(
                 matrix.getScaleX(),
                 matrix.getScaleY(),
@@ -422,9 +426,6 @@ open class CanvasGroupRenderer : BaseRenderer() {
             elementMatrix.set(invertRotateMatrix)
             elementMatrix.postConcat(scaleMatrix)
             elementMatrix.postConcat(rotateMatrix)
-
-            //self
-            super.applyScaleMatrix(matrix, reason, delegate)
 
             //sub
             applyGroupScaleMatrix(this, elementMatrix, reason, delegate)
@@ -448,7 +449,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
             }
         } else {
             //element
-            renderer.applyScaleMatrixWithCenter(elementMatrix, true, Reason.code, null)
+            renderer.applyScaleMatrixWithCenter(elementMatrix, true, reason, delegate)
         }
     }
 
