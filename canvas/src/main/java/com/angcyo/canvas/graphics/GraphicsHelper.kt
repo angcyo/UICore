@@ -1,6 +1,5 @@
 package com.angcyo.canvas.graphics
 
-import android.graphics.RectF
 import androidx.annotation.AnyThread
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.R
@@ -11,7 +10,6 @@ import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.renderer.GroupRenderer
 import com.angcyo.canvas.data.generateNameByRenderer
 import com.angcyo.canvas.data.updateToRenderBounds
-import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.canvas.graphics.PathGraphicsParser.Companion.MIN_PATH_SIZE
 import com.angcyo.canvas.items.BaseItem
 import com.angcyo.canvas.items.data.DataItem
@@ -19,10 +17,11 @@ import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.renderer.BaseItemRenderer
 import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.http.rx.doBack
+import com.angcyo.laserpacker.bean.LPElementBean
+import com.angcyo.laserpacker.device.model.FscDeviceModel
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.MM
-import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.abs
@@ -60,10 +59,6 @@ object GraphicsHelper {
     }
 
     //---位置分配---
-
-    /**如果配置了此属性, 则分配位置的时候, 会在此矩形的中心*/
-    @Pixel
-    var assignLocationBounds: RectF? = null
 
     /**最小位置分配, 应该为设备最佳预览范围的左上角
      * [com.angcyo.laserpacker.device.model.FscDeviceModel.initDevice]*/
@@ -111,7 +106,7 @@ object GraphicsHelper {
         _lastTop += POSITION_STEP
 
         //2022-11-29 默认在中心位置添加元素
-        val bounds = assignLocationBounds
+        val bounds = FscDeviceModel.productAssignLocationBounds
         if (bounds == null) {
             bean.left = _minLeft + _lastLeft
             bean.top = _minTop + _lastTop
@@ -119,7 +114,8 @@ object GraphicsHelper {
             bean.left = bounds.centerX().toMm() - bean._width / 2
             bean.top = bounds.centerY().toMm() - bean._height / 2
         }
-/*2022-12-26 移除缩放, 1:1显示
+
+        /*2022-12-26 移除缩放, 1:1显示
         //调整可视化的缩放比例
         val visualRect = canvasViewBox.getVisualRect()
         if (!visualRect.isEmpty) {
