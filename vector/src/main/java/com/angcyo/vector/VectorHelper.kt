@@ -1,9 +1,15 @@
 package com.angcyo.vector
 
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.PointF
+import android.graphics.*
+import android.os.Build
+import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.pool.acquireTempPath
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.abs
+import com.angcyo.library.ex.c
+import com.angcyo.library.ex.computePathBounds
+import com.angcyo.library.ex.isRotated
 import com.angcyo.library.model.PointD
 import com.angcyo.svg.StylePath
 import com.pixplicity.sharp.Sharp
@@ -156,6 +162,149 @@ object VectorHelper {
                 (tempA1 * tempC2 - tempA2 * tempC1) / temp
             )
         }
+    }
+
+    /**将[pathList]使用扫描碰撞的方式,生成用来填充的新的[pathList]
+     *
+     * [fillPathStep] 填充间距
+     * [fillAngle] 填充线的旋转角度
+     * [pathFillType] 填充类型
+     *
+     * [VectorWriteHandler.PATH_FILL_TYPE_RECT]
+     * [VectorWriteHandler.PATH_FILL_TYPE_CIRCLE]
+     * */
+    fun pathFill(
+        pathList: List<Path>?,
+        @Pixel fillPathStep: Float = 1f,
+        fillAngle: Float = 0f,
+        pathFillType: Int = VectorWriteHandler.PATH_FILL_TYPE_RECT
+    ): List<Path>? {
+        pathList ?: return null
+        val result = mutableListOf<Path>()
+        val targetPathList = mutableListOf<Path>()
+
+        //能够完全包含path的矩形
+        val pathBounds = acquireTempRectF()
+        //先将目标反向旋转
+        var targetMatrix: Matrix? = null
+        //再将结果正向旋转
+        var resultMatrix: Matrix? = null
+
+        if (fillAngle.isRotated()) {
+            targetMatrix = Matrix()
+            resultMatrix = Matrix()
+            pathList.computePathBounds(pathBounds)
+            targetMatrix.setRotate(-fillAngle, pathBounds.centerX(), pathBounds.centerY())
+            resultMatrix.setRotate(fillAngle, pathBounds.centerX(), pathBounds.centerY())
+
+            //先将目标反向旋转
+            for (path in pathList) {
+                val targetPath = Path(path)
+                targetPath.transform(targetMatrix)
+                targetPathList.add(targetPath)
+            }
+        } else {
+            targetPathList.addAll(pathList)
+        }
+        targetPathList.computePathBounds(pathBounds)
+
+        //---开始扫描---
+
+        for (path in targetPathList) {
+            val fillPathList = pathFill(path, pathBounds, resultMatrix, fillPathStep, pathFillType)
+            fillPathList?.let {
+                result.addAll(it)
+            }
+        }
+
+        return result
+    }
+
+    /**扫描填充一个[path]路径*/
+    private fun pathFill(
+        path: Path?,
+        pathBounds: RectF,
+        resultMatrix: Matrix?,
+        @Pixel fillPathStep: Float = 1f,
+        pathFillType: Int = VectorWriteHandler.PATH_FILL_TYPE_RECT
+    ): List<Path>? {
+        val targetPath = path ?: return null
+        //矩形由上往下扫描, 取与path的交集
+        val scanStep = fillPathStep //扫描步长
+
+        var y = pathBounds.top + scanStep
+        var endY = pathBounds.bottom
+
+        val centerX = pathBounds.centerX()
+        val centerY = pathBounds.centerY()
+
+        val scanPath = acquireTempPath() //扫描形状
+
+        if (pathFillType == VectorWriteHandler.PATH_FILL_TYPE_CIRCLE) {
+            //使用圆的方式填充, 则y是当前扫描的半径, endY是最大扫描半径
+            y = scanStep
+            endY = c(pathBounds.width() / 2, pathBounds.height() / 2).toFloat()
+        }
+
+        var isFirst = true
+        val result = mutableListOf<Path>()
+
+        while (y <= endY) {
+            //逐行扫描
+            scanPath.rewind()
+            val resultPath = Path() //碰撞结果
+
+            //一行
+            //这里用CCW出来的就是顺时针
+            if (pathFillType == VectorWriteHandler.PATH_FILL_TYPE_CIRCLE) {
+                //圆形碰撞扫描
+                scanPath.addCircle(centerX, centerY, y, Path.Direction.CCW)
+            } else {
+                scanPath.addRect(
+                    pathBounds.left,
+                    y,
+                    pathBounds.right,
+                    y + scanStep,
+                    Path.Direction.CCW //ccw无效?
+                )
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
+                resultPath.op(scanPath, targetPath, Path.Op.INTERSECT)
+            ) {
+                //操作成功
+                if (!resultPath.isEmpty) {
+                    //有交集数据, 写入GCode数据
+                    resultMatrix?.let {
+                        resultPath.transform(it)
+                    }
+                    result.add(resultPath)
+                    isFirst = false
+                }
+            }
+
+            if (y == endY) {
+                break
+            }
+
+            //
+            y += if (pathFillType == VectorWriteHandler.PATH_FILL_TYPE_CIRCLE) {
+                scanStep * 2
+            } else {
+                scanStep * 2
+            }
+
+            //
+            if (y > endY) {
+                //y = endY //填充下, 丢弃. 防止重复雕刻
+                break
+            }
+        }
+
+        scanPath.rewind()
+        scanPath.release()
+
+        return result
     }
 }
 
