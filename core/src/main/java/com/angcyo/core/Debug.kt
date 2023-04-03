@@ -202,7 +202,7 @@ object Debug {
     }
 
     /**反馈*/
-    fun EditText._feedback() {
+    private fun EditText._feedback() {
         selectAll()
         longFeedback()
     }
