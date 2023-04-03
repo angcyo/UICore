@@ -33,17 +33,7 @@ interface IElement {
             controlType = BaseControlPoint.CONTROL_TYPE_DATA
         },
         block: IElement.() -> Unit
-    ) {
-        renderer ?: return
-        //用来恢复的状态
-        val undoState = createStateStack()
-        undoState.saveState(renderer, delegate)
-        block()
-        val redoState = createStateStack()
-        redoState.saveState(renderer, delegate)
-        renderer.requestUpdateDrawableAndPropertyFlag(reason, delegate)
-        delegate?.addStateToStack(renderer, undoState, redoState, reason = reason)
-    }
+    )
 
     /**请求获取元素渲染时, 相关的属性信息*/
     fun requestElementRenderProperty(): CanvasRenderProperty

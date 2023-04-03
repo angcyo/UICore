@@ -2,9 +2,12 @@ package com.angcyo.canvas.render.element
 
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import com.angcyo.canvas.render.core.CanvasRenderDelegate
+import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.core.component.ElementHitComponent
 import com.angcyo.canvas.render.data.RenderParams
+import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.util.*
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.unit.toPixel
@@ -29,6 +32,39 @@ abstract class BaseElement : IElement {
 
     //region---core---
 
+    /**
+     * 更新元素, 并且支持回退
+     * [onUpdateElementBefore]
+     * [onUpdateElementAfter]*/
+    override fun updateElement(
+        renderer: BaseRenderer?,
+        delegate: CanvasRenderDelegate?,
+        reason: Reason,
+        block: IElement.() -> Unit
+    ) {
+        renderer ?: return
+        //用来恢复的状态
+        val undoState = createStateStack()
+        undoState.saveState(renderer, delegate)
+        onUpdateElementBefore()
+        block()
+        onUpdateElementAfter()
+        val redoState = createStateStack()
+        redoState.saveState(renderer, delegate)
+        renderer.requestUpdateDrawableAndPropertyFlag(reason, delegate)
+        delegate?.addStateToStack(renderer, undoState, redoState, reason = reason)
+    }
+
+    /**在更新[updateElement]之前调用*/
+    open fun onUpdateElementBefore() {
+
+    }
+
+    /**在更新[updateElement]之后调用*/
+    open fun onUpdateElementAfter() {
+
+    }
+
     override fun requestElementRenderProperty(): CanvasRenderProperty = renderProperty
 
     override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? =
@@ -37,6 +73,18 @@ abstract class BaseElement : IElement {
     override fun updateElementRenderProperty(property: CanvasRenderProperty) {
         property.copyTo(renderProperty)
     }
+
+    /**获取用来绘制的图片, 未经过[CanvasRenderProperty]处理的
+     *
+     * [createBitmapDrawable]
+     * */
+    open fun getDrawBitmap(): Bitmap? = null
+
+    /**获取用来绘制的原始路径集合, 未经过[CanvasRenderProperty]处理的
+     *
+     * [createPathDrawable]
+     * */
+    open fun getDrawPathList(): List<Path>? = null
 
     //endregion---core---
 
@@ -135,10 +183,11 @@ abstract class BaseElement : IElement {
      * [overrideWidth] [overrideHeight] 需要覆盖输出的宽度
      * */
     protected fun createBitmapDrawable(
-        bitmap: Bitmap,
         paint: Paint,
-        overrideSize: Float?
-    ): Drawable {
+        overrideSize: Float?,
+        bitmap: Bitmap? = getDrawBitmap(),
+    ): Drawable? {
+        bitmap ?: return null
         return createPictureDrawable(overrideSize) {
             val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
             drawBitmap(bitmap, renderMatrix, paint)
@@ -151,44 +200,43 @@ abstract class BaseElement : IElement {
      * [isLinePath] 是否线段
      * */
     protected fun createPathDrawable(
-        pathList: List<Path>?,
         paint: Paint,
         overrideSize: Float?,
         @Pixel
         minWidth: Float, /*最小宽度*/
         @Pixel
         minHeight: Float,
-        isLinePath: Boolean
-    ): Drawable {
+        isLinePath: Boolean,
+        pathList: List<Path>? = getDrawPathList()
+    ): Drawable? {
+        pathList ?: return null
+        if (pathList.isEmpty()) return null
         return createPictureDrawable(overrideSize, minWidth, minHeight) {
-            if (pathList.isNullOrEmpty()) {
-                //
-            } else {
-                val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
-                val newPathList = pathList.translateToOrigin()
 
-                val oldStyle = paint.style
-                val oldPathEffect = paint.pathEffect
-                for (path in newPathList!!) {
-                    path.transform(renderMatrix)
-                    if (isLinePath) {
-                        //画线必须使用STROKE模式, 否则画不出
-                        paint.style = Paint.Style.STROKE
+            val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
+            val newPathList = pathList.translateToOrigin()
 
-                        if (oldStyle == Paint.Style.STROKE) {
-                            //描边的线段, 使用虚线绘制
-                            paint.pathEffect = createDashPathEffect() //虚线
-                        } else {
-                            paint.pathEffect = null //实线
-                        }
+            val oldStyle = paint.style
+            val oldPathEffect = paint.pathEffect
+            for (path in newPathList!!) {
+                path.transform(renderMatrix)
+                if (isLinePath) {
+                    //画线必须使用STROKE模式, 否则画不出
+                    paint.style = Paint.Style.STROKE
+
+                    if (oldStyle == Paint.Style.STROKE) {
+                        //描边的线段, 使用虚线绘制
+                        paint.pathEffect = createDashPathEffect() //虚线
+                    } else {
+                        paint.pathEffect = null //实线
                     }
-
-                    //draw
-                    drawPath(path, paint)
                 }
-                paint.style = oldStyle
-                paint.pathEffect = oldPathEffect
+
+                //draw
+                drawPath(path, paint)
             }
+            paint.style = oldStyle
+            paint.pathEffect = oldPathEffect
         }
     }
 

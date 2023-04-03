@@ -21,9 +21,10 @@ open class BitmapElement : BaseElement() {
 
     override fun createStateStack(): IStateStack = BitmapStateStack()
 
+    override fun getDrawBitmap(): Bitmap? = renderBitmap ?: originBitmap
+
     override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? {
-        val bitmap = renderBitmap ?: originBitmap ?: return null
-        return createBitmapDrawable(bitmap, paint, renderParams?.overrideSize)
+        return createBitmapDrawable(paint, renderParams?.overrideSize)
     }
 
     /**更新原始的[bitmap]对象, 并保持可视化的宽高一致

@@ -40,7 +40,6 @@ open class PathElement : BaseElement() {
         val minWidth = max((renderParams ?: RenderParams()).drawMinWidth, paint.strokeWidth)
         val minHeight = max((renderParams ?: RenderParams()).drawMinHeight, paint.strokeWidth)
         return createPathDrawable(
-            pathList,
             paint,
             renderParams?.overrideSize,
             minWidth,
@@ -48,6 +47,8 @@ open class PathElement : BaseElement() {
             false
         )
     }
+
+    override fun getDrawPathList(): List<Path>? = pathList
 
     /**更新原始的[pathList]对象, 并保持可视化的宽高一致
      * [updateOriginWidthHeight]*/

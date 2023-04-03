@@ -17,6 +17,7 @@ import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.onMain
 import com.angcyo.library.ex.*
 import com.angcyo.library.isMain
 import com.angcyo.library.unit.IRenderUnit
@@ -329,8 +330,10 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         newFlags: Int,
         reason: Reason
     ) {
-        for (listener in renderListenerList) {
-            listener.onRendererFlagsChange(renderer, oldFlags, newFlags, reason)
+        onMain {
+            for (listener in renderListenerList) {
+                listener.onRendererFlagsChange(renderer, oldFlags, newFlags, reason)
+            }
         }
         refresh()
     }

@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.core
 
 import android.graphics.Matrix
 import android.graphics.RectF
+import androidx.annotation.UiThread
 import androidx.annotation.WorkerThread
 import com.angcyo.canvas.render.core.component.BaseControl
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
@@ -72,6 +73,7 @@ interface ICanvasRenderListener {
     }
 
     /**[com.angcyo.canvas.render.renderer.BaseRenderer.renderFlags]改变时触发的回调*/
+    @UiThread
     fun onRendererFlagsChange(
         renderer: BaseRenderer,
         oldFlags: Int,
