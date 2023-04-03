@@ -10,7 +10,10 @@ package com.angcyo.library.component
  */
 object VersionMatcher {
 
+    /**多个范围用空格隔开*/
     internal const val RS = " "
+
+    /**min和max用波浪号隔开*/
     internal const val VS = "~"
 
     /**解析范围, 格式 [ x x~ ~x xxx~xxx xxx~xxx]*/
@@ -18,27 +21,32 @@ object VersionMatcher {
         val rangeStringList = config?.split(RS)
         val list = mutableListOf<VersionRange>()
         rangeStringList?.forEach { range ->
-            val rangeString = range.split(VS)
-            rangeString.firstOrNull()?.toIntOrNull()?.let { min ->
-                if (rangeString.size >= 2) {
-                    list.add(
-                        VersionRange(
-                            min,
-                            rangeString.getOrNull(1)?.toIntOrNull() ?: Int.MAX_VALUE
+            if (range == "*") {
+                //适配*
+                list.add(VersionRange(Int.MIN_VALUE, Int.MAX_VALUE))
+            } else {
+                val rangeString = range.split(VS)
+                rangeString.firstOrNull()?.toIntOrNull()?.let { min ->
+                    if (rangeString.size >= 2) {
+                        list.add(
+                            VersionRange(
+                                min,
+                                rangeString.getOrNull(1)?.toIntOrNull() ?: Int.MAX_VALUE
+                            )
                         )
-                    )
-                } else {
-                    if (range.contains(VS)) {
-                        if (range.startsWith(VS)) {
-                            //[~xxx] 的格式
-                            list.add(VersionRange(Int.MIN_VALUE, min))
-                        } else {
-                            //[x~] [x] 的格式
-                            list.add(VersionRange(min, Int.MAX_VALUE))
-                        }
                     } else {
-                        //不包含 ~
-                        list.add(VersionRange(min, min))
+                        if (range.contains(VS)) {
+                            if (range.startsWith(VS)) {
+                                //[~xxx] 的格式
+                                list.add(VersionRange(Int.MIN_VALUE, min))
+                            } else {
+                                //[x~] [x] 的格式
+                                list.add(VersionRange(min, Int.MAX_VALUE))
+                            }
+                        } else {
+                            //不包含 ~
+                            list.add(VersionRange(min, min))
+                        }
                     }
                 }
             }
