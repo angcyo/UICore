@@ -15,7 +15,7 @@ import com.angcyo.widget.base.addDslItem
 import com.angcyo.widget.base.layoutDelegate
 
 /**
- *
+ * 带取消item, 带单选多选的[androidx.recyclerview.widget.RecyclerView]对话框配置
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/05
@@ -103,7 +103,9 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
         }
     }
 
-    /**[androidx.recyclerview.widget.RecyclerView]*/
+    /**[androidx.recyclerview.widget.RecyclerView]
+     * 此方法调用之前, 可能需要先调用[renderAdapter]方法
+     * */
     open fun initRecyclerConfig(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         _recyclerConfig.adapterSelectorModel = dialogSelectorModel
         _recyclerConfig.initRecycler(dialog, dialogViewHolder)

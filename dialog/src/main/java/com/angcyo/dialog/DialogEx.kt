@@ -42,7 +42,7 @@ fun DslDialogConfig.configBottomDialog(context: Context? = null): DslDialogConfi
 
 /**快速配置一个显示在中心全屏的[DslDialogConfig]*/
 fun DslDialogConfig.configCenterDialog(
-    width: Int = _screenWidth * 3 / 5,
+    width: Int = min(_screenWidth, _screenHeight) * 3 / 5,
     height: Int = -2,
     context: Context? = null
 ): DslDialogConfig {
