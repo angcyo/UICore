@@ -33,16 +33,16 @@ data class TextProperty(
     var isCompactText: Boolean = true,
 
     /**删除线*/
-    var isStrikeThruText: Boolean = true,
+    var isStrikeThruText: Boolean = false,
 
     /**下划线*/
-    var isUnderlineText: Boolean = true,
+    var isUnderlineText: Boolean = false,
 
     /**加粗*/
-    var isFakeBoldText: Boolean = true,
+    var isFakeBoldText: Boolean = false,
 
     /**斜体*/
-    var isItalic: Boolean = true,
+    var isItalic: Boolean = false,
 
     /**笔的样式*/
     var paintStyle: Paint.Style = Paint.Style.FILL,
