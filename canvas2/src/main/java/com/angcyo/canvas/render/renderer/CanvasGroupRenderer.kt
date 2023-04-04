@@ -118,6 +118,9 @@ open class CanvasGroupRenderer : BaseRenderer() {
         ): Bitmap? {
             rendererList ?: return null
             val rect = computeBounds(rendererList, bounds)
+            if (rect.isEmpty) {
+                return null
+            }
             return createOverrideBitmapCanvas(
                 rect.width(),
                 rect.height(),

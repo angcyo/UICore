@@ -115,12 +115,19 @@ fun createOverrideBitmapCanvas(
     overrideWidth: Float?,
     overrideHeight: Float? = null,
     block: Canvas.() -> Unit
-): Bitmap {
+): Bitmap? {
     val matrix = createOverrideMatrix(originWidth, originHeight, overrideWidth, overrideHeight)
     //目标输出的大小
     val width = originWidth * matrix.getScaleX()
     val height = originHeight * matrix.getScaleY()
-    return withBitmap(width.ceilInt(), height.ceilInt()) {
+
+    val bitmapWidth = width.ceilInt()
+    val bitmapHeight = height.ceilInt()
+    if (bitmapWidth <= 0 || bitmapHeight <= 0) {
+        return null
+    }
+
+    return withBitmap(bitmapWidth, bitmapHeight) {
         concat(matrix)
         block()
     }

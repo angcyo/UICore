@@ -111,7 +111,12 @@ class CanvasAsyncManager(val delegate: CanvasRenderDelegate) {
     }
 
     /**判断是否有指定的异步任务*/
-    fun hasAsyncTask(uuid: String) = tasks.find { it.uuid == uuid } != null
+    fun hasAsyncTask(uuid: String) = try {
+        tasks.find { it.uuid == uuid } != null
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
+    }
 
     /**是否有异步任务未执行完成*/
     fun hasAsyncTask() = tasks.isNotEmpty()
