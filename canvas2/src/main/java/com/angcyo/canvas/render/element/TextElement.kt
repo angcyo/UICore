@@ -181,6 +181,12 @@ open class TextElement : BaseElement() {
         }
     }
 
+    /**获取描述文本的宽度, 支持多行*/
+    fun getTextWidth() = calcLineTextWidth()
+
+    /**获取描述文本的高度, 支持多行*/
+    fun getTextHeight() = calcLineTextHeight()
+
     //endregion---操作---
 
     //region---core---
@@ -364,7 +370,10 @@ open class TextElement : BaseElement() {
 
     /**计算多行文本的宽度*/
     @Pixel
-    protected fun calcLineTextWidth(text: String?, paint: Paint = this.paint): Float {
+    protected fun calcLineTextWidth(
+        text: String? = textProperty.text,
+        paint: Paint = this.paint
+    ): Float {
         var result = 0f
         val lineTextList = text.lineTextList()
         if (textProperty.orientation == LinearLayout.HORIZONTAL) {
@@ -394,7 +403,10 @@ open class TextElement : BaseElement() {
 
     /**计算多行文本的高度*/
     @Pixel
-    protected fun calcLineTextHeight(text: String?, paint: Paint = this.paint): Float {
+    protected fun calcLineTextHeight(
+        text: String? = textProperty.text,
+        paint: Paint = this.paint
+    ): Float {
         var result = 0f
         val lineTextList = text.lineTextList()
         if (textProperty.orientation == LinearLayout.HORIZONTAL) {
