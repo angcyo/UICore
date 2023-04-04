@@ -1,5 +1,6 @@
 package com.angcyo.canvas.utils
 
+import androidx.annotation.Keep
 import com.angcyo.library.component.HawkPropertyValue
 import com.angcyo.library.unit.IValueUnit
 import com.angcyo.library.unit.InchValueUnit
@@ -11,6 +12,8 @@ import com.angcyo.library.unit.PixelValueUnit
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/06/15
  */
+
+@Keep
 object CanvasConstant {
 
     //region ---Canvas---
