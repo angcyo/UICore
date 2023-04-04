@@ -211,7 +211,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
 
         if (BuildConfig.DEBUG) {
             L.d("按下:[${_tempPoint}]")
-            delegate.logRendererProperty()
+            //delegate.logRendererProperty()
         }
 
         if (isSelectorElement && selectorComponent.rendererContainsPoint(delegate, _tempPoint)) {
