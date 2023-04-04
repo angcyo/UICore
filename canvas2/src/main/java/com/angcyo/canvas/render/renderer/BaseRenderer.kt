@@ -189,7 +189,9 @@ abstract class BaseRenderer : IRenderer {
             renderDrawable?.let { drawable ->
                 renderDrawable(canvas, property, drawable, params)
             }.elseNull {
-                L.w("没有可绘制的Drawable[${this@BaseRenderer.simpleHash()}]")
+                if (this is CanvasElementRenderer) {
+                    L.w("没有可绘制的Drawable[${this@BaseRenderer.simpleHash()}]")
+                }
             }
         }
     }
