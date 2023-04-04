@@ -14,6 +14,7 @@ import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.gesture.RotationGestureDetector
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 /**
  * 裁剪
@@ -367,7 +368,7 @@ class CropDelegate(val view: View) {
 
     /**更新图片数据*/
     @CallPoint
-    fun updateBitmap(bitmap: Bitmap, useBitmapRadio: Boolean = true) {
+    fun updateBitmap(bitmap: Bitmap) {
         if (!view.isLaidOut) {
             view.post {
                 updateBitmap(bitmap)
@@ -376,11 +377,11 @@ class CropDelegate(val view: View) {
         }
         _bitmap = bitmap
         _bitmapOriginRect.set(0, 0, bitmap.width, bitmap.height)
-        updateRotate(rotate, useBitmapRadio, false)
+        updateRotate(rotate, false)
     }
 
     /**更新旋转角度 */
-    fun updateRotate(rotate: Float, useBitmapRadio: Boolean = false, anim: Boolean = true) {
+    fun updateRotate(rotate: Float, anim: Boolean = true) {
         this.rotate = rotate % 360
 
         val bestRect = calcBestRect(_bitmapOriginRect.rectF)
@@ -388,12 +389,12 @@ class CropDelegate(val view: View) {
 
         moveBitmapToRect(bestRect, anim)
 
-        if (useBitmapRadio) {
+        if (overlay.useBitmapRadio) {
             overlay.clipRatio = _bestRect.width() * 1f / _bestRect.height()//图片比例
         }
 
         //更新
-        overlay.updateClipRatio(overlay.clipRatio)
+        overlay.updateClipRatio(overlay.clipRatio, true)
     }
 
     /**重置到默认状态*/
@@ -480,41 +481,36 @@ class CropDelegate(val view: View) {
         if (overlay.enableClipMoveMode) {
             //这种方式下的截图, 使用原始图片
 
-            /*
-            val targetRect = mapOriginRect(overlay.clipRect).toRectOut(false)
-            val result = Bitmap.createBitmap(
-                bitmap,
-                targetRect.left, targetRect.top,
-                targetRect.width(), targetRect.height(),
-                matrix,
-                false
-            )
-
-            matrix.release()*/
-
-            val matrix = acquireTempMatrix()
-            matrix.setRotate(rotate, bitmap.width / 2f, bitmap.height / 2f)
-            matrix.postScale(
+            //获取剪切框在图片中未旋转时的对应的位置
+            val targetRect = mapOriginRect(overlay.clipRect)
+            val matrix = Matrix()
+            matrix.setScale(
                 if (flipHorizontal) -1f else 1f,
                 if (flipVertical) -1f else 1f,
                 bitmap.width / 2f,
                 bitmap.height / 2f
             )
-            val targetRect = mapOriginRect(overlay.clipRect).toRectOut(false)
-            matrix.postTranslate(-targetRect.left.toFloat(), -targetRect.top.toFloat())
+            matrix.postRotate(rotate, bitmap.width / 2f, bitmap.height / 2f)
 
+            val left = max(0, targetRect.left.roundToInt())
+            val top = max(0, targetRect.top.roundToInt())
+
+            val width = minOf(targetRect.width().floorInt(), bitmap.width - left)
+            val height = minOf(targetRect.height().floorInt(), bitmap.height - top)
+
+            val originResult = Bitmap.createBitmap(bitmap, left, top, width, height, matrix, false)
             val result = Bitmap.createBitmap(
-                targetRect.width(),
-                targetRect.height(),
-                bitmap.config
+                originResult.width,
+                originResult.height,
+                Bitmap.Config.ARGB_8888
             )
             val canvas = CropCanvas(result)
 
-            canvas.withMatrix(matrix) {//旋转镜像
-                withClip(overlay.updateClipPath(Path(), targetRect)) {//clip
-                    drawBitmap(bitmap, 0f, 0f, paint)
-                }
+            val rect = Rect(0, 0, originResult.width, originResult.height)
+            canvas.withClip(overlay.updateClipPath(Path(), rect)) {//clip
+                drawBitmap(originResult, 0f, 0f, paint)
             }
+            originResult.recycle()
             return result
         } else {
             val result = Bitmap.createBitmap(

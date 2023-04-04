@@ -70,6 +70,9 @@ class CropOverlay(val cropDelegate: CropDelegate) {
 
     }
 
+    /**默认情况下,是否图片的比例*/
+    var useBitmapRadio: Boolean = true
+
     /**剪切框的比例
      * [null] 表示自由比例
      * [setBitmapRatio] 图片比例/原始比例
@@ -146,7 +149,7 @@ class CropOverlay(val cropDelegate: CropDelegate) {
         onRectScaleLimitAction = { rect ->
             var result = false
             if (enableClipMoveMode) {
-                val bitmapRectMap = cropDelegate.bitmapRectMap
+                val bitmapRectMap = cropDelegate.bitmapRectMap.toRectOut(true)
                 if (rect.isOverflowOf(bitmapRectMap)) {
                     result = true
                 }
@@ -397,14 +400,20 @@ class CropOverlay(val cropDelegate: CropDelegate) {
     /**使用图片比例*/
     fun setBitmapRatio() {
         updateClipRatio(cropDelegate._bestRect.width() * 1f / cropDelegate._bestRect.height())
+        useBitmapRadio = true
     }
 
     /**更新裁剪比例
      * [null] 表示自由比例
      * [setBitmapRatio] 图片比例/原始比例
      * [updateClipRatio] 自定义比例
+     *
+     * [isUpdate] 是否是更新[clipRatio], 而非设置[clipRatio]
      * */
-    fun updateClipRatio(ratio: Float? = null) {
+    fun updateClipRatio(ratio: Float? = null, isUpdate: Boolean = false) {
+        if (!isUpdate) {
+            useBitmapRadio = false
+        }
         clipRatio = ratio
         updateClipRect()
         cropDelegate.moveBitmapToRect(clipRect.rectF, true)
@@ -435,8 +444,15 @@ class CropOverlay(val cropDelegate: CropDelegate) {
                 width = width * s2 / s1
             }
 
-            val maxWidth = cropDelegate.maxWidth
-            val maxHeight = cropDelegate.maxHeight
+            val maxWidth = if (enableClipMoveMode) min(
+                targetRect.width(),
+                cropDelegate.maxWidth
+            ) else cropDelegate.maxWidth
+            val maxHeight = if (enableClipMoveMode) min(
+                targetRect.height(),
+                cropDelegate.maxHeight
+            ) else cropDelegate.maxHeight
+
             val scaleWidth = maxWidth * 1f / width
             val scaleHeight = maxHeight * 1f / height
             val minScale = minOf(scaleWidth, scaleHeight)
