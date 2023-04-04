@@ -3,11 +3,13 @@ package com.angcyo.canvas.render.renderer
 import android.graphics.*
 import androidx.core.graphics.withClip
 import com.angcyo.canvas.render.R
+import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.util.createRenderPaint
 import com.angcyo.library._refreshRateRatio
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
 
 /**
@@ -15,11 +17,12 @@ import com.angcyo.library.ex.*
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/04/03
  */
-class ProgressInsideRenderer(val delegate: CanvasRenderDelegate?) : BaseRenderer() {
+class ProgressRenderer(val delegate: CanvasRenderDelegate?) : BaseRenderer() {
 
     init {
-        renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_OUTSIDE)
-            .remove(IRenderer.RENDERER_FLAG_ON_VIEW)
+        renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_VIEW)
+            .remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
+        //.remove(IRenderer.RENDERER_FLAG_ON_OUTSIDE)
     }
 
     /**画笔*/
@@ -30,6 +33,14 @@ class ProgressInsideRenderer(val delegate: CanvasRenderDelegate?) : BaseRenderer
         style = Paint.Style.FILL
     }
 
+    //---
+
+    /**是否要渲染进度
+     * [progress]
+     * [borderBounds]
+     * */
+    var renderProgress: Boolean = false
+
     /**雕刻进度*/
     var progress: Int = -1
         set(value) {
@@ -37,11 +48,30 @@ class ProgressInsideRenderer(val delegate: CanvasRenderDelegate?) : BaseRenderer
             delegate?.refresh()
         }
 
+    /**绘制进度的位置, 未旋转的坐标*/
+    @Pixel
+    @CanvasInsideCoordinate
+    var progressRect: RectF? = null
+
+    /**进度旋转的角度, 用来计算clipPath*/
+    var progressRotate: Float? = null
+
     /**进度颜色, 不带透明*/
     var progressColor: Int = _color(R.color.canvas_render_select)
 
     /**进度文本颜色, 不带透明*/
     var progressTextColor: Int = _color(R.color.error)
+
+    //---
+
+    /**是否要渲染蚂蚁线边框
+     * [borderBounds]*/
+    var renderBorder: Boolean = false
+
+    /**边框*/
+    @Pixel
+    @CanvasInsideCoordinate
+    var borderBounds: RectF? = null
 
     /**边框的颜色*/
     var borderColor: Int = _color(R.color.canvas_render_select)
@@ -63,35 +93,34 @@ class ProgressInsideRenderer(val delegate: CanvasRenderDelegate?) : BaseRenderer
         fullIn: Boolean,
         def: Boolean
     ): Boolean {
-        return super.isVisibleInRender(delegate, fullIn, def)
+        return isVisible
     }
 
-    override fun renderOnInside(canvas: Canvas, params: RenderParams) {
-        //模式
-        /*progressRenderer?.let {
-            if (drawProgressMode && progress >= 0) {
-                _drawProgressMode(canvas, it)
-            }
+    override fun renderOnOutside(canvas: Canvas, params: RenderParams) {
+        if (renderProgress) {
+            _drawProgressMode(canvas)
         }
-        borderRenderer?.let {
-            if (drawBorderMode) {
-                _drawBorderMode(canvas, it)
-            }
-        }*/
+        if (renderBorder) {
+            _drawBorderMode(canvas)
+        }
     }
 
     //---
 
     /**绘制边框*/
-    private fun _drawBorderMode(canvas: Canvas, renderer: BaseRenderer) {
-        val visualBounds = renderer.getRendererBounds() ?: return
-        drawBorder(canvas, visualBounds)
+    private fun _drawBorderMode(canvas: Canvas) {
+        borderBounds?.let {
+            delegate?.renderViewBox?.transformToOutside(it, _tempRect)
+            drawBorder(canvas, _tempRect)
+        }
     }
 
     /**绘制进度模式*/
-    private fun _drawProgressMode(canvas: Canvas, renderer: BaseRenderer) {
-        val visualBounds = renderer.getRendererBounds() ?: return
-        drawProgress(canvas, visualBounds)
+    private fun _drawProgressMode(canvas: Canvas) {
+        progressRect?.let {
+            delegate?.renderViewBox?.transformToOutside(it, _tempRect)
+            drawProgress(canvas, _tempRect)
+        }
     }
 
     //---
@@ -119,6 +148,7 @@ class ProgressInsideRenderer(val delegate: CanvasRenderDelegate?) : BaseRenderer
     private val _clipPath = Path()
     private val _borderPath = Path()
     private val _drawRect = RectF()
+    private val _rotateMatrix = Matrix()
 
     /**绘制矩形[rect], 支持旋转属性
      * [rect] 需要绘制的矩形, 不带旋转
@@ -148,7 +178,11 @@ class ProgressInsideRenderer(val delegate: CanvasRenderDelegate?) : BaseRenderer
 
     /**绘制进度文本和clip的rect*/
     private fun drawProgress(canvas: Canvas, rect: RectF) {
+        val rotate = progressRotate ?: 0f
+        _rotateMatrix.setRotate(rotate, rect.centerX(), rect.centerY())
+
         _drawRect.set(rect)
+        _rotateMatrix.mapRect(_drawRect)
 
         _drawRect.bottom = _drawRect.top + _drawRect.height() * clamp(
             progress,
@@ -165,7 +199,8 @@ class ProgressInsideRenderer(val delegate: CanvasRenderDelegate?) : BaseRenderer
 
         //clip
         _clipPath.rewind()
-        _clipPath.addRect(_drawRect, Path.Direction.CW)
+        _clipPath.addRect(rect, Path.Direction.CW)
+        _clipPath.transform(_rotateMatrix)
 
         canvas.withClip(_clipPath) {
             canvas.drawRect(_drawRect, paint) //进度提示

@@ -48,11 +48,15 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     /**监测信息绘制*/
     var monitorRenderer = CanvasMonitorRenderer(delegate)
 
+    /**进度绘制渲染器*/
+    var progressRenderer = ProgressRenderer(delegate)
+
     override var renderFlags: Int = 0xff
 
     init {
         /*renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
             .remove(IRenderer.RENDERER_FLAG_ON_OUTSIDE)*/
+        afterRendererList.add(progressRenderer)
     }
 
     /**渲染入口点*/
