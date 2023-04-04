@@ -28,9 +28,13 @@ interface IRenderer {
         @RenderFlag
         const val RENDERER_FLAG_ON_OUTSIDE = RENDERER_FLAG_ON_INSIDE shl 1
 
+        /**在渲染[renderOnOutside]时, 是否要clipRect*/
+        @RenderFlag
+        const val RENDERER_FLAG_CLIP_RECT_OUTSIDE = RENDERER_FLAG_ON_OUTSIDE shl 1
+
         /**最后一个标识位*/
         @RenderFlag
-        const val RENDERER_FLAG_LAST = RENDERER_FLAG_ON_OUTSIDE shl 1
+        const val RENDERER_FLAG_LAST = RENDERER_FLAG_CLIP_RECT_OUTSIDE shl 1
     }
 
     /**当前类的flag标识位*/

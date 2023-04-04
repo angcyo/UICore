@@ -75,7 +75,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
             }
         }
 
-        /**[rendererList] 需要绘制的渲染器
+        /**[rendererList] 需要绘制的渲染器, 必须是简单的渲染器
          * [overrideSize] 需要等比覆盖输出的大小
          * [bounds] 指定输出的绘制位置*/
         fun createRenderDrawable(
@@ -98,9 +98,12 @@ open class CanvasGroupRenderer : BaseRenderer() {
                     }
                 }
                 for (renderer in rendererList) {
-                    renderer.updateRenderDrawable(params) //更新绘制内容
-                    renderer.renderOnInside(this, params)
-                    renderer.requestUpdateDrawableFlag(Reason.code, null)//清除缓存
+                    if (renderer is CanvasElementRenderer) {
+                        val renderProperty = renderer.renderProperty ?: continue
+                        val drawable = renderer.renderElement?.requestElementRenderDrawable(params)
+                            ?: continue
+                        renderer.renderDrawable(this, renderProperty, drawable, params)
+                    }
                 }
             })
         }
@@ -127,10 +130,14 @@ open class CanvasGroupRenderer : BaseRenderer() {
                         renderDst = overrideSize / rect.width()
                     }
                 }
+
                 for (renderer in rendererList) {
-                    renderer.updateRenderDrawable(params) //更新绘制内容
-                    renderer.renderOnInside(this, params)
-                    renderer.requestUpdateDrawableFlag(Reason.code, null)
+                    if (renderer is CanvasElementRenderer) {
+                        val renderProperty = renderer.renderProperty ?: continue
+                        val drawable = renderer.renderElement?.requestElementRenderDrawable(params)
+                            ?: continue
+                        renderer.renderDrawable(this, renderProperty, drawable, params)
+                    }
                 }
             }
         }

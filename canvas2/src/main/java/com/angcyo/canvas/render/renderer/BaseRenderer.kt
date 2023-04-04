@@ -18,6 +18,7 @@ import com.angcyo.canvas.render.element.IElement
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRenderBitmap
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRenderDrawable
 import com.angcyo.drawable.loading.CircleScaleLoadingDrawable
+import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
@@ -186,17 +187,30 @@ abstract class BaseRenderer : IRenderer {
         readyRenderIfNeed(params)
         renderProperty?.let { property ->
             renderDrawable?.let { drawable ->
-                val renderBounds = property.getRenderBounds()
-                canvas.withSave {
-                    translate(renderBounds.left, renderBounds.top)//平移到指定位置
-                    val width = max(renderBounds.width(), params.drawMinWidth).ceilInt()
-                    val height = max(renderBounds.height(), params.drawMinHeight).ceilInt()
-                    drawable.setBounds(0, 0, width, height)//设置绘制的宽高
-                    params.delegate?.dispatchRenderDrawable(this@BaseRenderer, params, false)
-                    drawable.draw(canvas)//绘制
-                    params.delegate?.dispatchRenderDrawable(this@BaseRenderer, params, true)
-                }
+                renderDrawable(canvas, property, drawable, params)
+            }.elseNull {
+                L.w("没有可绘制的Drawable[${this@BaseRenderer.simpleHash()}]")
             }
+        }
+    }
+
+    /**绘制指定的数据[drawable]
+     * [renderOnInside]*/
+    open fun renderDrawable(
+        canvas: Canvas,
+        property: CanvasRenderProperty,
+        drawable: Drawable,
+        params: RenderParams
+    ) {
+        val renderBounds = property.getRenderBounds()
+        canvas.withSave {
+            translate(renderBounds.left, renderBounds.top)//平移到指定位置
+            val width = max(renderBounds.width(), params.drawMinWidth).ceilInt()
+            val height = max(renderBounds.height(), params.drawMinHeight).ceilInt()
+            drawable.setBounds(0, 0, width, height)//设置绘制的宽高
+            params.delegate?.dispatchRenderDrawable(this@BaseRenderer, params, false)
+            drawable.draw(canvas)//绘制
+            params.delegate?.dispatchRenderDrawable(this@BaseRenderer, params, true)
         }
     }
 

@@ -45,6 +45,7 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
 
     init {
         renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_VIEW)
+            .remove(IRenderer.RENDERER_FLAG_CLIP_RECT_OUTSIDE)
         //.remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
 
         delegate.touchManager.touchListenerList.add(this)

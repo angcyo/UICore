@@ -144,7 +144,9 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
             _isTouchDownInCanvas = renderBounds.contains(eventX, eventY)
         }
 
-        if (!_isTouchDownInCanvas) {
+        if (selectorManager.isSelectorElement) {
+            //有选中元素时, 因为控制按钮会覆盖在画布上, 所以需要先处理控制按钮事件
+        } else if (!_isTouchDownInCanvas) {
             //按下的时候, 没有在画板区域, 则后续不处理事件
             return false
         }

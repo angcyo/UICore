@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.core
 
 import android.graphics.Canvas
 import androidx.core.graphics.withMatrix
+import androidx.core.graphics.withSave
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
@@ -88,10 +89,16 @@ abstract class BaseRenderDispatch {
 
         //偏移到画布bounds
         canvas.withTranslation(renderBounds.left, renderBounds.top) {
-            clipRect(0f, 0f, renderBounds.width(), renderBounds.height())//剪切画布
             //---
             for (renderer in list) {
-                renderer.renderOnOutside(canvas, params)
+                if (renderer.renderFlags.have(IRenderer.RENDERER_FLAG_CLIP_RECT_OUTSIDE)) {
+                    withSave {
+                        clipRect(0f, 0f, renderBounds.width(), renderBounds.height())//剪切画布
+                        renderer.renderOnOutside(canvas, params)
+                    }
+                } else {
+                    renderer.renderOnOutside(canvas, params)
+                }
             }
         }
     }
