@@ -187,6 +187,10 @@ abstract class BaseRenderer : IRenderer {
         readyRenderIfNeed(params)
         renderProperty?.let { property ->
             renderDrawable?.let { drawable ->
+                val renderBounds = property.getRenderBounds()
+                val width = max(renderBounds.width(), params.drawMinWidth).ceilInt()
+                val height = max(renderBounds.height(), params.drawMinHeight).ceilInt()
+                drawable.setBounds(0, 0, width, height)//设置绘制的宽高
                 renderDrawable(canvas, property, drawable, params)
             }.elseNull {
                 if (this is CanvasElementRenderer) {
@@ -198,7 +202,7 @@ abstract class BaseRenderer : IRenderer {
 
     /**绘制指定的数据[drawable]
      * [renderOnInside]*/
-    open fun renderDrawable(
+    fun renderDrawable(
         canvas: Canvas,
         property: CanvasRenderProperty,
         drawable: Drawable,
@@ -207,11 +211,8 @@ abstract class BaseRenderer : IRenderer {
         val renderBounds = property.getRenderBounds()
         canvas.withSave {
             translate(renderBounds.left, renderBounds.top)//平移到指定位置
-            val width = max(renderBounds.width(), params.drawMinWidth).ceilInt()
-            val height = max(renderBounds.height(), params.drawMinHeight).ceilInt()
-            drawable.setBounds(0, 0, width, height)//设置绘制的宽高
             params.delegate?.dispatchRenderDrawable(this@BaseRenderer, params, false)
-            drawable.draw(canvas)//绘制
+            drawable.draw(this)//绘制
             params.delegate?.dispatchRenderDrawable(this@BaseRenderer, params, true)
         }
     }
