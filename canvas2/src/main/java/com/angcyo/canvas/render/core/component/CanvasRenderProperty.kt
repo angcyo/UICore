@@ -5,6 +5,8 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
+import com.angcyo.canvas.render.core.component.CanvasRenderProperty.Companion.ANCHOR_X_RIGHT
+import com.angcyo.canvas.render.core.component.CanvasRenderProperty.Companion.ANCHOR_Y_CENTER
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
 import kotlin.math.*
@@ -24,12 +26,18 @@ data class CanvasRenderProperty(
     /**锚点[anchorY]的位置*/
     var originY: String = "top",
 
-    /**矩形的左上角, 像素
+    /**矩形的横向锚点位置, 像素.
+     *
+     * 假设[originX] = [ANCHOR_X_RIGHT] 则表示矩形最终渲染的右边距离为[anchorX]
+     *
      * 如果有旋转[angle], 那么这个值也要是旋转后的值*/
     @Pixel
     var anchorX: Float = 0f,
 
-    /**矩形的左上角, 像素
+    /**矩形的纵向锚点位置, 像素.
+     *
+     * 假设[originY] = [ANCHOR_Y_CENTER] 则表示矩形最终渲染的垂直中心位置是[anchorY]
+     *
      * 如果有旋转[angle], 那么这个值也要是旋转后的值*/
     @Pixel
     var anchorY: Float = 0f,
@@ -77,6 +85,27 @@ data class CanvasRenderProperty(
 ) : Cloneable {
 
     companion object {
+
+        /**锚点对应在矩形中的位置*/
+
+        /**[anchorX]描述矩形的左边*/
+        const val ANCHOR_X_LEFT = "left"
+
+        /**[anchorX]描述矩形的右边*/
+        const val ANCHOR_X_RIGHT = "right"
+
+        /**[anchorX]描述矩形的中心*/
+        const val ANCHOR_X_CENTER = "center"
+
+        /**[anchorY]描述矩形的上边*/
+        const val ANCHOR_Y_TOP = "top"
+
+        /**[anchorY]描述矩形的下边*/
+        const val ANCHOR_Y_BOTTOM = "bottom"
+
+        /**[anchorY]描述矩形的中心*/
+        const val ANCHOR_Y_CENTER = "center"
+
         internal val _tempPoint = PointF()
         internal val _tempRect = RectF()
         internal val _tempMatrix = Matrix()
@@ -92,6 +121,8 @@ data class CanvasRenderProperty(
         matrix.setRotate(angle, rect.centerX(), rect.centerY())
         matrix.mapPoint(point)
 
+        this.originX = ANCHOR_X_LEFT
+        this.originY = ANCHOR_Y_TOP
         this.anchorX = point.x
         this.anchorY = point.y
         this.angle = angle
@@ -101,8 +132,8 @@ data class CanvasRenderProperty(
 
     /**重置属性*/
     fun reset() {
-        originX = "left"
-        originY = "top"
+        originX = ANCHOR_X_LEFT
+        originY = ANCHOR_Y_TOP
         anchorX = 0f
         anchorY = anchorX
         width = 0f
@@ -141,6 +172,28 @@ data class CanvasRenderProperty(
         return result
     }
 
+    /**根据[originX]的描述返回[anchorX]应该对应矩形x方向的偏移量*/
+    @Pixel
+    fun getOffsetX(): Float {
+        val rect = getScaleRect()
+        return when (originX) {
+            ANCHOR_X_RIGHT -> anchorX - rect.right
+            ANCHOR_X_CENTER -> anchorX - rect.centerX()
+            else -> anchorX - rect.left
+        }
+    }
+
+    /**根据[originY]的描述返回[anchorY]应该对应矩形y方向的偏移量*/
+    @Pixel
+    fun getOffsetY(): Float {
+        val rect = getScaleRect()
+        return when (originY) {
+            ANCHOR_Y_BOTTOM -> anchorY - rect.bottom
+            ANCHOR_Y_CENTER -> anchorY - rect.centerY()
+            else -> anchorY - rect.top
+        }
+    }
+
     //region---方法---
 
     /**基础矩形*/
@@ -161,9 +214,11 @@ data class CanvasRenderProperty(
         return result
     }
 
-    /**翻转矩阵*/
-    private fun flipMatrix(result: Matrix): Matrix {
-        result.postScale(if (flipX) -1f else 1f, if (flipY) -1f else 1f)
+    /**仅获取缩放倾斜后的矩形*/
+    private fun getScaleRect(result: RectF = _baseRect): RectF {
+        getBaseRect(result)
+        val matrix = getBaseMatrix(_baseMatrix, false)
+        matrix.mapRect(result) //先计算出目标的宽高
         return result
     }
 
@@ -173,12 +228,10 @@ data class CanvasRenderProperty(
 
     /**获取渲染目标时的中点坐标*/
     @CanvasInsideCoordinate
-    fun getRenderCenter(result: PointF = _centerPoint, includeFlip: Boolean = true): PointF {
-        val rect = getBaseRect()
-        val matrix = getBaseMatrix(_baseMatrix, includeFlip)
-        matrix.mapRect(rect) //先计算出目标的宽高
+    fun getRenderCenter(result: PointF = _centerPoint): PointF {
+        val rect = getScaleRect()
 
-        result.set(anchorX + rect.width() / 2, anchorY + rect.height() / 2)
+        result.set(getOffsetX() + rect.width() / 2, getOffsetY() + rect.height() / 2)
 
         _tempMatrix.reset()
         val rotateMatrix = _tempMatrix
@@ -241,7 +294,7 @@ data class CanvasRenderProperty(
         includeFlip: Boolean = true
     ): Matrix {
         getBaseMatrix(result, includeFlip)
-        val centerPoint = getRenderCenter(_centerPoint, includeFlip)
+        val centerPoint = getRenderCenter(_centerPoint)
         if (includeRotate) {
             result.postRotate(angle)
         }
