@@ -4,12 +4,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
+import android.content.Context.ACTIVITY_SERVICE
 import android.graphics.Point
 import android.graphics.Rect
 import android.net.ConnectivityManager
 import android.net.Proxy
 import android.os.Build
 import android.os.Environment
+import android.os.Process
 import android.os.StatFs
 import android.provider.Settings
 import android.telephony.TelephonyManager
@@ -21,6 +23,8 @@ import com.angcyo.library.*
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.component.pad.Pad
 import com.angcyo.library.ex.connect
+import com.angcyo.library.ex.fileSizeString
+import com.angcyo.library.ex.toSizeString
 import com.angcyo.library.unit.toPixel
 import java.io.BufferedReader
 import java.io.FileReader
@@ -30,6 +34,7 @@ import java.util.*
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
+
 
 /**
  *
@@ -142,8 +147,25 @@ object Device {
         }
     }
 
+    /**判断app是否还可以分配[size]字节的内存*/
+    fun canAllocationMemory(size: Long): Boolean {
+        //预留0.9的倍数
+        return getProcessMemoryUsage() * 1024 + size < getAvailableMemory() * 0.9 &&
+                size < Runtime.getRuntime().freeMemory() /*JVM中的剩余内存*/
+    }
+
+    /**获取内存使用情况
+     * [App已用/手机剩余/手机总共]*/
+    fun getMemoryUseInfo(): String = buildString {
+        append((getProcessMemoryUsage() * 1024).toSizeString()) //App已用内存
+        append("/")
+        append(getAvailableMemory().fileSizeString()) //系统可用内存
+        append("/")
+        append(getTotalMemory().fileSizeString()) //系统总内存
+    }
+
     /**
-     * 获取当前可用内存，返回数据以字节为单位。
+     * 获取当前整个系统可用内存，返回数据以字节为单位。
      *
      * @param context 可传入应用程序上下文。
      * @return 当前可用内存单位为B。
@@ -153,10 +175,21 @@ object Device {
         return memoryInfo.availMem
     }
 
-    /**获取总内存大小*/
+    /**获取当前整个系统总内存大小*/
     fun getTotalMemory(context: Context = app()): Long {
         val memoryInfo = getMemoryInfo(context)
         return memoryInfo.totalMem
+    }
+
+    /**获取当前进程使用了多少内存:KB*/
+    fun getProcessMemoryUsage(context: Context = app()): Int {
+        val activityManager = context.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        val pid = Process.myPid() // 获取当前进程的PID
+
+        val memoryInfoArray = activityManager.getProcessMemoryInfo(intArrayOf(pid))
+        val memoryInfo = memoryInfoArray[0]
+        val memoryUsage = memoryInfo.totalPss // 获取内存使用情况（单位：KB）
+        return memoryUsage
     }
 
     /**
@@ -256,10 +289,10 @@ object Device {
         deviceInfoLess(builder)
         builder.appendLine()
 
-        builder.append("memoryClass: ")
-        builder.appendln(manager.memoryClass)
-        builder.append("largeMemoryClass: ")
-        builder.appendln(manager.largeMemoryClass)
+        builder.append("App使用内存:${(getProcessMemoryUsage() * 1024).toSizeString()}")
+        builder.appendLine()
+        builder.appendLine("memoryClass: ${manager.memoryClass}MB")
+        builder.appendLine("largeMemoryClass: ${manager.largeMemoryClass}MB")
         builder.appendLine()
         builder.append("手机内存大小:")
         builder.appendLine(Formatter.formatFileSize(context, getTotalMemorySize()))

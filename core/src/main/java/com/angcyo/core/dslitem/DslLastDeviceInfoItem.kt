@@ -155,21 +155,17 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
                 append("%")
 
                 //内存信息
-                append(" (")
-                append(Device.getAvailableMemory().fileSizeString())
-                append(" /")
-                append(Device.getTotalMemory().fileSizeString())
-                append(")")
+                append(" (${Device.getMemoryUseInfo()})")
 
                 //内存信息2
                 val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-                append(" (${manager.memoryClass}MB")
-                append("/${manager.largeMemoryClass}MB)")
+                append(" (${manager.memoryClass}MB") //app分配的内存
+                append("/${manager.largeMemoryClass}MB)") //app分配的内存2
 
                 //内存信息3
                 append(" (${Runtime.getRuntime().freeMemory().fileSizeString()}")
-                append(" /${Runtime.getRuntime().totalMemory().fileSizeString()}")
-                append(" /${Runtime.getRuntime().maxMemory().fileSizeString()})")
+                append("/${Runtime.getRuntime().totalMemory().fileSizeString()}")
+                append("/${Runtime.getRuntime().maxMemory().fileSizeString()})")
             }
 
             return progress
