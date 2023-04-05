@@ -78,7 +78,13 @@ fun Consumer<Throwable>.removeRxErrorHandleOnce() {
 /**使用Rx调度后台线程, 主线程切换*/
 fun <T> runRx(backAction: () -> T, mainAction: (T?) -> Unit = {}): Disposable {
     return Single.create<T> { emitter ->
-        emitter.onSuccess(backAction())
+        try {
+            emitter.onSuccess(backAction())
+        } catch (e: Exception) {
+            L.e("Rx run异常:${e}")
+            e.printStackTrace()
+            emitter.onError(e)
+        }
     }.subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(mainAction) {

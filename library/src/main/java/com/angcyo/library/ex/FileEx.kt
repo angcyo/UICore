@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.text.format.Formatter
 import androidx.annotation.AnyThread
 import com.angcyo.library.app
+import com.angcyo.library.component.lastContext
 import com.angcyo.library.model.Page
 import com.angcyo.library.toastQQ
 import java.io.*
@@ -124,14 +125,21 @@ fun String?.fileSizeString(): String {
     return fileSize().fileSizeString()
 }
 
-/**格式化字节大小 [Long.fileSizeString]*/
+/**格式化字节大小 [Long.fileSizeString]
+ *
+ * [android.text.format.Formatter.formatFileSize]*/
 fun Int.toSizeString(unit: SizeUnit = SizeUnit.Auto): String = toLong().toSizeString(unit)
 
 /**格式化字节大小 [Long.fileSizeString]*/
 fun Long.toSizeString(unit: SizeUnit = SizeUnit.Auto): String = fileSizeString(unit)
 
+/**[android.text.format.Formatter.formatFileSize]*/
+fun Long.formatFileSize(): String = Formatter.formatFileSize(lastContext, this)
+
 /**[this] b 字节数量
  * 返回 [xxKB] [xxMB] [xxGB] [xxTB] [xxPB]
+ *
+ * [android.text.format.Formatter.formatFileSize]
  * */
 fun Long.fileSizeString(unit: SizeUnit = SizeUnit.Auto): String {
     val size = this
