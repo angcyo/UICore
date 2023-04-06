@@ -6,6 +6,7 @@ import com.angcyo.library.utils.fileNameUUID
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.InputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
@@ -106,6 +107,8 @@ fun File.unzipFile(outputPath: String = libCacheFolderPath()): String? {
                 e.printStackTrace()
             }
         }
+
+        zipFile.close()
         unzipFolder
     } catch (e: Exception) {
         e.printStackTrace()
@@ -134,5 +137,23 @@ fun ZipEntry.writeTo(outputPath: String, zipFile: ZipFile) {
         file.parentFile?.mkdirs()
         FileOutputStream(file).use { inputStream.writeTo(it) }
         inputStream.close()
+    }
+}
+
+/**直接从zip文件中, 读取指定[ZipEntry]的流
+ *
+ * [entryName] [ZipEntry]实体的名称, 需要带上路径 [name] [folder/folder/name]*/
+fun File.readEntryStream(entryName: String): InputStream? {
+    return try {
+        val zipFile = ZipFile(this)
+        //zipFile.close()
+        zipFile.getEntry(entryName)?.let {
+            return zipFile.getInputStream(it)
+            //请主动调用 inputStream.close()
+        }
+        null
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }
