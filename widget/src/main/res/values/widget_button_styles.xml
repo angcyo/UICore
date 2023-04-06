@@ -40,6 +40,7 @@
         <item name="button_gradient_end_color">@color/colorPrimaryDark</item>
         <item name="button_radius">@dimen/lib_radius_common</item>
         <item name="button_ripple_color">@color/colorAccent</item>
+        <item name="android:textColor">@color/lib_button_theme_solid_text_color</item>
     </style>
 
     <!--圆角黑色底填充的样式-->

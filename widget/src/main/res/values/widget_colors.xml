@@ -5,4 +5,6 @@
 
     <color name="lib_indicator_normal_color">#4D727272</color>
     <color name="lib_indicator_focus_color">@color/colorAccent</color>
+
+    <color name="lib_button_theme_solid_text_color">@color/lib_white</color>
 </resources>
