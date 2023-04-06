@@ -334,6 +334,7 @@ object Device {
         if (abi) {
             builder.appendLine()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                //Build.SUPPORTED_64_BIT_ABIS + Build.SUPPORTED_32_BIT_ABIS
                 builder.append(Build.SUPPORTED_ABIS.connect("/"))
             } else {
                 builder.append(Build.CPU_ABI)
