@@ -176,22 +176,22 @@ class GCodeWriteHandler : VectorWriteHandler() {
 
         if (enableGCodeShrink) {
             val cmd = "G1"
-            val x = xValue.toLossyFloat()
-            val y = yValue.toLossyFloat()
+            val xFloat = xValue.toLossyFloat()
+            val yFloat = yValue.toLossyFloat()
             writer?.appendLine(buildString {
                 if (lastInfo.lastCmd != cmd) {
                     append(cmd)
                 }
-                if (lastInfo.lastX != x) {
-                    append("X$x")
+                if (lastInfo.lastX != xFloat) {
+                    append("X$xFloat")
                 }
-                if (lastInfo.lastY != y) {
-                    append("Y$y")
+                if (lastInfo.lastY != yFloat) {
+                    append("Y$yFloat")
                 }
             })
             lastInfo.lastCmd = cmd
-            lastInfo.lastX = x
-            lastInfo.lastY = y
+            lastInfo.lastX = xFloat
+            lastInfo.lastY = yFloat
         } else {
             writer?.appendLine("G1 X${xValue.toLossyFloat()} Y${yValue.toLossyFloat()}")
         }
