@@ -46,6 +46,7 @@
     <!--圆角黑色底填充的样式-->
     <style name="LibButtonBlackSolidStyle" parent="LibButtonThemeSolidStyle">
         <item name="button_gradient_colors">@color/lib_black</item>
+        <item name="android:textColor">@color/lib_white</item>
     </style>
 
     <!--圆角边框的样式-->
