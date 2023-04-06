@@ -22,6 +22,8 @@ _replaceRes.doFirst {
     //canvas2
     pathListZh += "./UICoreEx/canvas2_lp/src/main/res/values-zh/canvas_strings.xml"
     pathListZh += "./UICoreEx/engrave2/src/main/res/values-zh/engrave_strings.xml"
+    pathListZh += "./UICoreEx/lpDevice/src/main/res/values-zh/device_strings.xml"
+    pathListZh += "./UICoreEx/lpDevice/src/main/res/values-zh/material_strings.xml"
 
     //ja 日语资源
     /*def pathOutListZh = []
@@ -35,7 +37,10 @@ _replaceRes.doFirst {
 
     //canvas2
     pathOutListZh += "./UICoreEx/canvas2_lp/src/main/res/values-ja/canvas_strings.xml"
-    pathOutListZh += "./UICoreEx/engrave2/src/main/res/values-ja/engrave_strings.xml"*/
+    pathOutListZh += "./UICoreEx/engrave2/src/main/res/values-ja/engrave_strings.xml"
+    pathOutListZh += "./UICoreEx/lpDevice/src/main/res/values-ja/device_strings.xml"
+    pathOutListZh += "./UICoreEx/lpDevice/src/main/res/values-ja/material_strings.xml"
+    */
 
     //ko 韩语资源
     def pathOutListZh = []
@@ -50,6 +55,8 @@ _replaceRes.doFirst {
     //canvas2
     pathOutListZh += "./UICoreEx/canvas2_lp/src/main/res/values-ko/canvas_strings.xml"
     pathOutListZh += "./UICoreEx/engrave2/src/main/res/values-ko/engrave_strings.xml"
+    pathOutListZh += "./UICoreEx/lpDevice/src/main/res/values-ko/device_strings.xml"
+    pathOutListZh += "./UICoreEx/lpDevice/src/main/res/values-ko/material_strings.xml"
 
     _replaceResList(pathListZh, pathOutListZh, _readCsvMap(csvPath))
 }
