@@ -13,6 +13,23 @@ import com.orhanobut.hawk.Hawk
 
 const val HAWK_SPLIT_CHAR = "|"
 
+/**指定的key是否存在*/
+fun String?.hawkHave(): Boolean = hawkContains()
+
+/**指定的key是否存在*/
+fun String?.hawkContains(): Boolean {
+    return this?.run {
+        Hawk.contains(this)
+    } ?: false
+}
+
+/**删除指定的key*/
+fun String?.hawkDelete(): Boolean {
+    return this?.run {
+        Hawk.delete(this)
+    } ?: false
+}
+
 /**
  * this 对应的 key值,
  * 将获取到的 value 用 `,` 分割, 返回列表集合 (不含空字符)
@@ -199,10 +216,3 @@ fun String?.hawkGetFloat(def: Float = -1f): Float {
     }
     return result
 }
-
-fun String?.hawkDelete(): Boolean {
-    return this?.run {
-        Hawk.delete(this)
-    } ?: false
-}
-
