@@ -78,6 +78,11 @@ object LibHawkKeys {
     @Pixel
     var pathAcceptableError: Float by HawkPropertyValue<Any, Float>(1f)
 
+    /**图片转GCode时, [gapValue]采样间隙, mm单位
+     * [com.angcyo.engrave2.transition.SimpleTransition.covertBitmapPixel2GCode]*/
+    @MM
+    var pathPixelGapValue: Float by HawkPropertyValue<Any, Float>(0.3f)
+
     /**是否强制使用高刷*/
     var enableHighRefresh: Boolean by HawkPropertyValue<Any, Boolean>(isDebug())
 
