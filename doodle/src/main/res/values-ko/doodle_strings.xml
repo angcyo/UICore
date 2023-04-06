@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="doodle_title">낙서</string>
+
+    <string name="doodle_undo">취소하다</string>
+    <string name="doodle_redo">다시 하다</string>
+    <string name="doodle_color">색깔</string>
+    <string name="doodle_eraser">지우개</string>
+    <string name="doodle_brush">붓</string>
+    <string name="doodle_pencil">만년필</string>
+    <string name="doodle_size">크기</string>
+</resources>

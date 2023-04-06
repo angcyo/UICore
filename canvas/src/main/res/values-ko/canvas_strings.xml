@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="canvas_tips">제시</string>
+    <string name="canvas_exit_edit">放弃编辑?</string>
+    <string name="canvas_title">새로 만들기</string>
+
+    <string name="canvas_width">너비</string>
+    <string name="canvas_height">높이</string>
+    <string name="canvas_axis_x">X축</string>
+    <string name="canvas_axis_y">Y축</string>
+    <string name="canvas_rotate">회전하다.</string>
+
+    <!--libcanvas-->
+    <string name="canvas_image">그림</string>
+    <string name="canvas_text">텍스트</string>
+    <string name="canvas_input_text">텍스트 입력</string>
+    <string name="canvas_shapes">모양</string>
+    <string name="canvas_material">소재</string>
+    <string name="canvas_doodle">낙서</string>
+    <string name="canvas_barcode">바코드</string>
+    <string name="canvas_qrcode">QR코드</string>
+    <string name="canvas_edit">편집</string>
+    <string name="canvas_layer">레이어</string>
+    <string name="canvas_undo">취소하다</string>
+    <string name="canvas_redo">다시 하다</string>
+    <string name="canvas_setting">설정</string>
+    <string name="canvas_line">선</string>
+    <string name="canvas_oval">타원</string>
+    <string name="canvas_polygon">다각형</string>
+    <string name="canvas_rectangle">직사각형</string>
+    <string name="canvas_pentagram">별 모양</string>
+    <string name="canvas_love">하트 모양</string>
+    <string name="canvas_stroke">선 긋기</string>
+    <string name="canvas_fill">채우기</string>
+    <string name="canvas_path_fill">경로 채우기</string>
+    <string name="canvas_fill_stroke">填充&amp;描边</string>
+
+    <string name="canvas_solid">채우기</string>
+    <string name="canvas_hollow">비우기</string>
+    <string name="canvas_bold">볼드체</string>
+    <string name="canvas_italic">이탤릭체</string>
+    <string name="canvas_under_line">밑줄</string>
+    <string name="canvas_delete_line">선 삭제</string>
+    <string name="canvas_font">글꼴</string>
+    <string name="canvas_standard">가로 배열</string>
+    <string name="canvas_vertical">세로 배열</string>
+    <string name="canvas_align_left">왼쪽 정렬</string>
+    <string name="canvas_align_horizontal">가로 중간 정렬</string>
+    <string name="canvas_align_right">오른쪽 정렬</string>
+    <string name="canvas_align_center">중간 정렬</string>
+    <string name="canvas_bounds_center">설비 중간 정렬</string>
+    <string name="canvas_align_top">위쪽 맞춤</string>
+    <string name="canvas_align_vertical">세로 중간 정렬</string>
+    <string name="canvas_align_bottom">아래 맞춤</string>
+    <string name="canvas_prints">프린트</string>
+    <string name="canvas_gcode">GCode</string>
+    <string name="canvas_black_white">흑백 프린트</string>
+    <string name="canvas_dithering">진동</string>
+    <string name="canvas_grey">그레이 스케일</string>
+    <string name="canvas_seal">서명</string>
+
+    <string name="canvas_font_text">레이저패커</string>
+    <string name="canvas_invert">색 반전</string>
+    <string name="canvas_threshold">역치</string>
+    <string name="canvas_contrast">대비</string>
+    <string name="canvas_brightness">밝기</string>
+    <string name="canvas_line_space">선 거리</string>
+    <string name="canvas_path_fill_line_space">선 간격 채우기</string>
+    <string name="canvas_path_fill_angle">각도 채우기</string>
+    <string name="canvas_outline">윤곽</string>
+    <string name="canvas_angle">각도</string>
+    <string name="canvas_direction">방향</string>
+    <string name="canvas_inch_unit">영국식 단위</string>
+    <string name="canvas_pixel_unit">픽셀</string>
+    <string name="canvas_grid">격자</string>
+    <string name="canvas_smart_assistant">스마트 가이드</string>
+    <string name="canvas_preview">미리 보기</string>
+    <string name="canvas_regulate">조정</string>
+    <string name="canvas_confirm">결정</string>
+    <string name="canvas_forward">윗 레이어로 이동</string>
+    <string name="canvas_backward">아래 레이어로 이동</string>
+    <string name="canvas_front">가장 윗 레이어에 놓기</string>
+    <string name="canvas_back">가장 아래 레이어에 놓기</string>
+    <string name="canvas_sort">배열</string>
+
+    <string name="canvas_import_font">가져오기</string>
+    <string name="canvas_invalid_font">잘못된 글꼴</string>
+    <string name="canvas_font_exist">글꼴이 이미 존재합니다</string>
+    <string name="canvas_cannot_import">가져올 수 없음</string>
+    <string name="canvas_delete_font">글꼴 삭제</string>
+
+    <string name="canvas_photo">사진첩</string>
+    <string name="out_of_limit">최적 범위를 벗어나다</string>
+    <string name="out_of_bounds">각인 범위를 벗어나다</string>
+    <string name="canvas_crop">커팅</string>
+    <string name="canvas_mesh">뒤틀리다</string>
+    <string name="canvas_system">시스템</string>
+    <string name="canvas_custom">사용자 정의</string>
+    <string name="canvas_style">스타일</string>
+    <string name="canvas_align">정렬</string>
+    <string name="canvas_flat">균등하게 나누다</string>
+    <string name="canvas_flat_horizontal">가로 균등 분할</string>
+    <string name="canvas_flat_vertical">세로 균등 분할</string>
+    <string name="canvas_group_dissolve">그룹 해제</string>
+    <string name="canvas_group_group">그룹</string>
+
+    <string name="canvas_font_size">글자크기</string>
+    <string name="canvas_word_spacing">글자 간격</string>
+    <string name="canvas_line_spacing">행간격</string>
+    <string name="canvas_curve">곡선</string>
+    <string name="canvas_rasterize">격자 표시</string>
+
+    <string name="canvas_side">변수</string>
+    <string name="canvas_depth">깊이</string>
+    <string name="canvas_corner">둥근 모서리</string>
+
+    <string name="invert_title">색반전 설명</string>
+    <string name="invert_des">1.先按照正常流程测试雕刻材料\n2.看雕刻效果深浅（与材料色对比）\n3.判断是否勾选反色</string>
+    <string name="invert_criterion">판단 근거</string>
+    <string name="invert_not_recommend">색반전을 추천하지 않음</string>
+    <string name="invert_not_recommend_criterion">각인색이 재료색보다 진합니다</string>
+    <string name="invert_recommend">색반전을 추천하다</string>
+    <string name="invert_recommend_criterion">각인색은 재료색보다 옅습니다</string>
+
+    <string name="canvas_clear">비우다</string>
+    <string name="canvas_origin">원점</string>
+    <string name="canvas_reset">리셋</string>
+    <string name="canvas_best">적용</string>
+
+    <string name="canvas_item_outof_limit">元素数量超出限制!</string>
+</resources>
