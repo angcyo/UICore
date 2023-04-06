@@ -45,6 +45,7 @@ fun List<String>.zip(zipFilePath: String = libCacheFile(fileNameUUID(".zip")).ab
 }
 
 /**向zip流中, 写入文件/文件夹
+ * [file] 支持文件/文件夹
  * [parentFolderName] 可以为空字符, xxx/
  * */
 fun ZipOutputStream.writeEntry(file: File, parentFolderName: String = "") {
@@ -86,7 +87,7 @@ fun ZipOutputStream.writeEntry(file: File, parentFolderName: String = "") {
 
 //---
 
-/**解压文件
+/**解压zip文件
  * [outputPath] 输出的文件夹
  * @return 成功/失败*/
 fun File.unzipFile(outputPath: String = libCacheFolderPath()): String? {
@@ -112,6 +113,7 @@ fun File.unzipFile(outputPath: String = libCacheFolderPath()): String? {
     }
 }
 
+/**[unzipFile]*/
 fun String.unzipFile(outputPath: String = libCacheFolderPath()): String? =
     file().unzipFile(outputPath)
 
