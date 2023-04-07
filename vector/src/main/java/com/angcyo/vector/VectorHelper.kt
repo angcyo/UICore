@@ -164,6 +164,41 @@ object VectorHelper {
         }
     }
 
+    /**2个点, 1个半径, 求圆心*/
+    fun centerOfCircle(
+        x1: Double,
+        y1: Double,
+        x2: Double,
+        y2: Double,
+        r: Double
+    ): PointD? {
+        // 求出中点坐标
+        val centerX = (x1 + x2) / 2
+        val centerY = (y1 + y2) / 2
+
+        // 求出向量d1和d2
+        val dx1 = x1 - x2
+        val dy1 = y1 - y2
+
+        val dx2 = -y1 + y2
+        val dy2 = x1 - x2
+
+        if (dx1 == 0.0 && dy1 == 0.0) {
+            return null
+        }
+
+        // 求出向量d1和d2的长度
+        val d1 = sqrt(dx1 * dx1 + dy1 * dy1)
+        val d2 = r * d1 / sqrt(dx1 * dx1 + dy1 * dy1)
+        // 求出单位向量U
+        val u1 = dx2 / d2
+        val u2 = dy2 / d2
+        // 求出圆心坐标
+        val originX = centerX + r * u1
+        val originY = centerY + r * u2
+        return PointD(originX, originY)
+    }
+
     /**将[pathList]使用扫描碰撞的方式,生成用来填充的新的[pathList]
      *
      * [fillPathStep] 填充间距
