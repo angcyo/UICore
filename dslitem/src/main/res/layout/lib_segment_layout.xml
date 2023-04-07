@@ -8,4 +8,4 @@
     android:minWidth="50dp"
     android:minHeight="40dp"
     android:paddingHorizontal="@dimen/lib_hdpi"
-    tools:text="首页" />
+    tools:text="Item" />

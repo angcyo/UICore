@@ -18,7 +18,6 @@
     <color name="canvas_ico_selected">@color/canvas_primary</color>
     <!--分割线的颜色-->
     <color name="canvas_line">#e7e7e7</color>
-    <color name="canvas_ico_dark">#a5a5a5</color>
 
     <color name="canvas_gray">#d8d8d8</color>
     <color name="canvas_dark_gray">#d8d8d8</color>
