@@ -338,7 +338,7 @@ object GCodeHelper {
         var overrideCommand: ((line: GCodeLineData) -> Unit)? = null
 
         /**
-         * M05指令:主轴关闭, M03:主轴打卡 M04自动
+         * M05指令:主轴关闭, M03:主轴打开 M04自动
          * 自动从文件中提取提取, 如果文件中不包含M03/M05, 则自动使用M04
          * */
         private var spindleType: Int? = null
@@ -548,7 +548,7 @@ object GCodeHelper {
                             overrideGCommand?.invoke(line, firstCmd, _tempXYPoint, null)
                         }
                         2, 3 -> { //G2 G3, G2是顺时针圆弧移动，G3是逆时针圆弧移动。
-                            //x1 y1, x2, y2 经过i j未中心的圆弧
+                            //x1 y1, x2, y2 经过i j为中心的圆弧
 
                             isSpindleOn = if (spindleType == SPINDLE_AUTO) {
                                 true
