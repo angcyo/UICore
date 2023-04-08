@@ -13,6 +13,7 @@ import com.angcyo.library.ex.isRotated
 import com.angcyo.library.model.PointD
 import com.angcyo.svg.StylePath
 import com.pixplicity.sharp.Sharp
+import java.lang.Math.pow
 import kotlin.math.*
 
 /**
@@ -197,6 +198,53 @@ object VectorHelper {
         val originX = centerX + r * u1
         val originY = centerY + r * u2
         return PointD(originX, originY)
+    }
+
+    /**[centerOfCircle]*/
+    fun centerOfCircle2(x1: Float, y1: Float, x2: Float, y2: Float, r: Float): Array<Point>? {
+        val midX = (x1 + x2) / 2
+        val midY = (y1 + y2) / 2
+        val distance = sqrt((x2 - x1).toDouble().pow(2.0) + (y2 - y1).toDouble().pow(2.0)).toFloat()
+        if (distance > r * 2) {
+            // 两点之间的距离大于直径，不存在圆心
+            return null
+        }
+        val offsetX = (y2 - y1) * sqrt(
+            pow(r.toDouble(), 2.0) - pow(
+                (distance / 2).toDouble(),
+                2.0
+            )
+        ).toFloat() / distance
+        val offsetY = (x2 - x1) * sqrt(
+            pow(r.toDouble(), 2.0) - pow(
+                (distance / 2).toDouble(),
+                2.0
+            )
+        ).toFloat() / distance
+        val centerX1 = midX + offsetX
+        val centerY1 = midY + offsetY
+        val centerX2 = midX - offsetX
+        val centerY2 = midY - offsetY
+        val d1 = sqrt(
+            pow((centerX1 - x1).toDouble(), 2.0) + pow(
+                (centerY1 - y1).toDouble(),
+                2.0
+            )
+        ).toFloat()
+        val d2 = sqrt(
+            pow((centerX1 - x2).toDouble(), 2.0) + pow(
+                (centerY1 - y2).toDouble(),
+                2.0
+            )
+        ).toFloat()
+        return if (abs(d1 - r) < 0.01 && abs(d2 - r) < 0.01) {
+            arrayOf(Point(centerX1.toInt(), centerY1.toInt()))
+        } else {
+            arrayOf(
+                Point(centerX1.toInt(), centerY1.toInt()),
+                Point(centerX2.toInt(), centerY2.toInt())
+            )
+        }
     }
 
     /**将[pathList]使用扫描碰撞的方式,生成用来填充的新的[pathList]
