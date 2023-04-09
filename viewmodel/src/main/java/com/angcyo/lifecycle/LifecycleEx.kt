@@ -1,7 +1,7 @@
 package com.angcyo.lifecycle
 
-import androidx.annotation.MainThread
 import androidx.lifecycle.*
+import com.angcyo.library.component.ICancel
 
 /**
  * [androidx.lifecycle.LifecycleObserver]
@@ -106,3 +106,15 @@ fun LifecycleOwner.onAny(forever: Boolean = false, action: () -> Boolean) =
     on(Lifecycle.Event.ON_ANY, forever, action)
 
 //</editor-fold desc="LifecycleOwner">
+
+//<editor-fold desc="Other">
+
+/**销毁的时候, 自动取消*/
+fun ICancel.cancelOnDestroy(lifecycleOwner: LifecycleOwner) {
+    lifecycleOwner.onDestroy {
+        cancel()
+        true
+    }
+}
+
+//</editor-fold desc="Other">
