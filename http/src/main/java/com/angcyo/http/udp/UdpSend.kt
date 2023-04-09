@@ -3,6 +3,7 @@ package com.angcyo.http.udp
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.DSL
+import com.angcyo.library.component.ICancel
 import com.angcyo.library.ex.size
 import java.net.DatagramPacket
 import java.net.DatagramSocket
@@ -17,7 +18,7 @@ import kotlin.concurrent.thread
  * @date 2023/04/09
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class UdpSend {
+class UdpSend : ICancel {
 
     /**需要发送的目标ip地址,
      * 如果地址是: 255.255.255.255 , 那么就是广播
@@ -63,6 +64,10 @@ class UdpSend {
             }
             L.i("UDP发送数据结束")
         }
+    }
+
+    override fun cancel() {
+        isCancel.set(true)
     }
 }
 

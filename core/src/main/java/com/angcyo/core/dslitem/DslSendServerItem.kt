@@ -7,10 +7,7 @@ import com.angcyo.http.base.readString
 import com.angcyo.http.base.toTextBody
 import com.angcyo.http.postBody2Body
 import com.angcyo.http.rx.observe
-import com.angcyo.library.ex.connectUrl
-import com.angcyo.library.ex.longFeedback
-import com.angcyo.library.ex.nowTimeString
-import com.angcyo.library.ex.randomColor
+import com.angcyo.library.ex.*
 import com.angcyo.library.toastQQ
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.string
@@ -50,6 +47,7 @@ class DslSendServerItem : DslAdapterItem() {
         itemAddress?.let {
             itemHolder.tv(R.id.lib_address_edit_view)?.apply {
                 text = it
+                setTextColor(_color(R.color.error))
                 longFeedback()
             }
         }

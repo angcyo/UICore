@@ -3,6 +3,7 @@ package com.angcyo.http.udp
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.DSL
+import com.angcyo.library.component.ICancel
 import com.angcyo.library.ex.size
 import java.net.BindException
 import java.net.DatagramPacket
@@ -19,7 +20,7 @@ import kotlin.concurrent.thread
  * @date 2023/04/09
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-class UdpReceive {
+class UdpReceive : ICancel {
 
     companion object {
         /**buffer大小*/
@@ -66,7 +67,7 @@ class UdpReceive {
                         socket.receive(data)//接收UDP数据
                         break
                     } catch (e: SocketTimeoutException) {
-                        if (timeoutRetry) {
+                        if (timeoutRetry && isCancel.get().not()) {
                             continue
                         } else {
                             throw e
@@ -96,6 +97,10 @@ class UdpReceive {
             }
             L.i("UDP接收数据结束")
         }
+    }
+
+    override fun cancel() {
+        isCancel.set(true)
     }
 }
 

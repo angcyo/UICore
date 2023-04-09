@@ -21,6 +21,7 @@ import com.angcyo.http.uploadFile2Body
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.getShowName
 import com.angcyo.library.ex.inputStream
+import com.angcyo.lifecycle.cancelOnDestroy
 
 /**
  * 2023-04-09
@@ -63,7 +64,7 @@ class ShareSendFragment : BaseDslFragment() {
                         itemAddress = it
                         updateAdapterItem() //更新item状态
                     }
-                }
+                }.cancelOnDestroy(this@ShareSendFragment)
             }
             sendUriList?.forEach {
                 DslSendFileItem()() {
@@ -75,6 +76,9 @@ class ShareSendFragment : BaseDslFragment() {
 
     /**开始上传文件*/
     private fun DslAdapter.startUploadFile(url: String) {
+        if (isDetached) {
+            return  //已经销毁
+        }
         val fileItem = findItem { it is DslSendFileItem && it.itemSendState != 1 }
         if (fileItem == null || fileItem !is DslSendFileItem) {
             //上传完成
