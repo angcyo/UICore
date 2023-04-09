@@ -31,8 +31,14 @@ class DslRequest {
             return json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
         }
 
+        /**会自动加上[; charset=utf-8]*/
         fun textBody(text: String): RequestBody {
             return text.toRequestBody("text/plain".toMediaTypeOrNull())
+        }
+
+        /**会自动加上[; charset=utf-8]*/
+        fun htmlBody(html: String): RequestBody {
+            return html.toRequestBody("text/html".toMediaTypeOrNull())
         }
 
         fun formBody(form: Map<String, String?>?, charset: Charset? = Charsets.UTF_8): FormBody {

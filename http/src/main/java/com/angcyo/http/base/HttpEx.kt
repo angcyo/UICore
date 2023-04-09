@@ -1,10 +1,10 @@
 package com.angcyo.http.base
 
+import com.angcyo.http.DslRequest
 import com.angcyo.library.model.Page
 import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import okio.Buffer
 import java.io.EOFException
@@ -103,9 +103,19 @@ fun mapOf(vararg args: String, split: String = ":"): HashMap<String, Any> {
     return result
 }
 
-/**application/json*/
-fun String.toJsonBody(): RequestBody =
-    toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+/**application/json
+ *
+ * [com.angcyo.http.DslRequest]*/
+fun String.toJsonBody(): RequestBody = DslRequest.jsonBody(this)
+
+/** [com.angcyo.http.DslRequest]*/
+fun String.toTextBody(): RequestBody = DslRequest.textBody(this)
+
+/** [com.angcyo.http.DslRequest]*/
+fun String.toHtmlBody(): RequestBody = DslRequest.htmlBody(this)
+
+/** [com.angcyo.http.DslRequest]*/
+fun Map<String, String?>.toFormBody(): RequestBody = DslRequest.formBody(this)
 
 fun String?.isJsonType() = this?.startsWith("application/json") == true
 fun String?.isTextType() = this?.startsWith("text/plain") == true
@@ -148,3 +158,8 @@ fun httpListBeanType(wrapClass: KClass<*>, typeClass: KClass<*>): Type =
 
 /**成功*/
 fun Int.isSuccess() = this in 200..299
+
+/**文件请求体, 转换成[MultipartBody.Part]*/
+fun RequestBody.toFilePart(fileName: String): MultipartBody.Part {
+    return MultipartBody.Part.createFormData("file", fileName, this)
+}

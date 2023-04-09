@@ -16,18 +16,22 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.http.*
+import java.io.File
 import java.lang.reflect.Type
 import java.security.cert.X509Certificate
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+
 
 /**
  * 网络请求库
@@ -145,7 +149,7 @@ interface Api {
         @Body body: RequestBody?,
         @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
-    ): Observable<Response<JsonElement>>
+    ): Observable<Response<ResponseBody>>
 
     @PATCH
     fun patch2Body(
@@ -154,6 +158,45 @@ interface Api {
         @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
         @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
     ): Observable<Response<ResponseBody>>
+
+    /*------------以下是上传文件[POST]请求-----------------*/
+
+    @Multipart
+    @POST
+    fun uploadFile(
+        @Url url: String,
+        @Part file: MultipartBody.Part?,
+        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
+    ): Observable<Response<JsonElement>>
+
+    @Multipart
+    @POST
+    fun uploadFiles(
+        @Url url: String,
+        @Part fileList: List<MultipartBody.Part>?,
+        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
+    ): Observable<Response<JsonElement>>
+
+    @Multipart
+    @POST
+    fun uploadFile2Body(
+        @Url url: String,
+        @Part file: MultipartBody.Part?,
+        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
+    ): Observable<Response<ResponseBody>>
+
+    @Multipart
+    @POST
+    fun uploadFiles2Body(
+        @Url url: String,
+        @Part fileList: List<MultipartBody.Part>?,
+        @QueryMap queryMap: HashMap<String, Any> = hashMapOf(),
+        @HeaderMap headerMap: HashMap<String, String> = hashMapOf()
+    ): Observable<Response<ResponseBody>>
+
 }
 
 //</editor-fold desc="通用网络接口">
@@ -358,7 +401,23 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
 
     val observable = when (requestConfig.method) {
         POST -> {
-            if (requestConfig.requestBody == null) {
+            if (requestConfig.filePart != null) {
+                //单文件上传
+                dslHttp(Api::class.java)?.uploadFile(
+                    requestConfig.url,
+                    requestConfig.filePart,
+                    requestConfig.query,
+                    requestConfig.header
+                )
+            } else if (!requestConfig.filePartList.isNullOrEmpty()) {
+                //多文件上传
+                dslHttp(Api::class.java)?.uploadFiles(
+                    requestConfig.url,
+                    requestConfig.filePartList,
+                    requestConfig.query,
+                    requestConfig.header
+                )
+            } else if (requestConfig.requestBody == null) {
                 dslHttp(Api::class.java)?.post(
                     requestConfig.url,
                     requestConfig.body,
@@ -375,21 +434,12 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
             }
         }
         PATCH -> {
-            if (requestConfig.requestBody == null) {
-                dslHttp(Api::class.java)?.patch(
-                    requestConfig.url,
-                    requestConfig.body,
-                    requestConfig.query,
-                    requestConfig.header
-                )
-            } else {
-                dslHttp(Api::class.java)?.patchBody(
-                    requestConfig.url,
-                    requestConfig.requestBody,
-                    requestConfig.query,
-                    requestConfig.header
-                )
-            }
+            dslHttp(Api::class.java)?.patch(
+                requestConfig.url,
+                requestConfig.body,
+                requestConfig.query,
+                requestConfig.header
+            )
         }
         POST_FORM -> {
             dslHttp(Api::class.java)?.postForm(
@@ -469,7 +519,23 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
 
     val observable = when (requestConfig.method) {
         POST -> {
-            if (requestConfig.requestBody == null) {
+            if (requestConfig.filePart != null) {
+                //单文件上传
+                dslHttp(Api::class.java)?.uploadFile2Body(
+                    requestConfig.url,
+                    requestConfig.filePart,
+                    requestConfig.query,
+                    requestConfig.header
+                )
+            } else if (!requestConfig.filePartList.isNullOrEmpty()) {
+                //多文件上传
+                dslHttp(Api::class.java)?.uploadFiles2Body(
+                    requestConfig.url,
+                    requestConfig.filePartList,
+                    requestConfig.query,
+                    requestConfig.header
+                )
+            } else if (requestConfig.requestBody == null) {
                 dslHttp(Api::class.java)?.post2Body(
                     requestConfig.url,
                     requestConfig.body,
@@ -492,6 +558,23 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
                 requestConfig.query,
                 requestConfig.header
             )
+        }
+        PATCH -> {
+            if (requestConfig.requestBody == null) {
+                dslHttp(Api::class.java)?.patch2Body(
+                    requestConfig.url,
+                    requestConfig.body,
+                    requestConfig.query,
+                    requestConfig.header
+                )
+            } else {
+                dslHttp(Api::class.java)?.patchBody(
+                    requestConfig.url,
+                    requestConfig.requestBody,
+                    requestConfig.query,
+                    requestConfig.header
+                )
+            }
         }
         else -> {
             dslHttp(Api::class.java)?.get2Body(
@@ -614,8 +697,43 @@ fun post2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
 }
 
 /**快速发送一个[post]请求*/
-fun postBody(
+fun postBody2Body(
     body: RequestBody,
+    config: RequestBodyConfig.() -> Unit
+): Observable<Response<ResponseBody>> {
+    return http2Body {
+        method = POST
+        requestBody = body
+        this.config()
+    }
+}
+
+fun put2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<ResponseBody>> {
+    return http2Body {
+        method = PUT
+        this.config()
+    }
+}
+
+/**上传文件, 并且返回json结果*/
+fun uploadFile(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
+    return http {
+        method = POST
+        this.config()
+    }
+}
+
+fun uploadFile(file: File, config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
+    return http {
+        method = POST
+        val requestBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
+        filePart = requestBody.toFilePart(file.name)
+        this.config()
+    }
+}
+
+/**上传文件, 并且返回ResponseBody结果*/
+fun uploadFile2Body(
     config: RequestBodyConfig.() -> Unit
 ): Observable<Response<ResponseBody>> {
     return http2Body {
@@ -624,9 +742,14 @@ fun postBody(
     }
 }
 
-fun put2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<ResponseBody>> {
+fun uploadFile2Body(
+    file: File,
+    config: RequestBodyConfig.() -> Unit
+): Observable<Response<ResponseBody>> {
     return http2Body {
-        method = PUT
+        method = POST
+        val requestBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
+        filePart = requestBody.toFilePart(file.name)
         this.config()
     }
 }
@@ -783,6 +906,12 @@ open class BaseRequestConfig {
     /**直接发送请求体
      * [com.angcyo.http.Api.postBody]*/
     var requestBody: RequestBody? = null
+
+    /**文件上传使用的body, 单文件上传*/
+    var filePart: MultipartBody.Part? = null
+
+    /**多文件上传*/
+    var filePartList: List<MultipartBody.Part>? = null
 
     //url后面拼接的参数列表
     var query: HashMap<String, Any> = hashMapOf()
