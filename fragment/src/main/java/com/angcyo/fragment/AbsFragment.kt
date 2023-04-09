@@ -94,7 +94,7 @@ abstract class AbsFragment : Fragment() {
         super.onInflate(context, attrs, savedInstanceState)
     }
 
-    /**
+    /**生命周期的执行顺序
      * OnAttach -> OnCreate -> onInflate -> onGetLayoutInflater ->
      * OnCreateView (initBaseView) -> onViewCreated -> OnActivityCreated ->
      * OnViewStateRestored -> OnStart -> OnResume
