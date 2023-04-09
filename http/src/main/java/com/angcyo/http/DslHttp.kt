@@ -738,6 +738,7 @@ fun uploadFile2Body(
 ): Observable<Response<ResponseBody>> {
     return http2Body {
         method = POST
+        //filePart 赋值此属性即可
         this.config()
     }
 }

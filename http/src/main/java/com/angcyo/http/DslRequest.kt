@@ -228,7 +228,7 @@ fun multipartBody(config: MultipartBody.Builder.() -> Unit): MultipartBody {
  * [RequestBody]
  * */
 fun InputStream.asRequestBody(
-    length: Long,
+    length: Long = available().toLong(),
     contentType: MediaType? = "application/octet-stream".toMediaTypeOrNull()
 ): RequestBody {
     return object : RequestBody() {
