@@ -14,6 +14,30 @@ import java.io.File
  */
 object ROpenFileHelper {
 
+    /**从[Intent]中获取对应的资源*/
+    fun parseIntentUri(intent: Intent?): ArrayList<Uri>? {
+        intent ?: return null
+        val action = intent.action
+        val dataList: ArrayList<Uri>? = when (action) {
+            //使用app打开
+            //android.intent.action.VIEW
+            //content://com.estrongs.files/storage/emulated/0/tencent/QQ_Images/ffea464c0cb6e12.jpg
+            //Intent.ACTION_VIEW -> intent.data
+
+            //发送至app
+            Intent.ACTION_SEND -> intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+                ?.toArrayListOf()
+            //android.intent.action.SEND_MULTIPLE
+            //content://media/external/images/media/6238
+
+            //多选发送/分享至app
+            Intent.ACTION_SEND_MULTIPLE -> intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM)
+            else -> intent.data?.toArrayListOf()
+        }
+        L.i("解析:$action $dataList")
+        return dataList
+    }
+
     /**
      * 从[intent]中, 解析出需要打开的文件路径
      * 会通过Uri, 进行转存文件, 保存到cache目录
@@ -33,16 +57,8 @@ object ROpenFileHelper {
         folderPath: String? = null
     ): String? {
         intent ?: return null
-        val action = intent.action
-
-        val data = when (action) {
-            //Intent.ACTION_VIEW -> intent.data
-            Intent.ACTION_SEND -> intent.extras?.getParcelable(Intent.EXTRA_STREAM)
-            else -> intent.data
-        }
-        //android.intent.action.VIEW
-        //content://com.estrongs.files/storage/emulated/0/tencent/QQ_Images/ffea464c0cb6e12.jpg
-        L.i("解析:$action $data")
+        val dataList = parseIntentUri(intent)
+        val data = dataList?.firstOrNull() ?: return null
         return parseData(
             data,
             ext ?: intent.type?.mimeTypeToExtName() ?: intent.type?.lastName(),
@@ -51,7 +67,12 @@ object ROpenFileHelper {
         )
     }
 
-    /**[parseIntent]*/
+    /**
+     * 转存[data]数据
+     * [parseIntent]
+     * [savePath] 指定转存的文件全路径,不指定时自动获取
+     * [folderPath] 单独指定路径, 并且自动获取文件名和扩展
+     * */
     fun parseData(
         data: Uri?,
         ext: String? = null, //单独指定文件的扩展名
@@ -65,7 +86,7 @@ object ROpenFileHelper {
             //%E9%87%91%E9%97%A8%E5%A4%A7%E6%A1%A5-GCODE.dxf
             //decode->金门大桥-GCODE.dxf
 
-            val name = data.getDisplayName() ?: path.decode().lastName()
+            val name = data.getShowName()
             var extName = name.extName()
 
             val fileName = if (extName.isEmpty() && !ext.isNullOrEmpty()) {

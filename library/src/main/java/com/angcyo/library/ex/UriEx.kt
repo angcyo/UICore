@@ -71,10 +71,19 @@ fun Uri.inputStream(context: Context = app()): InputStream? {
 /**转存数据流
  * @return 文件路径*/
 fun Uri.saveTo(filePath: String = libCacheFile().absolutePath, context: Context = app()): String {
-    inputStream(context)?.use {
-        it.copyTo(FileOutputStream(File(filePath)))
-    }
+    inputStream(context)?.copyToFile(filePath)
     return filePath
+}
+
+/**将流读出并写入文件[filePath]*/
+fun InputStream.copyToFile(filePath: String, bufferSize: Int = DEFAULT_BUFFER_SIZE): Long {
+    var bytesCopied: Long = 0
+    use {
+        val out = FileOutputStream(File(filePath))
+        bytesCopied = it.copyTo(out, bufferSize)
+        out.close()
+    }
+    return bytesCopied
 }
 
 /**默认按照原文件名存储
@@ -244,6 +253,10 @@ fun Uri.getFileName(context: Context = app()): String? {
     }
     return filename
 }
+
+/**不为空的返回值[getDisplayName]*/
+fun Uri.getShowName(context: Context = app()): String =
+    getDisplayName(context) ?: "$this".decode().lastName()
 
 /**从[Uri]中获取对应的显示名称
  * [Uri.getFileName]*/
