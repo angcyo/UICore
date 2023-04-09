@@ -120,7 +120,7 @@ fun ProgressListener.removeUploadProgress() {
  * [freq] 通知更新频率*/
 fun RequestBody.toProgressBody(
     freq: Int = 300,
-    action: (ProgressInfo?, Exception?) -> Unit
+    action: (progressInfo: ProgressInfo?, exception: Exception?) -> Unit
 ): ProgressRequestBody {
     val listener = object : ProgressListener {
         override fun onProgress(progressInfo: ProgressInfo?) {
