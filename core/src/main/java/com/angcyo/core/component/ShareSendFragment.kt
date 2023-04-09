@@ -11,8 +11,12 @@ import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.findItem
 import com.angcyo.getParcelableList
 import com.angcyo.http.asRequestBody
+import com.angcyo.http.base.getString
 import com.angcyo.http.base.toFilePart
+import com.angcyo.http.base.toJsonElement
+import com.angcyo.http.progress.toProgressBody
 import com.angcyo.http.rx.observe
+import com.angcyo.http.udp.udpReceive
 import com.angcyo.http.uploadFile2Body
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.getShowName
@@ -54,6 +58,12 @@ class ShareSendFragment : BaseDslFragment() {
                 itemSendFileAction = {
                     startUploadFile(it)
                 }
+                udpReceive(9999) { content, error ->
+                    content?.toJsonElement()?.getString("url")?.let {
+                        itemAddress = it
+                        updateAdapterItem() //更新item状态
+                    }
+                }
             }
             sendUriList?.forEach {
                 DslSendFileItem()() {
@@ -78,7 +88,11 @@ class ShareSendFragment : BaseDslFragment() {
                 uri?.inputStream()?.asRequestBody()?.let { body ->
                     uploadFile2Body {
                         this.url = url
-                        filePart = body.toFilePart(uri.getShowName())
+                        filePart = body.toProgressBody { progressInfo, exception ->
+                            itemSendProgress = progressInfo?.percent ?: 0
+                            updateAdapterItem() //更新item进度
+                        }
+                            .toFilePart(uri.getShowName())
                     }.observe { data, error ->
                         itemSendState = if (error == null) {
                             1

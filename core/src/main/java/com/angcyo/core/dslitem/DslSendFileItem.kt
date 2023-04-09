@@ -5,6 +5,7 @@ import com.angcyo.core.R
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.ex.*
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.progress.DslProgressBar
 import com.angcyo.widget.span.span
 
 /**
@@ -20,6 +21,9 @@ class DslSendFileItem : DslAdapterItem() {
      * 1: 成功
      * -1: 失败*/
     var itemSendState: Int = 0
+
+    /**发送的进度[0~100]*/
+    var itemSendProgress: Int = 0
 
     /**错误的原因*/
     var itemErrorThrowable: Throwable? = null
@@ -69,6 +73,9 @@ class DslSendFileItem : DslAdapterItem() {
                     foregroundColor = _color(R.color.error)
                 }
             }
+        }
+        itemHolder.v<DslProgressBar>(R.id.lib_progress_view)?.apply {
+            setProgress(itemSendProgress)
         }
     }
 }
