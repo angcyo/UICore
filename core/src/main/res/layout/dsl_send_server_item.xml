@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.angcyo.widget.edit.DslEditText
+        android:id="@+id/lib_address_edit_view"
+        style="@style/LibFocusSingleEditStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="接收服务器地址:"
+        android:padding="@dimen/lib_xhdpi"
+        android:text="http://192.168.32.192:9400" />
+
+    <com.angcyo.widget.edit.DslEditText
+        android:id="@+id/lib_content_edit_view"
+        style="@style/LibEditStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="需要发送的纯文本内容"
+        android:minHeight="80dp"
+        android:padding="@dimen/lib_xhdpi"
+        app:layout_constraintTop_toBottomOf="@id/lib_address_edit_view" />
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/lib_send_file_button"
+        style="@style/LibButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/lib_xhdpi"
+        android:layout_marginTop="@dimen/lib_xhdpi"
+        android:padding="@dimen/lib_xhdpi"
+        android:text="发送文件"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/lib_send_body_button"
+        app:layout_constraintTop_toBottomOf="@id/lib_content_edit_view" />
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/lib_send_body_button"
+        style="@style/LibButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/lib_xhdpi"
+        android:layout_marginTop="@dimen/lib_xhdpi"
+        android:padding="@dimen/lib_xhdpi"
+        android:text="发送文本"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintLeft_toRightOf="@id/lib_send_file_button"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lib_content_edit_view" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_result_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="..."
+        app:layout_constraintTop_toBottomOf="@id/lib_send_file_button" />
+</androidx.constraintlayout.widget.ConstraintLayout>

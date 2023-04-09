@@ -65,7 +65,10 @@ open class LogInterceptor : Interceptor {
         val header = originRequest.header(HEADER_LOG)
 
         var pass = !enable
-        if (header.isNullOrEmpty()) {
+        if (originRequest.isUploadFileRequest()) {
+            //如果是上传文件, 则不输出日志
+            pass = true
+        } else if (header.isNullOrEmpty()) {
             //no op
         } else {
             if (header == true.toString()) {
@@ -165,6 +168,20 @@ open class LogInterceptor : Interceptor {
         }
 
         return response
+    }
+
+    /**是否是上传文件的请求*/
+    protected fun Request.isUploadFileRequest(): Boolean {
+        val request = this
+        if (request.body is MultipartBody) {
+            for (part in (request.body as MultipartBody).parts) {
+                val headers = part.headers.toString()
+                if (headers.contains("name=\"file\"") || headers.contains("name=\"files\"")) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     open fun logRequest(chain: Interceptor.Chain, request: Request, builder: StringBuilder) {
