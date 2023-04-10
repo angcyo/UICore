@@ -75,6 +75,7 @@ class DslSendFileItem : DslAdapterItem() {
             }
         }
         itemHolder.v<DslProgressBar>(R.id.lib_progress_view)?.apply {
+            enableProgressFlowMode = itemSendProgress < 100
             setProgress(itemSendProgress)
         }
     }

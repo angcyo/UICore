@@ -9,6 +9,7 @@ import com.angcyo.core.dslitem.DslSendServerItem
 import com.angcyo.core.fragment.BaseDslFragment
 import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.findItem
+import com.angcyo.dsladapter.updateAllItemBy
 import com.angcyo.getParcelableList
 import com.angcyo.http.asRequestBody
 import com.angcyo.http.base.getString
@@ -56,8 +57,21 @@ class ShareSendFragment : BaseDslFragment() {
 
         renderDslAdapter {
             DslSendServerItem()() {
-                itemSendFileAction = {
-                    startUploadFile(it)
+                itemSendFileAction = { url, retry ->
+                    if (retry) {
+                        //重试
+                        updateAllItemBy {
+                            if (it is DslSendFileItem) {
+                                it.itemSendState = 0
+                                it.itemSendProgress = 0
+                                it.itemErrorThrowable = null
+                                true
+                            } else {
+                                false
+                            }
+                        }
+                    }
+                    startUploadFile(url)
                 }
                 udpReceive(9999) { content, error ->
                     content?.toJsonElement()?.getString("url")?.let {

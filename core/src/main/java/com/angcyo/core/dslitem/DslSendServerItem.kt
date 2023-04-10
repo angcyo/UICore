@@ -23,7 +23,7 @@ import com.angcyo.widget.span.span
 class DslSendServerItem : DslAdapterItem() {
 
     /**发送文件触发的回调*/
-    var itemSendFileAction: (url: String) -> Unit = {}
+    var itemSendFileAction: (url: String, retry: Boolean) -> Unit = { _, _ -> }
 
     /**是否发送完成*/
     var itemIsSendFinish: Boolean = true
@@ -54,19 +54,33 @@ class DslSendServerItem : DslAdapterItem() {
 
         itemHolder.focused(R.id.lib_send_file_button)
         itemHolder.enable(R.id.lib_send_file_button, itemIsSendFinish)
+        itemHolder.enable(R.id.lib_retry_send_file_button, itemIsSendFinish)
 
         itemHolder.click(R.id.lib_send_file_button) {
             it.isEnabled = false
             itemIsSendFinish = false
             itemSendFileAction(
-                itemHolder.tv(R.id.lib_address_edit_view).string(true).connectUrl("/uploadFile")
+                itemHolder.tv(R.id.lib_address_edit_view).string(true)
+                    .connectUrl(itemHolder.tv(R.id.upload_file_api_edit_view).string(true)),
+                false
+            )
+        }
+
+        itemHolder.click(R.id.lib_retry_send_file_button) {
+            it.isEnabled = false
+            itemIsSendFinish = false
+            itemSendFileAction(
+                itemHolder.tv(R.id.lib_address_edit_view).string(true)
+                    .connectUrl(itemHolder.tv(R.id.upload_file_api_edit_view).string(true)),
+                true
             )
         }
 
         itemHolder.click(R.id.lib_send_body_button) {
             it.isEnabled = false
             postBody2Body(itemHolder.tv(R.id.lib_content_edit_view).string(false).toTextBody()) {
-                url = itemHolder.tv(R.id.lib_address_edit_view).string(true).connectUrl("/body")
+                url = itemHolder.tv(R.id.lib_address_edit_view).string(true)
+                    .connectUrl(itemHolder.tv(R.id.body_api_edit_view).string(true))
             }.observe { data, error ->
                 it.isEnabled = true
                 error?.let {
