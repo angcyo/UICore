@@ -52,7 +52,7 @@ class DslSendServerItem : DslAdapterItem() {
             }
         }
 
-        itemHolder.focused(R.id.lib_send_file_button)
+        itemHolder.focused(R.id.lib_result_view)
         itemHolder.enable(R.id.lib_send_file_button, itemIsSendFinish)
         itemHolder.enable(R.id.lib_retry_send_file_button, itemIsSendFinish)
 

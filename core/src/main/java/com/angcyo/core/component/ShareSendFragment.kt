@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import com.angcyo.core.R
+import com.angcyo.core.dslitem.DslSendEmptyItem
 import com.angcyo.core.dslitem.DslSendFileItem
 import com.angcyo.core.dslitem.DslSendServerItem
 import com.angcyo.core.fragment.BaseDslFragment
@@ -80,9 +81,13 @@ class ShareSendFragment : BaseDslFragment() {
                     }
                 }.cancelOnDestroy(this@ShareSendFragment)
             }
-            sendUriList?.forEach {
-                DslSendFileItem()() {
-                    itemData = it
+            if (sendUriList.isNullOrEmpty()) {
+                DslSendEmptyItem()()
+            } else {
+                sendUriList?.forEach {
+                    DslSendFileItem()() {
+                        itemData = it
+                    }
                 }
             }
         }

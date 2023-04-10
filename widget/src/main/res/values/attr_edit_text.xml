@@ -97,6 +97,10 @@
         <attr name="r_draw_left" />
         <attr name="r_draw_left_color" />
         <attr name="r_draw_left_size" />
+        <attr name="r_draw_left_offset_left" />
+        <attr name="r_draw_left_offset_right" />
+        <attr name="r_draw_left_offset_top" />
+        <attr name="r_draw_left_offset_bottom" />
 
         <attr name="r_pattern_enable" />
         <attr name="r_pattern_string" />
