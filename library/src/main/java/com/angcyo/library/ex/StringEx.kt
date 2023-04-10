@@ -453,6 +453,10 @@ fun String?.mimeTypeToExtName() = MimeTypeMap.getSingleton().getExtensionFromMim
 
 /**获取url或者文件扩展名 对应的mimeType
  * https://www.iana.org/assignments/media-types/media-types.xhtml
+ *
+ * xxx.jpg->image/jpeg
+ * xxx.log->null
+ * xxx.zip->application/zip
  * */
 fun String?.mimeType(): String? {
     //text/html

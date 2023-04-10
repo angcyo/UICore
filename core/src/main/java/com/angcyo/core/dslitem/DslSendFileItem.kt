@@ -28,6 +28,9 @@ class DslSendFileItem : DslAdapterItem() {
     /**错误的原因*/
     var itemErrorThrowable: Throwable? = null
 
+    /**上传耗时, 毫秒*/
+    var itemDuration = 0L
+
     //---
 
     /**需要发送的[Uri]数据*/
@@ -75,6 +78,13 @@ class DslSendFileItem : DslAdapterItem() {
                 fontSize = 9 * dpi
                 foregroundColor = _color(R.color.text_sub_color)
             }
+            if (itemDuration > 0) {
+                append(" 耗时:")
+                append(itemDuration.toMsTime()) {
+                    fontSize = 9 * dpi
+                    foregroundColor = _color(R.color.text_sub_color)
+                }
+            }
             if (itemSendState == -1) {
                 appendln()
                 append(itemErrorThrowable?.message) {
@@ -85,6 +95,23 @@ class DslSendFileItem : DslAdapterItem() {
         itemHolder.v<DslProgressBar>(R.id.lib_progress_view)?.apply {
             enableProgressFlowMode = itemSendProgress < 100
             setProgress(itemSendProgress)
+        }
+        //根据类型显示不同图标
+        val lowerName = _itemSendUriName?.lowercase() ?: ""
+        val mimeType = _itemSendUriName?.mimeType() ?: ""
+        itemHolder.img(R.id.lib_file_icon_view)?.apply {
+            if (mimeType.isImageMimeType()) {
+                setImageURI(itemSendUri)
+            } else {
+                setImageResource(
+                    when {
+                        lowerName.endsWith("log") -> R.drawable.core_file_log_ico
+                        lowerName.endsWith("txt") -> R.drawable.core_file_txt_ico
+                        lowerName.endsWith("zip") -> R.drawable.core_file_zip_ico
+                        else -> R.drawable.lib_ic_file
+                    }
+                )
+            }
         }
     }
 }

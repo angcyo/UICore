@@ -23,6 +23,7 @@ import com.angcyo.http.uploadFile2Body
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.getShowName
 import com.angcyo.library.ex.inputStream
+import com.angcyo.library.ex.nowTime
 import com.angcyo.lifecycle.cancelOnDestroy
 
 /**
@@ -65,6 +66,7 @@ class ShareSendFragment : BaseDslFragment() {
                         updateAllItemBy {
                             if (it is DslSendFileItem) {
                                 it.itemSendState = 0
+                                it.itemDuration = 0
                                 it.itemSendProgress = 0
                                 it.itemErrorThrowable = null
                                 true
@@ -110,6 +112,7 @@ class ShareSendFragment : BaseDslFragment() {
             fileItem.apply {
                 val uri = itemSendUri
                 uri?.inputStream()?.asRequestBody()?.let { body ->
+                    val nowTime = nowTime()
                     uploadFile2Body {
                         this.url = url
                         filePart = body.toProgressBody { progressInfo, exception ->
@@ -119,6 +122,7 @@ class ShareSendFragment : BaseDslFragment() {
                             .toFilePart(uri.getShowName())
                     }.observe { data, error ->
                         itemSendState = if (error == null) {
+                            itemDuration = nowTime() - nowTime
                             1
                         } else {
                             -1
