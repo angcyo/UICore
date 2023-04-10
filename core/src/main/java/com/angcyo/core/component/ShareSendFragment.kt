@@ -43,6 +43,7 @@ class ShareSendFragment : BaseDslFragment() {
 
     init {
         fragmentTitle = _string(R.string.core_send_to_label)
+        enableSoftInput = true
     }
 
     /**外部传递过来, 需要发送的[Uri]数据*/

@@ -42,8 +42,16 @@ class DslSendFileItem : DslAdapterItem() {
             return field
         }
 
+    /**缓存数据大小*/
+    private var itemSendSize: Int? = null
+
     init {
         itemLayoutId = R.layout.dsl_send_file_item
+    }
+
+    override fun onSetItemData(data: Any?) {
+        super.onSetItemData(data)
+        itemSendSize = itemSendUri?.inputStream()?.available()
     }
 
     override fun onItemBind(
@@ -63,7 +71,7 @@ class DslSendFileItem : DslAdapterItem() {
         itemHolder.tv(R.id.lib_file_name_view)?.text = span {
             append(_itemSendUriName ?: "")
             append(" ")
-            append(itemSendUri?.inputStream()?.available()?.toSizeString()) {
+            append(itemSendSize?.toSizeString()) {
                 fontSize = 9 * dpi
                 foregroundColor = _color(R.color.text_sub_color)
             }
