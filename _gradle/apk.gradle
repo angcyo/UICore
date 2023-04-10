@@ -9,13 +9,14 @@
 def output = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
 
 //APK输出文件名配置:(不包含扩展名)
-//可用参数: #an:app名字; #vn:版本名; #t:当天日期; #fn:风味名; #bn:编译类型名;
+//可用参数: #an:app名字; #vn:版本名; #d:当天日期yyyy-MM-dd; #t:当天时间yyyy-MM-dd_HH-mm; #fn:风味名; #bn:编译类型名;
 //         #sn:使用的签名名称; #ka:使用的签名别名;
 
-def apkFormatName = project.hasProperty("apkName") ? project.ext.apkName : "#an-#vn_#t_#fn_#bn_#ka"
+def apkFormatName = project.hasProperty("apkName") ? project.ext.apkName : "#an-#vn_#d_#fn_#bn_#ka"
 
 def _app_name = project.hasProperty("APP_NAME") ? project.ext.APP_NAME : ((project.name != "app") ? project.name : rootProject.name)
 def apk_time = apkTime()
+def release_time = releaseTime()
 
 def keyAlias = project.hasProperty("signConfig") ? signConfig.key_alias : ''
 
@@ -60,7 +61,8 @@ android {
                     variant.flavorName,
                     variant.buildType.name,
                     variant.signingConfig?.name ?: '',
-                    keyAlias
+                    keyAlias,
+                    release_time
             )
             setAabPathProperty(variant.flavorName, variant.buildType.name, new File(outputFolder, outputName + ".aab").absolutePath)
 
@@ -85,7 +87,8 @@ android {
                     variant.flavorName,
                     variant.buildType.name,
                     variant.signingConfig?.name ?: '',
-                    keyAlias
+                    keyAlias,
+                    release_time
             )
             setAabPathProperty(variant.flavorName, variant.buildType.name, new File(outputFolder, outputName + ".aab").absolutePath)
 
@@ -110,7 +113,8 @@ android {
                     variant.flavorName,
                     variant.buildType.name,
                     variant.signingConfig?.name ?: '',
-                    keyAlias
+                    keyAlias,
+                    release_time
             )
             setAabPathProperty(variant.flavorName, variant.buildType.name, new File(outputFolder, outputName + ".aab").absolutePath)
 
@@ -135,7 +139,8 @@ android {
                     variant.flavorName,
                     variant.buildType.name,
                     variant.signingConfig?.name ?: '',
-                    keyAlias
+                    keyAlias,
+                    release_time
             )
             setAabPathProperty(variant.flavorName, variant.buildType.name, new File(outputFolder, outputName + ".aab").absolutePath)
 
@@ -165,10 +170,11 @@ def setAabPathProperty(flavor, buildType, path) {
     println "设置属性:${aabPathKey} ->${getProperty(aabPathKey)}"
 }
 
-static def formatApkName(format, an, vn, t, fn, bn, sn, ka) {
+static def formatApkName(format, an, vn, t, fn, bn, sn, ka, d) {
     return format.replace("#an", an)
             .replace("#vn", vn)
             .replace("#t", t)
+            .replace("#d", d)
             .replace("#fn", fn)
             .replace("#bn", bn)
             .replace("#sn", sn)
