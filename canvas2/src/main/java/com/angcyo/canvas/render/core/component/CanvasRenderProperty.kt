@@ -230,8 +230,9 @@ data class CanvasRenderProperty(
     @CanvasInsideCoordinate
     fun getRenderCenter(result: PointF = _centerPoint): PointF {
         val rect = getScaleRect()
+        rect.offset(getOffsetX(), getOffsetY())
 
-        result.set(getOffsetX() + rect.width() / 2, getOffsetY() + rect.height() / 2)
+        result.set(rect.centerX(), rect.centerY())
 
         _tempMatrix.reset()
         val rotateMatrix = _tempMatrix
