@@ -319,6 +319,9 @@ fun Bitmap.flip(scaleX: Float, scaleY: Float): Bitmap {
     return flipBitmap
 }
 
+fun InputStream.toBitmap(opts: BitmapFactory.Options? = null) =
+    BitmapFactory.decodeStream(this, null, opts)
+
 fun ByteArray.toBitmap(opts: BitmapFactory.Options? = null): Bitmap {
     return BitmapFactory.decodeByteArray(this, 0, this.size, opts)
 }

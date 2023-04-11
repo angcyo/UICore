@@ -17,6 +17,43 @@ import java.util.zip.ZipOutputStream
  * @since 2022/12/06
  */
 
+/**快速创作一个zip文件, 并且写入数据
+ * [zipFilePath] zip文件输出全路径
+ * @return 返回成功与失败*/
+fun zipFileWrite(zipFilePath: String, writeAction: ZipOutputStream.() -> Unit): String? {
+    return try {
+        val file = File(zipFilePath)
+        if (!file.exists()) {
+            file.createNewFile()
+        }
+        val zip = ZipOutputStream(FileOutputStream(file, false))
+        //zip.writeEntry() //使用这个方法, 写入数据到zip文件
+        zip.writeAction()
+        zip.finish()
+        zip.close()
+        zipFilePath //成功返回路径, 失败返回null
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+/**压缩包文件的读取, 不解压直接读流
+ * [zipFilePath] zip文件的路径
+ * */
+fun zipFileRead(zipFilePath: String, readAction: ZipFile.() -> Unit) {
+    val file = File(zipFilePath)
+    if (!file.exists()) {
+        return
+    }
+    val zipFile = ZipFile(file)
+    //zipFile.readEntry() //使用这个方法, 读取zip文件中的数据
+    zipFile.readAction()
+    zipFile.close()
+}
+
+//---
+
 /**压缩文件列表到指定的压缩包中
  *
  * [zipFilePath] zip文件输出路径
@@ -45,6 +82,18 @@ fun List<String>.zip(zipFilePath: String = libCacheFile(fileNameUUID(".zip")).ab
     return mapTo(mutableListOf()) { it.file() }.zipFile(zipFilePath)
 }
 
+/**写入一个实体
+ * [entryName] 实体的名称, 可以是 xxx 也可以是 xxx/xxx.xxx
+ * [inputStream] 输入流, 数据的来源
+ * */
+fun ZipOutputStream.writeEntry(entryName: String, inputStream: InputStream) {
+    val entry = ZipEntry(entryName)
+    putNextEntry(entry)
+    inputStream.writeTo(this)
+    inputStream.close()
+    closeEntry()
+}
+
 /**向zip流中, 写入文件/文件夹
  * [file] 支持文件/文件夹
  * [parentFolderName] 可以为空字符, xxx/
@@ -58,12 +107,7 @@ fun ZipOutputStream.writeEntry(file: File, parentFolderName: String = "") {
         closeEntry()
     } else if (file.isFile) {
         //文件
-        val entry = ZipEntry(entryName)
-        putNextEntry(entry)
-        val inputStream = FileInputStream(file)
-        inputStream.writeTo(this)
-        inputStream.close()
-        closeEntry()
+        writeEntry(entryName, FileInputStream(file))
     } else {
         //文件夹
         entryName += File.separator // +/
@@ -137,6 +181,32 @@ fun ZipEntry.writeTo(outputPath: String, zipFile: ZipFile) {
         file.parentFile?.mkdirs()
         FileOutputStream(file).use { inputStream.writeTo(it) }
         inputStream.close()
+    }
+}
+
+fun ZipFile.readEntry(entryName: String): ByteArray? {
+    return try {
+        val bytes = getEntry(entryName)?.run {
+            getInputStream(this).use {
+                it.readBytes()
+            }
+        }
+        bytes
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+fun ZipFile.readEntryStream(entryName: String): InputStream? {
+    return try {
+        getEntry(entryName)?.run {
+            getInputStream(this)
+            //请主动调用 inputStream.close()
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }
 
