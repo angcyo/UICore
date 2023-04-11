@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dialog_positive">もちろん</string>
+    <string name="dialog_negative">キャンセル</string>
+    <string name="dialog_neutral">中性</string>
+    <string name="dialog_continue">続く</string>
+    <string name="dialog_input_hint">入ってください...</string>
+
+    <string name="dialog_color_picker">色を選んでください...</string>
+    <string name="dialog_width_picker">厚さを選択してください...</string>
+
+    <string name="not_prompt_label">再度通知しない</string>
+</resources>

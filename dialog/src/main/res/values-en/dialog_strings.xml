@@ -8,4 +8,7 @@
 
     <string name="dialog_color_picker">Select color...</string>
     <string name="dialog_width_picker">Select weight...</string>
+
+    <string name="not_prompt_label">Do not prompt</string>
+
 </resources>

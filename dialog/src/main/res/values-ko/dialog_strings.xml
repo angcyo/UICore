@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dialog_positive">확신하는</string>
+    <string name="dialog_negative">취소</string>
+    <string name="dialog_neutral">중립적</string>
+    <string name="dialog_continue">계속하다</string>
+    <string name="dialog_input_hint">들어 오세요...</string>
+
+    <string name="dialog_color_picker">색상을 선택하세요...</string>
+    <string name="dialog_width_picker">두께를 선택하세요...</string>
+
+    <string name="not_prompt_label">다시 묻지 않기</string>
+</resources>
