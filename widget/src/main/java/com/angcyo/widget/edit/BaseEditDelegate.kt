@@ -89,8 +89,17 @@ abstract class BaseEditDelegate(val editText: EditText) {
     val viewRect = Rect()
     open fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         viewRect.set(0, 0, w, h)
+        updateDrawLeftText(drawLeftText)
+    }
 
-        drawLeftText?.let { text ->
+    /**更新左边绘制的文本*/
+    fun updateDrawLeftText(text: String?) {
+        drawLeftText = text
+
+        drawLeftText?.let {
+            val w = viewRect.width()
+            val h = viewRect.height()
+
             val view = editText
             drawLeftPaint.set(view.paint)
             if (drawLeftSize != undefined_size) {
@@ -108,6 +117,8 @@ abstract class BaseEditDelegate(val editText: EditText) {
             if (editText.paddingLeft < needWidth) {
                 editText.paddingLeft(needWidth.toInt())
             }
+
+            editText.invalidate()
         }
     }
 
