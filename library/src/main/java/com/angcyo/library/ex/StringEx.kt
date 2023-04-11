@@ -15,6 +15,7 @@ import android.util.Base64
 import android.webkit.MimeTypeMap
 import androidx.annotation.ColorInt
 import androidx.annotation.UiThread
+import androidx.core.graphics.PathParser
 import androidx.core.net.toUri
 import androidx.core.text.getSpans
 import com.angcyo.library.L
@@ -1038,3 +1039,7 @@ fun getFileNameFromAttachment(attachment: String?): String? {
     }
     return name
 }
+
+/**[com.pixplicity.sharp.Sharp.loadPath]
+ * [androidx.core.graphics.PathParser.createPathFromPathData]*/
+fun String.toPath(): Path? = PathParser.createPathFromPathData(this)
