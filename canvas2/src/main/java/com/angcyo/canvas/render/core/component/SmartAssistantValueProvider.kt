@@ -99,7 +99,8 @@ class SmartAssistantValueProvider(val delegate: CanvasRenderDelegate) :
 
     private fun eachRenderer(action: (BaseRenderer) -> Unit) {
         val selectorList = delegate.selectorManager.getSelectorRendererList(true, true)
-        delegate.renderManager.getAllElementRendererList(true, false).forEach { renderer ->
+        //delegate.renderManager.getAllElementRendererList(true, false).forEach { renderer ->
+        delegate.renderManager.elementRendererList.forEach { renderer ->
             if (renderer.isVisible /*自身可见*/ &&
                 renderer.isVisibleInRender(delegate, true, false) /*坐标系中可见*/ &&
                 !selectorList.contains(renderer) /*不是选中的元素*/
