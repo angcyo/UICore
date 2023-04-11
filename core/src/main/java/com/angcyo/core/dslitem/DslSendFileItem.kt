@@ -97,20 +97,11 @@ class DslSendFileItem : DslAdapterItem() {
             setProgress(itemSendProgress)
         }
         //根据类型显示不同图标
-        val lowerName = _itemSendUriName?.lowercase() ?: ""
-        val mimeType = _itemSendUriName?.mimeType() ?: ""
         itemHolder.img(R.id.lib_file_icon_view)?.apply {
-            if (mimeType.isImageMimeType()) {
+            if (_itemSendUriName.isImageType()) {
                 setImageURI(itemSendUri)
             } else {
-                setImageResource(
-                    when {
-                        lowerName.endsWith("log") -> R.drawable.core_file_log_ico
-                        lowerName.endsWith("txt") -> R.drawable.core_file_txt_ico
-                        lowerName.endsWith("zip") -> R.drawable.core_file_zip_ico
-                        else -> R.drawable.lib_ic_file
-                    }
-                )
+                setImageResource(DslFileSelectorItem.getFileIconRes(_itemSendUriName))
             }
         }
     }

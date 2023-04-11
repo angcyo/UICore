@@ -19,6 +19,27 @@ import com.angcyo.widget.span.span
  */
 class DslFileSelectorItem : DslAdapterItem() {
 
+    companion object {
+
+        /**获取文件类型图标*/
+        fun getFileIconRes(fileName: String?): Int {
+            val name = fileName?.lowercase() ?: return R.drawable.core_file_icon_unknown
+            return when {
+                name.isImageType() -> R.drawable.core_file_icon_picture
+                name.isVideoType() -> R.drawable.core_file_icon_video
+                name.isAudioType() -> R.drawable.core_file_icon_audio
+                name.endsWith(".zip") -> R.drawable.core_file_icon_zip
+                name.endsWith(".7z") -> R.drawable.core_file_icon_7z
+                name.endsWith(".rar") -> R.drawable.core_file_icon_rar
+                name.endsWith(".log") -> R.drawable.core_file_icon_log
+                name.endsWith(".txt") -> R.drawable.core_file_icon_text
+                name.endsWith(".xml") -> R.drawable.core_file_icon_xml
+                else -> R.drawable.core_file_icon_unknown
+            }
+        }
+
+    }
+
     /**加载的数据*/
     var itemFile: FileItem? = null
 
@@ -42,36 +63,36 @@ class DslFileSelectorItem : DslAdapterItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
         itemFile?.also { fileItem ->
-            val fileBean = fileItem.file()
-            itemHolder.tv(R.id.lib_text_view)?.text = fileBean?.name
-            itemHolder.tv(R.id.lib_time_view)?.text = fileBean?.lastModified()?.toTime()
+            val file = fileItem.file()
+            itemHolder.tv(R.id.lib_text_view)?.text = file?.name
+            itemHolder.tv(R.id.lib_time_view)?.text = file?.lastModified()?.toTime()
 
             //权限信息
             itemHolder.tv(R.id.file_auth_view)?.text = span {
-                append(if (fileBean.isFolder()) "d" else "-")
-                append(if (fileBean?.canExecute() == true) "e" else "-")
-                append(if (fileBean?.canRead() == true) "r" else "-")
-                append(if (fileBean?.canWrite() == true) "w" else "-")
+                append(if (file.isFolder()) "d" else "-")
+                append(if (file?.canExecute() == true) "e" else "-")
+                append(if (file?.canRead() == true) "r" else "-")
+                append(if (file?.canWrite() == true) "w" else "-")
             }
 
             itemHolder.gone(R.id.file_md5_view)
 
             //文件/文件夹 提示信息
             when {
-                fileBean.isFolder() -> {
+                file.isFolder() -> {
                     itemHolder.img(R.id.lib_image_view)?.apply {
-                        setImageResource(R.drawable.lib_ic_folder)
+                        setImageResource(R.drawable.core_file_icon_folder)
                     }
-                    if (fileBean?.canRead() == true) {
+                    if (file?.canRead() == true) {
                         itemHolder.tv(R.id.lib_sub_text_view)?.text = "${fileItem.fileCount} 项"
                     }
                 }
-                fileBean.isFile() -> {
+                file.isFile() -> {
                     itemHolder.img(R.id.lib_image_view)?.apply {
-                        setImageResource(R.drawable.lib_ic_file)
+                        setImageResource(getFileIconRes(file?.name))
                         onLoadImageView(this, fileItem)
                     }
-                    if (fileBean?.canRead() == true) {
+                    if (file?.canRead() == true) {
                         itemHolder.tv(R.id.lib_sub_text_view)?.text =
                             "${fileItem.fileLength.fileSizeString()} ${fileItem.mimeType ?: ""}"
                     }
@@ -87,7 +108,7 @@ class DslFileSelectorItem : DslAdapterItem() {
                     itemHolder.img(R.id.lib_image_view)?.apply {
                         setImageDrawable(null)
                     }
-                    if (fileBean?.canRead() == true) {
+                    if (file?.canRead() == true) {
                         itemHolder.tv(R.id.lib_sub_text_view)?.text = "unknown"
                     }
                 }

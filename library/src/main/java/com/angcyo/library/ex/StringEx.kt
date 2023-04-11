@@ -519,7 +519,32 @@ fun String?.isImageType(): Boolean {
     return lc.endsWith(".jpg", true) ||
             lc.endsWith(".jpeg", true) ||
             lc.endsWith(".png", true) ||
+            lc.endsWith(".bmp", true) ||
             lc.endsWith(".webp", true)
+}
+
+/**是否是视频类型*/
+fun String?.isVideoType(): Boolean {
+    val lc = this?.lowercase() ?: return false
+    if (lc.mimeType()?.startsWith("video", true) == true) {
+        return true
+    }
+    return lc.endsWith(".mp4", true) ||
+            lc.endsWith(".avi", true) ||
+            lc.endsWith(".rmvb", true) ||
+            lc.endsWith(".3gpp", true)
+}
+
+/**是否是音频类型*/
+fun String?.isAudioType(): Boolean {
+    val lc = this?.lowercase() ?: return false
+    if (lc.mimeType()?.startsWith("audio", true) == true) {
+        return true
+    }
+    return lc.endsWith(".mp3", true) ||
+            lc.endsWith(".wmv", true) ||
+            lc.endsWith(".wav", true) ||
+            lc.endsWith(".amr", true)
 }
 
 /**是否是字体
