@@ -71,7 +71,7 @@ class DslSendFileItem : DslAdapterItem() {
                 else -> 0 //默认
             }
         )
-        itemHolder.tv(R.id.lib_file_des_view)?.text = "${itemSendUri ?: ""}"
+        itemHolder.tv(R.id.lib_file_des_view)?.text = "${itemSendUri ?: ""}".decode()
         itemHolder.tv(R.id.lib_file_name_view)?.text = span {
             append(_itemSendUriName ?: "")
             append(" ")
