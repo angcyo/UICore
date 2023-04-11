@@ -14,7 +14,6 @@ import com.angcyo.library.app
 import com.angcyo.library.ex.*
 import com.angcyo.svg.Svg
 import com.angcyo.svg.Svg.loadSvgPathDrawable
-import com.angcyo.library.ex.createPaint
 import com.pixplicity.sharp.SharpDrawable
 import kotlin.math.max
 
@@ -151,6 +150,7 @@ fun CanvasDelegate.engraveMode(enable: Boolean = true) {
 }
 
 /**扩展*/
+@Deprecated("请使用性能更好的Jni方法:[String.toGCodePath]")
 fun GCodeHelper.parseGCode(gCodeText: String?): GCodeDrawable? =
     parseGCode(gCodeText, createPaint(Color.BLACK))
 

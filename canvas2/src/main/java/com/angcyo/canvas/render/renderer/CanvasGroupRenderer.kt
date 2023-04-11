@@ -17,8 +17,6 @@ import com.angcyo.canvas.render.element.IElement
 import com.angcyo.canvas.render.state.GroupStateStack
 import com.angcyo.canvas.render.state.PropertyStateStack
 import com.angcyo.canvas.render.util.PictureRenderDrawable
-import com.angcyo.canvas.render.util.createOverrideBitmapCanvas
-import com.angcyo.canvas.render.util.createOverridePictureCanvas
 import com.angcyo.canvas.render.util.isOnlyGroupRenderer
 import com.angcyo.drawable.*
 import com.angcyo.library.annotation.Pixel

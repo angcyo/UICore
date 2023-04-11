@@ -3,7 +3,6 @@ package com.angcyo.library.ex
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Build
-import androidx.core.graphics.withTranslation
 import com.angcyo.library.component.PictureRenderDrawable
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.pool.*
@@ -699,20 +698,33 @@ fun List<Path>?.scaleToSize(newWidth: Float, newHeight: Float): List<Path>? {
     return result
 }
 
-fun Path?.toDrawable(paint: Paint = createPaint()) = this?.toListOf().toDrawable(paint)
+fun Path?.toDrawable(
+    overrideSize: Float? = null,
+    paint: Paint = createPaint()
+) = this?.toListOf().toDrawable(overrideSize, paint)
 
 /**将路径转成可以绘制的[Drawable]
  *
  * [Drawable.toBitmap]
  *
  * [toBitmap]*/
-fun List<Path>?.toDrawable(paint: Paint = createPaint()): Drawable? {
+fun List<Path>?.toDrawable(
+    overrideSize: Float? = null,
+    paint: Paint = createPaint()
+): Drawable? {
     this ?: return null
     val bounds = computePathBounds(acquireTempRectF())
+    val originWidth = bounds.width()
+    val originHeight = bounds.height()
+    val scaleMatrix = createOverrideMatrix(originWidth, originHeight, overrideSize)
+    //目标输出的大小
+    val width = originWidth * scaleMatrix.getScaleX()
+    val height = originHeight * scaleMatrix.getScaleY()
     val drawable = PictureRenderDrawable(Picture().apply {
-        val canvas = beginRecording(bounds.width().ceilInt(), bounds.height().ceilInt())
+        val canvas = beginRecording(width.ceilInt(), height.ceilInt())
         canvas.translate(-bounds.left, -bounds.top)//平移到路径开始的原点
-        for (path in this@toDrawable) {
+        canvas.concat(scaleMatrix)
+        for (path in this@toDrawable) {//并没有改变原始数据, 直接绘制
             canvas.drawPath(path, paint)
         }
         //结束
@@ -722,22 +734,30 @@ fun List<Path>?.toDrawable(paint: Paint = createPaint()): Drawable? {
     return drawable
 }
 
-fun Path?.toBitmap(paint: Paint = createPaint()) = this?.toListOf().toBitmap(paint)
+fun Path?.toBitmap(overrideSize: Float? = null, paint: Paint = createPaint()) =
+    this?.toListOf().toBitmap(overrideSize, paint)
 
 /**将路径转成[Bitmap]
  *
  * [toDrawable]*/
-fun List<Path>?.toBitmap(paint: Paint = createPaint()): Bitmap? {
+fun List<Path>?.toBitmap(overrideSize: Float? = null, paint: Paint = createPaint()): Bitmap? {
     this ?: return null
     val bounds = computePathBounds(acquireTempRectF())
+    val originWidth = bounds.width()
+    val originHeight = bounds.height()
+    val scaleMatrix = createOverrideMatrix(originWidth, originHeight, overrideSize)
+    //目标输出的大小
+    val width = originWidth * scaleMatrix.getScaleX()
+    val height = originHeight * scaleMatrix.getScaleY()
     val bitmap = Bitmap.createBitmap(
-        bounds.width().ceilInt(),
-        bounds.height().ceilInt(),
+        width.ceilInt(),
+        height.ceilInt(),
         Bitmap.Config.ARGB_8888
     )
     val canvas = Canvas(bitmap)
     canvas.translate(-bounds.left, -bounds.top)//平移到路径开始的原点
-    for (path in this@toBitmap) {
+    canvas.concat(scaleMatrix)
+    for (path in this@toBitmap) {//并没有改变原始数据, 直接绘制
         canvas.drawPath(path, paint)
     }
     bounds.release()

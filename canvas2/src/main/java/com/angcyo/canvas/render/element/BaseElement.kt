@@ -10,6 +10,8 @@ import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.util.*
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.ex.createOverrideMatrix
+import com.angcyo.library.ex.createOverridePictureCanvas
 import com.angcyo.library.ex.translateToOrigin
 import com.angcyo.library.unit.toPixel
 
