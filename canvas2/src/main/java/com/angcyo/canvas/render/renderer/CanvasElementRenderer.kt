@@ -27,6 +27,11 @@ class CanvasElementRenderer : BaseRenderer() {
     override fun requestRenderDrawable(overrideSize: Float?): Drawable? {
         return renderElement?.requestElementRenderDrawable(RenderParams().apply {
             this.overrideSize = overrideSize
+            if (overrideSize != null) {
+                getRendererBounds()?.width()?.let {
+                    this.renderDst = overrideSize / it //缩放比例, 对画笔进行反向放大
+                }
+            }
         })
     }
 

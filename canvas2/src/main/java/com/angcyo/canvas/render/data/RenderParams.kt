@@ -21,6 +21,7 @@ data class RenderParams(
      * 需要绘制在[Drawable]上
      * 需要绘制在[android.graphics.Canvas]上
      * 需要绘制在[com.angcyo.dsladapter.DslAdapterItem]上
+     * 目标需要缩放绘制, 则画笔会相应的方向放大,=[需要绘制的目标大小/目标真实大小]
      *
      * [updateDrawPathPaintStrokeWidth]
      * */
