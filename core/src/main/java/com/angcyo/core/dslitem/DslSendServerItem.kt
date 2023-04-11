@@ -10,6 +10,9 @@ import com.angcyo.http.rx.observe
 import com.angcyo.library.ex.*
 import com.angcyo.library.toastQQ
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget._ev
+import com.angcyo.widget.base.editDelegate
+import com.angcyo.widget.base.setInputText
 import com.angcyo.widget.base.string
 import com.angcyo.widget.span.span
 
@@ -45,10 +48,14 @@ class DslSendServerItem : DslAdapterItem() {
         itemHolder.hawkInstallAndRestore("SendServer_")
 
         itemAddress?.let {
-            itemHolder.tv(R.id.lib_address_edit_view)?.apply {
-                text = it
+            itemHolder._ev(R.id.lib_address_edit_view)?.apply {
+                setInputText(it)
                 setTextColor(_color(R.color.error))
                 longFeedback()
+
+                editDelegate {
+                    updateDrawLeftText("已嗅探:")
+                }
             }
         }
 
