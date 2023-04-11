@@ -10,7 +10,7 @@ import com.angcyo.canvas.R
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.core.RenderParams
 import com.angcyo.canvas.core.component.SmartAssistant
-import com.angcyo.widget.base.createPaint
+import com.angcyo.library.ex.createPaint
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.dp
 

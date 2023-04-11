@@ -45,22 +45,6 @@ import com.angcyo.widget.recycler.getLastVelocity
 
 //---
 
-/**创建一个画笔*/
-fun createPaint(color: Int = Color.GRAY, style: Paint.Style = Paint.Style.STROKE) =
-    Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        this.color = color
-        this.style = style
-        strokeWidth = 1f
-        strokeJoin = Paint.Join.ROUND
-        strokeCap = Paint.Cap.ROUND
-    }
-
-fun createTextPaint(color: Int = Color.BLACK, textSize: Float = 12 * dp) =
-    TextPaint(createPaint(color, Paint.Style.FILL)).apply {
-        this.textSize = textSize
-        this.textAlign = Paint.Align.LEFT
-    }
-
 /**[StaticLayout]*/
 fun createStaticLayout(
     source: CharSequence,

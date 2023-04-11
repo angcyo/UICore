@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import com.angcyo.canvas.CanvasDelegate
 import com.angcyo.canvas.core.RenderParams
-import com.angcyo.widget.base.createPaint
+import com.angcyo.library.ex.createPaint
 
 /**
  * 中点坐标提示渲染

@@ -27,7 +27,6 @@ import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.gesture.RectScaleGestureHandler
 import com.angcyo.library.isInEditMode
-import com.angcyo.widget.base.createTextPaint
 
 /**
  *

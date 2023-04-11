@@ -33,6 +33,17 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
 
     override var isEnableComponent: Boolean = true
 
+    /**是否激活智能平移提示*/
+    var enableSmartDx: Boolean = true
+    var enableSmartDy: Boolean = true
+
+    /**是否激活智能旋转提示*/
+    var enableSmartRotate: Boolean = true
+
+    /**是否激活智能宽高提示*/
+    var enableSmartWidth: Boolean = false
+    var enableSmartHeight: Boolean = false
+
     override var renderFlags: Int = 0xf
 
     /**智能提示的颜色*/
@@ -119,6 +130,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
     @Pixel
     @CanvasInsideCoordinate
     fun findSmartDx(elementBounds: RectF?, tx: Float, dx: Float): Float? {
+        if (!enableSmartDx) return null
         elementBounds ?: return null
         var requestValue = if (tx > 0) {
             //向右移动, 优先使用 right
@@ -144,6 +156,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
     /**查找智能推荐的宽度, 返回推荐的宽度
      * [findSmartDx]*/
     fun findSmartWidth(elementBounds: RectF?, tx: Float, dx: Float): Float? {
+        if (!enableSmartWidth) return null
         elementBounds ?: return null
         val requestValue = elementBounds.right
         findSmartX(requestValue, tx, dx)?.let { ref ->
@@ -156,6 +169,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
     @Pixel
     @CanvasInsideCoordinate
     fun findSmartDy(elementBounds: RectF?, ty: Float, dy: Float): Float? {
+        if (!enableSmartDy) return null
         elementBounds ?: return null
         val ref = findSmartY(elementBounds.top, ty, dy) ?: return null
         return ref.value - elementBounds.top
@@ -164,6 +178,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
     /**查找智能推荐的高度, 返回推荐的高度
      * [findSmartDy]*/
     fun findSmartHeight(elementBounds: RectF?, ty: Float, dy: Float): Float? {
+        if (!enableSmartHeight) return null
         elementBounds ?: return null
         val requestValue = elementBounds.bottom
         findSmartY(requestValue, ty, dy)?.let { ref ->
@@ -177,6 +192,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
      * @return 返回要旋转to的角度
      * */
     fun findSmartRotate(angle: Float): Float? {
+        if (!enableSmartRotate) return null
         var result: SmartAssistantReferenceValue? = null
         val referenceValue = lastSmartRotateValue
 

@@ -17,8 +17,6 @@ import com.angcyo.canvas.core.component.control.RotateControlPoint
 import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.canvas.items.renderer.IItemRenderer
 import com.angcyo.canvas.utils.canvasDecimal
-import com.angcyo.widget.base.createPaint
-import com.angcyo.widget.base.createTextPaint
 import com.angcyo.canvas.utils.isLineShape
 import com.angcyo.library.component.DrawText
 import com.angcyo.library.ex.*

@@ -1,8 +1,10 @@
 package com.angcyo.library.ex
 
 import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.core.graphics.withTranslation
+import com.angcyo.library.component.PictureRenderDrawable
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.pool.*
 import kotlin.math.atan2
@@ -383,44 +385,6 @@ fun List<Path>.computePathBounds(
     return bounds
 }
 
-/**[Path]转[Bitmap]*/
-fun Path.toBitmap(
-    paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.BLACK
-        strokeWidth = 1f
-        style = Paint.Style.STROKE
-    }
-): Bitmap? {
-    val pathRect = RectF()
-    computePathBounds(pathRect)
-    val width = max(1, pathRect.width().toInt())
-    val height = max(1, pathRect.height().toInt())
-    return bitmapCanvas(width, height) {
-        withTranslation(pathRect.left, pathRect.top) {
-            drawPath(this@toBitmap, paint)
-        }
-    }
-}
-
-/**List<Path>转[Bitmap]*/
-fun List<Path>.toBitmap(
-    paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.BLACK
-        strokeWidth = 1f
-        style = Paint.Style.STROKE
-    }
-): Bitmap? {
-    val pathRect = RectF()
-    computePathBounds(pathRect, true)
-    return bitmapCanvas(pathRect.width().toInt(), pathRect.height().toInt()) {
-        withTranslation(pathRect.left, pathRect.top) {
-            forEach {
-                drawPath(it, paint)
-            }
-        }
-    }
-}
-
 /**
  * 添加一个二阶贝塞尔曲线, 1个控制点
  * [c1x] [c1y] 控制点
@@ -678,4 +642,104 @@ fun List<Path>.flip(scaleX: Float, scaleY: Float): List<Path> {
     pathBounds.release()
 
     return newPathList
+}
+
+/**[translateToOrigin]*/
+fun Path?.translateToOrigin(): Path? {
+    this ?: return null
+    return listOf(this).translateToOrigin()?.lastOrNull()
+}
+
+/**将所有[this]平移到相对于[0,0]的位置*/
+fun List<Path>?.translateToOrigin(): List<Path>? {
+    val pathList = this ?: return null
+    val bounds = computePathBounds(acquireTempRectF())
+    val dx = -bounds.left
+    val dy = -bounds.top
+    val result = mutableListOf<Path>()
+    val matrix = acquireTempMatrix()
+    matrix.setTranslate(dx, dy)
+    for (path in pathList) {
+        val newPath = Path()
+        path.transform(matrix, newPath)
+        result.add(newPath)
+    }
+    bounds.release()
+    matrix.release()
+    return result
+}
+
+/**[scaleToSize]*/
+fun Path?.scaleToSize(newWidth: Float, newHeight: Float): Path? {
+    this ?: return null
+    return listOf(this).scaleToSize(newWidth, newHeight)?.lastOrNull()
+}
+
+/**将所有[this]缩放到指定的宽高*/
+fun List<Path>?.scaleToSize(newWidth: Float, newHeight: Float): List<Path>? {
+    val pathList = this ?: return null
+    val bounds = computePathBounds()
+
+    val oldWidth = bounds.width()
+    val oldHeight = bounds.height()
+
+    val sx = if (oldWidth == 0f) 1f else newWidth / oldWidth
+    val sy = if (oldHeight == 0f) 1f else newHeight / oldHeight
+
+    val result = mutableListOf<Path>()
+    val matrix = acquireTempMatrix()
+    matrix.setScale(sx, sy)
+    for (path in pathList) {
+        val newPath = Path()
+        path.transform(matrix, newPath)
+        result.add(newPath)
+    }
+    bounds.release()
+    matrix.release()
+    return result
+}
+
+fun Path?.toDrawable(paint: Paint = createPaint()) = this?.toListOf().toDrawable(paint)
+
+/**将路径转成可以绘制的[Drawable]
+ *
+ * [Drawable.toBitmap]
+ *
+ * [toBitmap]*/
+fun List<Path>?.toDrawable(paint: Paint = createPaint()): Drawable? {
+    this ?: return null
+    val bounds = computePathBounds(acquireTempRectF())
+    val drawable = PictureRenderDrawable(Picture().apply {
+        val canvas = beginRecording(bounds.width().ceilInt(), bounds.height().ceilInt())
+        canvas.translate(-bounds.left, -bounds.top)//平移到路径开始的原点
+        for (path in this@toDrawable) {
+            canvas.drawPath(path, paint)
+        }
+        //结束
+        endRecording()
+    })
+    bounds.release()
+    return drawable
+}
+
+fun Path?.toBitmap(paint: Paint = createPaint()) = this?.toListOf().toBitmap(paint)
+
+/**将路径转成[Bitmap]
+ *
+ * [toDrawable]*/
+fun List<Path>?.toBitmap(paint: Paint = createPaint()): Bitmap? {
+    this ?: return null
+    val bounds = computePathBounds(acquireTempRectF())
+    val bitmap = Bitmap.createBitmap(
+        bounds.width().ceilInt(),
+        bounds.height().ceilInt(),
+        Bitmap.Config.ARGB_8888
+    )
+    val canvas = Canvas(bitmap)
+    canvas.translate(-bounds.left, -bounds.top)//平移到路径开始的原点
+    for (path in this@toBitmap) {
+        canvas.drawPath(path, paint)
+    }
+    bounds.release()
+    return bitmap
 }

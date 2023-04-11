@@ -14,7 +14,7 @@ import com.angcyo.library.app
 import com.angcyo.library.ex.*
 import com.angcyo.svg.Svg
 import com.angcyo.svg.Svg.loadSvgPathDrawable
-import com.angcyo.widget.base.createPaint
+import com.angcyo.library.ex.createPaint
 import com.pixplicity.sharp.SharpDrawable
 import kotlin.math.max
 

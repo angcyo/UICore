@@ -26,6 +26,22 @@ fun paint() = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
     color = _color(R.color.text_primary_color)
 }
 
+/**创建一个画笔*/
+fun createPaint(color: Int = Color.BLACK, style: Paint.Style = Paint.Style.STROKE) =
+    Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        this.color = color
+        this.style = style
+        strokeWidth = 1f
+        strokeJoin = Paint.Join.ROUND
+        strokeCap = Paint.Cap.ROUND
+    }
+
+fun createTextPaint(color: Int = Color.BLACK, textSize: Float = 12 * dp) =
+    TextPaint(createPaint(color, Paint.Style.FILL)).apply {
+        this.textSize = textSize
+        this.textAlign = Paint.Align.LEFT
+    }
+
 /**文本的宽度*/
 fun Paint.textWidth(text: String?): Float {
     if (text == null) {
