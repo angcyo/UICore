@@ -75,7 +75,8 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
             override fun onElementRendererListChange(
                 from: List<BaseRenderer>,
                 to: List<BaseRenderer>,
-                op: List<BaseRenderer>
+                op: List<BaseRenderer>,
+                reason: Reason
             ) {
                 if (op.isIntersect(selectorComponent.rendererList)) {
                     //当有选中的元素, 此时渲染的数据列表又改变了

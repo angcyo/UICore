@@ -23,5 +23,6 @@ class DeleteControlPoint(controlManager: CanvasControlManager) : BaseControlPoin
         val delegate = controlManager.delegate
         val list = delegate.selectorManager.getSelectorRendererList(false)
         delegate.renderManager.removeElementRenderer(list, Reason.user, Strategy.normal)
+        delegate.dispatchControlHappen(this, true)
     }
 }
