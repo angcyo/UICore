@@ -55,13 +55,15 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 var isSet = false
                 for (renderer in rendererList) {
                     renderer.renderProperty?.getRenderBounds()?.let {
-                        isSet = true
-                        rect.set(
-                            min(it.left, rect.left),
-                            min(it.top, rect.top),
-                            max(it.right, rect.right),
-                            max(it.bottom, rect.bottom)
-                        )
+                        if (!it.isNoSize()) {
+                            isSet = true
+                            rect.set(
+                                min(it.left, rect.left),
+                                min(it.top, rect.top),
+                                max(it.right, rect.right),
+                                max(it.bottom, rect.bottom)
+                            )
+                        }
                     }
                 }
                 if (!isSet) {
@@ -116,7 +118,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
         ): Bitmap? {
             rendererList ?: return null
             val rect = computeBounds(rendererList, bounds)
-            if (rect.isEmpty) {
+            if (rect.isNoSize()) {
                 return null
             }
             return createOverrideBitmapCanvas(
