@@ -721,7 +721,7 @@ fun List<Path>?.toDrawable(
     val width = originWidth * scaleMatrix.getScaleX()
     val height = originHeight * scaleMatrix.getScaleY()
     val drawable = PictureRenderDrawable(Picture().apply {
-        val canvas = beginRecording(width.ceilInt(), height.ceilInt())
+        val canvas = beginRecording(max(1, width.ceilInt()), max(1, height.ceilInt()))
         canvas.translate(-bounds.left, -bounds.top)//平移到路径开始的原点
         canvas.concat(scaleMatrix)
         for (path in this@toDrawable) {//并没有改变原始数据, 直接绘制
@@ -750,8 +750,8 @@ fun List<Path>?.toBitmap(overrideSize: Float? = null, paint: Paint = createPaint
     val width = originWidth * scaleMatrix.getScaleX()
     val height = originHeight * scaleMatrix.getScaleY()
     val bitmap = Bitmap.createBitmap(
-        width.ceilInt(),
-        height.ceilInt(),
+        max(1, width.ceilInt()),
+        max(1, height.ceilInt()),
         Bitmap.Config.ARGB_8888
     )
     val canvas = Canvas(bitmap)

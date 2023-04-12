@@ -245,8 +245,8 @@ abstract class BaseElement : IElement {
 
     /**创建一个虚线效果*/
     protected open fun createDashPathEffect(): PathEffect {
-        val dashWidth = 1f.toPixel()
-        val dashGap = dashWidth
+        val dashWidth = 2f.toPixel()
+        val dashGap = 1f.toPixel()
         return DashPathEffect(floatArrayOf(dashWidth, dashGap), 0f)
     }
 
