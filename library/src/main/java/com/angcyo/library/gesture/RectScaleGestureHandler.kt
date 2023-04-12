@@ -416,7 +416,7 @@ class RectScaleGestureHandler {
             anchorX: Float,
             anchorY: Float
         ) {
-            if (target.isNoSize()) {
+            if (target.isInvalid()) {
                 target.right = target.left + newWidth
                 target.bottom = target.top + newHeight
             }

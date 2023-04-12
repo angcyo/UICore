@@ -64,11 +64,13 @@ interface ICanvasRenderListener {
 
     //region---CanvasRenderer---
 
-    /**当有元素添加/删除时*/
+    /**当有元素添加/删除时
+     * [com.angcyo.canvas.render.core.ICanvasRenderView.dispatchElementRendererListChange]*/
     fun onElementRendererListChange(
         from: List<BaseRenderer>,
         to: List<BaseRenderer>,
-        op: List<BaseRenderer>
+        op: List<BaseRenderer>,
+        reason: Reason
     ) {
     }
 

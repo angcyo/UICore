@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="font_import_fail">Font import failed</string>
-    <string name="font_import_success">Font imported successfully</string>
     <string name="canvas_tips">Tips</string>
     <string name="canvas_exit_edit">Discard?</string>
     <string name="canvas_title">Creation</string>
@@ -61,7 +59,6 @@
     <string name="canvas_axis_x">X-axis</string>
     <string name="canvas_axis_y">Y-axis</string>
     <string name="canvas_rotate">Rotate</string>
-    <string name="canvas_font_text">LaserPecker</string>
     <string name="canvas_invert">Invert</string>
     <string name="canvas_threshold">Threshold</string>
     <string name="canvas_contrast">Contrast</string>
@@ -84,7 +81,6 @@
     <string name="canvas_back">Bottom</string>
     <string name="engrave_engrave">Share</string>
 
-    <string name="canvas_import_font">Import</string>
     <string name="canvas_invalid_font">Invalid font</string>
     <string name="canvas_cannot_import">Unable to import</string>
     <string name="canvas_font_exist">Font already exist</string>
@@ -92,8 +88,6 @@
     <string name="canvas_photo">Album</string>
     <string name="canvas_delete_font">Delete the font</string>
     <string name="preview_out_of_range">Preview out of range</string>
-
-    <string name="canvas_open_label">Open With LaserPeckerPro</string>
 
     <string name="no_content_tip">No content to preview, please create first!</string>
 

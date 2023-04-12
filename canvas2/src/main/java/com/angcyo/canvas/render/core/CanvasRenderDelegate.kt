@@ -313,10 +313,11 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     override fun dispatchElementRendererListChange(
         from: List<BaseRenderer>,
         to: List<BaseRenderer>,
-        op: List<BaseRenderer>
+        op: List<BaseRenderer>,
+        reason: Reason
     ) {
         for (listener in renderListenerList) {
-            listener.onElementRendererListChange(from, to, op)
+            listener.onElementRendererListChange(from, to, op, reason)
         }
     }
 
@@ -560,8 +561,8 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
 
     /**移除所有元素渲染器
      * [CanvasRenderManager]*/
-    fun removeAllElementRenderer(strategy: Strategy = Strategy.normal) {
-        renderManager.removeAllElementRenderer(strategy)
+    fun removeAllElementRenderer(reason: Reason, strategy: Strategy = Strategy.normal) {
+        renderManager.removeAllElementRenderer(reason, strategy)
     }
 
     /**将[rendererList]中的渲染器, 过滤筛选成对应的元素渲染器

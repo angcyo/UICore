@@ -9,19 +9,9 @@ dependencies {
     implementation project(allModule.http)
     implementation project(allModule.lpDevice)
 
-    api project(allModule.vector)
-
     //code
     implementation project(allModule.qrcode)
 
     //无法访问[com.google.zxing.BarcodeFormat]
     compileOnly 'com.google.zxing:core:3.4.1'
-
-    //图片算法支持
-    compileOnly "com.angcyo:bitmapHandle:${opencv_version}"
-    compileOnly "com.angcyo:opencv:${opencv_version}"
-
-    //扭曲支持
-    compileOnly "com.angcyo:imageProcess:${opencv_version}"
-
 }

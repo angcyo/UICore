@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_disabled">권한이 비활성화됨</string>
+
+    <string name="ui_back">반품</string>
+    <string name="ui_enable_permission">열린 권위</string>
+    <string name="core_screen_shot_text">피드백</string>
+
+    <string name="core_thread_error_tip">나는 약간의 문제가 발생했습니다</string>
+
+    <string name="core_send_to_label">보내십시오...</string>
+
+</resources>

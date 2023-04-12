@@ -59,7 +59,6 @@
     <string name="canvas_grey">グレースケール</string>
     <string name="canvas_seal">スタンプ</string>
 
-    <string name="canvas_font_text">レーザーペッカー</string>
     <string name="canvas_invert">リフレクトカラー</string>
     <string name="canvas_threshold">境界値</string>
     <string name="canvas_contrast">コントラスト</string>
@@ -83,7 +82,6 @@
     <string name="canvas_back">ボトムに固定</string>
     <string name="canvas_sort">アレンジする</string>
 
-    <string name="canvas_import_font">導入</string>
     <string name="canvas_invalid_font">無効なフォント</string>
     <string name="canvas_font_exist">フォントがすでに存在します</string>
     <string name="canvas_cannot_import">導入できません</string>

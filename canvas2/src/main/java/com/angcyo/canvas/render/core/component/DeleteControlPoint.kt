@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.core.component
 
 import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.core.CanvasControlManager
+import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.Strategy
 import com.angcyo.library.ex._drawable
 
@@ -21,6 +22,6 @@ class DeleteControlPoint(controlManager: CanvasControlManager) : BaseControlPoin
         super.onClickControlPoint()
         val delegate = controlManager.delegate
         val list = delegate.selectorManager.getSelectorRendererList(false)
-        delegate.renderManager.removeElementRenderer(list, Strategy.normal)
+        delegate.renderManager.removeElementRenderer(list, Reason.user, Strategy.normal)
     }
 }

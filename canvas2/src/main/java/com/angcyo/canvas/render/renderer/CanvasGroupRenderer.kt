@@ -55,7 +55,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 var isSet = false
                 for (renderer in rendererList) {
                     renderer.renderProperty?.getRenderBounds()?.let {
-                        if (!it.isNoSize()) {
+                        if (!it.isInvalid()) {
                             isSet = true
                             rect.set(
                                 min(it.left, rect.left),
@@ -118,7 +118,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
         ): Bitmap? {
             rendererList ?: return null
             val rect = computeBounds(rendererList, bounds)
-            if (rect.isNoSize()) {
+            if (rect.isInvalid()) {
                 return null
             }
             return createOverrideBitmapCanvas(
@@ -863,7 +863,11 @@ open class CanvasGroupRenderer : BaseRenderer() {
         delegate.dispatchRendererGroupChange(groupRenderer, subRendererList, GROUP_TYPE_GROUP)
 
         //通知
-        delegate.renderManager.resetElementRenderer(newElementRendererList, Strategy.preview)
+        delegate.renderManager.resetElementRenderer(
+            newElementRendererList,
+            reason,
+            Strategy.preview
+        )
 
         val redoState = GroupStateStack()
         redoState.saveState(this, delegate)
@@ -904,7 +908,11 @@ open class CanvasGroupRenderer : BaseRenderer() {
         delegate.dispatchRendererGroupChange(this, subRendererList, GROUP_TYPE_DISSOLVE)
 
         //通知
-        delegate.renderManager.resetElementRenderer(newElementRendererList, Strategy.preview)
+        delegate.renderManager.resetElementRenderer(
+            newElementRendererList,
+            reason,
+            Strategy.preview
+        )
 
         val redoState = GroupStateStack()
         redoState.saveState(this, delegate)

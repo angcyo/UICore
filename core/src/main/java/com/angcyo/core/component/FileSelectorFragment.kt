@@ -27,6 +27,8 @@ import com.angcyo.library.ex.*
 import com.angcyo.library.toastWX
 import com.angcyo.library.utils.FileUtils
 import com.angcyo.library.utils.appFolderPath
+import com.angcyo.library.utils.storage.haveSdCardPermission
+import com.angcyo.library.utils.storage.sdCardManagePermission
 import com.angcyo.widget._rv
 import com.angcyo.widget.layout.touch.TouchBackLayout
 import com.angcyo.widget.progress.HSProgressView
@@ -267,11 +269,19 @@ open class FileSelectorFragment : BaseFragment() {
     override fun onFragmentFirstShow(bundle: Bundle?) {
         super.onFragmentFirstShow(bundle)
         _vh.post {
-            fContext().requestPermissions(listOf(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                if (it) {
-                    loadPath(fileSelectorConfig.targetPath, 360)
-                } else {
-                    toastWX("权限被拒!")
+            if (haveSdCardPermission()) {
+                //具有SD卡权限
+                loadPath(fileSelectorConfig.targetPath, 360)
+            } else if (fileSelectorConfig.targetPath.contains(fContext().packageName)) {
+                //不具有SD卡权限, 但是路径包含包名, 说明是app内部路径
+                loadPath(fileSelectorConfig.targetPath, 360)
+            } else {
+                fContext().requestPermissions(sdCardManagePermission()) {
+                    if (it) {
+                        loadPath(fileSelectorConfig.targetPath, 360)
+                    } else {
+                        toastWX(_string(R.string.permission_disabled))
+                    }
                 }
             }
         }

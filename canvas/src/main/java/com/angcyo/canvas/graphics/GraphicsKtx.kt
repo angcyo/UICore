@@ -12,14 +12,12 @@ import com.angcyo.canvas.items.data.DataItemRenderer
 import com.angcyo.canvas.items.data.DataTextItem
 import com.angcyo.canvas.utils.ShapesHelper
 import com.angcyo.gcode.GCodeWriteHandler
-import com.angcyo.laserpacker.LPDataConstant
+import com.angcyo.laserpacker.*
 import com.angcyo.laserpacker.bean.LPElementBean
-import com.angcyo.laserpacker.toPaintStyleInt
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.flip
 import com.angcyo.library.ex.size
-import com.angcyo.library.ex.toBase64Data
 import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 import com.angcyo.library.unit.toMm
 import com.angcyo.library.unit.toPixel
@@ -136,33 +134,13 @@ fun CanvasDelegate.addLoveRender(
 
 //region ---矢量---
 
-/**SVG数据转[LPElementBean]*/
-fun String?.toSvgItemData(): LPElementBean? {
-    this ?: return null
-    val bean = LPElementBean()
-    bean.mtype = LPDataConstant.DATA_TYPE_SVG
-    bean.data = this
-    bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
-    return bean
-}
-
 /**添加一个SVG渲染*/
 fun CanvasDelegate.addSvgRender(svg: String?) =
-    GraphicsHelper.addRenderItemDataBean(this, svg.toSvgItemData())
-
-/**GCode数据转[LPElementBean]*/
-fun String?.toGCodeItemData(): LPElementBean? {
-    this ?: return null
-    val bean = LPElementBean()
-    bean.mtype = LPDataConstant.DATA_TYPE_GCODE
-    bean.data = this
-    bean.paintStyle = Paint.Style.STROKE.toPaintStyleInt()
-    return bean
-}
+    GraphicsHelper.addRenderItemDataBean(this, svg.toSvgElementBean())
 
 /**添加一个GCode渲染*/
 fun CanvasDelegate.addGCodeRender(gcode: String?) =
-    GraphicsHelper.addRenderItemDataBean(this, gcode.toGCodeItemData())
+    GraphicsHelper.addRenderItemDataBean(this, gcode.toGCodeElementBean())
 
 //endregion ---矢量---
 
@@ -189,15 +167,6 @@ val IRenderer.dataItemIndex: Int?
 //endregion ---算法---
 
 //region ---图/文---
-
-fun Bitmap?.toBitmapItemData(action: LPElementBean.() -> Unit = {}): LPElementBean? {
-    this ?: return null
-    val bean = LPElementBean()
-    bean.mtype = LPDataConstant.DATA_TYPE_BITMAP
-    bean.imageOriginal = toBase64Data()
-    bean.action()
-    return bean
-}
 
 /**添加一个[bitmap]数据渲染*/
 fun CanvasDelegate.addBitmapRender(

@@ -188,8 +188,21 @@ abstract class BaseRenderer : IRenderer {
         renderProperty?.let { property ->
             renderDrawable?.let { drawable ->
                 val renderBounds = property.getRenderBounds()
-                val width = max(renderBounds.width(), params.drawMinWidth).ceilInt()
-                val height = max(renderBounds.height(), params.drawMinHeight).ceilInt()
+                val boundsWidth = renderBounds.width()
+                val width = if (boundsWidth <= 0) {
+                    //实际宽度为0, 可能是线条
+                    max(drawable.minimumWidth.toFloat(), params.drawMinWidth).ceilInt()
+                } else {
+                    max(boundsWidth, params.drawMinWidth).ceilInt()
+                }
+
+                val boundsHeight = renderBounds.height()
+                val height = if (boundsHeight <= 0f) {
+                    //实际高度为0, 可能是线条
+                    max(drawable.minimumHeight.toFloat(), params.drawMinHeight).ceilInt()
+                } else {
+                    max(boundsHeight, params.drawMinHeight).ceilInt()
+                }
                 drawable.setBounds(0, 0, width, height)//设置绘制的宽高
                 renderDrawable(canvas, property, drawable, params)
             }.elseNull {

@@ -145,7 +145,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
             elementRendererList.addAll(index, newRendererList)//在指定位置添加所有
             val to = elementRendererList.toList()
 
-            changeElementRenderer(from, to, newRendererList, strategy)
+            changeElementRenderer(from, to, newRendererList, reason, strategy)
 
             if (selector) {
                 delegate.selectorManager.resetSelectorRenderer(newRendererList, reason)
@@ -165,7 +165,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         elementRendererList.addAll(list)
         val to = elementRendererList.toList()
 
-        changeElementRenderer(from, to, list, strategy)
+        changeElementRenderer(from, to, list, reason, strategy)
 
         if (selector) {
             delegate.selectorManager.resetSelectorRenderer(list, reason)
@@ -178,16 +178,17 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         from: List<BaseRenderer>,
         to: List<BaseRenderer>,
         list: List<BaseRenderer>,
+        reason: Reason,
         strategy: Strategy
     ) {
         delegate.undoManager.addAndRedo(strategy, true, {
             elementRendererList.resetAll(from)
-            delegate.dispatchElementRendererListChange(to, from, list)
+            delegate.dispatchElementRendererListChange(to, from, list, reason)
             checkClearSelectorRenderer()
             delegate.refresh()
         }) {
             elementRendererList.resetAll(to)
-            delegate.dispatchElementRendererListChange(from, to, list)
+            delegate.dispatchElementRendererListChange(from, to, list, reason)
             checkClearSelectorRenderer()
             delegate.refresh()
         }
@@ -208,45 +209,45 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     }
 
     /**移除所有渲染元素*/
-    fun removeAllElementRenderer(strategy: Strategy) {
-        removeElementRenderer(elementRendererList.toList(), strategy)
+    fun removeAllElementRenderer(reason: Reason, strategy: Strategy) {
+        removeElementRenderer(elementRendererList.toList(), reason, strategy)
     }
 
     /**删除一个渲染器*/
-    fun removeElementRenderer(render: BaseRenderer, strategy: Strategy) {
-        removeElementRenderer(listOf(render), strategy)
+    fun removeElementRenderer(render: BaseRenderer, reason: Reason, strategy: Strategy) {
+        removeElementRenderer(listOf(render), reason, strategy)
     }
 
     /**添加一个集合渲染器*/
-    fun removeElementRenderer(list: List<BaseRenderer>, strategy: Strategy) {
+    fun removeElementRenderer(list: List<BaseRenderer>, reason: Reason, strategy: Strategy) {
         val from = elementRendererList.toList()
         elementRendererList.removeAll(list)
         val to = elementRendererList.toList()
 
         delegate.undoManager.addAndRedo(strategy, true, {
             elementRendererList.resetAll(from)
-            delegate.dispatchElementRendererListChange(to, from, list)
+            delegate.dispatchElementRendererListChange(to, from, list, reason)
             delegate.refresh()
         }) {
             elementRendererList.resetAll(to)
-            delegate.dispatchElementRendererListChange(from, to, list)
+            delegate.dispatchElementRendererListChange(from, to, list, reason)
             delegate.refresh()
         }
     }
 
     /**重置所有元素渲染器*/
-    fun resetElementRenderer(list: List<BaseRenderer>, strategy: Strategy) {
+    fun resetElementRenderer(list: List<BaseRenderer>, reason: Reason, strategy: Strategy) {
         val from = elementRendererList.toList()
         elementRendererList.resetAll(list)
         val to = elementRendererList.toList()
 
         delegate.undoManager.addAndRedo(strategy, true, {
             elementRendererList.resetAll(from)
-            delegate.dispatchElementRendererListChange(to, from, list)
+            delegate.dispatchElementRendererListChange(to, from, list, reason)
             delegate.refresh()
         }) {
             elementRendererList.resetAll(to)
-            delegate.dispatchElementRendererListChange(from, to, list)
+            delegate.dispatchElementRendererListChange(from, to, list, reason)
             delegate.refresh()
         }
     }
@@ -335,25 +336,34 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     //region---排序操作---
 
     /**排序[elementRendererList] [rendererList] 最后的顺序结果*/
-    fun arrangeElementSortWith(rendererList: List<BaseRenderer>, strategy: Strategy) {
+    fun arrangeElementSortWith(
+        rendererList: List<BaseRenderer>,
+        reason: Reason,
+        strategy: Strategy
+    ) {
         val newList = rendererList.toList()
         val oldList = elementRendererList.toList()
         if (oldList.isChange(newList)) {
             //数据改变过
             delegate.undoManager.addAndRedo(strategy, true, {
                 elementRendererList.resetAll(oldList)
-                delegate.dispatchElementRendererListChange(newList, oldList, rendererList)
+                delegate.dispatchElementRendererListChange(newList, oldList, rendererList, reason)
                 delegate.refresh()
             }) {
                 elementRendererList.resetAll(newList)
-                delegate.dispatchElementRendererListChange(oldList, newList, rendererList)
+                delegate.dispatchElementRendererListChange(oldList, newList, rendererList, reason)
                 delegate.refresh()
             }
         }
     }
 
     /**排序, 将[rendererList], 放到指定的位置[to] */
-    fun arrangeElementSort(rendererList: List<BaseRenderer>, to: Int, strategy: Strategy) {
+    fun arrangeElementSort(
+        rendererList: List<BaseRenderer>,
+        to: Int,
+        reason: Reason,
+        strategy: Strategy
+    ) {
         val first = rendererList.firstOrNull() ?: return
         val last = rendererList.lastOrNull() ?: return
 
@@ -377,7 +387,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
             newList.addAll(to - (rendererList.size - 1), rendererList)
         }
 
-        arrangeElementSortWith(newList, strategy)
+        arrangeElementSortWith(newList, reason, strategy)
     }
 
     /**检查[renderer]是否可以执行指定的排序操作
@@ -413,7 +423,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     /**安排排序
      * [elementCanArrange]
      * [arrangeElementSortWith]*/
-    fun arrangeElement(renderer: BaseRenderer, type: Int, strategy: Strategy) {
+    fun arrangeElement(renderer: BaseRenderer, type: Int, reason: Reason, strategy: Strategy) {
         val list = mutableListOf<BaseRenderer>()
 
         if (renderer is CanvasSelectorComponent) {
@@ -441,7 +451,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
             else -> elementRendererList.lastIndex
         }
 
-        arrangeElementSort(list, toIndex, strategy)
+        arrangeElementSort(list, toIndex, reason, strategy)
     }
 
     //endregion---排序操作---

@@ -9,6 +9,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.util.zip.ZipEntry
+import java.util.zip.ZipException
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 
@@ -42,15 +43,20 @@ fun zipFileWrite(zipFilePath: String, writeAction: ZipOutputStream.() -> Unit): 
 /**压缩包文件的读取, 不解压直接读流
  * [zipFilePath] zip文件的路径
  * */
+@Throws(ZipException::class)
 fun zipFileRead(zipFilePath: String, readAction: ZipFile.() -> Unit) {
     val file = File(zipFilePath)
     if (!file.exists()) {
         return
     }
-    val zipFile = ZipFile(file)
-    //zipFile.readEntry() //使用这个方法, 读取zip文件中的数据
-    zipFile.readAction()
-    zipFile.close()
+    try {
+        val zipFile = ZipFile(file) //java.util.zip.ZipException: error in opening zip file
+        //zipFile.readEntry() //使用这个方法, 读取zip文件中的数据
+        zipFile.readAction()
+        zipFile.close()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
 
 //---
@@ -98,10 +104,16 @@ fun ZipOutputStream.writeEntry(entryName: String, inputStream: InputStream) {
 /**使用UTF-8格式写入字符串
  * [Charsets.UTF_8]*/
 fun ZipOutputStream.writeEntry(entryName: String, text: String?) {
+    writeEntry(entryName, text?.toByteArray(Charsets.UTF_8))
+}
+
+/**使用UTF-8格式写入字符串
+ * [Charsets.UTF_8]*/
+fun ZipOutputStream.writeEntry(entryName: String, bytes: ByteArray?) {
     val entry = ZipEntry(entryName)
     putNextEntry(entry)
-    if (text != null) {
-        write(text.toByteArray())
+    if (bytes != null) {
+        write(bytes)
     }
     closeEntry()
 }
@@ -113,6 +125,15 @@ fun ZipOutputStream.writeEntry(entryName: String, bitmap: Bitmap?) {
     putNextEntry(entry)
     bitmap?.compress(Bitmap.CompressFormat.PNG, 100, this)
     closeEntry()
+}
+
+/**写入另一个Zip文件中的Entry到this这个zip文件*/
+fun ZipOutputStream.writeEntry(
+    inputEntryZipFile: ZipFile,
+    inputEntry: ZipEntry,
+    entryName: String = inputEntry.name
+) {
+    writeEntry(entryName, inputEntryZipFile.getInputStream(inputEntry))
 }
 
 /**向zip流中, 写入文件/文件夹
@@ -178,6 +199,48 @@ fun File.unzipFile(outputPath: String = libCacheFolderPath()): String? {
     } catch (e: Exception) {
         e.printStackTrace()
         null
+    }
+}
+
+/**替换Entry
+ *
+ * [replaceAction] 替换的动作, 返回null表示不替换
+ * */
+fun File.replaceZipEntry(replaceAction: ZipEntry.() -> Any?): Boolean {
+    return try {
+        val file = this
+        val tempFile = File(parentFile, "${name}.temp")
+        zipFileWrite(tempFile.absolutePath) {
+            val zipFile = ZipFile(file)
+            val entries = zipFile.entries()
+            while (entries.hasMoreElements()) {
+                try {
+                    val zipEntry = entries.nextElement()
+                    val any = zipEntry.replaceAction()
+                    if (any == null) {
+                        //不需要替换, 则直接写入
+                        writeEntry(zipFile, zipEntry)
+                    } else {
+                        //替换流
+                        when (any) {
+                            is InputStream -> writeEntry(zipEntry.name, any)
+                            is String -> writeEntry(zipEntry.name, any)
+                            is Bitmap -> writeEntry(zipEntry.name, any)
+                            is ByteArray -> writeEntry(zipEntry.name, any)
+                            else -> writeEntry(zipFile, zipEntry)
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            zipFile.close()
+        }
+        delete()
+        tempFile.renameTo(this) //重命名
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
     }
 }
 

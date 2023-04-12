@@ -149,18 +149,6 @@ fun CanvasDelegate.engraveMode(enable: Boolean = true) {
     refresh()
 }
 
-/**扩展*/
-@Deprecated("请使用性能更好的Jni方法:[String.toGCodePath]")
-fun GCodeHelper.parseGCode(gCodeText: String?): GCodeDrawable? =
-    parseGCode(gCodeText, createPaint(Color.BLACK))
-
-/**扩展*/
-fun parseSvg(svgText: String?): SharpDrawable? = if (svgText.isNullOrEmpty()) {
-    null
-} else {
-    loadSvgPathDrawable(svgText, -1, null, createPaint(Color.BLACK), 0, 0)
-}
-
 //</editor-fold desc="Other">
 
 //<editor-fold desc="Svg">

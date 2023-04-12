@@ -59,7 +59,6 @@
     <string name="canvas_grey">灰度</string>
     <string name="canvas_seal">印章</string>
 
-    <string name="canvas_font_text">LaserPecker</string>
     <string name="canvas_invert">反色</string>
     <string name="canvas_threshold">阈值</string>
     <string name="canvas_contrast">对比度</string>
@@ -83,7 +82,6 @@
     <string name="canvas_back">置为底层</string>
     <string name="canvas_sort">排列</string>
 
-    <string name="canvas_import_font">导入</string>
     <string name="canvas_invalid_font">无效的字体</string>
     <string name="canvas_font_exist">字体已存在</string>
     <string name="canvas_cannot_import">无法导入</string>

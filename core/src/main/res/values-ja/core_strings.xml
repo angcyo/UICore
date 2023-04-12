@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_disabled">パーミッションが無効になっています</string>
+
+    <string name="ui_back">戻る</string>
+    <string name="ui_enable_permission">開かれた権限</string>
+    <string name="core_screen_shot_text">フィードバック</string>
+
+    <string name="core_thread_error_tip">少し問題が発生しました</string>
+
+    <string name="core_send_to_label">に送る...</string>
+
+</resources>

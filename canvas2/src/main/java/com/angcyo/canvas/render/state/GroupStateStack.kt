@@ -35,7 +35,7 @@ class GroupStateStack : PropertyStateStack() {
         delegate: CanvasRenderDelegate?
     ) {
         super.restoreState(renderer, reason, strategy, delegate)
-        delegate?.renderManager?.resetElementRenderer(stateRendererList, Strategy.preview)
+        delegate?.renderManager?.resetElementRenderer(stateRendererList, reason, Strategy.preview)
         delegate?.selectorManager?.resetSelectorRenderer(stateRendererList, reason)
     }
 

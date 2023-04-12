@@ -85,6 +85,9 @@ fun RectF.isNoSize() =
 
 fun Rect.isNoSize() = width() == 0 || height() == 0
 
+/**是否是无效的矩形*/
+fun RectF.isInvalid() = !width().isFinite() || !height().isFinite()
+
 /**[this]矩形是否在[rect]矩形的外面*/
 fun RectF.isOutOf(rect: RectF): Boolean {
     if (left < rect.left && right < rect.left) {

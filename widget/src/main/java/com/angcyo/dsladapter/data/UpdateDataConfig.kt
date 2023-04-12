@@ -21,6 +21,9 @@ import kotlin.reflect.KClass
  */
 
 class UpdateDataConfig {
+    /**从第几页开始更新*/
+    var startPage: Int = Page.FIRST_PAGE_INDEX
+
     /**需要加载的页码, 会偏移到指定位置*/
     var updatePage: Int = Page.FIRST_PAGE_INDEX
 
@@ -126,7 +129,7 @@ fun UpdateDataConfig.updateData(originList: List<DslAdapterItem>): List<DslAdapt
         val oldRemoveList = mutableListOf<DslAdapterItem>()
         val newAddList = mutableListOf<DslAdapterItem>()
 
-        val updateStartIndex = max(0, updatePage - 1) * pageSize
+        val updateStartIndex = max(0, updatePage - startPage) * pageSize
         val updateEndIndex = updateStartIndex + updateSize()
 
         for (i in updateStartIndex until updateEndIndex) {
@@ -373,6 +376,7 @@ fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEndIndex(
 
     //更新数据源
     updateData {
+        startPage = page.firstPageIndex
         updatePage = page.requestPageIndex
         pageSize = page.requestPageSize
         updateDataList = dataList as List<Any>?

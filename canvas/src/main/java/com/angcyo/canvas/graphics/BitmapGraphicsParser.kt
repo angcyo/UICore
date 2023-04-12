@@ -6,11 +6,11 @@ import com.angcyo.bitmap.handle.BitmapHandle
 import com.angcyo.canvas.core.ICanvasView
 import com.angcyo.canvas.items.data.DataBitmapItem
 import com.angcyo.canvas.items.data.DataItem
-import com.angcyo.canvas.utils.parseGCode
 import com.angcyo.gcode.GCodeHelper
 import com.angcyo.laserpacker.LPDataConstant
 import com.angcyo.laserpacker.bean.LPElementBean
 import com.angcyo.laserpacker.device.HawkEngraveKeys
+import com.angcyo.laserpacker.parseGCode
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.app
