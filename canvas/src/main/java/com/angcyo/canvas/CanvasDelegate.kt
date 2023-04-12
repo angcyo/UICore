@@ -779,10 +779,11 @@ class CanvasDelegate(val view: View) : ICanvasView {
             height,
             bitmap?.toBase64Data(),
             data,
-            fileName,
-            nowTime(),
-            nowTime()
-        )
+            fileName
+        ).apply {
+            update_time = nowTime()
+            create_time = nowTime()
+        }
     }
 
     /**获取一个渲染器*/

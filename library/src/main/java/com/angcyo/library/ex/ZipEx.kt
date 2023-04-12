@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import android.graphics.Bitmap
 import com.angcyo.library.libCacheFile
 import com.angcyo.library.libCacheFolderPath
 import com.angcyo.library.utils.fileNameUUID
@@ -91,6 +92,26 @@ fun ZipOutputStream.writeEntry(entryName: String, inputStream: InputStream) {
     putNextEntry(entry)
     inputStream.writeTo(this)
     inputStream.close()
+    closeEntry()
+}
+
+/**使用UTF-8格式写入字符串
+ * [Charsets.UTF_8]*/
+fun ZipOutputStream.writeEntry(entryName: String, text: String?) {
+    val entry = ZipEntry(entryName)
+    putNextEntry(entry)
+    if (text != null) {
+        write(text.toByteArray())
+    }
+    closeEntry()
+}
+
+/**写入图片
+ * [Charsets.UTF_8]*/
+fun ZipOutputStream.writeEntry(entryName: String, bitmap: Bitmap?) {
+    val entry = ZipEntry(entryName)
+    putNextEntry(entry)
+    bitmap?.compress(Bitmap.CompressFormat.PNG, 100, this)
     closeEntry()
 }
 
@@ -192,6 +213,36 @@ fun ZipFile.readEntry(entryName: String): ByteArray? {
             }
         }
         bytes
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+/**[writeEntry]*/
+fun ZipFile.readEntryString(entryName: String): String? {
+    return try {
+        val text = getEntry(entryName)?.run {
+            getInputStream(this).use {
+                it.readBytes().toString(Charsets.UTF_8)
+            }
+        }
+        text
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+/**[writeEntry]*/
+fun ZipFile.readEntryBitmap(entryName: String): Bitmap? {
+    return try {
+        val bitmap = getEntry(entryName)?.run {
+            getInputStream(this).use {
+                it.readBytes().toBitmap()
+            }
+        }
+        bitmap
     } catch (e: Exception) {
         e.printStackTrace()
         null
