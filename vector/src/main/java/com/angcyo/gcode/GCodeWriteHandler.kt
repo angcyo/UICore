@@ -70,26 +70,28 @@ class GCodeWriteHandler : VectorWriteHandler() {
         }
 
         val cmd = "G0"
-        val x = xValue.toLossyFloat()
-        val y = yValue.toLossyFloat()
+        val xFloat = xValue.toLossyFloat()
+        val yFloat = yValue.toLossyFloat()
         if (enableGCodeShrink) {
             writer?.appendLine(buildString {
+                var isFirst = false
                 if (lastInfo.lastCmd != cmd) {
+                    isFirst = true
                     append(cmd)
                 }
-                if (lastInfo.lastX != x) {
-                    append("X$x")
+                if (isFirst || lastInfo.lastX != xFloat) {
+                    append("X$xFloat")
                 }
-                if (lastInfo.lastY != y) {
-                    append("Y$y")
+                if (isFirst || lastInfo.lastY != yFloat) {
+                    append("Y$yFloat")
                 }
             })
         } else {
-            writer?.appendLine("$cmd X${x} Y${y}")
+            writer?.appendLine("$cmd X${xFloat} Y${yFloat}")
         }
         lastInfo.lastCmd = cmd
-        lastInfo.lastX = x
-        lastInfo.lastY = y
+        lastInfo.lastX = xFloat
+        lastInfo.lastY = yFloat
     }
 
     override fun onLineToPoint(point: VectorPoint) {
@@ -131,19 +133,21 @@ class GCodeWriteHandler : VectorWriteHandler() {
                     val j = jValue.toLossyFloat()
 
                     if (enableGCodeShrink) {
+                        var isFirst = false
                         if (lastInfo.lastCmd != cmd) {
+                            isFirst = true
                             append(cmd)
                         }
-                        if (lastInfo.lastX != x) {
+                        if (isFirst || lastInfo.lastX != x) {
                             append("X$x")
                         }
-                        if (lastInfo.lastY != y) {
+                        if (isFirst || lastInfo.lastY != y) {
                             append("Y$y")
                         }
-                        if (lastInfo.lastI != i) {
+                        if (isFirst || lastInfo.lastI != i) {
                             append("I$i")
                         }
-                        if (lastInfo.lastJ != j) {
+                        if (isFirst || lastInfo.lastJ != j) {
                             append("J$j")
                         }
                     } else {
@@ -179,13 +183,15 @@ class GCodeWriteHandler : VectorWriteHandler() {
             val xFloat = xValue.toLossyFloat()
             val yFloat = yValue.toLossyFloat()
             writer?.appendLine(buildString {
+                var isFirst = false
                 if (lastInfo.lastCmd != cmd) {
+                    isFirst = true
                     append(cmd)
                 }
-                if (lastInfo.lastX != xFloat) {
+                if (isFirst || lastInfo.lastX != xFloat) {
                     append("X$xFloat")
                 }
-                if (lastInfo.lastY != yFloat) {
+                if (isFirst || lastInfo.lastY != yFloat) {
                     append("Y$yFloat")
                 }
             })

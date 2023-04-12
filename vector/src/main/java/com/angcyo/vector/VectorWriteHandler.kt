@@ -92,7 +92,7 @@ abstract class VectorWriteHandler {
     /**单位转换器, 如果不设置则[Path]的值, 1:1输出*/
     var unit: IValueUnit? = null
 
-    /**真实值, 可以是像素, 也可以是mm
+    /**真实值, 可以是像素, 也可以是mm. 根据[writePoint]的值, 自行决定
      *
      * 间隔太长, 就会使用G0移动到过
      * 当2个点之间的距离小于此值时, 视为同一个点
