@@ -429,17 +429,15 @@ data class CanvasRenderProperty(
      *
      * */
     private fun qrDecomposition(matrix: Matrix) {
-        val angle = atan2(matrix.getSkewY(), matrix.getScaleX()).toDegrees()
-        val denom = matrix.getScaleX().pow(2f) + matrix.getSkewY().pow(2f)
+        val sx = matrix.getScaleX()
+        val sy = matrix.getScaleY()
+        val angle = atan2(matrix.getSkewY(), sx).toDegrees()
+        val denom = sx.pow(2f) + matrix.getSkewY().pow(2f)
 
         val scaleX = sqrt(denom)
-        val scaleY = (matrix.getScaleX() * matrix.getScaleY() -
-                matrix.getSkewX() * matrix.getSkewY()) / scaleX
+        val scaleY = (sx * sy - matrix.getSkewX() * matrix.getSkewY()) / scaleX
 
-        val skewX = atan2(
-            (matrix.getScaleX() * matrix.getSkewX() + matrix.getSkewY() * matrix.getScaleY()),
-            denom
-        ) //x倾斜的角度, 弧度单位
+        val skewX = atan2((sx * matrix.getSkewX() + matrix.getSkewY() * sy), denom) //x倾斜的角度, 弧度单位
         val skewY = 0.0f//y倾斜的角度, 弧度单位
 
         updateAngle(angle)

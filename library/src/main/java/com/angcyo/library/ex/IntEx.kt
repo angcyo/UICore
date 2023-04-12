@@ -182,6 +182,10 @@ fun Float.ensure(def: Float = 0f): Float {
         //无穷大
         return def
     }
+    if (isFinite()) {
+        //有效的数值
+        return this
+    }
     return this
 }
 

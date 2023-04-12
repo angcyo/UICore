@@ -163,7 +163,7 @@ class LimitMatrixComponent : BaseCanvasRenderListener(), IComponent {
         }
 
         //调整
-        matrix.updateScale(sx, sy)
+        matrix.updateScale(sx.ensure(1f), sy.ensure(1f))
     }
 
     /**限制平移操作, 也就是限制xy*/

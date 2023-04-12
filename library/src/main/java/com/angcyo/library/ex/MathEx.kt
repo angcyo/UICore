@@ -290,13 +290,13 @@ fun Matrix.updateSkew(kx: Float = 0f, ky: Float = 0f) {
  * 比如1.2f 2.0f*/
 fun Matrix.getScaleX(): Float {
     getValues(_tempValues)
-    return _tempValues[Matrix.MSCALE_X]
+    return _tempValues[Matrix.MSCALE_X].ensure(1f)
 }
 
 /**默认是1f*/
 fun Matrix.getScaleY(): Float {
     getValues(_tempValues)
-    return _tempValues[Matrix.MSCALE_Y]
+    return _tempValues[Matrix.MSCALE_Y].ensure(1f)
 }
 
 /**缩放值*/
