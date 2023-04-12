@@ -40,6 +40,9 @@ class ShareSendFragment : BaseDslFragment() {
 
         /**需要发送的[Uri]集合放在这里*/
         const val KEY_URI_LIST = Intent.EXTRA_STREAM
+
+        /**需要发送的文本放在这里*/
+        const val KEY_TEXT = Intent.EXTRA_TEXT
     }
 
     init {
@@ -50,9 +53,13 @@ class ShareSendFragment : BaseDslFragment() {
     /**外部传递过来, 需要发送的[Uri]数据*/
     var sendUriList: List<Uri>? = null
 
+    /**外部传来要发送的文本*/
+    var sendText: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sendUriList = getParcelableList(KEY_URI_LIST)
+        sendText = arguments?.getString(KEY_TEXT)
     }
 
     override fun initBaseView(savedInstanceState: Bundle?) {
@@ -60,6 +67,7 @@ class ShareSendFragment : BaseDslFragment() {
 
         renderDslAdapter {
             DslSendServerItem()() {
+                itemContent = sendText
                 itemSendFileAction = { url, retry ->
                     if (retry) {
                         //重试

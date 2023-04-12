@@ -79,6 +79,19 @@ fun Fragment.putData(data: Any?, key: String = BUNDLE_KEY_JSON): Fragment {
     return this
 }
 
+fun Fragment.putData(action: Bundle.() -> Unit): Fragment {
+    val bundle = Bundle()
+    bundle.action()
+
+    arguments?.putAll(bundle)
+
+    if (arguments == null) {
+        arguments = bundle
+    }
+
+    return this
+}
+
 /**当前对象需要实现[Serializable]接口, 成员也需要. */
 fun Fragment.putDataSerializable(
     data: Serializable?,

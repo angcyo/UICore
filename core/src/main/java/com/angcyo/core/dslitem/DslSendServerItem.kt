@@ -34,6 +34,9 @@ class DslSendServerItem : DslAdapterItem() {
     /**服务端的地址, 自动获取的*/
     var itemAddress: String? = null
 
+    /**文本内容*/
+    var itemContent: String? = null
+
     init {
         itemLayoutId = R.layout.dsl_send_server_item
     }
@@ -57,6 +60,9 @@ class DslSendServerItem : DslAdapterItem() {
                     updateDrawLeftText("已嗅探:")
                 }
             }
+        }
+        itemContent?.let {
+            itemHolder.tv(R.id.lib_content_edit_view)?.setInputText(it, false)
         }
 
         itemHolder.focused(R.id.lib_result_view)
