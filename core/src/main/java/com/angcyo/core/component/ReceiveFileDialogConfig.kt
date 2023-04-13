@@ -34,6 +34,7 @@ class ReceiveFileDialogConfig(context: Context? = null) : DslDialogConfig(contex
     init {
         //dialogTitle = "服务接口:xxx"
         dialogLayoutId = R.layout.dialog_receive_file
+        canceledOnTouchOutside = false
     }
 
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
@@ -61,9 +62,18 @@ class ReceiveFileDialogConfig(context: Context? = null) : DslDialogConfig(contex
             it?.let {
                 receiveFile = it
                 val name = it.name
+                dialogViewHolder.visible(R.id.lib_file_name_view)
                 dialogViewHolder.tv(R.id.lib_file_name_view)?.text = name
                 dialogViewHolder.img(R.id.lib_file_icon_view)
                     ?.setImageResource(DslFileSelectorItem.getFileIconRes(name))
+            }
+        }
+
+        //监听文本
+        vmApp<DataShareModel>().shareTextOnceData.observe(this) {
+            it?.let {
+                dialogViewHolder.visible(R.id.lib_body_wrap_view)
+                dialogViewHolder.tv(R.id.lib_body_view)?.text = it
             }
         }
     }

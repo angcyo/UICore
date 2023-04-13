@@ -11,38 +11,40 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="@id/lib_file_des_view"
-        app:layout_constraintTop_toTopOf="@id/lib_file_name_view"
+        app:layout_constraintBottom_toBottomOf="@id/lib_body_wrap_view"
+        app:layout_constraintTop_toTopOf="@id/lib_body_wrap_view"
         app:srcCompat="@drawable/core_file_icon_unknown" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/lib_file_name_view"
-        style="@style/LibBodyTextStyle"
+    <LinearLayout
+        android:id="@+id/lib_body_wrap_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:paddingHorizontal="@dimen/lib_hdpi"
-        app:layout_constraintBottom_toTopOf="@id/lib_file_des_view"
         app:layout_constraintLeft_toRightOf="@id/lib_file_icon_view"
         app:layout_constraintRight_toLeftOf="@id/lib_state_image_view"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="要发送的资源名称" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/lib_file_des_view"
-        style="@style/LibSubTextStyle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/lib_hdpi"
-        app:layout_constraintLeft_toRightOf="@id/lib_file_icon_view"
-        app:layout_constraintRight_toLeftOf="@id/lib_state_image_view"
-        app:layout_constraintTop_toBottomOf="@id/lib_file_name_view"
-        tools:text="要发送的资源名\n要发送的资源名称要发送的资源名\n要发送的资源名称要发送的资源名\n要发送的资源名称要发送的资源名\n要发送的资源名称" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lib_file_name_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="要发送的资源名称" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lib_file_des_view"
+            style="@style/LibSubTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="要发送的资源名" />
+
+    </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/lib_state_image_view"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:padding="@dimen/lib_hdpi"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         app:layout_constraintBottom_toBottomOf="@id/lib_file_icon_view"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/lib_file_icon_view"
@@ -54,5 +56,5 @@
         android:layout_height="3dp"
         android:layout_marginTop="@dimen/lib_sdpi"
         app:enable_progress_flow_mode="true"
-        app:layout_constraintTop_toBottomOf="@id/lib_file_des_view" />
+        app:layout_constraintTop_toBottomOf="@id/lib_body_wrap_view" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,7 +12,6 @@
         style="@style/LibTitleTextStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="@dimen/lib_hdpi"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -34,21 +33,47 @@
         style="@style/LibBodyTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/lib_xhdpi"
+        android:paddingHorizontal="@dimen/lib_hdpi"
+        android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lib_file_icon_view"
-        tools:text="接收的文件名" />
+        tools:text="接收的文件名"
+        tools:visibility="visible" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/lib_body_wrap_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="200dp"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lib_file_name_view"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lib_body_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/lib_hdpi"
+            android:selectAllOnFocus="true"
+            android:textIsSelectable="true"
+            tools:text="接收的文本数据" />
+
+    </androidx.core.widget.NestedScrollView>
 
     <com.angcyo.widget.DslButton
         android:id="@+id/lib_cancel_button"
         style="@style/DefaultButtonMinStyle"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/lib_item_min_height"
+        android:layout_marginTop="@dimen/lib_hdpi"
+        android:minHeight="@dimen/lib_min_item_height"
         android:text="取消服务"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lib_file_name_view" />
+        app:layout_constraintTop_toBottomOf="@id/lib_body_wrap_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

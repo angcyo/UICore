@@ -16,6 +16,9 @@ class DataShareModel : ViewModel() {
     /**共享数据通知, [Any]类型*/
     val shareOnceData = vmDataOnce<Any?>()
 
+    /**共享文本通知*/
+    val shareTextOnceData = vmDataOnce<CharSequence?>()
+
     /**共享服务地址通知, http://地址*/
     val shareServerAddressOnceData = vmDataOnce<String?>()
 
