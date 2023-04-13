@@ -8,7 +8,12 @@ import android.view.MotionEvent
 import android.view.View
 import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.annotation.RenderFlag
-import com.angcyo.canvas.render.core.component.*
+import com.angcyo.canvas.render.core.component.BaseControl
+import com.angcyo.canvas.render.core.component.BaseControlPoint
+import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
+import com.angcyo.canvas.render.core.component.LimitMatrixComponent
+import com.angcyo.canvas.render.core.component.PointTouchComponent
 import com.angcyo.canvas.render.data.LimitInfo
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
@@ -18,7 +23,12 @@ import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.onMain
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.disableParentInterceptTouchEvent
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.getScaleX
+import com.angcyo.library.ex.getScaleY
+import com.angcyo.library.ex.longFeedback
+import com.angcyo.library.ex.size
 import com.angcyo.library.isMain
 import com.angcyo.library.unit.IRenderUnit
 import java.util.concurrent.CopyOnWriteArrayList
@@ -86,14 +96,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
 
     override fun onSizeChanged(w: Int, h: Int) {
         val size = 20 * dp
-        renderViewBox.updateRenderBounds(
-            RectF(
-                size * 2,
-                size * 2,
-                w.toFloat() - size,
-                h.toFloat() - size
-            )
-        )
+        renderViewBox.updateRenderBounds(RectF(size, size, w.toFloat(), h.toFloat()))
         axisManager.updateAxisBounds(size, 0, 0, w, h)
 
         //initialPointComponent
