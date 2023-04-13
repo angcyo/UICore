@@ -8,5 +8,7 @@
     <dimen name="lib_tab_icon_size">20dp</dimen>
     <!--tab栏文本的大小-->
     <dimen name="lib_tab_text_size">@dimen/text_assist_size</dimen>
+    <!--按钮类型的图标大小-->
+    <dimen name="lib_button_icon_size">50dp</dimen>
 
 </resources>

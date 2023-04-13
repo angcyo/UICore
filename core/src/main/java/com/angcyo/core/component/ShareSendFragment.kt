@@ -20,10 +20,7 @@ import com.angcyo.http.progress.toProgressBody
 import com.angcyo.http.rx.observe
 import com.angcyo.http.udp.udpReceive
 import com.angcyo.http.uploadFile2Body
-import com.angcyo.library.ex._string
-import com.angcyo.library.ex.getShowName
-import com.angcyo.library.ex.inputStream
-import com.angcyo.library.ex.nowTime
+import com.angcyo.library.ex.*
 import com.angcyo.lifecycle.cancelOnDestroy
 
 /**
@@ -56,6 +53,9 @@ class ShareSendFragment : BaseDslFragment() {
     /**外部传来要发送的文本*/
     var sendText: String? = null
 
+    /**接收文件的实现方式*/
+    var receiveFileAction: Action? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sendUriList = getParcelableList(KEY_URI_LIST)
@@ -68,6 +68,7 @@ class ShareSendFragment : BaseDslFragment() {
         renderDslAdapter {
             DslSendServerItem()() {
                 itemContent = sendText
+                itemReceiveFileAction = receiveFileAction
                 itemSendFileAction = { url, retry ->
                     if (retry) {
                         //重试

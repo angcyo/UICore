@@ -28,6 +28,9 @@ class DslSendServerItem : DslAdapterItem() {
     /**发送文件触发的回调*/
     var itemSendFileAction: (url: String, retry: Boolean) -> Unit = { _, _ -> }
 
+    /**接收文件触发的回调*/
+    var itemReceiveFileAction: Action? = null
+
     /**是否发送完成*/
     var itemIsSendFinish: Boolean = true
 
@@ -109,6 +112,12 @@ class DslSendServerItem : DslAdapterItem() {
                     }
                 }
             }
+        }
+
+        //接收文件
+        itemHolder.visible(R.id.lib_receive_file_button, itemReceiveFileAction != null)
+        itemHolder.click(R.id.lib_receive_file_button) {
+            itemReceiveFileAction?.invoke()
         }
     }
 

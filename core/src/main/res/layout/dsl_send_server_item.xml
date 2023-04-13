@@ -57,45 +57,54 @@
         android:padding="@dimen/lib_hdpi"
         app:layout_constraintTop_toBottomOf="@id/upload_file_api_edit_view" />
 
-    <com.angcyo.widget.DslButton
-        android:id="@+id/lib_send_file_button"
-        style="@style/LibButtonStyle"
-        android:layout_width="0dp"
+    <com.angcyo.widget.layout.DslFlowLayout
+        android:id="@+id/lib_flow_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/lib_hdpi"
-        android:layout_marginTop="@dimen/lib_xhdpi"
-        android:padding="@dimen/lib_xhdpi"
-        android:text="发送文件"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/lib_retry_send_file_button"
-        app:layout_constraintTop_toBottomOf="@id/lib_content_edit_view" />
+        app:layout_constraintTop_toBottomOf="@id/lib_content_edit_view"
+        app:r_flow_equ_width="true">
 
-    <com.angcyo.widget.DslButton
-        android:id="@+id/lib_retry_send_file_button"
-        style="@style/LibButtonStyle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/lib_hdpi"
-        android:layout_marginTop="@dimen/lib_xhdpi"
-        android:padding="@dimen/lib_xhdpi"
-        android:text="重发文件"
-        app:layout_constraintLeft_toRightOf="@id/lib_send_file_button"
-        app:layout_constraintRight_toLeftOf="@id/lib_send_body_button"
-        app:layout_constraintTop_toBottomOf="@id/lib_content_edit_view" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_send_file_button"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/lib_button_icon_size"
+            android:background="@drawable/lib_bg2_selector"
+            android:paddingVertical="@dimen/lib_xhdpi"
+            android:tooltipText="发送文件"
+            app:srcCompat="@drawable/core_file_send_icon"
+            app:tint="@color/lib_theme_icon_colors" />
 
-    <com.angcyo.widget.DslButton
-        android:id="@+id/lib_send_body_button"
-        style="@style/LibButtonStyle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/lib_xhdpi"
-        android:layout_marginRight="@dimen/lib_hdpi"
-        android:padding="@dimen/lib_xhdpi"
-        android:text="发送文本"
-        app:layout_constraintLeft_toRightOf="@id/lib_retry_send_file_button"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lib_content_edit_view" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_retry_send_file_button"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/lib_button_icon_size"
+            android:background="@drawable/lib_bg2_selector"
+            android:paddingVertical="@dimen/lib_xhdpi"
+            android:tooltipText="重发文件"
+            app:srcCompat="@drawable/core_file_resend_icon"
+            app:tint="@color/lib_theme_icon_colors" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_send_body_button"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/lib_button_icon_size"
+            android:background="@drawable/lib_bg2_selector"
+            android:paddingVertical="@dimen/lib_xhdpi"
+            android:tooltipText="发送文本"
+            app:srcCompat="@drawable/core_text_send_icon"
+            app:tint="@color/lib_theme_icon_colors" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_receive_file_button"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/lib_button_icon_size"
+            android:background="@drawable/lib_bg2_selector"
+            android:paddingVertical="@dimen/lib_xhdpi"
+            android:tooltipText="接收文件"
+            app:srcCompat="@drawable/core_file_receive_icon"
+            app:tint="@color/lib_theme_icon_colors" />
+
+    </com.angcyo.widget.layout.DslFlowLayout>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/lib_result_view"
@@ -104,5 +113,5 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/lib_xhdpi"
         android:text="..."
-        app:layout_constraintTop_toBottomOf="@id/lib_send_file_button" />
+        app:layout_constraintTop_toBottomOf="@id/lib_flow_layout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

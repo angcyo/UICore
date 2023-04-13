@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/dialog_white_round_bg_shape"
+    android:padding="@dimen/lib_xhdpi">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/dialog_title_view"
+        style="@style/LibTitleTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/lib_hdpi"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="服务接口:xxx" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_file_icon_view"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:padding="@dimen/lib_xhdpi"
+        android:scaleType="fitCenter"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog_title_view"
+        app:srcCompat="@drawable/core_file_receive_icon" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_file_name_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/lib_xhdpi"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lib_file_icon_view"
+        tools:text="接收的文件名" />
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/lib_cancel_button"
+        style="@style/DefaultButtonMinStyle"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/lib_item_min_height"
+        android:text="取消服务"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lib_file_name_view" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

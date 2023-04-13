@@ -34,6 +34,7 @@ class DslFileSelectorItem : DslAdapterItem() {
                 name.endsWith(".log") -> R.drawable.core_file_icon_log
                 name.endsWith(".txt") -> R.drawable.core_file_icon_text
                 name.endsWith(".xml") -> R.drawable.core_file_icon_xml
+                name.endsWith(".apk") -> R.drawable.core_file_icon_apk
                 else -> R.drawable.core_file_icon_unknown
             }
         }
