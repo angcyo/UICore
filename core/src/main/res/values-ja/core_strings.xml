@@ -9,5 +9,6 @@
     <string name="core_thread_error_tip">少し問題が発生しました</string>
 
     <string name="core_send_to_label">に送る...</string>
+    <string name="ui_minimum">最小化します</string>
 
 </resources>

@@ -9,5 +9,6 @@
     <string name="core_thread_error_tip">Ran into a little problem</string>
 
     <string name="core_send_to_label">Send to...</string>
+    <string name="ui_minimum">Minimum</string>
 
 </resources>
