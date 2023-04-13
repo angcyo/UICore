@@ -27,12 +27,6 @@ object LibLpHawkKeys {
      * */
     var lpSupportFirmware: String? by HawkPropertyValue<Any, String?>(null)
 
-    /**
-     * 哪些固件范围的中心点在物理中心
-     * resValue "string", "lp_device_origin_center", '"250~252 270~270 300~313 350~357 370~372 5500~5507 5510~5512"'
-     * */
-    var lpDeviceOriginCenter: String? by HawkPropertyValue<Any, String?>(null)
-
     /**是否激活圆弧输出矢量数据
      * [com.angcyo.vector.VectorWriteHandler._valueChangedType]*/
     var enableVectorArc: Boolean by HawkPropertyValue<Any, Boolean>(false)

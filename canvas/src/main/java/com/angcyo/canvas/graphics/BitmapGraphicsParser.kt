@@ -9,7 +9,7 @@ import com.angcyo.canvas.items.data.DataItem
 import com.angcyo.gcode.GCodeHelper
 import com.angcyo.laserpacker.LPDataConstant
 import com.angcyo.laserpacker.bean.LPElementBean
-import com.angcyo.laserpacker.device.HawkEngraveKeys
+import com.angcyo.bluetooth.fsc.laserpacker.HawkEngraveKeys
 import com.angcyo.laserpacker.parseGCode
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel

@@ -27,6 +27,7 @@ import android.webkit.MimeTypeMap
 import androidx.core.app.ActivityCompat
 import com.angcyo.library.L
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.InputStream
 import java.nio.charset.Charset
 
@@ -154,14 +155,17 @@ fun Context.saveToDCIM(input: InputStream, filename: String): Pair<Boolean, Uri?
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             values
         )
+
         mimeType.isVideoMimeType() -> contentResolver.insert(
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
             values
         )
+
         mimeType.isAudioMimeType() -> contentResolver.insert(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             values
         )
+
         else -> contentResolver.insert(MediaStore.Files.getContentUri("external"), values)
     }
 
@@ -303,7 +307,11 @@ fun Context.readAssets(fileName: String, charset: Charset = Charsets.UTF_8): Str
     return try {
         assets.open(fileName).reader(charset).readText()
     } catch (e: Exception) {
-        e.printStackTrace()
+        if (e is FileNotFoundException) {
+            L.e("资源文件不存在: ${e.message}")
+        } else {
+            e.printStackTrace()
+        }
         null
     }
 }

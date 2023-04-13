@@ -252,14 +252,21 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
             val resultList = mutableListOf<DslAdapterItem>()
 
             val startTime = nowTime()
-            if (LOG) L.v("${dslAdapter.hash()}:${hash()} 开始计算Diff:$startTime")
-            val diffResult = calculateDiff(resultList)
+            val logBuilder = StringBuilder()
+            if (LOG) logBuilder.append("${dslAdapter.hash()}:${hash()} 开始计算Diff:$startTime")
+            val diffResult = calculateDiff(resultList, logBuilder) //diff
             val nowTime = nowTime()
-            val s = (nowTime - startTime) / 1000
+            val dt = nowTime - startTime
+            val s = dt / 1000
             //val ms = ((nowTime - startTime) % 1000) * 1f / 1000
-            val ms = (nowTime - startTime) % 1000
+            val ms = dt % 1000
             //L.v("${hash()} Diff计算耗时:${String.format("%.3f", s + ms)}s")
-            if (LOG) L.v("${dslAdapter.hash()}:${hash()} Diff计算耗时:${s}s${ms}ms")
+            if (LOG) {
+                logBuilder.append(" Diff计算耗时:${s}s${ms}ms")
+                if (dt > 20) {
+                    L.v(logBuilder)
+                }
+            }
 
             val oldSize = filterDataList.size
             //因为是异步操作, 所以在延迟前, 就要覆盖 filterDataList 数据源
@@ -289,7 +296,10 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
         }
 
         /**计算[Diff]*/
-        private fun calculateDiff(resultList: MutableList<DslAdapterItem>): DiffUtil.DiffResult {
+        private fun calculateDiff(
+            resultList: MutableList<DslAdapterItem>,
+            logBuilder: StringBuilder
+        ): DiffUtil.DiffResult {
             //2个数据源
             val oldList = ArrayList(filterDataList)
             val newList = filterItemList(dslAdapter.adapterItems)
@@ -299,7 +309,7 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 
             resultList.addAll(_newList)
 
-            if (LOG) L.d("${dslAdapter.hash()}:${this.hash()} 数据列表->原:${oldList.size} 后:${newList.size} 终:${_newList.size}")
+            if (LOG) logBuilder.append(" 数据列表->原:${oldList.size} 后:${newList.size} 终:${_newList.size}")
 
             //开始计算diff
             val diffResult = DiffUtil.calculateDiff(
@@ -425,14 +435,15 @@ open class DslDataFilter(val dslAdapter: DslAdapter) {
 
             //任务结束
             val nowTime = System.currentTimeMillis()
-            if (LOG) L.d(
-                "${dslAdapter.hash()}:${hash()} 界面更新结束, 总耗时${
-                    LTime.time(
-                        _taskStartTime,
-                        nowTime
+            if (LOG) {
+                if (nowTime - _taskStartTime > 20) {
+                    L.d(
+                        "${dslAdapter.hash()}:${hash()} 界面更新结束, 总耗时${
+                            LTime.time(_taskStartTime, nowTime)
+                        }"
                     )
-                }"
-            )
+                }
+            }
             _updateTaskLit.remove(this)
             taskCancel.set(true)
         }

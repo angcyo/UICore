@@ -36,6 +36,7 @@ fun <T> LifecycleOwner.loadingAsyncTg(block: () -> T?, action: (T?) -> Unit) {
                 loadEnd(result, null)
             }
         }
+
         else -> {
             var activity: Context? = null
             if (context is Context) {
