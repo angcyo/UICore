@@ -96,7 +96,9 @@ dependencies {
     api fileTree(dir: 'libs', include: ['*.aar'])
 
     //https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-stdlib-jdk8/
+    //api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$_kotlin_version"
     //api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$_kotlin_version" //2022-11-4插件会自动依赖
+    //api "org.jetbrains.kotlin:kotlin-stdlib:$_kotlin_version" //2023-04-14 jdk7/8合并
 }
 
 //apply from: allGradle.version
