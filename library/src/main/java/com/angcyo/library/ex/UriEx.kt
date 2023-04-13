@@ -255,13 +255,15 @@ fun Uri.getFileName(context: Context = app()): String? {
 }
 
 /**不为空的返回值[getDisplayName]*/
-fun Uri.getShowName(context: Context = app()): String =
-    getDisplayName(context) ?: "$this".decode().lastName()
+fun Uri.getShowName(containEx: Boolean = true, context: Context = app()): String =
+    getDisplayName(context, containEx) ?: "$this".decode().lastName()
 
 /**从[Uri]中获取对应的显示名称
+ * [containEx] 是否要包含扩展名
  * [Uri.getFileName]*/
-fun Uri.getDisplayName(context: Context = app()): String? {
+fun Uri.getDisplayName(context: Context = app(), containEx: Boolean = false): String? {
     var result: String? = null
+    var lastResult: String? = null
 
     val contentResolver = context.contentResolver
     val entityColumns = arrayOf(
@@ -285,6 +287,11 @@ fun Uri.getDisplayName(context: Context = app()): String? {
             if (index != -1) {
                 val fileName = cursor.getString(index)// G10.dxf /ke.gcode
                 result = fileName
+                if (containEx && result?.contains(".") == false) {
+                    //不包含扩展名
+                    lastResult = result
+                    result = null
+                }
             }
 
             //2.
@@ -293,6 +300,12 @@ fun Uri.getDisplayName(context: Context = app()): String? {
                 if (index != -1) {
                     val fileTitle = cursor.getString(index)
                     result = fileTitle
+
+                    if (containEx && result?.contains(".") == false) {
+                        //不包含扩展名
+                        lastResult = result
+                        result = null
+                    }
                 }
 
                 //3.
@@ -301,9 +314,22 @@ fun Uri.getDisplayName(context: Context = app()): String? {
                     if (index != -1) {
                         val filePath = cursor.getString(index)// /storage/emulated/0/G10.dxf
                         result = filePath?.decode()?.lastName()
+                        if (containEx && result?.contains(".") == false) {
+                            //不包含扩展名
+                            lastResult = result
+                            result = null
+                        }
                     }
                 }
             }
+        }
+    }
+    if (containEx && result.isNullOrBlank()) {
+        //需要扩展名, 但是又没有获取到
+        result = getPathFromUri()?.lastName()
+        if (result?.contains(".") == false) {
+            //不包含扩展名
+            result = lastResult
         }
     }
     return result
