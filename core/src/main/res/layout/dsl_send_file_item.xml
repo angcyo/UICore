@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/lib_bg_selector"
     android:padding="@dimen/lib_hdpi">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -23,7 +24,8 @@
         android:paddingHorizontal="@dimen/lib_hdpi"
         app:layout_constraintLeft_toRightOf="@id/lib_file_icon_view"
         app:layout_constraintRight_toLeftOf="@id/lib_state_image_view"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_height="80dp">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/lib_file_name_view"

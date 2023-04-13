@@ -2,6 +2,7 @@ package com.angcyo.library.ex
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.text.TextUtils
 import android.text.format.Formatter
@@ -206,7 +207,7 @@ fun File.getFileMD5(): ByteArray? {
     return null
 }
 
-/**打开文件*/
+/**使用第三方应用打开文件*/
 fun File.open(context: Context = app()) {
     val intent = Intent()
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -224,6 +225,18 @@ fun File.open(context: Context = app()) {
         context.startActivity(intent)
     } catch (e: java.lang.Exception) {
         e.printStackTrace()
+    }
+}
+
+/**使用第三方应用打开一个Uri
+ * No Activity found to handle Intent { act=android.intent.action.VIEW dat=content://media/external/file/13640 flg=0x10000001 }
+ * */
+fun Uri.open(context: Context = app()) {
+    val path = getPathFromUri()
+    if (path.isNullOrBlank()) {
+        saveToFolder().file().open(context)
+    } else {
+        path.file().open(context)
     }
 }
 

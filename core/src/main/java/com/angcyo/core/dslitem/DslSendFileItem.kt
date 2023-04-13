@@ -50,6 +50,9 @@ class DslSendFileItem : DslAdapterItem() {
 
     init {
         itemLayoutId = R.layout.dsl_send_file_item
+        itemClick = {
+            itemSendUri?.open(it.context)
+        }
     }
 
     override fun onSetItemData(data: Any?) {
