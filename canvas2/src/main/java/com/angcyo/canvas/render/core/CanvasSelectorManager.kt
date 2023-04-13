@@ -5,14 +5,23 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.canvas.render.BuildConfig
-import com.angcyo.canvas.render.core.component.*
+import com.angcyo.canvas.render.core.component.BaseControl
+import com.angcyo.canvas.render.core.component.BaseTouchComponent
+import com.angcyo.canvas.render.core.component.CanvasMoveSelectorComponent
+import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
+import com.angcyo.canvas.render.core.component.TranslateRendererControl
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.library.L
 import com.angcyo.library.component.MainExecutor
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.have
+import com.angcyo.library.ex.isChange
+import com.angcyo.library.ex.isIntersect
+import com.angcyo.library.ex.nowTime
+import com.angcyo.library.ex.removeOutOf
+import com.angcyo.library.ex.size
 import com.angcyo.library.gesture.DoubleGestureDetector2
 
 /**
@@ -119,6 +128,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
     //region---内部---
 
     override fun dispatchTouchEvent(event: MotionEvent) {
+        if (!delegate._isTouchDownInCanvas) return //不在画布内点击, 不处理事件
         super.dispatchTouchEvent(event)
 
         if (isEnableComponent && !ignoreHandle) {
@@ -170,6 +180,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
                 removeDelayCancelSelectRenderer()
                 startTouchDownSelectElement(event)
             }
+
             MotionEvent.ACTION_POINTER_DOWN -> {
                 //多指按下
                 removeDelayCancelSelectRenderer()
