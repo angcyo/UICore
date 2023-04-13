@@ -13,7 +13,6 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.text.TextUtils
-import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import com.angcyo.library.L
 import com.angcyo.library.app
@@ -89,8 +88,9 @@ fun InputStream.copyToFile(filePath: String, bufferSize: Int = DEFAULT_BUFFER_SI
 /**默认按照原文件名存储
  * [folderPath] 需要存储到文件夹
  * [fileName] 重命名文件, 包含扩展名. 不指定则使用原文件名
- * @return 文件路径*/
-@RequiresApi(Build.VERSION_CODES.KITKAT)
+ * @return 文件路径
+ * @RequiresApi(Build.VERSION_CODES.KITKAT)
+ * */
 fun Uri.saveToFolder(
     folderPath: String = libCacheFolderPath(),
     fileName: String? = null,
