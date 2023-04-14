@@ -3,6 +3,7 @@ package com.angcyo.library.ex
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
+import android.graphics.Paint
 import android.graphics.Picture
 import com.angcyo.library.annotation.Pixel
 import kotlin.math.max
@@ -142,4 +143,14 @@ fun withBitmap(
         val canvas = Canvas(this)
         canvas.block()
     }
+}
+
+/**[withBitmap]*/
+fun withBitmapPaint(
+    bitmap: Bitmap,
+    config: Bitmap.Config = Bitmap.Config.ARGB_8888,
+    block: Canvas.(Paint) -> Unit
+) = withBitmap(bitmap.width, bitmap.height, config) {
+    val paint = createPaint()
+    block(this, paint)
 }
