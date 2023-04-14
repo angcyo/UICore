@@ -148,7 +148,8 @@ object FileUtils {
                         (limitLength && length() >= fileMaxSize) || !append -> when (data) {
                             is ByteArray -> writeBytes(data)
                             is File -> writeBytes(data.readBytes())
-                            else -> writeText(data.toString())
+                            //java.lang.OutOfMemoryError: Failed to allocate a 262193160 byte allocation with 74685304 free bytes and 71MB until OOM, target footprint 536870912, growth limit 536870912
+                            else -> writeText(data.toString()) //风险方法
                         }
                         //追加文件的内容
                         else -> when (data) {

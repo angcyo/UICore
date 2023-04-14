@@ -8,7 +8,13 @@ import com.angcyo.core.component.DslCrashHandler
 import com.angcyo.core.component.fileSelector
 import com.angcyo.library.Library
 import com.angcyo.library.component.lastContext
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.Action
+import com.angcyo.library.ex.file
+import com.angcyo.library.ex.hawkDelete
+import com.angcyo.library.ex.hawkGet
+import com.angcyo.library.ex.hawkPut
+import com.angcyo.library.ex.longFeedback
+import com.angcyo.library.ex.shareFile
 import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.Constant
 import com.angcyo.library.utils.FileUtils
@@ -74,6 +80,7 @@ object Debug {
                 file?.shareFile()
                 match = true
             }
+
             "@cmd#open=file", "@9.555555" -> {
                 //打开文件预览对话框
                 editText?.context?.apply {
@@ -92,102 +99,123 @@ object Debug {
                     }
                 }
             }
+
             else -> {
                 //@key#int=value 此指令用来设置hawk key value
-                inputText.lines().forEach { line ->
-                    if (line.contains("@") &&
-                        line.contains("#") &&
-                        line.contains("=")
-                    ) {
-                        val keyBuilder = StringBuilder()
-                        val typeBuilder = StringBuilder()
-                        val valueBuilder = StringBuilder()
+                parseHawkKeys(inputText.lines(), editText)
+            }
+        }
+        if (match) {
+            editText?._feedback()
+        }
+    }
 
-                        var operate: StringBuilder? = null
-                        line.forEach {
-                            when (it) {
-                                '@' -> operate = keyBuilder
-                                '#' -> operate = typeBuilder
-                                '=' -> operate = valueBuilder
-                                else -> operate?.append(it)
-                            }
+    /**解析 @key#int=value 此指令用来设置hawk key value */
+    fun parseHawkKeys(lines: List<String?>?, editText: EditText? = null) {
+        var match = false
+        try {
+            lines?.forEach { line ->
+                if (line == null) {
+                    //no op
+                } else if (line.contains("@") &&
+                    line.contains("#") &&
+                    line.contains("=")
+                ) {
+                    val keyBuilder = StringBuilder()
+                    val typeBuilder = StringBuilder()
+                    val valueBuilder = StringBuilder()
+
+                    var operate: StringBuilder? = null
+                    line.forEach {
+                        when (it) {
+                            '@' -> operate = keyBuilder
+                            '#' -> operate = typeBuilder
+                            '=' -> operate = valueBuilder
+                            else -> operate?.append(it)
                         }
+                    }
 
-                        //@key#int=value
-                        val key = keyBuilder.toString()
-                        val type = typeBuilder.toString().lowercase()
-                        val valueString = valueBuilder.toString()
-                        if (key.isNotBlank()) {
-                            when (key.lowercase()) {
-                                "cmd" -> {
-                                    when (type) {
-                                        "open" -> {
-                                            //打开Fragment界面
-                                            //@cmd#open=value
-                                            lastContext.apply {
-                                                if (this is FragmentActivity) {
-                                                    onShowFragmentAction?.invoke(this, valueString)
-                                                    match = true
-                                                }
+                    //@key#int=value
+                    val key = keyBuilder.toString()
+                    val type = typeBuilder.toString().lowercase()
+                    val valueString = valueBuilder.toString()
+                    if (key.isNotBlank()) {
+                        when (key.lowercase()) {
+                            "cmd" -> {
+                                when (type) {
+                                    "open" -> {
+                                        //打开Fragment界面
+                                        //@cmd#open=value
+                                        lastContext.apply {
+                                            if (this is FragmentActivity) {
+                                                onShowFragmentAction?.invoke(this, valueString)
+                                                match = true
                                             }
-                                        }
-                                        "hawk" -> {
-                                            //显示hawk的值
-                                            //@cmd#hawk=key
-                                            val hawkKey = valueString.lowercase()
-                                            toastQQ("${hawkKey.hawkGet<Any>()}")
-                                            match = true
                                         }
                                     }
+
+                                    "hawk" -> {
+                                        //显示hawk的值
+                                        //@cmd#hawk=key
+                                        val hawkKey = valueString.lowercase()
+                                        toastQQ("${hawkKey.hawkGet<Any>()}")
+                                        match = true
+                                    }
                                 }
-                                else -> {
-                                    //@key#int=value
-                                    when (type) {
-                                        "bool", "boolean" -> {
-                                            val value = valueString.toBoolean()
+                            }
+
+                            else -> {
+                                //@key#int=value
+                                when (type) {
+                                    "bool", "boolean" -> {
+                                        val value = valueString.toBoolean()
+                                        key.hawkPut(value)
+                                        match = true
+                                    }
+
+                                    "int", "i" -> {
+                                        val value = valueString.toIntOrNull()
+                                        if (value == null) {
+                                            key.hawkDelete()
+                                        } else {
                                             key.hawkPut(value)
-                                            match = true
                                         }
-                                        "int", "i" -> {
-                                            val value = valueString.toIntOrNull()
-                                            if (value == null) {
-                                                key.hawkDelete()
-                                            } else {
-                                                key.hawkPut(value)
-                                            }
-                                            match = true
+                                        match = true
+                                    }
+
+                                    "long", "l" -> {
+                                        val value = valueString.toLongOrNull()
+                                        if (value == null) {
+                                            key.hawkDelete()
+                                        } else {
+                                            key.hawkPut(value)
                                         }
-                                        "long", "l" -> {
-                                            val value = valueString.toLongOrNull()
-                                            if (value == null) {
-                                                key.hawkDelete()
-                                            } else {
-                                                key.hawkPut(value)
-                                            }
-                                            match = true
+                                        match = true
+                                    }
+
+                                    "float", "f" -> {
+                                        val value = valueString.toFloatOrNull()
+                                        if (value == null) {
+                                            key.hawkDelete()
+                                        } else {
+                                            key.hawkPut(value)
                                         }
-                                        "float", "f" -> {
-                                            val value = valueString.toFloatOrNull()
-                                            if (value == null) {
-                                                key.hawkDelete()
-                                            } else {
-                                                key.hawkPut(value)
-                                            }
-                                            match = true
+                                        match = true
+                                    }
+
+                                    "double", "d" -> {
+                                        val value = valueString.toDoubleOrNull()
+                                        if (value == null) {
+                                            key.hawkDelete()
+                                        } else {
+                                            key.hawkPut(value)
                                         }
-                                        "double", "d" -> {
-                                            val value = valueString.toDoubleOrNull()
-                                            if (value == null) {
-                                                key.hawkDelete()
-                                            } else {
-                                                key.hawkPut(value)
-                                            }
-                                            match = true
-                                        }
-                                        "string", "s" -> {
-                                            key.hawkPut(valueString)
-                                            match = true
-                                        }
+                                        match = true
+                                    }
+
+                                    "string", "s" -> {
+                                        key.hawkPut(valueString)
+                                        match = true
                                     }
                                 }
                             }
@@ -195,7 +223,10 @@ object Debug {
                     }
                 }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
+
         if (match) {
             editText?._feedback()
         }

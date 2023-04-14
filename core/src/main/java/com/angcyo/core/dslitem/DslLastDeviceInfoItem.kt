@@ -128,7 +128,7 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             appendln()
             append(Trackers.getInstance().networkStateTracker.activeNetworkState.toString())
 
-            //sd
+            //sd memory
             appendln()
             appendln()
             _statFsInfo(this, context)

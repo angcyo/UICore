@@ -157,7 +157,7 @@ object Device {
     /**获取内存使用情况
      * [App已用/手机剩余/手机总共]*/
     fun getMemoryUseInfo(): String = buildString {
-        append((getProcessMemoryUsage() * 1024).toSizeString()) //App已用内存
+        append((getProcessMemoryUsage() * 1024L).toSizeString()) //App已用内存
         append("/")
         append(getAvailableMemory().fileSizeString()) //系统可用内存
         append("/")
@@ -530,10 +530,12 @@ object Device {
                 proxyAddress = cm?.defaultProxy?.host
                 proxyPort = cm?.defaultProxy?.port ?: -1
             }
+
             isIcsOrLater -> {
                 proxyAddress = System.getProperty("http.proxyHost")
                 proxyPort = System.getProperty("http.proxyPort")?.toIntOrNull() ?: -1
             }
+
             else -> {
                 proxyAddress = Proxy.getHost(context)
                 proxyPort = Proxy.getPort(context)
