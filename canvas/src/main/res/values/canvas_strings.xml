@@ -17,13 +17,6 @@
     <string name="canvas_redo">Redo</string>
     <string name="canvas_setting">Settings</string>
     <string name="canvas_line">Lines</string>
-    <string name="canvas_circle">Ellipse</string>
-    <string name="canvas_triangle">Triangle</string>
-    <string name="canvas_square">Square</string>
-    <string name="canvas_pentagon">Pentagonal star</string>
-    <string name="canvas_hexagon">Hexagonal shape</string>
-    <string name="canvas_octagon">Octagonal star</string>
-    <string name="canvas_rhombus">Rhombic</string>
     <string name="canvas_pentagram">Star</string>
     <string name="canvas_love">Heart</string>
     <string name="canvas_stroke">Stroke</string>
@@ -79,7 +72,6 @@
     <string name="canvas_backward">Backward</string>
     <string name="canvas_front">Top</string>
     <string name="canvas_back">Bottom</string>
-    <string name="engrave_engrave">Share</string>
 
     <string name="canvas_invalid_font">Invalid font</string>
     <string name="canvas_cannot_import">Unable to import</string>
@@ -87,9 +79,6 @@
 
     <string name="canvas_photo">Album</string>
     <string name="canvas_delete_font">Delete the font</string>
-    <string name="preview_out_of_range">Preview out of range</string>
-
-    <string name="no_content_tip">No content to preview, please create first!</string>
 
     <!---->
 
