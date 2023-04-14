@@ -154,6 +154,14 @@ object Debug {
                                         }
                                     }
 
+                                    "clear" -> {
+                                        //删除hawk的键
+                                        //@cmd#clear=key
+                                        val hawkKey = valueString.lowercase()
+                                        hawkKey.hawkDelete()
+                                        match = true
+                                    }
+
                                     "hawk" -> {
                                         //显示hawk的值
                                         //@cmd#hawk=key
