@@ -2,7 +2,6 @@ package com.angcyo.dialog
 
 import android.app.Dialog
 import android.content.Context
-import com.angcyo.dialog.dslitem.DslDialogGridItem
 import com.angcyo.dialog.dslitem.DslDialogTextItem
 import com.angcyo.dsladapter.margin
 import com.angcyo.widget.DslViewHolder
@@ -40,12 +39,5 @@ open class GridDialogConfig(context: Context? = null) : RecyclerDialogConfig(con
             margin(0)
             itemBackgroundDrawable = null
         }
-    }
-
-    /**添加Item*/
-    fun addDialogItem(action: DslDialogGridItem.() -> Unit) {
-        _recyclerConfig.addItem(DslDialogGridItem().apply {
-            action()
-        })
     }
 }

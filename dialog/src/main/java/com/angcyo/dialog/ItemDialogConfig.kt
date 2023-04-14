@@ -3,6 +3,7 @@ package com.angcyo.dialog
 import android.app.Dialog
 import android.content.Context
 import com.angcyo.dialog.dslitem.DslDialogTextItem
+import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -19,17 +20,15 @@ open class ItemDialogConfig(context: Context? = null) : RecyclerDialogConfig(con
         super.initDialogView(dialog, dialogViewHolder)
     }
 
-    /**添加Item
-     * ```
-     * addDialogItem {
-     *    itemText = tx()
-     *    itemLeftDrawable = _drawable(R.drawable.lib_ic_error)
-     *    itemClick = {
-     *    }
-     * }
-     * ```
-     * */
-    fun addDialogItem(action: DslDialogTextItem.() -> Unit) {
-        _recyclerConfig.addDialogTextItem(action)
+    override fun initRecyclerConfig(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+        super.initRecyclerConfig(dialog, dialogViewHolder)
+    }
+
+    override fun addItem(item: DslAdapterItem) {
+        super.addItem(item)
+    }
+
+    override fun addDialogItem(action: DslDialogTextItem.() -> Unit) {
+        super.addDialogItem(action)
     }
 }
