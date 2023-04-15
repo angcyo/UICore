@@ -18,7 +18,7 @@ import java.util.*
 
 //<editor-fold desc="日历扩展方法">
 
-val ONE_DAY: Long = (1000 * 3600 * 24).toLong()
+val ONE_DAY: Long = 1000L * 3600 * 24
 
 /**今天的日历
  * [lunar] 是否需要农历*/

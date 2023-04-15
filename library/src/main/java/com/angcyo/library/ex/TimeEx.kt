@@ -15,6 +15,12 @@ import kotlin.math.roundToLong
  * Version: 1.0.0
  */
 
+/**1天多少毫秒*/
+val ONE_DAY: Long = 1000L * 3600 * 24
+
+/**1MB多少字节*/
+val MB: Long = 1024L * 1024
+
 /**一天的毫秒数 72,000 72,000,000*/
 const val DAY_MILLIS = 24 * 60 * 60 * 1000L
 
