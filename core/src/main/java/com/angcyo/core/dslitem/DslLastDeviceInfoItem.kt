@@ -16,10 +16,21 @@ import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.library.app
 import com.angcyo.library.component.RBackground
 import com.angcyo.library.component.work.Trackers
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.copy
+import com.angcyo.library.ex.fileSizeString
+import com.angcyo.library.ex.getColor
+import com.angcyo.library.ex.getMobileIP
+import com.angcyo.library.ex.getWifiIP
+import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.nowTimeString
 import com.angcyo.library.libFolderPath
 import com.angcyo.library.toast
-import com.angcyo.library.utils.*
+import com.angcyo.library.utils.Device
+import com.angcyo.library.utils.FileUtils
+import com.angcyo.library.utils.ID
+import com.angcyo.library.utils.LogFile
+import com.angcyo.library.utils.toLogFilePath
+import com.angcyo.library.utils.writeTo
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.progress.DslProgressBar
 import com.angcyo.widget.recycler.RecyclerBottomLayout
@@ -179,6 +190,19 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
 
     init {
         itemLayoutId = R.layout.lib_item_last_device_info
+
+        itemClick = {
+            itemFragment?.dslFHelper {
+                fileSelector({
+                    showFileMd5 = true
+                    showFileMenu = true
+                    showHideFile = true
+                    targetPath =
+                        FileUtils.appRootExternalFolder().absolutePath
+                            ?: storageDirectory
+                })
+            }
+        }
     }
 
     override fun onItemBind(
@@ -208,7 +232,7 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
         itemHolder.clickItem {
             itemData?.toString()?.run {
                 copy()
-                toast("信息已复制")
+                toast("设备调试信息已复制")
             }
             if (itemClick == null) {
                 itemFragment?.dslFHelper {

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import com.angcyo.core.R
+import com.angcyo.core.dslitem.DslLastDeviceInfoItem
 import com.angcyo.core.dslitem.DslSendEmptyItem
 import com.angcyo.core.dslitem.DslSendFileItem
 import com.angcyo.core.dslitem.DslSendServerItem
@@ -20,7 +21,11 @@ import com.angcyo.http.progress.toProgressBody
 import com.angcyo.http.rx.observe
 import com.angcyo.http.udp.udpReceive
 import com.angcyo.http.uploadFile2Body
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.Action
+import com.angcyo.library.ex._string
+import com.angcyo.library.ex.getShowName
+import com.angcyo.library.ex.inputStream
+import com.angcyo.library.ex.nowTime
 import com.angcyo.lifecycle.cancelOnDestroy
 
 /**
@@ -102,6 +107,8 @@ class ShareSendFragment : BaseDslFragment() {
                     }
                 }
             }
+
+            DslLastDeviceInfoItem()()
         }
     }
 
