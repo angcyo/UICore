@@ -638,17 +638,23 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     }
 
     /**获取选中的元素, 如果没有进入选中状态, 则返回所有元素
+     * [ignoreVisible] 默认只获取可见的元素
      * [com.angcyo.canvas.render.core.CanvasRenderManager.getAllElementRendererList]*/
     fun getSelectorOrAllElementRendererList(
         dissolveGroup: Boolean,
-        includeGroup: Boolean
+        includeGroup: Boolean,
+        ignoreVisible: Boolean = false
     ): List<BaseRenderer> {
         val list = if (selectorManager.isSelectorElement) {
             selectorManager.selectorComponent.rendererList
         } else {
             renderManager.getAllElementRendererList(dissolveGroup, includeGroup)
         }
-        return getSingleElementRendererListIn(list, dissolveGroup, includeGroup)
+        val result = getSingleElementRendererListIn(list, dissolveGroup, includeGroup)
+        if (ignoreVisible) {
+            return result
+        }
+        return result.filter { it.isVisible }
     }
 
     /**为所有的简单渲染器触发一个flag更新通知
