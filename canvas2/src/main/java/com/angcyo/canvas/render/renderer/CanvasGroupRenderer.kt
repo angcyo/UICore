@@ -1,6 +1,11 @@
 package com.angcyo.canvas.render.renderer
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.PointF
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.widget.LinearLayout
@@ -18,11 +23,26 @@ import com.angcyo.canvas.render.state.GroupStateStack
 import com.angcyo.canvas.render.state.PropertyStateStack
 import com.angcyo.canvas.render.util.PictureRenderDrawable
 import com.angcyo.canvas.render.util.isOnlyGroupRenderer
-import com.angcyo.drawable.*
+import com.angcyo.drawable.isGravityBottom
+import com.angcyo.drawable.isGravityCenter
+import com.angcyo.drawable.isGravityCenterHorizontal
+import com.angcyo.drawable.isGravityCenterVertical
+import com.angcyo.drawable.isGravityLeft
+import com.angcyo.drawable.isGravityRight
+import com.angcyo.drawable.isGravityTop
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.add
+import com.angcyo.library.ex.c
+import com.angcyo.library.ex.createOverrideBitmapCanvas
+import com.angcyo.library.ex.createOverridePictureCanvas
+import com.angcyo.library.ex.getScaleX
+import com.angcyo.library.ex.getScaleY
+import com.angcyo.library.ex.isInvalid
+import com.angcyo.library.ex.mapPoint
+import com.angcyo.library.ex.resetAll
+import com.angcyo.library.ex.size
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.absoluteValue
 import kotlin.math.max
@@ -45,7 +65,11 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
         /**计算[rendererList]的bounds范围
          * [bounds] 强制指定, 指定后不计算*/
-        fun computeBounds(rendererList: List<BaseRenderer>?, @Pixel bounds: RectF? = null): RectF {
+        fun computeBounds(
+            rendererList: List<BaseRenderer>?,
+            @Pixel bounds: RectF? = null,
+            ignoreVisible: Boolean = false
+        ): RectF {
             if (bounds == null) {
                 if (rendererList == null) {
                     return RectF(0f, 0f, 0f, 0f)
@@ -54,15 +78,17 @@ open class CanvasGroupRenderer : BaseRenderer() {
                     RectF(Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE)
                 var isSet = false
                 for (renderer in rendererList) {
-                    renderer.renderProperty?.getRenderBounds()?.let {
-                        if (!it.isInvalid()) {
-                            isSet = true
-                            rect.set(
-                                min(it.left, rect.left),
-                                min(it.top, rect.top),
-                                max(it.right, rect.right),
-                                max(it.bottom, rect.bottom)
-                            )
+                    if (ignoreVisible || renderer.isVisible) {
+                        renderer.renderProperty?.getRenderBounds()?.let {
+                            if (!it.isInvalid()) {
+                                isSet = true
+                                rect.set(
+                                    min(it.left, rect.left),
+                                    min(it.top, rect.top),
+                                    max(it.right, rect.right),
+                                    max(it.bottom, rect.bottom)
+                                )
+                            }
                         }
                     }
                 }
@@ -110,11 +136,14 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
         /**[rendererList] 需要绘制的渲染器
          * [overrideSize] 需要等比覆盖输出的大小
-         * [bounds] 指定输出的绘制位置*/
+         * [bounds] 指定输出的绘制位置
+         * [ignoreVisible] 是否要忽略可见性, false: 只有可见的才会绘制
+         * */
         fun createRenderBitmap(
             rendererList: List<BaseRenderer>?,
             overrideSize: Float? = null,
-            @Pixel bounds: RectF? = null
+            @Pixel bounds: RectF? = null,
+            ignoreVisible: Boolean = false
         ): Bitmap? {
             rendererList ?: return null
             val rect = computeBounds(rendererList, bounds)
@@ -135,7 +164,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 }
 
                 for (renderer in rendererList) {
-                    if (renderer is CanvasElementRenderer) {
+                    if (renderer is CanvasElementRenderer && (ignoreVisible || renderer.isVisible)) {
                         val renderProperty = renderer.renderProperty ?: continue
                         val drawable = renderer.renderElement?.requestElementRenderDrawable(params)
                             ?: continue
@@ -522,6 +551,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                     true,
                     sub.rendererList
                 ) else false
+
                 else -> false
             }
             if (result) {
@@ -763,9 +793,11 @@ open class CanvasGroupRenderer : BaseRenderer() {
             LinearLayout.VERTICAL -> sortList.sortBy {
                 it.renderProperty?.getRenderBounds()?.centerY()
             }
+
             LinearLayout.HORIZONTAL -> sortList.sortBy {
                 it.renderProperty?.getRenderBounds()?.centerX()
             }
+
             else -> return
         }
 
@@ -804,6 +836,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                                     (controlType ?: 0).add(BaseControlPoint.CONTROL_TYPE_TRANSLATE)
                             }, delegate)
                         }
+
                         LinearLayout.HORIZONTAL -> {
                             val dx = firstX + (step * index) - rendererBounds.centerX()
 

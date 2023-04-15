@@ -549,9 +549,15 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     fun preview(
         @Pixel bounds: RectF? = null,
         overrideSize: Float? = null,
+        ignoreVisible: Boolean = false,
         rendererList: List<BaseRenderer>? = renderManager.elementRendererList
     ): Bitmap? {
-        return CanvasGroupRenderer.createRenderBitmap(rendererList, overrideSize, bounds)
+        return CanvasGroupRenderer.createRenderBitmap(
+            rendererList,
+            overrideSize,
+            bounds,
+            ignoreVisible
+        )
     }
 
     /**是否禁用所有能够编辑元素的手势
