@@ -2,12 +2,22 @@ package com.angcyo.widget.base
 
 import android.app.Activity
 import android.graphics.Rect
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.findView
+import com.angcyo.library.ex.forEach
+import com.angcyo.library.ex.inflate
+import com.angcyo.library.ex.isVisible
+import com.angcyo.library.ex.resetChildCount
+import com.angcyo.library.ex.size
+import com.angcyo.library.ex.visible
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
 import com.angcyo.widget.layout.RSoftInputLayout

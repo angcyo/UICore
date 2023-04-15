@@ -11,6 +11,11 @@ import android.text.TextUtils
 import android.view.*
 import android.view.WindowManager.LayoutParams.*
 import android.widget.FrameLayout
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultCaller
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.ActivityResultRegistry
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.annotation.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -42,7 +47,7 @@ import java.io.Serializable
  * [dialogContext] android.view.WindowManager$BadTokenException: Unable to add window -- token null is not valid; is your activity running?
  * android.view.ViewRootImpl#setView(android.view.View, android.view.WindowManager.LayoutParams, android.view.View, int)
  * */
-open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
+open class DslDialogConfig(@Transient var dialogContext: Context? = null) : ActivityResultCaller,
     LifecycleOwner, Serializable, IActivityProvider {
 
     companion object {
@@ -631,6 +636,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
                     showDialog()
                 }
             }
+
             DIALOG_TYPE_ALERT_DIALOG -> {
                 if (dialogContext is AppCompatActivity) {
                     showAlertDialog()
@@ -638,6 +644,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
                     showDialog()
                 }
             }
+
             DIALOG_TYPE_BOTTOM_SHEET_DIALOG -> showSheetDialog()
             DIALOG_TYPE_ACTIVITY -> {
                 showDialogActivity()
@@ -645,6 +652,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
                     L.w("[DIALOG_TYPE_ACTIVITY] 类型, 无法返回[Dialog]对象")
                 }
             }
+
             else -> showDialog()
         }
 
@@ -706,6 +714,22 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) :
 
     /**用来实现异步加载弹窗*/
     override fun getActivityContext(): Context? = dialogContext
+
+    override fun <I : Any?, O : Any?> registerForActivityResult(
+        contract: ActivityResultContract<I, O>,
+        callback: ActivityResultCallback<O>
+    ): ActivityResultLauncher<I> {
+        error("未实现:registerForActivityResult")
+    }
+
+    override fun <I : Any?, O : Any?> registerForActivityResult(
+        contract: ActivityResultContract<I, O>,
+        registry: ActivityResultRegistry,
+        callback: ActivityResultCallback<O>
+    ): ActivityResultLauncher<I> {
+        error("未实现:registerForActivityResult")
+    }
+
 }
 
 fun Dialog.dialogViewHolder(): DslViewHolder = DslViewHolder(window!!.decorView)
