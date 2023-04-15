@@ -143,7 +143,7 @@ fun FileTextData?.writeToCache(
  * [logLevel] 同时输出到控制台的日志级别
  * [log/log.log]
  * [com.angcyo.library.utils.Constant.LOG_FOLDER_NAME]*/
-fun String.writeToLog(name: String = LogFile.log, logLevel: Int = L.NONE): String {
+fun CharSequence.writeToLog(name: String = LogFile.log, logLevel: Int = L.NONE): CharSequence {
     wrapLog().writeTo(Constant.LOG_FOLDER_NAME, name)
     L.log(logLevel, this)
     return this
@@ -153,7 +153,7 @@ fun String.writeToLog(name: String = LogFile.log, logLevel: Int = L.NONE): Strin
  * [logLevel] 同时输出到控制台的日志级别
  * [log/error.log]
  * */
-fun String.writeErrorLog(logLevel: Int = L.NONE): String {
+fun CharSequence.writeErrorLog(logLevel: Int = L.NONE): CharSequence {
     writeToLog(LogFile.error, logLevel)
     return this
 }
@@ -162,7 +162,7 @@ fun String.writeErrorLog(logLevel: Int = L.NONE): String {
  * [logLevel] 同时输出到控制台的日志级别
  * [log/http.log]
  * */
-fun String.writeHttpLog(logLevel: Int = L.NONE): String {
+fun CharSequence.writeHttpLog(logLevel: Int = L.NONE): CharSequence {
     writeToLog(LogFile.http, logLevel)
     return this
 }
@@ -171,7 +171,7 @@ fun String.writeHttpLog(logLevel: Int = L.NONE): String {
  * [logLevel] 同时输出到控制台的日志级别
  * [log/perf.log]
  * */
-fun String.writePerfLog(logLevel: Int = L.INFO): String {
+fun CharSequence.writePerfLog(logLevel: Int = L.INFO): CharSequence {
     writeToLog(LogFile.perf, logLevel)
     return this
 }

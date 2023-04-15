@@ -204,7 +204,7 @@ fun Any.toStr(): String = when (this) {
     else -> toString()
 }
 
-fun String.wrapLog() = "\n${nowTimeString()} ${Thread.currentThread().name}\n${this}\n"
+fun CharSequence.wrapLog() = "\n${nowTimeString()} ${Thread.currentThread().name}\n${this}\n"
 
 /**将列表连成字符串*/
 fun <T> Iterable<T>.connect(
