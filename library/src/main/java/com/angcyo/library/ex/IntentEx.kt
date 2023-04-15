@@ -16,6 +16,7 @@ import com.angcyo.library.app
 import com.angcyo.library.component.queryActivities
 import kotlin.reflect.KClass
 
+
 /**
  *
  * Email:angcyo@126.com
@@ -172,6 +173,26 @@ fun Context.toApplicationDetailsSettings(packageName: String = getPackageName())
         startActivity(intent)
     } catch (e: Throwable) {
         e.printStackTrace()
+    }
+}
+
+/**跳转应用市场, 对应的程序界面
+ * https://www.jianshu.com/p/28c2f2e783f9*/
+fun Context.toMarketDetails(packageName: String = getPackageName()) {
+    //存在手机里没安装应用市场的情况，跳转会包异常，做一个接收判断
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.data = Uri.parse("market://details?id=$packageName")
+    if (intent.resolveActivity(packageManager) != null) {
+        //可以接收
+        startActivity(intent)
+    } else {
+        //没有应用市场，我们通过浏览器跳转到Google Play
+        intent.data = Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)
+        //这里存在一个极端情况就是有些用户浏览器也没有，再判断一次
+        if (intent.resolveActivity(packageManager) != null) {
+            //有浏览器
+            startActivity(intent)
+        }
     }
 }
 

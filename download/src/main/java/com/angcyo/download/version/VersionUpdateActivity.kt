@@ -13,6 +13,7 @@ import com.angcyo.library.app
 import com.angcyo.library.ex.installApk
 import com.angcyo.library.ex.isShowDebug
 import com.angcyo.library.ex.openUrl
+import com.angcyo.library.ex.toMarketDetails
 import com.angcyo.library.getAppVersionCode
 import com.angcyo.library.utils.Device
 import com.angcyo.putData
@@ -76,7 +77,8 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
         _vh.tv(R.id.version_des_tip_view)?.text = bean.versionDesTip ?: "更新内容"
         _vh.tv(R.id.version_des_view)?.text = bean.versionDes
         _vh.visible(R.id.lib_cancel_view, !bean.versionForce)
-        _vh.visible(R.id.lib_button, !bean.versionUrl.isNullOrBlank())
+        val versionUrl = bean.versionUrl
+        _vh.visible(R.id.lib_button, !versionUrl.isNullOrBlank())
         val startButton = _vh.tv(R.id.lib_button)
 
         if (bean.link) {
@@ -90,53 +92,56 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
             finish()
         }
 
-        //下载
-        _vh.click(R.id.lib_button) {
-            bean.versionUrl?.apply {
-                if (bean.link) {
-                    openUrl(bean.versionUrl)
-                } else {
+        //下载实现
+        fun downloadUrl() {
+            versionUrl?.download {
+                onTaskStart = {
+                    startButton?.text = "下载中..."
+                }
 
-                    fun downloadUrl() {
-                        download {
-                            onTaskStart = {
-                                startButton?.text = "下载中..."
+                onTaskProgress = { _, progress, _ ->
+                    _vh.bar(R.id.lib_progress_bar)?.setProgress(progress)
+                }
+
+                onTaskFinish = { downloadTask, cause, error ->
+                    when (cause) {
+                        EndCause.COMPLETED -> {
+                            startButton?.text = "立即安装"
+
+                            installApk(app(), downloadTask.file)
+                        }
+                        EndCause.ERROR -> {
+                            if (error is ServerCanceledException &&
+                                error.responseCode == HttpURLConnection.HTTP_OK
+                            ) {
+                                downloadTask.info?.resetInfo()
                             }
-
-                            onTaskProgress = { _, progress, _ ->
-                                _vh.bar(R.id.lib_progress_bar)?.setProgress(progress)
-                            }
-
-                            onTaskFinish = { downloadTask, cause, error ->
-                                when (cause) {
-                                    EndCause.COMPLETED -> {
-                                        startButton?.text = "立即安装"
-
-                                        installApk(app(), downloadTask.file)
-                                    }
-                                    EndCause.ERROR -> {
-                                        if (error is ServerCanceledException &&
-                                            error.responseCode == HttpURLConnection.HTTP_OK
-                                        ) {
-                                            downloadTask.info?.resetInfo()
-                                        }
-                                        startButton?.text = "下载失败, 点击重试"
-                                    }
-                                    else -> {
-                                        startButton?.text = "点击重新开始"
-                                    }
-                                }
-                            }
+                            startButton?.text = "下载失败, 点击重试"
+                        }
+                        else -> {
+                            startButton?.text = "点击重新开始"
                         }
                     }
+                }
+            }
+        }
 
-                    val taskStatus = getTaskStatus()
+        //下载
+        _vh.click(R.id.lib_button) {
+            if (bean.toMarketDetails) {
+                it.context.toMarketDetails()//跳转到应用市场
+            } else {
+                versionUrl ?: return@click
+                if (bean.link) {
+                    openUrl(versionUrl)
+                } else {
+                    val taskStatus = versionUrl.getTaskStatus()
                     if (taskStatus == StatusUtil.Status.RUNNING) {
                         //下载中
-                        cancelDownload()
+                        versionUrl.cancelDownload()
                     } else if (taskStatus == StatusUtil.Status.COMPLETED) {
                         //下载已完成
-                        val task = DslDownload.findTask(this)
+                        val task = DslDownload.findTask(versionUrl)
                         if (task?.file?.exists() == true) {
                             startButton?.text = "立即安装"
                             installApk(app(), task.file)

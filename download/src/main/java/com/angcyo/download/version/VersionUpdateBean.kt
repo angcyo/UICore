@@ -25,6 +25,8 @@ data class VersionUpdateBean(
     var versionUrl: String? = null,
     /**[versionUrl]是外链, 而非下载地址*/
     var link: Boolean = false,
+    /**是否要跳转到应用市场, 优先级最高*/
+    var toMarketDetails: Boolean = false,
     /**版本更新类型
      * >=0 普通用户版本更新
      * <0 Debug用户版本更新
