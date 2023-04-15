@@ -162,12 +162,28 @@ fun Context.itemsDialog(config: ItemDialogConfig.() -> Unit): Dialog {
     }
 }
 
-/**
- * 文本输入对话框, 默认是单行, 无限制
- * */
+/** 文本输入对话框, 默认是单行, 无限制 */
 fun Context.inputDialog(config: InputDialogConfig.() -> Unit): Dialog {
     return InputDialogConfig(this).run {
         configBottomDialog()
+        config()
+        show()
+    }
+}
+
+/**数字输入对话框
+ * [decimal] 是否需要小数*/
+fun Context.numberInputDialog(
+    decimal: Boolean = false,
+    config: InputDialogConfig.() -> Unit
+): Dialog {
+    return InputDialogConfig(this).run {
+        configBottomDialog()
+        inputType = if (decimal) {
+            InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+        } else {
+            InputType.TYPE_CLASS_NUMBER
+        }
         config()
         show()
     }
