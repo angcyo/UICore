@@ -8,12 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.annotation.RenderFlag
-import com.angcyo.canvas.render.core.component.BaseControl
-import com.angcyo.canvas.render.core.component.BaseControlPoint
-import com.angcyo.canvas.render.core.component.CanvasRenderProperty
-import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
-import com.angcyo.canvas.render.core.component.LimitMatrixComponent
-import com.angcyo.canvas.render.core.component.PointTouchComponent
+import com.angcyo.canvas.render.core.component.*
 import com.angcyo.canvas.render.data.LimitInfo
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
@@ -23,12 +18,7 @@ import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.onMain
-import com.angcyo.library.ex.disableParentInterceptTouchEvent
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.getScaleX
-import com.angcyo.library.ex.getScaleY
-import com.angcyo.library.ex.longFeedback
-import com.angcyo.library.ex.size
+import com.angcyo.library.ex.*
 import com.angcyo.library.isMain
 import com.angcyo.library.unit.IRenderUnit
 import java.util.concurrent.CopyOnWriteArrayList
@@ -539,6 +529,37 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
             controlType =
                 BaseControlPoint.CONTROL_TYPE_SCALE or BaseControlPoint.CONTROL_TYPE_TRANSLATE
         }, finish)
+    }
+
+    /**自动移动画布, 已便能够完全显示[renderer]
+     * [margin] 需要偏移的最小距离*/
+    fun autoTranslateCanvas(renderer: BaseRenderer?, margin: Float = 4f * dp) {
+        renderer ?: return
+        val renderProperty = renderer.renderProperty ?: return
+        val renderBounds = renderProperty.getRenderBounds()
+        val visibleBoundsInside = renderViewBox.visibleBoundsInside
+        //计算需要移动的距离x
+        val translateX = if (renderBounds.left < visibleBoundsInside.left) {
+            visibleBoundsInside.left - renderBounds.left + margin
+        } else if (renderBounds.right > visibleBoundsInside.right) {
+            visibleBoundsInside.right - renderBounds.right - margin
+        } else {
+            0f
+        }
+
+        //计算需要移动的距离y
+        val translateY = if (renderBounds.top < visibleBoundsInside.top) {
+            visibleBoundsInside.top - renderBounds.top + margin
+        } else if (renderBounds.bottom > visibleBoundsInside.bottom) {
+            visibleBoundsInside.bottom - renderBounds.bottom - margin
+        } else {
+            0f
+        }
+
+        if (translateX != 0f || translateY != 0f) {
+            //需要移动
+            renderViewBox.translateBy(translateX, translateY)
+        }
     }
 
     /**创建一个预览图

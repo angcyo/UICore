@@ -12,6 +12,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.R
 import com.angcyo.item.style.itemText
 import com.angcyo.library.L
+import com.angcyo.library.annotation.DSL
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.getFloatNum
 import com.angcyo.widget.DslViewHolder
@@ -359,10 +360,13 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
             }
         }
     }
-
 }
 
-/**Dsl*/
+/**Dsl
+ * [com.angcyo.item.keyboard.NumberKeyboardPopupConfig.onClickNumberAction]
+ * [com.angcyo.item.keyboard.NumberKeyboardPopupConfig.onNumberResultAction]
+ * */
+@DSL
 fun Context.keyboardNumberWindow(
     anchor: View?,
     config: NumberKeyboardPopupConfig.() -> Unit

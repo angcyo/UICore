@@ -148,6 +148,17 @@ fun ViewGroup.getChildOrNull(index: Int): View? {
     }
 }
 
+/**获取child在group中的位置*/
+fun ViewGroup.indexOfChild(action: View.() -> Boolean): Int? {
+    for (index in 0 until childCount) {
+        val childAt = getChildAt(index)
+        if (childAt.action()) {
+            return index
+        }
+    }
+    return null
+}
+
 fun ViewGroup.eachChildVisibility(map: (index: Int, child: View) -> Unit) {
     for (index in 0 until childCount) {
         val childAt = getChildAt(index)

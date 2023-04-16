@@ -6,7 +6,10 @@ import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.util.createRenderPaint
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.textHeight
+import com.angcyo.library.ex.toSizeString
 import com.angcyo.library.utils.Device
 import kotlin.math.roundToInt
 
@@ -40,7 +43,8 @@ class CanvasMonitorRenderer(val delegate: CanvasRenderDelegate) : IRenderer {
         val text = "${(renderViewBox.getScale() * 100).roundToInt()}%"
         paint.style = Paint.Style.FILL
 
-        val x = delegate.view.measuredWidth - paint.textWidth(text)
+        //val x = delegate.view.measuredWidth - paint.textWidth(text)
+        val x = delegate.axisManager.yAxisBounds.right
         val y = bottom - paint.descent()
         canvas.drawText(text, x, y, paint)
     }
@@ -51,7 +55,8 @@ class CanvasMonitorRenderer(val delegate: CanvasRenderDelegate) : IRenderer {
             "${Runtime.getRuntime().freeMemory().toSizeString()}/${Device.getMemoryUseInfo()}"
         paint.style = Paint.Style.FILL
 
-        val x = delegate.view.measuredWidth - paint.textWidth(text)
+        //val x = delegate.view.measuredWidth - paint.textWidth(text)
+        val x = delegate.axisManager.yAxisBounds.right
         val y = bottom - paint.descent()
         canvas.drawText(text, x, y, paint)
     }

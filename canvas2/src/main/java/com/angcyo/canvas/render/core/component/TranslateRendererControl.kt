@@ -42,7 +42,7 @@ class TranslateRendererControl(controlManager: CanvasControlManager) : BaseContr
 
     /**直接将渲染器移动多少距离
      * [tx] [ty] 如果是手指触发的, 那么距离应该是移动的位置减去首次按下时的距离*/
-    private fun translate(tx: Float, ty: Float) {
+    fun translate(tx: Float, ty: Float) {
         if (handleControl) {
             L.d("移动元素:tx:$tx ty:$ty")
             controlRendererInfo?.let {
@@ -50,6 +50,22 @@ class TranslateRendererControl(controlManager: CanvasControlManager) : BaseContr
                 controlMatrix.setTranslate(tx, ty)
 
                 applyTranslate(Reason.preview, controlManager.delegate)
+            }
+        }
+    }
+
+    /**移动元素, 在上一次的位置上进行增量移动*/
+    fun translateBy(dx: Float, dy: Float) {
+        if (handleControl) {
+            L.d("移动元素By:dx:$dx dy:$dy")
+            controlRendererInfo?.let {
+                isControlHappen = true
+                controlMatrix.postTranslate(dx, dy)
+
+                applyTranslate(Reason.preview, controlManager.delegate)
+
+                //移动到边缘时, 自动移动画布
+                controlManager.delegate.autoTranslateCanvas(it.controlRenderer)
             }
         }
     }
