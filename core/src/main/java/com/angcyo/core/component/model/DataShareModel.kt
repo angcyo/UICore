@@ -24,4 +24,7 @@ class DataShareModel : ViewModel() {
 
     /**共享文件通知*/
     val shareFileOnceData = vmDataOnce<File?>()
+
+    /**共享状态通知*/
+    val shareStateOnceData = vmDataOnce<Int?>()
 }
