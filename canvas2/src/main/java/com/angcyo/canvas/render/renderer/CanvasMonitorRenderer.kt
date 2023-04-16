@@ -6,10 +6,7 @@ import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.util.createRenderPaint
-import com.angcyo.library.ex.dp
-import com.angcyo.library.ex.isDebug
-import com.angcyo.library.ex.textHeight
-import com.angcyo.library.ex.toSizeString
+import com.angcyo.library.ex.*
 import com.angcyo.library.utils.Device
 import kotlin.math.roundToInt
 
@@ -23,6 +20,9 @@ class CanvasMonitorRenderer(val delegate: CanvasRenderDelegate) : IRenderer {
         textSize = 9 * dp
     }
 
+    /**是否绘制文本内存文本信息*/
+    var drawMemoryTip: Boolean = isDebug()
+
     override var renderFlags: Int = 0xf
 
     override fun renderOnView(canvas: Canvas, params: RenderParams) {
@@ -31,7 +31,7 @@ class CanvasMonitorRenderer(val delegate: CanvasRenderDelegate) : IRenderer {
             canvas.drawRect(renderViewBox.renderBounds, paint)
         }*/
 
-        if (isDebug()) {
+        if (drawMemoryTip) {
             drawMemoryText(canvas, delegate.view.measuredHeight - paint.textHeight())
         }
         drawScaleText(canvas, delegate.view.measuredHeight.toFloat())
@@ -43,8 +43,8 @@ class CanvasMonitorRenderer(val delegate: CanvasRenderDelegate) : IRenderer {
         val text = "${(renderViewBox.getScale() * 100).roundToInt()}%"
         paint.style = Paint.Style.FILL
 
-        //val x = delegate.view.measuredWidth - paint.textWidth(text)
-        val x = delegate.axisManager.yAxisBounds.right
+        val x = if (drawMemoryTip) delegate.axisManager.yAxisBounds.right else
+            delegate.view.measuredWidth - paint.textWidth(text)
         val y = bottom - paint.descent()
         canvas.drawText(text, x, y, paint)
     }
@@ -55,8 +55,8 @@ class CanvasMonitorRenderer(val delegate: CanvasRenderDelegate) : IRenderer {
             "${Runtime.getRuntime().freeMemory().toSizeString()}/${Device.getMemoryUseInfo()}"
         paint.style = Paint.Style.FILL
 
-        //val x = delegate.view.measuredWidth - paint.textWidth(text)
-        val x = delegate.axisManager.yAxisBounds.right
+        val x = if (drawMemoryTip) delegate.axisManager.yAxisBounds.right else
+            delegate.view.measuredWidth - paint.textWidth(text)
         val y = bottom - paint.descent()
         canvas.drawText(text, x, y, paint)
     }
