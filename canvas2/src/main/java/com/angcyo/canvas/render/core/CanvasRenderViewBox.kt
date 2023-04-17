@@ -84,14 +84,14 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
     var maxScaleX: Float = 10f //5f
 
     var minScaleY: Float = minScaleX
-    var maxScaleY: Float = 10f //5f
+    var maxScaleY: Float = maxScaleX //5f
 
     /**最小和最大的平移距离*/
     var minTranslateX: Float = -Float.MAX_VALUE
     var maxTranslateX: Float = Float.MAX_VALUE //0f
 
-    var minTranslateY: Float = -Float.MAX_VALUE
-    var maxTranslateY: Float = Float.MAX_VALUE //0f
+    var minTranslateY: Float = minTranslateX
+    var maxTranslateY: Float = maxTranslateX //0f
 
     val _tempValues = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
     val _tempPoint = PointF()
