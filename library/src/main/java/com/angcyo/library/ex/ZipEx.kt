@@ -123,6 +123,7 @@ fun ZipOutputStream.writeEntry(entryName: String, bytes: ByteArray?) {
 fun ZipOutputStream.writeEntry(entryName: String, bitmap: Bitmap?) {
     val entry = ZipEntry(entryName)
     putNextEntry(entry)
+    //图片太大, 此方法会崩溃
     bitmap?.compress(Bitmap.CompressFormat.PNG, 100, this)
     closeEntry()
 }

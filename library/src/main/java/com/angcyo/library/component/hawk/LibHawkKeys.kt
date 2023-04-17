@@ -46,6 +46,9 @@ object LibHawkKeys {
      * */
     var maxBitmapCanvasSize: Long by HawkPropertyValue<Any, Long>(60 * 1024 * 1024)
 
+    /**存储图片到zip包时, 最大支持的像素点数, 宽*高*/
+    var maxBitmapSaveSize: Long by HawkPropertyValue<Any, Long>(4000 * 4000)
+
     /**是否要激活Canvas的渲染数量限制
      * 激活后[canvasRenderMaxCount]才有效*/
     var enableCanvasRenderLimit: Boolean by HawkPropertyValue<Any, Boolean>(true)
