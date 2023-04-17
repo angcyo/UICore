@@ -20,7 +20,6 @@ import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRen
 import com.angcyo.drawable.loading.CircleScaleLoadingDrawable
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
-import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.*
 import kotlin.math.max
 
@@ -66,13 +65,6 @@ abstract class BaseRenderer : IRenderer {
         /**最后一个标识位*/
         @RenderFlag
         const val RENDERER_FLAG_LAST = RENDERER_FLAG_REQUEST_DRAWABLE shl 1
-
-        /**渲染器的最小宽高*/
-        @Pixel
-        const val MIN_WIDTH = 1f
-
-        @Pixel
-        const val MIN_HEIGHT = 1f
     }
 
     /**渲染器的唯一标识*/
@@ -111,6 +103,8 @@ abstract class BaseRenderer : IRenderer {
      * [updateAsync]*/
     open val isAsync: Boolean
         get() = renderFlags.have(RENDERER_FLAG_ASYNC)
+
+    protected val tipPaint = createTextPaint(_color(R.color.error))
 
     //endregion---计算属性---
 
@@ -186,8 +180,14 @@ abstract class BaseRenderer : IRenderer {
     override fun renderOnInside(canvas: Canvas, params: RenderParams) {
         readyRenderIfNeed(params)
         renderProperty?.let { property ->
-            renderDrawable?.let { drawable ->
-                val renderBounds = property.getRenderBounds()
+            val renderBounds = property.getRenderBounds()
+            val drawable = renderDrawable
+            if (drawable == null) {
+                if (this is CanvasElementRenderer) {
+                    L.w("没有可绘制的Drawable[${this@BaseRenderer.simpleHash()}]")
+                    renderNoDrawable(canvas, params)
+                }
+            } else {
                 val boundsWidth = renderBounds.width()
                 val width = if (boundsWidth <= 0) {
                     //实际宽度为0, 可能是线条
@@ -205,10 +205,6 @@ abstract class BaseRenderer : IRenderer {
                 }
                 drawable.setBounds(0, 0, width, height)//设置绘制的宽高
                 renderDrawable(canvas, property, drawable, params)
-            }.elseNull {
-                if (this is CanvasElementRenderer) {
-                    L.w("没有可绘制的Drawable[${this@BaseRenderer.simpleHash()}]")
-                }
             }
         }
     }
@@ -271,6 +267,42 @@ abstract class BaseRenderer : IRenderer {
             }
         }
     }
+
+    /**无数据时, 渲染提示信息*/
+    private fun renderNoDrawable(canvas: Canvas, params: RenderParams) {
+        val property = renderProperty ?: return
+        val renderBounds = property.getRenderBounds()
+
+        val scale = params.delegate?.renderViewBox?.getScale() ?: 1f
+        val width = 1 * dp
+        //绘制一根线, 从左上角到右下角
+        tipPaint.strokeWidth = width / scale
+        tipPaint.style = Paint.Style.STROKE
+        canvas.drawRect(renderBounds, tipPaint)
+        tipPaint.style = Paint.Style.FILL
+        canvas.drawLine(
+            renderBounds.left,
+            renderBounds.top,
+            renderBounds.right,
+            renderBounds.bottom,
+            tipPaint
+        )
+        //绘制一根线, 从右上角到左下角
+        canvas.drawLine(
+            renderBounds.right,
+            renderBounds.top,
+            renderBounds.left,
+            renderBounds.bottom,
+            tipPaint
+        )
+        tipPaint.strokeWidth = width
+        val text = "Element No Data!"
+        tipPaint.textSize = 12 * dp / scale
+        val x = renderBounds.centerX() - tipPaint.textWidth(text) / 2
+        val y = renderBounds.centerY() + tipPaint.textHeight() / 2
+        canvas.drawText(text, x, y, tipPaint)
+    }
+
 
     /**移除一个渲染标识*/
     open fun removeRenderFlag(flag: Int, reason: Reason, delegate: CanvasRenderDelegate?) {
