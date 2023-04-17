@@ -132,6 +132,9 @@ interface ICanvasRenderView {
      * */
     fun dispatchPointTouchEvent(component: PointTouchComponent, type: Int)
 
+    /**画布内手势事件监听*/
+    fun dispatchCanvasTouchEvent(event: MotionEvent)
+
     //endregion---Base---
 
     //region---CanvasRenderViewBox---

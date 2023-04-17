@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.core
 
 import android.graphics.Matrix
 import android.graphics.RectF
+import android.view.MotionEvent
 import androidx.annotation.UiThread
 import androidx.annotation.WorkerThread
 import com.angcyo.canvas.render.core.component.BaseControl
@@ -40,6 +41,10 @@ interface ICanvasRenderListener {
 
     /**[CanvasRenderDelegate]*/
     fun onRenderDrawable(renderer: BaseRenderer, params: RenderParams, endDraw: Boolean) {}
+
+    /** 画布内手势事件监听
+     * [CanvasRenderDelegate]*/
+    fun onDispatchTouchEvent(event: MotionEvent) {}
 
     /**[com.angcyo.canvas.render.core.component.PointTouchComponent]*/
     fun onPointTouchEvent(component: PointTouchComponent, type: Int) {}

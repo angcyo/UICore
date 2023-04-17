@@ -8,7 +8,12 @@ import android.view.MotionEvent
 import android.view.View
 import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.annotation.RenderFlag
-import com.angcyo.canvas.render.core.component.*
+import com.angcyo.canvas.render.core.component.BaseControl
+import com.angcyo.canvas.render.core.component.BaseControlPoint
+import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
+import com.angcyo.canvas.render.core.component.LimitMatrixComponent
+import com.angcyo.canvas.render.core.component.PointTouchComponent
 import com.angcyo.canvas.render.data.LimitInfo
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TouchSelectorInfo
@@ -18,7 +23,12 @@ import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.onMain
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.disableParentInterceptTouchEvent
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.getScaleX
+import com.angcyo.library.ex.getScaleY
+import com.angcyo.library.ex.longFeedback
+import com.angcyo.library.ex.size
 import com.angcyo.library.isMain
 import com.angcyo.library.unit.IRenderUnit
 import java.util.concurrent.CopyOnWriteArrayList
@@ -158,6 +168,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
             _isTouchDownInCanvas = false
         }
+        dispatchCanvasTouchEvent(event)
         return handle
     }
 
@@ -296,6 +307,12 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     override fun dispatchPointTouchEvent(component: PointTouchComponent, type: Int) {
         for (listener in renderListenerList) {
             listener.onPointTouchEvent(component, type)
+        }
+    }
+
+    override fun dispatchCanvasTouchEvent(event: MotionEvent) {
+        for (listener in renderListenerList) {
+            listener.onDispatchTouchEvent(event)
         }
     }
 
