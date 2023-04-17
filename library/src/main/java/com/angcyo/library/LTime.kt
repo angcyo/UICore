@@ -2,7 +2,8 @@ package com.angcyo.library
 
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.nowTime
-import java.util.*
+import com.angcyo.library.ex.toMsStrTime
+import java.util.Stack
 
 /**
  *
@@ -31,14 +32,7 @@ object LTime {
 
     /**主动计算2个时间的差值*/
     fun time(startTime: Long, endTIme: Long = nowTime()): String {
-        val s = (endTIme - startTime) / 1000
-        //val ms = ((endTIme - startTime) % 1000) * 1f / 1000
-        val ms = (endTIme - startTime) % 1000
-
-        //val m = s / 60
-        //val h = m / 24
-
-        return "${s}s${ms}ms"
+        return (endTIme - startTime).toMsStrTime()!!
         //return "${String.format(Locale.US, "%.3f", s + ms)}s"
     }
 

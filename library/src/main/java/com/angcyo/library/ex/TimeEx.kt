@@ -343,6 +343,7 @@ fun Long.toElapsedTime(
             need == -1 -> {
                 //强制不要
             }
+
             value > 0 || need == 1 -> {
                 //智能 or 强制要
                 builder.append(toH24(h24, value))
@@ -373,6 +374,13 @@ fun Long?.toMsTime(
     pattern = pattern,
     units = units
 )
+
+/**xmxsxms 的时间格式, 分秒时间格式输出*/
+fun Long?.toMsStrTime(
+    pattern: IntArray = intArrayOf(0, 1),
+    refill: BooleanArray = booleanArrayOf(false, false, false, false, false),
+    units: Array<String> = arrayOf("", "s", "m", "h", "d")
+) = this?.toElapsedTime(pattern, refill, units)
 
 /**计算2个时间之间相差多少毫秒
  * [2020-6-6 02:20] [2020-7-7 02:20]
