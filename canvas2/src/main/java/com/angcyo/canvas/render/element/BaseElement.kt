@@ -96,7 +96,7 @@ abstract class BaseElement : IElement {
     /**更新原始数据的宽高, 并且保持看起来的宽高一直
      * [keepVisibleSize] 是否要保持可见的大小一致*/
     @Pixel
-    fun updateOriginWidthHeight(
+    open fun updateOriginWidthHeight(
         newWidth: Float,
         newHeight: Float,
         keepVisibleSize: Boolean = true
