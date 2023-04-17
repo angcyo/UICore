@@ -29,7 +29,7 @@ open class BitmapElement : BaseElement() {
 
     /**更新原始的[bitmap]对象, 并保持可视化的宽高一致
      * [updateOriginWidthHeight]*/
-    fun updateOriginBitmap(bitmap: Bitmap, keepVisibleSize: Boolean = true) {
+    open fun updateOriginBitmap(bitmap: Bitmap, keepVisibleSize: Boolean = true) {
         this.originBitmap = bitmap
         updateOriginWidthHeight(bitmap.width.toFloat(), bitmap.height.toFloat(), keepVisibleSize)
     }
