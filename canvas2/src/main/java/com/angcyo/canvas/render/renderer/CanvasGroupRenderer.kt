@@ -107,7 +107,8 @@ open class CanvasGroupRenderer : BaseRenderer() {
         fun createRenderDrawable(
             rendererList: List<BaseRenderer>?,
             overrideSize: Float? = null,
-            @Pixel bounds: RectF? = null
+            @Pixel bounds: RectF? = null,
+            ignoreVisible: Boolean = false
         ): Drawable? {
             rendererList ?: return null
             val rect = computeBounds(rendererList, bounds)
@@ -123,14 +124,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                         renderDst = overrideSize / rect.width()
                     }
                 }
-                for (renderer in rendererList) {
-                    if (renderer is CanvasElementRenderer) {
-                        val renderProperty = renderer.renderProperty ?: continue
-                        val drawable = renderer.renderElement?.requestElementRenderDrawable(params)
-                            ?: continue
-                        renderer.renderDrawable(this, renderProperty, drawable, params)
-                    }
-                }
+                renderRenderer(this, rendererList, params, ignoreVisible)
             })
         }
 
@@ -163,12 +157,26 @@ open class CanvasGroupRenderer : BaseRenderer() {
                     }
                 }
 
-                for (renderer in rendererList) {
-                    if (renderer is CanvasElementRenderer && (ignoreVisible || renderer.isVisible)) {
+                renderRenderer(this, rendererList, params, ignoreVisible)
+            }
+        }
+
+        /**使用[canvas]绘制[rendererList]*/
+        fun renderRenderer(
+            canvas: Canvas,
+            rendererList: List<BaseRenderer>,
+            params: RenderParams,
+            ignoreVisible: Boolean = false,
+        ) {
+            for (renderer in rendererList) {
+                if (ignoreVisible || renderer.isVisible) {
+                    if (renderer is CanvasElementRenderer) {
                         val renderProperty = renderer.renderProperty ?: continue
                         val drawable = renderer.renderElement?.requestElementRenderDrawable(params)
                             ?: continue
-                        renderer.renderDrawable(this, renderProperty, drawable, params)
+                        renderer.renderDrawable(canvas, renderProperty, drawable, params)
+                    } else if (renderer is CanvasGroupRenderer) {
+                        renderRenderer(canvas, renderer.rendererList, params, ignoreVisible)
                     }
                 }
             }
