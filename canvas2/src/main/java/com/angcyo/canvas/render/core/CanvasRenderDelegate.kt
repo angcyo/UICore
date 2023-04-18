@@ -627,8 +627,8 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     /**[com.angcyo.canvas.render.core.CanvasRenderManager.getAllElementRendererList]*/
     fun getSingleElementRendererListIn(
         rendererList: List<BaseRenderer>?,
-        dissolveGroup: Boolean,
-        includeGroup: Boolean
+        dissolveGroup: Boolean = true,
+        includeGroup: Boolean = false
     ): List<BaseRenderer> {
         val result = mutableListOf<BaseRenderer>()
         rendererList ?: return result
@@ -679,8 +679,8 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
      * [ignoreVisible] 默认只获取可见的元素
      * [com.angcyo.canvas.render.core.CanvasRenderManager.getAllElementRendererList]*/
     fun getSelectorOrAllElementRendererList(
-        dissolveGroup: Boolean,
-        includeGroup: Boolean,
+        dissolveGroup: Boolean = true,
+        includeGroup: Boolean = false,
         ignoreVisible: Boolean = false
     ): List<BaseRenderer> {
         val list = if (selectorManager.isSelectorElement) {
