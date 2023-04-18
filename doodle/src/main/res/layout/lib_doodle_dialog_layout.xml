@@ -40,6 +40,7 @@
             android:layout_marginRight="@dimen/lib_hdpi"
             android:enabled="false"
             android:text="@string/dialog_positive"
+            android:textColor="@color/lib_button_theme_solid_text_color"
             tools:ignore="TouchTargetSizeCheck" />
 
     </FrameLayout>
