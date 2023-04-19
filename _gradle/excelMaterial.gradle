@@ -108,10 +108,11 @@ _excelMaterial.doLast {
             if (!power.isBlank() && !depth.isBlank() && !dpiScale.isBlank()) {
                 //功率,深度分辨率必须要值
                 def layerMode = layerName == "灰度" ? "5" : "1,6" //图层模式
-
+                def layerId = layerName == "灰度" ? "layerPicture" : "layerFill" //图层id
                 def map = new HashMap<String, Object>()
                 map.put("type", type.toFloat().toInteger())
                 map.put("layerModeStr", layerMode)
+                map.put("layerId", layerId)
                 map.put("power", power.toFloat().toInteger())
                 map.put("depth", depth.toFloat().toInteger())
                 def dpiFloat = dpiScale.toFloat()
