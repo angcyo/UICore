@@ -152,7 +152,7 @@ fun Activity.showDebugInfoView(config: ActivityDebugInfoConfig) {
                             //导航栏没有显示.
                             if (_screenCornerRadius > 0) {
                                 //屏幕圆角大小, 手机屏幕四个角都是圆弧的了
-                                _screenCornerRadius * 2 //(DEFAULT_NORMAL_SIZE + 8) * dpi
+                                _screenCornerRadius + 8 * dpi //* 2 //(DEFAULT_NORMAL_SIZE + 8) * dpi
                             } else {
                                 DEFAULT_NORMAL_SIZE * dpi
                             }
