@@ -1,6 +1,12 @@
 package com.angcyo.canvas.render.renderer
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.DashPathEffect
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
 import androidx.core.graphics.withClip
 import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
@@ -10,7 +16,15 @@ import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.util.createRenderPaint
 import com.angcyo.library._refreshRateRatio
 import com.angcyo.library.annotation.Pixel
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex._color
+import com.angcyo.library.ex.alphaRatio
+import com.angcyo.library.ex.clamp
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.linearVerticalGradientShader
+import com.angcyo.library.ex.remove
+import com.angcyo.library.ex.rotate
+import com.angcyo.library.ex.textHeight
+import com.angcyo.library.ex.textWidth
 
 /**
  * 边框, 雕刻进度渲染渲染
