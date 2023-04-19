@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.angcyo.fragment.FragmentBridge
 import com.angcyo.library.ex.*
+import kotlin.math.min
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -74,6 +75,46 @@ fun FragmentManager.getFile(type: String = "*/*", onResult: (Uri?) -> Unit) {
             val uri = data?.data
             //uri?.getPathFromIntentData()
             onResult(uri)
+        } else {
+            onResult(null)
+        }
+    }
+}
+
+/**[getFile]
+ * [maxCount] 限制返回的最大数量*/
+fun FragmentManager.getFiles(
+    maxCount: Int = -1,
+    type: String = "*/*",
+    onResult: (List<Uri>?) -> Unit
+) {
+    //val action = if (type.isImageMimeType()) Intent.ACTION_PICK else Intent.ACTION_GET_CONTENT
+    val intent = Intent(Intent.ACTION_GET_CONTENT)
+    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+    intent.addCategory(Intent.CATEGORY_OPENABLE)
+    intent.type = type
+
+    FragmentBridge.install(this).startActivityForResult(intent) { resultCode, data ->
+        if (resultCode == Activity.RESULT_OK) {
+            val result = mutableListOf<Uri>()
+
+            val clipData = data?.clipData
+            if (clipData == null) {
+                data?.data?.let {
+                    result.add(it)
+                }
+            } else {
+                val count = if (maxCount > 0) {
+                    maxCount
+                } else {
+                    clipData.itemCount
+                }
+                for (i in 0 until min(clipData.itemCount, count)) {
+                    result.add(clipData.getItemAt(i).uri)
+                }
+            }
+
+            onResult(result)
         } else {
             onResult(null)
         }
