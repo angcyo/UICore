@@ -139,10 +139,12 @@ fun ViewGroup.each(recursively: Boolean = false, map: (child: View) -> Unit) {
     }
 }
 
-/**获取指定位置[index]的[child], 如果有.*/
+/**获取指定位置[index]的[child], 如果有.
+ * 支持负数*/
 fun ViewGroup.getChildOrNull(index: Int): View? {
-    return if (index in 0 until childCount) {
-        getChildAt(index)
+    val childIndex = if (index < 0) index + childCount else index
+    return if (childIndex in 0 until childCount) {
+        getChildAt(childIndex)
     } else {
         null
     }
