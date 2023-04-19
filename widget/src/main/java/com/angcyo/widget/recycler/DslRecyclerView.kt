@@ -9,9 +9,9 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.angcyo.widget.R
 import com.angcyo.library.ex.isTouchDown
 import com.angcyo.library.ex.isTouchFinish
+import com.angcyo.widget.R
 import com.angcyo.widget.layout.*
 import java.lang.ref.WeakReference
 import java.util.*
@@ -141,7 +141,11 @@ open class DslRecyclerView : RecyclerView, ILayoutDelegate, ITouchHold, ITouchDe
             if (enableFocusTransition) {
                 findFocus()
             }
-            super.draw(canvas)
+            try {
+                super.draw(canvas)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

@@ -5,6 +5,8 @@ import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter._dslAdapter
 import com.angcyo.library.component.onMain
 import com.angcyo.widget.R
+import com.angcyo.widget._rv
+import com.angcyo.widget.recycler.DslRecyclerView
 import com.angcyo.widget.recycler.noItemChangeAnim
 import com.angcyo.widget.recycler.renderDslAdapter
 
@@ -22,8 +24,11 @@ abstract class BaseRecyclerIView : IView() {
             updateIViewTitle(value)
         }
 
+    val _recyclerView: DslRecyclerView?
+        get() = viewHolder?._rv(R.id.lib_recycler_view)
+
     val _dslAdapter: DslAdapter?
-        get() = viewHolder?.rv(R.id.lib_recycler_view)?._dslAdapter
+        get() = _recyclerView?._dslAdapter
 
     init {
         iViewLayoutId = R.layout.lib_recycler_iview_layout
@@ -74,7 +79,7 @@ abstract class BaseRecyclerIView : IView() {
         updateState: Boolean = true,
         action: DslAdapter.() -> Unit = {}
     ) {
-        viewHolder?.rv(R.id.lib_recycler_view)?.apply {
+        _recyclerView?.apply {
             noItemChangeAnim()
             //noItemAnim()
             this.renderDslAdapter(append, new, updateState, action)
