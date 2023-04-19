@@ -1,19 +1,26 @@
 package com.angcyo.library
 
+import android.app.Activity
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.Insets
 import android.graphics.Point
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Looper
 import android.util.Log
+import android.view.RoundedCorner
 import android.view.View
+import android.view.WindowInsets
 import android.view.WindowManager
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LifecycleOwner
+import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.fileNameUUID
 import com.orhanobut.hawk.Hawk
@@ -257,6 +264,37 @@ val _screenHeight: Int get() = app().getScreenHeight()
 val _statusBarHeight: Int get() = app().getStatusBarHeight()
 val _navBarHeight: Int get() = app().getNavBarHeight()
 
+/**手机底部插入的装饰高度, 比如导航栏的高度, 导航条的高度*/
+val _bottomInset: Int
+    get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        lastContext.getInsetsType(WindowInsets.Type.navigationBars())?.bottom ?: 0
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        lastContext.getWindowInsets()?.systemWindowInsetBottom ?: 0
+        //和stableInsetBottom值一样
+    } else {
+        _navBarHeight
+    }
+
+/**[_bottomInset]*/
+val _topInset: Int
+    get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        lastContext.getInsetsType(WindowInsets.Type.statusBars())?.top ?: 0
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        lastContext.getWindowInsets()?.systemWindowInsetTop ?: 0
+        //和stableInsetTop值一样
+    } else {
+        _navBarHeight
+    }
+
+/**获取屏幕圆角半径*/
+@Pixel
+val _screenCornerRadius: Int
+    get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        lastContext.getRoundedCorner()?.radius ?: 0
+    } else {
+        0
+    }
+
 /**获取当前设备的刷新帧率[60] [90] [120]*/
 val _refreshRate: Float
     get() {
@@ -299,6 +337,41 @@ fun Context.getScreenHeight() = resources.displayMetrics.heightPixels
 
 /**导航栏正在显示的高度*/
 fun Context?.getNavBarHeightShow() = activityContent()?.navBarHeight() ?: 0
+
+/**获取屏幕圆角信息
+ * https://developer.android.com/guide/topics/ui/look-and-feel/rounded-corners?hl=zh-cn
+ *
+ * Only visual Contexts (such as Activity or one created with Context#createWindowContext) or ones created with Context#createDisplayContext are associated with displays.*/
+fun Context.getRoundedCorner(position: Int? = null) =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        try {
+            display?.getRoundedCorner(position ?: RoundedCorner.POSITION_TOP_LEFT)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    } else {
+        null
+    }
+
+/**[WindowInsets]*/
+@RequiresApi(Build.VERSION_CODES.M)
+fun Context.getWindowInsets(view: View? = null): WindowInsets? {
+    val targetView = view ?: if (this is Activity) {
+        window.decorView
+    } else {
+        null
+    } ?: return null
+    return targetView.rootWindowInsets
+}
+
+@RequiresApi(Build.VERSION_CODES.R)
+fun Context.getInsetsType(
+    typeMask: Int = WindowInsets.Type.statusBars(),
+    view: View? = null
+): Insets? {
+    return getWindowInsets(view)?.getInsets(typeMask)
+}
 
 /**是否是主线程*/
 fun isMain() = Looper.getMainLooper() == Looper.myLooper()

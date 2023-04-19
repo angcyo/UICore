@@ -299,6 +299,7 @@ open class DslViewHolder(
                             ViewConfiguration.getLongPressTimeout().toLong()
                         )
                     }
+
                     MotionEvent.ACTION_MOVE -> Unit
                     MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                         view.isPressed = false
@@ -505,7 +506,7 @@ open class DslViewHolder(
     }
 
     fun visible(@IdRes resId: Int, visible: Boolean): DslViewHolder {
-        val view = v<View>(resId)
+        val view = v<View>(resId) ?: return this
         if (visible) {
             visible(view)
         } else {
@@ -515,7 +516,7 @@ open class DslViewHolder(
     }
 
     fun invisible(@IdRes resId: Int, invisible: Boolean): DslViewHolder {
-        val view = v<View>(resId)!!
+        val view = v<View>(resId) ?: return this
         if (invisible) {
             invisible(view)
         } else {

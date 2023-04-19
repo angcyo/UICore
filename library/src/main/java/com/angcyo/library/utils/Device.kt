@@ -408,23 +408,28 @@ object Device {
             append(" dpi:").appendln(displayMetrics.densityDpi)
 
             //多少寸, 屏幕寸数
-            append("w:").append("%.02f".format(width))
-            append(" h:").append("%.02f".format(height))
-            append(" inches:").append("%.02f".format(screenInches))
+            append("w:").append("%.0f".format(width))
+            append(" h:").append("%.0f".format(height))
+            append(" in:").append("%.01f".format(screenInches))//inches
             //导航栏, 状态栏高度
             val statusBarHeight = _statusBarHeight
             val navBarHeight = max(dvWidth - cvWidth, dvHeight - cvHeight)
-            append(" sh:").append(statusBarHeight).append(" ")
-                .append(statusBarHeight / displayMetrics.density).append("dp")
-            append(" nh:").append(navBarHeight).append(" ")
-                .append(navBarHeight / displayMetrics.density).append("dp").appendLine()
+            append(" sh:").append(statusBarHeight).append("/${_topInset} ")
+                .append("%.0f".format(statusBarHeight / displayMetrics.density)).append("dp")
+            append(" nh:").append(navBarHeight).append("/${_bottomInset} ")
+                .append("%.0f".format(navBarHeight / displayMetrics.density)).append("dp")
+            //屏幕圆角
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                append(" r:${_screenCornerRadius}")
+            }
+            appendLine()
 
             //pad
             append("pad:").append(Pad.isPadSize())
             append(" tablet:").append(Pad.isTabletDevice)
-            append(" tw:").append(Pad.isTabletWindow())
-            append(" magic:").append(Pad.inMagicWindow())
-            append(" mw:").append(Pad.isInMultiWindowMode(lastContext))
+            append(" tw:").append(Pad.isTabletWindow()) //平板窗口
+            append(" magic:").append(Pad.inMagicWindow()) //平行窗口模式
+            append(" mw:").append(Pad.isInMultiWindowMode(lastContext))//分屏模式
             appendLine()
 
             val rect = Rect()

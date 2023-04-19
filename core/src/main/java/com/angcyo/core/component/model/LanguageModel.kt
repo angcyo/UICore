@@ -238,6 +238,7 @@ class LanguageModel : ViewModel() {
             }
 
         /**
+         * 时区信息
          * https://developer.android.com/guide/topics/resources/multilingual-support?hl=zh-cn
          * */
         fun getTimeZoneDes(): String = buildString {
@@ -247,8 +248,8 @@ class LanguageModel : ViewModel() {
             append(tz.id) //Asia/Shanghai
             append(" ")
             append(tz.getDisplayName(false, TimeZone.SHORT)) //GMT+08:00
-            append(" ")
-            append(tz.rawOffset) //28800000 8小时对应的毫秒数
+            //append(" ")
+            //append(tz.rawOffset) //28800000 8小时对应的毫秒数
         }
 
         /**
@@ -257,6 +258,7 @@ class LanguageModel : ViewModel() {
          * @return
          */
         fun getCurrentLanguage(context: Context = app()): String {
+            //zh_CN_#Hans
             val locale = context.resources.configuration.locale
             val language = locale.language
             val country = locale.country
@@ -267,6 +269,14 @@ class LanguageModel : ViewModel() {
         fun getCurrentLanguageTag(context: Context = app()): String {
             val locale = context.resources.configuration.locale
             return locale.toLanguageTag()
+        }
+
+        /**获取语言显示的名称
+         * [中文 (简体中文,中国)]*/
+        fun getCurrentLanguageDisplayName(context: Context = app()): String {
+            val locale = context.resources.configuration.locale
+            locale.displayLanguage //中文
+            return locale.displayName //中文 (简体中文,中国)
         }
 
         fun createLanguageForTag(languageTag: String): Locale {

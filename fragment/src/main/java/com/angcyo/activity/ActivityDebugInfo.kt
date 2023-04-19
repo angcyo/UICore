@@ -24,7 +24,9 @@ import com.angcyo.activity.ActivityDebugInfo.DEFAULT_NORMAL_SIZE
 import com.angcyo.drawable.isGravityTop
 import com.angcyo.fragment.R
 import com.angcyo.library.L
+import com.angcyo.library._bottomInset
 import com.angcyo.library._isNavigationBarShow
+import com.angcyo.library._screenCornerRadius
 import com.angcyo.library.app
 import com.angcyo.library.component.ActivityLifecycleCallbacksAdapter
 import com.angcyo.library.component.NetUtils
@@ -143,13 +145,17 @@ fun Activity.showDebugInfoView(config: ActivityDebugInfoConfig) {
             textView.layoutParams = textView.layoutParams.apply {
                 if (enable) {
                     width =
-                        if (_isNavigationBarShow || Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+                        if (_isNavigationBarShow || Build.VERSION.SDK_INT < Build.VERSION_CODES.P || _bottomInset > 0) {
                             //导航栏显示了
                             DEFAULT_NORMAL_SIZE * dpi
                         } else {
-                            //导航栏没有显示, 圆点放大一点.
-                            //Android P 之后, 手机屏幕四个角都是圆弧的了
-                            (DEFAULT_NORMAL_SIZE + 8) * dpi
+                            //导航栏没有显示.
+                            if (_screenCornerRadius > 0) {
+                                //屏幕圆角大小, 手机屏幕四个角都是圆弧的了
+                                _screenCornerRadius * 2 //(DEFAULT_NORMAL_SIZE + 8) * dpi
+                            } else {
+                                DEFAULT_NORMAL_SIZE * dpi
+                            }
                         }
                     height = width
                 } else {

@@ -90,6 +90,8 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             //gmt
             appendln()
             append(LanguageModel.getTimeZoneDes())
+            appendln()
+            append(LanguageModel.getCurrentLanguageDisplayName())
             append("/")
             append(LanguageModel.getCurrentLanguage())
             append("/")
