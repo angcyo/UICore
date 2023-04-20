@@ -204,8 +204,8 @@ abstract class BaseFragment : AbsLifecycleFragment() {
         @DrawableRes ico: Int = undefined_res,
         action: DslTextView.() -> Unit = {},
         onClick: (View) -> Unit
-    ) {
-        appendTextItem {
+    ): View? {
+        return appendTextItem {
             gravity = Gravity.CENTER
             setTextColor(fragmentConfig.titleItemTextColor)
             this.text = span {

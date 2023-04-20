@@ -363,6 +363,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
             } else {
                 TitleBarPlaceholderBehavior(fContext())
             }
+
             R.id.lib_content_wrap_layout -> RefreshContentBehavior(fContext())
             R.id.lib_refresh_wrap_layout -> if (enableRefresh) {
                 ArcLoadingHeaderBehavior(fContext()).apply {
@@ -376,6 +377,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
                     enableBottomOver = enableContentBounds
                 }
             }
+
             else -> null
         }
     }
@@ -440,8 +442,8 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         @DrawableRes ico: Int = undefined_res,
         action: DslTextView.() -> Unit = {},
         onClick: (View) -> Unit
-    ) {
-        leftControl()?.appendItem(text, ico, action, onClick)
+    ): View? {
+        return leftControl()?.appendItem(text, ico, action, onClick)
     }
 
     fun appendRightItem(
@@ -449,8 +451,8 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         @DrawableRes ico: Int = undefined_res,
         action: DslTextView.() -> Unit = {},
         onClick: (View) -> Unit
-    ) {
-        rightControl()?.appendItem(text, ico, action, onClick)
+    ): View? {
+        return rightControl()?.appendItem(text, ico, action, onClick)
     }
 
     //</editor-fold desc="扩展方法">
