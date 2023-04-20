@@ -617,8 +617,17 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     fun getElementRendererListOf(rendererList: List<BaseRenderer>?): List<BaseRenderer>? {
         rendererList ?: return null
         val result = mutableListOf<BaseRenderer>()
+
+        val subList = mutableListOf<BaseRenderer>()
         for (renderer in rendererList) {
-            val elementRenderer = renderManager.findElementGroupRenderer(renderer) ?: renderer
+            if (subList.contains(renderer)) {
+                continue
+            }
+            val groupRenderer = renderManager.findElementGroupRenderer(renderer)
+            if (groupRenderer != null) {
+                subList.addAll(groupRenderer.rendererList)
+            }
+            val elementRenderer = groupRenderer ?: renderer
             result.add(elementRenderer)
         }
         return result
