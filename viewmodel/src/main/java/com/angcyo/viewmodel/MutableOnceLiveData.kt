@@ -19,6 +19,10 @@ class MutableOnceLiveData<T>(value: T? = null) : MutableErrorLiveData<T>(value) 
     /**存储最后一次不为空的值*/
     var lastValue: T? = null
 
+    override fun postValue(value: T?) {
+        super.postValue(value)
+    }
+
     /**立马清空数据*/
     @MainThread
     override fun setValue(value: T?) {

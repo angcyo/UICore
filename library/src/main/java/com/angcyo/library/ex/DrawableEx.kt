@@ -13,6 +13,7 @@ import androidx.annotation.ColorRes
 import androidx.core.graphics.drawable.DrawableCompat
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.component.lastContext
 
 
 /**
@@ -142,10 +143,14 @@ fun Drawable.toBitmapDrawable(
     outHeight: Int = -1,
     bgColor: Int = Color.TRANSPARENT
 ): BitmapDrawable {
-    val drawable = BitmapDrawable()
-    drawable.setTargetDensity(DisplayMetrics.DENSITY_MEDIUM)
-    drawable.bitmap = toBitmap(outWidth, outHeight, bgColor)
-    return drawable
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val drawable = BitmapDrawable()
+        drawable.setTargetDensity(DisplayMetrics.DENSITY_MEDIUM)
+        drawable.bitmap = toBitmap(outWidth, outHeight, bgColor)
+        drawable
+    } else {
+        BitmapDrawable(lastContext.resources, toBitmap(outWidth, outHeight, bgColor))
+    }
 }
 
 fun Drawable.getByBitmap(): Bitmap? {
