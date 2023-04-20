@@ -153,7 +153,7 @@ fun CharSequence.writeToLog(name: String = LogFile.log, logLevel: Int = L.NONE):
  * [logLevel] 同时输出到控制台的日志级别
  * [log/error.log]
  * */
-fun CharSequence.writeErrorLog(logLevel: Int = L.NONE): CharSequence {
+fun CharSequence.writeErrorLog(logLevel: Int = L.ERROR): CharSequence {
     writeToLog(LogFile.error, logLevel)
     return this
 }

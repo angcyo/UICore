@@ -199,6 +199,10 @@ abstract class BaseFragment : AbsLifecycleFragment() {
 
     //<editor-fold desc="Append操作">
 
+    /**颜色受到影响
+     * [com.angcyo.core.fragment.FragmentConfig.titleItemTextColor]
+     * [com.angcyo.core.fragment.FragmentConfig.titleItemIconColor]
+     * */
     fun DslGroupHelper.appendItem(
         text: CharSequence? = null,
         @DrawableRes ico: Int = undefined_res,
