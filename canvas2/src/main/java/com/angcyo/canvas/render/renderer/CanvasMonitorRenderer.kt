@@ -6,7 +6,11 @@ import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.util.createRenderPaint
-import com.angcyo.library.ex.*
+import com.angcyo.library.Fps
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.textHeight
+import com.angcyo.library.ex.textWidth
 import com.angcyo.library.utils.Device
 import kotlin.math.roundToInt
 
@@ -51,8 +55,7 @@ class CanvasMonitorRenderer(val delegate: CanvasRenderDelegate) : IRenderer {
 
     /**绘制内存使用情况*/
     private fun drawMemoryText(canvas: Canvas, bottom: Float) {
-        val text =
-            "${Runtime.getRuntime().freeMemory().toSizeString()}/${Device.getMemoryUseInfo()}"
+        val text = "fps:${Fps.fps()}/${Device.getMemoryUseInfo()}"
         paint.style = Paint.Style.FILL
 
         val x = if (drawMemoryTip) delegate.axisManager.yAxisBounds.right else
