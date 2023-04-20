@@ -113,14 +113,6 @@ abstract class BasePagerFragment : BaseTitleFragment() {
         _vh.vp(R.id.lib_view_pager)?.apply {
             adapter = fragmentAdapter
             ViewPager1Delegate.install(this, _vh.tab(R.id.lib_tab_layout)?.apply {
-                configTabLayoutConfig {
-                    onGetTextStyleView = { itemView, _ ->
-                        itemView.find(R.id.lib_tab_text_view)
-                    }
-                    onGetIcoStyleView = { itemView, _ ->
-                        itemView.find(R.id.lib_tab_image_view)
-                    }
-                }
                 if (childCount <= 0) {
                     inflateTabItems(this)
                 }
@@ -137,18 +129,32 @@ abstract class BasePagerFragment : BaseTitleFragment() {
     /**[DslTabLayout]*/
     open fun initTabLayout() {
         _vh.tab(R.id.lib_tab_layout)?.apply {
-            setCurrentItem(defaultTabSelectIndex)
-
             configTabLayoutConfig {
-
                 onGetTextStyleView = { itemView, _ ->
                     itemView.find(R.id.lib_tab_text_view)
                 }
                 onGetIcoStyleView = { itemView, _ ->
                     itemView.find(R.id.lib_tab_image_view)
                 }
+                onSelectIndexChange = { fromIndex, selectIndexList, reselect, fromUser ->
+                    selectIndexList.firstOrNull()?.let {
+                        //关键代码, 切换ViewPager
+                        _viewPagerDelegate?.onSetCurrentItem(fromIndex, it, reselect, fromUser)
+                        onTabLayoutIndexChange(fromIndex, it, reselect, fromUser)
+                    }
+                }
             }
+            setCurrentItem(defaultTabSelectIndex)
         }
+    }
+
+    /**当切换了[DslTabLayout]时回调*/
+    open fun onTabLayoutIndexChange(
+        fromIndex: Int,
+        toIndex: Int,
+        reselect: Boolean,
+        fromUser: Boolean
+    ) {
     }
 
     //<editor-fold desc="TabLayout相关">
@@ -208,7 +214,9 @@ abstract class BasePagerFragment : BaseTitleFragment() {
         return pagerTabItem._fragment!!
     }
 
-    open fun <T : Fragment> getPage(position: Int, cls: Class<T>): T = getPageItem(position) as T
+    /**[getPageItem]*/
+    open fun <T : Fragment> getPageFragment(position: Int, cls: Class<T>): T =
+        getPageItem(position) as T
 
     /**页面数量*/
     open fun getPageCount(): Int = pageList.size
