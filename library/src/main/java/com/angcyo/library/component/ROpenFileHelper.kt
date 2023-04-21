@@ -3,8 +3,14 @@ package com.angcyo.library.component
 import android.content.Intent
 import android.net.Uri
 import com.angcyo.library.L
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.extName
+import com.angcyo.library.ex.getShowName
+import com.angcyo.library.ex.lastName
+import com.angcyo.library.ex.mimeTypeToExtName
+import com.angcyo.library.ex.saveTo
+import com.angcyo.library.ex.toArrayListOf
 import com.angcyo.library.libCacheFile
+import com.angcyo.library.utils.fileType
 import java.io.File
 
 /**
@@ -87,15 +93,24 @@ object ROpenFileHelper {
             //decode->金门大桥-GCODE.dxf
 
             val name = data.getShowName()
-            var extName = name.extName()
+            var extName: String? = name.extName()
 
-            val fileName = if (extName.isEmpty() && !ext.isNullOrEmpty()) {
-                //无扩展名
-                extName = ext
-                if (extName.startsWith(".")) {
-                    "${name}${extName}"
+            val fileName = if (extName.isNullOrEmpty()) {
+                //从Uri中无法获取到扩展名
+                extName = if (ext.isNullOrEmpty()) {
+                    //未强制指定扩展名, 则从流中读取扩展名
+                    data.fileType()
                 } else {
-                    "${name}.${extName}"
+                    ext
+                }
+                if (extName.isNullOrEmpty()) {
+                    name
+                } else {
+                    if (extName.startsWith(".")) {
+                        "${name}${extName}"
+                    } else {
+                        "${name}.${extName}"
+                    }
                 }
             } else {
                 name
