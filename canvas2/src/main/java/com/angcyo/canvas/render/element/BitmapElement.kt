@@ -13,7 +13,8 @@ import com.angcyo.canvas.render.state.IStateStack
  */
 open class BitmapElement : BaseElement() {
 
-    /**1:1 原始图片*/
+    /**1:1 原始图片
+     * [com.angcyo.canvas.render.element.BitmapElement.updateOriginBitmap]*/
     var originBitmap: Bitmap? = null
 
     /**[originBitmap]1:1修改后渲染的图片, 界面上看到的图片*/
