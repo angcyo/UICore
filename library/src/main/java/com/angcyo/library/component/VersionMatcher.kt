@@ -81,8 +81,13 @@ object VersionMatcher {
             return defOrEmpty
         }
 
+        return matches(version, versionRangeList)
+    }
+
+    /**匹配*/
+    fun matches(version: Int?, rangeList: List<VersionRange>): Boolean {
         var targetRange: VersionRange? = null //匹配到的固件版本范围
-        for (range in versionRangeList) {
+        for (range in rangeList) {
             if (version in range.min..range.max) {
                 targetRange = range
                 break
