@@ -1,7 +1,11 @@
 package com.angcyo.canvas.render.element
 
-import android.graphics.*
-import android.graphics.drawable.Drawable
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.RectF
+import android.graphics.Typeface
 import android.widget.LinearLayout
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
@@ -13,7 +17,11 @@ import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.state.TextStateStack
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.FontManager
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.size
+import com.angcyo.library.ex.textBounds
+import com.angcyo.library.ex.textHeight
+import com.angcyo.library.ex.textWidth
+import com.angcyo.library.ex.toColor
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.tan
@@ -71,13 +79,11 @@ open class TextElement : BaseElement() {
 
     override fun createStateStack(): IStateStack = TextStateStack()
 
-    override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? {
+    override fun onRenderInside(renderer: BaseRenderer?, canvas: Canvas, params: RenderParams) {
         updatePaint()
-        return createPictureDrawable(renderParams) {
-            val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
-            concat(renderMatrix)
-            drawNormalText(this)
-        }
+        val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
+        canvas.concat(renderMatrix)
+        drawNormalText(canvas)
     }
 
     /**更新画笔样式*/

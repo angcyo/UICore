@@ -1,8 +1,10 @@
 package com.angcyo.canvas.render.element
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.data.RenderParams
+import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.state.BitmapStateStack
 import com.angcyo.canvas.render.state.IStateStack
 
@@ -24,15 +26,24 @@ open class BitmapElement : BaseElement() {
 
     override fun getDrawBitmap(): Bitmap? = renderBitmap ?: originBitmap
 
-    override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? {
-        return createBitmapDrawable(paint, renderParams?.overrideSize)
-    }
-
     /**更新原始的[bitmap]对象, 并保持可视化的宽高一致
      * [updateOriginWidthHeight]*/
     open fun updateOriginBitmap(bitmap: Bitmap, keepVisibleSize: Boolean = true) {
         this.originBitmap = bitmap
         updateOriginWidthHeight(bitmap.width.toFloat(), bitmap.height.toFloat(), keepVisibleSize)
+    }
+
+    override fun requestElementDrawable(
+        renderer: BaseRenderer?,
+        renderParams: RenderParams?
+    ): Drawable? {
+        getDrawBitmap() ?: return null
+        return super.requestElementDrawable(renderer, renderParams)
+    }
+
+    override fun onRenderInside(renderer: BaseRenderer?, canvas: Canvas, params: RenderParams) {
+        val bitmap = getDrawBitmap() ?: return
+        renderBitmap(canvas, paint, bitmap)
     }
 
 }

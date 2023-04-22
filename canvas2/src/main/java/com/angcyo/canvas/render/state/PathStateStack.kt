@@ -30,7 +30,7 @@ open class PathStateStack : PropertyStateStack() {
     ) {
         renderer.element<PathElement>()?.pathList = pathList
         super.restoreState(renderer, reason, strategy, delegate)
-        renderer.requestUpdateDrawableAndPropertyFlag(reason, delegate)
+        renderer.requestUpdatePropertyFlag(reason, delegate)
     }
 
 }

@@ -1,9 +1,11 @@
 package com.angcyo.canvas.render.element
 
+import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.data.RenderParams
+import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.state.PathStateStack
 import com.angcyo.canvas.render.util.RenderHelper
@@ -33,22 +35,26 @@ open class PathElement : BaseElement() {
 
     override fun createStateStack(): IStateStack = PathStateStack()
 
-    override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? {
-        val pathList = pathList ?: return null
-        paint.strokeWidth = 1f
-        renderParams?.updateDrawPathPaintStrokeWidth(paint)
+    override fun requestElementDrawable(
+        renderer: BaseRenderer?,
+        renderParams: RenderParams?
+    ): Drawable? {
+        pathList ?: return null
+        val params = renderParams ?: RenderParams()
         val minWidth = max((renderParams ?: RenderParams()).drawMinWidth, paint.strokeWidth)
         val minHeight = max((renderParams ?: RenderParams()).drawMinHeight, paint.strokeWidth)
-        return createPathDrawable(
-            paint,
-            renderParams?.overrideSize,
-            minWidth,
-            minHeight,
-            false
-        )
+        params.drawMinWidth = minWidth
+        params.drawMinHeight = minHeight
+        return super.requestElementDrawable(renderer, params)
     }
 
     override fun getDrawPathList(): List<Path>? = pathList
+
+    override fun onRenderInside(renderer: BaseRenderer?, canvas: Canvas, params: RenderParams) {
+        paint.strokeWidth = 1f
+        params.updateDrawPathPaintStrokeWidth(paint)
+        renderPath(canvas, paint, false, getDrawPathList())
+    }
 
     /**更新原始的[pathList]对象, 并保持可视化的宽高一致
      * [updateOriginWidthHeight]*/
@@ -57,5 +63,4 @@ open class PathElement : BaseElement() {
         val bounds = RenderHelper.computePathBounds(pathList)
         updateOriginWidthHeight(bounds.width(), bounds.height(), keepVisibleSize)
     }
-
 }

@@ -54,7 +54,7 @@ abstract class BaseElement : IElement {
         onUpdateElementAfter()
         val redoState = createStateStack()
         redoState.saveState(renderer, delegate)
-        renderer.requestUpdateDrawableAndPropertyFlag(reason, delegate)
+        renderer.requestUpdatePropertyFlag(reason, delegate)
         delegate?.addStateToStack(renderer, undoState, redoState, reason = reason)
     }
 
@@ -70,8 +70,13 @@ abstract class BaseElement : IElement {
 
     override fun requestElementRenderProperty(): CanvasRenderProperty = renderProperty
 
-    override fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable? =
-        renderDrawable
+    override fun requestElementDrawable(
+        renderer: BaseRenderer?,
+        renderParams: RenderParams?
+    ): Drawable? =
+        renderDrawable ?: createPictureDrawable(renderParams) {
+            onRenderInside(renderer, this, renderParams ?: RenderParams())
+        }
 
     override fun updateElementRenderProperty(property: CanvasRenderProperty) {
         property.copyTo(renderProperty)
@@ -182,66 +187,51 @@ abstract class BaseElement : IElement {
         )
     }
 
-    /**根据当前的属性, 绘制一个[bitmap]
-     * [overrideWidth] [overrideHeight] 需要覆盖输出的宽度
-     * */
-    protected fun createBitmapDrawable(
-        paint: Paint,
-        overrideSize: Float?,
-        bitmap: Bitmap? = getDrawBitmap(),
-    ): Drawable? {
-        bitmap ?: return null
-        return createPictureDrawable(overrideSize) {
-            val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
-            drawBitmap(bitmap, renderMatrix, paint)
-        }
+    /**渲染图片
+     * [bitmap] 要绘制的原始数据*/
+    protected fun renderBitmap(canvas: Canvas, paint: Paint, bitmap: Bitmap?) {
+        bitmap ?: return
+        val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
+        canvas.drawBitmap(bitmap, renderMatrix, paint)
     }
 
-    /**[createBitmapDrawable]
-     *
-     * [pathList] 未经过任何处理的原始数据
-     * [isLinePath] 是否线段
-     * */
-    protected fun createPathDrawable(
+    /**渲染Path
+     * [pathList] 要绘制的原始数据*/
+    protected fun renderPath(
+        canvas: Canvas,
         paint: Paint,
-        overrideSize: Float?,
-        @Pixel
-        minWidth: Float, /*最小宽度*/
-        @Pixel
-        minHeight: Float,
         isLinePath: Boolean,
-        pathList: List<Path>? = getDrawPathList()
-    ): Drawable? {
-        pathList ?: return null
-        if (pathList.isEmpty()) return null
-        return createPictureDrawable(overrideSize, minWidth, minHeight) {
+        pathList: List<Path>?,
+    ) {
+        pathList ?: return
+        if (pathList.isEmpty()) return
 
-            val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
-            val newPathList = pathList.translateToOrigin()
+        val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
+        val newPathList = pathList.translateToOrigin()
 
-            val oldStyle = paint.style
-            val oldPathEffect = paint.pathEffect
-            for (path in newPathList!!) {
-                path.transform(renderMatrix)
-                if (isLinePath) {
-                    //画线必须使用STROKE模式, 否则画不出
-                    paint.style = Paint.Style.STROKE
+        val oldStyle = paint.style
+        val oldPathEffect = paint.pathEffect
+        for (path in newPathList!!) {
+            path.transform(renderMatrix)
+            if (isLinePath) {
+                //画线必须使用STROKE模式, 否则画不出
+                paint.style = Paint.Style.STROKE
 
-                    if (oldStyle == Paint.Style.STROKE) {
-                        //描边的线段, 使用虚线绘制
-                        paint.pathEffect = createDashPathEffect() //虚线
-                    } else {
-                        paint.pathEffect = null //实线
-                    }
+                if (oldStyle == Paint.Style.STROKE) {
+                    //描边的线段, 使用虚线绘制
+                    paint.pathEffect = createDashPathEffect() //虚线
+                } else {
+                    paint.pathEffect = null //实线
                 }
-
-                //draw
-                drawPath(path, paint)
             }
-            paint.style = oldStyle
-            paint.pathEffect = oldPathEffect
+
+            //draw
+            canvas.drawPath(path, paint)
         }
+        paint.style = oldStyle
+        paint.pathEffect = oldPathEffect
     }
+
 
     /**创建一个虚线效果*/
     protected open fun createDashPathEffect(): PathEffect {

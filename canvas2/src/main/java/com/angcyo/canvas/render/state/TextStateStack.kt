@@ -33,6 +33,6 @@ open class TextStateStack : PropertyStateStack(), IStateStack {
             renderer.element<TextElement>()?.textProperty = it
         }
         super.restoreState(renderer, reason, strategy, delegate)
-        renderer.requestUpdateDrawableAndPropertyFlag(reason, delegate)
+        renderer.requestUpdatePropertyFlag(reason, delegate)
     }
 }

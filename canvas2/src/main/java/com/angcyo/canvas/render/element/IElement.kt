@@ -1,5 +1,6 @@
 package com.angcyo.canvas.render.element
 
+import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
@@ -38,15 +39,20 @@ interface IElement {
     /**请求获取元素渲染时, 相关的属性信息*/
     fun requestElementRenderProperty(): CanvasRenderProperty
 
-    /**请求获取用来渲染在界面的[Drawable]
+    /**请求获取用来渲染在其它界面的[Drawable]
      * 当前的[Drawable]应该是相对于[0,0]位置绘制的*/
-    fun requestElementRenderDrawable(renderParams: RenderParams?): Drawable?
+    fun requestElementDrawable(renderer: BaseRenderer?, renderParams: RenderParams?): Drawable?
 
     /**当编辑/操作完成后, 需要更新到对应的元素属性中*/
     fun updateElementRenderProperty(property: CanvasRenderProperty)
 
     /**[com.angcyo.canvas.render.renderer.BaseRenderer.isSupportControlPoint]*/
     fun isElementSupportControlPoint(type: Int): Boolean = true
+
+    /**绘制元素, 在0,0的位置绘制
+     * [renderer] 所在的渲染器, 如果有
+     * [params] 一些参数*/
+    fun onRenderInside(renderer: BaseRenderer?, canvas: Canvas, params: RenderParams)
 
     //endregion---core---
 

@@ -1,8 +1,10 @@
 package com.angcyo.canvas.render.renderer
 
+import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import androidx.core.graphics.withSave
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
@@ -24,8 +26,24 @@ class CanvasElementRenderer : BaseRenderer() {
 
     //region---core---
 
+    override fun renderOnInside(canvas: Canvas, params: RenderParams) {
+        super.renderOnInside(canvas, params)
+        renderProperty?.let { property ->
+            val element = renderElement
+            if (element == null) {
+                renderNoDrawable(canvas, params)
+            } else {
+                val renderBounds = property.getRenderBounds()
+                canvas.withSave {
+                    translate(renderBounds.left, renderBounds.top)//平移到指定位置
+                    element.onRenderInside(this@CanvasElementRenderer, canvas, params)
+                }
+            }
+        }
+    }
+
     override fun requestRenderDrawable(overrideSize: Float?): Drawable? {
-        return renderElement?.requestElementRenderDrawable(RenderParams().apply {
+        return renderElement?.requestElementDrawable(this, RenderParams().apply {
             this.overrideSize = overrideSize
             if (overrideSize != null) {
                 getRendererBounds()?.width()?.let {
@@ -44,12 +62,6 @@ class CanvasElementRenderer : BaseRenderer() {
         super.updateRenderProperty()
         val element = renderElement ?: return
         renderProperty = element.requestElementRenderProperty()
-    }
-
-    override fun updateRenderDrawable(params: RenderParams?) {
-        super.updateRenderDrawable(params)
-        val element = renderElement ?: return
-        renderDrawable = element.requestElementRenderDrawable(params)
     }
 
     /**[com.angcyo.canvas.render.core.component.ElementHitComponent.elementContainsPoint]*/

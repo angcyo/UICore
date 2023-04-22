@@ -172,8 +172,9 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 if (ignoreVisible || renderer.isVisible) {
                     if (renderer is CanvasElementRenderer) {
                         val renderProperty = renderer.renderProperty ?: continue
-                        val drawable = renderer.renderElement?.requestElementRenderDrawable(params)
-                            ?: continue
+                        val drawable =
+                            renderer.renderElement?.requestElementDrawable(renderer, params)
+                                ?: continue
                         renderer.renderDrawable(canvas, renderProperty, drawable, params)
                     } else if (renderer is CanvasGroupRenderer) {
                         renderRenderer(canvas, renderer.rendererList, params, ignoreVisible)
@@ -233,39 +234,11 @@ open class CanvasGroupRenderer : BaseRenderer() {
         updateGroupRenderProperty(Reason.code, null)
     }
 
-    override fun updateRenderDrawable(params: RenderParams?) {
-        super.updateRenderDrawable(params)
-        for (renderer in rendererList) {
-            renderer.updateRenderDrawable(params)
-        }
-    }
-
-    override fun requestUpdateDrawableFlag(reason: Reason, delegate: CanvasRenderDelegate?) {
-        super.requestUpdateDrawableFlag(reason, delegate)
-        if (isOnlyGroupRenderer()) {
-            for (renderer in rendererList) {
-                renderer.requestUpdateDrawableFlag(reason, delegate)
-            }
-        }
-    }
-
     override fun requestUpdatePropertyFlag(reason: Reason, delegate: CanvasRenderDelegate?) {
         super.requestUpdatePropertyFlag(reason, delegate)
         if (isOnlyGroupRenderer()) {
             for (renderer in rendererList) {
                 renderer.requestUpdatePropertyFlag(reason, delegate)
-            }
-        }
-    }
-
-    override fun requestUpdateDrawableAndPropertyFlag(
-        reason: Reason,
-        delegate: CanvasRenderDelegate?
-    ) {
-        super.requestUpdateDrawableAndPropertyFlag(reason, delegate)
-        if (isOnlyGroupRenderer()) {
-            for (renderer in rendererList) {
-                renderer.requestUpdateDrawableAndPropertyFlag(reason, delegate)
             }
         }
     }

@@ -18,7 +18,6 @@ import com.angcyo.canvas.render.element.IElement
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRenderBitmap
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRenderDrawable
 import com.angcyo.drawable.loading.CircleScaleLoadingDrawable
-import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.*
 import kotlin.math.max
@@ -52,19 +51,15 @@ abstract class BaseRenderer : IRenderer {
         @RenderFlag
         const val RENDERER_FLAG_ASYNC = RENDERER_FLAG_LOCK_SCALE shl 1
 
-        /**请求需要重新获取[IElement]的绘制属性
+        /**请求需要重新获取[IElement]的绘制属性, 绘制属性改变
          * 此标识会额外触发[com.angcyo.canvas.render.core.ICanvasRenderView.dispatchRendererPropertyChange]
          * */
         @RenderFlag
         const val RENDERER_FLAG_REQUEST_PROPERTY = RENDERER_FLAG_ASYNC shl 1
 
-        /**请求需要重新获取[IElement]的绘制Drawable */
-        @RenderFlag
-        const val RENDERER_FLAG_REQUEST_DRAWABLE = RENDERER_FLAG_REQUEST_PROPERTY shl 1
-
         /**最后一个标识位*/
         @RenderFlag
-        const val RENDERER_FLAG_LAST = RENDERER_FLAG_REQUEST_DRAWABLE shl 1
+        const val RENDERER_FLAG_LAST = RENDERER_FLAG_REQUEST_PROPERTY shl 1
     }
 
     /**渲染器的唯一标识*/
@@ -147,28 +142,18 @@ abstract class BaseRenderer : IRenderer {
 
     /**渲染之前的准备工作
      * [com.angcyo.canvas.render.element.IElement.requestElementRenderProperty]
-     * [com.angcyo.canvas.render.element.IElement.requestElementRenderDrawable]
+     * [com.angcyo.canvas.render.element.IElement.requestElementDrawable]
      * */
     open fun readyRenderIfNeed(params: RenderParams?) {
         val requestProperty = renderFlags.have(RENDERER_FLAG_REQUEST_PROPERTY)
         if (renderProperty == null || requestProperty) {
             updateRenderProperty()
         }
-
-        val requestDrawable = renderFlags.have(RENDERER_FLAG_REQUEST_DRAWABLE)
-        if (renderDrawable == null || requestProperty || requestDrawable) {
-            updateRenderDrawable(params)
-        }
     }
 
     /**更新[renderProperty]属性*/
     open fun updateRenderProperty() {
         renderFlags = renderFlags.remove(RENDERER_FLAG_REQUEST_PROPERTY)
-    }
-
-    /**更新[renderDrawable]属性*/
-    open fun updateRenderDrawable(params: RenderParams?) {
-        renderFlags = renderFlags.remove(RENDERER_FLAG_REQUEST_DRAWABLE)
     }
 
     /**
@@ -182,12 +167,7 @@ abstract class BaseRenderer : IRenderer {
         renderProperty?.let { property ->
             val renderBounds = property.getRenderBounds()
             val drawable = renderDrawable
-            if (drawable == null) {
-                if (this is CanvasElementRenderer) {
-                    L.w("没有可绘制的Drawable[${this@BaseRenderer.simpleHash()}]")
-                    renderNoDrawable(canvas, params)
-                }
-            } else {
+            if (drawable != null) {
                 val boundsWidth = renderBounds.width()
                 val width = if (boundsWidth <= 0) {
                     //实际宽度为0, 可能是线条
@@ -269,7 +249,7 @@ abstract class BaseRenderer : IRenderer {
     }
 
     /**无数据时, 渲染提示信息*/
-    private fun renderNoDrawable(canvas: Canvas, params: RenderParams) {
+    protected fun renderNoDrawable(canvas: Canvas, params: RenderParams) {
         val property = renderProperty ?: return
         val renderBounds = property.getRenderBounds()
 
@@ -474,30 +454,14 @@ abstract class BaseRenderer : IRenderer {
         }
         target?.copyTo(renderProperty)
 
-        requestUpdateDrawableAndPropertyFlag(reason, delegate)
+        requestUpdatePropertyFlag(reason, delegate)
         delegate?.dispatchRendererPropertyChange(this, null, target, reason)
-    }
-
-    /**请求更新[renderDrawable], 通知对应的状态发生了改变*/
-    @RenderFlag
-    open fun requestUpdateDrawableFlag(reason: Reason, delegate: CanvasRenderDelegate?) {
-        addRenderFlag(RENDERER_FLAG_REQUEST_DRAWABLE, reason, delegate)
     }
 
     /**请求更新[renderProperty], 通知对应的状态发生了改变*/
     @RenderFlag
     open fun requestUpdatePropertyFlag(reason: Reason, delegate: CanvasRenderDelegate?) {
         addRenderFlag(RENDERER_FLAG_REQUEST_PROPERTY, reason, delegate)
-    }
-
-    /**同时更新[renderDrawable] 和 [renderProperty]*/
-    @RenderFlag
-    open fun requestUpdateDrawableAndPropertyFlag(reason: Reason, delegate: CanvasRenderDelegate?) {
-        addRenderFlag(
-            RENDERER_FLAG_REQUEST_DRAWABLE or RENDERER_FLAG_REQUEST_PROPERTY,
-            reason,
-            delegate
-        )
     }
 
     /**平移操作结束之后, 需要将矩阵[matrix]作用到[renderProperty]
