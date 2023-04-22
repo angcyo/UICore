@@ -3,6 +3,7 @@ package com.angcyo.http.download
 import com.angcyo.library.L
 import com.angcyo.library.ex.getFileAttachmentName
 import com.angcyo.library.libCacheFile
+import com.angcyo.library.utils.fileNameUUID
 
 /**
  * [OkHttp]下载器
@@ -12,6 +13,8 @@ import com.angcyo.library.libCacheFile
 
 /**简单的OkHttp下载文件, 覆盖原文件
  * 不支持断点下载, 不存数据库
+ *
+ * [savePath] 保存的路径, 如果以/开头, 就是路径, 否则就是文件名
  * */
 fun String.download(
     savePath: String? = null,
@@ -19,7 +22,11 @@ fun String.download(
     action: (task: DownloadTask, error: Throwable?) -> Unit
 ): DownloadTask {
     val name = getFileAttachmentName()
-    val path = savePath ?: libCacheFile(name!!).absolutePath
+    val path = if (savePath?.startsWith("/") == true) {
+        savePath
+    } else {
+        libCacheFile(savePath ?: name ?: fileNameUUID()).absolutePath
+    }
     val task = DownloadTask(this, path, object : DownloadListener {
         override fun onDownloadSuccess(task: DownloadTask) {
             action(task, null)

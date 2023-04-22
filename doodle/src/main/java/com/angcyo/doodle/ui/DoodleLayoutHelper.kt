@@ -374,7 +374,7 @@ class DoodleLayoutHelper(val dialogConfig: DoodleDialogConfig) {
                 val bitmapUrl = outputList[0].asString
 
                 //开始下载图片
-                bitmapUrl.download { task, error2 ->
+                bitmapUrl.download(fileNameUUID(".png")) { task, error2 ->
                     if (error2 == null) {
                         //下载成功
                         val bitmapPath = task.savePath
