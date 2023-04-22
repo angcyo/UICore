@@ -44,6 +44,7 @@
         android:layout_height="@dimen/lib_new_icon_size"
         android:visibility="gone"
         app:layout_constraintRight_toRightOf="parent"
-        app:srcCompat="@drawable/lib_new_svg" />
+        app:srcCompat="@drawable/lib_new_svg"
+        tools:visibility="visible" />
 
 </com.angcyo.widget.layout.RConstraintLayout>
