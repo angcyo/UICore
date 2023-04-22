@@ -48,6 +48,7 @@ import com.angcyo.library.ex.toBitmap
 import com.angcyo.library.ex.toUri
 import com.angcyo.library.libCacheFile
 import com.angcyo.library.toastQQ
+import com.angcyo.library.utils.fileNameUUID
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.resetDslItem
 import com.angcyo.widget.progress.DslProgressBar
@@ -296,13 +297,14 @@ class DoodleLayoutHelper(val dialogConfig: DoodleDialogConfig) {
             var result: String? = null
             syncSingle { countDownLatch ->
                 val originBitmap = doodleDelegate.getPreviewBitmap()!!
-                val cacheFile = libCacheFile("ai_draw_origin.png")
+                val cacheFile = libCacheFile(fileNameUUID(".png"))
                 originBitmap.save(cacheFile.absolutePath)
 
                 //开始上传图片
                 DslHttp.uploadFileAction?.invoke(cacheFile.absolutePath) { bitmapUrl, error ->
                     if (error == null && !bitmapUrl.isNullOrEmpty()) {
                         //图片上传成功
+                        cacheFile.delete()//删除缓存文件
                         post {
                             url = "https://scribblediffusion.com/api/predictions"
                             body = jsonObject {
