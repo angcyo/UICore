@@ -186,6 +186,9 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
      * -1 的时候, 请使用[R.style.LibDialogBaseFullTheme] 主题
      * */
     var dialogHeight: Int = undefined_res
+
+    /**此属性和[contentBgDrawable]属性, 可能导致白色内容背景
+     * [initDialogView]*/
     var dialogGravity: Int = undefined_res
 
     /**作用在view上*/

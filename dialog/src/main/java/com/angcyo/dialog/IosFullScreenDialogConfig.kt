@@ -12,7 +12,12 @@ import com.angcyo.behavior.effect.TouchBackBehavior
 import com.angcyo.dialog.dslitem.DslDialogTextItem
 import com.angcyo.dsladapter.filter.batchLoad
 import com.angcyo.library._screenHeight
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.clamp
+import com.angcyo.library.ex.doAnimate
+import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.evaluateColor
+import com.angcyo.library.ex.mH
+import com.angcyo.library.ex.toColorInt
 import com.angcyo.widget.ActivityScreenshotImageView
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.behavior
@@ -55,7 +60,7 @@ class IosFullScreenDialogConfig : BaseDialogConfig() {
         //开启布局全屏, 体验更佳
         window.enableLayoutFullScreen(true)
         window.translucentStatusBar(true)
-//        window.translucentNavigationBar(true)
+        //window.translucentNavigationBar(true)
     }
 
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {

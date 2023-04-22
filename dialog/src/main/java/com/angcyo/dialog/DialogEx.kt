@@ -86,7 +86,7 @@ fun Context.customFullScreenDialog(config: DslDialogConfig.() -> Unit): Dialog {
         onConfigWindow = {
             it.enableLayoutFullScreen(true)
             it.translucentStatusBar(true)
-//        it.translucentNavigationBar(true)
+            //it.translucentNavigationBar(true)
         }
         config()
         show()
