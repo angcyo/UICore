@@ -238,6 +238,16 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
      * */
     var dialogType = DIALOG_TYPE_APPCOMPAT
 
+    /**
+     * [SOFT_INPUT_ADJUST_RESIZE]
+     * [SOFT_INPUT_ADJUST_PAN]
+     * [SOFT_INPUT_STATE_ALWAYS_HIDDEN]
+     * [SOFT_INPUT_ADJUST_NOTHING]
+     *
+     * https://juejin.cn/post/6844903840483917831
+     * */
+    var softInputMode = SOFT_INPUT_ADJUST_RESIZE
+
     /** 系统默认3个按钮设置
      * [BaseDialogConfig]*/
     var positiveButtonText: CharSequence? = null //确定
@@ -437,7 +447,8 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
                 }
             }
         }
-        window.setSoftInputMode(SOFT_INPUT_ADJUST_RESIZE)
+        //软键盘输入模式
+        window.setSoftInputMode(softInputMode)
         if (dialogBgDrawable !is UndefinedDrawable) {
             window.setBackgroundDrawable(dialogBgDrawable)
         }
