@@ -81,30 +81,35 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                         newValueBuild.append(oldValue.substring(0, oldValue.lastIndex))
                     }
                 }
+
                 CONTROL_DECREMENT -> {
                     //自减
                     newValueBuild.clear()
                     newValueBuild.append(oldValue?.toDoubleOrNull()?.run { "${this - step}" }
                         ?: "${-step}")
                 }
+
                 CONTROL_INCREMENT -> {
                     //自增
                     newValueBuild.clear()
                     newValueBuild.append(oldValue?.toDoubleOrNull()?.run { "${this + step}" }
                         ?: "$step")
                 }
+
                 CONTROL_FAST_DECREMENT -> {
                     //长按自减
                     newValueBuild.clear()
                     newValueBuild.append(oldValue?.toDoubleOrNull()?.run { "${this - longStep}" }
                         ?: "${-step}")
                 }
+
                 CONTROL_FAST_INCREMENT -> {
                     //长按自增
                     newValueBuild.clear()
                     newValueBuild.append(oldValue?.toDoubleOrNull()?.run { "${this + longStep}" }
                         ?: "$step")
                 }
+
                 "." -> {
                     val value = newValueBuild.toString()
                     if (value.contains(".")) {
@@ -113,6 +118,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                         newValueBuild.append(op)
                     }
                 }
+
                 else -> {
                     newValueBuild.append(op)
                 }
@@ -130,6 +136,9 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                 number == CONTROL_FAST_INCREMENT ||
                 number == "."
     }
+
+    /**按键的大小*/
+    var numberItemSize: Int? = null
 
     /**点击按键的回调
      * [number] -0,表示退格
@@ -216,6 +225,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
             list.add(createNumberItem(window, "."))
         } else {
             list.add(DslAdapterItem().apply {
+                initKeyboardItem()
                 itemLayoutId = R.layout.lib_keyboard_empty_item_layout
             })
         }
@@ -250,9 +260,17 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         }
     }
 
+    private fun DslAdapterItem.initKeyboardItem() {
+        numberItemSize?.let { size ->
+            itemWidth = size
+            itemHeight = size
+        }
+    }
+
     /**数字键和.号*/
     fun createNumberItem(window: TargetWindow, number: String): DslAdapterItem =
         KeyboardNumberItem().apply {
+            initKeyboardItem()
             itemText = number
             itemClick = {
                 if (onClickNumberAction(number)) {
@@ -266,6 +284,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
     /**回退键*/
     fun createNumberImageItem(window: TargetWindow): DslAdapterItem =
         KeyboardNumberImageItem().apply {
+            initKeyboardItem()
             itemClick = {
                 if (onClickNumberAction(CONTROL_BACKSPACE)) {
                     if (window is PopupWindow) {
