@@ -3,7 +3,11 @@ package com.angcyo.http.download
 import com.angcyo.http.DslHttp
 import com.angcyo.library.component.Web
 import com.angcyo.library.ex.uuid
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -86,8 +90,10 @@ class DownloadTask(
                             (sum * 1.0f / contentLength * 100).toInt()
                         }
                         // 下载中
-                        this@DownloadTask.progress = progress
-                        listener.onDownloading(this@DownloadTask, progress)
+                        if (this@DownloadTask.progress != progress) {
+                            this@DownloadTask.progress = progress
+                            listener.onDownloading(this@DownloadTask, progress)
+                        }
                     }
                     fos.flush()
                     // 下载完成

@@ -3,7 +3,15 @@ package com.angcyo.http
 import com.angcyo.http.DslHttp.DEFAULT_CODE_KEY
 import com.angcyo.http.DslHttp.DEFAULT_MSG_KEY
 import com.angcyo.http.DslHttp.retrofit
-import com.angcyo.http.base.*
+import com.angcyo.http.base.fromJson
+import com.angcyo.http.base.getBoolean
+import com.angcyo.http.base.getInt
+import com.angcyo.http.base.getString
+import com.angcyo.http.base.isBoolean
+import com.angcyo.http.base.isSuccess
+import com.angcyo.http.base.readString
+import com.angcyo.http.base.toFilePart
+import com.angcyo.http.base.toJson
 import com.angcyo.http.exception.HttpDataException
 import com.angcyo.http.exception.HttpResponseException
 import com.angcyo.http.rx.errorMessage
@@ -23,7 +31,18 @@ import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.HeaderMap
+import retrofit2.http.Multipart
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Part
+import retrofit2.http.QueryMap
+import retrofit2.http.Url
 import java.io.File
 import java.lang.reflect.Type
 import java.security.cert.X509Certificate
@@ -276,6 +295,14 @@ object DslHttp {
             return dslHttpConfig.okHttpClient!!
         }
 
+    /**上传文件的实现方法
+     * [filePath] 需要上传的文件路径
+     * [callback] 回调
+     *   [url] 可以下载的服务器地址
+     *   [error] 是否失败*/
+    var uploadFileAction: ((filePath: String, callback: (url: String?, error: Exception?) -> Unit) -> Unit)? =
+        null
+
     /**自定义配置, 否则使用库中默认配置*/
     fun config(action: DslHttpConfig.() -> Unit) {
         dslHttpConfig.reset()
@@ -433,6 +460,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
                 )
             }
         }
+
         PATCH -> {
             dslHttp(Api::class.java)?.patch(
                 requestConfig.url,
@@ -441,6 +469,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
                 requestConfig.header
             )
         }
+
         POST_FORM -> {
             dslHttp(Api::class.java)?.postForm(
                 requestConfig.url,
@@ -448,6 +477,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
                 requestConfig.header
             )
         }
+
         PUT -> {
             dslHttp(Api::class.java)?.put(
                 requestConfig.url,
@@ -456,6 +486,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
                 requestConfig.header
             )
         }
+
         else -> {
             dslHttp(Api::class.java)?.get(
                 requestConfig.url,
@@ -476,6 +507,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
                     requestConfig.isSuccessful(it) -> {
                         requestConfig.onSuccess(it)
                     }
+
                     body is JsonObject -> {
                         L.e(requestConfig.url)
                         if (body.has(requestConfig.codeKey)) {
@@ -487,6 +519,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
                             throw HttpDataException("返回体无[${requestConfig.codeKey}]", -200)
                         }
                     }
+
                     else -> {
                         requestConfig.onSuccess(it)
                     }
@@ -551,6 +584,7 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
                 )
             }
         }
+
         PUT -> {
             dslHttp(Api::class.java)?.put2Body(
                 requestConfig.url,
@@ -559,6 +593,7 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
                 requestConfig.header
             )
         }
+
         PATCH -> {
             if (requestConfig.requestBody == null) {
                 dslHttp(Api::class.java)?.patch2Body(
@@ -576,6 +611,7 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
                 )
             }
         }
+
         else -> {
             dslHttp(Api::class.java)?.get2Body(
                 requestConfig.url,
@@ -595,6 +631,7 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
                     requestConfig.isSuccessful(it) -> {
                         requestConfig.onSuccess(it)
                     }
+
                     else -> {
                         requestConfig.onSuccess(it)
                     }
@@ -828,12 +865,14 @@ fun <T> Response<JsonElement>.toBean(
                 else -> bodyJson.fromJson<T>(type, exception)
             }
         }
+
         parseError -> {
             when (val bodyJson = errorBody()?.readString()) {
                 null -> null
                 else -> bodyJson.fromJson<T>(type, parseError)
             }
         }
+
         else -> null
     }
 }
@@ -850,12 +889,14 @@ fun <T> Response<JsonElement>.toBean(
                 else -> bodyJson.fromJson(bean, throwError)
             }
         }
+
         parseError -> {
             when (val bodyJson = errorBody()?.readString()) {
                 null -> null
                 else -> bodyJson.fromJson(bean)
             }
         }
+
         else -> null
     }
 }
@@ -868,12 +909,14 @@ inline fun <reified Bean> Response<JsonElement>.toBean(parseError: Boolean = fal
                 else -> bodyJson.fromJson(Bean::class.java)
             }
         }
+
         parseError -> {
             when (val bodyJson = errorBody()?.readString()) {
                 null -> null
                 else -> bodyJson.fromJson(Bean::class.java)
             }
         }
+
         else -> null
     }
 }

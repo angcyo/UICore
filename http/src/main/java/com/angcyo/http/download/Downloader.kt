@@ -1,5 +1,6 @@
 package com.angcyo.http.download
 
+import com.angcyo.library.L
 import com.angcyo.library.ex.getFileAttachmentName
 import com.angcyo.library.libCacheFile
 
@@ -25,6 +26,7 @@ fun String.download(
         }
 
         override fun onDownloading(task: DownloadTask, progress: Int) {
+            L.v("下载:${task.url} -> ${task.savePath} 进度:$progress%")
             action(task, null)
         }
 
