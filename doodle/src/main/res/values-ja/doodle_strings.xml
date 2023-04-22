@@ -9,4 +9,7 @@
     <string name="doodle_brush">ブラシ</string>
     <string name="doodle_pencil">万年筆</string>
     <string name="doodle_size">サイズ</string>
+
+    <string name="doodle_ai_draw">AI図面</string>
+
 </resources>

@@ -3,7 +3,9 @@ package com.angcyo.doodle.ui
 import android.graphics.Color
 import android.view.MotionEvent
 import android.view.View
+import com.angcyo.core.loadingAsyncTg
 import com.angcyo.dialog.TargetWindow
+import com.angcyo.dialog.inputDialog
 import com.angcyo.dialog.popup.PopupTipConfig
 import com.angcyo.dialog.popup.popupTipWindow
 import com.angcyo.dialog.singleColorPickerDialog
@@ -15,27 +17,54 @@ import com.angcyo.doodle.brush.ZenCircleBrush
 import com.angcyo.doodle.core.DoodleUndoManager
 import com.angcyo.doodle.core.IDoodleListener
 import com.angcyo.doodle.core.ITouchRecognize
+import com.angcyo.doodle.singlePhotoViewDialog
 import com.angcyo.doodle.ui.dslitem.DoodleFunItem
 import com.angcyo.doodle.ui.dslitem.DoodleIconItem
 import com.angcyo.drawable.BubbleDrawable
+import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter._dslAdapter
+import com.angcyo.http.DslHttp
+import com.angcyo.http.base.getArray
+import com.angcyo.http.base.getString
+import com.angcyo.http.base.jsonObject
+import com.angcyo.http.download.download
+import com.angcyo.http.get
+import com.angcyo.http.post
+import com.angcyo.http.rx.doBack
+import com.angcyo.http.rx.observe
+import com.angcyo.item.style.itemHaveNew
+import com.angcyo.item.style.itemNewHawkKeyStr
 import com.angcyo.library._screenWidth
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.interceptParentTouchEvent
 import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.save
+import com.angcyo.library.ex.sleep
+import com.angcyo.library.ex.syncSingle
+import com.angcyo.library.ex.toBitmap
+import com.angcyo.library.ex.toUri
+import com.angcyo.library.libCacheFile
+import com.angcyo.library.toastQQ
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.resetDslItem
 import com.angcyo.widget.progress.DslProgressBar
 import com.angcyo.widget.progress.DslSeekBar
 import com.angcyo.widget.recycler.renderDslAdapter
+import java.util.concurrent.CountDownLatch
 
 /**
  * 涂鸦的界面操作
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/08/19
  */
-class DoodleLayoutHelper {
+class DoodleLayoutHelper(val dialogConfig: DoodleDialogConfig) {
+
+    companion object {
+        const val TAG_DOODLE_AI_DRAW = "doodle_ai_draw"
+    }
 
     /**涂鸦控件*/
     var doodleView: DoodleView? = null
@@ -45,9 +74,15 @@ class DoodleLayoutHelper {
 
     var maxPaintWidth: Float = 80f
 
+    var _rootViewHolder: DslViewHolder? = null
+
+    val _doodleItemAdapter: DslAdapter?
+        get() = _rootViewHolder?.rv(R.id.doodle_item_view)?._dslAdapter
+
     /**初始化入口*/
     @CallPoint
     fun initLayout(viewHolder: DslViewHolder) {
+        _rootViewHolder = viewHolder
         //
         doodleView = viewHolder.v<DoodleView>(R.id.lib_doodle_view)
         //items
@@ -109,6 +144,34 @@ class DoodleLayoutHelper {
                             colorPickerResultAction = { dialog, color ->
                                 doodleConfig?.paintColor = color
                                 false
+                            }
+                        }
+                    }
+                }
+            }
+            if (LibHawkKeys.enableAIDraw) {
+                val uploadFileAction = DslHttp.uploadFileAction
+                if (uploadFileAction != null) {
+                    DoodleIconItem()() {
+                        itemTag = TAG_DOODLE_AI_DRAW
+                        itemIco = R.drawable.doodle_ai_draw
+                        itemText = _string(R.string.doodle_ai_draw)
+                        itemNewHawkKeyStr = TAG_DOODLE_AI_DRAW
+                        itemEnable = false
+                        itemClick = {
+                            itemHaveNew = false
+                            it.context.inputDialog {
+                                dialogTitle = "Describe image"
+                                hintInputString = "Describe the image you want to create..."
+                                maxInputLength = 1000
+                                canInputEmpty = false
+                                defaultInputString = _lastPrompt
+                                onInputResult = { dialog, inputText ->
+                                    startAiDraw("$inputText") {
+                                        affirmAiDraw(it)
+                                    }
+                                    false
+                                }
                             }
                         }
                     }
@@ -204,12 +267,14 @@ class DoodleLayoutHelper {
                     }
                 }
             }
+
             MotionEvent.ACTION_MOVE -> {
                 popupTipConfig?.apply {
                     touchX = event.x
                     updatePopup()
                 }
             }
+
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 //window?.dismiss()
                 popupTipConfig?.hide()
@@ -217,4 +282,127 @@ class DoodleLayoutHelper {
         }
     }
 
+    //---
+
+    private var _lastPrompt: CharSequence? = null
+
+    /**[prompt] ai绘图的图片描述文本
+     * [action] 请求成功后, 图片本地路径*/
+    private fun startAiDraw(prompt: String, action: (String?) -> Unit = {}) {
+        _lastPrompt = prompt
+        val doodleView = doodleView ?: return
+        val doodleDelegate = doodleView.doodleDelegate
+
+        dialogConfig.loadingAsyncTg({
+            var result: String? = null
+            syncSingle { countDownLatch ->
+                val originBitmap = doodleDelegate.getPreviewBitmap()
+                val cacheFile = libCacheFile("ai_draw_origin.png")
+                originBitmap.save(cacheFile.absolutePath)
+
+                //开始上传图片
+                DslHttp.uploadFileAction?.invoke(cacheFile.absolutePath) { bitmapUrl, error ->
+                    if (error != null && !bitmapUrl.isNullOrEmpty()) {
+                        //图片上传成功
+                        post {
+                            url = "https://scribblediffusion.com/api/predictions"
+                            body = jsonObject {
+                                add("prompt", prompt)
+                                add("image", bitmapUrl)
+                                /*add(
+                                    "image",
+                                    "https://upcdn.io/FW25b4F/raw/uploads/scribble-diffusion/1.0.0/2023-04-22/scribble_input_XhANmnDt.png"
+                                )*/
+                                add("structure", "scribble")
+                            }
+                            isSuccessful = {
+                                it.isSuccessful
+                            }
+                        }.observe { data, error ->
+                            val bitmapId = data?.body()?.getString("id")
+                            if (!bitmapId.isNullOrEmpty()) {
+                                //请求成功, 然后通过id获取图片地址
+                                getBitmapUrl(bitmapId, countDownLatch) {
+                                    result = it
+                                    if (it == null) {
+                                        toastQQ("error please retry!")
+                                    }
+                                }
+                            } else {
+                                //请求失败失败
+                                countDownLatch.countDown()
+                                error?.let {
+                                    toastQQ(it.message)
+                                }
+                            }
+                        }
+                    } else {
+                        countDownLatch.countDown()
+                        error?.let {
+                            toastQQ(it.message)
+                        }
+                    }
+                }
+            }
+            result
+        })
+        { bitmapPath ->
+            action(bitmapPath)
+        }
+    }
+
+    private fun getBitmapUrl(
+        bitmapId: String,
+        countDownLatch: CountDownLatch,
+        retryCount: Int = 0,/*重试次数*/
+        action: (String?) -> Unit
+    ) {
+        if (retryCount >= 30) {
+            countDownLatch.countDown()
+            action(null)
+            return
+        }
+        get {
+            url = "https://scribblediffusion.com/api/predictions/$bitmapId"
+            isSuccessful = {
+                it.isSuccessful
+            }
+        }.observe { data, error ->
+            val outputList = data?.body()?.getArray("output")
+            if (outputList != null && !outputList.isEmpty) {
+                //请求成功, 然后通过id获取图片地址
+                val bitmapUrl = outputList[0].asString
+
+                //开始下载图片
+                bitmapUrl.download { task, error2 ->
+                    countDownLatch.countDown()
+                    if (error2 == null) {
+                        //下载成功
+                        val bitmapPath = task.savePath
+                        action(bitmapPath)
+                    } else {
+                        toastQQ(error2.message)
+                    }
+                }
+            } else {
+                //失败后, 重试
+                doBack {
+                    sleep(1000)
+                    getBitmapUrl(bitmapId, countDownLatch, retryCount + 1, action)
+                }
+            }
+        }
+    }
+
+    /**确认是否要使用ai生成的图片*/
+    private fun affirmAiDraw(bitmapPath: String?) {
+        bitmapPath ?: return
+        _rootViewHolder?.context?.singlePhotoViewDialog(bitmapPath.toUri()) {
+            positiveButton { dialog, dialogViewHolder ->
+                dialog.dismiss()
+                dialogConfig.onDoodleResultAction(bitmapPath.toBitmap()!!)
+                dialogConfig._dialog?.dismiss()
+            }
+        }
+    }
 }

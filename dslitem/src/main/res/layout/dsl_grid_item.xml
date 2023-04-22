@@ -38,4 +38,12 @@
         app:layout_constraintTop_toBottomOf="@id/lib_image_view"
         tools:text="angcyo" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_new_view"
+        android:layout_width="@dimen/lib_new_icon_size"
+        android:layout_height="@dimen/lib_new_icon_size"
+        android:visibility="gone"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/lib_new_svg" />
+
 </com.angcyo.widget.layout.RConstraintLayout>

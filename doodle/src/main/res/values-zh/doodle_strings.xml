@@ -9,4 +9,7 @@
     <string name="doodle_brush">毛笔</string>
     <string name="doodle_pencil">钢笔</string>
     <string name="doodle_size">大小</string>
+
+    <string name="doodle_ai_draw">AI绘图</string>
+
 </resources>

@@ -75,5 +75,8 @@ interface IAutoInitItem : IDslItem {
         if (this is IGridMediaItem) {
             initMediaItem(itemHolder, itemPosition, adapterItem, payloads)
         }
+        if (this is INewItem) {
+            initNewItem(itemHolder, itemPosition, adapterItem, payloads)
+        }
     }
 }

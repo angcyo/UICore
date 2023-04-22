@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="doodle_title">涂鸦</string>
+    <string name="doodle_title">Graffiti</string>
 
-    <string name="doodle_undo">撤销</string>
-    <string name="doodle_redo">重做</string>
-    <string name="doodle_color">颜色</string>
-    <string name="doodle_eraser">橡皮擦</string>
-    <string name="doodle_brush">毛笔</string>
-    <string name="doodle_pencil">钢笔</string>
-    <string name="doodle_size">大小</string>
+    <string name="doodle_undo">Undo</string>
+    <string name="doodle_redo">Redo</string>
+    <string name="doodle_color">Color</string>
+    <string name="doodle_eraser">Eraser</string>
+    <string name="doodle_brush">Brush</string>
+    <string name="doodle_pencil">Pen</string>
+    <string name="doodle_size">Size</string>
+
+    <string name="doodle_ai_draw">AI Plot</string>
 </resources>

@@ -11,6 +11,7 @@ import com.angcyo.doodle.R
 import com.angcyo.doodle.core.IDoodleListener
 import com.angcyo.doodle.element.BaseElement
 import com.angcyo.doodle.layer.BaseLayer
+import com.angcyo.dsladapter.findItemByTag
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -20,7 +21,7 @@ import com.angcyo.widget.DslViewHolder
  */
 class DoodleDialogConfig(context: Context? = null) : DslDialogConfig(context) {
 
-    val doodleLayoutHelper = DoodleLayoutHelper()
+    val doodleLayoutHelper = DoodleLayoutHelper(this)
 
     /**返回的回调*/
     var onDoodleResultAction: (Bitmap) -> Unit = {}
@@ -78,10 +79,15 @@ class DoodleDialogConfig(context: Context? = null) : DslDialogConfig(context) {
     }
 
     fun updateConfirmButton(dialogViewHolder: DslViewHolder) {
-        dialogViewHolder.enable(
-            R.id.confirm_button,
+        val haveElement =
             doodleLayoutHelper.doodleView?.doodleDelegate?.doodleLayerManager?.haveElement() == true
-        )
+        dialogViewHolder.enable(R.id.confirm_button, haveElement)
+
+        doodleLayoutHelper._doodleItemAdapter?.findItemByTag(DoodleLayoutHelper.TAG_DOODLE_AI_DRAW)
+            ?.apply {
+                itemEnable = haveElement
+                updateAdapterItem()
+            }
     }
 
 }

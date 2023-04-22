@@ -17,8 +17,7 @@ import com.angcyo.widget.DslViewHolder
  */
 interface ITextItem : IAutoInitItem {
 
-    /**配置类
-     * */
+    /**配置类 */
     var textItemConfig: TextItemConfig
 
     /**初始化*/

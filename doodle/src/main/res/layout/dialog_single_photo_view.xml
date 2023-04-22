@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.angcyo.image.widget.RPhotoView
+        android:id="@+id/lib_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter" />
+
+    <FrameLayout
+        android:id="@+id/lib_transition_overlay_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.angcyo.widget.progress.ArcLoadingView
+            android:id="@+id/lib_loading_view"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            app:arc_auto_start="true" />
+
+    </FrameLayout>
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/dialog_positive_button"
+        style="@style/LibButtonThemeSolidStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginHorizontal="@dimen/lib_xxxhdpi"
+        android:layout_marginBottom="@dimen/lib_xxxhdpi"
+        android:text="@string/dialog_positive"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+</FrameLayout>
