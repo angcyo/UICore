@@ -53,7 +53,6 @@ import com.angcyo.widget.base.resetDslItem
 import com.angcyo.widget.progress.DslProgressBar
 import com.angcyo.widget.progress.DslSeekBar
 import com.angcyo.widget.recycler.renderDslAdapter
-import java.util.concurrent.CountDownLatch
 
 /**
  * 涂鸦的界面操作
@@ -296,13 +295,13 @@ class DoodleLayoutHelper(val dialogConfig: DoodleDialogConfig) {
         dialogConfig.loadingAsyncTg({
             var result: String? = null
             syncSingle { countDownLatch ->
-                val originBitmap = doodleDelegate.getPreviewBitmap()
+                val originBitmap = doodleDelegate.getPreviewBitmap()!!
                 val cacheFile = libCacheFile("ai_draw_origin.png")
                 originBitmap.save(cacheFile.absolutePath)
 
                 //开始上传图片
                 DslHttp.uploadFileAction?.invoke(cacheFile.absolutePath) { bitmapUrl, error ->
-                    if (error != null && !bitmapUrl.isNullOrEmpty()) {
+                    if (error == null && !bitmapUrl.isNullOrEmpty()) {
                         //图片上传成功
                         post {
                             url = "https://scribblediffusion.com/api/predictions"
@@ -318,29 +317,30 @@ class DoodleLayoutHelper(val dialogConfig: DoodleDialogConfig) {
                             isSuccessful = {
                                 it.isSuccessful
                             }
-                        }.observe { data, error ->
+                        }.observe { data, error2 ->
                             val bitmapId = data?.body()?.getString("id")
                             if (!bitmapId.isNullOrEmpty()) {
                                 //请求成功, 然后通过id获取图片地址
-                                getBitmapUrl(bitmapId, countDownLatch) {
+                                getBitmapUrl(bitmapId) {
                                     result = it
                                     if (it == null) {
                                         toastQQ("error please retry!")
                                     }
+                                    countDownLatch.countDown()
                                 }
                             } else {
                                 //请求失败失败
-                                countDownLatch.countDown()
-                                error?.let {
+                                error2?.let {
                                     toastQQ(it.message)
                                 }
+                                countDownLatch.countDown()
                             }
                         }
                     } else {
-                        countDownLatch.countDown()
                         error?.let {
                             toastQQ(it.message)
                         }
+                        countDownLatch.countDown()
                     }
                 }
             }
@@ -353,12 +353,10 @@ class DoodleLayoutHelper(val dialogConfig: DoodleDialogConfig) {
 
     private fun getBitmapUrl(
         bitmapId: String,
-        countDownLatch: CountDownLatch,
         retryCount: Int = 0,/*重试次数*/
         action: (String?) -> Unit
     ) {
         if (retryCount >= 30) {
-            countDownLatch.countDown()
             action(null)
             return
         }
@@ -375,7 +373,6 @@ class DoodleLayoutHelper(val dialogConfig: DoodleDialogConfig) {
 
                 //开始下载图片
                 bitmapUrl.download { task, error2 ->
-                    countDownLatch.countDown()
                     if (error2 == null) {
                         //下载成功
                         val bitmapPath = task.savePath
@@ -388,7 +385,7 @@ class DoodleLayoutHelper(val dialogConfig: DoodleDialogConfig) {
                 //失败后, 重试
                 doBack {
                     sleep(1000)
-                    getBitmapUrl(bitmapId, countDownLatch, retryCount + 1, action)
+                    getBitmapUrl(bitmapId, retryCount + 1, action)
                 }
             }
         }

@@ -3,7 +3,7 @@ package com.angcyo.doodle.ui
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Bitmap
-import com.angcyo.bitmap.handle.BitmapHandle
+import android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING
 import com.angcyo.core.loadingAsyncTg
 import com.angcyo.dialog.DslDialogConfig
 import com.angcyo.dialog.configBottomDialog
@@ -28,6 +28,7 @@ class DoodleDialogConfig(context: Context? = null) : DslDialogConfig(context) {
 
     init {
         dialogLayoutId = R.layout.lib_doodle_dialog_layout
+        softInputMode = SOFT_INPUT_ADJUST_NOTHING
     }
 
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
@@ -63,7 +64,7 @@ class DoodleDialogConfig(context: Context? = null) : DslDialogConfig(context) {
                 //async
                 loadingAsyncTg({
                     /*getPreviewBitmap().trimEdgeColor()*/
-                    BitmapHandle.trimEdgeColor(getPreviewBitmap(), 200)
+                    getPreviewBitmap()
                 }) { bitmap ->
                     onDoodleResultAction(bitmap!!)
                     //

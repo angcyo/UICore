@@ -6,11 +6,21 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.withTranslation
+import com.angcyo.bitmap.handle.BitmapHandle
 import com.angcyo.doodle.brush.EraserBrush
 import com.angcyo.doodle.component.DoodleMagnifier
 import com.angcyo.doodle.component.MagnifierCanvas
 import com.angcyo.doodle.component.PreviewCanvas
-import com.angcyo.doodle.core.*
+import com.angcyo.doodle.core.AlphaElement
+import com.angcyo.doodle.core.DoodleConfig
+import com.angcyo.doodle.core.DoodleLayerManager
+import com.angcyo.doodle.core.DoodleTouchManager
+import com.angcyo.doodle.core.DoodleUndoManager
+import com.angcyo.doodle.core.DoodleViewBox
+import com.angcyo.doodle.core.IDoodleListener
+import com.angcyo.doodle.core.IDoodleView
+import com.angcyo.doodle.core.ITouchRecognize
+import com.angcyo.doodle.core.Strategy
 import com.angcyo.doodle.element.BaseElement
 import com.angcyo.doodle.layer.BaseLayer
 import com.angcyo.doodle.layer.NormalLayer
@@ -91,6 +101,7 @@ class DoodleDelegate(val view: View) : IDoodleView {
                     }
                 }
             }
+
             MotionEvent.ACTION_MOVE -> {
                 doodleMagnifier?.apply {
                     if (isEnable) {
@@ -98,6 +109,7 @@ class DoodleDelegate(val view: View) : IDoodleView {
                     }
                 }
             }
+
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 doodleMagnifier?.apply {
                     if (isEnable) {
@@ -215,8 +227,13 @@ class DoodleDelegate(val view: View) : IDoodleView {
         operateLayer?.addElement(element, strategy)
     }
 
-    /**获取预览的图片*/
-    fun getPreviewBitmap(): Bitmap {
+    /**获取预览的图片
+     * [trim] 是否要剔除边框
+     * [grayThreshold] 灰度阈值, 剔除灰度值大于等于这个值时, 剔除*/
+    fun getPreviewBitmap(
+        trim: Boolean = true,
+        grayThreshold: Int = 200,
+    ): Bitmap? {
         val bitmap = Bitmap.createBitmap(
             viewBox.contentRect.width(),
             viewBox.contentRect.height(),
@@ -229,6 +246,13 @@ class DoodleDelegate(val view: View) : IDoodleView {
         ) {
             onDraw(canvas)
         }
+
+        if (trim) {
+            val result = BitmapHandle.trimEdgeColor(bitmap, grayThreshold)
+            bitmap.recycle()
+            return result
+        }
+
         return bitmap
     }
 
