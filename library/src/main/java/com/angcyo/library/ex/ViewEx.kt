@@ -248,6 +248,7 @@ fun View?.fullscreen(full: Boolean = true) {
                         //拉出状态栏和导航栏后显示一会儿消失。
                         View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
             }
+
             else -> {
                 systemUiVisibility.remove(View.SYSTEM_UI_FLAG_FULLSCREEN)
 
@@ -272,6 +273,7 @@ fun View?.lowProfile(lowProfile: Boolean = true) {
                         //拉出状态栏和导航栏后显示一会儿消失。
                         View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
             }
+
             else -> {
                 systemUiVisibility.remove(View.SYSTEM_UI_FLAG_FULLSCREEN)
                     .remove(View.SYSTEM_UI_FLAG_LOW_PROFILE)
@@ -538,6 +540,16 @@ fun View.doOnPreDraw(action: (View) -> Unit) {
 //<editor-fold desc="软键盘相关">
 
 /**隐藏软键盘*/
+fun Context.hideSoftInput() {
+    if (this is Activity) {
+        (currentFocus ?: window.decorView).apply {
+            isFocusable = false
+            hideSoftInput()
+        }
+    }
+}
+
+/**隐藏软键盘*/
 fun View.hideSoftInput() {
     val manager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     manager.hideSoftInputFromWindow(windowToken, 0)
@@ -552,9 +564,7 @@ fun View.showSoftInput() {
     }
 }
 
-/**
- * 获取键盘的高度
- */
+/** 获取键盘的高度 */
 fun View.getSoftKeyboardHeight(): Int {
     val screenHeight = getScreenHeightPixels()
     val rect = acquireTempRect()

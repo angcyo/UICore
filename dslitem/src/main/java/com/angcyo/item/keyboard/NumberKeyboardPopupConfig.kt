@@ -13,6 +13,7 @@ import com.angcyo.item.R
 import com.angcyo.item.style.itemText
 import com.angcyo.library.L
 import com.angcyo.library.annotation.DSL
+import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.getFloatNum
 import com.angcyo.widget.DslViewHolder
@@ -390,6 +391,8 @@ fun Context.keyboardNumberWindow(
     anchor: View?,
     config: NumberKeyboardPopupConfig.() -> Unit
 ): TargetWindow {
+    //显示键盘之前, 需要隐藏键盘
+    lastContext.hideSoftInput()
     val popupConfig = NumberKeyboardPopupConfig()
     popupConfig.anchor = anchor
     popupConfig.config()
