@@ -53,7 +53,9 @@ class GCodeWriteHandler : VectorWriteHandler() {
         if (isAutoCnc) {
             writer?.appendLine("S0 M5")
         }
-        writer?.appendLine("G0 X0 Y0")
+        if (LibLpHawkKeys.enableGCodeEndG0) {
+            writer?.appendLine("G0 X0 Y0")
+        }
         writer?.append("M2") //程序结束
     }
 

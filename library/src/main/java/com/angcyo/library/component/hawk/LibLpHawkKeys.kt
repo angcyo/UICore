@@ -34,6 +34,9 @@ object LibLpHawkKeys {
     /**是否激活压缩GCode输出*/
     var enableGCodeShrink: Boolean by HawkPropertyValue<Any, Boolean>(true)
 
+    /**是否激活GCode最后的G0输出*/
+    var enableGCodeEndG0: Boolean by HawkPropertyValue<Any, Boolean>(false)
+
     //---
 
     /**L1的物理尺寸配置*/
