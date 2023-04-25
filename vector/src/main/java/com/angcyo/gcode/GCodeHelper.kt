@@ -527,6 +527,7 @@ object GCodeHelper {
                             }
                             overrideGCommand?.invoke(line, firstCmd, _tempXYPoint, null)
                         }
+
                         1 -> { //G1
                             isSpindleOn = if (spindleType == SPINDLE_AUTO) {
                                 true
@@ -547,6 +548,7 @@ object GCodeHelper {
                             }
                             overrideGCommand?.invoke(line, firstCmd, _tempXYPoint, null)
                         }
+
                         2, 3 -> { //G2 G3, G2是顺时针圆弧移动，G3是逆时针圆弧移动。
                             //x1 y1, x2, y2 经过i j为中心的圆弧
 
