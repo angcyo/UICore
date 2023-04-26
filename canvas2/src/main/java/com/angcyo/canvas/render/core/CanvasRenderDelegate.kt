@@ -326,6 +326,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         op: List<BaseRenderer>,
         reason: Reason
     ) {
+        selectorManager.updateSelectorRendererOrder()
         for (listener in renderListenerList) {
             listener.onElementRendererListChange(from, to, op, reason)
         }

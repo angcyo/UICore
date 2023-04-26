@@ -21,6 +21,7 @@ import com.angcyo.library.ex.isChange
 import com.angcyo.library.ex.isIntersect
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.removeOutOf
+import com.angcyo.library.ex.resetAll
 import com.angcyo.library.ex.size
 import com.angcyo.library.gesture.DoubleGestureDetector2
 
@@ -385,6 +386,20 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
      * [com.angcyo.canvas.render.core.component.CanvasSelectorComponent.updateLockScaleRatio]*/
     fun updateLockScaleRatio(lock: Boolean, reason: Reason, delegate: CanvasRenderDelegate?) {
         this.delegate.controlManager.updateLockScaleRatio(lock, reason, delegate)
+    }
+
+    /**当渲染的元素改变后, 需要同步更新选中元素的顺序*/
+    fun updateSelectorRendererOrder() {
+        if (isSelectorElement) {
+            val newList = mutableListOf<BaseRenderer>()
+            val oldList = selectorComponent.rendererList
+            for (renderer in delegate.renderManager.elementRendererList) {
+                if (oldList.contains(renderer)) {
+                    newList.add(renderer)
+                }
+            }
+            selectorComponent.rendererList.resetAll(newList)
+        }
     }
 
     //endregion---操作---
