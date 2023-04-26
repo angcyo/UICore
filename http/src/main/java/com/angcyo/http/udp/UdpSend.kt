@@ -1,15 +1,16 @@
 package com.angcyo.http.udp
 
+import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.DSL
+import com.angcyo.library.annotation.ThreadDes
 import com.angcyo.library.component.ICancel
 import com.angcyo.library.ex.size
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.concurrent.thread
 
 /**
  * 使用UDP发送数据, 如果地址是: 255.255.255.255 , 那么就是广播
@@ -26,12 +27,13 @@ class UdpSend : ICancel {
     var address: String? = null
 
     /**发送的端口*/
-    var port = 0
+    var port = 80
 
     /**需要发送的数据*/
     var bytes: ByteArray? = null
 
     /**发送数据的回调*/
+    @ThreadDes("子线程回调")
     var onSendAction: (error: Exception?) -> Unit = { }
 
     /**是否被取消*/
@@ -40,7 +42,7 @@ class UdpSend : ICancel {
     /**开始发送数据*/
     @CallPoint
     fun startSend() {
-        thread {
+        doBack {
             try {
                 val socket = DatagramSocket()
                 val data = DatagramPacket(

@@ -10,7 +10,7 @@ import com.angcyo.library.ex._string
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/11/10
  */
-class DslPropertyStringItem : DslBasePropertyItem(), IEditItem {
+open class DslPropertyStringItem : DslBasePropertyItem(), IEditItem {
 
     override var editItemConfig: EditItemConfig = EditItemConfig().apply {
         itemEditTextStyle.hint = _string(R.string.dialog_input_hint)

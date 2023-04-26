@@ -1,8 +1,10 @@
 package com.angcyo.http.udp
 
+import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.DSL
+import com.angcyo.library.annotation.ThreadDes
 import com.angcyo.library.component.ICancel
 import com.angcyo.library.ex.size
 import java.net.BindException
@@ -11,7 +13,6 @@ import java.net.DatagramSocket
 import java.net.SocketTimeoutException
 import java.nio.charset.Charset
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.concurrent.thread
 
 /**
  * 使用UDP接收数据
@@ -31,7 +32,7 @@ class UdpReceive : ICancel {
     }
 
     /**接收的端口*/
-    var port = 0
+    var port = 9200
 
     /**接收的字节大小*/
     var bufferSize: Int = BUFFER_SIZE
@@ -46,6 +47,7 @@ class UdpReceive : ICancel {
     var timeoutRetry: Boolean = true
 
     /**接收到数据的回调*/
+    @ThreadDes("子线程回调")
     var onReceiveAction: (content: String?, error: Exception?) -> Unit = { _, _ -> }
 
     /**是否被取消*/
@@ -54,7 +56,7 @@ class UdpReceive : ICancel {
     /**开始接收数据*/
     @CallPoint
     fun startReceive() {
-        thread {
+        doBack {
             var socket: DatagramSocket? = null
             try {
                 socket = DatagramSocket(port)
