@@ -117,113 +117,102 @@ object Debug {
             lines?.forEach { line ->
                 if (line == null) {
                     //no op
-                } else if (line.contains("@") &&
-                    line.contains("#") &&
-                    line.contains("=")
-                ) {
-                    val keyBuilder = StringBuilder()
-                    val typeBuilder = StringBuilder()
-                    val valueBuilder = StringBuilder()
+                } else {
+                    val keyIndex = line.indexOf("@")
+                    val typeIndex = line.indexOf("#")
+                    val valueIndex = line.indexOf("=")
+                    if (keyIndex != -1 && typeIndex != -1 && valueIndex != -1) {
 
-                    var operate: StringBuilder? = null
-                    line.forEach {
-                        when (it) {
-                            '@' -> operate = keyBuilder
-                            '#' -> operate = typeBuilder
-                            '=' -> operate = valueBuilder
-                            else -> operate?.append(it)
-                        }
-                    }
-
-                    //@key#int=value
-                    val key = keyBuilder.toString()
-                    val type = typeBuilder.toString().lowercase()
-                    val valueString = valueBuilder.toString()
-                    if (key.isNotBlank()) {
-                        when (key.lowercase()) {
-                            "cmd" -> {
-                                when (type) {
-                                    "open" -> {
-                                        //打开Fragment界面
-                                        //@cmd#open=value
-                                        lastContext.apply {
-                                            if (this is FragmentActivity) {
-                                                onShowFragmentAction?.invoke(this, valueString)
-                                                match = true
+                        //@key#int=value
+                        val key = line.substring(keyIndex + 1, typeIndex)
+                        val type = line.substring(typeIndex + 1, valueIndex)
+                        val valueString = line.substring(valueIndex + 1, line.length)
+                        if (key.isNotBlank()) {
+                            when (key.lowercase()) {
+                                "cmd" -> {
+                                    when (type) {
+                                        "open" -> {
+                                            //打开Fragment界面
+                                            //@cmd#open=value
+                                            lastContext.apply {
+                                                if (this is FragmentActivity) {
+                                                    onShowFragmentAction?.invoke(this, valueString)
+                                                    match = true
+                                                }
                                             }
                                         }
-                                    }
 
-                                    "clear" -> {
-                                        //删除hawk的键
-                                        //@cmd#clear=key
-                                        val hawkKey = valueString.lowercase()
-                                        hawkKey.hawkDelete()
-                                        match = true
-                                    }
+                                        "clear" -> {
+                                            //删除hawk的键
+                                            //@cmd#clear=key
+                                            val hawkKey = valueString.lowercase()
+                                            hawkKey.hawkDelete()
+                                            match = true
+                                        }
 
-                                    "hawk" -> {
-                                        //显示hawk的值
-                                        //@cmd#hawk=key
-                                        val hawkKey = valueString.lowercase()
-                                        toastQQ("${hawkKey.hawkGet<Any>()}")
-                                        match = true
+                                        "hawk" -> {
+                                            //显示hawk的值
+                                            //@cmd#hawk=key
+                                            val hawkKey = valueString.lowercase()
+                                            toastQQ("${hawkKey.hawkGet<Any>()}")
+                                            match = true
+                                        }
                                     }
                                 }
-                            }
 
-                            else -> {
-                                //@key#int=value
-                                when (type) {
-                                    "bool", "boolean" -> {
-                                        val value = valueString.toBoolean()
-                                        key.hawkPut(value)
-                                        match = true
-                                    }
-
-                                    "int", "i" -> {
-                                        val value = valueString.toIntOrNull()
-                                        if (value == null) {
-                                            key.hawkDelete()
-                                        } else {
+                                else -> {
+                                    //@key#int=value
+                                    when (type) {
+                                        "bool", "boolean" -> {
+                                            val value = valueString.toBoolean()
                                             key.hawkPut(value)
+                                            match = true
                                         }
-                                        match = true
-                                    }
 
-                                    "long", "l" -> {
-                                        val value = valueString.toLongOrNull()
-                                        if (value == null) {
-                                            key.hawkDelete()
-                                        } else {
-                                            key.hawkPut(value)
+                                        "int", "i" -> {
+                                            val value = valueString.toIntOrNull()
+                                            if (value == null) {
+                                                key.hawkDelete()
+                                            } else {
+                                                key.hawkPut(value)
+                                            }
+                                            match = true
                                         }
-                                        match = true
-                                    }
 
-                                    "float", "f" -> {
-                                        val value = valueString.toFloatOrNull()
-                                        if (value == null) {
-                                            key.hawkDelete()
-                                        } else {
-                                            key.hawkPut(value)
+                                        "long", "l" -> {
+                                            val value = valueString.toLongOrNull()
+                                            if (value == null) {
+                                                key.hawkDelete()
+                                            } else {
+                                                key.hawkPut(value)
+                                            }
+                                            match = true
                                         }
-                                        match = true
-                                    }
 
-                                    "double", "d" -> {
-                                        val value = valueString.toDoubleOrNull()
-                                        if (value == null) {
-                                            key.hawkDelete()
-                                        } else {
-                                            key.hawkPut(value)
+                                        "float", "f" -> {
+                                            val value = valueString.toFloatOrNull()
+                                            if (value == null) {
+                                                key.hawkDelete()
+                                            } else {
+                                                key.hawkPut(value)
+                                            }
+                                            match = true
                                         }
-                                        match = true
-                                    }
 
-                                    "string", "s" -> {
-                                        key.hawkPut(valueString)
-                                        match = true
+                                        "double", "d" -> {
+                                            val value = valueString.toDoubleOrNull()
+                                            if (value == null) {
+                                                key.hawkDelete()
+                                            } else {
+                                                key.hawkPut(value)
+                                            }
+                                            match = true
+                                        }
+
+                                        "string", "s" -> {
+                                            key.hawkPut(valueString)
+                                            match = true
+                                        }
                                     }
                                 }
                             }
