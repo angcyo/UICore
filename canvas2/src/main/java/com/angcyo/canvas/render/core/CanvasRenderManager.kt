@@ -174,6 +174,14 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
 
         if (selector) {
             delegate.selectorManager.resetSelectorRenderer(list, reason)
+
+            val bounds = CanvasGroupRenderer.computeBounds(list)
+            if (bounds != null) {
+                if (!delegate.renderViewBox.isVisibleInRenderBox(bounds, true)) {
+                    //元素没有完全显示, 则自动移动到中心
+                    delegate.showBounds(bounds)
+                }
+            }
         }
     }
 

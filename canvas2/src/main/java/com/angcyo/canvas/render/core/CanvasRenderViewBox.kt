@@ -328,6 +328,19 @@ class CanvasRenderViewBox(val delegate: CanvasRenderDelegate) {
         return result
     }
 
+    /**是否在当前的可视坐标范围内可见
+     * [fullIn] 是否要全部可见, 否则露出一部分也视为可见*/
+    fun isVisibleInRenderBox(bounds: RectF?, fullIn: Boolean = false): Boolean {
+        bounds ?: return false
+        val visibleBoundsInside = visibleBoundsInside
+        return if (fullIn) {
+            //需要全部可见
+            visibleBoundsInside.contains(bounds) //全包含
+        } else {
+            visibleBoundsInside.intersect(bounds) //相交即可
+        }
+    }
+
     //---
 
     /**增量平移画布*/

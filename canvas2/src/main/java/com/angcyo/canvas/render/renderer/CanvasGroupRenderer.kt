@@ -69,10 +69,10 @@ open class CanvasGroupRenderer : BaseRenderer() {
             rendererList: List<BaseRenderer>?,
             @Pixel bounds: RectF? = null,
             ignoreVisible: Boolean = false
-        ): RectF {
+        ): RectF? {
             if (bounds == null) {
                 if (rendererList == null) {
-                    return RectF(0f, 0f, 0f, 0f)
+                    return null
                 }
                 val rect =
                     RectF(Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE)
@@ -93,7 +93,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                     }
                 }
                 if (!isSet) {
-                    rect.set(0f, 0f, 0f, 0f)
+                    return null
                 }
                 return rect
             } else {
@@ -111,7 +111,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
             ignoreVisible: Boolean = false
         ): Drawable? {
             rendererList ?: return null
-            val rect = computeBounds(rendererList, bounds)
+            val rect = computeBounds(rendererList, bounds) ?: return null
             return PictureRenderDrawable(createOverridePictureCanvas(
                 rect.width(),
                 rect.height(),
@@ -140,7 +140,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
             ignoreVisible: Boolean = false
         ): Bitmap? {
             rendererList ?: return null
-            val rect = computeBounds(rendererList, bounds)
+            val rect = computeBounds(rendererList, bounds) ?: return null
             if (rect.isInvalid()) {
                 return null
             }

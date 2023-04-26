@@ -376,13 +376,7 @@ abstract class BaseRenderer : IRenderer {
     ): Boolean {
         delegate ?: return def
         val bounds = renderProperty?.getRenderBounds() ?: return false
-        val visibleBoundsInside = delegate.renderViewBox.visibleBoundsInside
-        return if (fullIn) {
-            //需要全部可见
-            visibleBoundsInside.contains(bounds) //全包含
-        } else {
-            visibleBoundsInside.intersect(bounds) //相交即可
-        }
+        return delegate.renderViewBox.isVisibleInRenderBox(bounds, fullIn)
     }
 
     //endregion---core---

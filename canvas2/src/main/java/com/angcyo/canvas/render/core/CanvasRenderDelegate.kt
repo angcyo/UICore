@@ -432,6 +432,20 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         }
     }
 
+    /**[showRectBounds]
+     * [showRendererBounds]*/
+    fun showBounds(
+        @CanvasInsideCoordinate
+        rect: RectF?,
+        zoomIn: Boolean = false /*自动放大*/,
+        zoomOut: Boolean = true /*自动缩小*/,
+        margin: Float = BaseControlPoint.DEFAULT_CONTROL_POINT_SIZE
+    ) {
+        rect?.let {
+            showRectBounds(it, margin, zoomIn, zoomOut)
+        }
+    }
+
     /**将画板移动到可以完全显示出[rect]
      * [rect] 坐标系中的矩形坐标
      * [zoomIn]  当矩形很小的时候, 是否要放大.
@@ -445,7 +459,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     fun showRectBounds(
         @CanvasInsideCoordinate
         rect: RectF,
-        margin: Float = 4f * dp,
+        margin: Float = BaseControlPoint.DEFAULT_CONTROL_POINT_SIZE,
         zoomIn: Boolean = true /*自动放大*/,
         zoomOut: Boolean = true /*自动缩小*/,
         lockScale: Boolean = true,
