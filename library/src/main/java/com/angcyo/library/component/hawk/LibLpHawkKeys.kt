@@ -88,4 +88,18 @@ object LibLpHawkKeys {
      * 2米*/
     @MM
     var carMaxY: Int? by HawkPropertyValue<Any, Int?>(null)//2_00_0
+
+    //
+
+    /**是否激活wifi传输*/
+    var enableWifiConfig: Boolean by HawkPropertyValue<Any, Boolean>(false)
+
+    /**服务地址: ip:port*/
+    var wifiAddress: String? by HawkPropertyValue<Any, String?>(null)
+
+    /**wifi发送缓存大小*/
+    var wifiBufferSize: Int by HawkPropertyValue<Any, Int>(4096)
+
+    /**wifi发送延迟*/
+    var wifiSendDelay: Int by HawkPropertyValue<Any, Int>(20)
 }
