@@ -41,10 +41,12 @@ open class PathElement : BaseElement() {
     ): Drawable? {
         pathList ?: return null
         val params = renderParams ?: RenderParams()
-        val minWidth = max((renderParams ?: RenderParams()).drawMinWidth, paint.strokeWidth)
-        val minHeight = max((renderParams ?: RenderParams()).drawMinHeight, paint.strokeWidth)
-        params.drawMinWidth = minWidth
-        params.drawMinHeight = minHeight
+        if (params.renderDst is Float) {
+            val minWidth = max((renderParams ?: RenderParams()).drawMinWidth, paint.strokeWidth)
+            val minHeight = max((renderParams ?: RenderParams()).drawMinHeight, paint.strokeWidth)
+            params.drawMinWidth = minWidth
+            params.drawMinHeight = minHeight
+        }
         return super.requestElementDrawable(renderer, params)
     }
 
