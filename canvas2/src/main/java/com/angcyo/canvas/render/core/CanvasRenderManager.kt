@@ -6,7 +6,12 @@ import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement
-import com.angcyo.canvas.render.renderer.*
+import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
+import com.angcyo.canvas.render.renderer.CanvasLimitRenderer
+import com.angcyo.canvas.render.renderer.CanvasMonitorRenderer
+import com.angcyo.canvas.render.renderer.ProgressRenderer
+import com.angcyo.canvas.render.renderer.SimpleInsideRenderer
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.isChange
 import com.angcyo.library.ex.resetAll
@@ -253,7 +258,7 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     }
 
     /**通过[uuid]查询对应的渲染器*/
-    fun findElementRenderer(uuid: String): BaseRenderer? =
+    fun findElementRenderer(uuid: String?): BaseRenderer? =
         elementRendererList.find { it.uuid == uuid }
 
     /**查找[subRenderer] 所对应的[CanvasGroupRenderer]*/
