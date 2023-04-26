@@ -612,6 +612,14 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         renderManager.removeAllElementRenderer(reason, strategy)
     }
 
+    /**选中所有元素渲染器
+     * [CanvasRenderManager]
+     * [CanvasSelectorManager]
+     * */
+    fun selectAllElementRenderer(reason: Reason) {
+        selectorManager.resetSelectorRenderer(renderManager.elementRendererList, reason)
+    }
+
     /**将[rendererList]中的渲染器, 过滤筛选成对应的元素渲染器
      * 主要解决, [rendererList]有可能只是其中一个[CanvasGroupRenderer]的子元素*/
     fun getElementRendererListOf(rendererList: List<BaseRenderer>?): List<BaseRenderer>? {
