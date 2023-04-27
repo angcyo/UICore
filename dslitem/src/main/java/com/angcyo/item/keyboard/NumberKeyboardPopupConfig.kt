@@ -130,12 +130,8 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         }
 
         /**是否是控制输入[number]*/
-        fun isControlInputNumber(number: String): Boolean = number == CONTROL_BACKSPACE ||
-                number == CONTROL_DECREMENT ||
-                number == CONTROL_FAST_DECREMENT ||
-                number == CONTROL_INCREMENT ||
-                number == CONTROL_FAST_INCREMENT ||
-                number == "."
+        fun isControlInputNumber(number: String): Boolean =
+            number == CONTROL_BACKSPACE || number == CONTROL_DECREMENT || number == CONTROL_FAST_DECREMENT || number == CONTROL_INCREMENT || number == CONTROL_FAST_INCREMENT || number == "."
     }
 
     /**按键的大小*/
@@ -335,12 +331,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         }
 
         val result = keyboardInputValueParse(
-            newValueBuilder,
-            defaultValue,
-            enableShakeInput,
-            value,
-            incrementStep,
-            longIncrementStep
+            newValueBuilder, defaultValue, enableShakeInput, value, incrementStep, longIncrementStep
         ).apply {
             toFloatOrNull()?.let { toValue ->
                 _pendingRunnable = Runnable {
@@ -364,7 +355,12 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                 }
             }
         }
-        keyboardBindTextView?.text = onFormatValueAction(result)
+        val value = onFormatValueAction(result)
+        keyboardBindTextView?.text = value
+        if (!enableShakeInput) {
+            newValueBuilder.clear()
+            newValueBuilder.append(value)
+        }
         return false
     }
 
@@ -393,8 +389,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
  * */
 @DSL
 fun Context.keyboardNumberWindow(
-    anchor: View?,
-    config: NumberKeyboardPopupConfig.() -> Unit
+    anchor: View?, config: NumberKeyboardPopupConfig.() -> Unit
 ): TargetWindow {
     //显示键盘之前, 需要隐藏键盘
     lastContext.hideSoftInput()
