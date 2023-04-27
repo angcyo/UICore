@@ -163,7 +163,7 @@ object Debug {
                                 else -> {
                                     //@key#int=value
                                     when (type) {
-                                        "bool", "boolean" -> {
+                                        "b", "bool", "boolean" -> {
                                             val value = valueString.toBoolean()
                                             key.hawkPut(value)
                                             match = true
