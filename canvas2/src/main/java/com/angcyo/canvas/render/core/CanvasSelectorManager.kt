@@ -402,6 +402,9 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
         }
     }
 
+    /**是否选中了渲染器*/
+    fun isSelected(renderer: BaseRenderer) = selectorComponent.rendererList.contains(renderer)
+
     //endregion---操作---
 
 }

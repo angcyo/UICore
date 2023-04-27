@@ -635,6 +635,21 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         selectorManager.resetSelectorRenderer(renderManager.elementRendererList, reason)
     }
 
+    /**隐藏所有未选中的元素*/
+    fun hideAllNoSelectElementRenderer(
+        hide: Boolean,
+        reason: Reason,
+        delegate: CanvasRenderDelegate?
+    ) {
+        val list = mutableListOf<BaseRenderer>()
+        for (renderer in renderManager.elementRendererList) {
+            if (!selectorManager.isSelected(renderer)) {
+                list.add(renderer)
+            }
+        }
+        renderManager.updateRendererVisible(list, !hide, reason, delegate)
+    }
+
     /**将[rendererList]中的渲染器, 过滤筛选成对应的元素渲染器
      * 主要解决, [rendererList]有可能只是其中一个[CanvasGroupRenderer]的子元素*/
     fun getElementRendererListOf(rendererList: List<BaseRenderer>?): List<BaseRenderer>? {
