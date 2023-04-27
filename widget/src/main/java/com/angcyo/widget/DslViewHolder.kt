@@ -314,6 +314,7 @@ open class DslViewHolder(
                             block(view, event, EVENT_TYPE_CLICK)
                         }
                         view.removeCallbacks(longRunnable)
+                        eventType = null
                     }
                 }
                 true
