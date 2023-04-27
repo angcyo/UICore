@@ -179,8 +179,22 @@ abstract class BaseElement : IElement {
         renderParams: RenderParams?,
         block: Canvas.() -> Unit
     ): Drawable {
+        var overrideSize = renderParams?.overrideSize
+        if (renderParams?.overrideSizeNotZoomIn == true) {
+            //需要阻止放大
+            if (overrideSize != null) {
+                val bounds = renderProperty.getRenderBounds()
+                val originWidth = bounds.width()
+                val originHeight = bounds.height()
+
+                if (overrideSize > originWidth || overrideSize > originHeight) {
+                    overrideSize = null
+                }
+            }
+        }
+
         return createPictureDrawable(
-            renderParams?.overrideSize,
+            overrideSize,
             (renderParams ?: RenderParams()).drawMinWidth,
             (renderParams ?: RenderParams()).drawMinHeight,
             block

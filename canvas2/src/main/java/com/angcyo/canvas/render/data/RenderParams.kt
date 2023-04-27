@@ -34,8 +34,19 @@ data class RenderParams(
     @Pixel
     var drawMinWidth: Float = 1f,
     @Pixel
-    var drawMinHeight: Float = 1f
+    var drawMinHeight: Float = 1f,
+
+    /**[overrideSize]如果大于目标尺寸时, 是否需要阻止放大*/
+    var overrideSizeNotZoomIn: Boolean = false,
 ) {
+
+    /*companion object {
+        fun overrideSize(overrideSize: Float): RenderParams {
+            val params = RenderParams()
+            params.renderDst = overrideSize / rect.width()
+            return params
+        }
+    }*/
 
     /**绘制[android.graphics.Path]需要控制的画笔宽度*/
     fun updateDrawPathPaintStrokeWidth(paint: Paint) {
