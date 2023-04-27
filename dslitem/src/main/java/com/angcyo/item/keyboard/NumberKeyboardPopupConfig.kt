@@ -155,18 +155,23 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
     var onNumberResultAction: (number: Float) -> Unit = { }
 
     /**格式化文本内容, 比如90°, 则应该返回90*/
-    var onFormatTextAction: (value: String) -> String = {
-        if (it.endsWith(".") || !it.contains(".")) {
+    var onFormatTextAction: (text: String) -> String = { text ->
+        if (text.endsWith(".") || !text.contains(".")) {
             //xx. 的情况
-            it
+            text
         } else {
-            val float = it.toDoubleOrNull()
+            val float = text.toDoubleOrNull()
             if (float == null) {
-                "${it.getFloatNum() ?: it}"
+                "${text.getFloatNum() ?: text}"
             } else {
                 "$float"
             }
         }
+    }
+
+    /**计算之后的结果, 格式化*/
+    var onFormatValueAction: (value: String) -> String = { value ->
+        value
     }
 
     /**键盘输入样式, 用来控制需要显示那些按键
@@ -359,7 +364,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                 }
             }
         }
-        keyboardBindTextView?.text = result
+        keyboardBindTextView?.text = onFormatValueAction(result)
         return false
     }
 
