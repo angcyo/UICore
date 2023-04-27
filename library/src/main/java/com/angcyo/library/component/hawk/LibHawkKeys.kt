@@ -23,7 +23,7 @@ object LibHawkKeys {
     /**当颜色的透明值小于此值时, 视为透明色
      * 影响图片的锯齿, 值越大锯齿越多
      * 图片旋转之后, 4条边上就会产生透明颜色*/
-    var alphaThreshold: Int by HawkPropertyValue<Any, Int>(128)
+    var alphaThreshold: Int by HawkPropertyValue<Any, Int>(240)
 
     /**等同于[alphaThreshold], 只不过这个值在移除透明背景时使用
      * 或者在图片旋转后, 移除边上的透明颜色时使用*/
@@ -32,7 +32,7 @@ object LibHawkKeys {
     /**灰度阈值, 大于这个值视为白色1不出光, 小于这个值视为黑色0出光
      * 白色传1, 1不出光.
      * 黑色传0, 0出光. */
-    var grayThreshold: Int by HawkPropertyValue<Any, Int>(128)
+    var grayThreshold: Int by HawkPropertyValue<Any, Int>(240)
 
     /**日志单文件最大数据量的大小
      * 允许写入单个文件的最大大小10mb, 之后会重写*/
