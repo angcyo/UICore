@@ -23,7 +23,7 @@ object LibHawkKeys {
     /**当颜色的透明值小于此值时, 视为透明色
      * 影响图片的锯齿, 值越大锯齿越多
      * 图片旋转之后, 4条边上就会产生透明颜色*/
-    var alphaThreshold: Int by HawkPropertyValue<Any, Int>(8)
+    var alphaThreshold: Int by HawkPropertyValue<Any, Int>(128)
 
     /**等同于[alphaThreshold], 只不过这个值在移除透明背景时使用
      * 或者在图片旋转后, 移除边上的透明颜色时使用*/
