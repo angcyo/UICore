@@ -276,21 +276,28 @@ open class DslViewHolder(
 
         view?.let {
             var eventType: Int? = null
-            val longRunnable = Runnable {
-                if (eventType == null) {
-                    eventType = EVENT_TYPE_LONG_PRESS
+            var longRunnable: Runnable? = null
+            longRunnable = Runnable {
+                if (view.isPressed) {
+                    if (eventType == null || eventType == EVENT_TYPE_LONG_PRESS) {
+                        eventType = EVENT_TYPE_LONG_PRESS
 
-                    //发送长按事件
-                    val event = motionEvent(MotionEvent.ACTION_MOVE)
-                    block(view, event, eventType)
-                    event.recycle()
+                        //发送长按事件
+                        val event = motionEvent(MotionEvent.ACTION_MOVE)
+                        block(view, event, eventType)
+                        event.recycle()
+
+                        view.postDelayed(
+                            longRunnable,
+                            ViewConfiguration.getLongPressTimeout().toLong()
+                        )
+                    }
                 }
             }
 
             //touch
             view.setOnTouchListener { _, event ->
-                val actionMasked = event.actionMasked
-                when (actionMasked) {
+                when (event.actionMasked) {
                     MotionEvent.ACTION_DOWN -> {
                         view.isPressed = true //按下的状态
                         //长按检测
@@ -304,22 +311,12 @@ open class DslViewHolder(
                     MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                         view.isPressed = false
                         if (eventType == null) {
-                            eventType = EVENT_TYPE_CLICK
+                            block(view, event, EVENT_TYPE_CLICK)
                         }
                         view.removeCallbacks(longRunnable)
                     }
                 }
-                //回调
-                val result =
-                    if (eventType == EVENT_TYPE_LONG_PRESS) true else block(view, event, eventType)
-                //清空事件
-                when (actionMasked) {
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                        block(view, event, eventType)
-                        eventType = null
-                    }
-                }
-                result
+                true
             }
         }
     }
