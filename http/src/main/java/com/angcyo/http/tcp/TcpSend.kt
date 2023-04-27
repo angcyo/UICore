@@ -62,6 +62,12 @@ class TcpSend : ICancel {
     /**是否被取消*/
     var isCancel: AtomicBoolean = AtomicBoolean(false)
 
+    /**是否被关闭*/
+    var isClose: AtomicBoolean = AtomicBoolean(false)
+
+    /**读取数据完成后, 是否自动关闭socket*/
+    var autoClose: AtomicBoolean = AtomicBoolean(true)
+
     /**开始发送数据*/
     @CallPoint
     fun startSend() {
@@ -131,12 +137,15 @@ class TcpSend : ICancel {
         }
     }
 
+    /**主动取消*/
     override fun cancel() {
         isCancel.set(true)
         close()
     }
 
-    private fun close() {
+    /**主动关闭*/
+    fun close() {
+        isClose.set(true)
         _socket?.let {
             if (!it.isClosed) {
                 it.close()
@@ -161,15 +170,19 @@ class TcpSend : ICancel {
                 val output = ByteArrayOutputStream(bufferSize)
                 val receiveBytes = ByteArray(bufferSize)
 
-                while (true) {
+                while (isClose.get().not()) {
                     val size = input.read(receiveBytes) //阻塞方法
                     if (size > 0) {
                         output.write(receiveBytes, 0, size)
                         if (size < bufferSize) {
-                            break
+                            if (autoClose.get()) {
+                                break
+                            }
                         }
                     } else {
-                        break
+                        if (autoClose.get()) {
+                            break
+                        }
                     }
                 }
                 socket.shutdownInput()
