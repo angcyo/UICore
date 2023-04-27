@@ -212,6 +212,11 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
         _initView()
     }
 
+    /**是否要激活功能*/
+    fun enableSoftInputApply(enable: Boolean = true) {
+        isEnabled = enable
+    }
+
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
@@ -264,6 +269,7 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
                                 ),
                                 _softInputPaddingTop
                             )
+
                             else -> measureChildWithMargins(
                                 child,
                                 widthMeasureSpec,
@@ -273,6 +279,7 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
                             )
                         }
                     }
+
                     _emojiView -> {
                         //emoji布局测量大小
                         when (handlerMode) {
@@ -289,6 +296,7 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
                                 )
                                 child.measure(childWidthMeasureSpec, childHeightMeasureSpec)
                             }
+
                             else -> {
                                 val childWidthMeasureSpec = ViewGroup.getChildMeasureSpec(
                                     widthMeasureSpec,
@@ -302,6 +310,7 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
                             }
                         }
                     }
+
                     else -> {
                         measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0)
                     }
@@ -388,6 +397,7 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
                 childLeft = when (absoluteGravity and Gravity.HORIZONTAL_GRAVITY_MASK) {
                     Gravity.CENTER_HORIZONTAL -> parentLeft + (parentRight - parentLeft - width) / 2 +
                             lp.leftMargin - lp.rightMargin
+
                     Gravity.RIGHT -> {
                         if (!forceLeftGravity) {
                             parentRight - width - lp.rightMargin
@@ -395,6 +405,7 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
                             parentLeft + lp.leftMargin
                         }
                     }
+
                     Gravity.LEFT -> parentLeft + lp.leftMargin
                     else -> parentLeft + lp.leftMargin
                 }
@@ -409,12 +420,15 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
                             parentTop + lp.topMargin + _softInputPaddingTop,
                             emojiViewTop - lp.bottomMargin - height - lp.topMargin
                         )
+
                         Gravity.CENTER_VERTICAL -> parentTop + (emojiViewTop - parentTop - height) / 2 +
                                 lp.topMargin - lp.bottomMargin
+
                         Gravity.BOTTOM -> min(
                             parentBottom - height - lp.bottomMargin,
                             emojiViewTop - lp.bottomMargin - height - lp.topMargin
                         )
+
                         else -> emojiViewTop - lp.bottomMargin - height - lp.topMargin
                     }
                 } else {
@@ -423,6 +437,7 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
                         Gravity.TOP -> parentTop + lp.topMargin
                         Gravity.CENTER_VERTICAL -> parentTop + (parentBottom - parentTop - height) / 2 +
                                 lp.topMargin - lp.bottomMargin
+
                         Gravity.BOTTOM -> parentBottom - height - lp.bottomMargin
                         else -> parentTop + lp.topMargin
                     }
