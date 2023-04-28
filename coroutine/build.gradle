@@ -27,7 +27,7 @@ dependencies {
     //https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-common
     api "androidx.lifecycle:lifecycle-common:$lifecycle_version"
     //https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-runtime
-    api "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
+    //api "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
     //https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-runtime-ktx
     api "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
 

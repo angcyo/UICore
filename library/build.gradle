@@ -19,7 +19,7 @@ dependencies {
     api "androidx.appcompat:appcompat:1.6.1"
 
     //https://mvnrepository.com/artifact/androidx.core/core
-    api 'androidx.core:core:1.10.0' //1.9.0 minCompileSdk (33)
+    //api 'androidx.core:core:1.10.0' //1.9.0 minCompileSdk (33)
     //https://mvnrepository.com/artifact/androidx.core/core-ktx
     api 'androidx.core:core-ktx:1.10.0'
 

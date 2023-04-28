@@ -7,17 +7,17 @@ dependencies {
 
     //https://mvnrepository.com/artifact/androidx.fragment
     //https://mvnrepository.com/artifact/androidx.fragment/fragment
-    implementation "androidx.fragment:fragment:1.5.7"
+    //implementation "androidx.fragment:fragment:1.5.7"
     implementation "androidx.fragment:fragment-ktx:1.5.7"
 
     def lifecycle = "2.6.1"
     //https://mvnrepository.com/artifact/androidx.lifecycle
 
     //https://developer.android.google.cn/jetpack/androidx/releases/lifecycle
-    api "androidx.lifecycle:lifecycle-viewmodel:$lifecycle"
+    //api "androidx.lifecycle:lifecycle-viewmodel:$lifecycle"
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle"
     //https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-livedata
-    api "androidx.lifecycle:lifecycle-livedata:$lifecycle"
+    //api "androidx.lifecycle:lifecycle-livedata:$lifecycle"
     api "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle"
 
     //2.2.0之后, 此库已废弃

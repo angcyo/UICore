@@ -11,7 +11,7 @@ import androidx.annotation.Keep
  */
 
 @Keep
-class Page {
+open class Page {
     companion object {
 
         /**默认一页请求的数量*/
@@ -51,23 +51,23 @@ class Page {
         get() = currentStartIndex + requestPageSize
 
     /**页面刷新, 重置page index*/
-    fun pageRefresh() {
+    open fun pageRefresh() {
         _currentPageIndex = firstPageIndex
         requestPageIndex = firstPageIndex
     }
 
     /**页面加载更多*/
-    fun pageLoadMore() {
+    open fun pageLoadMore() {
         requestPageIndex = _currentPageIndex + 1
     }
 
     /**页面加载结束, 刷新结束/加载更多结束*/
-    fun pageLoadEnd() {
+    open fun pageLoadEnd() {
         _currentPageIndex = requestPageIndex
     }
 
     /**重新赋值*/
-    fun set(page: Page) {
+    open fun set(page: Page) {
         firstPageIndex = page.firstPageIndex
         _currentPageIndex = page._currentPageIndex
         requestPageIndex = page.requestPageIndex
@@ -75,10 +75,10 @@ class Page {
     }
 
     /**是否是第一页请求*/
-    fun isFirstPage() = requestPageIndex == firstPageIndex
+    open fun isFirstPage() = requestPageIndex == firstPageIndex
 
     /**单列表数据, 无加载更多*/
-    fun singlePage() {
+    open fun singlePage() {
         requestPageSize = Int.MAX_VALUE
     }
 

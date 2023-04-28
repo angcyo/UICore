@@ -8,7 +8,7 @@ dependencies {
 
     //https://mvnrepository.com/artifact/androidx.work/work-runtime
     // (Java only)
-    implementation "androidx.work:work-runtime:$work_version"
+    //implementation "androidx.work:work-runtime:$work_version"
 
     // Kotlin + coroutines
     implementation "androidx.work:work-runtime-ktx:$work_version"
