@@ -111,7 +111,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
             ignoreVisible: Boolean = false
         ): Drawable? {
             rendererList ?: return null
-            val rect = computeBounds(rendererList, bounds) ?: return null
+            val rect = computeBounds(rendererList, bounds, ignoreVisible) ?: return null
             return PictureRenderDrawable(createOverridePictureCanvas(
                 rect.width(),
                 rect.height(),
@@ -576,6 +576,17 @@ open class CanvasGroupRenderer : BaseRenderer() {
     ) {
         val elementRendererList = delegate?.getElementRendererListOf(list) ?: list
         rendererList.resetAll(elementRendererList)
+
+        val isAllVisible =
+            elementRendererList.sumOf { if (it.isVisible) 1L else 0 } == elementRendererList.size()
+                .toLong()
+        val isAllLock =
+            elementRendererList.sumOf { if (it.isLock) 1L else 0 } == elementRendererList.size()
+                .toLong()
+
+        updateVisible(isAllVisible, reason, delegate)
+        updateLock(isAllLock, reason, delegate)
+
         updateGroupRenderProperty(reason, delegate)
     }
 
