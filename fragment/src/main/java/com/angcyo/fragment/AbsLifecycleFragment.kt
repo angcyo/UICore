@@ -195,7 +195,8 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment, OnBackPressedDis
         L.i("无返回Callback需要被执行")
     }
 
-    override fun getOnBackPressedDispatcher(): OnBackPressedDispatcher = backPressedDispatcher
+    override val onBackPressedDispatcher
+        get() = backPressedDispatcher
 
     //</editor-fold>
 

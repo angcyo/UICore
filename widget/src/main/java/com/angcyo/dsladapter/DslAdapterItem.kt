@@ -1605,9 +1605,8 @@ open class DslAdapterItem : LifecycleOwner {
 
     val lifecycleRegistry = LifecycleRegistry(this)
 
-    override fun getLifecycle(): Lifecycle {
-        return lifecycleRegistry
-    }
+    override val lifecycle: Lifecycle
+        get() = lifecycleRegistry
 
     /**请勿覆盖[itemViewAttachedToWindow]*/
     @CallSuper

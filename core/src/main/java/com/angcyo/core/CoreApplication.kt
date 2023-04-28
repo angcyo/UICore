@@ -245,7 +245,7 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
     /**[ViewModel]单例*/
     val modelStore: ViewModelStore = ViewModelStore()
 
-    override fun getViewModelStore(): ViewModelStore = modelStore
+    override val viewModelStore get() = modelStore
 
     //</editor-fold desc="ViewModelStore">
 

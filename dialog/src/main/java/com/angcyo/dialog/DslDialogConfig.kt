@@ -686,9 +686,8 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
 
     val lifecycleRegistry = LifecycleRegistry(this)
 
-    override fun getLifecycle(): Lifecycle {
-        return lifecycleRegistry
-    }
+    override val lifecycle: Lifecycle
+        get() = lifecycleRegistry
 
     @CallSuper
     open fun onDialogInit() {

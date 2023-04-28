@@ -4,7 +4,7 @@ apply from: allGradle.libBase
 dependencies {
     implementation project(allModule.library)
 
-    def work_version = "2.7.1"
+    def work_version = "2.8.1"
 
     //https://mvnrepository.com/artifact/androidx.work/work-runtime
     // (Java only)

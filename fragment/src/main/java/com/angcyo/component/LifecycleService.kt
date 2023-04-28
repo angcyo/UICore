@@ -25,9 +25,8 @@ abstract class LifecycleService : BaseService(), LifecycleOwner {
 
     val lifecycleRegistry = LifecycleRegistry(this)
 
-    override fun getLifecycle(): Lifecycle {
-        return lifecycleRegistry
-    }
+    override val lifecycle: Lifecycle
+        get() = lifecycleRegistry
 
     override fun onCreate() {
         super.onCreate()

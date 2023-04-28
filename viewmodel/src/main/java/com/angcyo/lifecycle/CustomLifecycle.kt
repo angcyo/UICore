@@ -15,6 +15,9 @@ class CustomLifecycle : LifecycleOwner {
 
     private val lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
 
+    override val lifecycle: Lifecycle
+        get() = lifecycleRegistry
+
     init {
         setCurrentState(Lifecycle.State.CREATED)
     }
@@ -25,9 +28,5 @@ class CustomLifecycle : LifecycleOwner {
 
     fun setCurrentState(state: Lifecycle.State) {
         lifecycleRegistry.currentState = state
-    }
-
-    override fun getLifecycle(): Lifecycle {
-        return lifecycleRegistry
     }
 }

@@ -94,9 +94,8 @@ open class LibApplication : Application(), LifecycleOwner {
 
     val lifecycleRegistry = LifecycleRegistry(this)
 
-    override fun getLifecycle(): Lifecycle {
-        return lifecycleRegistry
-    }
+    override val lifecycle: Lifecycle
+        get() = lifecycleRegistry
 
     //</editor-fold desc="Lifecycle支持">
 }

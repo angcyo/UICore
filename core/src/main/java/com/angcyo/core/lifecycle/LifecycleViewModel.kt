@@ -24,6 +24,9 @@ open class LifecycleViewModel : ViewModel(), IViewModel, LifecycleOwner {
     @SuppressLint("StaticFieldLeak")
     private val lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
 
+    override val lifecycle: Lifecycle
+        get() = lifecycleRegistry
+
     init {
         setCurrentState(Lifecycle.State.CREATED)
         setCurrentState(Lifecycle.State.STARTED)
@@ -40,10 +43,6 @@ open class LifecycleViewModel : ViewModel(), IViewModel, LifecycleOwner {
         super.onCleared()
         setCurrentState(Lifecycle.State.DESTROYED)
         release()
-    }
-
-    override fun getLifecycle(): Lifecycle {
-        return lifecycleRegistry
     }
 
     /**取消所有Rx 和 协程 / 恢复初始状态*/

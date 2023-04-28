@@ -248,9 +248,8 @@ abstract class IView : OnBackPressedCallback(true), LifecycleOwner {
 
     var lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
 
-    override fun getLifecycle(): Lifecycle {
-        return lifecycleRegistry
-    }
+    override val lifecycle: Lifecycle
+        get() = lifecycleRegistry
 
     //</editor-fold desc="Lifecycle支持">
 

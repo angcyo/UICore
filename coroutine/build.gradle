@@ -21,7 +21,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-jdk8
     //implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.1'
 
-    def lifecycle_version = "2.5.1"
+    def lifecycle_version = "2.6.1"
     //https://mvnrepository.com/artifact/androidx.lifecycle
 
     //https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-common
@@ -30,5 +30,6 @@ dependencies {
     api "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
     //https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-runtime-ktx
     api "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+
 
 }

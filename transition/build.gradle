@@ -4,7 +4,7 @@ dependencies {
     implementation project(allModule.library)
 
     //doOnPreDraw
-    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.core:core-ktx:1.10.0'
 
     //https://mvnrepository.com/artifact/androidx.transition/transition
     api 'androidx.transition:transition:1.4.1'

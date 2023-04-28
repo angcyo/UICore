@@ -7,8 +7,10 @@ dependencies {
     implementation project(allModule.tbs)
 
     //http://mvnrepository.com/artifact/androidx.browser
-    implementation "androidx.browser:browser:1.4.0"
+    //http://mvnrepository.com/artifact/androidx.browser/browser
+    implementation "androidx.browser:browser:1.5.0"
 
+    //https://mvnrepository.com/artifact/com.google.androidbrowserhelper/
     //https://mvnrepository.com/artifact/com.google.androidbrowserhelper/androidbrowserhelper
     implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.4.0'
 }
