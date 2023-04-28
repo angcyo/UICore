@@ -476,14 +476,20 @@ open class DslAdapterItem : LifecycleOwner {
         //设置
         if (itemMinWidth != undefined_size) {
             itemView.minimumWidth = itemMinWidth
-            when (itemView) {
-                is ConstraintLayout -> itemView.minWidth = itemMinWidth
+            try {
+                when (itemView) {
+                    is ConstraintLayout -> itemView.minWidth = itemMinWidth
+                }
+            } catch (e: Exception) {
             }
         }
         if (itemMinHeight != undefined_size) {
             itemView.minimumHeight = itemMinHeight
-            when (itemView) {
-                is ConstraintLayout -> itemView.minHeight = itemMinHeight
+            try {
+                when (itemView) {
+                    is ConstraintLayout -> itemView.minHeight = itemMinHeight
+                }
+            } catch (e: Exception) {
             }
         }
 

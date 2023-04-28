@@ -1,10 +1,12 @@
 package com.angcyo.dsladapter
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.text.TextUtils
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.component.DrawText
+import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.textHeight
 import java.util.*
 
@@ -271,7 +273,10 @@ class DragCallbackHelper : ItemTouchHelper.Callback() {
             }
         }
 
-    var _drawText = DrawText()
+    var _drawText = DrawText().apply {
+        textPaint.color = Color.RED
+        textPaint.textSize = 14 * dp
+    }
 
     override fun onChildDraw(
         canvas: Canvas,
