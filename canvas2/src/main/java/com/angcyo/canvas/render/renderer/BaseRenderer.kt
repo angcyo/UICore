@@ -359,7 +359,7 @@ abstract class BaseRenderer : IRenderer {
     /**获取渲染器用来渲染的[Drawable]
      * [requestRenderBitmap]*/
     open fun requestRenderDrawable(overrideSize: Float? = null): Drawable? =
-        createRenderDrawable(getSingleRendererList(false), overrideSize)
+        createRenderDrawable(getSingleRendererList(false), overrideSize, ignoreVisible = true)
 
     /**获取渲染器用来渲染的[Bitmap]
      * [requestRenderDrawable]
