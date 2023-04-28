@@ -1,6 +1,5 @@
 package com.angcyo.widget.image
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
@@ -8,6 +7,7 @@ import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewOutlineProvider
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import com.angcyo.library.ex.*
 import com.angcyo.widget.R
@@ -20,7 +20,6 @@ import kotlin.math.min
  * @date 2020/01/20
  */
 
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 open class ShapeImageView : AppCompatImageView {
 
     /**圆角大小, 足够大时, 就是正方形就会绘制成圆*/
@@ -42,12 +41,14 @@ open class ShapeImageView : AppCompatImageView {
     var enableShape: Boolean = false
         set(value) {
             field = value
-            if (value) {
-                outlineProvider = ShapeOutline()
-                clipToOutline = true
-            } else {
-                outlineProvider = null
-                clipToOutline = false
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (value) {
+                    outlineProvider = ShapeOutline()
+                    clipToOutline = true
+                } else {
+                    outlineProvider = null
+                    clipToOutline = false
+                }
             }
         }
 
@@ -82,9 +83,7 @@ open class ShapeImageView : AppCompatImageView {
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
+        context, attrs, defStyleAttr
     ) {
         initAttribute(context, attrs)
     }
@@ -92,15 +91,13 @@ open class ShapeImageView : AppCompatImageView {
     private fun initAttribute(context: Context, attributeSet: AttributeSet?) {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ShapeImageView)
         imageRadius = typedArray.getDimensionPixelOffset(
-            R.styleable.ShapeImageView_r_image_radius,
-            imageRadius
+            R.styleable.ShapeImageView_r_image_radius, imageRadius
         )
         drawBorder = typedArray.getBoolean(R.styleable.ShapeImageView_r_draw_border, drawBorder)
         enableShape = typedArray.getBoolean(R.styleable.ShapeImageView_r_enable_shape, enableShape)
         isCircle = typedArray.getBoolean(R.styleable.ShapeImageView_r_is_circle, isCircle)
         borderWidth = typedArray.getDimensionPixelOffset(
-            R.styleable.ShapeImageView_r_border_width,
-            borderWidth
+            R.styleable.ShapeImageView_r_border_width, borderWidth
         )
         borderColor = typedArray.getColor(R.styleable.ShapeImageView_r_border_color, borderColor)
         maskDrawable = typedArray.getDrawable(R.styleable.ShapeImageView_r_mask_drawable)
@@ -117,10 +114,7 @@ open class ShapeImageView : AppCompatImageView {
                 val centerY = paddingTop + drawHeight / 2
                 val radius = min(drawWidth / 2, drawHeight / 2)
                 _outlineRect.set(
-                    centerX - radius,
-                    centerY - radius,
-                    centerX + radius,
-                    centerY + radius
+                    centerX - radius, centerY - radius, centerX + radius, centerY + radius
                 )
             } else {
                 _outlineRect.set(paddingLeft, paddingTop, right, bottom)
@@ -166,10 +160,7 @@ open class ShapeImageView : AppCompatImageView {
                 )
             } else {
                 canvas.drawRoundRect(
-                    _outlineRectF,
-                    imageRadius.toFloat(),
-                    imageRadius.toFloat(),
-                    paint
+                    _outlineRectF, imageRadius.toFloat(), imageRadius.toFloat(), paint
                 )
             }
         }
@@ -180,14 +171,12 @@ open class ShapeImageView : AppCompatImageView {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     inner class ShapeOutline : ViewOutlineProvider() {
         override fun getOutline(view: View, outline: Outline) {
             if (isCircle) {
                 outline.setOval(
-                    _outlineRect.left,
-                    _outlineRect.top,
-                    _outlineRect.right,
-                    _outlineRect.bottom
+                    _outlineRect.left, _outlineRect.top, _outlineRect.right, _outlineRect.bottom
                 )
             } else {
                 outline.setRoundRect(_outlineRect, imageRadius.toFloat())
