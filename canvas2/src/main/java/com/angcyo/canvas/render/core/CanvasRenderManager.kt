@@ -233,17 +233,18 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
 
     /**添加一个集合渲染器*/
     fun removeElementRenderer(list: List<BaseRenderer>, reason: Reason, strategy: Strategy) {
+        val op = list.toList()
         val from = elementRendererList.toList()
-        elementRendererList.removeAll(list)
+        elementRendererList.removeAll(op)
         val to = elementRendererList.toList()
 
         delegate.undoManager.addAndRedo(strategy, true, {
             elementRendererList.resetAll(from)
-            delegate.dispatchElementRendererListChange(to, from, list, reason)
+            delegate.dispatchElementRendererListChange(to, from, op, reason)
             delegate.refresh()
         }) {
             elementRendererList.resetAll(to)
-            delegate.dispatchElementRendererListChange(from, to, list, reason)
+            delegate.dispatchElementRendererListChange(from, to, op, reason)
             delegate.refresh()
         }
     }

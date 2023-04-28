@@ -389,16 +389,22 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
     }
 
     /**当渲染的元素改变后, 需要同步更新选中元素的顺序*/
-    fun updateSelectorRendererOrder() {
+    fun updateSelectorRendererOrder(reason: Reason) {
         if (isSelectorElement) {
             val newList = mutableListOf<BaseRenderer>()
             val oldList = selectorComponent.rendererList
+            val oldSize = oldList.size()
             for (renderer in delegate.renderManager.elementRendererList) {
                 if (oldList.contains(renderer)) {
                     newList.add(renderer)
                 }
             }
-            selectorComponent.rendererList.resetAll(newList)
+            val newSize = newList.size()
+            if (newSize != oldSize) {
+                resetSelectorRenderer(newList, reason)
+            } else {
+                selectorComponent.rendererList.resetAll(newList)
+            }
         }
     }
 
