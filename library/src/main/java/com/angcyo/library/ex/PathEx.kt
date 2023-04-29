@@ -29,8 +29,7 @@ import kotlin.math.roundToInt
 /**获取[Path]指定进度[progress]时的点坐标
  * [progress] [0~1] */
 fun Path.getProgressPosition(
-    progress: Float,
-    result: FloatArray = floatArrayOf(0f, 0f)
+    progress: Float, result: FloatArray = floatArrayOf(0f, 0f)
 ): FloatArray {
     val pathMeasure = PathMeasure(this, false)
     pathMeasure.getPosTan(progress * pathMeasure.length, result, null)
@@ -331,8 +330,7 @@ fun Path.eachSegment(len: Float, block: (index: Int, ratio: Float, path: Path) -
  * [exact] 是否需要确切的bounds, true:此方法使用读取path中的所有点坐标进行bounds计算
  * */
 fun Path.computePathBounds(
-    bounds: RectF = RectF(),
-    exact: Boolean = LibHawkKeys.enablePathBoundsExact
+    bounds: RectF = RectF(), exact: Boolean = LibHawkKeys.enablePathBoundsExact
 ): RectF {
     if (exact) {
         computeExactBounds(bounds)
@@ -344,8 +342,7 @@ fun Path.computePathBounds(
 
 /** [acceptableError] 误差级别*/
 fun Path.computeExactBounds(
-    bounds: RectF = RectF(),
-    acceptableError: Float = LibHawkKeys.pathAcceptableError
+    bounds: RectF = RectF(), acceptableError: Float = LibHawkKeys.pathAcceptableError
 ): RectF {
     val pos: FloatArray = approximate2(acceptableError)
 
@@ -361,8 +358,7 @@ fun Path.computeExactBounds(
 
 /**计算一组[Path]的bounds*/
 fun List<Path>.computePathBounds(
-    bounds: RectF = RectF(),
-    exact: Boolean = LibHawkKeys.enablePathBoundsExact
+    bounds: RectF = RectF(), exact: Boolean = LibHawkKeys.enablePathBoundsExact
 ): RectF {
     if (isEmpty()) {
         return bounds
@@ -534,8 +530,7 @@ fun Path.transform(bounds: RectF, rotate: Float): Path {
     pathBounds = computePathBounds(pathBounds)
     matrix.reset()
     matrix.setTranslate(
-        rotateBounds.centerX() - pathBounds.centerX(),
-        rotateBounds.centerY() - pathBounds.centerY()
+        rotateBounds.centerX() - pathBounds.centerX(), rotateBounds.centerY() - pathBounds.centerY()
     )
     newPath.transform(matrix)
 
@@ -599,8 +594,7 @@ fun List<Path>.transform(bounds: RectF, rotate: Float): List<Path> {
     pathBounds = newPathList.computePathBounds(pathBounds)
     matrix.reset()
     matrix.setTranslate(
-        rotateBounds.centerX() - pathBounds.centerX(),
-        rotateBounds.centerY() - pathBounds.centerY()
+        rotateBounds.centerX() - pathBounds.centerX(), rotateBounds.centerY() - pathBounds.centerY()
     )
     for (path in newPathList) {
         path.transform(matrix)
@@ -699,8 +693,7 @@ fun List<Path>?.scaleToSize(newWidth: Float, newHeight: Float): List<Path>? {
 }
 
 fun Path?.toDrawable(
-    overrideSize: Float? = null,
-    paint: Paint = createPaint()
+    overrideSize: Float? = null, paint: Paint = createPaint()
 ) = this?.toListOf().toDrawable(overrideSize, paint)
 
 /**将路径转成可以绘制的[Drawable]
@@ -709,8 +702,7 @@ fun Path?.toDrawable(
  *
  * [toBitmap]*/
 fun List<Path>?.toDrawable(
-    overrideSize: Float? = null,
-    paint: Paint = createPaint()
+    overrideSize: Float? = null, paint: Paint = createPaint()
 ): Drawable? {
     this ?: return null
     val bounds = computePathBounds(acquireTempRectF())
@@ -718,12 +710,18 @@ fun List<Path>?.toDrawable(
     val originHeight = bounds.height()
     val scaleMatrix = createOverrideMatrix(originWidth, originHeight, overrideSize)
     //目标输出的大小
-    val width = originWidth * scaleMatrix.getScaleX()
-    val height = originHeight * scaleMatrix.getScaleY()
+    val scaleX = scaleMatrix.getScaleX()
+    val scaleY = scaleMatrix.getScaleY()
+    val width = originWidth * scaleX
+    val height = originHeight * scaleY
+    val drawMatrix = Matrix()
+    drawMatrix.setScale(scaleX, scaleY, bounds.left, bounds.top)
+    drawMatrix.postTranslate(-bounds.left, -bounds.top)
     val drawable = PictureRenderDrawable(Picture().apply {
         val canvas = beginRecording(max(1, width.ceilInt()), max(1, height.ceilInt()))
-        canvas.translate(-bounds.left, -bounds.top)//平移到路径开始的原点
-        canvas.concat(scaleMatrix)
+        /*canvas.translate(-bounds.left, -bounds.top)//平移到路径开始的原点
+        canvas.concat(scaleMatrix)*/
+        canvas.concat(drawMatrix)
         for (path in this@toDrawable) {//并没有改变原始数据, 直接绘制
             canvas.drawPath(path, paint)
         }
@@ -750,9 +748,7 @@ fun List<Path>?.toBitmap(overrideSize: Float? = null, paint: Paint = createPaint
     val width = originWidth * scaleMatrix.getScaleX()
     val height = originHeight * scaleMatrix.getScaleY()
     val bitmap = Bitmap.createBitmap(
-        max(1, width.ceilInt()),
-        max(1, height.ceilInt()),
-        Bitmap.Config.ARGB_8888
+        max(1, width.ceilInt()), max(1, height.ceilInt()), Bitmap.Config.ARGB_8888
     )
     val canvas = Canvas(bitmap)
     canvas.translate(-bounds.left, -bounds.top)//平移到路径开始的原点
