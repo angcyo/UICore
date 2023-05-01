@@ -11,10 +11,10 @@ import com.angcyo.drawable.R
  * @date 2022/04/16
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
-abstract class BaseProgressDrawable : AbsDslDrawable() {
+abstract class BaseProgressDrawable : AbsDslDrawable(), IProgressDrawable {
 
     /**不确定的进度*/
-    var isIndeterminate: Boolean = true
+    override var isIndeterminate: Boolean = true
         set(value) {
             field = value
             invalidateSelf()
@@ -22,7 +22,7 @@ abstract class BaseProgressDrawable : AbsDslDrawable() {
 
     /**当前的进度
      * [0~100]*/
-    var progress: Int = 0
+    override var progress: Float = 0f
         set(value) {
             field = value
             invalidateSelf()
@@ -31,13 +31,12 @@ abstract class BaseProgressDrawable : AbsDslDrawable() {
     override fun initAttribute(context: Context, attributeSet: AttributeSet?) {
         val typedArray =
             context.obtainStyledAttributes(attributeSet, R.styleable.BaseProgressDrawable)
-        isIndeterminate =
-            typedArray.getBoolean(
-                R.styleable.BaseProgressDrawable_r_loading_is_indeterminate,
-                isIndeterminate
-            )
+        isIndeterminate = typedArray.getBoolean(
+            R.styleable.BaseProgressDrawable_r_loading_is_indeterminate, isIndeterminate
+        )
         progress =
-            typedArray.getInt(R.styleable.BaseProgressDrawable_r_loading_progress, progress)
+            typedArray.getInt(R.styleable.BaseProgressDrawable_r_loading_progress, progress.toInt())
+                .toFloat()
         typedArray.recycle()
     }
 

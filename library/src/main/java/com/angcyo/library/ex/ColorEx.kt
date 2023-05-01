@@ -4,11 +4,14 @@ import android.animation.ArgbEvaluator
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Rect
+import android.graphics.RectF
 import android.os.SystemClock
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
 import androidx.core.math.MathUtils
-import java.util.*
+import java.util.Locale
+import java.util.Random
 import kotlin.random.Random.Default.nextInt
 
 /**
@@ -79,6 +82,25 @@ private var argbEvaluator: ArgbEvaluator = ArgbEvaluator()
  * */
 fun evaluateColor(fraction: Float, startValue: Int, endValue: Int): Int {
     return argbEvaluator.evaluate(fraction, startValue, endValue) as Int
+}
+
+/**[com.angcyo.library.component.RectEvaluator]*/
+fun evaluateRect(fraction: Float, startValue: Rect, endValue: Rect, result: Rect): Rect {
+    val left = startValue.left + ((endValue.left - startValue.left) * fraction).toInt()
+    val top = startValue.top + ((endValue.top - startValue.top) * fraction).toInt()
+    val right = startValue.right + ((endValue.right - startValue.right) * fraction).toInt()
+    val bottom = startValue.bottom + ((endValue.bottom - startValue.bottom) * fraction).toInt()
+    result.set(left, top, right, bottom)
+    return result
+}
+
+fun evaluateRectF(fraction: Float, startValue: RectF, endValue: RectF, result: RectF): RectF {
+    val left = startValue.left + (endValue.left - startValue.left) * fraction
+    val top = startValue.top + (endValue.top - startValue.top) * fraction
+    val right = startValue.right + (endValue.right - startValue.right) * fraction
+    val bottom = startValue.bottom + (endValue.bottom - startValue.bottom) * fraction
+    result.set(left, top, right, bottom)
+    return result
 }
 
 /**[this~toValue] [progress]进度[0~1]比例进度

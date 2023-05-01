@@ -25,9 +25,9 @@ class DangerWarningDrawable : BaseLoadingDrawable() {
 
     init {
         textPaint.style = Paint.Style.FILL
-        loadingStep = 3
+        loadingStep = 3f
         if (isInEditMode) {
-            loadingProgress = 100
+            loadingProgress = 100f
         }
     }
 

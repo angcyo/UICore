@@ -27,7 +27,7 @@ import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
 import com.angcyo.widget.progress.DslProgressBar
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.Stack
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -186,7 +186,7 @@ fun View?.updateProgress(progress: String?) {
     } else {
         val background = view.background
         if (background is BaseProgressDrawable) {
-            val p = progress?.toIntOrNull()
+            val p = progress?.toFloatOrNull()
             if (p != null) {
                 background.isIndeterminate = p <= 0
                 background.progress = p
@@ -284,16 +284,12 @@ fun ActivityResultCaller.loadingBottomCaller(
     onCancel: (dialog: Dialog) -> Unit = {}
 ): Dialog? {
     return loadingCaller(
-        text,
-        R.layout.lib_dialog_bottom_loading_layout,
-        showCloseView,
-        config = {
+        text, R.layout.lib_dialog_bottom_loading_layout, showCloseView, config = {
             dialogGravity = Gravity.BOTTOM
             animStyleResId = R.style.LibDialogBottomTranslateAnimation
             dimAmount = 0.2f
             dialogWidth = -1
-        },
-        onCancel = onCancel
+        }, onCancel = onCancel
     )
 }
 
@@ -357,8 +353,7 @@ fun ActivityResultCaller.loadLoadingCaller(
 /**快速显示[loadingCaller]对话框*/
 data class LoadingConfig(
     var loadingText: CharSequence? = null,
-    @LayoutRes
-    var loadingLayoutId: Int = R.layout.lib_dialog_flow_loading_layout,
+    @LayoutRes var loadingLayoutId: Int = R.layout.lib_dialog_flow_loading_layout,
     var loadingShowCloseView: Boolean = true,
     var loadingConfig: DslDialogConfig.() -> Unit = {},
     var onLoadingCancel: (dialog: Dialog) -> Unit = {}
@@ -366,8 +361,7 @@ data class LoadingConfig(
 
 /**快速显示[loadingCaller]对话框*/
 fun ActivityResultCaller.dslLoading(
-    bottom: Boolean = false,
-    action: LoadingConfig.() -> Unit = {}
+    bottom: Boolean = false, action: LoadingConfig.() -> Unit = {}
 ): Dialog? {
     val config = LoadingConfig()
     if (bottom) {
@@ -378,21 +372,15 @@ fun ActivityResultCaller.dslLoading(
         is Fragment -> activity
         is Activity -> this
         else -> null
-    }?.loadingCaller(
-        config.loadingText,
-        config.loadingLayoutId,
-        config.loadingShowCloseView,
-        {
-            if (bottom) {
-                dialogGravity = Gravity.BOTTOM
-                animStyleResId = R.style.LibDialogBottomTranslateAnimation
-                dimAmount = 0.2f
-                dialogWidth = -1
-            }
-            config.loadingConfig(this)
-        },
-        {
-            config.onLoadingCancel(it)
+    }?.loadingCaller(config.loadingText, config.loadingLayoutId, config.loadingShowCloseView, {
+        if (bottom) {
+            dialogGravity = Gravity.BOTTOM
+            animStyleResId = R.style.LibDialogBottomTranslateAnimation
+            dimAmount = 0.2f
+            dialogWidth = -1
         }
-    )
+        config.loadingConfig(this)
+    }, {
+        config.onLoadingCancel(it)
+    })
 }
