@@ -103,6 +103,7 @@ fun createOverrideBitmapCanvas(
     originHeight: Float,
     overrideWidth: Float?,
     overrideHeight: Float? = null,
+    init: Matrix.() -> Unit = {},
     block: Canvas.() -> Unit
 ): Bitmap? {
     val matrix = createOverrideMatrix(originWidth, originHeight, overrideWidth, overrideHeight)
@@ -117,6 +118,7 @@ fun createOverrideBitmapCanvas(
     }
 
     return withBitmap(bitmapWidth, bitmapHeight) {
+        matrix.init()
         concat(matrix)
         block()
     }
