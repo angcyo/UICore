@@ -258,19 +258,22 @@ open class DslViewHolder(
     }
 
     /**长按事件识别
+     * [loopLongPress] 是否需要循环发送长按事件, 否则只发送一次
      * [EVENT_TYPE_CLICK]
      * [EVENT_TYPE_LONG_PRESS]
      * */
     fun longTouch(
         @IdRes id: Int,
+        loopLongPress: Boolean = false,
         block: (view: View, event: MotionEvent, eventType: Int?) -> Boolean
     ) {
-        longTouch(v<View>(id), block)
+        longTouch(v<View>(id), loopLongPress, block)
     }
 
     @SuppressLint("ClickableViewAccessibility")
     fun longTouch(
         view: View?,
+        loopLongPress: Boolean = false,
         block: (view: View, event: MotionEvent, eventType: Int?) -> Boolean
     ) {
 
@@ -287,10 +290,12 @@ open class DslViewHolder(
                         block(view, event, eventType)
                         event.recycle()
 
-                        view.postDelayed(
-                            longRunnable,
-                            ViewConfiguration.getLongPressTimeout().toLong()
-                        )
+                        if (loopLongPress) {
+                            view.postDelayed(
+                                longRunnable,
+                                ViewConfiguration.getLongPressTimeout().toLong()
+                            )
+                        }
                     }
                 }
             }
@@ -311,9 +316,20 @@ open class DslViewHolder(
                     MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                         view.isPressed = false
                         if (eventType == null) {
-                            block(view, event, EVENT_TYPE_CLICK)
+                            eventType = EVENT_TYPE_CLICK
                         }
                         view.removeCallbacks(longRunnable)
+                    }
+                }
+                if (eventType == EVENT_TYPE_CLICK) {
+                    //发送点击事件
+                    block(view, event, EVENT_TYPE_CLICK)
+                } else {
+                    //其它事件转发, 用于自定义处理
+                    block(view, event, null)
+                }
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                         eventType = null
                     }
                 }
