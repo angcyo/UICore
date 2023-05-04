@@ -104,6 +104,9 @@ fun RecyclerView.initDslAdapter(
     return dslAdapter(append, new, action)
 }
 
+/**[new] true:始终创建一个新的[DslAdapter], 此时忽略[append]参数
+ * [append] false:先清空原有的[DslAdapter]数据, true:追加数据到[DslAdapter]中
+ * */
 fun RecyclerView.dslAdapter(
     append: Boolean = false, //当已经是adapter时, 是否追加item. 需要先关闭 new
     new: Boolean = true, //始终创建新的adapter, 为true时, 则append无效
@@ -484,10 +487,12 @@ fun RecyclerView.restoreScrollPosition(config: ScrollPositionConfig) {
                 config.adapterPosition,
                 if (lm.orientation == HORIZONTAL) config.left else config.top
             )
+
             is StaggeredGridLayoutManager -> lm.scrollToPositionWithOffset(
                 config.adapterPosition,
                 if (lm.orientation == HORIZONTAL) config.left else config.top
             )
+
             else -> scrollToPosition(config.adapterPosition)
         }
     }
