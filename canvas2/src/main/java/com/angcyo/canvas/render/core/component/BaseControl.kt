@@ -6,9 +6,15 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
-import com.angcyo.canvas.render.core.*
+import com.angcyo.canvas.render.core.CanvasControlManager
+import com.angcyo.canvas.render.core.CanvasRenderDelegate
+import com.angcyo.canvas.render.core.ICanvasTouchListener
+import com.angcyo.canvas.render.core.IComponent
+import com.angcyo.canvas.render.core.Reason
+import com.angcyo.canvas.render.core.Strategy
 import com.angcyo.canvas.render.data.ControlRendererInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.library.L
 import com.angcyo.library.ex.dp
 
 /**
@@ -95,6 +101,7 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
                 lastTouchMovePoint.set(touchDownPoint)
                 lastTouchMovePointInside.set(touchDownPointInside)
             }
+
             MotionEvent.ACTION_POINTER_DOWN -> {
                 //controlMatrix.reset()
             }
@@ -120,6 +127,7 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
                     lastTouchMovePointInside.set(touchMovePointInside)
                 }
             }
+
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 if (isEnableComponent) {
                     endControl()
@@ -260,6 +268,68 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
         handleControl = false
         isControlHappen = false
         controlRendererInfo = null
+    }
+
+    /**直接将渲染器移动多少距离
+     * [tx] [ty] 如果是手指触发的, 那么距离应该是移动的位置减去首次按下时的距离*/
+    fun translate(tx: Float, ty: Float) {
+        if (handleControl) {
+            L.d("移动元素:tx:$tx ty:$ty")
+            controlRendererInfo?.let {
+                isControlHappen = true
+                controlMatrix.setTranslate(tx, ty)
+
+                applyTranslate(Reason.preview, controlManager.delegate)
+            }
+        }
+    }
+
+    /**移动元素, 在上一次的位置上进行增量移动*/
+    fun translateBy(dx: Float, dy: Float) {
+        if (handleControl) {
+            L.d("移动元素By:dx:$dx dy:$dy")
+            controlRendererInfo?.let {
+                isControlHappen = true
+                controlMatrix.postTranslate(dx, dy)
+
+                applyTranslate(Reason.preview, controlManager.delegate)
+
+                //移动到边缘时, 自动移动画布
+                controlManager.delegate.autoTranslateCanvas(it.controlRenderer)
+            }
+        }
+    }
+
+    /**直接从原始位置(存档的位置), 旋转多少角度
+     * 非旋转到多少度
+     * [angle] 当前旋转了多少度*/
+    fun rotate(angle: Float, px: Float, py: Float) {
+        L.d("旋转元素:angle:$angle")
+        controlRendererInfo?.let {
+            isControlHappen = true
+            controlMatrix.setRotate(angle, px, py)
+            applyRotate(Reason.preview, controlManager.delegate)
+        }
+    }
+
+    /**在当前可视的角度上, 旋转多少角度
+     *  [angle] 需要旋转的角度*/
+    fun rotateBy(angle: Float, px: Float, py: Float) {
+        L.d("旋转元素:by:$angle")
+        controlRendererInfo?.let {
+            it.controlRenderer.renderProperty?.angle?.let {
+                rotate(it + angle, px, py)
+            }
+        }
+    }
+
+    /**[rotateBy]*/
+    fun rotateBy(angle: Float) {
+        controlRendererInfo?.let {
+            it.state.renderProperty?.getRenderCenter()?.let { centerPoint ->
+                rotateBy(angle, centerPoint.x, centerPoint.y)
+            }
+        }
     }
 
     //endregion---操作---

@@ -5,6 +5,7 @@
     <dimen name="lib_check_box_size">18dp</dimen>
     <dimen name="lib_keyboard_size">50dp</dimen>
     <dimen name="lib_new_icon_size">18dp</dimen>
+    <dimen name="lib_direction_icon_size">24dp</dimen>
 
     <!--显示时, 标签的样式-->
     <style name="ItemLabelStyle" parent="LibSubTextStyle">

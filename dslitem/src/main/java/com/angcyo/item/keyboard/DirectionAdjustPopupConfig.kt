@@ -26,13 +26,24 @@ class DirectionAdjustPopupConfig : ShadowAnchorPopupConfig() {
         const val DIRECTION_DOWN = 2
         const val DIRECTION_LEFT = 3
         const val DIRECTION_RIGHT = 4
+
+        /**设备居中*/
+        const val DIRECTION_CENTER = 5
+
+        /**顺时针/逆时针旋转*/
+        const val DIRECTION_ROTATE_CW = 6
+        const val DIRECTION_ROTATE_CCW = 7
     }
 
     /**方向改变回调, */
-    var onDirectionAdjustAction: (direction: Int /*方向*/, step: Int /*步长*/) -> Unit = { _, _ -> }
+    var onDirectionAdjustAction: (direction: Int /*方向*/, step: Float /*步长*/) -> Unit =
+        { _, _ -> }
 
     /**微调的步长, [1,2,5]*/
-    var modifyStep: Int by HawkPropertyValue<Any, Int>(1)
+    var modifyStep: Float by HawkPropertyValue<Any, Float>(1f)
+
+    /**是否要显示居中调整按钮*/
+    var showDirectionCenterButton: Boolean = false
 
     init {
         contentLayoutId = R.layout.lib_keyboard_direction_modify_layout
@@ -44,17 +55,18 @@ class DirectionAdjustPopupConfig : ShadowAnchorPopupConfig() {
         //步长选择
         viewHolder.v<DslTabLayout>(R.id.lib_tab_layout)?.apply {
             setCurrentItem(indexOfChild {
-                tag?.toString()?.toIntOrNull() == modifyStep
+                tag?.toString()?.toFloatOrNull() == modifyStep
             } ?: 0)
             configTabLayoutConfig {
                 //选中回调
                 onSelectViewChange = { fromView, selectViewList, reselect, fromUser ->
-                    selectViewList.firstOrNull()?.tag?.toString()?.toIntOrNull()?.let {
+                    selectViewList.firstOrNull()?.tag?.toString()?.toFloatOrNull()?.let {
                         modifyStep = it
                     }
                 }
             }
         }
+        viewHolder.visible(R.id.lib_direction_center_view, showDirectionCenterButton)
         //方向键盘微调控制
         viewHolder.click(R.id.lib_direction_up_view) {
             onDirectionAdjustAction(DIRECTION_UP, modifyStep)
@@ -67,6 +79,16 @@ class DirectionAdjustPopupConfig : ShadowAnchorPopupConfig() {
         }
         viewHolder.click(R.id.lib_direction_right_view) {
             onDirectionAdjustAction(DIRECTION_RIGHT, modifyStep)
+        }
+        //
+        viewHolder.click(R.id.lib_direction_center_view) {
+            onDirectionAdjustAction(DIRECTION_CENTER, modifyStep)
+        }
+        viewHolder.click(R.id.lib_direction_rotate_cw_view) {
+            onDirectionAdjustAction(DIRECTION_ROTATE_CW, modifyStep)
+        }
+        viewHolder.click(R.id.lib_direction_rotate_ccw_view) {
+            onDirectionAdjustAction(DIRECTION_ROTATE_CCW, modifyStep)
         }
     }
 }

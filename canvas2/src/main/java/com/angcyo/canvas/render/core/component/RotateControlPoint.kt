@@ -6,7 +6,6 @@ import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.core.CanvasControlManager
 import com.angcyo.canvas.render.core.Reason
-import com.angcyo.library.L
 import com.angcyo.library.ex._drawable
 import kotlin.math.atan2
 
@@ -38,6 +37,7 @@ class RotateControlPoint(controlManager: CanvasControlManager) : BaseControlPoin
                     it.getRenderCenter(centerPointInside)
                 }
             }
+
             MotionEvent.ACTION_MOVE -> {
                 var angle = calculateAngleBetweenLines(
                     centerPointInside.x,
@@ -67,13 +67,7 @@ class RotateControlPoint(controlManager: CanvasControlManager) : BaseControlPoin
      * 非旋转到多少度
      * [angle] 当前旋转了多少度*/
     private fun rotate(angle: Float) {
-        L.d("旋转元素:angle:$angle")
-        controlRendererInfo?.let {
-            isControlHappen = true
-            controlMatrix.setRotate(angle, centerPointInside.x, centerPointInside.y)
-
-            applyRotate(Reason.preview, controlManager.delegate)
-        }
+        rotate(angle, centerPointInside.x, centerPointInside.y)
     }
 
     override fun endControl() {
