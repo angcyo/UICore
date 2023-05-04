@@ -15,7 +15,7 @@ import kotlin.reflect.KProperty
  */
 
 /**自动同步保存至[Hawk]
- * [HawkProperty]
+ * [com.angcyo.library.component.HawkProperty]
  *
  * var inputHistoryHawkKey: List<String> by HawkListProperty<Any>()
  *
