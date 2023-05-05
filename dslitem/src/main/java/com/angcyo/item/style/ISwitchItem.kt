@@ -54,6 +54,17 @@ interface ISwitchItem : IAutoInitItem {
     fun configSwitchItem(action: SwitchItemConfig.() -> Unit) {
         switchItemConfig.action()
     }
+
+    /**更新开关的状态*/
+    fun updateSwitchChecked(checked: Boolean) {
+        if (itemSwitchChecked != checked) {
+            itemSwitchChecked = checked
+            if (this is DslAdapterItem) {
+                itemChanging = true
+                updateAdapterItem()
+            }
+        }
+    }
 }
 
 var ISwitchItem.itemSwitchChecked: Boolean
