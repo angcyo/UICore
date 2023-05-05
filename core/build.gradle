@@ -17,5 +17,7 @@ dependencies {
 
     //浮窗权限 https://github.com/czy1121/settingscompat
     //api 'com.github.czy1121:settingscompat:1.1.4'
-    api 'com.github.angcyo:settingscompat:1.1.4.1'
+    api('com.github.angcyo:settingscompat:1.1.4.1') {
+        exclude group: 'androidx.appcompat'
+    }
 }

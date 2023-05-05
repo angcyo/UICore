@@ -8,7 +8,9 @@ dependencies {
 
     //http://mvnrepository.com/artifact/androidx.browser
     //http://mvnrepository.com/artifact/androidx.browser/browser
-    implementation "androidx.browser:browser:1.5.0"
+    implementation("androidx.browser:browser:1.5.0") {
+        exclude group: 'androidx.annotation'
+    }
 
     //https://mvnrepository.com/artifact/com.google.androidbrowserhelper/
     //https://mvnrepository.com/artifact/com.google.androidbrowserhelper/androidbrowserhelper
