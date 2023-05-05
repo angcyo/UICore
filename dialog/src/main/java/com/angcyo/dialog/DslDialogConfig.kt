@@ -281,6 +281,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
      * [android.app.Dialog.cancel] 才会触发[onCancelListener]*/
     var onCancelListener: ((dialog: Dialog) -> Unit)? = null
 
+    /**中立按钮*/
     open fun neutralButton(
         text: CharSequence? = neutralButtonText ?: _string(R.string.dialog_neutral),
         listener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit
@@ -289,6 +290,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
         neutralButtonListener = listener
     }
 
+    /**取消按钮*/
     open fun negativeButton(
         text: CharSequence? = negativeButtonText ?: _string(R.string.dialog_negative),
         listener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit
@@ -297,6 +299,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
         negativeButtonListener = listener
     }
 
+    /**确定按钮*/
     open fun positiveButton(
         text: CharSequence? = positiveButtonText ?: _string(R.string.dialog_positive),
         listener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit
