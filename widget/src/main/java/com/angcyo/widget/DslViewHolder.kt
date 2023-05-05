@@ -388,7 +388,7 @@ open class DslViewHolder(
         }
     }
 
-    fun postDelay(delayMillis: Long, runnable: () -> Unit) {
+    fun postDelay(delayMillis: Long = 0, runnable: () -> Unit) {
         postDelay(object : Runnable {
             override fun run() {
                 runnable.invoke()
