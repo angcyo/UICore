@@ -283,7 +283,9 @@ fun Activity.showDebugInfoView(config: ActivityDebugInfoConfig) {
         }
 
         layoutParams.gravity = gravity
-        if (decorView.bottom > contentView.bottom) { //显示了导航栏
+        if (decorView.bottom > contentView.bottom &&
+            decorView.measuredHeight > decorView.measuredWidth /*竖屏模式*/
+        ) { //显示了导航栏
             val resources = resources
             val resourceId =
                 resources.getIdentifier("navigation_bar_height", "dimen", "android")
