@@ -84,9 +84,9 @@ class Tcp : ICancel {
                 e.printStackTrace()
             }
             socket = Socket()
+            socket?.keepAlive = true
+            socket?.soTimeout = soTimeout
         }
-        socket?.keepAlive = true
-        socket?.soTimeout = soTimeout
 
         //java.net.SocketException: Socket is not connected
         //val inputStream = socket?.getInputStream()
