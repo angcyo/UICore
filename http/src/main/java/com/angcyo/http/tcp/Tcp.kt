@@ -60,7 +60,7 @@ class Tcp : ICancel {
     /**发送的端口*/
     var port = 80
 
-    /**读流的超时时长*/
+    /**读流的超时时长, 同时也是超时时长*/
     var soTimeout = 5000
 
     /**数据缓存大小*/
@@ -110,7 +110,7 @@ class Tcp : ICancel {
         doBack {
             try {
                 L.d("TCP准备连接:$address:$port")
-                socket.connect(InetSocketAddress(address, port), socket.soTimeout)
+                socket.connect(InetSocketAddress(address, port), soTimeout)
                 onSocketConnectSuccess()
             } catch (e: Exception) {
                 e.printStackTrace()
