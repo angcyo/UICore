@@ -12,6 +12,7 @@ import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 import java.io.InputStream
 import java.io.OutputStream
+import java.net.ConnectException
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketException
@@ -97,8 +98,7 @@ class Tcp : ICancel {
     /**连接到服务器*/
     fun connect() {
         init()
-        val socket = socket ?: return
-        if (socket.isConnected) {
+        if (socket?.isConnected == true) {
             for (listener in listeners) {
                 listener.onConnectStateChanged(this, CONNECT_STATE_CONNECTED)
             }
@@ -109,9 +109,24 @@ class Tcp : ICancel {
         }
         doBack {
             try {
-                L.d("TCP准备连接:$address:$port")
-                socket.connect(InetSocketAddress(address, port), soTimeout)
-                onSocketConnectSuccess()
+                var tryCount = 0
+                while (this.socket?.isConnected == false) {
+                    try {
+                        L.d("TCP准备连接:$address:$port /$tryCount")
+                        socket?.connect(InetSocketAddress(address, port), soTimeout)
+                        onSocketConnectSuccess()
+                    } catch (e: ConnectException) {
+                        e.printStackTrace()
+                        throw e
+                    } catch (e: SocketException) {
+                        this.socket = null
+                        init()
+                        tryCount++
+                        if (tryCount > 5) {
+                            break
+                        }
+                    }
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 for (listener in listeners) {
@@ -127,7 +142,7 @@ class Tcp : ICancel {
         while (!socket.isConnected) {
             sleep(1000)
             try {
-                socket.connect(InetSocketAddress(address, port), socket.soTimeout)
+                socket.connect(InetSocketAddress(address, port), soTimeout)
                 onSocketConnectSuccess()
             } catch (e: Exception) {
                 e.printStackTrace()
