@@ -79,7 +79,9 @@ abstract class BaseElement : IElement {
         }
 
     override fun updateElementRenderProperty(property: CanvasRenderProperty) {
-        property.copyTo(renderProperty)
+        if (property != renderProperty) {
+            property.copyTo(renderProperty)
+        }
     }
 
     /**获取用来绘制的图片, 未经过[CanvasRenderProperty]处理的

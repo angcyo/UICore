@@ -446,8 +446,9 @@ abstract class BaseRenderer : IRenderer {
         if (renderProperty == null) {
             renderProperty = CanvasRenderProperty()
         }
-        target?.copyTo(renderProperty)
-
+        if (renderProperty != target) {
+            target?.copyTo(renderProperty)
+        }
         requestUpdatePropertyFlag(reason, delegate)
         delegate?.dispatchRendererPropertyChange(this, null, target, reason)
     }
