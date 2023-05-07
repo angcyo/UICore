@@ -12,6 +12,9 @@ import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
+ * 主线程调度器
+ *
+ * [com.angcyo.library.component.ThreadExecutor]
  *
  * Email:angcyo@126.com
  * @author angcyo
@@ -54,6 +57,31 @@ class MainRunnable(var action: Action? = null) : Runnable {
         cancel.set(true)
         action = null
     }
+}
+
+/**在主线程中执行一次[Runnable], 抖动处理
+ * [runnable] 需要确保是唯一的对象*/
+fun onMainOnce(
+    delayMillis: Long = app().resources.getInteger(R.integer.lib_animation_delay).toLong(),
+    runnable: Runnable
+) {
+    MainExecutor.remove(runnable)
+    MainExecutor.delay(runnable, delayMillis)
+}
+
+fun _removeMainRunnable(runnable: Runnable) {
+    MainExecutor.remove(runnable)
+}
+
+fun _runMainRunnable(runnable: Runnable) {
+    MainExecutor.execute(runnable)
+}
+
+fun _runMainRunnableDelay(
+    delayMillis: Long = app().resources.getInteger(R.integer.lib_animation_delay).toLong(),
+    runnable: Runnable
+) {
+    MainExecutor.delay(runnable, delayMillis)
 }
 
 /**延迟处理*/

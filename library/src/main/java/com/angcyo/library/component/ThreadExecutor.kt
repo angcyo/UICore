@@ -1,13 +1,20 @@
 package com.angcyo.library.component
 
 import com.angcyo.library.isMain
-import java.util.*
-import java.util.concurrent.*
+import java.util.Locale
+import java.util.concurrent.Executor
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.ThreadFactory
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 
 /**
  * 线程调度器
+ *
+ * [com.angcyo.library.component.MainExecutor]
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/02/14
@@ -53,6 +60,15 @@ object ThreadExecutor : Executor {
         synchronized(executorLock) {
             MainExecutor.execute(command)
         }
+    }
+}
+
+/**在线程中执行*/
+fun onThread(check: Boolean = true, command: Runnable) {
+    if (check && !isMain()) {
+        command.run()
+    } else {
+        ThreadExecutor.execute(command)
     }
 }
 
