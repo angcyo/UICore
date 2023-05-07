@@ -376,7 +376,6 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
 
     /**选中的渲染器改变*/
     private fun onSelfSelectorRendererChange(old: List<BaseRenderer>) {
-        delegate.controlManager.updateControlPointLocation()
         delegate.dispatchSelectorRendererChange(old, rendererList)
     }
 

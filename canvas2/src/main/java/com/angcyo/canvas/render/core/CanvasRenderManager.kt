@@ -64,6 +64,16 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         afterRendererList.add(progressRenderer)
     }
 
+    override fun renderBefore(canvas: Canvas, params: RenderParams) {
+        //---
+        renderBefore(canvas, beforeRendererList, params)
+        renderBefore(canvas, elementRendererList, params)
+        renderBefore(canvas, afterRendererList, params)
+        //---
+        limitRenderer.renderBefore(canvas, params)
+        monitorRenderer.renderBefore(canvas, params)
+    }
+
     /**渲染入口点*/
     @CallPoint
     override fun renderOnView(canvas: Canvas, params: RenderParams) {

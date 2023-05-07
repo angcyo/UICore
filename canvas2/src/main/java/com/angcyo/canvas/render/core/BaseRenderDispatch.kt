@@ -33,6 +33,7 @@ abstract class BaseRenderDispatch {
         rendererList: List<IRenderer>,
         params: RenderParams
     ) {
+        dispatchRenderBefore(canvas, rendererList, params)
         dispatchRenderOnInside(
             canvas,
             rendererList.filter { it.renderFlags.have(IRenderer.RENDERER_FLAG_ON_INSIDE) },
@@ -48,6 +49,19 @@ abstract class BaseRenderDispatch {
             rendererList.filter { it.renderFlags.have(IRenderer.RENDERER_FLAG_ON_VIEW) },
             params
         )
+    }
+
+    /**[com.angcyo.canvas.render.core.IRenderer.renderBefore]*/
+    protected fun dispatchRenderBefore(
+        canvas: Canvas,
+        list: List<IRenderer>,
+        params: RenderParams
+    ) {
+        if (list.isEmpty()) return
+
+        for (renderer in list) {
+            renderer.renderBefore(canvas, params)
+        }
     }
 
     /**[com.angcyo.canvas.render.core.IRenderer.renderOnInside]*/
@@ -113,6 +127,14 @@ abstract class BaseRenderDispatch {
 
         for (renderer in list) {
             renderer.renderOnView(canvas, params)
+        }
+    }
+
+    //---
+
+    fun renderBefore(canvas: Canvas, list: List<IRenderer>, params: RenderParams) {
+        for (renderer in list) {
+            renderer.renderBefore(canvas, params)
         }
     }
 

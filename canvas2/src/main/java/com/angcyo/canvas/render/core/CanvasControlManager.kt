@@ -5,7 +5,15 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
-import com.angcyo.canvas.render.core.component.*
+import com.angcyo.canvas.render.core.component.BaseControlPoint
+import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
+import com.angcyo.canvas.render.core.component.DeleteControlPoint
+import com.angcyo.canvas.render.core.component.LockControlPoint
+import com.angcyo.canvas.render.core.component.RotateControlPoint
+import com.angcyo.canvas.render.core.component.ScaleControlPoint
+import com.angcyo.canvas.render.core.component.SmartAssistantComponent
+import com.angcyo.canvas.render.core.component.TranslateRendererControl
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.library.ex.mapPoint
@@ -61,23 +69,6 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
 
     //region---core---
 
-    override fun onRenderBoxMatrixUpdate(newMatrix: Matrix, reason: Reason, finish: Boolean) {
-        if (delegate.selectorManager.isSelectorElement) {
-            updateControlPointLocation()
-        }
-    }
-
-    override fun onRendererPropertyChange(
-        renderer: BaseRenderer,
-        fromProperty: CanvasRenderProperty?,
-        toProperty: CanvasRenderProperty?,
-        reason: Reason
-    ) {
-        if (renderer == delegate.selectorManager.selectorComponent) {
-            updateControlPointLocation()
-        }
-    }
-
     override fun onSelectorRendererChange(
         selectorComponent: CanvasSelectorComponent,
         from: List<BaseRenderer>,
@@ -86,6 +77,12 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
         val selectorRenderer = delegate.selectorManager.selectorComponent
         lockControlPoint.isLockScaleRatio = selectorRenderer.isLockScaleRatio
         scaleControlPoint.isLockScaleRatio = selectorRenderer.isLockScaleRatio
+    }
+
+    override fun renderBefore(canvas: Canvas, params: RenderParams) {
+        if (isEnableComponent) {
+            updateControlPointLocation()
+        }
     }
 
     override fun renderOnInside(canvas: Canvas, params: RenderParams) {

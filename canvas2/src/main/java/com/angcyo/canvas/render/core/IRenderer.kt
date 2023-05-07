@@ -40,6 +40,11 @@ interface IRenderer {
     /**当前类的flag标识位*/
     var renderFlags: Int
 
+    /**开始渲染之前回调*/
+    @CallPoint
+    fun renderBefore(canvas: Canvas, params: RenderParams) {
+    }
+
     /**绘制顺序1: 在画板内部绘制, 相对于画板原点坐标系绘制
      * 受[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderBounds]影响
      * 受[com.angcyo.canvas.render.core.CanvasRenderViewBox.originGravity]影响
