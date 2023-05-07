@@ -426,7 +426,7 @@ open class DslViewHolder(
     }
 
     /**获取焦点*/
-    fun focused(view: View?) {
+    fun focused(view: View? = itemView) {
         view?.isFocusable = true
         view?.isFocusableInTouchMode = true
         view?.requestFocus()
