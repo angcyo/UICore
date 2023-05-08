@@ -97,12 +97,10 @@ fun Uri.saveToFolder(
     context: Context = app()
 ): String {
     val name = if (fileName == null) {
-        val displayName = getDisplayName()
-        if (displayName.isNullOrBlank()) {
+        val name = getShowName()
+        name.ifBlank {
             val path = getPathFromUri()
             path?.lastName() ?: fileNameUUID()
-        } else {
-            displayName
         }
     } else {
         fileName
