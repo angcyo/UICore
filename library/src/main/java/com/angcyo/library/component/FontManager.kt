@@ -4,7 +4,13 @@ import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
 import com.angcyo.library.L
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.copyFileTo
+import com.angcyo.library.ex.eachFile
+import com.angcyo.library.ex.file
+import com.angcyo.library.ex.fileName
+import com.angcyo.library.ex.isFontType
+import com.angcyo.library.ex.noExtName
+import com.angcyo.library.ex.saveToFolder
 import com.angcyo.library.model.TypefaceInfo
 import com.angcyo.library.utils.folderPath
 import java.io.File
@@ -20,7 +26,7 @@ object FontManager {
     const val DEFAULT_FONT_FOLDER_NAME = "fonts"
 
     /**默认的导入字体文件夹路径, 全路径*/
-    var defaultCustomFontFolder: String = folderPath(DEFAULT_FONT_FOLDER_NAME)
+    var defaultCustomFontFolder: String = folderPath("$DEFAULT_FONT_FOLDER_NAME/custom")
 
     /**自定义字体的其他加载文件夹路径*/
     val customFontFolderList = mutableListOf<String>()
@@ -178,12 +184,22 @@ object FontManager {
 
     val _primaryFontList = mutableListOf<TypefaceInfo>()
 
+    /**App系统推荐的字体目录, 全路径*/
+    var defaultPrimaryFontFolder: String = folderPath("$DEFAULT_FONT_FOLDER_NAME/system")
+
     /**获取主要的字体*/
     fun getPrimaryFontList(): List<TypefaceInfo> {
         if (_primaryFontList.isEmpty()) {
-
+            //推荐字体
+            loadPrimaryFont(defaultPrimaryFontFolder)
         }
         return _primaryFontList
+    }
+
+    fun loadPrimaryFont(folder: String) {
+        folder.file().eachFile { file ->
+            _addFont(_primaryFontList, file)
+        }
     }
 
     //endregion ---在线/推荐字体---
