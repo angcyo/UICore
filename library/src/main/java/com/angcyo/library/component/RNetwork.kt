@@ -214,11 +214,12 @@ object RNetwork {
         return NetworkType.NETWORK_NO
     }
 
-    fun checkState(context: Context = app()): BooleanArray {
+    /**连接状态[wifi, mobile]*/
+    fun connectState(context: Context = app()): BooleanArray {
         val connMgr = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        var isWifiConn = false
-        var isMobileConn = false
+        var isWifiConnect = false
+        var isMobileConnect = false
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //获取所有网络连接的信息
@@ -232,46 +233,50 @@ object RNetwork {
                 val networkInfo = connMgr.getNetworkInfo(networks[i])
 
                 if ("WIFI".equals(networkInfo?.typeName, ignoreCase = true)) {
-                    isWifiConn = networkInfo?.isConnected == true
+                    isWifiConnect = networkInfo?.isConnected == true
                 } else if ("MOBILE".equals(networkInfo?.typeName, ignoreCase = true)) {
                     //现在的手机, 在wifi 连接的时候, mobile 也会是连接状态
-                    isMobileConn = networkInfo?.isConnected == true
+                    isMobileConnect = networkInfo?.isConnected == true
                 }
             }
         } else {
             var networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-            isWifiConn = networkInfo?.isConnected == true
+            isWifiConnect = networkInfo?.isConnected == true
 
             //获取移动数据连接的信息
             networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
-            isMobileConn = networkInfo?.isConnected == true
+            isMobileConnect = networkInfo?.isConnected == true
         }
 
-        return booleanArrayOf(isWifiConn, isMobileConn)
+        return booleanArrayOf(isWifiConnect, isMobileConnect)
     }
 
     /** wifi连接 */
     fun isWifi(context: Context = app()): Boolean {
-        return checkState(context)[0]
+        return connectState(context)[0]
     }
 
     /** mobile连接*/
     fun isMobile(context: Context = app()): Boolean {
-        val checkState = checkState(context)
+        val checkState = connectState(context)
         //wifi 未连接的情况下, mobile 连接
         return !checkState[0] && checkState[1]
     }
 
     /** 有网络*/
     fun isConnect(context: Context = app()): Boolean {
-        return checkState(context)[0] || checkState(context)[1]
+        return connectState(context)[0] || connectState(context)[1]
     }
 
     /**[android.Manifest.permission.ACCESS_NETWORK_STATE]*/
     fun isWifiConnect(context: Context = app()): Boolean {
         val manager: ConnectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)?.isConnected == true
+        return try {
+            manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)?.isConnected == true
+        } catch (e: Exception) {
+            false
+        }
     }
 }
 
