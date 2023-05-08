@@ -188,6 +188,9 @@ open class PopupConfig : ActivityResultCaller, IActivityProvider {
     var onInitLayout: (window: TargetWindow, viewHolder: DslViewHolder) -> Unit =
         { _, _ -> }
 
+    /**[DslViewHolder]*/
+    var _popupViewHolder: DslViewHolder? = null
+
     /**[PopupWindow]or[Window]载体*/
     var _container: TargetWindow? = null
 
@@ -279,6 +282,7 @@ open class PopupConfig : ActivityResultCaller, IActivityProvider {
             //创建布局和初始化
             val view = createContentView(context)
             val popupViewHolder = DslViewHolder(view!!)
+            _popupViewHolder = popupViewHolder
             view.setDslViewHolder(popupViewHolder)
             initPopupWindow(window, popupViewHolder)
             initLayout(window, popupViewHolder)//init 配置位置
@@ -569,6 +573,7 @@ open class PopupConfig : ActivityResultCaller, IActivityProvider {
         //创建内容布局, 和初始化
         val contentLayout = createContentView(activity)
         val viewHolder = DslViewHolder(contentLayout!!)
+        _popupViewHolder = viewHolder
         initPopupActivity(activity, viewHolder)
         initLayout(window, viewHolder)
 
