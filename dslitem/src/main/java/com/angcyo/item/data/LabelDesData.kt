@@ -8,4 +8,5 @@ package com.angcyo.item.data
 data class LabelDesData(
     val label: CharSequence? = null,
     val des: CharSequence? = null,
+    val tooltipText: CharSequence? = null,
 )

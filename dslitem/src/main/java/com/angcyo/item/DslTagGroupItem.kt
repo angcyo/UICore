@@ -3,6 +3,7 @@ package com.angcyo.item
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.data.LabelDesData
 import com.angcyo.library.annotation.DSL
+import com.angcyo.library.ex.tooltipText
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
 import com.angcyo.widget.base.resetChild
@@ -40,6 +41,7 @@ open class DslTagGroupItem : DslAdapterItem() {
                 val viewHolder = itemView.dslViewHolder()
                 viewHolder.tv(R.id.lib_label_view)?.text = item.label
                 viewHolder.tv(R.id.lib_des_view)?.text = item.des
+                viewHolder.itemView.tooltipText(item.tooltipText)
             }
     }
 
