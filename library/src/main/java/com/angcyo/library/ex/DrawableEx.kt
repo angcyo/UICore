@@ -100,6 +100,10 @@ fun Drawable.initBounds(width: Int = undefined_int, height: Int = undefined_int)
     return this
 }
 
+/**[setBounds]*/
+fun Drawable.setSize(width: Int = undefined_int, height: Int = undefined_int): Drawable =
+    setBounds(width, height)
+
 fun Drawable.setBounds(width: Int = undefined_int, height: Int = undefined_int): Drawable {
     val w = if (width == undefined_int) minimumWidth else width
     val h = if (height == undefined_int) minimumHeight else height
