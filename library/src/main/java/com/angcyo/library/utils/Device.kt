@@ -45,6 +45,10 @@ import kotlin.math.sqrt
  */
 object Device {
 
+    /**Rom api版本*/
+    val api: Int
+        get() = Build.VERSION.SDK_INT
+
     /**设备显示的名称: [厂家 型号]
      * Google Pixel 6
      * */
