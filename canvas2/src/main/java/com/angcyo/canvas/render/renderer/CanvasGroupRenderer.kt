@@ -53,6 +53,9 @@ import kotlin.math.min
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/02/17
  */
+
+typealias RenderAction = (renderer: CanvasElementRenderer, canvas: Canvas, renderProperty: CanvasRenderProperty, params: RenderParams) -> Unit
+
 open class CanvasGroupRenderer : BaseRenderer() {
 
     companion object {
@@ -137,7 +140,8 @@ open class CanvasGroupRenderer : BaseRenderer() {
             rendererList: List<BaseRenderer>?,
             overrideSize: Float? = null,
             @Pixel bounds: RectF? = null,
-            ignoreVisible: Boolean = false
+            ignoreVisible: Boolean = false,
+            renderAction: RenderAction? = null
         ): Bitmap? {
             rendererList ?: return null
             val rect = computeBounds(rendererList, bounds) ?: return null
@@ -156,8 +160,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                         renderDst = overrideSize / rect.width()
                     }
                 }
-
-                renderRenderer(this, rendererList, params, ignoreVisible)
+                renderRenderer(this, rendererList, params, ignoreVisible, renderAction)
             }
         }
 
@@ -167,6 +170,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
             rendererList: List<BaseRenderer>,
             params: RenderParams,
             ignoreVisible: Boolean = false,
+            renderAction: RenderAction? = null
         ) {
             for (renderer in rendererList) {
                 if (ignoreVisible || renderer.isVisible) {
@@ -176,8 +180,15 @@ open class CanvasGroupRenderer : BaseRenderer() {
                             renderer.renderElement?.requestElementDrawable(renderer, params)
                                 ?: continue
                         renderer.renderDrawable(canvas, renderProperty, drawable, params)
+                        renderAction?.invoke(renderer, canvas, renderProperty, params)
                     } else if (renderer is CanvasGroupRenderer) {
-                        renderRenderer(canvas, renderer.rendererList, params, ignoreVisible)
+                        renderRenderer(
+                            canvas,
+                            renderer.rendererList,
+                            params,
+                            ignoreVisible,
+                            renderAction
+                        )
                     }
                 }
             }
