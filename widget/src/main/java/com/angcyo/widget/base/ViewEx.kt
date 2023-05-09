@@ -357,6 +357,7 @@ fun View.findView(isIt: (View) -> Boolean): View? {
                 }
             }
         }
+
         this is ViewGroup -> {
             var result: View? = null
             for (i in 0 until childCount) {
@@ -368,6 +369,7 @@ fun View.findView(isIt: (View) -> Boolean): View? {
             }
             result
         }
+
         else -> null
     }
 }
@@ -381,6 +383,7 @@ fun View?.getLastVelocity(): Float {
                 val mScroller = this.getMember(NestedScrollView::class.java, "mScroller")
                 currVelocity = mScroller.getCurrVelocity()
             }
+
             is ScrollView -> {
                 val mScroller = this.getMember(ScrollView::class.java, "mScroller")
                 currVelocity = mScroller.getCurrVelocity()
@@ -425,6 +428,31 @@ fun Any?.stopScroll() {
             mScroller.abortAnimation()
         } else if (mScroller is ScrollerCompat) {
             mScroller.abortAnimation()
+        }
+    }
+}
+
+/**滚动到底部*/
+fun NestedScrollView.scrollToEnd(end: Boolean = true) {
+    post {
+        if (end) {
+            //滚到底部
+            fullScroll(View.FOCUS_DOWN)
+        } else {
+            //滚到顶部
+            fullScroll(ScrollView.FOCUS_UP)
+        }
+    }
+}
+
+fun HorizontalScrollView.scrollToEnd(end: Boolean = true) {
+    post {
+        if (end) {
+            //滚到底部
+            fullScroll(View.FOCUS_DOWN)
+        } else {
+            //滚到顶部
+            fullScroll(ScrollView.FOCUS_UP)
         }
     }
 }
