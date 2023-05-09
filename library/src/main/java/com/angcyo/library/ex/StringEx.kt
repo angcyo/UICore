@@ -511,7 +511,10 @@ fun String?.isTextMimeType(): Boolean {
     return this?.startsWith("text", true) ?: false
 }
 
-/**是否是图片类型*/
+/**是否是图片类型
+ * [File.fileType]
+ * [com.angcyo.library.utils.FileType.getFileType]
+ * */
 fun String?.isImageType(): Boolean {
     val lc = this?.lowercase() ?: return false
     if (lc.mimeType()?.startsWith("image", true) == true) {

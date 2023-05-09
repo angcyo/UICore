@@ -13,7 +13,7 @@ import java.io.InputStream
  */
 object FileType {
 
-    /**从流中, 读取头几个字节, 获取文件类型*/
+    /**从流中, 读取头几个字节, 获取文件类型的后缀名*/
     fun getFileType(inputStream: InputStream?): String? {
         val b = ByteArray(8)
         try {
@@ -24,7 +24,7 @@ object FileType {
         return getFileType(b)
     }
 
-    /**获取文件类型*/
+    /**获取文件类型对应的后缀名*/
     fun getFileType(bytes: ByteArray): String? {
         val fileCode = bytes2HexString(bytes)
         return when {
@@ -76,15 +76,17 @@ object FileType {
     }
 }
 
+/**@return 返回文件类型的后缀名*/
 fun Uri.fileType(context: Context = lastContext): String? {
     return try {
-        context.contentResolver.openInputStream(this).fileType()
+        context.contentResolver.openInputStream(this).use { fileType() }
     } catch (e: Exception) {
         e.printStackTrace()
         null
     }
 }
 
+/**@return 返回文件类型的后缀名*/
 fun File.fileType(): String? {
     return try {
         inputStream().use { FileType.getFileType(it) }
@@ -94,6 +96,7 @@ fun File.fileType(): String? {
     }
 }
 
+/**@return 返回文件类型的后缀名*/
 fun InputStream?.fileType(): String? {
     return try {
         FileType.getFileType(this)
