@@ -1,12 +1,21 @@
 package com.angcyo.canvas.render.core.component
 
 import android.graphics.Matrix
+import android.graphics.RectF
 import com.angcyo.canvas.render.core.BaseCanvasRenderListener
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IComponent
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.library.annotation.Pixel
-import com.angcyo.library.ex.*
+import com.angcyo.library.component.hawk.LibHawkKeys
+import com.angcyo.library.ex.abs
+import com.angcyo.library.ex.ensure
+import com.angcyo.library.ex.getScaleX
+import com.angcyo.library.ex.getScaleY
+import com.angcyo.library.ex.getTranslateX
+import com.angcyo.library.ex.getTranslateY
+import com.angcyo.library.ex.updateScale
+import com.angcyo.library.ex.updateTranslate
 import com.angcyo.library.unit.toPixel
 import kotlin.math.max
 
@@ -19,58 +28,78 @@ class LimitMatrixComponent : BaseCanvasRenderListener(), IComponent {
 
     companion object {
 
-        /**限制坐标*/
-        @Pixel
-        var DEFAULT_MIN_LEFT: Float? = (-1000f).toPixel()
+        private val _tempBoundsLimit = RectF()
 
-        @Pixel
-        var DEFAULT_MIN_TOP: Float? = DEFAULT_MIN_LEFT
+        /**元素的范围限制, +-1000mm*/
+        val BOUNDS_LIMIT: RectF?
+            get() {
+                val limit = LibHawkKeys.canvasItemBoundsLimit
+                return if (limit.isBlank()) {
+                    null
+                } else {
+                    val list = limit.split(",")
+                    list.forEachIndexed { index, string ->
+                        when (index) {
+                            0 -> _tempBoundsLimit.left = string.toFloatOrNull()?.toPixel() ?: 0f //l
+                            1 -> _tempBoundsLimit.top = string.toFloatOrNull()?.toPixel() ?: 0f  //t
+                            2 -> _tempBoundsLimit.right =
+                                string.toFloatOrNull()?.toPixel() ?: 0f //r
+                            3 -> _tempBoundsLimit.bottom =
+                                string.toFloatOrNull()?.toPixel() ?: 0f //b
+                        }
+                    }
+                    _tempBoundsLimit
+                }
+            }
 
-        @Pixel
-        var DEFAULT_MAX_RIGHT: Float? = 1000f.toPixel()
-
-        @Pixel
-        var DEFAULT_MAX_BOTTOM: Float? = DEFAULT_MAX_RIGHT
-
-        /**限制大小*/
-        @Pixel
-        var DEFAULT_MIN_WIDTH: Float? = 1f
-
-        @Pixel
-        var DEFAULT_MIN_HEIGHT: Float? = DEFAULT_MIN_WIDTH
-
-        @Pixel
-        var DEFAULT_MAX_WIDTH: Float? = 1000f.toPixel()
-
-        @Pixel
-        var DEFAULT_MAX_HEIGHT: Float? = DEFAULT_MAX_WIDTH
+        /**元素的宽高限制, +-1000mm*/
+        val SIZE_LIMIT: RectF?
+            get() {
+                val limit = LibHawkKeys.canvasItemSizeLimit
+                return if (limit.isBlank()) {
+                    null
+                } else {
+                    val list = limit.split(",")
+                    _tempBoundsLimit.left = 0f
+                    _tempBoundsLimit.top = 0f
+                    list.forEachIndexed { index, string ->
+                        when (index) {
+                            0 -> _tempBoundsLimit.left = string.toFloatOrNull() ?: 0f //l
+                            1 -> _tempBoundsLimit.top = string.toFloatOrNull() ?: 0f  //t
+                            2 -> _tempBoundsLimit.right = string.toFloatOrNull() ?: 0f //r
+                            3 -> _tempBoundsLimit.bottom = string.toFloatOrNull() ?: 0f //b
+                        }
+                    }
+                    _tempBoundsLimit
+                }
+            }
     }
 
     /**限制元素只能在此范围内移动*/
     @Pixel
-    var limitLeft: Float? = DEFAULT_MIN_LEFT
+    var limitLeft: Float? = BOUNDS_LIMIT?.left
 
     @Pixel
-    var limitTop: Float? = DEFAULT_MIN_TOP
+    var limitTop: Float? = BOUNDS_LIMIT?.top
 
     @Pixel
-    var limitRight: Float? = DEFAULT_MAX_RIGHT
+    var limitRight: Float? = BOUNDS_LIMIT?.right
 
     @Pixel
-    var limitBottom: Float? = DEFAULT_MAX_BOTTOM
+    var limitBottom: Float? = BOUNDS_LIMIT?.bottom
 
     /**限制元素的最小/最大宽高*/
     @Pixel
-    var limitMinWidth: Float? = DEFAULT_MIN_WIDTH
+    var limitMinWidth: Float? = BOUNDS_LIMIT?.left
 
     @Pixel
-    var limitMinHeight: Float? = DEFAULT_MIN_HEIGHT
+    var limitMinHeight: Float? = BOUNDS_LIMIT?.top
 
     @Pixel
-    var limitMaxWidth: Float? = DEFAULT_MAX_WIDTH
+    var limitMaxWidth: Float? = BOUNDS_LIMIT?.right
 
     @Pixel
-    var limitMaxHeight: Float? = DEFAULT_MAX_HEIGHT
+    var limitMaxHeight: Float? = BOUNDS_LIMIT?.bottom
 
     override var isEnableComponent: Boolean = true
 

@@ -55,7 +55,13 @@ object LibHawkKeys {
 
     /**[CanvasDelegate]item的bounds范围
      * l,t,r,b mm单位*/
+    @MM
     var canvasItemBoundsLimit: String by HawkPropertyValue<Any, String>("-1000,-1000,1000,8000")
+
+    /**[CanvasDelegate]item的宽高
+     * minw,minh,maxw,maxh mm单位*/
+    @Pixel
+    var canvasItemSizeLimit: String by HawkPropertyValue<Any, String>("1,1,9999,99999")
 
     /**[com.angcyo.canvas.CanvasDelegate]允许添加的最大渲染元素数据*/
     var canvasRenderMaxCount: Int by HawkPropertyValue<Any, Int>(30)
