@@ -86,8 +86,9 @@ fun createOverridePictureCanvas(
     val width = originWidth * scaleMatrix.getScaleX()
     val height = originHeight * scaleMatrix.getScaleY()
 
-    val w = max(width, minWidth).ceilInt()
-    val h = max(height, minHeight).ceilInt()
+    //最小宽高
+    val w = max(width, minWidth).toInt()
+    val h = max(height, minHeight).toInt()
 
     return withPicture(w, h) {
         concat(scaleMatrix)
