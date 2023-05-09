@@ -29,7 +29,6 @@ import com.angcyo.library.ex.getScaleX
 import com.angcyo.library.ex.getScaleY
 import com.angcyo.library.ex.longFeedback
 import com.angcyo.library.ex.size
-import com.angcyo.library.isMain
 import com.angcyo.library.unit.IRenderUnit
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.min
@@ -173,11 +172,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     }
 
     override fun refresh() {
-        if (isMain()) {
-            view.invalidate()
-        } else {
-            view.postInvalidate()
-        }
+        view.postInvalidate()
     }
 
     override fun onAttachedToWindow() {

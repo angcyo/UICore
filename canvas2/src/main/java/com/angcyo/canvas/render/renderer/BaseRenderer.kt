@@ -436,6 +436,8 @@ abstract class BaseRenderer : IRenderer {
 
     /**更新[renderProperty]时触发
      * [updateRenderPropertyTo]
+     *
+     * [com.angcyo.canvas.render.renderer.CanvasElementRenderer.updateRenderPropertyTo]
      * */
     @RenderFlag
     open fun updateRenderPropertyTo(

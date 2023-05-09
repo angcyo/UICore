@@ -89,7 +89,7 @@ class CanvasElementRenderer : BaseRenderer() {
         delegate: CanvasRenderDelegate?
     ) {
         super.updateRenderPropertyTo(target, reason, delegate)
-        target?.let { renderElement?.updateElementRenderProperty(it) }
+        renderProperty?.let { renderElement?.updateElementRenderProperty(it) }
     }
 
     //endregion---core---
