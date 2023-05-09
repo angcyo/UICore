@@ -156,3 +156,14 @@ fun withBitmapPaint(
     val paint = createPaint()
     block(this, paint)
 }
+
+/**将文本的中点绘制在指定的位置*/
+fun Canvas.drawTextCenter(text: String, cx: Float, cy: Float, paint: Paint) {
+    val textWidth = paint.measureText(text)
+    val textHeight = paint.textHeight()
+
+    val x = cx - textWidth / 2
+    val y = cy + textHeight / 2 - paint.descent()
+
+    drawText(text, x, y, paint)
+}
