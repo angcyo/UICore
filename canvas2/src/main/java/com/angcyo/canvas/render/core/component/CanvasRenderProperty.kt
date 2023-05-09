@@ -8,8 +8,21 @@ import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty.Companion.ANCHOR_X_RIGHT
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty.Companion.ANCHOR_Y_CENTER
 import com.angcyo.library.annotation.Pixel
-import com.angcyo.library.ex.*
-import kotlin.math.*
+import com.angcyo.library.ex.getRotateDegrees
+import com.angcyo.library.ex.getScaleX
+import com.angcyo.library.ex.getScaleY
+import com.angcyo.library.ex.getSkewX
+import com.angcyo.library.ex.getSkewY
+import com.angcyo.library.ex.getTranslateX
+import com.angcyo.library.ex.getTranslateY
+import com.angcyo.library.ex.mapPoint
+import com.angcyo.library.ex.toDegrees
+import com.angcyo.library.ex.toRadians
+import kotlin.math.absoluteValue
+import kotlin.math.atan2
+import kotlin.math.pow
+import kotlin.math.sqrt
+import kotlin.math.tan
 
 /**
  * 渲染的核心矩阵数据
@@ -105,11 +118,10 @@ data class CanvasRenderProperty(
 
         /**[anchorY]描述矩形的中心*/
         const val ANCHOR_Y_CENTER = "center"
-
-        internal val _tempPoint = PointF()
-        internal val _tempRect = RectF()
-        internal val _tempMatrix = Matrix()
     }
+
+    private val _tempPoint = PointF()
+    private val _tempMatrix = Matrix()
 
     /**使用一个未旋转的矩形[rect], 和一个即将旋转的角度[angle]初始化*/
     fun initWithRect(@Pixel rect: RectF, angle: Float) {
