@@ -19,7 +19,13 @@ import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.release
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex._color
+import com.angcyo.library.ex.diagonalLine
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.nowTime
+import com.angcyo.library.ex.textDrawHeight
+import com.angcyo.library.ex.textHeight
+import com.angcyo.library.ex.textWidth
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
@@ -48,6 +54,9 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
 
     /**提示的延迟阈值, 2s之内只提示1次*/
     var smartAssistantDelayThreshold = 600L
+
+    /**平移提示的延迟阈值, 2s之内只提示1次*/
+    var smartAssistantTranslateDelayThreshold = 300L
 
     private var _lastSmartAssistantTimeDx = 0L
     private var _lastSmartAssistantTimeDy = 0L
@@ -609,7 +618,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
             }
             lastSmartXValue = null
         }
-        if ((nowTime - _lastSmartAssistantTimeDx) < smartAssistantDelayThreshold) {
+        if ((nowTime - _lastSmartAssistantTimeDx) < smartAssistantTranslateDelayThreshold) {
             return true
         }
         _lastSmartAssistantTimeDx = nowTime
@@ -625,7 +634,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
             }
             lastSmartYValue = null
         }
-        if ((nowTime - _lastSmartAssistantTimeDy) < smartAssistantDelayThreshold) {
+        if ((nowTime - _lastSmartAssistantTimeDy) < smartAssistantTranslateDelayThreshold) {
             return true
         }
         _lastSmartAssistantTimeDy = nowTime
