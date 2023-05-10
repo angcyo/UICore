@@ -21,7 +21,7 @@ class CanvasElementRenderer : BaseRenderer() {
     var renderElement: IElement? = null
         set(value) {
             field = value
-            renderProperty = value?.requestElementRenderProperty()
+            updateRenderProperty()
         }
 
     //region---core---
