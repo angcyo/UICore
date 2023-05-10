@@ -31,6 +31,10 @@ abstract class BaseElement : IElement {
     /**需要在界面上渲染的[Drawable]*/
     var renderDrawable: Drawable? = null
 
+    /**[Matrix]*/
+    protected val RenderParams._renderMatrix
+        get() = renderMatrix ?: renderProperty.getDrawMatrix(includeRotate = true)
+
     override var elementHitComponent: ElementHitComponent = ElementHitComponent(this)
 
     //region---core---
@@ -205,9 +209,13 @@ abstract class BaseElement : IElement {
 
     /**渲染图片
      * [bitmap] 要绘制的原始数据*/
-    protected fun renderBitmap(canvas: Canvas, paint: Paint, bitmap: Bitmap?) {
+    protected fun renderBitmap(
+        canvas: Canvas,
+        paint: Paint,
+        bitmap: Bitmap?,
+        renderMatrix: Matrix
+    ) {
         bitmap ?: return
-        val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
         canvas.drawBitmap(bitmap, renderMatrix, paint)
     }
 
@@ -218,11 +226,11 @@ abstract class BaseElement : IElement {
         paint: Paint,
         isLinePath: Boolean,
         pathList: List<Path>?,
+        renderMatrix: Matrix
     ) {
         pathList ?: return
         if (pathList.isEmpty()) return
 
-        val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
         val newPathList = pathList.translateToOrigin()
 
         val oldStyle = paint.style

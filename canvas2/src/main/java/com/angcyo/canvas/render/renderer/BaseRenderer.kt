@@ -104,10 +104,11 @@ abstract class BaseRenderer : IRenderer {
     //endregion---计算属性---
 
     //region---临时变量---
+    protected val _renderRect = RectF()      //缓存的渲染矩形, 不包含旋转
+    protected val _renderBounds = RectF()   //缓存的渲染bounds
+    protected val _renderMatrix = Matrix()  //缓存的渲染矩阵
 
     protected val _tempRect = RectF()
-    protected val _renderBounds = RectF()
-    protected val _renderRect = RectF()
 
     //endregion---临时变量---
 
@@ -154,6 +155,11 @@ abstract class BaseRenderer : IRenderer {
     /**更新[renderProperty]属性*/
     open fun updateRenderProperty() {
         renderFlags = renderFlags.remove(RENDERER_FLAG_REQUEST_PROPERTY)
+        renderProperty?.apply {
+            getRenderRect(_renderRect)
+            getRenderBounds(_renderBounds)
+            getDrawMatrix(_renderMatrix, true)
+        }
     }
 
     /**
@@ -164,8 +170,9 @@ abstract class BaseRenderer : IRenderer {
     @CallPoint
     override fun renderOnInside(canvas: Canvas, params: RenderParams) {
         readyRenderIfNeed(params)
-        renderProperty?.let { property ->
-            val renderBounds = property.getRenderBounds()
+        params.renderMatrix = _renderMatrix
+        renderProperty?.let {
+            val renderBounds = _renderBounds
             val drawable = renderDrawable
             if (drawable != null) {
                 val boundsWidth = renderBounds.width()
@@ -184,7 +191,7 @@ abstract class BaseRenderer : IRenderer {
                     max(boundsHeight, params.drawMinHeight).ceilInt()
                 }
                 drawable.setBounds(0, 0, width, height)//设置绘制的宽高
-                renderDrawable(canvas, property, drawable, params)
+                renderDrawable(canvas, renderBounds, drawable, params)
             }
         }
     }
@@ -193,11 +200,10 @@ abstract class BaseRenderer : IRenderer {
      * [renderOnInside]*/
     fun renderDrawable(
         canvas: Canvas,
-        property: CanvasRenderProperty,
+        renderBounds: RectF,
         drawable: Drawable,
         params: RenderParams
     ) {
-        val renderBounds = property.getRenderBounds()
         canvas.withSave {
             translate(renderBounds.left, renderBounds.top)//平移到指定位置
             params.delegate?.dispatchRenderDrawable(this@BaseRenderer, params, false)
@@ -375,7 +381,7 @@ abstract class BaseRenderer : IRenderer {
         def: Boolean = true
     ): Boolean {
         delegate ?: return def
-        val bounds = renderProperty?.getRenderBounds() ?: return false
+        val bounds = _renderBounds
         return delegate.renderViewBox.isVisibleInRenderBox(bounds, fullIn)
     }
 

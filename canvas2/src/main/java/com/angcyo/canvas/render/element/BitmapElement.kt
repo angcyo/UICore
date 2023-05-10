@@ -43,7 +43,12 @@ open class BitmapElement : BaseElement() {
 
     override fun onRenderInside(renderer: BaseRenderer?, canvas: Canvas, params: RenderParams) {
         val bitmap = getDrawBitmap() ?: return
-        renderBitmap(canvas, paint, bitmap)
+        renderBitmap(
+            canvas,
+            paint,
+            bitmap,
+            params._renderMatrix
+        )
     }
 
 }

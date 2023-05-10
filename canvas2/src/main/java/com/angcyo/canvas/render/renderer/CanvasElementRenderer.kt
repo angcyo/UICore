@@ -28,12 +28,12 @@ class CanvasElementRenderer : BaseRenderer() {
 
     override fun renderOnInside(canvas: Canvas, params: RenderParams) {
         super.renderOnInside(canvas, params)
-        renderProperty?.let { property ->
+        renderProperty?.let {
             val element = renderElement
             if (element == null) {
                 renderNoDrawable(canvas, params)
             } else {
-                val renderBounds = property.getRenderBounds()
+                val renderBounds = _renderBounds
                 canvas.withSave {
                     translate(renderBounds.left, renderBounds.top)//平移到指定位置
                     element.onRenderInside(this@CanvasElementRenderer, canvas, params)
@@ -59,9 +59,9 @@ class CanvasElementRenderer : BaseRenderer() {
     }
 
     override fun updateRenderProperty() {
-        super.updateRenderProperty()
         val element = renderElement ?: return
         renderProperty = element.requestElementRenderProperty()
+        super.updateRenderProperty()
     }
 
     /**[com.angcyo.canvas.render.core.component.ElementHitComponent.elementContainsPoint]*/

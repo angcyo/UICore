@@ -81,7 +81,7 @@ open class TextElement : BaseElement() {
 
     override fun onRenderInside(renderer: BaseRenderer?, canvas: Canvas, params: RenderParams) {
         updatePaint()
-        val renderMatrix = renderProperty.getDrawMatrix(includeRotate = true)
+        val renderMatrix = params._renderMatrix
         canvas.concat(renderMatrix)
         drawNormalText(canvas)
     }

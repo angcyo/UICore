@@ -55,7 +55,7 @@ open class PathElement : BaseElement() {
     override fun onRenderInside(renderer: BaseRenderer?, canvas: Canvas, params: RenderParams) {
         paint.strokeWidth = 1f
         params.updateDrawPathPaintStrokeWidth(paint)
-        renderPath(canvas, paint, false, getDrawPathList())
+        renderPath(canvas, paint, false, getDrawPathList(), params._renderMatrix)
     }
 
     /**更新原始的[pathList]对象, 并保持可视化的宽高一致

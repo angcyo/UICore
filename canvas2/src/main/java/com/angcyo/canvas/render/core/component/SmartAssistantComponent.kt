@@ -437,8 +437,13 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
     /**距离提示文本*/
     private val smartAssistantDistanceTextList = mutableListOf<SmartAssistantDistanceTextData>()
 
+    /**是否有推荐的值*/
+    private fun haveSmartAssistantValue() =
+        lastSmartXValue != null && lastSmartYValue != null && lastSmartRotateValue != null
+
     /**先绘制提示线*/
     override fun renderOnInside(canvas: Canvas, params: RenderParams) {
+        if (!haveSmartAssistantValue()) return
         smartAssistantDistanceTextList.clear()
         //选中元素的边界
         val elementBounds = selectorElementBounds ?: return

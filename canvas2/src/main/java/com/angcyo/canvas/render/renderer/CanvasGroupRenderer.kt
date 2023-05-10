@@ -179,7 +179,12 @@ open class CanvasGroupRenderer : BaseRenderer() {
                         val drawable =
                             renderer.renderElement?.requestElementDrawable(renderer, params)
                                 ?: continue
-                        renderer.renderDrawable(canvas, renderProperty, drawable, params)
+                        renderer.renderDrawable(
+                            canvas,
+                            renderProperty.getRenderBounds(),
+                            drawable,
+                            params
+                        )
                         renderAction?.invoke(renderer, canvas, renderProperty, params)
                     } else if (renderer is CanvasGroupRenderer) {
                         renderRenderer(

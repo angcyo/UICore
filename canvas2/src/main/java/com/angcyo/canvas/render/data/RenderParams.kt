@@ -1,5 +1,6 @@
 package com.angcyo.canvas.render.data
 
+import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
@@ -38,6 +39,9 @@ data class RenderParams(
 
     /**[overrideSize]如果大于目标尺寸时, 是否需要阻止放大*/
     var overrideSizeNotZoomIn: Boolean = false,
+
+    /**渲染图片, path时的矩阵, 不指定则会从[com.angcyo.canvas.render.core.component.CanvasRenderProperty]中获取*/
+    var renderMatrix: Matrix? = null
 ) {
 
     /*companion object {
