@@ -277,7 +277,7 @@ data class CanvasRenderProperty(
      *
      * [afterRotate] 如果为true, 则获取到的是[getRenderRect]旋转后的bounds
      *               如果为false, 则是原始矩形变换后的最佳bounds, 默认false
-     *
+     * 此方法可能有性能消耗
      * //todo 在非矢量的数据情况下, bounds计算是否会有问题
      * */
     @Pixel
