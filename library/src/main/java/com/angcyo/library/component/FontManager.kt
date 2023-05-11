@@ -4,13 +4,17 @@ import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
 import com.angcyo.library.L
+import com.angcyo.library.component.FontManager.FONT_LIST_EXT
 import com.angcyo.library.ex.copyFileTo
 import com.angcyo.library.ex.eachFile
+import com.angcyo.library.ex.eachZipEntry
 import com.angcyo.library.ex.file
 import com.angcyo.library.ex.fileName
 import com.angcyo.library.ex.isFontType
 import com.angcyo.library.ex.noExtName
 import com.angcyo.library.ex.saveToFolder
+import com.angcyo.library.ex.writeTo
+import com.angcyo.library.libCacheFolderPath
 import com.angcyo.library.model.TypefaceInfo
 import com.angcyo.library.utils.folderPath
 import java.io.File
@@ -115,7 +119,7 @@ object FontManager {
     //region ---导入自定义的字体---
 
     /**导入字体*/
-    fun importCustomFont(uri: Uri?): TypefaceInfo? {
+    fun importCustomFont(uri: Uri?): List<TypefaceInfo>? {
         if (uri == null) {
             return null
         }
@@ -126,35 +130,48 @@ object FontManager {
         }
     }
 
-    /**导入字体*/
-    fun importCustomFont(path: String?): TypefaceInfo? {
+    /**导入字体到自定义字体目录*/
+    fun importCustomFont(path: String?): List<TypefaceInfo> {
+        val result = mutableListOf<TypefaceInfo>()
         try {
-            val fontList = getCustomFontList()
             if (path.isFontType()) {
                 val file = File(path!!)
-
-                val typeface = Typeface.createFromFile(file)
-                val targetFile = File(defaultCustomFontFolder, file.name)
-                file.copyTo(targetFile, true)
-
-                val typefaceInfo =
-                    TypefaceInfo(file.name.noExtName(), typeface, targetFile.absolutePath)
-                typefaceInfo.isCustom = true
-                val find = fontList.find { it.name == typefaceInfo.name }
-                if (find == null) {
-                    _customFontList.add(0, typefaceInfo)
-                } else {
-                    //字体已存在
-                    typefaceInfo.isRepeat = true
+                result.add(importCustomFont(file))
+            } else if (path.isFontListType()) {
+                //字体列表压缩文件
+                eachZipEntry(path) {
+                    if (it.name.isFontType()) {
+                        val file = it.writeTo(libCacheFolderPath(), this)
+                        result.add(importCustomFont(file))
+                    }
                 }
-
-                return typefaceInfo
             }
-            return null
         } catch (e: Exception) {
             e.printStackTrace()
-            return null
         }
+        return result
+    }
+
+    /**导入字体文件, 如果是字体文件
+     * [file] 字体文件原始所在的路径, 最后会复制到自定义的字体目录*/
+    fun importCustomFont(file: File): TypefaceInfo {
+        val fontList = getCustomFontList()
+        val typeface = Typeface.createFromFile(file)
+        val targetFile = File(defaultCustomFontFolder, file.name)
+        file.copyTo(targetFile, true)
+
+        val typefaceInfo =
+            TypefaceInfo(file.name.noExtName(), typeface, targetFile.absolutePath)
+        typefaceInfo.isCustom = true
+        val find = fontList.find { it.name == typefaceInfo.name }
+        if (find == null) {
+            _customFontList.add(0, typefaceInfo)
+        } else {
+            //字体已存在
+            typefaceInfo.isRepeat = true
+        }
+
+        return typefaceInfo
     }
 
     //endregion ---导入自定义的字体---
@@ -256,5 +273,9 @@ object FontManager {
     }
 
     //endregion ---自定义的字体---
+}
 
+/**是否是字体列表文件类型*/
+fun String?.isFontListType(): Boolean {
+    return this?.lowercase()?.endsWith(FONT_LIST_EXT, true) == true
 }
