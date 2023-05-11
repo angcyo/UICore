@@ -372,14 +372,15 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         keyboardStyle = keyboardStyle.remove(style)
     }
 
-    override fun dismissPopupWindow(popupWindow: PopupWindow) {
-        super.dismissPopupWindow(popupWindow)
+    override fun dismissPopupWindow(window: TargetWindow): Boolean {
+        val result = super.dismissPopupWindow(window)
         if (bindPendingDelay > 0) {
             _pendingRunnable?.let {
                 mainHandle.removeCallbacks(it)
                 it.run()//立即执行
             }
         }
+        return result
     }
 }
 

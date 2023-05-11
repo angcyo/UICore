@@ -17,9 +17,14 @@ import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.PopupWindowCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import com.angcyo.dsladapter.getViewRect
 import com.angcyo.library.IActivityProvider
 import com.angcyo.library.L
@@ -28,6 +33,7 @@ import com.angcyo.library._screenWidth
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.*
+import com.angcyo.lifecycle.onDestroy
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.*
 import kotlin.math.max
@@ -61,7 +67,7 @@ fun TargetWindow.dismissWindow() {
     }
 }
 
-open class PopupConfig : ActivityResultCaller, IActivityProvider {
+open class PopupConfig : ActivityResultCaller, LifecycleOwner, IActivityProvider {
     /**
      * 标准需要显示的属性, 使用[showAsDropDown]显示
      *
@@ -223,6 +229,8 @@ open class PopupConfig : ActivityResultCaller, IActivityProvider {
     /**显示[PopupWindow]*/
     @CallPoint
     open fun showWithPopupWindow(context: Context): PopupWindow {
+        onPopupInit()
+
         val window = if (popupStyleAttr != undefined_res) {
             try {
                 PopupWindow(context, null, popupStyleAttr, popupStyleAttr)
@@ -232,6 +240,8 @@ open class PopupConfig : ActivityResultCaller, IActivityProvider {
         } else {
             PopupWindow(context)
         }
+
+        onPopupCreate(window)
 
         window.apply {
             inputMethodMode = PopupWindow.INPUT_METHOD_NEEDED
@@ -290,6 +300,8 @@ open class PopupConfig : ActivityResultCaller, IActivityProvider {
             onInitLayout(window, popupViewHolder)
 
             contentView = view
+
+            onPopupShow(window, popupViewHolder)
         }
 
         if (parent != null) {
@@ -332,8 +344,9 @@ open class PopupConfig : ActivityResultCaller, IActivityProvider {
     }
 
     /**销毁[PopupWindow]时触发的回调*/
-    open fun dismissPopupWindow(popupWindow: PopupWindow) {
-        onDismiss(popupWindow)
+    open fun dismissPopupWindow(window: TargetWindow): Boolean {
+        onPopupDestroy(window, _popupViewHolder)
+        return onDismiss(window)
     }
 
     //</editor-fold desc="PopupWindow">
@@ -553,6 +566,9 @@ open class PopupConfig : ActivityResultCaller, IActivityProvider {
 
     /**使用[Activity]当做载体*/
     open fun showWidthActivity(activity: Activity): Window {
+        onPopupInit()
+
+        val window = activity.window
 
         //拦截掉[Activity]的[BackPress], 需要[BaseAppCompatActivity]的支持
         _onBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -566,7 +582,7 @@ open class PopupConfig : ActivityResultCaller, IActivityProvider {
             activity.onBackPressedDispatcher.addCallback(_onBackPressedCallback!!)
         }
 
-        val window = activity.window
+        onPopupCreate(window)
 
         val windowLayout = window.findViewById<FrameLayout>(Window.ID_ANDROID_CONTENT)
 
@@ -631,6 +647,8 @@ open class PopupConfig : ActivityResultCaller, IActivityProvider {
         //回调
         onAddRootLayout(activity, viewHolder)
 
+        onPopupShow(window, viewHolder)
+
         onInitLayout(window, viewHolder)
 
         return window
@@ -679,7 +697,7 @@ open class PopupConfig : ActivityResultCaller, IActivityProvider {
         _onBackPressedCallback?.isEnabled = false
         contentView?.run {
             val window = activity.window
-            if (!onDismiss(window)) {
+            if (!dismissPopupWindow(activity)) {
                 val windowLayout = window.findViewById<FrameLayout>(Window.ID_ANDROID_CONTENT)
                 val backgroundLayout = (contentView as? ViewGroup)?.getChildOrNull(0)
                 val contentWrapLayout = (backgroundLayout as? ViewGroup)?.getChildOrNull(0)
@@ -734,4 +752,54 @@ open class PopupConfig : ActivityResultCaller, IActivityProvider {
     ): ActivityResultLauncher<I> {
         error("未实现:registerForActivityResult")
     }
+
+    //<editor-fold desc="Lifecycle支持">
+
+    /**监听声明周期*/
+    var _lifecycleObserver: LifecycleEventObserver? = null
+
+    val lifecycleRegistry = LifecycleRegistry(this)
+
+    override val lifecycle: Lifecycle
+        get() = lifecycleRegistry
+
+    @CallSuper
+    open fun onPopupInit() {
+        //防止activity销毁时, dialog泄漏
+        val activityContext = getActivityContext()
+        if (activityContext is LifecycleOwner) {
+            val observer: LifecycleEventObserver = (activityContext as LifecycleOwner).onDestroy {
+                _container?.dismissWindow()
+                true
+            }
+            _lifecycleObserver = observer
+        }
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    }
+
+    @CallSuper
+    open fun onPopupCreate(window: TargetWindow) {
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
+    }
+
+    @CallSuper
+    open fun onPopupShow(window: TargetWindow, viewHolder: DslViewHolder) {
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    }
+
+    /**[android.content.DialogInterface.OnDismissListener]*/
+    @CallSuper
+    open fun onPopupDestroy(window: TargetWindow, viewHolder: DslViewHolder?) {
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+        _lifecycleObserver?.let { observer ->
+            val activityContext = getActivityContext()
+            if (activityContext is LifecycleOwner) {
+                activityContext.lifecycle.removeObserver(observer)
+            }
+        }
+        viewHolder?.clear()
+    }
+
+    //</editor-fold desc="Lifecycle支持">
 }
