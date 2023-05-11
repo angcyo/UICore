@@ -149,6 +149,8 @@ fun httpBeanType(wrapClass: KClass<*>, typeClass: KClass<*>): Type =
 
 /**
  * HttpBean<List<Bean>>
+ * [wrapClass] 外层的类型
+ * [typeClass] 内层的类型
  * */
 fun httpListBeanType(wrapClass: Class<*>, typeClass: Class<*>): Type =
     type(wrapClass, type(List::class.java, typeClass))
