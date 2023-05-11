@@ -475,7 +475,7 @@ fun File.eachFile(recursively: Boolean = true, block: (File) -> Unit) {
     for (file in files) {
         try {
             if (file.isDirectory && recursively) {
-                file.eachFile(recursively, block)
+                file.eachFile(true, block)
             } else {
                 block(file)
             }

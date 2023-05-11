@@ -174,6 +174,14 @@ object FontManager {
         return typefaceInfo
     }
 
+    /**枚举自定义字体目录下的所有文件*/
+    fun eachCustomFontFolderFile(block: (File) -> Unit) {
+        defaultCustomFontFolder.file().eachFile(block = block)
+        customFontFolderList.forEach {
+            it.file().eachFile(block = block)
+        }
+    }
+
     //endregion ---导入自定义的字体---
 
     //region ---系统字体---
@@ -265,7 +273,8 @@ object FontManager {
 
     /**删除自定义的字体, 从硬盘上删除*/
     fun deleteCustomFont(info: TypefaceInfo): Boolean {
-        val bool = info.filePath?.file()?.delete() == true
+        //使用后缀的方式删除字体
+        val bool = info.filePath?.file()?.renameTo(File(info.filePath + ".del")) == true
         if (bool) {
             _customFontList.remove(info)
         }
