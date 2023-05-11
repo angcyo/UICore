@@ -278,7 +278,9 @@ fun String.removeListener(listener: FDownloadListener) {
     DslDownload.removeListener(this, listener)
 }
 
-/**下载文件*/
+/**下载文件
+ * [com.liulishuo.okdownload.DownloadTask.getFile] 下载的目标文件
+ * */
 fun dslDownload(url: String?, config: DownloadConfig.() -> Unit = {}): DownloadTask? {
     var task: DownloadTask? = null
     val downloadConfig = DownloadConfig()
@@ -288,7 +290,7 @@ fun dslDownload(url: String?, config: DownloadConfig.() -> Unit = {}): DownloadT
         setAutoCallbackToUIThread(true)
         setMinIntervalMillisCallbackProcess(1_000) //24帧:60 60帧:16
         setPriority(0)
-        setFilename(getFileNameFromUrl(url))
+        setFilename(getFileNameFromUrl(url)) //只能设置下载的文件名, 不能设置路径
         setPassIfAlreadyCompleted(downloadConfig.passIfAlreadyCompleted)
         setWifiRequired(downloadConfig.isWifiRequired)
 

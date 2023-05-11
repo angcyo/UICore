@@ -107,11 +107,27 @@ fun doBack(check: Boolean = false, action: () -> Unit) {
     if (check) {
         //已经在子线程
         if (isMain()) {
-            runRx({ action();true })
+            runRx({
+                try {
+                    action()
+                    true
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    false
+                }
+            })
         } else {
             action()
         }
     } else {
-        runRx({ action();true })
+        runRx({
+            try {
+                action()
+                true
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+        })
     }
 }

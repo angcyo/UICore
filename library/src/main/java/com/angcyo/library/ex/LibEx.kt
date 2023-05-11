@@ -405,7 +405,7 @@ fun <R> sync(count: Int = 1, action: (CountDownLatch, AtomicReference<R>) -> Uni
 /**无返回值, 简单的同步方法, 阻塞当前线程
  * 请主动调用[java.util.concurrent.CountDownLatch.countDown]
  * */
-fun syncSingle(count: Int = 1, action: (CountDownLatch) -> Unit) {
+fun syncSingle(count: Int = 1, action: (countDownLatch: CountDownLatch) -> Unit) {
     sync<String>(count) { countDownLatch, _ ->
         action(countDownLatch)
     }
@@ -414,7 +414,7 @@ fun syncSingle(count: Int = 1, action: (CountDownLatch) -> Unit) {
 /**
  * 具有返回值
  * [syncSingle]*/
-fun <T> syncSingleResult(count: Int = 1, action: (CountDownLatch) -> T?): T? {
+fun <T> syncSingleResult(count: Int = 1, action: (countDownLatch: CountDownLatch) -> T?): T? {
     var result: T? = null
     sync<String>(count) { countDownLatch, _ ->
         result = action(countDownLatch)
