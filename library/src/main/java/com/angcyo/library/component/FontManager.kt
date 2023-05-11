@@ -290,6 +290,9 @@ object FontManager {
     //endregion ---自定义的字体---
 }
 
+/**当前文件是否被删除*/
+fun String?.isFileDel() = this?.endsWith(".del", true) == true
+
 /**是否是字体列表文件类型*/
 fun String?.isFontListType(): Boolean {
     return this?.lowercase()?.endsWith(FONT_LIST_EXT, true) == true
