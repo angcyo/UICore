@@ -672,16 +672,6 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
 
             else -> showDialog()
         }
-
-        //防止activity销毁时, dialog泄漏
-        if (dialogContext is LifecycleOwner) {
-            val observer: LifecycleEventObserver = (dialogContext as LifecycleOwner).onDestroy {
-                dialog.cancel()
-                true
-            }
-            _lifecycleObserver = observer
-        }
-
         return dialog
     }
 
@@ -695,6 +685,15 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
     @CallSuper
     open fun onDialogInit() {
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+
+        //防止activity销毁时, dialog泄漏
+        if (dialogContext is LifecycleOwner) {
+            val observer: LifecycleEventObserver = (dialogContext as LifecycleOwner).onDestroy {
+                _dialog?.cancel()
+                true
+            }
+            _lifecycleObserver = observer
+        }
     }
 
     @CallSuper
