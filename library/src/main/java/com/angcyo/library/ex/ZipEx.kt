@@ -9,7 +9,6 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.util.zip.ZipEntry
-import java.util.zip.ZipException
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 
@@ -43,8 +42,10 @@ fun zipFileWrite(zipFilePath: String, writeAction: ZipOutputStream.() -> Unit): 
 /**压缩包文件的读取, 不解压直接读流
  * [zipFilePath] zip文件的路径
  * */
-@Throws(ZipException::class)
-fun zipFileRead(zipFilePath: String, readAction: ZipFile.() -> Unit) {
+fun zipFileRead(zipFilePath: String?, readAction: ZipFile.() -> Unit) {
+    if (zipFilePath.isNullOrEmpty()) {
+        return
+    }
     val file = File(zipFilePath)
     if (!file.exists()) {
         return
@@ -56,6 +57,18 @@ fun zipFileRead(zipFilePath: String, readAction: ZipFile.() -> Unit) {
         zipFile.close()
     } catch (e: Exception) {
         e.printStackTrace()
+    }
+}
+
+/**枚举压缩包中的所有实体*/
+fun eachZipEntry(zipFilePath: String?, eachAction: ZipFile.(zipEntry: ZipEntry) -> Unit) {
+    if (zipFilePath.isNullOrEmpty()) {
+        return
+    }
+    zipFileRead(zipFilePath) {
+        entries().iterator().forEach {
+            eachAction(it)
+        }
     }
 }
 
@@ -250,8 +263,10 @@ fun String.unzipFile(outputPath: String = libCacheFolderPath()): String? =
     file().unzipFile(outputPath)
 
 /**将[ZipEntry]输出到指定的文件夹
- * 支持文件/文件夹*/
-fun ZipEntry.writeTo(outputPath: String, zipFile: ZipFile) {
+ * 支持文件/文件夹
+ *
+ * @return 返回保存到的本地文件对象*/
+fun ZipEntry.writeTo(outputPath: String, zipFile: ZipFile): File {
     var name = name
     if (name.endsWith(File.separator)) {
         name = name.substring(0, name.length - 1) // xxx/ 移除最后的/
@@ -267,6 +282,7 @@ fun ZipEntry.writeTo(outputPath: String, zipFile: ZipFile) {
         FileOutputStream(file).use { inputStream.writeTo(it) }
         inputStream.close()
     }
+    return file
 }
 
 fun ZipFile.readEntry(entryName: String): ByteArray? {
