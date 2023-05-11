@@ -22,6 +22,9 @@ import java.io.File
  */
 object FontManager {
 
+    /**字体列表zip文件, 用来存放字体文件的压缩包*/
+    const val FONT_LIST_EXT = ".fl"
+
     /**默认的字体文件夹名称*/
     const val DEFAULT_FONT_FOLDER_NAME = "fonts"
 
