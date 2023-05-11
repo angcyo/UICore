@@ -6,7 +6,15 @@ import com.angcyo.core.R
 import com.angcyo.core.component.file.FileItem
 import com.angcyo.core.component.file.file
 import com.angcyo.dsladapter.DslAdapterItem
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex._color
+import com.angcyo.library.ex.alpha
+import com.angcyo.library.ex.fileSizeString
+import com.angcyo.library.ex.isAudioType
+import com.angcyo.library.ex.isFile
+import com.angcyo.library.ex.isFolder
+import com.angcyo.library.ex.isImageType
+import com.angcyo.library.ex.isVideoType
+import com.angcyo.library.ex.toTime
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.setRBgDrawable
 import com.angcyo.widget.span.span
@@ -21,9 +29,10 @@ class DslFileSelectorItem : DslAdapterItem() {
 
     companion object {
 
-        /**获取文件类型图标*/
-        fun getFileIconRes(fileName: String?): Int {
-            val name = fileName?.lowercase() ?: return R.drawable.core_file_icon_unknown
+        /**获取文件类型图标
+         * [fileName] 文件名, 包含后缀*/
+        fun getFileIconRes(fileName: String?, def: Int = R.drawable.core_file_icon_unknown): Int {
+            val name = fileName?.lowercase() ?: return def
             return when {
                 name.isImageType() -> R.drawable.core_file_icon_picture
                 name.isVideoType() -> R.drawable.core_file_icon_video
@@ -35,7 +44,7 @@ class DslFileSelectorItem : DslAdapterItem() {
                 name.endsWith(".txt") -> R.drawable.core_file_icon_text
                 name.endsWith(".xml") -> R.drawable.core_file_icon_xml
                 name.endsWith(".apk") -> R.drawable.core_file_icon_apk
-                else -> R.drawable.core_file_icon_unknown
+                else -> def
             }
         }
 
@@ -88,6 +97,7 @@ class DslFileSelectorItem : DslAdapterItem() {
                         itemHolder.tv(R.id.lib_sub_text_view)?.text = "${fileItem.fileCount} 项"
                     }
                 }
+
                 file.isFile() -> {
                     itemHolder.img(R.id.lib_image_view)?.apply {
                         setImageResource(getFileIconRes(file?.name))
@@ -105,6 +115,7 @@ class DslFileSelectorItem : DslAdapterItem() {
                     )
                     itemHolder.tv(R.id.file_md5_view)?.text = fileItem.fileMd5
                 }
+
                 else -> {
                     itemHolder.img(R.id.lib_image_view)?.apply {
                         setImageDrawable(null)
