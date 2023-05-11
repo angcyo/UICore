@@ -249,6 +249,12 @@ object FontManager {
         return _customFontList
     }
 
+    /**重新加载自定义字体列表*/
+    fun reloadCustomFontList() {
+        _customFontList.clear()
+        getCustomFontList()
+    }
+
     /**备份内部字体到指定目录
      * [targetFolder] 目标文件夹*/
     fun backupFontTo(targetFolder: String) {
