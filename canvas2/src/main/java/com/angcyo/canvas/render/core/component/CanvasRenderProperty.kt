@@ -263,6 +263,7 @@ data class CanvasRenderProperty(
      * [includeRotate] 是否要包含旋转矩阵, 包含后就等于[getRenderBounds]了*/
     @Pixel
     @CanvasInsideCoordinate
+    @Synchronized
     fun getRenderRect(result: RectF = _renderRect, includeRotate: Boolean = false): RectF {
         val matrix = getRenderMatrix(includeRotate = includeRotate)
         getBaseRect(result)
@@ -282,6 +283,7 @@ data class CanvasRenderProperty(
      * */
     @Pixel
     @CanvasInsideCoordinate
+    @Synchronized
     fun getRenderBounds(result: RectF = _renderBounds, afterRotate: Boolean = false): RectF {
         if (afterRotate) {
             getRenderRect(result)
@@ -299,8 +301,10 @@ data class CanvasRenderProperty(
 
     private val _renderMatrix = Matrix()
 
+
     /**获取对应的的矩阵, 偏移到了[anchorX] [anchorY]
      * [includeRotate] 是否需要包含旋转信息, 否则就是缩放和倾斜信息描述的矩阵*/
+    @Synchronized
     fun getRenderMatrix(
         result: Matrix = _renderMatrix,
         includeRotate: Boolean = true,
