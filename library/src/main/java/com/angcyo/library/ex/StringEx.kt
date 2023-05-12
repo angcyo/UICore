@@ -751,6 +751,11 @@ fun String?.md5(algorithm: String = "MD5"): String? {
     return this?.toByteArray(Charsets.UTF_8)?.encrypt(algorithm)?.toHexString()
 }
 
+/**文件路径转文件转md5值, 也就是获取文件的md5值*/
+fun String?.fileMd5(algorithm: String = "MD5"): String? {
+    return this?.file()?.md5(algorithm)
+}
+
 /**字节大小, 返回字节数量*/
 fun String.byteSize(): Int {
     return toByteArray(Charsets.UTF_8).size

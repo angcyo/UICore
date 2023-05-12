@@ -78,8 +78,8 @@ fun String?.copyFileTo(target: File, overwrite: Boolean = true): File? {
 }
 
 /**获取文件md5值*/
-fun File.md5(): String? {
-    return getFileMD5()?.toHexString()
+fun File.md5(algorithm: String = "MD5"): String? {
+    return getFileMD5(algorithm)?.toHexString()
 }
 
 fun File.copyTo(path: String, overwrite: Boolean = true) = copyTo(File(path), overwrite)
@@ -122,6 +122,31 @@ fun File?.deleteFlag() = this?.renameTo(File(absolutePath + DELETE_FLAG)) == tru
 
 /**当前文件是否被删除*/
 fun String?.isFileDeleteFlag() = this?.endsWith(".del", true) == true
+
+/**重命名文件
+ * [newName] 新的文件名, 非路径
+ * @return 命名成功返回新的文件, 否则返回null*/
+fun File?.rename(newName: String): File? {
+    this ?: return null
+    val newFile = File(parent, newName)
+    return if (renameTo(newFile)) {
+        newFile
+    } else {
+        null
+    }
+}
+
+/**重命名文件, 保持扩展名不变
+ * [newName] 可以包含扩展名, 也可以不包含*/
+fun File?.renameKeepExt(newName: String): File? {
+    this ?: return null
+    val ext = if (!newName.contains(".") && name.contains(".")) {
+        ".${extension}"
+    } else {
+        ""
+    }
+    return rename("$newName$ext")
+}
 
 //---
 
@@ -198,11 +223,11 @@ fun Long.fileSizeString(unit: SizeUnit = SizeUnit.Auto): String {
  * @param file 文件
  * @return 文件的MD5校验码
  */
-fun File.getFileMD5(): ByteArray? {
+fun File.getFileMD5(algorithm: String = "MD5"): ByteArray? {
     var dis: DigestInputStream? = null
     try {
         val fis = FileInputStream(this)
-        var md = MessageDigest.getInstance("MD5")
+        var md = MessageDigest.getInstance(algorithm)
         dis = DigestInputStream(fis, md)
         val buffer = ByteArray(1024 * 256)
         while (dis.read(buffer) > 0);
