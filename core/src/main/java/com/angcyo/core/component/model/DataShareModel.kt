@@ -27,4 +27,7 @@ class DataShareModel : ViewModel() {
 
     /**共享状态通知*/
     val shareStateOnceData = vmDataOnce<Int?>()
+
+    /**共享需要更新[com.angcyo.dsladapter.DslAdapterItem]状态通知, 当收到此通知时, 表示需要更新对应的item*/
+    val shareUpdateAdapterItemOnceData = vmDataOnce<Any?>()
 }
