@@ -6,6 +6,7 @@ import android.os.Build
 import com.angcyo.library.L
 import com.angcyo.library.component.FontManager.FONT_LIST_EXT
 import com.angcyo.library.ex.copyFileTo
+import com.angcyo.library.ex.deleteFlag
 import com.angcyo.library.ex.eachFile
 import com.angcyo.library.ex.eachZipEntry
 import com.angcyo.library.ex.file
@@ -280,7 +281,7 @@ object FontManager {
     /**删除自定义的字体, 从硬盘上删除*/
     fun deleteCustomFont(info: TypefaceInfo): Boolean {
         //使用后缀的方式删除字体
-        val bool = info.filePath?.file()?.renameTo(File(info.filePath + ".del")) == true
+        val bool = info.filePath?.file().deleteFlag()
         if (bool) {
             _customFontList.remove(info)
         }
@@ -289,9 +290,6 @@ object FontManager {
 
     //endregion ---自定义的字体---
 }
-
-/**当前文件是否被删除*/
-fun String?.isFileDel() = this?.endsWith(".del", true) == true
 
 /**是否是字体列表文件类型*/
 fun String?.isFontListType(): Boolean {

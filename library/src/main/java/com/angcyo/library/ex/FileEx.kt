@@ -114,6 +114,17 @@ fun String?.fileSize(def: Long = 0L): Long {
 
 //---
 
+/**删除文件的后缀标识*/
+const val DELETE_FLAG = ".del"
+
+/**使用重命名的方式删除文件*/
+fun File?.deleteFlag() = this?.renameTo(File(absolutePath + DELETE_FLAG)) == true
+
+/**当前文件是否被删除*/
+fun String?.isFileDeleteFlag() = this?.endsWith(".del", true) == true
+
+//---
+
 /**格式化文件大小, 根据系统版本号选择实现方式*/
 fun formatFileSize(context: Context, size: Long): String {
     return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
