@@ -98,6 +98,39 @@ fun createOverridePictureCanvas(
 
 /**创建一个输出指定大小的[Canvas] [Bitmap]
  * [createOverrideMatrix]
+ * */
+fun createOverrideBitmapCanvas(
+    @Pixel
+    originWidth: Float,
+    @Pixel
+    originHeight: Float,
+    @Pixel
+    overrideWidth: Float?, /*要缩放到的宽度*/
+    @Pixel
+    overrideHeight: Float? = null,
+    @Pixel
+    minWidth: Float = 1f, /*最小宽度*/
+    @Pixel
+    minHeight: Float = 1f,
+    block: Canvas.() -> Unit
+): Bitmap {
+    val scaleMatrix = createOverrideMatrix(originWidth, originHeight, overrideWidth, overrideHeight)
+    //目标输出的大小
+    val width = originWidth * scaleMatrix.getScaleX()
+    val height = originHeight * scaleMatrix.getScaleY()
+
+    //最小宽高
+    val w = max(width, minWidth).toInt()
+    val h = max(height, minHeight).toInt()
+
+    return withBitmap(w, h) {
+        concat(scaleMatrix)
+        block()
+    }
+}
+
+/**创建一个输出指定大小的[Canvas] [Bitmap]
+ * [createOverrideMatrix]
  */
 fun createOverrideBitmapCanvas(
     originWidth: Float,

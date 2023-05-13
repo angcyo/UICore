@@ -10,6 +10,9 @@ import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.util.*
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.pool.acquireTempRectF
+import com.angcyo.library.component.pool.release
+import com.angcyo.library.ex.createOverrideBitmapCanvas
 import com.angcyo.library.ex.createOverrideMatrix
 import com.angcyo.library.ex.createOverridePictureCanvas
 import com.angcyo.library.ex.translateToOrigin
@@ -82,6 +85,13 @@ abstract class BaseElement : IElement {
             onRenderInside(renderer, this, renderParams ?: RenderParams())
         }
 
+    override fun requestElementBitmap(
+        renderer: BaseRenderer?,
+        renderParams: RenderParams?
+    ): Bitmap? = createBitmapCanvas(renderParams) {
+        onRenderInside(renderer, this, renderParams ?: RenderParams())
+    }
+
     override fun updateElementRenderProperty(property: CanvasRenderProperty) {
         if (property != renderProperty) {
             property.copyTo(renderProperty)
@@ -132,9 +142,11 @@ abstract class BaseElement : IElement {
         overrideHeight: Float? = null
     ): Matrix {
         //原始目标需要绘制的大小
-        val bounds = renderProperty.getRenderBounds()
+        val bounds = acquireTempRectF()
+        renderProperty.getRenderBounds(bounds)
         val originWidth = bounds.width()
         val originHeight = bounds.height()
+        bounds.release()
         return createOverrideMatrix(
             originWidth,
             originHeight,
@@ -145,7 +157,7 @@ abstract class BaseElement : IElement {
 
     /**创建一个输出指定大小的[Canvas] [Picture]
      * [overrideSize] 等比输出到这个大小*/
-    protected fun createOverrideCanvas(
+    protected fun createPictureCanvas(
         overrideSize: Float?,
         @Pixel
         minWidth: Float = 1f,
@@ -154,10 +166,39 @@ abstract class BaseElement : IElement {
         block: Canvas.() -> Unit
     ): Picture {
         //原始目标需要绘制的大小
-        val bounds = renderProperty.getRenderBounds()
+        val bounds = acquireTempRectF()
+        renderProperty.getRenderBounds(bounds)
         val originWidth = bounds.width()
         val originHeight = bounds.height()
+        bounds.release()
         return createOverridePictureCanvas(
+            originWidth,
+            originHeight,
+            overrideSize,
+            null,
+            minWidth,
+            minHeight,
+            block
+        )
+    }
+
+    /**创建一个输出指定大小的[Canvas] [Bitmap]
+     * [overrideSize] 等比输出到这个大小*/
+    protected fun createBitmapCanvas(
+        overrideSize: Float?,
+        @Pixel
+        minWidth: Float = 1f,
+        @Pixel
+        minHeight: Float = 1f,
+        block: Canvas.() -> Unit
+    ): Bitmap {
+        //原始目标需要绘制的大小
+        val bounds = acquireTempRectF()
+        renderProperty.getRenderBounds(bounds)
+        val originWidth = bounds.width()
+        val originHeight = bounds.height()
+        bounds.release()
+        return createOverrideBitmapCanvas(
             originWidth,
             originHeight,
             overrideSize,
@@ -177,7 +218,14 @@ abstract class BaseElement : IElement {
         minHeight: Float = 1f,
         block: Canvas.() -> Unit
     ): Drawable {
-        return PictureRenderDrawable(createOverrideCanvas(overrideSize, minWidth, minHeight, block))
+        return PictureRenderDrawable(
+            createPictureCanvas(
+                overrideSize,
+                minWidth,
+                minHeight,
+                block
+            )
+        )
     }
 
     /**[createPictureDrawable]*/
@@ -189,9 +237,11 @@ abstract class BaseElement : IElement {
         if (renderParams?.overrideSizeNotZoomIn == true) {
             //需要阻止放大
             if (overrideSize != null) {
-                val bounds = renderProperty.getRenderBounds()
+                val bounds = acquireTempRectF()
+                renderProperty.getRenderBounds(bounds)
                 val originWidth = bounds.width()
                 val originHeight = bounds.height()
+                bounds.release()
 
                 if (overrideSize > originWidth || overrideSize > originHeight) {
                     overrideSize = null
@@ -200,6 +250,35 @@ abstract class BaseElement : IElement {
         }
 
         return createPictureDrawable(
+            overrideSize,
+            (renderParams ?: RenderParams()).drawMinWidth,
+            (renderParams ?: RenderParams()).drawMinHeight,
+            block
+        )
+    }
+
+    /**[createPictureDrawable]*/
+    protected fun createBitmapCanvas(
+        renderParams: RenderParams?,
+        block: Canvas.() -> Unit
+    ): Bitmap {
+        var overrideSize = renderParams?.overrideSize
+        if (renderParams?.overrideSizeNotZoomIn == true) {
+            //需要阻止放大
+            if (overrideSize != null) {
+                val bounds = acquireTempRectF()
+                renderProperty.getRenderBounds(bounds)
+                val originWidth = bounds.width()
+                val originHeight = bounds.height()
+                bounds.release()
+
+                if (overrideSize > originWidth || overrideSize > originHeight) {
+                    overrideSize = null
+                }
+            }
+        }
+
+        return createBitmapCanvas(
             overrideSize,
             (renderParams ?: RenderParams()).drawMinWidth,
             (renderParams ?: RenderParams()).drawMinHeight,

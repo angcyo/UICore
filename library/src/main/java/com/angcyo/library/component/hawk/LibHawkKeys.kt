@@ -20,6 +20,9 @@ object LibHawkKeys {
      * */
     var minKeepSize: Int by HawkPropertyValue<Any, Int>(400)
 
+    /**最小post延迟操作*/
+    var minPostDelay: Long by HawkPropertyValue<Any, Long>(160)
+
     /**当颜色的透明值小于此值时, 视为透明色
      * 影响图片的锯齿, 值越大锯齿越多
      * 图片旋转之后, 4条边上就会产生透明颜色*/

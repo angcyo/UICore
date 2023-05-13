@@ -80,9 +80,10 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 val rect =
                     RectF(Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE)
                 var isSet = false
+                val bounds = acquireTempRectF()
                 for (renderer in rendererList) {
                     if (ignoreVisible || renderer.isVisible) {
-                        renderer.renderProperty?.getRenderBounds()?.let {
+                        renderer.renderProperty?.getRenderBounds(bounds)?.let {
                             if (!it.isInvalid()) {
                                 isSet = true
                                 rect.set(
@@ -95,6 +96,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                         }
                     }
                 }
+                bounds.release()
                 if (!isSet) {
                     return null
                 }
@@ -172,6 +174,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
             ignoreVisible: Boolean = false,
             renderAction: RenderAction? = null
         ) {
+            val bounds = acquireTempRectF()
             for (renderer in rendererList) {
                 if (ignoreVisible || renderer.isVisible) {
                     if (renderer is CanvasElementRenderer) {
@@ -181,7 +184,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                                 ?: continue
                         renderer.renderDrawable(
                             canvas,
-                            renderProperty.getRenderBounds(),
+                            renderProperty.getRenderBounds(bounds),
                             drawable,
                             params
                         )
@@ -197,6 +200,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                     }
                 }
             }
+            bounds.release()
         }
 
         /**获取一组渲染器对应的边界矩形
@@ -217,11 +221,11 @@ open class CanvasGroupRenderer : BaseRenderer() {
             } else {
                 //多个元素
                 val rect = acquireTempRectF()
-                val tempBounds = acquireTempRectF()
+                val bounds = acquireTempRectF()
                 rect.set(Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE)
                 for (renderer in rendererList) {
                     renderer.renderProperty?.let {
-                        val bounds = it.getRenderBounds(tempBounds)
+                        it.getRenderBounds(bounds)
                         //val bounds = it.getRenderBounds(afterRotate = true)
                         rect.left = min(rect.left, bounds.left)
                         rect.top = min(rect.top, bounds.top)
@@ -231,7 +235,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 }
                 result.initWithRect(rect, 0f)
                 rect.release()
-                tempBounds.release()
+                bounds.release()
             }
             return result
         }
@@ -239,6 +243,8 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
     /**组内所有渲染器*/
     val rendererList = CopyOnWriteArrayList<BaseRenderer>()
+
+    private val _bounds = RectF()
 
     //region---core---
 
@@ -640,8 +646,10 @@ open class CanvasGroupRenderer : BaseRenderer() {
         if (list.size() <= 1) {
             return
         }
-
-        val groupBounds = renderProperty?.getRenderBounds() ?: return
+        val property = renderProperty ?: return
+        val groupBounds = acquireTempRectF()
+        val bounds = acquireTempRectF()
+        property.getRenderBounds(groupBounds)
 
         //寻找定位锚点item
         var anchorItemRenderer: BaseRenderer? = null
@@ -654,7 +662,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
             var minR = Float.MAX_VALUE
 
             list.forEach {
-                val bounds = it.renderProperty?.getRenderBounds()
+                val bounds = it.renderProperty?.getRenderBounds(bounds)
                 if (bounds != null) {
                     val r = c(centerX, centerY, bounds.centerX(), bounds.centerY()).absoluteValue
                     if (r < minR) {
@@ -667,7 +675,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
             //水平居中, 找出最大的高度item
             var maxHeight = Float.MIN_VALUE
             list.forEach {
-                val bounds = it.renderProperty?.getRenderBounds()
+                val bounds = it.renderProperty?.getRenderBounds(bounds)
                 if (bounds != null) {
                     if (bounds.height() > maxHeight) {
                         anchorItemRenderer = it
@@ -679,7 +687,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
             //垂直居中, 找出最大的宽度item
             var maxWidth = Float.MIN_VALUE
             list.forEach {
-                val bounds = it.renderProperty?.getRenderBounds()
+                val bounds = it.renderProperty?.getRenderBounds(bounds)
                 if (bounds != null) {
                     if (bounds.width() > maxWidth) {
                         anchorItemRenderer = it
@@ -690,7 +698,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
         } else if (align.isGravityTop()) {
             var minTop = Float.MAX_VALUE
             list.forEach {
-                val bounds = it.renderProperty?.getRenderBounds()
+                val bounds = it.renderProperty?.getRenderBounds(bounds)
                 if (bounds != null) {
                     if (bounds.top < minTop) {
                         anchorItemRenderer = it
@@ -701,7 +709,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
         } else if (align.isGravityBottom()) {
             var maxBottom = Float.MIN_VALUE
             list.forEach {
-                val bounds = it.renderProperty?.getRenderBounds()
+                val bounds = it.renderProperty?.getRenderBounds(bounds)
                 if (bounds != null) {
                     if (bounds.bottom > maxBottom) {
                         anchorItemRenderer = it
@@ -712,7 +720,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
         } else if (align.isGravityLeft()) {
             var minLeft = Float.MAX_VALUE
             list.forEach {
-                val bounds = it.renderProperty?.getRenderBounds()
+                val bounds = it.renderProperty?.getRenderBounds(bounds)
                 if (bounds != null) {
                     if (bounds.left < minLeft) {
                         anchorItemRenderer = it
@@ -723,7 +731,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
         } else if (align.isGravityRight()) {
             var maxRight = Float.MIN_VALUE
             list.forEach {
-                val bounds = it.renderProperty?.getRenderBounds()
+                val bounds = it.renderProperty?.getRenderBounds(bounds)
                 if (bounds != null) {
                     if (bounds.right > maxRight) {
                         anchorItemRenderer = it
@@ -734,6 +742,8 @@ open class CanvasGroupRenderer : BaseRenderer() {
         }
 
         if (anchorItemRenderer == null) {
+            groupBounds.release()
+            bounds.release()
             return
         }
 
@@ -741,10 +751,10 @@ open class CanvasGroupRenderer : BaseRenderer() {
         val undoState = PropertyStateStack()
         undoState.saveState(this, delegate)
 
-        val anchorBounds = anchorItemRenderer!!.renderProperty?.getRenderBounds() ?: return
+        val anchorBounds = anchorItemRenderer!!.renderProperty?.getRenderBounds(bounds) ?: return
         for (item in list) {
             if (item != anchorItemRenderer) {
-                val itemBounds = item.renderProperty?.getRenderBounds() ?: continue
+                val itemBounds = item.renderProperty?.getRenderBounds(bounds) ?: continue
                 //开始调整
                 var dx = 0f
                 var dy = 0f
@@ -780,6 +790,9 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
         //回退栈
         delegate?.addStateToStack(this, undoState, redoState, false, reason, strategy)
+
+        groupBounds.release()
+        bounds.release()
     }
 
     /**水平分布/垂直分布*/
@@ -799,11 +812,11 @@ open class CanvasGroupRenderer : BaseRenderer() {
         //先排序
         when (flat) {
             LinearLayout.VERTICAL -> sortList.sortBy {
-                it.renderProperty?.getRenderBounds()?.centerY()
+                it.renderProperty?.getRenderBounds(_bounds)?.centerY()
             }
 
             LinearLayout.HORIZONTAL -> sortList.sortBy {
-                it.renderProperty?.getRenderBounds()?.centerX()
+                it.renderProperty?.getRenderBounds(_bounds)?.centerX()
             }
 
             else -> return
@@ -812,8 +825,8 @@ open class CanvasGroupRenderer : BaseRenderer() {
         val first = sortList.first()
         val last = sortList.last()
 
-        val firstBounds = first?.renderProperty?.getRenderBounds() ?: return
-        val lastBounds = last?.renderProperty?.getRenderBounds() ?: return
+        val firstBounds = first?.renderProperty?.getRenderBounds(_bounds) ?: return
+        val lastBounds = last?.renderProperty?.getRenderBounds(_bounds) ?: return
 
         val firstX = firstBounds.centerX()
         val firstY = firstBounds.centerY()
@@ -831,7 +844,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
         sortList.forEachIndexed { index, renderer ->
             if (renderer != first && renderer != last) {
-                val rendererBounds = renderer.renderProperty?.getRenderBounds()
+                val rendererBounds = renderer.renderProperty?.getRenderBounds(_bounds)
                 if (rendererBounds != null) {
                     when (flat) {
                         LinearLayout.VERTICAL -> {

@@ -89,6 +89,11 @@ class CanvasElementRenderer : BaseRenderer() {
         delegate: CanvasRenderDelegate?
     ) {
         super.updateRenderPropertyTo(target, reason, delegate)
+        updateElementRenderProperty()
+    }
+
+    /**更新元素的渲染属性*/
+    fun updateElementRenderProperty() {
         renderProperty?.let { renderElement?.updateElementRenderProperty(it) }
     }
 

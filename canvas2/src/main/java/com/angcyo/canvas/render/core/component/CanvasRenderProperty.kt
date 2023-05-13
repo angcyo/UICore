@@ -8,6 +8,9 @@ import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty.Companion.ANCHOR_X_RIGHT
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty.Companion.ANCHOR_Y_CENTER
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.pool.acquireTempMatrix
+import com.angcyo.library.component.pool.acquireTempPointF
+import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.getRotateDegrees
 import com.angcyo.library.ex.getScaleX
 import com.angcyo.library.ex.getScaleY
@@ -120,16 +123,13 @@ data class CanvasRenderProperty(
         const val ANCHOR_Y_CENTER = "center"
     }
 
-    private val _tempPoint = PointF()
-    private val _tempMatrix = Matrix()
-
     /**使用一个未旋转的矩形[rect], 和一个即将旋转的角度[angle]初始化*/
     fun initWithRect(@Pixel rect: RectF, angle: Float) {
-        _tempPoint.set(rect.left, rect.top)
-        val point = _tempPoint
+        val point = acquireTempPointF()
+        point.set(rect.left, rect.top)
 
-        _tempMatrix.reset()
-        val matrix = _tempMatrix
+        val matrix = acquireTempMatrix()
+        matrix.reset()
         matrix.setRotate(angle, rect.centerX(), rect.centerY())
         matrix.mapPoint(point)
 
@@ -140,6 +140,9 @@ data class CanvasRenderProperty(
         this.angle = angle
         this.width = rect.width()
         this.height = rect.height()
+
+        point.release()
+        matrix.release()
     }
 
     /**重置属性*/
@@ -246,30 +249,32 @@ data class CanvasRenderProperty(
 
         result.set(rect.centerX(), rect.centerY())
 
-        _tempMatrix.reset()
-        val rotateMatrix = _tempMatrix
-        rotateMatrix.setRotate(angle, anchorX, anchorY)
+        val matrix = acquireTempMatrix()
+        matrix.reset()
+        matrix.setRotate(angle, anchorX, anchorY)
 
         //将中点绕着left,top旋转之后, 就是原始的中点
-        rotateMatrix.mapPoint(result)
+        matrix.mapPoint(result)
 
+        matrix.release()
         return result
     }
-
-    private val _renderRect = RectF()
-    private val _renderBounds = RectF()
 
     /**获取渲染的矩形位置, 包含了缩放和倾斜, 但是不包含旋转
      * [includeRotate] 是否要包含旋转矩阵, 包含后就等于[getRenderBounds]了*/
     @Pixel
     @CanvasInsideCoordinate
-    @Synchronized
-    fun getRenderRect(result: RectF = _renderRect, includeRotate: Boolean = false): RectF {
-        val matrix = getRenderMatrix(includeRotate = includeRotate)
+    fun getRenderRect(result: RectF, includeRotate: Boolean = false): RectF {
+        val matrix = acquireTempMatrix()
+        getRenderMatrix(matrix, includeRotate)
         getBaseRect(result)
         matrix.mapRect(result)
+        matrix.release()
         return result
     }
+
+    /**缓存*/
+    private val _renderBounds = RectF()
 
     /**获取能够包裹元素, 在坐标系统中的矩形坐标位置.
      * 通常用于群组选中时, 边框的确定.
@@ -283,28 +288,26 @@ data class CanvasRenderProperty(
      * */
     @Pixel
     @CanvasInsideCoordinate
-    @Synchronized
     fun getRenderBounds(result: RectF = _renderBounds, afterRotate: Boolean = false): RectF {
+        val matrix = acquireTempMatrix()
         if (afterRotate) {
-            getRenderRect(result)
-            _tempMatrix.reset()
-            val rotateMatrix = _tempMatrix
-            rotateMatrix.setRotate(angle, result.centerX(), result.centerY())
-            rotateMatrix.mapRect(result)
+            getRenderRect(result)//先获取到未旋转的矩形
+            matrix.reset()
+            matrix.setRotate(angle, result.centerX(), result.centerY())
+            matrix.mapRect(result) //然后再旋转
         } else {
-            val matrix = getRenderMatrix(includeRotate = true)
+            getRenderMatrix(matrix, true)
             getBaseRect(result)
             matrix.mapRect(result)
         }
+        matrix.release()
         return result
     }
 
     private val _renderMatrix = Matrix()
 
-
     /**获取对应的的矩阵, 偏移到了[anchorX] [anchorY]
      * [includeRotate] 是否需要包含旋转信息, 否则就是缩放和倾斜信息描述的矩阵*/
-    @Synchronized
     fun getRenderMatrix(
         result: Matrix = _renderMatrix,
         includeRotate: Boolean = true,
@@ -371,17 +374,22 @@ data class CanvasRenderProperty(
      * */
     private fun applyScaleMatrixWithAnchor(matrix: Matrix, useQr: Boolean) {
         if (useQr) {
-            val target = getRenderMatrix(includeRotate = true, includeFlip = false)
+            val target = acquireTempMatrix()
+            getRenderMatrix(target, true, false)
             target.postConcat(matrix)
 
-            _tempPoint.set(anchorX, anchorY)
-            val anchor = _tempPoint
+            val anchor = acquireTempPointF()
+            anchor.set(anchorX, anchorY)
             matrix.mapPoint(anchor)
 
             this.anchorX = anchor.x
             this.anchorY = anchor.y
 
+            anchor.release()
+
             qrDecomposition(target)
+
+            target.release()
         } else {
             applyScaleMatrixWithValue(matrix)
         }
@@ -400,27 +408,33 @@ data class CanvasRenderProperty(
      * [useQr] 是否要使用qr算法, 一般在群组操作时, 内部元素才需要使用qr
      * */
     fun applyScaleMatrixWithCenter(matrix: Matrix, useQr: Boolean) {
-        getRenderCenter(_tempPoint)
-        matrix.mapPoint(_tempPoint)
+        val point = acquireTempPointF()
+
+        getRenderCenter(point)
+        matrix.mapPoint(point)
 
         //目标中点位置
-        val targetCenterX = _tempPoint.x
-        val targetCenterY = _tempPoint.y
+        val targetCenterX = point.x
+        val targetCenterY = point.y
 
         if (useQr) {
-            val target = getRenderMatrix(includeRotate = true, includeFlip = true)
+            val target = acquireTempMatrix()
+            getRenderMatrix(target, true, true)
             target.postConcat(matrix)
             qrDecomposition(target)
+            target.release()
         } else {
             applyScaleMatrixWithValue(matrix)
         }
 
         //qr后的元素中点
-        getRenderCenter(_tempPoint)
+        getRenderCenter(point)
 
         //将中点偏移
-        this.anchorX += targetCenterX - _tempPoint.x
-        this.anchorY += targetCenterY - _tempPoint.y
+        this.anchorX += targetCenterX - point.x
+        this.anchorY += targetCenterY - point.y
+
+        point.release()
     }
 
     /**应用一个旋转矩阵*/

@@ -1,5 +1,6 @@
 package com.angcyo.canvas.render.element
 
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
@@ -42,6 +43,10 @@ interface IElement {
     /**请求获取用来渲染在其它界面的[Drawable]
      * 当前的[Drawable]应该是相对于[0,0]位置绘制的*/
     fun requestElementDrawable(renderer: BaseRenderer?, renderParams: RenderParams?): Drawable?
+
+    /**请求元素的绘制图片
+     * [requestElementDrawable]*/
+    fun requestElementBitmap(renderer: BaseRenderer?, renderParams: RenderParams?): Bitmap?
 
     /**当编辑/操作完成后, 需要更新到对应的元素属性中*/
     fun updateElementRenderProperty(property: CanvasRenderProperty)
