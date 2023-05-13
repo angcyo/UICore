@@ -346,3 +346,7 @@ fun isNetworkAvailable(context: Context = app()): Boolean {
     }
     return false
 }
+
+/**是否处于wifi连接状态*/
+val isWifi: Boolean
+    get() = RNetwork.isWifiConnect(lastContext)
