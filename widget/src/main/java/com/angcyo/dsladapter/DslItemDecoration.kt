@@ -5,6 +5,8 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.angcyo.dsladapter.item.INewFlagItem
+import com.angcyo.dsladapter.item.itemHaveNewFlag
 import com.angcyo.library.ex.dp
 import com.angcyo.widget.DslViewHolder
 
@@ -139,13 +141,13 @@ open class DslItemDecoration(
 
                 if (state.isPreLayout || state.willRunSimpleAnimations()) {
                 } else {
-                    canvas?.let {
+                    canvas?.let { canvas ->
                         if (!isOverDraw) {
                             //绘制分割线
                             _tempRect.clear()
                             item.setItemOffsets(_tempRect)
                             item.draw(
-                                it,
+                                canvas,
                                 paint,
                                 viewHolder.itemView,
                                 _tempRect,
@@ -153,6 +155,15 @@ open class DslItemDecoration(
                                 adapterPosition,
                                 _tempDrawRect
                             )
+                        }
+
+                        if (isOverDraw) {
+                            //绘制new标识
+                            if (item is INewFlagItem) {
+                                if (item.itemHaveNewFlag) {
+                                    item.newFlagItemConfig.drawNewFlag(canvas, item, viewHolder)
+                                }
+                            }
                         }
                     }
                 }

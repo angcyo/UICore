@@ -43,7 +43,7 @@ var INewItem.itemHaveNew: Boolean
         itemNewHawkKeyStr.hawkPut(value)
     }
 
-class NewItemConfig : IDslItemConfig {
+open class NewItemConfig : IDslItemConfig {
 
     /**默认情况下, 是否有new*/
     var itemDefaultNew: Boolean = true
