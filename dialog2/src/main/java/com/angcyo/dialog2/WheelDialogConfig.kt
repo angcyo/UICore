@@ -11,6 +11,7 @@ import com.angcyo.dialog2.widget.ArrayWheelAdapter
 import com.angcyo.library.L
 import com.angcyo.library.ex.dp
 import com.angcyo.library.extend.IToDrawable
+import com.angcyo.library.extend.IToRightDrawable
 import com.angcyo.library.extend.IToText
 import com.angcyo.widget.DslViewHolder
 import com.contrarywind.view.WheelView
@@ -121,6 +122,21 @@ open class WheelDialogConfig : BaseDialogConfig() {
                                         0,
                                         (left + size).toInt(),
                                         size
+                                    )
+                                    drawable.draw(canvas)
+                                }
+                            }
+                            if (item is IToRightDrawable) {
+                                item.toRightDrawable()?.let { drawable ->
+                                    val width = textBounds.width()
+                                    val height = textBounds.height()
+                                    val offset = 4 * dp
+                                    val left = textDrawX + width + offset
+                                    drawable.setBounds(
+                                        left.toInt(),
+                                        0,
+                                        (left + height).toInt(),
+                                        height
                                     )
                                     drawable.draw(canvas)
                                 }
