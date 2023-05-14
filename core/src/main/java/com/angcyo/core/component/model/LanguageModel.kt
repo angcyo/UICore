@@ -228,7 +228,7 @@ class LanguageModel : ViewModel() {
         }
 
         /**
-         * 获取当前时区 GMT+08:00
+         * 获取当前时区 [GMT+08:00]
          * @return
          */
         val currentTimeZone: String
@@ -237,11 +237,19 @@ class LanguageModel : ViewModel() {
                 return tz.getDisplayName(false, TimeZone.SHORT)
             }
 
+        /**时区[Asia/Shanghai]*/
+        val timeZoneId: String
+            get() {
+                val tz = TimeZone.getDefault()
+                return tz.id
+            }
+
         /**
          * 时区信息
          * https://developer.android.com/guide/topics/resources/multilingual-support?hl=zh-cn
          * */
         fun getTimeZoneDes(): String = buildString {
+            //libcore.util.ZoneInfo[id="Asia/Shanghai",mRawOffset=28800000,mEarliestRawOffset=28800000,mUseDst=false,mDstSavings=0,transitions=28]
             val tz = TimeZone.getDefault()
             append(tz.getDisplayName(false, TimeZone.LONG)) //中国标准时间
             append(" ")
