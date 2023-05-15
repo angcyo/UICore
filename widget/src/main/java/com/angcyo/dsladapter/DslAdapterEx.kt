@@ -8,6 +8,7 @@ import android.os.Looper
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import com.angcyo.dsladapter.annotation.UpdateByDiff
+import com.angcyo.dsladapter.annotation.UpdateByLocal
 import com.angcyo.dsladapter.annotation.UpdateByNotify
 import com.angcyo.dsladapter.annotation.UpdateFlag
 import com.angcyo.dsladapter.filter.IFilterInterceptor
@@ -28,7 +29,9 @@ import com.angcyo.widget.R
 //<editor-fold desc="Item操作">
 
 /**
- * 通过条件, 查找[DslAdapterItem].
+ * 通过条件, 查找[DslAdapterItem]. 找到第一个就返回.
+ *
+ * [findItemList]
  *
  * @param useFilterList 是否使用过滤后的数据源. 通常界面上显示的是过滤后的数据, 所有add的数据源在非过滤列表中
  * */
@@ -39,6 +42,7 @@ fun DslAdapter.findItem(
     return getDataList(useFilterList).find(predicate)
 }
 
+/**查找指定[Class]的[DslAdapterItem], 找到第一个就返回*/
 fun <Item : DslAdapterItem> DslAdapter.findItem(
     itemClass: Class<Item>,
     useFilterList: Boolean = true
@@ -48,6 +52,11 @@ fun <Item : DslAdapterItem> DslAdapter.findItem(
     } as? Item
 }
 
+/**
+ * 通过条件, 查找[DslAdapterItem]. 找到第一个就返回.
+ *
+ * [findItemList]
+ * */
 inline fun <reified Item : DslAdapterItem> DslAdapter.find(
     tag: String? = null,
     useFilterList: Boolean = true,
@@ -62,6 +71,7 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.find(
     return getDataList(useFilterList).find(predicate) as? Item
 }
 
+/**[findItemList]*/
 inline fun <reified Item : DslAdapterItem> DslAdapter.findItem(
     tag: String? = null,
     useFilterList: Boolean = true,
@@ -75,6 +85,78 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.findItem(
     dsl: Item.() -> Unit
 ): Item? {
     return find<Item>(tag, useFilterList, predicate)?.apply(dsl)
+}
+
+/**隐藏所有满足条件的[DslAdapterItem]
+ * @return 返回操作的列表*/
+@UpdateByDiff
+inline fun DslAdapter.hideItemBy(
+    hide: Boolean = true,
+    useFilterList: Boolean = false,
+    predicate: (DslAdapterItem) -> Boolean
+): List<DslAdapterItem> {
+
+    val list = getDataList(useFilterList)
+    val result = mutableListOf<DslAdapterItem>()
+
+    for (it in list) {
+        if (predicate(it)) {
+            it.itemHidden = hide
+            result.add(it)
+        }
+    }
+
+    return result
+}
+
+/**隐藏指定标签的[DslAdapterItem]
+ * [com.angcyo.dsladapter.DslAdapterItem.itemTag]
+ * [hideItemBy]*/
+@UpdateByDiff
+inline fun DslAdapter.hideItemTags(
+    hide: Boolean = true,
+    tags: List<String>,
+    useFilterList: Boolean = false,
+): List<DslAdapterItem> {
+    return hideItemBy(hide, useFilterList) {
+        tags.contains(it.itemTag)
+    }
+}
+
+/**使能所有满足条件的[DslAdapterItem]
+ * @return 返回操作的列表*/
+@UpdateByLocal
+inline fun DslAdapter.enableItemBy(
+    enable: Boolean = true,
+    useFilterList: Boolean = true,
+    predicate: (DslAdapterItem) -> Boolean
+): List<DslAdapterItem> {
+
+    val list = getDataList(useFilterList)
+    val result = mutableListOf<DslAdapterItem>()
+
+    for (it in list) {
+        if (predicate(it)) {
+            it.itemEnable = enable
+            result.add(it)
+        }
+    }
+
+    return result
+}
+
+/**使能指定标签的[DslAdapterItem]
+ * [com.angcyo.dsladapter.DslAdapterItem.itemTag]
+ * [hideItemBy]*/
+@UpdateByLocal
+inline fun DslAdapter.enableItemTags(
+    hide: Boolean = true,
+    tags: List<String>,
+    useFilterList: Boolean = true,
+): List<DslAdapterItem> {
+    return enableItemBy(hide, useFilterList) {
+        tags.contains(it.itemTag)
+    }
 }
 
 /**更新第一个满足条件的item*/
