@@ -55,14 +55,19 @@ interface ISwitchItem : IAutoInitItem {
         switchItemConfig.action()
     }
 
-    /**更新开关的状态*/
-    fun updateSwitchChecked(checked: Boolean) {
-        if (itemSwitchChecked != checked) {
+    /**更新开关的状态
+     * [notify] 是否要通知回调
+     * [force] 是否强制更新? 忽略相同的状态*/
+    fun updateSwitchChecked(checked: Boolean, notify: Boolean = false, force: Boolean = false) {
+        if (itemSwitchChecked != checked || force) {
             itemSwitchChecked = checked
             if (this is DslAdapterItem) {
                 itemChanging = true
                 updateAdapterItem()
             }
+        }
+        if (notify) {
+            switchItemConfig.itemSwitchChangedAction(checked)
         }
     }
 }
