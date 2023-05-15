@@ -7,7 +7,14 @@ import com.angcyo.DslFHelper
 import com.angcyo.core.component.file.DslFileHelper
 import com.angcyo.library.L
 import com.angcyo.library.component.work.Trackers
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.currentApplication
+import com.angcyo.library.ex.file
+import com.angcyo.library.ex.hawkGet
+import com.angcyo.library.ex.hawkPut
+import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.isRelease
+import com.angcyo.library.ex.nowTimeString
+import com.angcyo.library.ex.shareFile
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.fileNameTime
 import java.io.BufferedWriter
@@ -129,6 +136,7 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
         //异常时间
         KEY_CRASH_TIME.hawkPut(nowTimeString())
 
+        val oldAsync = DslFileHelper.async
         DslFileHelper.async = false
         DslFileHelper.crash(currentCrashName(), buildString {
 
@@ -165,7 +173,7 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
             KEY_CRASH_FILE.hawkPut(this)
         }
 
-        DslFileHelper.async = true
+        DslFileHelper.async = oldAsync
 
         if (t.name == "FinalizerWatchdogDaemon" && e is TimeoutException) {
             KEY_IS_CRASH.hawkPut("false")
