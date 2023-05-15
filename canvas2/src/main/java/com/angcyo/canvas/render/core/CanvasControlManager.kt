@@ -118,7 +118,7 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispat
     override fun onTouchEvent(event: MotionEvent): Boolean = haveInterceptTarget
 
     override fun onTouchEventIntercept(target: ICanvasTouchListener) {
-        delegate.refresh()
+        //delegate.refresh() //2023-5-15 need?
     }
 
     //endregion---core---

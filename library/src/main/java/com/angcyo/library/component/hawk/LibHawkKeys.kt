@@ -20,6 +20,9 @@ object LibHawkKeys {
      * */
     var minKeepSize: Int by HawkPropertyValue<Any, Int>(400)
 
+    /**最小界面更新post延迟操作*/
+    var minInvalidateDelay: Long by HawkPropertyValue<Any, Long>(16)
+
     /**最小post延迟操作*/
     var minPostDelay: Long by HawkPropertyValue<Any, Long>(160)
 
