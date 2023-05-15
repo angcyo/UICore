@@ -28,6 +28,9 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
     /**浮子, 不受padding属性的影响, 根据[progress]的Y轴中点定位*/
     var seekThumbDrawable: Drawable? = null
 
+    /**[seekThumbDrawable]禁用时绘制*/
+    var seekThumbDisableDrawable: Drawable? = null
+
     /**是否激活光晕效果*/
     var enableHalo: Boolean = true
 
@@ -146,6 +149,8 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
         )
 
         seekThumbDrawable = typedArray.getDrawable(R.styleable.DslSeekBar_seek_thumb_drawable)
+        seekThumbDisableDrawable =
+            typedArray.getDrawable(R.styleable.DslSeekBar_seek_thumb_disable_drawable)
         seekThumbTouchHaloDrawable =
             typedArray.getDrawable(R.styleable.DslSeekBar_seek_thumb_touch_halo_drawable)
         thumbTextBgDrawable =
@@ -160,6 +165,11 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
         val thumbSolidColor = typedArray.getColor(
             R.styleable.DslSeekBar_seek_thumb_solid_color,
             getColor(R.color.colorAccent)
+        )
+
+        val radius = typedArray.getDimensionPixelOffset(
+            R.styleable.DslSeekBar_seek_thumb_radius,
+            45 * dpi
         )
 
         //未设置[seekThumbDrawable]时, 使用默认样式
@@ -179,15 +189,18 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 
             _dslGradientDrawable.gradientSolidColor = thumbSolidColor
 
-            val radius = typedArray.getDimensionPixelOffset(
-                R.styleable.DslSeekBar_seek_thumb_radius,
-                45 * dpi
-            )
-
             _dslGradientDrawable.fillRadii(radius)
 
             _dslGradientDrawable.updateOriginDrawable()
             seekThumbDrawable = _dslGradientDrawable
+        }
+
+        if (seekThumbDisableDrawable == null) {
+            seekThumbDisableDrawable = DslGradientDrawable().apply {
+                gradientSolidColor = _color(R.color.lib_disable_bg_color)
+                fillRadii(radius)
+                updateOriginDrawable()
+            }
         }
 
         //未设置[seekThumbTouchDrawable]时, 使用默认样式
@@ -256,7 +269,11 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
         }
 
         //浮子
-        seekThumbDrawable?.apply {
+        if (isEnabled) {
+            seekThumbDrawable
+        } else {
+            seekThumbDisableDrawable ?: seekThumbDrawable
+        }?.apply {
             bounds = _thumbBound
             draw(canvas)
         }
@@ -300,29 +317,32 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
     //<editor-fold desc="Touch事件">
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        super.onTouchEvent(event)
+        if (isEnabled) {
+            super.onTouchEvent(event)
+            if (event.isTouchDown()) {
+                _isTouchDownInThumb = _thumbBound.contains(event.x.toInt(), event.y.toInt())
+                _drawTouchThumbDrawable = true
+                isTouchDown = true
+                if (_isTouchDownInThumb) {
+                    seekThumbDrawable?.state = intArrayOf(android.R.attr.state_pressed)
+                }
+            } else if (event.isTouchMove()) {
+                parent.requestDisallowInterceptTouchEvent(true)
+                _onTouchMoveTo(event.x, event.y, false)
+            } else if (event.isTouchFinish()) {
+                _isTouchDownInThumb = false
+                isTouchDown = false
+                _drawTouchThumbDrawable = false
+                seekThumbDrawable?.state = intArrayOf()
+                parent.requestDisallowInterceptTouchEvent(false)
 
-        if (event.isTouchDown()) {
-            _isTouchDownInThumb = _thumbBound.contains(event.x.toInt(), event.y.toInt())
-            _drawTouchThumbDrawable = true
-            isTouchDown = true
-            if (_isTouchDownInThumb) {
-                seekThumbDrawable?.state = intArrayOf(android.R.attr.state_pressed)
+                onSeekBarConfig?.apply { onSeekTouchEnd(progressValue, _progressFraction) }
             }
-        } else if (event.isTouchMove()) {
-            parent.requestDisallowInterceptTouchEvent(true)
-            _onTouchMoveTo(event.x, event.y, false)
-        } else if (event.isTouchFinish()) {
-            _isTouchDownInThumb = false
-            isTouchDown = false
-            _drawTouchThumbDrawable = false
-            seekThumbDrawable?.state = intArrayOf()
-            parent.requestDisallowInterceptTouchEvent(false)
-
-            onSeekBarConfig?.apply { onSeekTouchEnd(progressValue, _progressFraction) }
+            _touchListener?.onTouch(this, event)
+            return true
+        } else {
+            return super.onTouchEvent(event)
         }
-        _touchListener?.onTouch(this, event)
-        return true
     }
 
     /**手势事件*/

@@ -16,12 +16,18 @@ import androidx.core.graphics.withSave
 import androidx.core.math.MathUtils
 import com.angcyo.drawable.base.DslGradientDrawable
 import com.angcyo.drawable.text.DslTextDrawable
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.Anim
+import com.angcyo.library.ex._color
+import com.angcyo.library.ex.anim
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.getColor
+import com.angcyo.library.ex.toDp
+import com.angcyo.library.ex.toDpi
 import com.angcyo.widget.R
 import com.angcyo.widget.base.atMost
 import com.angcyo.widget.base.getMode
 import kotlin.math.max
-import kotlin.text.format
 
 /**
  * 提供一个高度可定义的标准进度条
@@ -42,6 +48,9 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
     /**进度条*/
     var progressTrackDrawable: Drawable? = null
+
+    /**进度条禁用时的绘制对象*/
+    var progressTrackDisableDrawable: Drawable? = null
 
     /**最小进度*/
     var progressMinValue: Float = 0f
@@ -162,6 +171,8 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         //进度条轨道
         progressTrackDrawable =
             typedArray.getDrawable(R.styleable.DslProgressBar_progress_track_drawable)
+        progressTrackDisableDrawable =
+            typedArray.getDrawable(R.styleable.DslProgressBar_progress_track_disable_drawable)
 
         progressRadius = typedArray.getDimensionPixelOffset(
             R.styleable.DslProgressBar_progress_radius,
@@ -229,6 +240,10 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             setTrackGradientColors(colors)
         } else if (progressTrackDrawable == null) {
             setTrackGradientColors("${getColor(R.color.colorPrimary)},${getColor(R.color.colorPrimaryDark)}")
+        }
+
+        if (progressTrackDisableDrawable == null) {
+            progressTrackDisableDrawable = ColorDrawable(_color(R.color.lib_disable_bg_color))
         }
         //----end
 
@@ -404,7 +419,12 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     //绘制进度轨道
     open fun drawTrack(canvas: Canvas) {
         val pBound = _progressBound
-        progressTrackDrawable?.apply {
+
+        if (isEnabled) {
+            progressTrackDrawable
+        } else {
+            progressTrackDisableDrawable ?: progressTrackDrawable
+        }?.apply {
 
             var progressRight = (pBound.left + pBound.width() * _progressFraction).toInt()
 
@@ -577,7 +597,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     fun validProgress(progress: Float): Float {
         return MathUtils.clamp(progress, progressMinValue, progressMaxValue)
     }
-    
+
     open fun setProgress(
         progress: Int,
         fromProgress: Float = progressValue,

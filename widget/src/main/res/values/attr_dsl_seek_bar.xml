@@ -2,6 +2,7 @@
 <resources>
     <declare-styleable name="DslSeekBar">
         <attr name="seek_thumb_drawable" format="reference|color" />
+        <attr name="seek_thumb_disable_drawable" format="reference|color" />
         <attr name="seek_thumb_touch_halo_drawable" format="reference|color" />
         <attr name="seek_thumb_touch_halo_gradient_colors" format="string|color" />
         <attr name="seek_thumb_solid_color" format="color" />
