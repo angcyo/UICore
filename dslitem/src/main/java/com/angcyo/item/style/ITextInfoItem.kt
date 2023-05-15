@@ -41,6 +41,12 @@ var ITextInfoItem.itemInfoText: CharSequence?
         textInfoItemConfig.itemInfoText = value
     }
 
+var ITextInfoItem.itemInfoTooltipText: CharSequence?
+    get() = textInfoItemConfig.itemInfoTooltipText
+    set(value) {
+        textInfoItemConfig.itemInfoTooltipText = value
+    }
+
 class TextInfoItemConfig : IDslItemConfig {
     /**[R.id.lib_text_view]*/
     var itemInfoTextViewId: Int = R.id.lib_text_view
@@ -50,6 +56,13 @@ class TextInfoItemConfig : IDslItemConfig {
         set(value) {
             field = value
             itemInfoTextStyle.text = value
+        }
+
+    /**条目长按提示文本*/
+    var itemInfoTooltipText: CharSequence? = null
+        set(value) {
+            field = value
+            itemInfoTextStyle.tooltipText = value
         }
 
     /**统一样式配置*/

@@ -2,17 +2,24 @@ package com.angcyo.item.style
 
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.ex.tooltipText
 import com.angcyo.library.ex.undefined_color
 import com.angcyo.library.ex.undefined_float
 import com.angcyo.library.ex.undefined_size
 import com.angcyo.library.ex.visible
-import com.angcyo.widget.base.*
+import com.angcyo.widget.base.bottomIco
+import com.angcyo.widget.base.leftIco
+import com.angcyo.widget.base.rightIco
+import com.angcyo.widget.base.setBoldText
+import com.angcyo.widget.base.setInputHint
+import com.angcyo.widget.base.topIco
 
 /**
  * 文本样式配置
@@ -26,6 +33,9 @@ open class TextStyleConfig : ViewStyleConfig() {
 
     /**显示的文本内容*/
     var text: CharSequence? = null
+
+    /**长按的提示文本*/
+    var tooltipText: CharSequence? = null
 
     /**当[text]为null时, 隐藏控件*/
     var goneOnTextEmpty: Boolean = false
@@ -61,8 +71,13 @@ open class TextStyleConfig : ViewStyleConfig() {
                 hint = view.hint
             }
 
+            if (tooltipText == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                tooltipText = view.tooltipText
+            }
+
             with(view) {
                 text = this@TextStyleConfig.text
+                view.tooltipText(this@TextStyleConfig.tooltipText)
 
                 //[TextView]设置最小宽度和最小高度
                 if (viewMinWidth != undefined_size) {
@@ -89,9 +104,11 @@ open class TextStyleConfig : ViewStyleConfig() {
                     this@TextStyleConfig.textColors != null -> {
                         this@TextStyleConfig.textColors
                     }
+
                     textColor != undefined_color -> {
                         ColorStateList.valueOf(textColor)
                     }
+
                     else -> {
                         textColors
                     }
