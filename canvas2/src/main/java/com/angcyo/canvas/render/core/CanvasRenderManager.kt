@@ -176,6 +176,9 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         reason: Reason,
         strategy: Strategy
     ) {
+        if (list.isEmpty()) {
+            return
+        }
         val from = elementRendererList.toList()
         elementRendererList.addAll(list)
         val to = elementRendererList.toList()

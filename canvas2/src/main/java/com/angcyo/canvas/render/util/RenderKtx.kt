@@ -1,6 +1,9 @@
 package com.angcyo.canvas.render.util
 
-import android.graphics.*
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PointF
+import android.graphics.RectF
 import android.text.TextPaint
 import android.view.Gravity
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
@@ -13,9 +16,8 @@ import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasElementRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.library.annotation.Pixel
-import com.angcyo.library.ex.*
-import kotlin.math.max
-import kotlin.math.min
+import com.angcyo.library.ex.decimal
+import com.angcyo.library.ex.dp
 import kotlin.math.sqrt
 
 /**一些工具扩展
@@ -148,5 +150,17 @@ fun BaseRenderer?.isSelectorGroupRenderer() = this is CanvasSelectorComponent
 
 /**判断当前的渲染器是否是群组渲染器, 但是不是选择群组渲染器*/
 fun BaseRenderer?.isOnlyGroupRenderer() = !isSelectorGroupRenderer() && this is CanvasGroupRenderer
+
+fun List<BaseRenderer>?.toDrawable(
+    overrideSize: Float? = null,
+    @Pixel bounds: RectF? = null,
+    ignoreVisible: Boolean = false
+) = CanvasGroupRenderer.createRenderDrawable(this, overrideSize, bounds, ignoreVisible)
+
+fun List<BaseRenderer>?.toBitmap(
+    overrideSize: Float? = null,
+    @Pixel bounds: RectF? = null,
+    ignoreVisible: Boolean = false
+) = CanvasGroupRenderer.createRenderBitmap(this, overrideSize, bounds, ignoreVisible)
 
 //endregion---operate---
