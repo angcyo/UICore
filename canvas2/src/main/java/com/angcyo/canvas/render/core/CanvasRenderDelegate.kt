@@ -22,7 +22,6 @@ import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
-import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.onMain
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
@@ -173,8 +172,8 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     }
 
     override fun refresh() {
-        //view.postInvalidate()
-        view.postInvalidateDelayed(LibHawkKeys.minInvalidateDelay) //2023-5-15
+        view.postInvalidate()
+        //view.postInvalidateDelayed(LibHawkKeys.minInvalidateDelay) //2023-5-15
     }
 
     override fun onAttachedToWindow() {
