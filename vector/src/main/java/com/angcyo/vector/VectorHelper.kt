@@ -1,6 +1,11 @@
 package com.angcyo.vector
 
-import android.graphics.*
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.Point
+import android.graphics.PointF
+import android.graphics.RectF
 import android.os.Build
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.pool.acquireTempPath
@@ -14,7 +19,11 @@ import com.angcyo.library.model.PointD
 import com.angcyo.svg.StylePath
 import com.pixplicity.sharp.Sharp
 import java.lang.Math.pow
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.atan
+import kotlin.math.atan2
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
  * 矢量助手工具类
@@ -69,12 +78,11 @@ object VectorHelper {
     fun angle(x1: Double, y1: Double, x2: Double, y2: Double): Double {
         return 180.0 / Math.PI * atan2((y2 - y1), (x2 - x1))
     }
-    /*fun angle(y1: Float, x1: Float, y2: Float, x2: Float): Float {
-        return Math.toDegrees(
-            atan2(y1.toDouble(), x1.toDouble()) -
-                    atan2(y2.toDouble(), x2.toDouble())
-        ).toFloat() % 360
-    }*/
+
+    /**[angle]*/
+    fun angle(y1: Float, x1: Float, y2: Float, x2: Float): Float {
+        return (180.0 / Math.PI * atan2((y2 - y1), (x2 - x1))).toFloat()
+    }
 
     /**视图坐标系中的角度
      * [0~360°]*/

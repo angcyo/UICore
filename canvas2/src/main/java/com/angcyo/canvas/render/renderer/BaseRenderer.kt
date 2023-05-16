@@ -554,8 +554,12 @@ abstract class BaseRenderer : IRenderer {
     ) {
         val matrix = Matrix()
         matrix.setTranslate(dx, dy)
-        delegate?.undoManager?.addToStack(this, false, reason, strategy) {
-            applyTranslateMatrix(matrix, reason, delegate)
+        if (delegate == null) {
+            applyTranslateMatrix(matrix, reason, null)
+        } else {
+            delegate.undoManager.addToStack(this, false, reason, strategy) {
+                applyTranslateMatrix(matrix, reason, delegate)
+            }
         }
     }
 
@@ -572,8 +576,12 @@ abstract class BaseRenderer : IRenderer {
         val py = renderProperty?.anchorY ?: 0f
         val matrix = Matrix()
         matrix.setScale(sx, sy, px, py)
-        delegate?.undoManager?.addToStack(this, false, reason, strategy) {
-            applyScaleMatrix(matrix, reason, delegate)
+        if (delegate == null) {
+            applyScaleMatrix(matrix, reason, null)
+        } else {
+            delegate.undoManager.addToStack(this, false, reason, strategy) {
+                applyScaleMatrix(matrix, reason, delegate)
+            }
         }
     }
 
@@ -602,8 +610,12 @@ abstract class BaseRenderer : IRenderer {
         val py = center?.y ?: 0f
         val matrix = Matrix()
         matrix.setRotate(value, px, py)
-        delegate?.undoManager?.addToStack(this, false, reason, strategy) {
-            applyRotateMatrix(matrix, reason, delegate)
+        if (delegate == null) {
+            applyRotateMatrix(matrix, reason, null)
+        } else {
+            delegate.undoManager.addToStack(this, false, reason, strategy) {
+                applyRotateMatrix(matrix, reason, delegate)
+            }
         }
     }
 
@@ -620,8 +632,12 @@ abstract class BaseRenderer : IRenderer {
         strategy: Strategy,
         delegate: CanvasRenderDelegate?
     ) {
-        delegate?.undoManager?.addToStack(this, false, reason, strategy) {
-            applyFlip(flipX, flipY, reason, delegate)
+        if (delegate == null) {
+            applyFlip(flipX, flipY, reason, null)
+        } else {
+            delegate.undoManager.addToStack(this, false, reason, strategy) {
+                applyFlip(flipX, flipY, reason, delegate)
+            }
         }
     }
 
@@ -633,11 +649,20 @@ abstract class BaseRenderer : IRenderer {
     fun flipX(reason: Reason, strategy: Strategy, delegate: CanvasRenderDelegate?) {
         val list = getSingleRendererList(false)
         if (list.isEmpty()) return
-        delegate?.undoManager?.addToStack(this, false, reason, strategy) {
+
+        if (delegate == null) {
             for (renderer in list) {
                 val flipX: Boolean = renderer.renderProperty?.flipX ?: false
                 val flipY: Boolean = renderer.renderProperty?.flipY ?: false
-                renderer.applyFlip(!flipX, flipY, reason, delegate)
+                renderer.applyFlip(!flipX, flipY, reason, null)
+            }
+        } else {
+            delegate.undoManager.addToStack(this, false, reason, strategy) {
+                for (renderer in list) {
+                    val flipX: Boolean = renderer.renderProperty?.flipX ?: false
+                    val flipY: Boolean = renderer.renderProperty?.flipY ?: false
+                    renderer.applyFlip(!flipX, flipY, reason, delegate)
+                }
             }
         }
     }
@@ -650,11 +675,20 @@ abstract class BaseRenderer : IRenderer {
     fun flipY(reason: Reason, strategy: Strategy, delegate: CanvasRenderDelegate?) {
         val list = getSingleRendererList(false)
         if (list.isEmpty()) return
-        delegate?.undoManager?.addToStack(this, false, reason, strategy) {
+
+        if (delegate == null) {
             for (renderer in list) {
                 val flipX: Boolean = renderer.renderProperty?.flipX ?: false
                 val flipY: Boolean = renderer.renderProperty?.flipY ?: false
-                renderer.applyFlip(flipX, !flipY, reason, delegate)
+                renderer.applyFlip(flipX, !flipY, reason, null)
+            }
+        } else {
+            delegate.undoManager.addToStack(this, false, reason, strategy) {
+                for (renderer in list) {
+                    val flipX: Boolean = renderer.renderProperty?.flipX ?: false
+                    val flipY: Boolean = renderer.renderProperty?.flipY ?: false
+                    renderer.applyFlip(flipX, !flipY, reason, delegate)
+                }
             }
         }
     }

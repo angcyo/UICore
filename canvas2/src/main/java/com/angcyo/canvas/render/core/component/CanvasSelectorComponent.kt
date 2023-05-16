@@ -20,7 +20,12 @@ import com.angcyo.canvas.render.util.canvasDecimal
 import com.angcyo.canvas.render.util.createRenderPaint
 import com.angcyo.canvas.render.util.createRenderTextPaint
 import com.angcyo.library.component.DrawText
-import com.angcyo.library.ex.*
+import com.angcyo.library.component.hawk.LibLpHawkKeys
+import com.angcyo.library.ex._color
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.emptyRectF
+import com.angcyo.library.ex.have
+import com.angcyo.library.ex.size
 import com.angcyo.library.unit.IRenderUnit
 
 /**
@@ -128,7 +133,7 @@ class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupR
         if (isSelectorElement) {
             //绘制所有子元素的Rect
 
-            if (getSingleRendererList(false).size() > 1) {
+            if (LibLpHawkKeys.enableRenderElementBounds && getSingleRendererList(false).size() > 1) {
                 //元素旋转的矩形
                 if (renderFlags.have(RENDERER_FLAG_DRAW_ELEMENT_RECT)) {
                     boundsPaint.color = elementBoundsColor
