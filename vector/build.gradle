@@ -10,7 +10,7 @@ dependencies {
     //https://github.com/Pixplicity/sharp
     //https://github.com/LaserPeckerIst/sharp
     //https://jitpack.io/#LaserPeckerIst/sharp
-    api 'com.github.LaserPeckerIst:sharp:1.1.3.17'
+    api 'com.github.LaserPeckerIst:sharp:1.1.3.18'
 
     //https://github.com/LaserPeckerIst/Android-Kabeja
     api 'com.github.LaserPeckerIst:Android-Kabeja:1.0.3'
