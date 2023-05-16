@@ -61,7 +61,7 @@ object Pad {
      * https://juejin.cn/post/7046989823034261541
      */
     val isTabletDevice: Boolean by lazy {
-        SystemPropertiesProxy[app(), "ro.build.characteristics"]?.contains("tablet") == true
+        SystemPropertiesProxy[app(), "ro.build.characteristics"]?.contains("tablet", true) == true
     }
 
     /**
