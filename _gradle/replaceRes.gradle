@@ -9,56 +9,32 @@ task _replaceRes(group: 'angcyo', description: '替换xml文件中的字符串�
 
 _replaceRes.doFirst {
     def csvPath = file("res.csv").absolutePath
+    _replaceLanguageFile("-ko", _readCsvMap(csvPath))
+}
 
-    def pathListZh = []
-    pathListZh += "./UICore/crop/src/main/res/values-zh/crop_strings.xml"
-    pathListZh += "./UICore/doodle/src/main/res/values-zh/doodle_strings.xml"
-    pathListZh += "./UICore/canvas/src/main/res/values-zh/canvas_strings.xml"
+def _getLanguageResPath(language) {
+    def pathList = []
+    pathList += "./UICore/core/src/main/res/values${language}/core_strings.xml"
+    pathList += "./UICore/crop/src/main/res/values${language}/crop_strings.xml"
+    pathList += "./UICore/dialog/src/main/res/values${language}/dialog_strings.xml"
+    pathList += "./UICore/doodle/src/main/res/values${language}/doodle_strings.xml"
+    //pathList += "./UICore/canvas/src/main/res/values${language}/canvas_strings.xml"
+    pathList += "./UICore/widget/src/main/res/values${language}/widget_strings.xml"
 
-    pathListZh += "./UICoreEx/canvas_lp/src/main/res/values-zh/canvas_strings.xml"
-    pathListZh += "./UICoreEx/engrave/src/main/res/values-zh/engrave_strings.xml"
-    pathListZh += "./UICoreEx/fsc/src/main/res/values-zh/fsc_strings.xml"
+    //pathList += "./UICoreEx/canvas_lp/src/main/res/values${language}/canvas_strings.xml"
+    pathList += "./UICoreEx/canvas2_lp/src/main/res/values${language}/canvas_strings.xml"
+    //pathList += "./UICoreEx/engrave/src/main/res/values${language}/engrave_strings.xml"
+    pathList += "./UICoreEx/engrave2/src/main/res/values${language}/engrave_strings.xml"
+    pathList += "./UICoreEx/fsc/src/main/res/values${language}/fsc_strings.xml"
+    pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/device_strings.xml"
+    pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/material_strings.xml"
 
-    //canvas2
-    pathListZh += "./UICoreEx/canvas2_lp/src/main/res/values-zh/canvas_strings.xml"
-    pathListZh += "./UICoreEx/engrave2/src/main/res/values-zh/engrave_strings.xml"
-    pathListZh += "./UICoreEx/lpDevice/src/main/res/values-zh/device_strings.xml"
-    pathListZh += "./UICoreEx/lpDevice/src/main/res/values-zh/material_strings.xml"
+    return pathList
+}
 
-    //ja 日语资源
-    /*def pathOutListZh = []
-    pathOutListZh += "./UICore/crop/src/main/res/values-ja/crop_strings.xml"
-    pathOutListZh += "./UICore/doodle/src/main/res/values-ja/doodle_strings.xml"
-    pathOutListZh += "./UICore/canvas/src/main/res/values-ja/canvas_strings.xml"
-
-    pathOutListZh += "./UICoreEx/canvas_lp/src/main/res/values-ja/canvas_strings.xml"
-    pathOutListZh += "./UICoreEx/engrave/src/main/res/values-ja/engrave_strings.xml"
-    pathOutListZh += "./UICoreEx/fsc/src/main/res/values-ja/fsc_strings.xml"
-
-    //canvas2
-    pathOutListZh += "./UICoreEx/canvas2_lp/src/main/res/values-ja/canvas_strings.xml"
-    pathOutListZh += "./UICoreEx/engrave2/src/main/res/values-ja/engrave_strings.xml"
-    pathOutListZh += "./UICoreEx/lpDevice/src/main/res/values-ja/device_strings.xml"
-    pathOutListZh += "./UICoreEx/lpDevice/src/main/res/values-ja/material_strings.xml"
-    */
-
-    //ko 韩语资源
-    def pathOutListZh = []
-    pathOutListZh += "./UICore/crop/src/main/res/values-ko/crop_strings.xml"
-    pathOutListZh += "./UICore/doodle/src/main/res/values-ko/doodle_strings.xml"
-    pathOutListZh += "./UICore/canvas/src/main/res/values-ko/canvas_strings.xml"
-
-    pathOutListZh += "./UICoreEx/canvas_lp/src/main/res/values-ko/canvas_strings.xml"
-    pathOutListZh += "./UICoreEx/engrave/src/main/res/values-ko/engrave_strings.xml"
-    pathOutListZh += "./UICoreEx/fsc/src/main/res/values-ko/fsc_strings.xml"
-
-    //canvas2
-    pathOutListZh += "./UICoreEx/canvas2_lp/src/main/res/values-ko/canvas_strings.xml"
-    pathOutListZh += "./UICoreEx/engrave2/src/main/res/values-ko/engrave_strings.xml"
-    pathOutListZh += "./UICoreEx/lpDevice/src/main/res/values-ko/device_strings.xml"
-    pathOutListZh += "./UICoreEx/lpDevice/src/main/res/values-ko/material_strings.xml"
-
-    _replaceResList(pathListZh, pathOutListZh, _readCsvMap(csvPath))
+/**合并指定语言的xml文件*/
+def _replaceLanguageFile(outLanguage, map) {
+    _replaceResList(_getLanguageResPath("-zh"), _getLanguageResPath(outLanguage), map)
 }
 
 /**读取csv文件, 返回对应的map*/

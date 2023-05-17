@@ -1,0 +1,58 @@
+/**
+ * 2023-5-17
+ * 读取xml中的数据, 输出到csv文件中
+ *
+ * https://www.jianshu.com/p/695507fcc24d
+ * */
+
+task _parseXml(group: 'angcyo', description: '读取xml中的数据, 输出到csv文件中') {
+    //配置任务
+}
+
+_parseXml.doLast {
+    //默认的xml文件路径
+    def defXmlPath = '.apk/LaserPecker Android Resource(中文).xml'
+    //默认的数据输出路径
+    def defOutputPath = ''
+    def xmlPath = project.hasProperty("xml_path") ? project.ext.xml_path : defXmlPath
+    def file = file(xmlPath)
+
+    if (!file.exists()) {
+        throw new IllegalStateException("请在[gradle.properties]文件中配置xml文件路径:xml_path")
+    }
+
+    if (defOutputPath == null || defOutputPath.isEmpty()) {
+        defOutputPath = file.getParentFile().getAbsolutePath() + "/${file.name}.csv"
+    }
+
+    //解析文件
+    _parseFile(xmlPath, defOutputPath)
+}
+
+def _parseFile(xmlPath, outPath) {
+    def file = file(xmlPath)
+    def output = new File(outPath)
+    output.delete()
+
+    System.err.println "解析文件-> ${file.absolutePath}"
+    def rootNode = openXml(file)
+    rootNode.childNodes().each { node ->
+        groovy.util.slurpersupport.Node
+        //groovy.util.slurpersupport.Node
+        //println "${node["name"]}:${node.text()}"
+        //写入文件
+        //output << "${node.attributes["name"]},${node.text()}\n"
+        output << "${node.text()}\n"
+    }
+    System.err.println "输出路径-> ${defOutputPath}"
+}
+
+/**
+ * 获取一个 GPathResult 对象
+ * @see groovy.util.slurpersupport.GPathResult*                         */
+static def openXml(xmlFile) {
+    def xmlSlurper = new groovy.util.XmlSlurper()
+    def result = xmlSlurper.parse(xmlFile)
+    return result
+}
+

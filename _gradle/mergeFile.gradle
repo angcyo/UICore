@@ -14,8 +14,7 @@ _mergeFile.doFirst {
     _mergeLanguageFile("-zh", outputPathZh)//中文
 }
 
-/**合并指定语言的xml文件*/
-def _mergeLanguageFile(language, outputPath) {
+def _getLanguageResPath(language) {
     def pathList = []
     pathList += "./UICore/core/src/main/res/values${language}/core_strings.xml"
     pathList += "./UICore/crop/src/main/res/values${language}/crop_strings.xml"
@@ -30,8 +29,14 @@ def _mergeLanguageFile(language, outputPath) {
     pathList += "./UICoreEx/engrave2/src/main/res/values${language}/engrave_strings.xml"
     pathList += "./UICoreEx/fsc/src/main/res/values${language}/fsc_strings.xml"
     pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/device_strings.xml"
+    pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/material_strings.xml"
 
-    _mergeFile(pathList, outputPath)
+    return pathList
+}
+
+/**合并指定语言的xml文件*/
+def _mergeLanguageFile(language, outputPath) {
+    _mergeFile(_getLanguageResPath(language), outputPath)
 }
 
 /** 合并文件内容到一个文件*/
