@@ -1,3 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="dialog_positive">确定</string>
+    <string name="dialog_negative">取消</string>
+    <string name="dialog_neutral">中立</string>
+    <string name="dialog_continue">继续</string>
+    <string name="dialog_input_hint">请输入...</string>
+
+    <string name="dialog_color_picker">请选择颜色...</string>
+    <string name="dialog_width_picker">请选择粗细...</string>
+
+    <string name="not_prompt_label">不再提示</string>
 </resources>
