@@ -1,6 +1,7 @@
 package com.angcyo.http.interceptor
 
 import android.Manifest
+import android.content.Context
 import com.angcyo.library.app
 import com.angcyo.library.ex.havePermissions
 import com.angcyo.library.ex.uuid
@@ -29,7 +30,8 @@ class UUIDInterceptor : Interceptor {
         val newRequest = chain.request().newBuilder()
             //.addHeader("deviceId", Device.deviceId)
             .addHeader("androidId", Device.androidId) //86756e10cf9a9562
-            .addHeader("log-trace-id", uuid()) //86756e10cf9a9562
+            .addHeader("log-trace-id", uuid()) //b955430613fb45b5ba04d41a3a61d725
+            //.addHeader("language", getCurrentLanguage()) //zh_CN
             //java.lang.IllegalArgumentException: Unexpected char 0x0a at 34 in deviceInfo
             //.addHeader("deviceInfo", Device.beautifyDeviceLog().encode()) //设备一些基础信息, 去掉节省流量
             .apply {
@@ -47,4 +49,15 @@ class UUIDInterceptor : Interceptor {
             .build()
         return chain.proceed(newRequest)
     }
+
+    /**获取当前系统语言格式 zh_CN
+     * [com.angcyo.core.component.model.LanguageModel.Companion.getCurrentLanguage]*/
+    private fun getCurrentLanguage(context: Context = app()): String {
+        //zh_CN_#Hans
+        val locale = context.resources.configuration.locale
+        val language = locale.language
+        val country = locale.country
+        return language + "_" + country
+    }
+
 }
