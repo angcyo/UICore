@@ -10,30 +10,28 @@ task _mergeFile(group: 'angcyo', description: '将多个路径的文件内容合
 _mergeFile.doFirst {
     def outputPathZh = file(".apk/LaserPecker Android Resource(中文).xml").absolutePath
     def outputPathEn = file(".apk/LaserPecker Android Resource(英文).xml").absolutePath
-    def pathListZh = []
-    def pathListEn = []
+    _mergeLanguageFile("", outputPathEn)//默认英文
+    _mergeLanguageFile("-zh", outputPathZh)//中文
+}
 
-    pathListZh += "./UICore/crop/src/main/res/values-zh/crop_strings.xml"
-    pathListZh += "./UICore/doodle/src/main/res/values-zh/doodle_strings.xml"
-    pathListZh += "./UICore/canvas/src/main/res/values-zh/canvas_strings.xml"
+/**合并指定语言的xml文件*/
+def _mergeLanguageFile(language, outputPath) {
+    def pathList = []
+    pathList += "./UICore/core/src/main/res/values${language}/core_strings.xml"
+    pathList += "./UICore/crop/src/main/res/values${language}/crop_strings.xml"
+    pathList += "./UICore/dialog/src/main/res/values${language}/dialog_strings.xml"
+    pathList += "./UICore/doodle/src/main/res/values${language}/doodle_strings.xml"
+    //pathList += "./UICore/canvas/src/main/res/values${language}/canvas_strings.xml"
+    pathList += "./UICore/widget/src/main/res/values${language}/widget_strings.xml"
 
-    pathListZh += "./UICoreEx/canvas_lp/src/main/res/values-zh/canvas_strings.xml"
-    pathListZh += "./UICoreEx/engrave/src/main/res/values-zh/engrave_strings.xml"
-    pathListZh += "./UICoreEx/fsc/src/main/res/values-zh/fsc_strings.xml"
+    //pathList += "./UICoreEx/canvas_lp/src/main/res/values${language}/canvas_strings.xml"
+    pathList += "./UICoreEx/canvas2_lp/src/main/res/values${language}/canvas_strings.xml"
+    //pathList += "./UICoreEx/engrave/src/main/res/values${language}/engrave_strings.xml"
+    pathList += "./UICoreEx/engrave2/src/main/res/values${language}/engrave_strings.xml"
+    pathList += "./UICoreEx/fsc/src/main/res/values${language}/fsc_strings.xml"
+    pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/device_strings.xml"
 
-    _mergeFile(pathListZh, outputPathZh)
-
-    //--
-
-    pathListEn += "./UICore/crop/src/main/res/values/crop_strings.xml"
-    pathListEn += "./UICore/doodle/src/main/res/values/doodle_strings.xml"
-    pathListEn += "./UICore/canvas/src/main/res/values/canvas_strings.xml"
-
-    pathListEn += "./UICoreEx/canvas_lp/src/main/res/values/canvas_strings.xml"
-    pathListEn += "./UICoreEx/engrave/src/main/res/values/engrave_strings.xml"
-    pathListEn += "./UICoreEx/fsc/src/main/res/values/fsc_strings.xml"
-
-    _mergeFile(pathListEn, outputPathEn)
+    _mergeFile(pathList, outputPath)
 }
 
 /** 合并文件内容到一个文件*/
