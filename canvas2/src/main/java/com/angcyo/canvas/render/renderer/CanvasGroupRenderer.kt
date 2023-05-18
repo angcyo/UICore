@@ -751,7 +751,8 @@ open class CanvasGroupRenderer : BaseRenderer() {
         val undoState = PropertyStateStack()
         undoState.saveState(this, delegate)
 
-        val anchorBounds = anchorItemRenderer!!.renderProperty?.getRenderBounds(bounds) ?: return
+        val anchorBounds = acquireTempRectF()
+        anchorItemRenderer!!.renderProperty?.getRenderBounds(anchorBounds) ?: return
         for (item in list) {
             if (item != anchorItemRenderer) {
                 val itemBounds = item.renderProperty?.getRenderBounds(bounds) ?: continue
@@ -791,6 +792,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
         //回退栈
         delegate?.addStateToStack(this, undoState, redoState, false, reason, strategy)
 
+        anchorBounds.release()
         groupBounds.release()
         bounds.release()
     }
@@ -825,8 +827,10 @@ open class CanvasGroupRenderer : BaseRenderer() {
         val first = sortList.first()
         val last = sortList.last()
 
-        val firstBounds = first?.renderProperty?.getRenderBounds(_bounds) ?: return
-        val lastBounds = last?.renderProperty?.getRenderBounds(_bounds) ?: return
+        val firstBounds = acquireTempRectF()
+        val lastBounds = acquireTempRectF()
+        first?.renderProperty?.getRenderBounds(firstBounds) ?: return
+        last?.renderProperty?.getRenderBounds(lastBounds) ?: return
 
         val firstX = firstBounds.centerX()
         val firstY = firstBounds.centerY()
@@ -836,7 +840,6 @@ open class CanvasGroupRenderer : BaseRenderer() {
             LinearLayout.VERTICAL -> lastBounds.centerY() - firstY
             else -> 0f
         } / (count - 1)
-
 
         //保存一个状态
         val undoState = PropertyStateStack()
@@ -879,6 +882,9 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
         //回退栈
         delegate?.addStateToStack(this, undoState, redoState, false, reason, strategy)
+
+        firstBounds.release()
+        lastBounds.release()
     }
 
     /**创建组合
