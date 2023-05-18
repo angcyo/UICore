@@ -1,6 +1,13 @@
 /**
  * 在Library中使用Rust
  * 2023-5-18
+ *
+ * Rust:
+ * https://www.rust-lang.org/zh-CN/
+ *
+ * Rust包管理:
+ * https://crates.io/
+ *
  * */
 
 apply plugin: 'org.mozilla.rust-android-gradle.rust-android'
