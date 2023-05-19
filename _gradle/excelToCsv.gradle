@@ -56,8 +56,7 @@ _excelToCsv.doLast {
     deOutput.delete()
     def esOutput = file("es.csv")
     esOutput.delete()
-
-
+    
     System.err.println "解析文件-> ${excelFile.absolutePath}"
 
     //读取数据
