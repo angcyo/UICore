@@ -203,6 +203,37 @@ static def getLocalIp() {
     return ip
 }
 
+/**统一内容的方法, 获取资源路径
+ *
+ * -zh
+ * -ja
+ * -ko
+ * -fr
+ * -de
+ * -es
+ * -zh-rHK
+ * -zh-rTW
+ * */
+static def getLanguageResPath(language) {
+    def pathList = []
+    pathList += "./UICore/core/src/main/res/values${language}/core_strings.xml"
+    pathList += "./UICore/crop/src/main/res/values${language}/crop_strings.xml"
+    pathList += "./UICore/dialog/src/main/res/values${language}/dialog_strings.xml"
+    pathList += "./UICore/doodle/src/main/res/values${language}/doodle_strings.xml"
+    //pathList += "./UICore/canvas/src/main/res/values${language}/canvas_strings.xml"
+    pathList += "./UICore/widget/src/main/res/values${language}/widget_strings.xml"
+
+    //pathList += "./UICoreEx/canvas_lp/src/main/res/values${language}/canvas_strings.xml"
+    pathList += "./UICoreEx/canvas2_lp/src/main/res/values${language}/canvas_strings.xml"
+    //pathList += "./UICoreEx/engrave/src/main/res/values${language}/engrave_strings.xml"
+    pathList += "./UICoreEx/engrave2/src/main/res/values${language}/engrave_strings.xml"
+    pathList += "./UICoreEx/fsc/src/main/res/values${language}/fsc_strings.xml"
+    pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/device_strings.xml"
+    pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/material_strings.xml"
+
+    return pathList
+}
+
 /**复制apk文件*/
 def copyApkFile() {
     def output = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
@@ -270,4 +301,5 @@ ext {
     getLogoPath = this.&getLogoPath
     getLocalIp = this.&getLocalIp
     copyApkFile = this.&copyApkFile
+    getLanguageResPath = this.&getLanguageResPath
 }

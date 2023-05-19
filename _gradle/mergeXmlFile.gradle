@@ -3,11 +3,11 @@
  * 将多个路径的文件内容合并到一个文件
  * */
 
-task _mergeFile(group: 'angcyo', description: '将多个路径的文件内容合并到一个文件') {
+task _mergeXmlFile(group: 'angcyo', description: '将多个路径的xml文件内容合并到一个xml文件') {
     //配置任务
 }
 
-_mergeFile.doFirst {
+_mergeXmlFile.doFirst {
     _mergeLanguageFile("", ".apk/LaserPecker Android Resource(英文).xml")        //默认英文
     _mergeLanguageFile("-zh", ".apk/LaserPecker Android Resource(中文).xml")
     _mergeLanguageFile("-ja", ".apk/LaserPecker Android Resource(日语).xml")
@@ -19,34 +19,13 @@ _mergeFile.doFirst {
     _mergeLanguageFile("-zh-rHK", ".apk/LaserPecker Android Resource(香港).xml")
 }
 
-/**统一内容的方法, 获取资源路径*/
-def _getLanguageResPath(language) {
-    def pathList = []
-    pathList += "./UICore/core/src/main/res/values${language}/core_strings.xml"
-    pathList += "./UICore/crop/src/main/res/values${language}/crop_strings.xml"
-    pathList += "./UICore/dialog/src/main/res/values${language}/dialog_strings.xml"
-    pathList += "./UICore/doodle/src/main/res/values${language}/doodle_strings.xml"
-    //pathList += "./UICore/canvas/src/main/res/values${language}/canvas_strings.xml"
-    pathList += "./UICore/widget/src/main/res/values${language}/widget_strings.xml"
-
-    //pathList += "./UICoreEx/canvas_lp/src/main/res/values${language}/canvas_strings.xml"
-    pathList += "./UICoreEx/canvas2_lp/src/main/res/values${language}/canvas_strings.xml"
-    //pathList += "./UICoreEx/engrave/src/main/res/values${language}/engrave_strings.xml"
-    pathList += "./UICoreEx/engrave2/src/main/res/values${language}/engrave_strings.xml"
-    pathList += "./UICoreEx/fsc/src/main/res/values${language}/fsc_strings.xml"
-    pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/device_strings.xml"
-    pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/material_strings.xml"
-
-    return pathList
-}
-
 /**合并指定语言的xml文件*/
 def _mergeLanguageFile(language, outputPath) {
-    _mergeFile(_getLanguageResPath(language), outputPath)
+    _mergeXmlFile(getLanguageResPath(language), outputPath)
 }
 
 /** 合并文件内容到一个文件*/
-def _mergeFile(pathList, outputPath) {
+def _mergeXmlFile(pathList, outputPath) {
     def outputFile = file(outputPath)
     if (pathList != null && pathList.size() > 0) {
         outputFile.delete()

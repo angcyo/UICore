@@ -17,9 +17,6 @@ buildscript {
         classpath 'org.apache.poi:poi-ooxml:5.2.3'
         // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
         classpath 'org.apache.logging.log4j:log4j-core:2.20.0'
-
-        //https://jcenter.bintray.com/com/google/code/gson/gson/
-        classpath "com.google.code.gson:gson:2.10.1"
     }
 }
 

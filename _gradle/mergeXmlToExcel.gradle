@@ -1,0 +1,129 @@
+/**
+ * 2023-05-19
+ * 将多个xml文件, 按照key合并到一个Excel文件中
+ * */
+
+buildscript {
+    repositories {
+        mavenCentral()
+        /*maven {
+            url "http://repo.serebryanskiy.site/"
+            allowInsecureProtocol = true
+        }*/
+    }
+    dependencies {
+        // https://mvnrepository.com/artifact/org.apache.poi/poi
+        //classpath 'org.apache.poi:poi:5.2.3'
+        classpath 'org.apache.poi:poi-ooxml:5.2.3'
+        // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
+        classpath 'org.apache.logging.log4j:log4j-core:2.20.0'
+    }
+}
+
+task _mergeXmlToExcel(group: 'angcyo', description: '将多个xml文件, 按照key合并到一个Excel文件中') {
+    //配置任务
+}
+
+_mergeXmlToExcel.doFirst {
+    def workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook()
+    def sheet = workbook.createSheet("Sheet1")
+
+    // * -zh
+    // * -ja
+    // * -ko
+    // * -fr
+    // * -de
+    // * -es
+    // * -zh-rHK
+    // * -zh-rTW
+
+    def languageArray = ["中文", "英语", "日语", "韩语", "德语", "西班牙语", "法语", "繁体"]
+
+    def zhPathArray = getLanguageResPath("-zh")
+    def enPathArray = getLanguageResPath("")
+    def jaPathArray = getLanguageResPath("-ja")
+    def koPathArray = getLanguageResPath("-ko")
+    def dePathArray = getLanguageResPath("-de")
+    def esPathArray = getLanguageResPath("-es")
+    def frPathArray = getLanguageResPath("-fr")
+    def zh_rHKPathArray = getLanguageResPath("-zh-rHK")
+    //def zh_rTWPathArray = getLanguageResPath("-zh-rTW")
+
+    def zhMap = [:]
+    def enMap = [:]
+    def jaMap = [:]
+    def koMap = [:]
+    def deMap = [:]
+    def esMap = [:]
+    def frMap = [:]
+    def zh_rHKMap = [:]
+    //def zh_rTWMap = [:]
+
+    readXmlToMap(zhPathArray, zhMap)
+    readXmlToMap(enPathArray, enMap)
+    readXmlToMap(jaPathArray, jaMap)
+    readXmlToMap(koPathArray, koMap)
+    readXmlToMap(dePathArray, deMap)
+    readXmlToMap(esPathArray, esMap)
+    readXmlToMap(frPathArray, frMap)
+    readXmlToMap(zh_rHKPathArray, zh_rHKMap)
+    //readXmlToMap(zh_rTWPathArray, zh_rTWMap)
+
+    def titleRow = sheet.createRow(0)
+    languageArray.eachWithIndex { value, index ->
+        def cell = titleRow.createCell(index)
+        cell.setCellValue(value)
+    }
+
+    zhMap.eachWithIndex { entry, index ->
+        def key = entry.key
+        def value = entry.value
+
+        def row = sheet.createRow(index + 1)
+        def zhCell = row.createCell(0)
+        def enCell = row.createCell(1)
+        def jaCell = row.createCell(2)
+        def koCell = row.createCell(3)
+        def deCell = row.createCell(4)
+        def esCell = row.createCell(5)
+        def frCell = row.createCell(6)
+        def zh_rHKCell = row.createCell(7)
+        //def zh_rTWCell = row.createCell(8)
+
+        zhCell.setCellValue(value)
+        enCell.setCellValue(enMap[key])
+        jaCell.setCellValue(jaMap[key])
+        koCell.setCellValue(koMap[key])
+        deCell.setCellValue(deMap[key])
+        esCell.setCellValue(esMap[key])
+        frCell.setCellValue(frMap[key])
+        zh_rHKCell.setCellValue(zh_rHKMap[key])
+        //zh_rTWCell.setCellValue(zh_rTWMap[key])
+    }
+
+    //写入到excel文件中
+    def file = file("language.xlsx")
+    file.withOutputStream { outputStream ->
+        workbook.write(outputStream)
+    }
+
+    System.err.println "已合并到-> ${file.absolutePath}"
+}
+
+/**读取xml文件数据, 到map中.[key:value]
+ * [xmlPath] 支持字符串, 支持字符串数组*/
+def readXmlToMap(xmlPath, map) {
+    //判断xmlPath是否是数组
+    if (xmlPath instanceof ArrayList) {
+        xmlPath.forEach { path ->
+            readXmlToMap(path, map)
+        }
+    } else {
+        def xmlFile = file(xmlPath)
+        println "开始读取->${xmlFile.absolutePath}"
+        def xml = new XmlSlurper().parse(xmlFile)
+        xml.childNodes().each { node ->
+            map[node.attributes["name"]] = node.text()
+        }
+    }
+}
