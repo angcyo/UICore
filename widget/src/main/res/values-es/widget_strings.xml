@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="adapter_loading">加载中...</string>
-    <string name="adapter_error">加载失败, 点击重试</string>
-    <string name="adapter_no_data">暂无数据</string>
-    <string name="not_support">暂不支持</string>
-    <string name="not_support_part">部分数据不支持</string>
+    <string name="adapter_loading">Cargando...</string>
+    <string name="adapter_error">No se pudo cargar, haga clic para intentarlo de nuevo</string>
+    <string name="adapter_no_data">Sin datos</string>
+    <string name="not_support">Aún no es compatible</string>
+    <string name="not_support_part">Algunos datos no son compatibles</string>
 </resources>
