@@ -8,10 +8,15 @@ task _mergeFile(group: 'angcyo', description: '将多个路径的文件内容合
 }
 
 _mergeFile.doFirst {
-    def outputPathZh = file(".apk/LaserPecker Android Resource(中文).xml").absolutePath
-    def outputPathEn = file(".apk/LaserPecker Android Resource(英文).xml").absolutePath
-    _mergeLanguageFile("", outputPathEn)//默认英文
-    _mergeLanguageFile("-zh", outputPathZh)//中文
+    _mergeLanguageFile("", ".apk/LaserPecker Android Resource(英文).xml")        //默认英文
+    _mergeLanguageFile("-zh", ".apk/LaserPecker Android Resource(中文).xml")
+    _mergeLanguageFile("-ja", ".apk/LaserPecker Android Resource(日语).xml")
+    _mergeLanguageFile("-ko", ".apk/LaserPecker Android Resource(韩语).xml")
+    _mergeLanguageFile("-de", ".apk/LaserPecker Android Resource(德语).xml")
+    _mergeLanguageFile("-es", ".apk/LaserPecker Android Resource(西班牙语).xml")
+    _mergeLanguageFile("-fr", ".apk/LaserPecker Android Resource(法语).xml")
+    _mergeLanguageFile("-zh-rTW", ".apk/LaserPecker Android Resource(台湾).xml")
+    _mergeLanguageFile("-zh-rHK", ".apk/LaserPecker Android Resource(香港).xml")
 }
 
 /**统一内容的方法, 获取资源路径*/

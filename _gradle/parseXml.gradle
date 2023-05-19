@@ -5,6 +5,18 @@
  * https://www.jianshu.com/p/695507fcc24d
  * */
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        //https://jcenter.bintray.com/com/squareup/okhttp3/
+        classpath "com.squareup.okhttp3:okhttp:4.11.0"
+        //https://jcenter.bintray.com/com/google/code/gson/gson/
+        classpath "com.google.code.gson:gson:2.10.1"
+    }
+}
+
 task _parseXml(group: 'angcyo', description: '读取xml中的数据, 输出到csv文件中') {
     //配置任务
 }
@@ -30,26 +42,71 @@ _parseXml.doLast {
 }
 
 def _parseFile(xmlPath, outPath) {
-    def file = file(xmlPath)
+    def xmlFile = file(xmlPath)
     def output = file(outPath)
     output.delete()
 
-    System.err.println "解析文件-> ${file.absolutePath}"
-    def rootNode = openXml(file)
+    System.err.println "解析文件-> ${xmlFile.absolutePath}"
+    def rootNode = openXml(xmlFile)
     rootNode.childNodes().each { node ->
         groovy.util.slurpersupport.Node
         //groovy.util.slurpersupport.Node
         //println "${node["name"]}:${node.text()}"
         //写入文件
         //output << "${node.attributes["name"]},${node.text()}\n"
-        output << "${node.text()}\n"
+
+        def text = node.text()
+        //翻译
+        def text2 = translate(text, "zh-TW")
+        //翻译
+        output << "${text},${text2}\n"
     }
     System.err.println "输出路径-> ${output.absolutePath}"
 }
 
+/**翻译字符串[q], 到语种[]*/
+def translate(q, tl) {
+    def q2 = URLEncoder.encode(q, "UTF-8")
+    def url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${tl}&dt=t&q=${q2}"
+    //get请求url
+    def clientBuilder = new okhttp3.OkHttpClient.Builder()
+    okhttp3.OkHttpClient client = clientBuilder.build()
+
+    def request = new okhttp3.Request.Builder()
+            .url(url)
+            .get()
+            .build()
+    try {
+        def response = client.newCall(request).execute()
+        def bodyString = response.body().string()
+
+        System.err.println "翻译结果[$q]-> ${bodyString}"
+
+        if (response.code() != 200) {
+            System.err.println "翻译失败!"
+            throw new IllegalStateException("翻译失败!")
+        }
+
+        def json = new groovy.json.JsonSlurper().parseText(bodyString)
+        def result = json[0][0][0]
+        try {
+            return URLDecoder.decode(result, "UTF-8")
+        } catch (IllegalArgumentException e) {
+            //解码失败, 忽略. URLDecoder: Incomplete trailing escape (%) pattern
+            return result
+        }
+    } catch (SocketTimeoutException e) {
+        //网络错误, 重试
+        return translate(q, tl)
+    } catch (Exception e) {
+        e.printStackTrace()
+        throw e
+    }
+}
+
 /**
  * 获取一个 GPathResult 对象
- * @see groovy.util.slurpersupport.GPathResult*                             */
+ * @see groovy.util.slurpersupport.GPathResult*                                                                                */
 static def openXml(xmlFile) {
     def xmlSlurper = new groovy.util.XmlSlurper()
     def result = xmlSlurper.parse(xmlFile)
