@@ -15,10 +15,15 @@ _replaceRes.doFirst {
     def deCsvPath = file("de.csv")
     def esCsvPath = file("es.csv")
 
+    def rHKCsvPath = file("rHK.csv")
+    def rTWCsvPath = rHKCsvPath
+
     _replaceLanguageFile("-zh", "-ko", _readCsvMap(koCsvPath))
     _replaceLanguageFile("-zh", "-fr", _readCsvMap(frCsvPath))
     _replaceLanguageFile("-zh", "-de", _readCsvMap(deCsvPath))
     _replaceLanguageFile("-zh", "-es", _readCsvMap(esCsvPath))
+    //_replaceLanguageFile("-zh", "-zh-rHK", _readCsvMap(rHKCsvPath))
+    //_replaceLanguageFile("-zh", "-zh-rTW", _readCsvMap(rTWCsvPath))
 }
 
 /**统一内容的方法, 获取资源路径*/
