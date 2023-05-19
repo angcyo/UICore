@@ -14,6 +14,7 @@ _mergeFile.doFirst {
     _mergeLanguageFile("-zh", outputPathZh)//中文
 }
 
+/**统一内容的方法, 获取资源路径*/
 def _getLanguageResPath(language) {
     def pathList = []
     pathList += "./UICore/core/src/main/res/values${language}/core_strings.xml"

@@ -9,9 +9,19 @@ task _replaceRes(group: 'angcyo', description: '替换xml文件中的字符串�
 
 _replaceRes.doFirst {
     def csvPath = file("res.csv").absolutePath
-    _replaceLanguageFile("-ko", _readCsvMap(csvPath))
+
+    def koCsvPath = file("ko.csv")
+    def frCsvPath = file("fr.csv")
+    def deCsvPath = file("de.csv")
+    def esCsvPath = file("es.csv")
+
+    _replaceLanguageFile("-zh", "-ko", _readCsvMap(koCsvPath))
+    _replaceLanguageFile("-zh", "-fr", _readCsvMap(frCsvPath))
+    _replaceLanguageFile("-zh", "-de", _readCsvMap(deCsvPath))
+    _replaceLanguageFile("-zh", "-es", _readCsvMap(esCsvPath))
 }
 
+/**统一内容的方法, 获取资源路径*/
 def _getLanguageResPath(language) {
     def pathList = []
     pathList += "./UICore/core/src/main/res/values${language}/core_strings.xml"
@@ -32,9 +42,11 @@ def _getLanguageResPath(language) {
     return pathList
 }
 
-/**合并指定语言的xml文件*/
-def _replaceLanguageFile(outLanguage, map) {
-    _replaceResList(_getLanguageResPath("-zh"), _getLanguageResPath(outLanguage), map)
+/**合并指定语言的xml文件
+ * [inLanguage] 原来的语言数据
+ * [outLanguage] 需要在原来的语言上替换成什么语言的数据*/
+def _replaceLanguageFile(inLanguage, outLanguage, map) {
+    _replaceResList(_getLanguageResPath(inLanguage), _getLanguageResPath(outLanguage), map)
 }
 
 /**读取csv文件, 返回对应的map*/
@@ -84,5 +96,5 @@ def _replaceRes(path, outPath, map) {
         outPathFile.createNewFile()
     }
     outPathFile.write(originText)//重写文件
-    System.err.println "替换完成:${pathFile.absolutePath}↓\n->${outPathFile.absolutePath} 共:${count}"
+    System.err.println "替换完成:${pathFile.absolutePath}↓\n->${outPathFile.absolutePath} 共替换:${count}个"
 }

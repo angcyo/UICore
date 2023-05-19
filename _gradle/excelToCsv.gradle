@@ -1,0 +1,112 @@
+/**
+ * 2023-5-19
+ * 读取excel中的数据, 输出到csv文件中
+ * */
+
+buildscript {
+    repositories {
+        mavenCentral()
+        /*maven {
+            url "http://repo.serebryanskiy.site/"
+            allowInsecureProtocol = true
+        }*/
+    }
+    dependencies {
+        // https://mvnrepository.com/artifact/org.apache.poi/poi
+        //classpath 'org.apache.poi:poi:5.2.3'
+        classpath 'org.apache.poi:poi-ooxml:5.2.3'
+        // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
+        classpath 'org.apache.logging.log4j:log4j-core:2.20.0'
+
+        //https://jcenter.bintray.com/com/google/code/gson/gson/
+        classpath "com.google.code.gson:gson:2.10.1"
+    }
+}
+
+task _excelToCsv(group: 'angcyo', description: '读取excel中的数据, 输出到csv文件中') {
+    //配置任务
+}
+
+//执行任务
+_excelToCsv.doLast {
+    //默认的excel文件路径
+    def defExcelPath = 'language.xlsx'
+    //默认的数据输出路径
+    def defOutputPath = 'res.csv'
+    def excelPath = project.hasProperty("excel_path") ? project.ext.excel_path : defExcelPath
+    def excelFile = file(excelPath)
+    //println excelFile.absolutePath
+
+    if (!excelFile.exists()) {
+        throw new IllegalStateException("请在[gradle.properties]文件中配置excel文件路径:excel_path")
+    }
+
+    //输出文件
+    if (defOutputPath == null || defOutputPath.isEmpty()) {
+        defOutputPath = file.getParentFile().getAbsolutePath() + "/${file.name}.csv"
+    }
+    def output = file(defOutputPath)
+    output.delete()
+
+    def koOutput = file("ko.csv")
+    koOutput.delete()
+    def frOutput = file("fr.csv")
+    frOutput.delete()
+    def deOutput = file("de.csv")
+    deOutput.delete()
+    def esOutput = file("es.csv")
+    esOutput.delete()
+
+
+    System.err.println "解析文件-> ${excelFile.absolutePath}"
+
+    //读取数据
+    // 指定excel文件，创建缓存输入流
+    def inputStream = new BufferedInputStream(new FileInputStream(excelFile))
+    // 直接传入输入流即可，此时excel就已经解析了
+    def workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook(inputStream)
+    //println workbook
+    def sheet = workbook.getSheetAt(0)
+
+    //开始一行一行读取excel数据
+    def rows = sheet.getPhysicalNumberOfRows()
+    for (line in 0..<rows) {
+        def row = sheet.getRow(line)
+        //println row.getPhysicalNumberOfCells() //获取这一行有多少列
+        if (line == 0) {
+            //标头
+            print row.getCell(0)
+            print " "
+            print row.getCell(1)
+            print " "
+            print row.getCell(2)
+            print " "
+            print row.getCell(3)
+            print " "
+            print row.getCell(4)
+            print " "
+            print row.getCell(5)
+            print " (共:${rows}行)"
+            println()
+        } else {
+            //输出[中文,其他语言]的格式
+            def zh = row.getCell(1)
+            def ko = row.getCell(2) //韩语
+            def fr = row.getCell(3) //法语
+            def de = row.getCell(4) //德语
+            def es = row.getCell(5) //西班牙语
+
+            //def ja = row.getCell(2)
+            if (zh != null && !zh.toString().isBlank()) {
+                //output << "${zh},${ko}\n"
+                def zhStr = zh.toString().replaceAll("\n", '')
+                koOutput << "${zhStr},${ko.toString().replaceAll("\n", '')}\n"
+                frOutput << "${zhStr},${fr.toString().replaceAll("\n", '')}\n"
+                deOutput << "${zhStr},${de.toString().replaceAll("\n", '')}\n"
+                esOutput << "${zhStr},${es.toString().replaceAll("\n", '')}\n"
+            }
+        }
+    }
+
+    System.err.println "输出路径-> ${output.absolutePath}"
+}

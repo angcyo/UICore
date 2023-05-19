@@ -31,7 +31,7 @@ _parseXml.doLast {
 
 def _parseFile(xmlPath, outPath) {
     def file = file(xmlPath)
-    def output = new File(outPath)
+    def output = file(outPath)
     output.delete()
 
     System.err.println "解析文件-> ${file.absolutePath}"
@@ -44,12 +44,12 @@ def _parseFile(xmlPath, outPath) {
         //output << "${node.attributes["name"]},${node.text()}\n"
         output << "${node.text()}\n"
     }
-    System.err.println "输出路径-> ${defOutputPath}"
+    System.err.println "输出路径-> ${output.absolutePath}"
 }
 
 /**
  * 获取一个 GPathResult 对象
- * @see groovy.util.slurpersupport.GPathResult*                         */
+ * @see groovy.util.slurpersupport.GPathResult*                             */
 static def openXml(xmlFile) {
     def xmlSlurper = new groovy.util.XmlSlurper()
     def result = xmlSlurper.parse(xmlFile)
