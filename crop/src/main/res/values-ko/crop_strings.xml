@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="crop_title">재단하다</string>
-    <string name="crop_rotate">회전하다.</string>
-    <string name="crop_horizontal_flip">수평 반전</string>
-    <string name="crop_vertical_flip">수직 반전</string>
+    <string name="crop_title">잘라내기</string>
+    <string name="crop_rotate">회전</string>
+    <string name="crop_horizontal_flip">수평 뒤집기</string>
+    <string name="crop_vertical_flip">수직 뒤집기</string>
     <string name="crop_ratio_free">자유비율</string>
     <string name="crop_type_circle">원형</string>
-    <string name="crop_auto_side">자동 테두리 자르기</string>
+    <string name="crop_auto_side">자동 잘라내기</string>
 
     <string name="crop_horizontal">수평</string>
     <string name="crop_vertical">수직</string>

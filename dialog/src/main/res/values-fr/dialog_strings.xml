@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dialog_positive">확인</string>
-    <string name="dialog_negative">취소</string>
+    <string name="dialog_positive">Confirmation</string>
+    <string name="dialog_negative"> Annulé</string>
     <string name="dialog_neutral">中立</string>
-    <string name="dialog_continue">계속</string>
+    <string name="dialog_continue"> Continuer</string>
     <string name="dialog_input_hint">请输入...</string>
 
     <string name="dialog_color_picker">请选择颜色...</string>

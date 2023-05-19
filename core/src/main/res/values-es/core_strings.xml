@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="permission_disabled">권한이 비활성화됨</string>
+    <string name="permission_disabled">Permiso desactivado</string>
 
     <string name="ui_back">返回</string>
     <string name="ui_enable_permission">开启权限</string>
-    <string name="core_screen_shot_text">문제 피드백</string>
+    <string name="core_screen_shot_text">Resultados de los comentarios</string>
 
     <string name="core_thread_error_tip">遇到了一点问题</string>
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_disabled">權限被禁用</string>
+
+    <string name="ui_back">返回</string>
+    <string name="ui_enable_permission">開啟權限</string>
+    <string name="core_screen_shot_text">反馈问题</string>
+
+    <string name="core_thread_error_tip">遇到了一點問題</string>
+
+    <string name="core_send_to_label">發送到...</string>
+    <string name="ui_minimum">最小化</string>
+
+</resources>

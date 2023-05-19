@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="doodle_title">Graffiti</string>
+
+    <string name="doodle_undo">Rückgängig</string>
+    <string name="doodle_redo">Wiederherstellen</string>
+    <string name="doodle_color">Farbe</string>
+    <string name="doodle_eraser">Radiergummis</string>
+    <string name="doodle_brush">Pinsel</string>
+    <string name="doodle_pencil">Füller</string>
+    <string name="doodle_size">Größe</string>
+
+    <string name="doodle_ai_draw">AI绘图</string>
+
+</resources>
