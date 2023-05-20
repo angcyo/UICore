@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:padding="50dp"
+    tools:background="@color/transparent20">
+
+    <com.angcyo.widget.layout.RConstraintLayout
+        android:id="@+id/content_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/dialog_white_round_common_bg_shape">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_image_tip_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="fitXY"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/lib_version_forbidden_bg" />
+
+        <TextView
+            android:id="@+id/version_name_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clipToOutline="false"
+            android:padding="@dimen/lib_hdpi"
+            android:textColor="@color/error"
+            android:textSize="24dp"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toBottomOf="@id/lib_image_tip_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="V9.9.9" />
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/version_des_wrap_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintHeight_max="160dp"
+            app:layout_constraintTop_toBottomOf="@id/lib_image_tip_view">
+
+            <TextView
+                android:id="@+id/version_des_view"
+                style="@style/LibTitleTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:lineSpacingExtra="4dp"
+                android:padding="@dimen/lib_xhdpi"
+                tools:text="当前版本已禁止使用, 请更新至最新版!" />
+
+        </androidx.core.widget.NestedScrollView>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="10dp"
+            android:rotation="45"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/lib_forbidden_svg" />
+
+    </com.angcyo.widget.layout.RConstraintLayout>
+
+</FrameLayout>

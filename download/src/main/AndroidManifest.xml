@@ -7,7 +7,16 @@
         <activity
             android:name=".version.VersionUpdateActivity"
             android:excludeFromRecents="true"
-            android:exported="true"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:noHistory="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/VersionUpdateActivityTheme" />
+
+        <activity
+            android:name=".version.VersionForbiddenActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
             android:launchMode="singleTask"
             android:noHistory="false"
             android:screenOrientation="portrait"

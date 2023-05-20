@@ -5,7 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.base.dslAHelper
-import com.angcyo.download.*
+import com.angcyo.download.DslDownload
+import com.angcyo.download.R
+import com.angcyo.download.cancelDownload
+import com.angcyo.download.download
+import com.angcyo.download.getTaskStatus
 import com.angcyo.download.version.VersionUpdateActivity.Companion.isUpdateIgnore
 import com.angcyo.getData
 import com.angcyo.library.L
@@ -24,7 +28,7 @@ import com.liulishuo.okdownload.core.exception.ServerCanceledException
 import java.net.HttpURLConnection
 
 /**
- * 版本更新提示Activity
+ * 版本更新提示 Activity
  * [com.angcyo.dialog.R.style.LibDialogActivity]
  *
  * [com.angcyo.dialog.activity.DialogActivity]
@@ -110,6 +114,7 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
 
                             installApk(app(), downloadTask.file)
                         }
+
                         EndCause.ERROR -> {
                             if (error is ServerCanceledException &&
                                 error.responseCode == HttpURLConnection.HTTP_OK
@@ -118,6 +123,7 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
                             }
                             startButton?.text = "下载失败, 点击重试"
                         }
+
                         else -> {
                             startButton?.text = "点击重新开始"
                         }
@@ -180,6 +186,20 @@ fun Context.versionUpdate(
     if (updateBean == null) {
         return false
     }
+
+    //---禁用检查---
+
+    if (debug || updateBean.forbiddenVersionList?.contains(getAppVersionCode()) == true) {
+        //当前版本被禁止使用
+        dslAHelper {
+            start(VersionForbiddenActivity::class.java) {
+                putData(updateBean)
+            }
+        }
+    }
+
+    //---更新检查---
+
     if (updateBean.debug) {
         if (!isShowDebug()) {
             //非调试模式下, 跳过更新处理

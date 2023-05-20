@@ -40,4 +40,12 @@ data class VersionUpdateBean(
     var deviceList: List<String>? = null,
     /**当前版本信息, 是否只在debug模式下生效*/
     var debug: Boolean = false,
+
+    //---
+
+    /**需要强制禁止使用的版本[versionCode]*/
+    var forbiddenVersionList: List<Long>? = null,
+
+    /**禁止使用的原因*/
+    var forbiddenReason: String? = null
 )
