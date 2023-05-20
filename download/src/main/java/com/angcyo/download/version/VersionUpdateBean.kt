@@ -43,6 +43,10 @@ data class VersionUpdateBean(
 
     //---
 
+    /**禁用的版本范围
+     * [com.angcyo.library.component.VersionMatcher.parseRange]*/
+    var forbiddenVersionRange: String? = null,
+
     /**需要强制禁止使用的版本[versionCode]*/
     var forbiddenVersionList: List<Long>? = null,
 

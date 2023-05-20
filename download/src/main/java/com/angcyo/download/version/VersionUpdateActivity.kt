@@ -14,6 +14,7 @@ import com.angcyo.download.version.VersionUpdateActivity.Companion.isUpdateIgnor
 import com.angcyo.getData
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.component.VersionMatcher
 import com.angcyo.library.ex.installApk
 import com.angcyo.library.ex.isShowDebug
 import com.angcyo.library.ex.openUrl
@@ -189,7 +190,10 @@ fun Context.versionUpdate(
 
     //---禁用检查---
 
-    if (debug || updateBean.forbiddenVersionList?.contains(getAppVersionCode()) == true) {
+    if (debug ||
+        updateBean.forbiddenVersionList?.contains(getAppVersionCode()) == true ||
+        VersionMatcher.matches(getAppVersionCode(), updateBean.forbiddenVersionRange, false, true)
+    ) {
         //当前版本被禁止使用
         dslAHelper {
             start(VersionForbiddenActivity::class.java) {

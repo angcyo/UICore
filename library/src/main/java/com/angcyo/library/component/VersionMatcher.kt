@@ -23,25 +23,25 @@ object VersionMatcher {
         rangeStringList?.forEach { range ->
             if (range == "*") {
                 //适配*
-                list.add(VersionRange(Int.MIN_VALUE, Int.MAX_VALUE))
+                list.add(VersionRange(Long.MIN_VALUE, Long.MAX_VALUE))
             } else {
                 val rangeString = range.split(VS)
-                rangeString.firstOrNull()?.toIntOrNull()?.let { min ->
+                rangeString.firstOrNull()?.toLongOrNull()?.let { min ->
                     if (rangeString.size >= 2) {
                         list.add(
                             VersionRange(
                                 min,
-                                rangeString.getOrNull(1)?.toIntOrNull() ?: Int.MAX_VALUE
+                                rangeString.getOrNull(1)?.toLongOrNull() ?: Long.MAX_VALUE
                             )
                         )
                     } else {
                         if (range.contains(VS)) {
                             if (range.startsWith(VS)) {
                                 //[~xxx] 的格式
-                                list.add(VersionRange(Int.MIN_VALUE, min))
+                                list.add(VersionRange(Long.MIN_VALUE, min))
                             } else {
                                 //[x~] [x] 的格式
-                                list.add(VersionRange(min, Int.MAX_VALUE))
+                                list.add(VersionRange(min, Long.MAX_VALUE))
                             }
                         } else {
                             //不包含 ~
@@ -54,6 +54,14 @@ object VersionMatcher {
         return list
     }
 
+    /**[matches]*/
+    fun matches(
+        version: Int?,
+        config: String?,
+        defOrNull: Boolean = false,
+        defOrEmpty: Boolean = true
+    ): Boolean = matches(version?.toLong(), config, defOrNull, defOrEmpty)
+
     /**当前的版本[version]适配满足配置的规则[min~max]
      * [version] 当前的版本 比如:678
      * [config] 版本配置 比如:xxx~xxx ~xxx xxx~
@@ -62,7 +70,7 @@ object VersionMatcher {
      * [defOrEmpty] 当匹配范围为空时的默认值
      * */
     fun matches(
-        version: Int?,
+        version: Long?,
         config: String?,
         defOrNull: Boolean = false,
         defOrEmpty: Boolean = true
@@ -85,7 +93,7 @@ object VersionMatcher {
     }
 
     /**匹配*/
-    fun matches(version: Int?, rangeList: List<VersionRange>): Boolean {
+    fun matches(version: Long?, rangeList: List<VersionRange>): Boolean {
         var targetRange: VersionRange? = null //匹配到的固件版本范围
         for (range in rangeList) {
             if (version in range.min..range.max) {
@@ -102,5 +110,5 @@ object VersionMatcher {
     }
 
     /**版本规则数据结构[min~max]*/
-    data class VersionRange(val min: Int, val max: Int)
+    data class VersionRange(val min: Long, val max: Long)
 }
