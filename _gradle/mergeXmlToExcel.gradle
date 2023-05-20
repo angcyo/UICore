@@ -71,7 +71,7 @@ _mergeXmlToExcel.doFirst {
 
     def titleRow = sheet.createRow(0)
     languageArray.eachWithIndex { value, index ->
-        def cell = titleRow.createCell(index)
+        def cell = titleRow.createCell(sheet.lastRowNum + 1)
         cell.setCellValue(value)
     }
 
@@ -79,7 +79,7 @@ _mergeXmlToExcel.doFirst {
         def key = entry.key
         def value = entry.value
 
-        def row = sheet.createRow(index + 1)
+        def row = sheet.createRow(sheet.lastRowNum + 1)
         def zhCell = row.createCell(0)
         def enCell = row.createCell(1)
         def jaCell = row.createCell(2)
@@ -99,6 +99,32 @@ _mergeXmlToExcel.doFirst {
         frCell.setCellValue(frMap[key])
         zh_rHKCell.setCellValue(zh_rHKMap[key])
         //zh_rTWCell.setCellValue(zh_rTWMap[key])
+    }
+
+    //读取PC中文资源
+    def pcFile = file('pc_zh.csv')
+    def pcZhLines = pcFile.readLines()
+    pcZhLines.forEach { line ->
+        if (zhMap.values().contains(line)) {
+            //println "已存在->$line"
+        } else {
+            def row = sheet.createRow(sheet.lastRowNum + 1)
+            def zhCell = row.createCell(0)
+            zhCell.setCellValue(line)
+        }
+    }
+
+    //读取RN中文资源
+    def rnFile = file('rn_zh.csv')
+    def rnZhLines = rnFile.readLines()
+    rnZhLines.forEach { line ->
+        if (zhMap.values().contains(line) || pcZhLines.contains(line)) {
+            //println "已存在->$line"
+        } else {
+            def row = sheet.createRow(sheet.lastRowNum + 1)
+            def zhCell = row.createCell(0)
+            zhCell.setCellValue(line)
+        }
     }
 
     //写入到excel文件中

@@ -202,14 +202,30 @@ def translate(q, tl) {
 }
 
 /**
+ * Groovy 解析XML文件
+ * https://groovy-lang.org/processing-xml.html
+ *
  * 获取一个 GPathResult 对象
- * @see groovy.util.slurpersupport.GPathResult*                                                                                                                 */
+ * @see groovy.util.slurpersupport.GPathResult*                                                                                                                                    */
 static def openXml(xmlFile) {
-    def xmlSlurper = new groovy.util.XmlSlurper()
-    def result = xmlSlurper.parse(xmlFile)
-    return result
+    // 解析XML文档 返回 GPathResult
+    def xml = new groovy.util.XmlSlurper().parse(xmlFile) //parseText
+    /*xml.childNodes().each { node ->
+        map[node.attributes["name"]] = node.text()
+    }*/
+    return xml
 }
 
+/**第2种方式 */
+static def openXml2(xmlFile) {
+    // 解析XML文档 返回 Node
+    def xml = new groovy.util.XmlParser().parse(xmlFile) //parseText
+    // 遍历XML节点
+    /*xml.user.each { user ->
+        println "Name: ${user.name.text()}, Age: ${user.age.text()}"
+    }*/
+    return xml
+}
 
 /**支持的翻译语种:
  LANGUAGE.put("阿尔巴尼亚语", "sq");
