@@ -15,6 +15,7 @@ import kotlin.coroutines.CoroutineContext
 
 //<editor-fold desc="GlobalScope">
 
+/**在全局域中启动协程*/
 @DelicateCoroutinesApi
 fun <T> launchMain(onBack: CoroutineScope.() -> T, onMain: (T) -> Unit = {}): Job {
     return GlobalScope.launch(Dispatchers.Main) {
@@ -71,6 +72,12 @@ fun <T> CoroutineScope.onBack(
     action: suspend CoroutineScope.() -> T
 ) = async(context) { this.action() }
 
+/**[onBack]*/
+fun <T> CoroutineScope.withBack(
+    context: CoroutineContext = Dispatchers.IO,
+    action: suspend CoroutineScope.() -> T
+) = async(context) { this.action() }
+
 //</editor-fold desc="CoroutineScope">
 
 //<editor-fold desc="suspend">
@@ -100,6 +107,7 @@ fun sleep(ms: Long = 300) {
 
 //<editor-fold desc="lifecycleScope">
 
+/**在生命周期中启动一个协程*/
 fun LifecycleOwner.launchLifecycle(
     context: CoroutineContext = Dispatchers.Main + CoroutineErrorHandler(),
     start: CoroutineStart = CoroutineStart.DEFAULT,
