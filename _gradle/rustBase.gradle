@@ -1,0 +1,31 @@
+apply plugin: 'org.mozilla.rust-android-gradle.rust-android'
+
+// https://github.com/mozilla/rust-android-gradle#configuration 配置项
+cargo {
+    module = "../rust"            // Or whatever directory contains your Cargo.toml
+    libname = "rust"              // Or whatever matches Cargo.toml's [package] name.
+    //["arm", "arm64", "x86", "x86_64"]    // See bellow for a longer list of options
+    targets = ["arm", "arm64"]
+    profile = 'release' //Defaults to "debug"
+    verbose = true
+
+    prebuiltToolchains = true
+    //targetDirectory = 'path/to/workspace/root/target'
+    apiLevel = 21
+
+    //androidNdkToolchainDir
+    //pythonCommand
+    //cargoCommand
+
+    //rustupChannel
+
+    //压缩属性
+    // https://github.com/RustStudioIst/min-sized-rust
+
+//    [profile.release]
+//    strip = true  # Automatically strip symbols from the binary.
+//    opt-level = "z"  # Optimize for size.
+//    lto = true  # Perform link-time optimizations.
+//    codegen-units = 1  # Compile the whole crate at once.
+//    panic = "abort"  # Abort on panic.
+}
