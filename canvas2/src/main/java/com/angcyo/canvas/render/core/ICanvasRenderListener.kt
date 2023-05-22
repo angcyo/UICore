@@ -107,6 +107,15 @@ interface ICanvasRenderListener {
     ) {
     }
 
+    /**[onApplyControlMatrix]*/
+    fun onLimitControlMatrix(
+        control: BaseControl,
+        controlRenderer: BaseRenderer,
+        controlMatrix: Matrix,
+        controlType: Int
+    ) {
+    }
+
     /**[com.angcyo.canvas.render.core.ICanvasRenderView.dispatchApplyMatrix]*/
     fun onApplyMatrix(
         delegate: CanvasRenderDelegate,

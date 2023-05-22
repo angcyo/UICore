@@ -575,7 +575,7 @@ abstract class BaseRenderer : IRenderer {
         val px = renderProperty?.anchorX ?: 0f
         val py = renderProperty?.anchorY ?: 0f
         val matrix = Matrix()
-        matrix.setScale(sx, sy, px, py)
+        matrix.setScale(sx.ensure(1f), sy.ensure(1f), px, py)
         if (delegate == null) {
             applyScaleMatrix(matrix, reason, null)
         } else {

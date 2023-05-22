@@ -12,6 +12,8 @@ import com.angcyo.library.L
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.distance
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.getScaleX
+import com.angcyo.library.ex.getScaleY
 import com.angcyo.library.ex.mapPoint
 import kotlin.math.absoluteValue
 
@@ -202,10 +204,33 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
     /**在按下的基础上, 缩放了多少*/
     private fun scale(sx: Float, sy: Float) {
         L.d("缩放元素:sx:$sx sy:$sy")
-        controlRendererInfo?.let {
-            it.state.renderProperty?.let { property ->
+        controlRendererInfo?.let { controlInfo ->
+            controlInfo.state.renderProperty?.let { property ->
                 updateControlHappen(true)
-                controlMatrix.setScale(sx, sy, property.anchorX, property.anchorY)
+
+                //需要缩放的矩阵
+                controlMatrix.setScale(
+                    sx,
+                    sy,
+                    property.anchorX,
+                    property.anchorY
+                )
+
+                //limit
+                controlManager.delegate.dispatchLimitControlMatrix(
+                    this,
+                    controlInfo.controlRenderer,
+                    controlMatrix,
+                    CONTROL_TYPE_SCALE
+                )
+
+                //计算缩放后的矩阵
+                controlMatrix.setScale(
+                    controlMatrix.getScaleX(),
+                    controlMatrix.getScaleY(),
+                    property.anchorX,
+                    property.anchorY
+                )
 
                 applyScale(Reason.preview, controlManager.delegate)
             }

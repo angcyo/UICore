@@ -84,6 +84,16 @@ interface ICanvasRenderView {
         controlType: Int
     )
 
+    /**
+     * 限制控制矩阵的值
+     * [dispatchApplyControlMatrix]*/
+    fun dispatchLimitControlMatrix(
+        control: BaseControl,
+        controlRenderer: BaseRenderer,
+        controlMatrix: Matrix,
+        controlType: Int
+    )
+
     /** 当需要将[matrix]应用到[renderer]时触发, 可以在此回调用进行限制操作
      * [controlType] 控制类型
      * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_TRANSLATE]

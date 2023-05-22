@@ -250,6 +250,17 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         }
     }
 
+    override fun dispatchLimitControlMatrix(
+        control: BaseControl,
+        controlRenderer: BaseRenderer,
+        controlMatrix: Matrix,
+        controlType: Int
+    ) {
+        for (listener in renderListenerList) {
+            listener.onLimitControlMatrix(control, controlRenderer, controlMatrix, controlType)
+        }
+    }
+
     override fun dispatchApplyMatrix(renderer: BaseRenderer, matrix: Matrix, controlType: Int) {
         for (listener in renderListenerList) {
             listener.onApplyMatrix(this, renderer, matrix, controlType)

@@ -103,7 +103,7 @@ class LimitMatrixComponent : BaseCanvasRenderListener(), IComponent {
 
     override var isEnableComponent: Boolean = true
 
-    override fun onApplyControlMatrix(
+    override fun onLimitControlMatrix(
         control: BaseControl,
         controlRenderer: BaseRenderer,
         controlMatrix: Matrix,
@@ -150,18 +150,15 @@ class LimitMatrixComponent : BaseCanvasRenderListener(), IComponent {
         } else {
             //最小要保留1个像素
 
-            if (width == 0f) {
-                sx = 1f
-            }
-            if (height == 0f) {
-                sy = 1f
-            }
+            if (width <= 0f || height <= 0) {
+                //no op
+            } else {
+                val minSx = 1 / width
+                val minSy = 1 / height
 
-            val minSx = if (width == 0f) 1f else 1 / width
-            val minSy = if (height == 0f) 1f else 1 / height
-
-            sx = max(minSx, sx)
-            sy = max(minSy, sy)
+                sx = max(minSx, sx)
+                sy = max(minSy, sy)
+            }
         }
 
         //限制
