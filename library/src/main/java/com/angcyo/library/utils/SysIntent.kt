@@ -61,6 +61,19 @@ object SysIntent {
         fragment.startActivityForResult(intent, requestCode)
     }
 
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
+    fun getPhoto(activity: Activity, requestCode: Int) {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "image/*"
+
+        //intent.type = "*/*"
+        //val mimetypes = arrayOf("image/*", "video/*")
+        //intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes)
+
+        activity.startActivityForResult(intent, requestCode)
+    }
+
     /**批量插入通话记录
      * requires android.permission.READ_CALL_LOG or android.permission.WRITE_CALL_LOG
      * https://github.com/Atinerlengs/InsertDemo
