@@ -605,7 +605,17 @@ fun Appendable.append(value: Any?): Appendable {
     return append(value.toStr())
 }
 
+fun Appendable.appendValue(value: Any?): Appendable {
+    value ?: return this
+    return append(value.toStr())
+}
+
 fun Appendable.appendLine(value: Any?): Appendable {
+    value ?: return this
+    return appendLine(value.toStr())
+}
+
+fun Appendable.appendLineValue(value: Any?): Appendable {
     value ?: return this
     return appendLine(value.toStr())
 }
