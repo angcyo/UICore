@@ -25,6 +25,7 @@ import com.angcyo.library.component.pad.Pad
 import com.angcyo.library.ex.connect
 import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.ex.toSizeString
+import com.angcyo.library.ex.toStr
 import com.angcyo.library.unit.toPixel
 import java.io.BufferedReader
 import java.io.FileReader
@@ -599,30 +600,14 @@ object Device {
     }
 }
 
-fun Appendable.append(value: Int): Appendable {
-    return append(value.toString())
+fun Appendable.append(value: Any?): Appendable {
+    value ?: return this
+    return append(value.toStr())
 }
 
-fun Appendable.append(value: Boolean): Appendable {
-    return append(value.toString())
+fun Appendable.appendLine(value: Any?): Appendable {
+    value ?: return this
+    return appendLine(value.toStr())
 }
 
-fun Appendable.append(value: Float): Appendable {
-    return append(value.toString())
-}
-
-fun Appendable.append(value: Rect): Appendable {
-    return append(value.toString())
-}
-
-fun Appendable.append(value: Point): Appendable {
-    return append(value.toString())
-}
-
-fun Appendable.appendln(value: Int): Appendable {
-    return appendLine(value.toString())
-}
-
-fun Appendable.appendln(value: Float): Appendable {
-    return appendLine(value.toString())
-}
+fun Appendable.appendln(value: Any?): Appendable = appendLine(value)
