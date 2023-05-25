@@ -74,6 +74,11 @@ object VectorHelper {
      * [-90~-180] 点2 在第二象限
      * [90~180]   点2 在第三象限
      * [0~90]     点2 在第四象限
+     *
+     * P1: PointF(45.0, -45.0) -45.0
+     * P2: PointF(-45.0, -45.0) -135.0
+     * P3: PointF(-45.0, 45.0) 135.0
+     * P4: PointF(45.0, 45.0) 45.0
      * */
     fun angle(x1: Double, y1: Double, x2: Double, y2: Double): Double {
         return 180.0 / Math.PI * atan2((y2 - y1), (x2 - x1))
@@ -132,6 +137,10 @@ object VectorHelper {
     fun angle3(centerX: Float, centerY: Float, x: Float, y: Float): Double =
         angle3(centerX.toDouble(), centerY.toDouble(), x.toDouble(), y.toDouble())
 
+    /**
+     * 获取2个点之间的角度, 非弧度
+     * [0~180°] [0~-180°]
+     */
     fun angle(p1: PointF, p2: PointF): Double {
         return angle(p1.x.toDouble(), p1.y.toDouble(), p2.x.toDouble(), p2.y.toDouble())
     }

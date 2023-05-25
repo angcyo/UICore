@@ -15,6 +15,10 @@ import kotlin.math.absoluteValue
  */
 class SvgWriteHandler : VectorWriteHandler() {
 
+    /**是否需要再路径结束之后, 添加Z
+     * [closeSvg]*/
+    var needClosePath: Boolean = false
+
     init {
         unit = null
     }
@@ -26,7 +30,9 @@ class SvgWriteHandler : VectorWriteHandler() {
 
     override fun onPathEnd() {
         super.onPathEnd()
-        //closeSvg() //need?
+        if (needClosePath) {
+            closeSvg() //need?
+        }
     }
 
     override fun onNewPoint(x: Double, y: Double) {
@@ -48,32 +54,25 @@ class SvgWriteHandler : VectorWriteHandler() {
                 val yValue = point.y
 
                 writer?.append(buildString {
-                    val a1 = VectorHelper.angle2(circle.x, circle.y, first.x, first.y)
-                    val a2 = VectorHelper.angle2(circle.x, circle.y, point.x, point.y)
+                    val a1 = VectorHelper.angle(circle.x, circle.y, first.x, first.y)
+                    val a2 = VectorHelper.angle(circle.x, circle.y, point.x, point.y)
 
                     //L.w("a1:${a1} a2:${a2} 1:${first} 2:${point}")
 
                     //弧线的方向，0 表示从起点到终点沿逆时针画弧，1 表示从起点到终点沿顺时针画弧。
                     val sweepFlag = if (first.circleDir == Path.Direction.CW) 1 else 0
 
-                    var a3 = 0.0
+                    var a3 = a2 - a1
+                    if (a3 < 0) {
+                        a3 += 360
+                    }
                     //决定弧线是大于还是小于 180 度, 0 表示小角度弧，1 表示大角度弧
                     val largeArcFlag = if (first.circleDir == Path.Direction.CW) {
                         //顺时针枚举点
-                        a3 = if (a2 <= a1) {
-                            a2 - a1 + 360
-                        } else {
-                            a2 - a1
-                        }
                         if (a3 > 180) 1 else 0
                     } else {
                         //逆时针枚举点
-                        a3 = if (a2 <= a1) {
-                            a1 - a2 + 360
-                        } else {
-                            a1 - a2
-                        }
-                        if (a3 > 180) 1 else 0
+                        if (a3 > 180) 0 else 1
                     }
                     append("A${r.toLossyFloat()},${r.toLossyFloat()},0,$largeArcFlag,$sweepFlag,${xValue.toLossyFloat()},${yValue.toLossyFloat()}")
                 })
