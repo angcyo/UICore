@@ -600,24 +600,24 @@ object Device {
     }
 }
 
-fun Appendable.append(value: Any?): Appendable {
-    value ?: return this
-    return append(value.toStr())
-}
+fun Appendable.append(value: Any?): Appendable = appendValue(value)
 
 fun Appendable.appendValue(value: Any?): Appendable {
     value ?: return this
+    if (value is CharSequence) {
+        append(value)
+        return this
+    }
     return append(value.toStr())
-}
-
-fun Appendable.appendLine(value: Any?): Appendable {
-    value ?: return this
-    return appendLine(value.toStr())
 }
 
 fun Appendable.appendLineValue(value: Any?): Appendable {
     value ?: return this
+    if (value is CharSequence) {
+        appendLine(value)
+        return this
+    }
     return appendLine(value.toStr())
 }
 
-fun Appendable.appendln(value: Any?): Appendable = appendLine(value)
+fun Appendable.appendln(value: Any?): Appendable = appendLineValue(value)

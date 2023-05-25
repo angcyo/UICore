@@ -1,0 +1,16 @@
+ext {
+    M_SDK_LIB = 19
+}
+apply from: allGradle.libBase
+
+android {
+    compileSdkPreview 'UpsideDownCake'
+}
+
+dependencies {
+    implementation project(allModule.library)
+
+    //compileSdkPreview 'UpsideDownCake'
+    //https://mvnrepository.com/artifact/androidx.graphics/graphics-path
+    implementation 'androidx.graphics:graphics-path:1.0.0-alpha01' //compileSdkVersion 34
+}

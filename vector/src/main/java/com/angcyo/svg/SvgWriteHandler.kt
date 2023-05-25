@@ -30,7 +30,7 @@ class SvgWriteHandler : VectorWriteHandler() {
     }
 
     override fun onNewPoint(x: Double, y: Double) {
-        writer?.append("M${x} $y ")
+        writer?.append("M${x},$y")
     }
 
     override fun onLineToPoint(point: VectorPoint) {
@@ -75,7 +75,7 @@ class SvgWriteHandler : VectorWriteHandler() {
                         }
                         if (a3 > 180) 1 else 0
                     }
-                    append("A ${r.toLossyFloat()} ${r.toLossyFloat()} 0 $largeArcFlag $sweepFlag ${xValue.toLossyFloat()} ${yValue.toLossyFloat()} ")
+                    append("A${r.toLossyFloat()},${r.toLossyFloat()},0,$largeArcFlag,$sweepFlag,${xValue.toLossyFloat()},${yValue.toLossyFloat()}")
                 })
             }
         } else {
@@ -85,7 +85,7 @@ class SvgWriteHandler : VectorWriteHandler() {
 
     override fun onLineToPoint(x: Double, y: Double) {
         //super.onLineToPoint(x, y)
-        writer?.append("L${x} $y ")
+        writer?.append("L${x},$y")
     }
 
     /**关闭路径*/
