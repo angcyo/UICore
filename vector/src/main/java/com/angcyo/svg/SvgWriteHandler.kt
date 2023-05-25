@@ -15,6 +15,10 @@ import kotlin.math.absoluteValue
  */
 class SvgWriteHandler : VectorWriteHandler() {
 
+    init {
+        unit = null
+    }
+
     override fun onPathStart() {
         super.onPathStart()
         //viewBox ?
