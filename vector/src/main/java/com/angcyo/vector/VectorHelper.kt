@@ -146,6 +146,30 @@ object VectorHelper {
         return isHorizontalIntent(p1.x, p1.y, p2.x, p2.y)
     }
 
+    /**获取指定的点在那个象限
+     * [origin] 原点
+     * [point] 指定的点
+     * https://zh.wikipedia.org/wiki/%E8%B1%A1%E9%99%90%E8%A7%92 */
+    fun quadrant(origin: PointF, point: PointF): Int {
+        if (point.x > origin.x) {
+            return if (point.y > origin.y) {
+                //第四象限
+                4
+            } else {
+                //第一象限
+                1
+            }
+        } else {
+            return if (point.y > origin.y) {
+                //第三象限
+                3
+            } else {
+                //第二象限
+                2
+            }
+        }
+    }
+
     /**3个点, 求圆心
      * https://www.cnblogs.com/jason-star/archive/2013/04/22/3036130.html
      * https://stackoverflow.com/questions/4103405/what-is-the-algorithm-for-finding-the-center-of-a-circle-from-three-points
