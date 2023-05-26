@@ -3,6 +3,7 @@ package com.angcyo.widget.progress
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
@@ -61,6 +62,14 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 
     /**是否Touch按下*/
     var isTouchDown = false
+
+    /**是否在中点进度上绘制提示圆圈*/
+    var showCenterProgressTip: Boolean = false
+
+    val centerProgressTipPaint: Paint = createPaint().apply {
+        color = Color.WHITE
+        style = Paint.Style.FILL
+    }
 
     //浮子文本绘制
     val _thumbTextDrawable: DslTextDrawable = DslTextDrawable()
@@ -249,8 +258,45 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        drawCenterProgressTip(canvas)
         drawThumb(canvas)
         drawThumbText(canvas)
+    }
+
+    /**中点提示*/
+    open fun drawCenterProgressTip(canvas: Canvas) {
+        if (showCenterProgressTip) {
+            val bounds = _progressBound
+            val cx = bounds.centerX()
+            val cy = bounds.centerY()
+            val size = min(bounds.width(), bounds.height()) / 2
+
+            //外圈
+            if (_progressFraction >= 0.5) {
+                //超过1半的进度
+                seekThumbDrawable?.let {
+                    if (it is DslGradientDrawable) {
+                        centerProgressTipPaint.color = it.gradientSolidColor
+                    }
+                }
+            } else {
+                centerProgressTipPaint.color = Color.GRAY
+            }
+            canvas.drawCircle(
+                cx.toFloat(),
+                cy.toFloat(),
+                size + 2 * dp,
+                centerProgressTipPaint
+            )
+            //内圈
+            centerProgressTipPaint.color = Color.WHITE
+            canvas.drawCircle(
+                cx.toFloat(),
+                cy.toFloat(),
+                size.toFloat(),
+                centerProgressTipPaint
+            )
+        }
     }
 
     /**绘制浮子*/
@@ -354,7 +400,8 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 
     /**手指移动*/
     open fun _onTouchMoveTo(x: Float, y: Float, isFinish: Boolean) {
-        val progress = (x - _progressBound.left) / _progressBound.width() * progressMaxValue
+        val fraction = (x - _progressBound.left) / _progressBound.width()
+        val progress = progressMinValue + fraction * progressValidMaxValue
 
         progressValue = validProgress(progress)
 
@@ -367,7 +414,7 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
         super.setProgress(progress, fromProgress, animDuration)
         val validProgress = validProgress(progress)
         onSeekBarConfig?.apply {
-            onSeekChanged(validProgress, validProgress / progressMaxValue, false)
+            onSeekChanged(validProgress, validProgress / progressValidMaxValue, false)
         }
     }
 

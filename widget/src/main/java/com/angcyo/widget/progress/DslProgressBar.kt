@@ -52,11 +52,9 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     /**进度条禁用时的绘制对象*/
     var progressTrackDisableDrawable: Drawable? = null
 
-    /**最小进度*/
-    var progressMinValue: Float = 0f
-
-    /**最大进度*/
-    var progressMaxValue: Float = 100f
+    //进度分母的最大值
+    val progressValidMaxValue: Float
+        get() = progressMaxValue - progressMinValue
 
     /**当前的进度
      * [0~100]*/
@@ -82,6 +80,29 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             field = validProgress(value)
             postInvalidate()
         }
+
+    /**最小进度*/
+    var progressMinValue: Float = 0f
+        set(value) {
+            field = value
+            if (progressValue == 0f) {
+                progressValue = value
+            }
+            if (progressSecondValue == 0f) {
+                progressSecondValue = value
+            }
+        }
+
+    /**最大进度*/
+    var progressMaxValue: Float = 100f
+
+    //进度有效的值
+    val progressValidValue: Float
+        get() = progressValue - progressMinValue
+
+    //进度有效的值
+    val progressSecondValidValue: Float
+        get() = progressSecondValue - progressMinValue
 
     /**是否激活流光进度效果*/
     var enableProgressFlowMode: Boolean = false
@@ -326,7 +347,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         if (enableShowHideProgress) {
-            if (progressValue <= 0) {
+            if (progressValue <= progressMinValue) {
                 translationY = (-measuredHeight).toFloat()
             }
         }
@@ -373,6 +394,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     val _textHeight: Float
         get() = _progressTextDrawable.textHeight
 
+    /**进度条整个绘制的区域*/
     open val _progressBound = Rect()
         get() {
             val right: Int = if (showProgressText) {
@@ -395,10 +417,10 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
     //0.1 0.8 0.9进度
     val _progressFraction: Float
-        get() = progressValue * 1f / progressMaxValue
+        get() = progressValidValue / progressValidMaxValue
 
     val _progressSecondFraction: Float
-        get() = progressSecondValue * 1f / progressMaxValue
+        get() = progressSecondValidValue / progressValidMaxValue
 
     //绘制第二进度
     open fun drawSecondProgress(canvas: Canvas) {
@@ -600,7 +622,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
     open fun setProgress(
         progress: Int,
-        fromProgress: Float = progressValue,
+        fromProgress: Float = progressValidValue,
         animDuration: Long = Anim.ANIM_DURATION
     ) {
         setProgress(progress.toFloat(), fromProgress, animDuration)
@@ -637,13 +659,13 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     /**获取一个值[value], 在指定范围[minValue]~[maxValue]中的比例
      * 返回的比例是[0~100f]的值*/
     fun getProgress(value: Float, minValue: Float, maxValue: Float): Float {
-        return progressMinValue + (value - minValue) / (maxValue - minValue) * (progressMaxValue - progressMinValue)
+        return progressMinValue + (value - minValue) / (maxValue - minValue) * progressValidMaxValue
     }
 
     /**获取一个进度[progress], 在指定范围[minValue]~[maxValue]中的值
      * [progress] 是[0~100f]的进度
      * */
     fun getValue(progress: Float, minValue: Float, maxValue: Float): Float {
-        return minValue + (maxValue - minValue) * (progressMinValue + progress / (progressMaxValue - progressMinValue))
+        return minValue + (maxValue - minValue) * (progressMinValue + progress / progressValidMaxValue)
     }
 }

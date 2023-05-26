@@ -66,10 +66,7 @@ open class DslSeekBarInfoItem : DslBaseInfoItem() {
             setProgress(itemSeekProgress, progressValue, -1)
             config {
                 onSeekChanged = { value, fraction, fromUser ->
-                    if (fromUser) {
-                        itemChanging = true
-                    }
-                    itemSeekChanged(value, fraction, fromUser)
+                    this@DslSeekBarInfoItem.onItemSeekChanged(value, fraction, fromUser)
                 }
                 onSeekTouchEnd = itemSeekTouchEnd
             }
@@ -81,6 +78,14 @@ open class DslSeekBarInfoItem : DslBaseInfoItem() {
                 true
             }
         }
+    }
+
+    /**滑块改变后触发*/
+    open fun onItemSeekChanged(value: Float, fraction: Float, fromUser: Boolean) {
+        if (fromUser) {
+            itemChanging = true
+        }
+        itemSeekChanged(value, fraction, fromUser)
     }
 
     //---弹窗提示---
@@ -108,12 +113,14 @@ open class DslSeekBarInfoItem : DslBaseInfoItem() {
                     }
                 }
             }
+
             MotionEvent.ACTION_MOVE -> {
                 _popupTipConfig?.apply {
                     touchX = event.x
                     updatePopup()
                 }
             }
+
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 //window?.dismiss()
                 _popupTipConfig?.hide()
