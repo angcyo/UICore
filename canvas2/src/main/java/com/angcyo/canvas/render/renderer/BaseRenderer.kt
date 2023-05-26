@@ -693,6 +693,20 @@ abstract class BaseRenderer : IRenderer {
         }
     }
 
+    /**将元素的中点移动至指定位置*/
+    fun translateCenterTo(
+        cx: Float,
+        cy: Float,
+        reason: Reason,
+        strategy: Strategy,
+        delegate: CanvasRenderDelegate?
+    ) {
+        val bounds = getRendererBounds()
+        val dx = cx - (bounds?.centerX() ?: 0f)
+        val dy = cy - (bounds?.centerY() ?: 0f)
+        translate(dx, dy, reason, strategy, delegate)
+    }
+
     //endregion---操作---
 
 }

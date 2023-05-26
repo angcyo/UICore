@@ -110,15 +110,40 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
 
     /**添加一个在[elementRendererList]之前绘制的渲染器
      * [bounds] 渲染的位置
-     * [drawable] 需要渲染的数据*/
+     * [drawable] 需要渲染的数据
+     *
+     * [removeBeforeRendererList]*/
     fun addBeforeRendererList(bounds: RectF, drawable: Drawable?) {
         beforeRendererList.add(SimpleInsideRenderer(bounds, drawable))
         delegate.refresh()
     }
 
-    /**添加一个在[elementRendererList]之后绘制的渲染器*/
+    /**[removeBeforeRendererList]*/
+    fun addBeforeRendererList(renderer: BaseRenderer) {
+        if (!beforeRendererList.contains(renderer)) {
+            beforeRendererList.add(renderer)
+        }
+        delegate.refresh()
+    }
+
+    /**添加一个在[elementRendererList]之后绘制的渲染器
+     * [removeAfterRendererList]*/
     fun addAfterRendererList(renderer: BaseRenderer) {
-        afterRendererList.add(renderer)
+        if (!afterRendererList.contains(renderer)) {
+            afterRendererList.add(renderer)
+        }
+        delegate.refresh()
+    }
+
+    /**[addBeforeRendererList]*/
+    fun removeBeforeRendererList(renderer: BaseRenderer) {
+        beforeRendererList.remove(renderer)
+        delegate.refresh()
+    }
+
+    /**[addAfterRendererList]*/
+    fun removeAfterRendererList(renderer: BaseRenderer) {
+        afterRendererList.remove(renderer)
         delegate.refresh()
     }
 
