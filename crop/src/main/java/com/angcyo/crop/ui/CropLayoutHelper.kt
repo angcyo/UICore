@@ -11,6 +11,7 @@ import com.angcyo.crop.ui.dslitem.CropRadioItem
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.drawRight
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.elseNull
@@ -44,19 +45,20 @@ class CropLayoutHelper(val cropProvide: ICropProvide) {
                 drawCropRight()
                 itemClick = {
                     cropProvide.getOriginCropBitmap()?.let { bitmap ->
+                        //异步裁剪
                         cropProvide.getCropLifecycleOwner()?.loadingAsyncTg({
-                            //bitmap.trimEdgeColor()
-                            BitmapHandle.trimEdgeColor(bitmap, 200)
+                            BitmapHandle.trimEdgeColor(bitmap, LibHawkKeys.cropGrayThreshold)
                         }) {
                             it?.let {
                                 cropDelegate?.updateBitmap(it)
                             }
                         }.elseNull {
+                            //同步裁剪
                             cropDelegate?.updateBitmap(
                                 BitmapHandle.trimEdgeColor(
                                     bitmap,
-                                    200
-                                )!! /*bitmap.trimEdgeColor()*/
+                                    LibHawkKeys.cropGrayThreshold
+                                )!!
                             )
                         }
                     }

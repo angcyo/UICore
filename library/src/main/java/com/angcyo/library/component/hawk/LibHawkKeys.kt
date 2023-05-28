@@ -40,6 +40,9 @@ object LibHawkKeys {
      * 黑色传0, 0出光. */
     var grayThreshold: Int by HawkPropertyValue<Any, Int>(240)
 
+    /**自动裁边时, 需要剔除的灰度阈值*/
+    var cropGrayThreshold: Int by HawkPropertyValue<Any, Int>(240)
+
     /**日志单文件最大数据量的大小
      * 允许写入单个文件的最大大小10mb, 之后会重写*/
     var logFileMaxSize: Long by HawkPropertyValue<Any, Long>(2 * 1024 * 1024)
