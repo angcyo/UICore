@@ -18,8 +18,12 @@ class DslMagnifier {
     var magnifierView: MagnifierView? = null
 
     /**在指定的[viewGroup]上附加放大镜
-     * [targetView]放大镜的内容*/
-    fun init(viewGroup: ViewGroup, targetView: View) {
+     * [targetView]放大镜的内容
+     *
+     * [show] 显示放大镜*/
+    fun init(viewGroup: ViewGroup?, targetView: View?) {
+        viewGroup ?: return
+        targetView ?: return
         _containerLayout = viewGroup
         _targetView = targetView
         magnifierView = MagnifierView(viewGroup.context)
@@ -52,8 +56,14 @@ class DslMagnifier {
      * [x] 距离屏幕的x坐标
      * [y] 距离屏幕的y坐标*/
     fun show(touchEvent: MotionEvent) {
-        attach()
-        magnifierView?.update(touchEvent)
+        if (touchEvent.actionMasked == MotionEvent.ACTION_UP ||
+            touchEvent.actionMasked == MotionEvent.ACTION_CANCEL
+        ) {
+            hide()
+        } else {
+            attach()
+            magnifierView?.update(touchEvent)
+        }
     }
 
     /**隐藏放大镜*/

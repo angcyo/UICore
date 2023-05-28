@@ -6,7 +6,6 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.MotionEvent
-import androidx.appcompat.widget.AppCompatImageView
 import com.angcyo.drawable.CheckerboardDrawable
 import com.angcyo.library.ex.mapPoint
 
@@ -16,7 +15,7 @@ import com.angcyo.library.ex.mapPoint
  * @since 2023/05/24
  */
 class TouchImageView(context: Context, attributeSet: AttributeSet? = null) :
-    AppCompatImageView(context, attributeSet) {
+    TouchCompatImageView(context, attributeSet) {
 
     /**核心回调*/
     var onTouchPointAction: (PointF) -> Unit = {}
@@ -31,14 +30,14 @@ class TouchImageView(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
-    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
         return super.dispatchTouchEvent(event)
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
+    override fun onTouchEvent(event: MotionEvent): Boolean {
         val result = super.onTouchEvent(event)
-        if (event?.actionMasked == MotionEvent.ACTION_UP) {
+        if (event.actionMasked == MotionEvent.ACTION_UP) {
             touchPoint.set(event.x, event.y)
             imageMatrix.invert(tempMatrix)//关键
             tempMatrix.mapPoint(touchPoint)

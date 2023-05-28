@@ -15,7 +15,7 @@ import androidx.appcompat.widget.AppCompatImageView
 open class TouchCompatImageView(context: Context, attributeSet: AttributeSet? = null) :
     AppCompatImageView(context, attributeSet) {
 
-    /**手势回调*/
+    /**手势回调, 不影响click事件的处理*/
     var touchAction: (View, MotionEvent) -> Unit = { _, _ -> }
 
     init {
