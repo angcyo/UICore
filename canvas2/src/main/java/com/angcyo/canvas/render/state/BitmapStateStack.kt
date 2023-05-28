@@ -3,10 +3,10 @@ package com.angcyo.canvas.render.state
 import android.graphics.Bitmap
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
-import com.angcyo.canvas.render.core.Strategy
 import com.angcyo.canvas.render.element.BitmapElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.util.element
+import com.angcyo.library.component.Strategy
 
 /**
  * 图片状态存储, 用来恢复/重做

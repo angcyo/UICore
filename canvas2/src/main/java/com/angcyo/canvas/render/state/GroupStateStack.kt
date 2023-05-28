@@ -2,8 +2,8 @@ package com.angcyo.canvas.render.state
 
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
-import com.angcyo.canvas.render.core.Strategy
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.library.component.Strategy
 
 /**
  * 群组状态

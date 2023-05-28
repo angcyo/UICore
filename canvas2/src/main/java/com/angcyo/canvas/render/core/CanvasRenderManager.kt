@@ -13,6 +13,7 @@ import com.angcyo.canvas.render.renderer.CanvasMonitorRenderer
 import com.angcyo.canvas.render.renderer.ProgressRenderer
 import com.angcyo.canvas.render.renderer.SimpleInsideRenderer
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.component.Strategy
 import com.angcyo.library.ex.isChange
 import com.angcyo.library.ex.resetAll
 import java.util.concurrent.CopyOnWriteArrayList

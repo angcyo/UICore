@@ -8,7 +8,6 @@ import android.text.TextPaint
 import android.view.Gravity
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
-import com.angcyo.canvas.render.core.Strategy
 import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.element.IElement
 import com.angcyo.canvas.render.element.TextElement
@@ -16,6 +15,7 @@ import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasElementRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.Strategy
 import com.angcyo.library.ex.decimal
 import com.angcyo.library.ex.dp
 import kotlin.math.sqrt

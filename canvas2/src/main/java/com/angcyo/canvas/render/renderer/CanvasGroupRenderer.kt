@@ -14,7 +14,6 @@ import androidx.core.graphics.withSave
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.CanvasRenderViewBox
 import com.angcyo.canvas.render.core.Reason
-import com.angcyo.canvas.render.core.Strategy
 import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
@@ -31,6 +30,7 @@ import com.angcyo.drawable.isGravityLeft
 import com.angcyo.drawable.isGravityRight
 import com.angcyo.drawable.isGravityTop
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.Strategy
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.add

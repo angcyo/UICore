@@ -1,13 +1,11 @@
-package com.angcyo.canvas.render.core
+package com.angcyo.library.component
 
 /**
  * 操作策略, 比如当前的操作需要加入回退栈/或者不需要加入
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023-2-24
  */
-data class Strategy(
-    val type: Int = STRATEGY_TYPE_NORMAL
-) {
+data class Strategy(val type: Int = STRATEGY_TYPE_NORMAL) {
 
     companion object {
 

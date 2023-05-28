@@ -10,7 +10,6 @@ import com.angcyo.canvas.render.annotation.RenderFlag
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.core.Reason
-import com.angcyo.canvas.render.core.Strategy
 import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
@@ -19,6 +18,7 @@ import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRen
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRenderDrawable
 import com.angcyo.drawable.loading.CircleScaleLoadingDrawable
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.component.Strategy
 import com.angcyo.library.ex.*
 import kotlin.math.max
 

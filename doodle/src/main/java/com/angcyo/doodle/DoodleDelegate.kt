@@ -20,11 +20,11 @@ import com.angcyo.doodle.core.DoodleViewBox
 import com.angcyo.doodle.core.IDoodleListener
 import com.angcyo.doodle.core.IDoodleView
 import com.angcyo.doodle.core.ITouchRecognize
-import com.angcyo.doodle.core.Strategy
 import com.angcyo.doodle.element.BaseElement
 import com.angcyo.doodle.layer.BaseLayer
 import com.angcyo.doodle.layer.NormalLayer
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.component.Strategy
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.longFeedback
 import com.angcyo.library.ex.scale
@@ -219,10 +219,10 @@ class DoodleDelegate(val view: View) : IDoodleView {
     }
 
     /**添加一个元素*/
-    fun addElement(element: BaseElement, strategy: Strategy = Strategy.Normal()) {
+    fun addElement(element: BaseElement, strategy: Strategy = Strategy.normal) {
         if (doodleLayerManager.layerList.isEmpty()) {
             //添加一个默认的背景层
-            doodleLayerManager.addLayer(NormalLayer(this), Strategy.Redo())
+            doodleLayerManager.addLayer(NormalLayer(this), Strategy.redo)
         }
         operateLayer?.addElement(element, strategy)
     }

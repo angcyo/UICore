@@ -3,10 +3,10 @@ package com.angcyo.doodle.brush
 import android.view.MotionEvent
 import com.angcyo.doodle.core.DoodleTouchManager
 import com.angcyo.doodle.core.ITouchRecognize
-import com.angcyo.doodle.core.Strategy
 import com.angcyo.doodle.data.TouchPoint
 import com.angcyo.doodle.data.toTouchPoint
 import com.angcyo.doodle.element.BaseBrushElement
+import com.angcyo.library.component.Strategy
 import com.angcyo.library.ex.c
 import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.degrees
@@ -118,7 +118,7 @@ abstract class BaseBrush : ITouchRecognize {
                         //
                         manager.doodleDelegate.dispatchCreateElement(this, this@BaseBrush)
                         //
-                        manager.doodleDelegate.addElement(this, Strategy.Preview())
+                        manager.doodleDelegate.addElement(this, Strategy.preview)
                     }
                     brushElement?.onCreateElement(manager, this)
                     //update
@@ -126,6 +126,7 @@ abstract class BaseBrush : ITouchRecognize {
                     brushElement?.onUpdateElement(manager, this, touchPoint)
                 }
             }
+
             MotionEvent.ACTION_MOVE -> {
                 handle = true
                 collectPointList?.apply {
@@ -137,6 +138,7 @@ abstract class BaseBrush : ITouchRecognize {
                     manager.doodleDelegate.refresh()
                 }
             }
+
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 handle = true
                 collectPointList?.apply {
@@ -153,7 +155,7 @@ abstract class BaseBrush : ITouchRecognize {
                         brushElement?.onFinishElement(manager, this)
                     }
                     brushElement?.let {
-                        manager.doodleDelegate.addElement(it, Strategy.Normal())
+                        manager.doodleDelegate.addElement(it, Strategy.normal)
                     }
                     brushElement = null
                 }

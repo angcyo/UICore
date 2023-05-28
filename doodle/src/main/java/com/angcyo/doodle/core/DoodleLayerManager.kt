@@ -5,6 +5,7 @@ import com.angcyo.doodle.DoodleDelegate
 import com.angcyo.doodle.layer.BackgroundLayer
 import com.angcyo.doodle.layer.BaseLayer
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.component.Strategy
 import com.angcyo.library.ex.saveLayerAlpha
 
 /**

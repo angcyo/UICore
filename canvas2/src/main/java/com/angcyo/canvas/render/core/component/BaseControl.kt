@@ -11,10 +11,10 @@ import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.ICanvasTouchListener
 import com.angcyo.canvas.render.core.IComponent
 import com.angcyo.canvas.render.core.Reason
-import com.angcyo.canvas.render.core.Strategy
 import com.angcyo.canvas.render.data.ControlRendererInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.library.L
+import com.angcyo.library.component.Strategy
 import com.angcyo.library.ex.dp
 
 /**

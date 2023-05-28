@@ -1,5 +1,6 @@
 package com.angcyo.widget.image
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -25,6 +26,7 @@ open class TouchCompatImageView(context: Context, attributeSet: AttributeSet? = 
         return super.dispatchTouchEvent(event)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
         touchAction(this, event)

@@ -2,10 +2,10 @@ package com.angcyo.canvas.render.state
 
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.Reason
-import com.angcyo.canvas.render.core.Strategy
 import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
+import com.angcyo.library.component.Strategy
 import com.angcyo.library.ex.resetAll
 
 /**
