@@ -18,6 +18,7 @@ import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRen
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRenderDrawable
 import com.angcyo.drawable.loading.CircleScaleLoadingDrawable
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.Strategy
 import com.angcyo.library.ex.*
 import kotlin.math.max
@@ -545,6 +546,7 @@ abstract class BaseRenderer : IRenderer {
 
     /**平移元素[dx] [dy]本次的偏移量
      * [applyTranslateMatrix]*/
+    @Pixel
     fun translate(
         dx: Float,
         dy: Float,
@@ -694,6 +696,7 @@ abstract class BaseRenderer : IRenderer {
     }
 
     /**将元素的中点移动至指定位置*/
+    @Pixel
     fun translateCenterTo(
         cx: Float,
         cy: Float,
@@ -705,6 +708,7 @@ abstract class BaseRenderer : IRenderer {
         val dx = cx - (bounds?.centerX() ?: 0f)
         val dy = cy - (bounds?.centerY() ?: 0f)
         translate(dx, dy, reason, strategy, delegate)
+        updateRenderProperty()
     }
 
     //endregion---操作---

@@ -172,8 +172,12 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         return handle
     }
 
-    override fun refresh() {
-        view.postInvalidate()
+    override fun refresh(just: Boolean) {
+        if (just) {
+            view.invalidate()
+        } else {
+            view.postInvalidate()
+        }
         //view.postInvalidateDelayed(LibHawkKeys.minInvalidateDelay) //2023-5-15
     }
 

@@ -38,8 +38,9 @@ interface ICanvasRenderView {
     /**手势核心入口方法*/
     fun dispatchTouchEvent(event: MotionEvent): Boolean
 
-    /**重绘刷新*/
-    fun refresh()
+    /**重绘刷新
+     * [just] 是否立即刷新*/
+    fun refresh(just: Boolean = false)
 
     fun onAttachedToWindow()
 

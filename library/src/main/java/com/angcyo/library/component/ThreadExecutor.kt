@@ -56,6 +56,15 @@ object ThreadExecutor : Executor {
         }
     }
 
+    fun remove(command: Runnable) {
+        synchronized(executorLock) {
+            if (threadPoolExecutor.isShutdown) {
+                throw IllegalStateException("ThreadExecutor is Shutdown")
+            }
+            threadPoolExecutor.remove(command)
+        }
+    }
+
     fun onMain(command: Runnable) {
         synchronized(executorLock) {
             MainExecutor.execute(command)

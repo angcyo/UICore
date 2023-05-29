@@ -27,9 +27,10 @@ object RenderHelper {
     /**将原始[pathList]数据, 转换成目标位置(旋转/缩放/倾斜)的数据*/
     fun translateToRender(
         pathList: List<Path>?,
-        renderProperty: CanvasRenderProperty
+        renderProperty: CanvasRenderProperty?
     ): List<Path>? {
         val list = pathList ?: return null
+        renderProperty ?: return pathList
         val newPathList = list.translateToOrigin()
         val renderMatrix = renderProperty.getRenderMatrix()
         for (path in newPathList!!) {

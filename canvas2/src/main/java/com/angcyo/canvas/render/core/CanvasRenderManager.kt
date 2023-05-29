@@ -159,21 +159,22 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     }
 
     /**替换一个渲染器
-     * [renderer] 需要被替换的渲染器, 会保持位置不变
+     * [rendererList] 需要被替换的渲染器, 会保持位置不变
      * [newRendererList] 新的渲染器集合*/
     fun replaceElementRenderer(
-        renderer: BaseRenderer,
+        rendererList: List<BaseRenderer>,
         newRendererList: List<BaseRenderer>,
         selector: Boolean,
         reason: Reason,
         strategy: Strategy
     ) {
-
         val originRendererList = mutableListOf<BaseRenderer>()
-        if (renderer is CanvasSelectorComponent) {
-            originRendererList.addAll(renderer.rendererList)
-        } else {
-            originRendererList.add(renderer)
+        for (renderer in rendererList) {
+            if (renderer is CanvasSelectorComponent) {
+                originRendererList.addAll(renderer.rendererList)
+            } else {
+                originRendererList.add(renderer)
+            }
         }
 
         val index = elementRendererList.indexOf(originRendererList.firstOrNull())
@@ -192,6 +193,17 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
                 delegate.selectorManager.resetSelectorRenderer(newRendererList, reason)
             }
         }
+    }
+
+    /**[replaceElementRenderer]*/
+    fun replaceElementRenderer(
+        renderer: BaseRenderer,
+        newRendererList: List<BaseRenderer>,
+        selector: Boolean,
+        reason: Reason,
+        strategy: Strategy
+    ) {
+        replaceElementRenderer(listOf(renderer), newRendererList, selector, reason, strategy)
     }
 
     /**添加一个集合渲染器
@@ -280,11 +292,11 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         delegate.undoManager.addAndRedo(strategy, true, {
             elementRendererList.resetAll(from)
             delegate.dispatchElementRendererListChange(to, from, op, reason)
-            delegate.refresh()
+            delegate.refresh(true)
         }) {
             elementRendererList.resetAll(to)
             delegate.dispatchElementRendererListChange(from, to, op, reason)
-            delegate.refresh()
+            delegate.refresh(true)
         }
     }
 
