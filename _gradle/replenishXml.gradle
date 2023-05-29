@@ -16,8 +16,15 @@ _replenishXml.doFirst {
     //println lines
     def zhPathArray = getLanguageResPath("-zh")
     def enPathArray = getLanguageResPath("")
+    def jaPathArray = getLanguageResPath("-ja")
+    def koPathArray = getLanguageResPath("-ko")
+    def dePathArray = getLanguageResPath("-de")
+    def esPathArray = getLanguageResPath("-es")
+    def frPathArray = getLanguageResPath("-fr")
+    def zh_rHKPathArray = getLanguageResPath("-zh-rHK")
+    //def zh_rTWPathArray = getLanguageResPath("-zh-rTW")
     //使用中文资源文件, 补齐英文资源文件
-    _replenishXmlList(zhPathArray, enPathArray)
+    _replenishXmlList(zhPathArray, jaPathArray)
 }
 
 /**文件一一对应补齐*/
@@ -44,11 +51,11 @@ def _replenishXml(srcPath, dstPath) {
     }
 
     if (replenishMap.size() > 0) {
-        println "补齐资源: ${replenishMap.size()}"
+        System.err.println "${dstFile} 补齐资源:${replenishMap.size()}个"
 
         def lines = dstFile.text.readLines()
         replenishMap.each { key, value ->
-            lines.add(lines.size() - 1, "\n    <string name=\"${key}\">${value}</string>")
+            lines.add(lines.size() - 1, "    <string name=\"${key}\">${value}</string>")
         }
         dstFile.text = lines.join("\n")
     }
