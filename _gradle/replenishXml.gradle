@@ -1,0 +1,55 @@
+/**
+ * 2023-5-29
+ * 将另一个资源文件中缺少的资源补齐
+ * */
+
+task _replenishXml(group: 'angcyo', description: '将另一个资源文件中缺少的资源补齐') {
+    //配置任务
+}
+
+_replenishXml.doFirst {
+    //def map = readXmlMap("xml.xml")
+    //println map
+    //def lines = readExcelLines("excel.xlsx")
+    //println lines
+    //def lines = readCsvLines("rHK.csv")
+    //println lines
+    def zhPathArray = getLanguageResPath("-zh")
+    def enPathArray = getLanguageResPath("")
+    //使用中文资源文件, 补齐英文资源文件
+    _replenishXmlList(zhPathArray, enPathArray)
+}
+
+/**文件一一对应补齐*/
+def _replenishXmlList(srcPathList, dstPathList) {
+    srcPathList.eachWithIndex { srcPath, index ->
+        _replenishXml(srcPath, dstPathList[index])
+    }
+}
+
+/**一个文件一个文件对比补齐*/
+def _replenishXml(srcPath, dstPath) {
+    def srcFile = file(srcPath)
+    def dstFile = file(dstPath)
+
+    def srcMap = readXmlMap(srcFile)
+    def dstMap = readXmlMap(dstFile)
+
+    //判断dst中没有的key
+    def replenishMap = [:] //需要补齐的key:value
+    srcMap.each { key, value ->
+        if (!dstMap.containsKey(key)) {
+            replenishMap[key] = value
+        }
+    }
+
+    if (replenishMap.size() > 0) {
+        println "补齐资源: ${replenishMap.size()}"
+
+        def lines = dstFile.text.readLines()
+        replenishMap.each { key, value ->
+            lines.add(lines.size() - 1, "\n    <string name=\"${key}\">${value}</string>")
+        }
+        dstFile.text = lines.join("\n")
+    }
+}

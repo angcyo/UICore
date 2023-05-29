@@ -3,6 +3,23 @@
  * 2022-5-21
  * */
 
+buildscript {
+    repositories {
+        mavenCentral()
+        /*maven {
+            url "http://repo.serebryanskiy.site/"
+            allowInsecureProtocol = true
+        }*/
+    }
+    dependencies {
+        // https://mvnrepository.com/artifact/org.apache.poi/poi
+        //classpath 'org.apache.poi:poi:5.2.3'
+        classpath 'org.apache.poi:poi-ooxml:5.2.3' //excel支持
+        // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
+        classpath 'org.apache.logging.log4j:log4j-core:2.20.0'
+    }
+}
+
 /**判断是否是Mac系统*/
 static def isMac() {
     //Mac OS X
@@ -45,7 +62,8 @@ static def error(Object msg) {
     System.err.println msg
 }
 
-/**查找apk文件路径,
+/**2022-5-21
+ * 查找apk文件路径,
  * [https://docs.groovy-lang.org/latest/html/groovy-jdk/java/io/File.html]
  * [folderPath] 指定要查找的路径
  * */
@@ -97,7 +115,8 @@ def findApkFile(String folderPath = null) {
     return result
 }
 
-/**上传文件成功, 写入到文件, 记录一下
+/**2022-10-22
+ * 上传文件成功, 写入到文件, 记录一下
  * [filePath] 上传成功的文件路径
  * [folderPath] 日志文件所在的路径
  * */
@@ -125,7 +144,8 @@ def uploadFileSucceed(String filePath, String folderPath = null) {
     isUploadFile.append("${line}\n")
 }
 
-/**根据文件名, 获取png目录的logo图片
+/**2022-5-21
+ * 根据文件名, 获取png目录的logo图片
  * [png/logo.png] 正式包logo
  * [png/logo_test.png] 测试式包logo
  * */
@@ -142,7 +162,7 @@ def getLogoPath(apkFileName) {
     return null
 }
 
-/**
+/**2022-11-10
  * 复制文件
  * */
 static def copyFile(String from, String toPath) {
@@ -174,7 +194,9 @@ static def copyFile(String from, String toPath) {
     }
 }
 
-//获取本机ip, 可能会有多个网卡信息
+/**2022-11-10
+ * 获取本机ip, 可能会有多个网卡信息
+ * */
 static def getLocalIp() {
     def ip = ''
     NetworkInterface.getNetworkInterfaces().each {
@@ -203,38 +225,8 @@ static def getLocalIp() {
     return ip
 }
 
-/**统一内容的方法, 获取资源路径
- *
- * -zh
- * -ja
- * -ko
- * -fr
- * -de
- * -es
- * -zh-rHK
- * -zh-rTW
- * */
-static def getLanguageResPath(language) {
-    def pathList = []
-    pathList += "./UICore/core/src/main/res/values${language}/core_strings.xml"
-    pathList += "./UICore/crop/src/main/res/values${language}/crop_strings.xml"
-    pathList += "./UICore/dialog/src/main/res/values${language}/dialog_strings.xml"
-    pathList += "./UICore/doodle/src/main/res/values${language}/doodle_strings.xml"
-    //pathList += "./UICore/canvas/src/main/res/values${language}/canvas_strings.xml"
-    pathList += "./UICore/widget/src/main/res/values${language}/widget_strings.xml"
-
-    //pathList += "./UICoreEx/canvas_lp/src/main/res/values${language}/canvas_strings.xml"
-    pathList += "./UICoreEx/canvas2_lp/src/main/res/values${language}/canvas_strings.xml"
-    //pathList += "./UICoreEx/engrave/src/main/res/values${language}/engrave_strings.xml"
-    pathList += "./UICoreEx/engrave2/src/main/res/values${language}/engrave_strings.xml"
-    pathList += "./UICoreEx/fsc/src/main/res/values${language}/fsc_strings.xml"
-    pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/device_strings.xml"
-    pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/material_strings.xml"
-
-    return pathList
-}
-
-/**复制apk文件*/
+/**2023-2-23
+ * 复制apk文件*/
 def copyApkFile() {
     def output = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
     def apkFolder = new File(project.rootDir.absolutePath + "/" + output)
@@ -284,6 +276,120 @@ def copyApkFile() {
     }
 }
 
+
+/**2023-5-20
+ *
+ * 统一内容的方法, 获取资源路径
+ *
+ * -zh
+ * -ja
+ * -ko
+ * -fr
+ * -de
+ * -es
+ * -zh-rHK
+ * -zh-rTW
+ * */
+static def getLanguageResPath(language) {
+    def pathList = []
+    pathList += "./UICore/core/src/main/res/values${language}/core_strings.xml"
+    pathList += "./UICore/crop/src/main/res/values${language}/crop_strings.xml"
+    pathList += "./UICore/dialog/src/main/res/values${language}/dialog_strings.xml"
+    pathList += "./UICore/doodle/src/main/res/values${language}/doodle_strings.xml"
+    //pathList += "./UICore/canvas/src/main/res/values${language}/canvas_strings.xml"
+    pathList += "./UICore/widget/src/main/res/values${language}/widget_strings.xml"
+
+    //pathList += "./UICoreEx/canvas_lp/src/main/res/values${language}/canvas_strings.xml"
+    pathList += "./UICoreEx/canvas2_lp/src/main/res/values${language}/canvas_strings.xml"
+    //pathList += "./UICoreEx/engrave/src/main/res/values${language}/engrave_strings.xml"
+    pathList += "./UICoreEx/engrave2/src/main/res/values${language}/engrave_strings.xml"
+    pathList += "./UICoreEx/fsc/src/main/res/values${language}/fsc_strings.xml"
+    pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/device_strings.xml"
+    pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/material_strings.xml"
+
+    return pathList
+}
+
+/**2023-5-29
+ * 读取xml文件, 按照key:value的形式返回*/
+def readXmlMap(path) {
+    def map = [:]
+    def xmlFile = file(path)
+    if (xmlFile.exists()) {
+        def xml = new XmlParser().parse(xmlFile)
+        xml.string.each {
+            map[it.@name] = it.text()
+        }
+    }
+    return map
+}
+
+/**2023-5-29
+ * 读取excel文件, 一行一行读取*/
+def readExcelLines(path) {
+    def lines = [] //每一行的数据, N列的数组
+    def excelFile = file(path)
+    if (excelFile.exists()) {
+        def inputStream = new BufferedInputStream(new FileInputStream(excelFile))
+        def workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook(inputStream)
+        try {
+            def sheet = workbook.getSheetAt(0)
+            def rowIterator = sheet.iterator()
+            while (rowIterator.hasNext()) {
+                def row = rowIterator.next()
+                def cellIterator = row.cellIterator()
+                def line = []
+                def isNullLine = true
+                while (cellIterator.hasNext()) {
+                    def cell = cellIterator.next()
+                    def value = cell.toString()
+                    if (value == null || value.isBlank()) {
+                    } else {
+                        isNullLine = false
+                    }
+                    line.add(value)
+                }
+                if (!isNullLine) {
+                    //如果这一行不是空行, 则添加到lines中
+                    lines.add(line)
+                }
+
+                //def rows = sheet.getPhysicalNumberOfRows()
+                //def columns = row.getPhysicalNumberOfCells() //获取这一行有多少列
+                //println("rows:${rows}, columns:${columns}")
+            }
+        } catch (Exception e) {
+            e.printStackTrace()
+            System.err.println("读取excel文件失败:${excelFile}")
+            throw e
+        }
+    }
+    return lines
+}
+
+/**2023-5-29
+ * 读取csv文件, 一行一行读取*/
+def readCsvLines(path, regex = ",") {
+    def csvFile = file(path)
+    def lines = csvFile.text.readLines()
+    def result = []
+    lines.forEach { line ->
+        def lineList = line.split(regex)
+        def lineRow = []
+        def isNullLine = true
+        lineList.each {
+            if (it != null && !it.isBlank()) {
+                isNullLine = false
+            }
+            lineRow.add(it)
+        }
+        if (!isNullLine) {
+            result.add(lineRow)
+        }
+    }
+    return result
+}
+
 //导出
 ext {
     isMac = this.&isMac
@@ -302,4 +408,7 @@ ext {
     getLocalIp = this.&getLocalIp
     copyApkFile = this.&copyApkFile
     getLanguageResPath = this.&getLanguageResPath
+    readXmlMap = this.&readXmlMap
+    readExcelLines = this.&readExcelLines
+    readCsvLines = this.&readCsvLines
 }
