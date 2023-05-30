@@ -123,7 +123,8 @@ class GCodeWriteHandler : VectorWriteHandler() {
                 }
                 //`G2` 顺时针画弧 -> Path.Direction.CCW
                 //`G3` 逆时针画弧 -> Path.Direction.CW
-                writer?.appendLine(buildString {
+
+                val gcode = buildString {
                     val cmd = if (first.circleDir == Path.Direction.CW) {
                         "G3"
                     } else {
@@ -163,7 +164,11 @@ class GCodeWriteHandler : VectorWriteHandler() {
                     lastInfo.lastY = y
                     lastInfo.lastI = i
                     lastInfo.lastJ = j
-                })
+                }
+
+                if (gcode.isNotBlank()) {
+                    writer?.appendLine(gcode)
+                }
             }
         } else {
             super.onLineToPoint(point)
@@ -184,7 +189,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
             val cmd = "G1"
             val xFloat = xValue.toLossyFloat()
             val yFloat = yValue.toLossyFloat()
-            writer?.appendLine(buildString {
+            val gcode = buildString {
                 var isFirst = false
                 if (lastInfo.lastCmd != cmd) {
                     isFirst = true
@@ -196,7 +201,10 @@ class GCodeWriteHandler : VectorWriteHandler() {
                 if (isFirst || lastInfo.lastY != yFloat) {
                     append("Y$yFloat")
                 }
-            })
+            }
+            if (gcode.isNotBlank()) {
+                writer?.appendLine(gcode)
+            }
             lastInfo.lastCmd = cmd
             lastInfo.lastX = xFloat
             lastInfo.lastY = yFloat

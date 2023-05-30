@@ -4,8 +4,10 @@ import android.graphics.Paint
 import android.graphics.Path
 import com.angcyo.gcode.GCodeWriteHandler
 import com.angcyo.library.component.hawk.LibHawkKeys
+import com.angcyo.library.model.PointD
 import com.angcyo.library.unit.IValueUnit
 import com.angcyo.svg.SvgWriteHandler
+import com.angcyo.vector.VectorWriteHandler
 import java.io.File
 import java.io.FileOutputStream
 import java.io.StringWriter
@@ -123,13 +125,23 @@ fun List<Path>.toGCodeStrokeContent(
     return output
 }
 
-/**简单的将[Path]转成GCode*/
-fun Path.toGCodeStrokeSingleContent(): String {
+/**简单的将[Path]转成GCode
+ * [lastPoint] 最后一次的点, 如果有*/
+fun Path.toGCodeStrokeSingleContent(lastPoint: PointD? = null): String {
     val gCodeHandler = GCodeWriteHandler()
     gCodeHandler.unit = IValueUnit.MM_UNIT
     gCodeHandler.isAutoCnc = false
     StringWriter().use { writer ->
         gCodeHandler.writer = writer
+        lastPoint?.let {
+            gCodeHandler._pointList.add(
+                VectorWriteHandler.VectorPoint(
+                    it.x,
+                    it.y,
+                    VectorWriteHandler.POINT_TYPE_NEW
+                )
+            )
+        }
         gCodeHandler.pathStrokeToVector(this, false, false)
         return writer.toString()
     }

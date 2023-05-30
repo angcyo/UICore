@@ -93,7 +93,8 @@ abstract class VectorWriteHandler {
     /**输出写入器*/
     var writer: Appendable? = null
 
-    /**单位转换器, 如果不设置则[Path]的值, 1:1输出*/
+    /**单位转换器, 如果不设置则[Path]的值, 1:1输出
+     * [com.angcyo.gcode.GCodeWriteHandler.isPixelValue]*/
     var unit: IValueUnit? = null
 
     /**真实值, 可以是像素, 也可以是mm. 根据[writePoint]的值, 自行决定
@@ -348,9 +349,9 @@ abstract class VectorWriteHandler {
             POINT_TYPE_NEW_CIRCLE -> {
                 _pointList.lastOrNull()?.let { last ->
                     onLineToPoint(last)
-                    _resetLastPoint(point)
                 }
-                lineLastPoint(point)
+                onLineToPoint(point)
+                _pointList.clear()
             }
 
             POINT_TYPE_NEW -> {

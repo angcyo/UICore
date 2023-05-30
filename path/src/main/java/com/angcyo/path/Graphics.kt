@@ -8,8 +8,10 @@ import androidx.core.os.BuildCompat
 import androidx.graphics.path.PathIterator
 import androidx.graphics.path.PathSegment
 import androidx.graphics.path.iterator
+import com.angcyo.gcode.GCodeWriteHandler
 import com.angcyo.library.L
 import com.angcyo.library.ex.toListOf
+import com.angcyo.library.unit.IValueUnit
 import com.angcyo.library.unit.toMm
 import com.angcyo.toGCodeStrokeSingleContent
 import java.io.File
@@ -115,9 +117,19 @@ fun Path.toSvgPathContent(output: File, tolerance: Float = 0.1f, append: Boolean
 fun List<Path>.toGCodePathContent(
     output: File,
     tolerance: Float = 0.1f,
-    append: Boolean = false
+    append: Boolean = false,
+    isAutoCnc: Boolean = false,
+    writeFirst: Boolean = true,
+    writeLast: Boolean = true,
 ): File {
+    val gCodeWriteHandler = GCodeWriteHandler()
+    gCodeWriteHandler.unit = IValueUnit.MM_UNIT
+    gCodeWriteHandler.isAutoCnc = isAutoCnc
     FileOutputStream(output, append).writer().use { writer ->
+        gCodeWriteHandler.writer = writer
+        if (writeFirst) {
+            gCodeWriteHandler.onPathStart()
+        }
         val lastPoint = PointF(0f, 0f)
         forEachIndexed { index, path ->
             lastPoint.set(0f, 0f)
@@ -127,6 +139,7 @@ fun List<Path>.toGCodePathContent(
                 //M L Q A C Z
                 when (segment.type) {
                     PathSegment.Type.Move -> {
+                        gCodeWriteHandler.closeCnc()
                         writer.append("G0")
                         val point = segment.points.getOrNull(0)?.apply {
                             lastPoint.set(x, y)
@@ -138,6 +151,7 @@ fun List<Path>.toGCodePathContent(
                     }
 
                     PathSegment.Type.Line -> {
+                        gCodeWriteHandler.openCnc()
                         writer.append("G1")
                         val endPoint = segment.points.getOrNull(1)?.apply {
                             lastPoint.set(x, y)
@@ -166,16 +180,23 @@ fun List<Path>.toGCodePathContent(
                             val p4 = segment.points[3]
                             temp.cubicTo(p2.x, p2.y, p3.x, p3.y, p4.x, p4.y)
                         }
-                        writer.appendLine(temp.toGCodeStrokeSingleContent())
+                        gCodeWriteHandler.openCnc()
+                        writer.append(temp.toGCodeStrokeSingleContent())
                     }
 
-                    PathSegment.Type.Close -> writer.appendLine("M2")
+                    PathSegment.Type.Close -> {
+                        gCodeWriteHandler.closeCnc()
+                    }
+
                     PathSegment.Type.Done -> Unit
                     else -> {
                         L.w("不支持的数据:$segment")
                     }
                 }
             }
+        }
+        if (writeLast) {
+            gCodeWriteHandler.onPathEnd()
         }
     }
     return output
