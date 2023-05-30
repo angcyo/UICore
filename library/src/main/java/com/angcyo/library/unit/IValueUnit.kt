@@ -1,5 +1,6 @@
 package com.angcyo.library.unit
 
+import android.graphics.PointF
 import android.util.TypedValue
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.ceil
@@ -192,3 +193,9 @@ fun Float?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0f)
 
 /**1像素转毫米*/
 fun Double?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0.0)
+
+/**直接修改值*/
+fun PointF.toMm() = this.apply {
+    x = MM_UNIT.convertPixelToValue(x)
+    y = MM_UNIT.convertPixelToValue(y)
+}

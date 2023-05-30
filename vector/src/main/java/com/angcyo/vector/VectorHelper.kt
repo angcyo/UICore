@@ -15,6 +15,7 @@ import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.c
 import com.angcyo.library.ex.computePathBounds
 import com.angcyo.library.ex.isRotated
+import com.angcyo.library.model.Circle
 import com.angcyo.library.model.PointD
 import com.angcyo.svg.StylePath
 import com.pixplicity.sharp.Sharp
@@ -22,7 +23,9 @@ import java.lang.Math.pow
 import kotlin.math.abs
 import kotlin.math.atan
 import kotlin.math.atan2
+import kotlin.math.cos
 import kotlin.math.pow
+import kotlin.math.sin
 import kotlin.math.sqrt
 
 /**
@@ -432,6 +435,94 @@ object VectorHelper {
 
         return result
     }
+
+    /**二阶贝赛尔曲线求圆心坐标
+     * 这种方式计算出来的圆心坐标, 与[cx] [cy] 控制点坐标一致
+     * 得到的半径是有效值, 可以使用
+     * [sx] [sy] 起点坐标
+     * [cx] [cy] 控制点坐标
+     * [ex] [ey] 终点坐标
+     * */
+    @Pixel
+    fun quadCenterOfCircle(
+        sx: Float,
+        sy: Float,
+        cx: Float,
+        cy: Float,
+        ex: Float,
+        ey: Float
+    ): Circle {
+        val result = Circle()
+        // 计算控制点到曲线两个端点的距离
+        val d1 = sqrt(((cx - sx).pow(2) + (cy - sy).pow(2)).toDouble()).toFloat()
+        val d2 = sqrt(((cx - ex).pow(2) + (cy - ey).pow(2)).toDouble()).toFloat()
+        // 计算控制点到两个端点的连线的中垂线的斜率
+        val k1 = (cy - sy) / (cx - sx)
+        val k2 = (cy - ey) / (cx - ex)
+        // 计算中垂线的截距
+        val b1 = (cy + sy - k1 * (cx + sx)) / 2
+        val b2 = (cy + ey - k2 * (cx + ex)) / 2
+        // 计算中垂线的交点，即圆心坐标
+        val cx1 = (b2 - b1) / (k1 - k2)
+        val cy1 = k1 * cx1 + b1
+        // 计算圆的半径
+        result.r = (d1 + d2) / 2
+        result.x = cx1
+        result.y = cy1
+        return result
+    }
+
+    @Pixel
+    fun calculateCircleCenter(
+        sx: Float,
+        sy: Float,
+        ex: Float,
+        ey: Float,
+        cx: Float,
+        cy: Float
+    ): PointF {
+        // 计算曲线的中点
+        val mx = (sx + 2 * cx + ex) / 4
+        val my = (sy + 2 * cy + ey) / 4
+
+        // 计算切线斜率和垂线斜率
+        val k1 = (2 * (1 - 0.5f) * (cy - sy) + 2 * 0.5f * (ey - cy)) /
+                (2 * (1 - 0.5f) * (cx - sx) + 2 * 0.5f * (ex - cx))
+        val k2 = -1 / k1
+
+        // 计算切线和垂线交点坐标
+        val bx = mx + 1 / sqrt((1 + k2 * k2).toDouble()).toFloat()
+        val by = my + k2 / sqrt((1 + k2 * k2).toDouble()).toFloat()
+
+        // 计算圆心坐标
+        val r = sqrt(((sx - ex) * (sx - ex) + (sy - ey) * (sy - ey)).toDouble()).toFloat() / 2
+        val alpha = atan(k2.toDouble()).toFloat()
+        val originX = bx - r * cos(alpha.toDouble()).toFloat()
+        val originY = by - r * sin(alpha.toDouble()).toFloat()
+        return PointF(originX, originY)
+    }
+
+    /**通过计算向量叉积的正负来判断顺时针还是逆时针。
+     * 向量叉积的正负可以用右手定则来判断：将右手四指从第一个向量转向第二个向量，
+     * 大拇指所指的方向即为向量叉积的正方向。
+     * 如果向量叉积为正， 即大拇指所指向的方向是顺时针方向；
+     * 如果向量叉积为负， 即大拇指所指向的方向是逆时针方向。
+     * [sx] [sy] 起点坐标
+     * [cx] [cy] 圆心点坐标
+     * [ex] [ey] 终点坐标
+     * */
+    fun getDirection(sx: Float, sy: Float, ex: Float, ey: Float, cx: Float, cy: Float): Int {
+        // 计算起点到圆心的向量
+        val dx1 = cx - sx
+        val dy1 = cy - sy
+        // 计算终点到圆心的向量
+        val dx2 = cx - ex
+        val dy2 = cy - ey
+        // 计算向量叉积
+        val cross = dx1 * dy2 - dx2 * dy1
+        return if (cross > 0) 1 else -1 // 返回 1 表示顺时针，返回 -1 表示逆时针
+    }
+
 }
 
 /**[android.graphics.Paint.Style]*/

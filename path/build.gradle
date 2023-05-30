@@ -13,4 +13,7 @@ dependencies {
     //compileSdkPreview 'UpsideDownCake'
     //https://mvnrepository.com/artifact/androidx.graphics/graphics-path
     implementation 'androidx.graphics:graphics-path:1.0.0-alpha01' //compileSdkVersion 34
+
+    //2023-5-30
+    compileOnly project(allModule.vector)//toGCodeContent
 }

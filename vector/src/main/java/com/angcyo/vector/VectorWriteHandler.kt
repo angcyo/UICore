@@ -82,6 +82,10 @@ abstract class VectorWriteHandler {
         /**多个点在圆上*/
         @Flag("点位类型")
         internal const val POINT_TYPE_CIRCLE = 4
+
+        /**下一个点在新的圆上*/
+        @Flag("点位类型")
+        internal const val POINT_TYPE_NEW_CIRCLE = 5
     }
 
     //---
@@ -99,6 +103,7 @@ abstract class VectorWriteHandler {
      *
      * 负数表示关闭Gap判断, 全部使用G1
      * */
+    @MM
     var gapValue: Float = PATH_SPACE_GAP
 
     /**当距离上一个点距离大于这个值时,
@@ -106,6 +111,7 @@ abstract class VectorWriteHandler {
      *
      * 类似于2点之间的间隙
      * */
+    @MM
     var gapMaxValue: Float = PATH_SPACE_GAP * 2
 
     /**多少度误差之内, 视为同一个点*/
@@ -156,7 +162,10 @@ abstract class VectorWriteHandler {
         onLineToPoint(point.x, point.y)
     }
 
-    @Deprecated("请使用[onLineToPoint]", replaceWith = ReplaceWith("this.onLineToPoint(VectorPoint)"))
+    @Deprecated(
+        "请使用[onLineToPoint]",
+        replaceWith = ReplaceWith("this.onLineToPoint(VectorPoint)")
+    )
     open fun onLineToPoint(x: Double, y: Double) {
 
     }
@@ -222,9 +231,10 @@ abstract class VectorWriteHandler {
     fun _valueChangedType(x: Double, y: Double): Int {
         val last = _pointList.lastOrNull() ?: return POINT_TYPE_NEW //之前没有点, 那当前的点肯定是最新的
         //val first = _pointList.first()
+        val pointType = _valueChangedType(last, x, y) //当前点的类型
         if (_pointList.size() == 1) {
             //之前只有1个点
-            return _valueChangedType(last, x, y)
+            return pointType
         } else {
             //之前已经有多个点
             if (LibLpHawkKeys.enableVectorArc && _pointList.size() == 2) {
@@ -265,7 +275,12 @@ abstract class VectorWriteHandler {
                             POINT_TYPE_CIRCLE
                         } else {
                             //圆心不一致, 则使用新的点
-                            POINT_TYPE_NEW
+                            if (pointType == POINT_TYPE_GAP || pointType == POINT_TYPE_SAME) {
+                                //圆心不一致, 但是采样点是在临界类, 则需要先LineTo, 并清理状态
+                                POINT_TYPE_NEW_CIRCLE
+                            } else {
+                                POINT_TYPE_NEW
+                            }
                         }
                     }
                     return POINT_TYPE_CIRCLE
@@ -273,7 +288,7 @@ abstract class VectorWriteHandler {
             }
 
             //val firstType = _valueChangedType(first, x, y) //第一个点的类型
-            val lastType = _valueChangedType(last, x, y) //最后一个点的类型
+            val lastType = pointType //最后一个点的类型
 
             if (lastType == POINT_TYPE_GAP) {
                 if (_isSameAngle(x, y)) {
@@ -330,10 +345,19 @@ abstract class VectorWriteHandler {
         val point = generatePoint(x, y)
 
         when (point.pointType) {
+            POINT_TYPE_NEW_CIRCLE -> {
+                _pointList.lastOrNull()?.let { last ->
+                    onLineToPoint(last)
+                    _resetLastPoint(point)
+                }
+                lineLastPoint(point)
+            }
+
             POINT_TYPE_NEW -> {
                 clearLastPoint()
                 onNewPoint(x, y)
             }
+
             POINT_TYPE_GAP -> lineLastPoint(point)
             /*POINT_TYPE_SAME, else -> _resetLastPoint(point)*/
         }

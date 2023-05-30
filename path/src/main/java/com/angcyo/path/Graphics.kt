@@ -2,6 +2,7 @@ package com.angcyo.path
 
 import android.graphics.Path
 import android.graphics.PointF
+import android.os.Build
 import androidx.annotation.OptIn
 import androidx.core.os.BuildCompat
 import androidx.graphics.path.PathIterator
@@ -9,6 +10,8 @@ import androidx.graphics.path.PathSegment
 import androidx.graphics.path.iterator
 import com.angcyo.library.L
 import com.angcyo.library.ex.toListOf
+import com.angcyo.library.unit.toMm
+import com.angcyo.toGCodeStrokeSingleContent
 import java.io.File
 import java.io.FileOutputStream
 
@@ -35,36 +38,36 @@ fun List<Path>.toSvgPathContent(
                         writer.append("M")
                         val point = segment.points.getOrNull(0)?.apply {
                             lastPoint.set(x, y)
-                        }
-                        writer.append((point ?: lastPoint).x)
+                        } ?: lastPoint
+                        writer.append(point.x)
                         writer.append(",")
-                        writer.append((point ?: lastPoint).y)
+                        writer.append(point.y)
                     }
 
                     PathSegment.Type.Line -> {
                         writer.append("L")
-                        val point = segment.points.getOrNull(1)?.apply {
+                        val endPoint = segment.points.getOrNull(1)?.apply {
                             lastPoint.set(x, y)
-                        }
-                        writer.append((point ?: lastPoint).x)
+                        } ?: lastPoint
+                        writer.append(endPoint.x)
                         writer.append(",")
-                        writer.append((point ?: lastPoint).y)
+                        writer.append(endPoint.y)
                     }
 
                     PathSegment.Type.Quadratic, PathSegment.Type.Conic -> {
                         //二次曲线 转svg
                         writer.append("Q")
                         val controlPoint = segment.points.getOrNull(1) //控制点
-                        val point = segment.points.getOrNull(1)?.apply {
+                        val endPoint = segment.points.getOrNull(2)?.apply {
                             lastPoint.set(x, y)
-                        }
+                        } ?: lastPoint
                         writer.append(controlPoint?.x ?: 0f)
                         writer.append(",")
                         writer.append(controlPoint?.y ?: 0f)
                         writer.append(",")
-                        writer.append((point ?: lastPoint).x)
+                        writer.append(endPoint.x)
                         writer.append(",")
-                        writer.append((point ?: lastPoint).y)
+                        writer.append(endPoint.y)
                     }
 
                     PathSegment.Type.Cubic -> {
@@ -72,9 +75,9 @@ fun List<Path>.toSvgPathContent(
                         writer.append("C")
                         val controlPoint1 = segment.points.getOrNull(1) //控制点1
                         val controlPoint2 = segment.points.getOrNull(2) //控制点2
-                        val point = segment.points.getOrNull(3)?.apply {
+                        val endPoint = segment.points.getOrNull(3)?.apply {
                             lastPoint.set(x, y)
-                        } //终点
+                        } ?: lastPoint //终点
                         writer.append(controlPoint1?.x ?: 0f)
                         writer.append(",")
                         writer.append(controlPoint1?.y ?: 0f)
@@ -83,9 +86,9 @@ fun List<Path>.toSvgPathContent(
                         writer.append(",")
                         writer.append(controlPoint2?.y ?: 0f)
                         writer.append(",")
-                        writer.append((point ?: lastPoint).x)
+                        writer.append(endPoint.x)
                         writer.append(",")
-                        writer.append((point ?: lastPoint).y)
+                        writer.append(endPoint.y)
                     }
 
                     PathSegment.Type.Close -> writer.append("Z")
@@ -106,9 +109,8 @@ fun List<Path>.toSvgPathContent(
 fun Path.toSvgPathContent(output: File, tolerance: Float = 0.1f, append: Boolean = false): File {
     return toListOf().toSvgPathContent(output, tolerance, append)
 }
-/*
-*/
-/**转GCode数据*//*
+
+/**转GCode数据*/
 @OptIn(BuildCompat.PrereleaseSdkCheck::class)
 fun List<Path>.toGCodePathContent(
     output: File,
@@ -128,34 +130,43 @@ fun List<Path>.toGCodePathContent(
                         writer.append("G0")
                         val point = segment.points.getOrNull(0)?.apply {
                             lastPoint.set(x, y)
-                        }
-                        writer.append("X${(point ?: lastPoint).x}")
-                        writer.append("Y${(point ?: lastPoint).y}")
+                        } ?: lastPoint
+                        point.toMm()
+                        writer.append("X${point.x}")
+                        writer.append("Y${point.y}")
                         writer.appendLine()
                     }
 
                     PathSegment.Type.Line -> {
                         writer.append("G1")
-                        val point = segment.points.getOrNull(1)?.apply {
+                        val endPoint = segment.points.getOrNull(1)?.apply {
                             lastPoint.set(x, y)
-                        }
-                        writer.append("X${(point ?: lastPoint).x}")
-                        writer.append("Y${(point ?: lastPoint).y}")
+                        } ?: lastPoint
+                        endPoint.toMm()
+                        writer.append("X${endPoint.x}")
+                        writer.append("Y${endPoint.y}")
                         writer.appendLine()
                     }
 
-                    PathSegment.Type.Quadratic, PathSegment.Type.Conic -> {
+                    PathSegment.Type.Quadratic, PathSegment.Type.Conic, PathSegment.Type.Cubic -> {
                         //二次曲线 转svg
-                        writer.append("G2")
-                        val startPoint = segment.points.getOrNull(0) //起点
-                        val point = segment.points.getOrNull(1)?.apply {
-                            lastPoint.set(x, y)
+                        val temp = Path()
+                        val p1 = segment.points[0]
+                        val p2 = segment.points[1]
+                        val p3 = segment.points[2]
+
+                        temp.moveTo(p1.x, p1.y)
+                        if (segment.type == PathSegment.Type.Quadratic) {
+                            temp.quadTo(p2.x, p2.y, p3.x, p3.y)
+                        } else if (segment.type == PathSegment.Type.Conic) {
+                            if (Build.VERSION.SDK_INT >= 34) {
+                                temp.conicTo(p2.x, p2.y, p3.x, p3.y, segment.weight)
+                            }
+                        } else {
+                            val p4 = segment.points[3]
+                            temp.cubicTo(p2.x, p2.y, p3.x, p3.y, p4.x, p4.y)
                         }
-                        writer.append("I${(startPoint!!.x + (point ?: lastPoint).x) / 2}")
-                        writer.append("J${(startPoint.y + (point ?: lastPoint).y) / 2}")
-                        writer.append("X${(point ?: lastPoint).x}")
-                        writer.append("Y${(point ?: lastPoint).y}")
-                        writer.appendLine()
+                        writer.appendLine(temp.toGCodeStrokeSingleContent())
                     }
 
                     PathSegment.Type.Close -> writer.appendLine("M2")
@@ -170,10 +181,10 @@ fun List<Path>.toGCodePathContent(
     return output
 }
 
-*//**将[Path]转换成gcode数据
- * [tolerance] 近似误差值*//*
+/**将[Path]转换成gcode数据
+ * [tolerance] 近似误差值*/
 fun Path.toGCodePathContent(output: File, tolerance: Float = 0.1f, append: Boolean = false): File {
     return toListOf().toGCodePathContent(output, tolerance, append)
-}*/
+}
 
 fun Appendable.append(value: Float): Appendable = append("$value")

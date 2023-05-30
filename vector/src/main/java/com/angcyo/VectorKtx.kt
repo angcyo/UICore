@@ -8,6 +8,7 @@ import com.angcyo.library.unit.IValueUnit
 import com.angcyo.svg.SvgWriteHandler
 import java.io.File
 import java.io.FileOutputStream
+import java.io.StringWriter
 
 
 /**
@@ -120,6 +121,18 @@ fun List<Path>.toGCodeStrokeContent(
         )
     }
     return output
+}
+
+/**简单的将[Path]转成GCode*/
+fun Path.toGCodeStrokeSingleContent(): String {
+    val gCodeHandler = GCodeWriteHandler()
+    gCodeHandler.unit = IValueUnit.MM_UNIT
+    gCodeHandler.isAutoCnc = false
+    StringWriter().use { writer ->
+        gCodeHandler.writer = writer
+        gCodeHandler.pathStrokeToVector(this, false, false)
+        return writer.toString()
+    }
 }
 
 /**只获取填充的数据*/
