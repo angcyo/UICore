@@ -429,14 +429,14 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 open class SeekBarConfig {
 
     /**进度改变回调,
-     * [value] 进度值[0~100]
-     * [fraction] 进度比例[0~1]
+     * [value] 进度值[0~100] [progressMinValue, progressMaxValue] [com.angcyo.widget.progress.DslProgressBar.progressValue]
+     * [fraction] 进度比例[0~1f]
      * [fromUser] 是否是用户触发*/
     var onSeekChanged: (value: Float, fraction: Float, fromUser: Boolean) -> Unit = { _, _, _ -> }
 
     /**Touch结束后的回调
-     * [value] 进度值[0~100]
-     * [fraction] 进度比例[0~1]
+     * [value] 进度值[0~100] [progressMinValue, progressMaxValue] [com.angcyo.widget.progress.DslProgressBar.progressValue]
+     * [fraction] 进度比例[0~1f]
      * */
     var onSeekTouchEnd: (value: Float, fraction: Float) -> Unit = { _, _ -> }
 }

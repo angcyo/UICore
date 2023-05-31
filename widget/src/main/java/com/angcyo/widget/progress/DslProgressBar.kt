@@ -57,7 +57,8 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         get() = progressMaxValue - progressMinValue
 
     /**当前的进度
-     * [0~100]*/
+     * [0~100]
+     * [progressMinValue]~[progressMaxValue]*/
     var progressValue: Float = 0f
         set(value) {
             val old = field
@@ -657,15 +658,28 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     }
 
     /**获取一个值[value], 在指定范围[minValue]~[maxValue]中的比例
-     * 返回的比例是[0~100f]的值*/
-    fun getProgress(value: Float, minValue: Float, maxValue: Float): Float {
-        return progressMinValue + (value - minValue) / (maxValue - minValue) * progressValidMaxValue
+     * 返回的比例是[0~100f]的值
+     *
+     * @return 返回进度比例*/
+    fun getProgress(
+        value: Float = progressValue,
+        minValue: Float = progressMinValue,
+        maxValue: Float = progressMaxValue
+    ): Float {
+        return (value - minValue) / (maxValue - minValue) * 100
     }
 
     /**获取一个进度[progress], 在指定范围[minValue]~[maxValue]中的值
      * [progress] 是[0~100f]的进度
+     *
+     * @return 返回的值是[minValue]~[maxValue]的值
      * */
-    fun getValue(progress: Float, minValue: Float, maxValue: Float): Float {
-        return minValue + (maxValue - minValue) * (progressMinValue + progress / progressValidMaxValue)
+    fun getValue(
+        progress: Float = _progressFraction * 100,
+        minValue: Float = progressMinValue,
+        maxValue: Float = progressMaxValue
+    ): Float {
+        val fraction = progress / 100
+        return minValue + (maxValue - minValue) * fraction
     }
 }
