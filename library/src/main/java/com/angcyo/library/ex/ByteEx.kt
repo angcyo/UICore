@@ -16,7 +16,10 @@ private val hexDigits: CharArray =
     charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
 
 /**加密字节数据
- * [algorithm] 加密算法 MD2/MD5/SHA1/SHA224/SHA256/SHA384/SHA512
+ * [algorithm] 加密算法 MD2/MD5/SHA-1/SHA-224/SHA-256/SHA-384/SHA-512
+ *
+ * 命名规则:
+ * https://docs.oracle.com/en/java/javase/11/docs/specs/security/standard-names.html
  * */
 fun ByteArray.encrypt(algorithm: String = "MD5"): ByteArray? {
     return try {
@@ -63,6 +66,9 @@ fun String.beautifyHex(fm: String = ":$0") = replace("(?<=[0-9A-F]{2})[0-9A-F]{2
 
 /**获取字节数组的md5值*/
 fun ByteArray.md5() = encrypt()?.toHexString()
+
+/**获取字节数组的hash值*/
+fun ByteArray.sha256() = encrypt("SHA-256")?.toHexString()
 
 //---
 
