@@ -50,7 +50,8 @@ fun Paint.textWidth(text: String?): Float {
     return measureText(text)
 }
 
-/**文本的高度*/
+/**文本的高度
+ * [textBounds]*/
 fun Paint?.textHeight(): Float = this?.run { descent() - ascent() } ?: 0f
 
 /**文本绘制的高度, 在绘制文本时top-此高度值, 就是文本绘制时的左下角坐标*/

@@ -9,8 +9,17 @@ import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.model.PointD
-import java.util.*
-import kotlin.math.*
+import java.util.Locale
+import kotlin.math.absoluteValue
+import kotlin.math.atan2
+import kotlin.math.ceil
+import kotlin.math.cos
+import kotlin.math.floor
+import kotlin.math.hypot
+import kotlin.math.pow
+import kotlin.math.roundToInt
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 /**
  *
@@ -238,6 +247,19 @@ fun Float.toDegrees(): Float = Math.toDegrees(this.toDouble()).toFloat()
 /**弧度转角度*/
 fun Double.toDegrees(): Double = Math.toDegrees(this)
 
+/**获取圆上指定角度的点坐标
+ * [cx] [cy] 圆心
+ * [radius] 半径
+ * [angleInDegrees] 角度, 非弧度*/
+fun getPointOnCircle(cx: Float, cy: Float, radius: Float, angleInDegrees: Float): PointF {
+    // 将角度值转换为弧度值
+    val angleInRadians = Math.toRadians(angleInDegrees.toDouble()).toFloat()
+    // 计算坐标
+    val x = cx + radius * cos(angleInRadians.toDouble()).toFloat()
+    val y = cy + radius * sin(angleInRadians.toDouble()).toFloat()
+    return PointF(x, y)
+}
+
 //<editor-fold desc="matrix">
 
 /**临时对象, 用来存储[Matrix]矩阵值*/
@@ -327,25 +349,25 @@ fun Matrix.getRotate(): Float = (360 + getRotateDegrees()) % 360
  * */
 fun Matrix.getRotateDegrees(): Float {
     getValues(_tempValues)
-/*//    // translation is simple
- * [0~-180°]
- * [180°~0]
-//    val tx = _tempValues[Matrix.MTRANS_X]
-//    val ty = _tempValues[Matrix.MTRANS_Y]
-//
-//    // calculate real scale
-//    val scalex: Float = _tempValues[Matrix.MSCALE_X]
-//    val skewy: Float = _tempValues[Matrix.MSKEW_Y]
-//    val rScale = sqrt((scalex * scalex + skewy * skewy).toDouble()).toFloat()
+    /*//    // translation is simple
+     * [0~-180°]
+     * [180°~0]
+    //    val tx = _tempValues[Matrix.MTRANS_X]
+    //    val ty = _tempValues[Matrix.MTRANS_Y]
+    //
+    //    // calculate real scale
+    //    val scalex: Float = _tempValues[Matrix.MSCALE_X]
+    //    val skewy: Float = _tempValues[Matrix.MSKEW_Y]
+    //    val rScale = sqrt((scalex * scalex + skewy * skewy).toDouble()).toFloat()
 
-    // calculate the degree of rotation
-    val rAngle = Math.round(
-        atan2(
-            _tempValues[Matrix.MSKEW_X].toDouble(),
-            _tempValues[Matrix.MSCALE_X].toDouble()
-        ) * (180 / Math.PI)
-    ).toFloat()
-    return rAngle*/
+        // calculate the degree of rotation
+        val rAngle = Math.round(
+            atan2(
+                _tempValues[Matrix.MSKEW_X].toDouble(),
+                _tempValues[Matrix.MSCALE_X].toDouble()
+            ) * (180 / Math.PI)
+        ).toFloat()
+        return rAngle*/
 
     val degrees = atan2(
         _tempValues[Matrix.MSKEW_X],
