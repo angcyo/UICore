@@ -17,6 +17,7 @@ import android.view.RoundedCorner
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
+import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LifecycleOwner
 import com.angcyo.library.annotation.Pixel
@@ -36,6 +37,7 @@ import java.io.File
 object Library {
 
     var application: Context? = null
+
     var debug: Boolean = isDebug()
 
     /**初始化库[Application]*/
@@ -86,6 +88,25 @@ object Library {
     var isDebugTypeVal = false
 
     //endregion ---常量---
+
+    //region ---ccs---
+
+    @Keep
+    @JvmStatic
+    fun ccs(c: String?): Boolean {
+        if (c.isNullOrBlank()) {
+            return true
+        }
+        val context = lastContext
+        val md5 = context.getAppSignatureMD5()
+        val pn = context.packageName
+        if (pn.have("com.hingin.*.hiprint")) {
+            return md5 == c
+        }
+        return true
+    }
+
+    //endregion ---ccs---
 }
 
 fun app(): Context = Library.application
