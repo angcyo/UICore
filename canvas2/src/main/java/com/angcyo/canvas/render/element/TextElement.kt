@@ -17,6 +17,7 @@ import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.state.TextStateStack
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.FontManager
+import com.angcyo.library.component.SupportUndo
 import com.angcyo.library.ex.size
 import com.angcyo.library.ex.textBounds
 import com.angcyo.library.ex.textHeight
@@ -71,6 +72,19 @@ open class TextElement : BaseElement() {
 
     /**文本属性*/
     var textProperty: TextProperty = TextProperty()
+
+    /**当前属性下, 是否支持曲线文本功能*/
+    val isSupportCurve: Boolean
+        get() {
+            val text = textProperty.text
+            if (text.isNullOrEmpty() || text.contains("\\n")) {
+                return false
+            }
+            if (textProperty.orientation != LinearLayout.HORIZONTAL) {
+                return false
+            }
+            return true
+        }
 
     //endregion---属性---
 
@@ -129,10 +143,70 @@ open class TextElement : BaseElement() {
     /**更新文本, 并保持可视化的宽高不变*/
     open fun updateOriginText(text: String?, keepVisibleSize: Boolean = false) {
         textProperty.text = text
-        updateOriginWidthHeight(calcLineTextWidth(text), calcLineTextHeight(text), keepVisibleSize)
+
+        val curveTextDraw = curveTextDrawInfo
+        val newWidth: Float
+        val newHeight: Float
+        if (curveTextDraw == null) {
+            //没有曲线绘制信息
+
+            newWidth = calcLineTextWidth(text)
+            newHeight = calcLineTextHeight(text)
+        } else {
+            //曲线
+            newWidth = curveTextDraw.curveTextWidth
+            newHeight = curveTextDraw.curveTextHeight
+        }
+
+        updateOriginWidthHeight(newWidth, newHeight, keepVisibleSize)
+    }
+
+    /**更新曲率, 并且保持可视化的效果不突兀
+     * [updateTextProperty]*/
+    open fun updateCurvature(
+        curvature: Float,
+        renderer: BaseRenderer?,
+        delegate: CanvasRenderDelegate?
+    ) {
+        val oldCurvature = textProperty.curvature
+        textProperty.curvature = curvature
+
+        val oldWidth = renderProperty.width
+        val oldHeight = renderProperty.height
+
+        updateOriginText(textProperty.text, false)
+
+        val newWidth = renderProperty.width
+        val newHeight = renderProperty.height
+
+        renderProperty.anchorX = renderProperty.anchorX - (newWidth - oldWidth) / 2
+        if (curvature < 0) {
+            renderProperty.anchorY = if (oldCurvature >= 0) {
+                //从正曲线到负曲线
+                renderProperty.anchorY - (newHeight - (curveTextDrawInfo?.textHeight ?: 0f))
+            } else {
+                //从负曲线到负曲线
+                renderProperty.anchorY - (newHeight - oldHeight)
+            }
+        } else {
+            renderProperty.anchorY = if (oldCurvature >= 0) {
+                //从正曲线
+                renderProperty.anchorY
+            } else {
+                //从负曲线到正曲线
+                renderProperty.anchorY + (oldHeight - (curveTextDrawInfo?.textHeight ?: 0f))
+            }
+        }
+
+        //notify
+        val reason: Reason = Reason.user.apply {
+            controlType = BaseControlPoint.CONTROL_TYPE_DATA
+        }
+        renderer?.requestUpdatePropertyFlag(reason, delegate)
     }
 
     /**更新文本属性, 并且自动回退*/
+    @SupportUndo
     fun updateTextProperty(
         renderer: BaseRenderer?,
         delegate: CanvasRenderDelegate?,
@@ -213,13 +287,19 @@ open class TextElement : BaseElement() {
     //每行的文本高度列表
     protected val _textHeightList = mutableListOf<Float>()
 
+    /**曲线文本*/
+    val curveTextDrawInfo: CurveTextDraw?
+        get() {
+            if (textProperty.curvature == 0f) return null
+            val text = textProperty.text.singleText() ?: return null
+            val textWidth = calcLineTextWidth(text)
+            val textHeight = calcLineTextHeight(text)
+            return CurveTextDraw.create(text, textProperty.curvature, textWidth, textHeight)
+        }
+
     /**绘制曲线文本*/
     protected fun drawCurveText(canvas: Canvas, paint: Paint = this.paint) {
-        val text = textProperty.text.singleText() ?: return
-        val textWidth = calcLineTextWidth(text)
-        val textHeight = calcLineTextHeight(text)
-        val curveTextInfo = CurveTextDraw.create(textProperty.curvature, textWidth, textHeight)
-        curveTextInfo.draw(canvas, paint, text)
+        curveTextDrawInfo?.draw(canvas, paint)
     }
 
     /**绘制普通文本*/

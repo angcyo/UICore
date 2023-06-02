@@ -1,6 +1,7 @@
 package com.angcyo.canvas.render.element
 
 import android.graphics.Canvas
+import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
@@ -16,6 +17,8 @@ import kotlin.math.absoluteValue
  * @since 2023/06/02
  */
 data class CurveTextDraw(
+    /**文本*/
+    var text: String,
     /**曲度[-360~360], 角度*/
     var curvature: Float = 0f,
     /**文本默认的原始宽度*/
@@ -37,7 +40,12 @@ data class CurveTextDraw(
 
     companion object {
         /**创建一个曲线绘制对象*/
-        fun create(curvature: Float, textWidth: Float, textHeight: Float): CurveTextDraw {
+        fun create(
+            text: String,
+            curvature: Float,
+            textWidth: Float,
+            textHeight: Float
+        ): CurveTextDraw {
             val fraction = curvature / 360f
             //圆的周长
             val circleLength = (textWidth * 1 / fraction).absoluteValue
@@ -45,7 +53,7 @@ data class CurveTextDraw(
             val radius = circleLength / 2 / Math.PI
             //外圆的半径
             val outRadius = radius + textHeight
-            return CurveTextDraw(curvature, textWidth, radius.toFloat(), outRadius.toFloat())
+            return CurveTextDraw(text, curvature, textWidth, radius.toFloat(), outRadius.toFloat())
         }
     }
 
@@ -156,8 +164,20 @@ data class CurveTextDraw(
         return path
     }
 
+    /**在指定位置绘制的最佳偏移量*/
+    fun getTranslateMatrix(x: Float, y: Float, result: Matrix = Matrix()): Matrix {
+        val tx = x - curveTextWidth / 2
+        val ty = if (curvature > 0) {
+            y - curveTextHeight / 2 + curveTextHeight / 2 - textHeight
+        } else {
+            y - curveTextHeight
+        }
+        result.setTranslate(tx, ty)
+        return result
+    }
+
     /**绘制曲线文本,按照角度变化, 一个一个字符绘制 */
-    fun draw(canvas: Canvas, paint: Paint, text: String) {
+    fun draw(canvas: Canvas, paint: Paint) {
         //开始绘制的角度
         val startAngle = leftAngleDegrees
         //每个像素对应的角度
