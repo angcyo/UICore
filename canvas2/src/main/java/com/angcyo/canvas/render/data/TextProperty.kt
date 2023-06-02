@@ -59,4 +59,8 @@ data class TextProperty(
     /**文本颜色*/
     var textColor: String? = null,
 
+    /** 曲线文本曲率[-360~360], 0表示正常文本
+     * [com.angcyo.laserpacker.bean.LPElementBean.curvature]*/
+    var curvature: Float = 0f,
+
     )

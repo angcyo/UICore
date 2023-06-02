@@ -77,13 +77,20 @@ open class TextElement : BaseElement() {
     /**获取每一行的文本*/
     protected fun String?.lineTextList(): List<String> = this?.lines() ?: emptyList()
 
+    /**将多行文本转换成单行*/
+    protected fun String?.singleText(): String? = this?.replace("\\n", "")
+
     override fun createStateStack(): IStateStack = TextStateStack()
 
     override fun onRenderInside(renderer: BaseRenderer?, canvas: Canvas, params: RenderParams) {
         updatePaint()
         val renderMatrix = params._renderMatrix
         canvas.concat(renderMatrix)
-        drawNormalText(canvas)
+        if (textProperty.curvature == 0f) {
+            drawNormalText(canvas)
+        } else {
+            drawCurveText(canvas)
+        }
     }
 
     /**更新画笔样式*/
@@ -205,6 +212,15 @@ open class TextElement : BaseElement() {
 
     //每行的文本高度列表
     protected val _textHeightList = mutableListOf<Float>()
+
+    /**绘制曲线文本*/
+    protected fun drawCurveText(canvas: Canvas, paint: Paint = this.paint) {
+        val text = textProperty.text.singleText() ?: return
+        val textWidth = calcLineTextWidth(text)
+        val textHeight = calcLineTextHeight(text)
+        val curveTextInfo = CurveTextDraw.create(textProperty.curvature, textWidth, textHeight)
+        curveTextInfo.draw(canvas, paint, text)
+    }
 
     /**绘制普通文本*/
     protected fun drawNormalText(canvas: Canvas, paint: Paint = this.paint) {
