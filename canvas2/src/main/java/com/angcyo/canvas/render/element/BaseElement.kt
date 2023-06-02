@@ -10,6 +10,7 @@ import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.util.*
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.SupportUndo
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.createOverrideBitmapCanvas
@@ -46,6 +47,7 @@ abstract class BaseElement : IElement {
      * 更新元素, 并且支持回退
      * [onUpdateElementBefore]
      * [onUpdateElementAfter]*/
+    @SupportUndo
     override fun updateElement(
         renderer: BaseRenderer?,
         delegate: CanvasRenderDelegate?,

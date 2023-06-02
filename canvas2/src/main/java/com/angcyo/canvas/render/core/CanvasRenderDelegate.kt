@@ -23,6 +23,7 @@ import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.Strategy
+import com.angcyo.library.component.SupportUndo
 import com.angcyo.library.component.onMain
 import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
@@ -403,6 +404,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     }
 
     /**自动添加一个状态到回退栈*/
+    @SupportUndo
     fun addStateToStack(
         renderer: BaseRenderer,
         undoState: IStateStack,
