@@ -120,6 +120,27 @@ abstract class BaseRenderer : IRenderer {
 
     //region---core---
 
+    /**仅在[renderOnInside]中绘制*/
+    open fun onlyRenderOnInside() {
+        renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_OUTSIDE)
+        renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_VIEW)
+        renderFlags = renderFlags.add(IRenderer.RENDERER_FLAG_ON_INSIDE)
+    }
+
+    /**仅在[renderOnOutside]中绘制*/
+    open fun onlyRenderOnOutside() {
+        renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
+        renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_VIEW)
+        renderFlags = renderFlags.add(IRenderer.RENDERER_FLAG_ON_OUTSIDE)
+    }
+
+    /**仅在[renderOnView]中绘制*/
+    open fun onlyRenderOnView() {
+        renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
+        renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_OUTSIDE)
+        renderFlags = renderFlags.add(IRenderer.RENDERER_FLAG_ON_VIEW)
+    }
+
     /**[com.angcyo.canvas.render.core.component.CanvasRenderProperty.getRenderRect]*/
     @CanvasInsideCoordinate
     open fun getRendererRect(result: RectF = _renderRect, includeRotate: Boolean = false) =
