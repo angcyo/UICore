@@ -32,7 +32,11 @@ class CanvasMoveSelectorComponent(val selectorManager: CanvasSelectorManager) :
     var paint = createRenderPaint(width = 1 * dp)
 
     /**选择框的颜色*/
-    var paintColor: Int = _color(R.color.canvas_render_select)
+    var borderColor: Int = _color(R.color.canvas_render_select)
+
+    /**选择框填充的颜色*/
+    val fillColor: Int
+        get() = borderColor.alpha(32)
 
     override var isEnableComponent: Boolean = true
 
@@ -44,11 +48,11 @@ class CanvasMoveSelectorComponent(val selectorManager: CanvasSelectorManager) :
     override fun renderOnOutside(canvas: Canvas, params: RenderParams) {
         if (isHandleTouch) {
             paint.style = Paint.Style.FILL
-            paint.color = paintColor.alpha(32)
+            paint.color = fillColor
             canvas.drawRect(selectRect, paint)
 
             paint.style = Paint.Style.STROKE
-            paint.color = paintColor
+            paint.color = borderColor
             canvas.drawRect(selectRect, paint)
         }
     }
@@ -59,6 +63,7 @@ class CanvasMoveSelectorComponent(val selectorManager: CanvasSelectorManager) :
                 isHandleTouch = false
                 ignoreHandle = true
             }
+
             MotionEvent.ACTION_MOVE -> {
                 val dx = _movePointList[0].x - _downPointList[0].x
                 val dy = _movePointList[0].y - _downPointList[0].y
@@ -80,6 +85,7 @@ class CanvasMoveSelectorComponent(val selectorManager: CanvasSelectorManager) :
                     selectorManager.delegate.refresh()
                 }
             }
+
             MotionEvent.ACTION_UP -> {
                 if (isHandleTouch) {
                     selectorManager.delegate.renderViewBox.transformToInside(selectRect, _tempRect)

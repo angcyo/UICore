@@ -1,15 +1,29 @@
 package com.angcyo.canvas.render.core
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.RectF
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withSave
+import com.angcyo.canvas.render.R
+import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.data.AxisPoint
 import com.angcyo.canvas.render.data.RenderParams
-import com.angcyo.library.unit.IRenderUnit
-import com.angcyo.library.unit.MmRenderUnit
 import com.angcyo.canvas.render.util.createRenderPaint
 import com.angcyo.library.annotation.Pixel
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex._color
+import com.angcyo.library.ex.alpha
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.have
+import com.angcyo.library.ex.remove
+import com.angcyo.library.ex.textDrawHeight
+import com.angcyo.library.ex.textHeight
+import com.angcyo.library.ex.textWidth
+import com.angcyo.library.ex.toColor
+import com.angcyo.library.unit.IRenderUnit
+import com.angcyo.library.unit.MmRenderUnit
 
 /**
  * 坐标尺/网格 绘制和管理
@@ -54,13 +68,25 @@ class CanvasAxisManager(val delegate: CanvasRenderDelegate) : IRenderer {
         style = Paint.Style.FILL
     }
 
+    /**元素大小提示画笔
+     * [com.angcyo.canvas.render.core.component.CanvasMoveSelectorComponent.fillColor]*/
+    val selectElementSizePaint = createRenderPaint().apply {
+        style = Paint.Style.FILL
+        color = _color(R.color.canvas_render_select).alpha(120)
+    }
+
     /**是否要绘制网格线*/
     var enableRenderGrid: Boolean = true
 
     /**是否要绘制刻度尺的横竖线*/
     var enableRenderBounds: Boolean = true
 
+    /**是否要绘制选中元素的坐标提示*/
+    var enableRenderSelectElementSize: Boolean = true
+
     override var renderFlags: Int = 0xf
+
+    private val tempRectF = RectF()
 
     init {
         renderFlags = renderFlags.remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
@@ -90,10 +116,16 @@ class CanvasAxisManager(val delegate: CanvasRenderDelegate) : IRenderer {
         }
         canvas.withSave {
             clipRect(xAxisBounds)
+            if (enableRenderSelectElementSize) {
+                renderXAxisSelectElement(canvas)
+            }
             renderXAxis(canvas)
         }
         canvas.withSave {
             clipRect(yAxisBounds)
+            if (enableRenderSelectElementSize) {
+                renderYAxisSelectElement(canvas)
+            }
             renderYAxis(canvas)
         }
         if (enableRenderGrid) {
@@ -102,6 +134,8 @@ class CanvasAxisManager(val delegate: CanvasRenderDelegate) : IRenderer {
         if (enableRenderBounds) {
             renderAxisBounds(canvas)
         }
+
+        //renderOriginPoint(canvas)
     }
 
     /**更新刻度尺的绘制范围
@@ -240,6 +274,68 @@ class CanvasAxisManager(val delegate: CanvasRenderDelegate) : IRenderer {
         )
     }
 
+    fun renderXAxisSelectElement(canvas: Canvas) {
+        if (delegate.selectorManager.isSelectorElement) {
+            val bounds = delegate.selectorManager.selectorComponent.getRendererBounds() ?: return
+            renderXAxisRect(canvas, bounds.left, bounds.right)
+        }
+    }
+
+    fun renderYAxisSelectElement(canvas: Canvas) {
+        if (delegate.selectorManager.isSelectorElement) {
+            val bounds = delegate.selectorManager.selectorComponent.getRendererBounds() ?: return
+            renderYAxisRect(canvas, bounds.top, bounds.bottom)
+        }
+    }
+
+    /**在x轴上绘制一块区域
+     * [fromX] 坐标系中的坐标*/
+    fun renderXAxisRect(
+        canvas: Canvas,
+        @CanvasInsideCoordinate @Pixel fromX: Float,
+        @CanvasInsideCoordinate @Pixel toX: Float
+    ) {
+        val fx = getXPixelInView(fromX)
+        val tx = getXPixelInView(toX)
+        tempRectF.set(fx, xAxisBounds.top, tx, xAxisBounds.bottom)
+        canvas.drawRect(tempRectF, selectElementSizePaint)
+    }
+
+    /**在y轴上绘制一块区域*/
+    fun renderYAxisRect(
+        canvas: Canvas,
+        @CanvasInsideCoordinate @Pixel fromY: Float,
+        @CanvasInsideCoordinate @Pixel toY: Float
+    ) {
+        val fy = getYPixelInView(fromY)
+        val ty = getYPixelInView(toY)
+        tempRectF.set(yAxisBounds.left, fy, yAxisBounds.right, ty)
+        canvas.drawRect(tempRectF, selectElementSizePaint)
+    }
+
+    /**渲染出坐标系的中点*/
+    fun renderOriginPoint(canvas: Canvas) {
+        val renderViewBox = delegate.renderViewBox
+        val originPoint = renderViewBox.getOriginPointOutside()
+        renderViewBox.offsetToView(originPoint)
+
+        selectElementSizePaint.style = Paint.Style.FILL_AND_STROKE
+        selectElementSizePaint.strokeWidth = 1 * dp
+        canvas.drawLine(
+            originPoint.x,
+            0f,
+            originPoint.x,
+            delegate.view.measuredHeight.toFloat(),
+            selectElementSizePaint
+        )
+        canvas.drawLine(
+            0f,
+            originPoint.y,
+            delegate.view.measuredWidth.toFloat(),
+            originPoint.y,
+            selectElementSizePaint
+        )
+    }
     //endregion---绘制---
 
     //region---计算---
@@ -248,6 +344,28 @@ class CanvasAxisManager(val delegate: CanvasRenderDelegate) : IRenderer {
     fun updateAxisList() {
         updateXAxisList()
         updateYAxisList()
+    }
+
+    /**获取当前像素坐标[x] 对应在x轴上的位置*/
+    fun getXPixelInView(@CanvasInsideCoordinate @Pixel x: Float): Float {
+        val renderViewBox = delegate.renderViewBox
+        val scale = renderViewBox.getScaleX()
+
+        val originPoint = renderViewBox.getOriginPointOutside()
+        renderViewBox.offsetToView(originPoint)
+
+        return originPoint.x + x * scale
+    }
+
+    /**获取当前像素坐标[y] 对应在y轴上的位置*/
+    fun getYPixelInView(@CanvasInsideCoordinate @Pixel y: Float): Float {
+        val renderViewBox = delegate.renderViewBox
+        val scale = renderViewBox.getScaleY()
+
+        val originPoint = renderViewBox.getOriginPointOutside()
+        renderViewBox.offsetToView(originPoint)
+
+        return originPoint.y + y * scale
     }
 
     private fun updateXAxisList() {
