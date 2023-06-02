@@ -114,3 +114,15 @@ interface IDoStep {
     /**执行重做操作*/
     fun runRedo()
 }
+
+/**当前操作支持撤销/重做*/
+@MustBeDocumented
+@Retention(AnnotationRetention.SOURCE)
+@Target(
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.FIELD,
+    AnnotationTarget.LOCAL_VARIABLE,
+    AnnotationTarget.VALUE_PARAMETER,
+)
+annotation class SupportUndo
