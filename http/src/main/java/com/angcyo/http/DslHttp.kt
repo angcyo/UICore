@@ -699,7 +699,11 @@ fun get(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
     return http(config)
 }
 
-/**快速发送一个[post]请求*/
+/**快速发送一个[post]请求
+ * 支持
+ * [com.angcyo.http.BaseRequestConfig.body]
+ * [com.angcyo.http.BaseRequestConfig.requestBody]
+ * */
 fun post(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
     return http {
         method = POST
