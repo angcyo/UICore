@@ -2,6 +2,7 @@ package com.angcyo.http.rsa
 
 import android.util.Base64
 import java.io.UnsupportedEncodingException
+import java.nio.charset.Charset
 import java.security.NoSuchAlgorithmException
 import javax.crypto.Cipher
 import javax.crypto.NoSuchPaddingException
@@ -93,10 +94,10 @@ object AESEncrypt {
      * @return
      */
     @Throws(UnsupportedEncodingException::class)
-    fun encrypt(content: String, key: String, salt: String): String {
+    fun encrypt(content: String, key: String, salt: String): String? {
         val secretKey = generateSecretKey(key, salt)
-        val bytes = content.toByteArray(charset(UTF_8))
-        return Base64.encodeToString(encryptAES(bytes, secretKey), Base64.NO_WRAP)
+        val bytes = encryptAES(content.toByteArray(charset(UTF_8)), secretKey) ?: return null
+        return Base64.encodeToString(bytes, Base64.NO_WRAP)
     }
 
     /**
@@ -106,8 +107,19 @@ object AESEncrypt {
      * @return
      */
     @Throws(UnsupportedEncodingException::class)
-    fun decrypt(content: String?, key: String, salt: String): String {
+    fun decrypt(content: String?, key: String, salt: String): String? {
         val secretKey = generateSecretKey(key, salt)
-        return decryptAES(Base64.decode(content, Base64.NO_WRAP), secretKey).toString()
+        return decryptAES(
+            Base64.decode(content, Base64.NO_WRAP),
+            secretKey
+        )?.toString(Charset.defaultCharset())
     }
 }
+
+/**使用aes加密*/
+fun String.aesEncrypt(key: String, salt: String = "angcyo"): String? =
+    AESEncrypt.encrypt(this, key, salt)
+
+/**使用aes解密*/
+fun String.aesDecrypt(key: String, salt: String = "angcyo"): String? =
+    AESEncrypt.decrypt(this, key, salt)
