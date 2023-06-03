@@ -2,12 +2,12 @@
 <resources>
     <string name="dialog_positive">확인</string>
     <string name="dialog_negative">취소</string>
-    <string name="dialog_neutral">中立</string>
+    <string name="dialog_neutral">중립</string>
     <string name="dialog_continue">계속</string>
-    <string name="dialog_input_hint">请输入...</string>
+    <string name="dialog_input_hint">입력하십시오...</string>
 
-    <string name="dialog_color_picker">请选择颜色...</string>
-    <string name="dialog_width_picker">请选择粗细...</string>
+    <string name="dialog_color_picker">색상을 선택하십시오...</string>
+    <string name="dialog_width_picker">굵기를 선택하십시오...</string>
 
-    <string name="not_prompt_label">不再提示</string>
+    <string name="not_prompt_label">더 이상 나타나지 않기</string>
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="doodle_title">그래피티</string>
+    <string name="doodle_title">낙서</string>
 
     <string name="doodle_undo">취소</string>
     <string name="doodle_redo">다시 하기</string>
@@ -10,6 +10,6 @@
     <string name="doodle_pencil">펜</string>
     <string name="doodle_size">크기</string>
 
-    <string name="doodle_ai_draw">AI绘图</string>
+    <string name="doodle_ai_draw">AI플롯</string>
 
 </resources>

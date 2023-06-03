@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="permission_disabled">권한이 비활성화됨</string>
+    <string name="permission_disabled">사용권한이 비활성화 됨</string>
 
-    <string name="ui_back">返回</string>
-    <string name="ui_enable_permission">开启权限</string>
-    <string name="core_screen_shot_text">문제 피드백</string>
+    <string name="ui_back">뒤로가기</string>
+    <string name="ui_enable_permission">권한허용</string>
+    <string name="core_screen_shot_text">피드백</string>
 
-    <string name="core_thread_error_tip">遇到了一点问题</string>
+    <string name="core_thread_error_tip">작은 문제가 발생하였습니다. </string>
 
-    <string name="core_send_to_label">发送到...</string>
-    <string name="ui_minimum">最小化</string>
+    <string name="core_send_to_label">보내기...</string>
+    <string name="ui_minimum">최소화</string>
 
 </resources>
