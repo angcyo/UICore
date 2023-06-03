@@ -390,6 +390,17 @@ def readCsvLines(path, regex = ",") {
     return result
 }
 
+/**2023-6-3
+ * 将一行一行, 一列一列的数据转成map[:]
+ */
+static def convertLinesToMap(lines, keyIndex = 0, valueIndex = 1) {
+    def map = [:]
+    lines.forEach { line ->
+        map[line[keyIndex]] = line[valueIndex]
+    }
+    return map
+}
+
 //导出
 ext {
     isMac = this.&isMac
@@ -411,4 +422,5 @@ ext {
     readXmlMap = this.&readXmlMap
     readExcelLines = this.&readExcelLines
     readCsvLines = this.&readCsvLines
+    convertLinesToMap = this.&convertLinesToMap
 }

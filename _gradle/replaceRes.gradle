@@ -8,8 +8,31 @@ task _replaceRes(group: 'angcyo', description: '替换xml文件中的字符串�
 }
 
 _replaceRes.doFirst {
+    //replaceResWithCsv()
+    replaceResWithExcel()
+}
+
+/**使用excel的数据结构替换res*/
+def replaceResWithExcel() {
+    //8国资源都在这里
+    def lines = readExcelLines("翻译稿.xlsx")
+
+    _replaceLanguageFile("-zh", "", convertLinesToMap(lines, 0, 1))
+    //_replaceLanguageFile("-zh", "-ja", convertLinesToMap(lines, 0, 2))
+    //_replaceLanguageFile("-zh", "-ko", convertLinesToMap(lines, 0, 3))
+    //_replaceLanguageFile("-zh", "-de", convertLinesToMap(lines, 0, 4))
+    //_replaceLanguageFile("-zh", "-es", convertLinesToMap(lines, 0, 5))
+    //_replaceLanguageFile("-zh", "-fr", convertLinesToMap(lines, 0, 6))
+    //_replaceLanguageFile("-zh", "-zh-rHK", convertLinesToMap(lines, 0, 7))
+    //_replaceLanguageFile("-zh", "-zh-rTW", convertLinesToMap(lines, 0, 7))
+}
+
+/**使用csv的数据结构替换res*/
+def replaceResWithCsv() {
     def csvPath = file("res.csv").absolutePath
 
+    def enCsvPath = file("en.csv")
+    def jaCsvPath = file("ja.csv")
     def koCsvPath = file("ko.csv")
     def frCsvPath = file("fr.csv")
     def deCsvPath = file("de.csv")
@@ -18,6 +41,8 @@ _replaceRes.doFirst {
     def rHKCsvPath = file("rHK.csv")
     def rTWCsvPath = rHKCsvPath
 
+    //_replaceLanguageFile("-zh", "", _readCsvMap(enCsvPath))
+    //_replaceLanguageFile("-zh", "-ja", _readCsvMap(jaCsvPath))
     //_replaceLanguageFile("-zh", "-ko", _readCsvMap(koCsvPath))
     //_replaceLanguageFile("-zh", "-fr", _readCsvMap(frCsvPath))
     //_replaceLanguageFile("-zh", "-de", _readCsvMap(deCsvPath))

@@ -1,0 +1,98 @@
+/**
+ * 2023-6-3
+ * 合并多个Excel文件, 按照对应的列合并到一个Excel文件中
+ * */
+
+buildscript {
+    repositories {
+        mavenCentral()
+        /*maven {
+            url "http://repo.serebryanskiy.site/"
+            allowInsecureProtocol = true
+        }*/
+    }
+    dependencies {
+        // https://mvnrepository.com/artifact/org.apache.poi/poi
+        //classpath 'org.apache.poi:poi:5.2.3'
+        classpath 'org.apache.poi:poi-ooxml:5.2.3'
+        // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
+        classpath 'org.apache.logging.log4j:log4j-core:2.20.0'
+    }
+}
+
+task _mergeExcel(group: 'angcyo', description: '合并多个Excel文件, 按照对应的列合并到一个Excel文件中') {
+    //配置任务
+}
+
+_mergeExcel.doFirst {
+    def workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook()
+    def sheet = workbook.createSheet("Sheet1")
+
+    //读取基表
+    def baseLines = readExcelLines("E:/Temp/v2.xlsx")
+    baseLines.forEach { line ->
+        def row = sheet.createRow(sheet.lastRowNum + 1)
+        line.eachWithIndex { value, index ->
+            def cell = row.createCell(index)
+            cell.setCellValue(value)
+        }
+    }
+
+    //补齐增量表
+    def enLines = readExcelLines("E:/Temp/v2-en.xlsx")
+    def krLines = readExcelLines("E:/Temp/v2-kr.xlsx")
+    def jpLines = readExcelLines("E:/Temp/v2-jp.xlsx")
+    def otherLines = readExcelLines("E:/Temp/v2-other.xlsx")
+    otherLines.subList(1, otherLines.size()).forEach { line ->
+        def zh = line[0] //中文
+        def de = line[1] //德语
+        def es = line[2] //西班牙语
+        def fr = line[3] //法语
+
+        def en = getExcelLineValue(enLines, zh) //英语
+        def ja = getExcelLineValue(jpLines, zh) //日语
+        def ko = getExcelLineValue(krLines, zh) //韩语
+        def zh_rHK = zh //繁体
+
+        def row = sheet.createRow(sheet.lastRowNum + 1)
+        def zhCell = row.createCell(0)
+        def enCell = row.createCell(1)
+        def jaCell = row.createCell(2)
+        def koCell = row.createCell(3)
+        def deCell = row.createCell(4)
+        def esCell = row.createCell(5)
+        def frCell = row.createCell(6)
+        def zh_rHKCell = row.createCell(7)
+        //def zh_rTWCell = row.createCell(8)
+
+        zhCell.setCellValue(zh)
+        enCell.setCellValue(en)
+        jaCell.setCellValue(ja)
+        koCell.setCellValue(ko)
+        deCell.setCellValue(de)
+        esCell.setCellValue(es)
+        frCell.setCellValue(fr)
+        zh_rHKCell.setCellValue(zh_rHK)
+        //zh_rTWCell.setCellValue(zh_rHK)
+    }
+
+    //写入到excel文件中
+    def file = file("翻译稿.xlsx")
+    file.withOutputStream { outputStream ->
+        workbook.write(outputStream)
+    }
+
+    System.err.println "已合并到-> ${file.absolutePath}"
+}
+
+/**在一行一行, 一列一列中找到对应key的value*/
+static def getExcelLineValue(lines, key) {
+    def result = key
+    lines.forEach { line ->
+        if (line[0] == key) {
+            result = line[1] //value
+            return result
+        }
+    }
+    return result // default
+}
