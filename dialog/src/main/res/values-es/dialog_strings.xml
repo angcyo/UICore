@@ -2,12 +2,12 @@
 <resources>
     <string name="dialog_positive">Confirmación </string>
     <string name="dialog_negative">Cancelar</string>
-    <string name="dialog_neutral">中立</string>
+    <string name="dialog_neutral">neutralidad</string>
     <string name="dialog_continue">Continuar</string>
-    <string name="dialog_input_hint">请输入...</string>
+    <string name="dialog_input_hint">Por favor, introduzca...</string>
 
-    <string name="dialog_color_picker">请选择颜色...</string>
-    <string name="dialog_width_picker">请选择粗细...</string>
+    <string name="dialog_color_picker">Por favor, seleccione un color...</string>
+    <string name="dialog_width_picker">Por favor, seleccione un grosor...</string>
 
-    <string name="not_prompt_label">不再提示</string>
+    <string name="not_prompt_label">No más avisos</string>
 </resources>
