@@ -2,12 +2,12 @@
 <resources>
     <string name="dialog_positive">Bestätigen</string>
     <string name="dialog_negative">Abbrechen</string>
-    <string name="dialog_neutral">中立</string>
+    <string name="dialog_neutral">Neutralität</string>
     <string name="dialog_continue">Weiter</string>
-    <string name="dialog_input_hint">请输入...</string>
+    <string name="dialog_input_hint">Bitte geben Sie ein...</string>
 
-    <string name="dialog_color_picker">请选择颜色...</string>
-    <string name="dialog_width_picker">请选择粗细...</string>
+    <string name="dialog_color_picker">Bitte wählen Sie eine Farbe...</string>
+    <string name="dialog_width_picker">Bitte wählen Sie eine Dicke...</string>
 
-    <string name="not_prompt_label">不再提示</string>
+    <string name="not_prompt_label">Keine Eingabeaufforderungen mehr</string>
 </resources>
