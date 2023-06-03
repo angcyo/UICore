@@ -18,6 +18,7 @@ import com.angcyo.canvas.render.state.TextStateStack
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.FontManager
 import com.angcyo.library.component.SupportUndo
+import com.angcyo.library.ex.have
 import com.angcyo.library.ex.size
 import com.angcyo.library.ex.textBounds
 import com.angcyo.library.ex.textHeight
@@ -77,10 +78,23 @@ open class TextElement : BaseElement() {
     val isSupportCurve: Boolean
         get() {
             val text = textProperty.text
-            if (text.isNullOrEmpty() || text.contains("\\n")) {
+            if (text.isNullOrEmpty() || text.have("\\n")) {
                 return false
             }
             if (textProperty.orientation != LinearLayout.HORIZONTAL) {
+                return false
+            }
+            return true
+        }
+
+    /**当前样式下, 是否支持行距*/
+    val isSupportLineSpacing: Boolean
+        get() {
+            val text = textProperty.text
+            if (text.isNullOrEmpty() || !text.have("\\n")) {
+                return false
+            }
+            if (textProperty.curvature != 0f) {
                 return false
             }
             return true
@@ -92,7 +106,7 @@ open class TextElement : BaseElement() {
     protected fun String?.lineTextList(): List<String> = this?.lines() ?: emptyList()
 
     /**将多行文本转换成单行*/
-    protected fun String?.singleText(): String? = this?.replace("\\n", "")
+    protected fun String?.singleText(): String? = this?.replace("\n", "")
 
     override fun createStateStack(): IStateStack = TextStateStack()
 
