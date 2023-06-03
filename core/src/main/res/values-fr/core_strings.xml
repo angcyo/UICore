@@ -2,13 +2,13 @@
 <resources>
     <string name="permission_disabled">Autorisations désactivées</string>
 
-    <string name="ui_back">返回</string>
-    <string name="ui_enable_permission">开启权限</string>
+    <string name="ui_back">rendre</string>
+    <string name="ui_enable_permission">Activer les autorisations</string>
     <string name="core_screen_shot_text">Question en retour</string>
 
-    <string name="core_thread_error_tip">遇到了一点问题</string>
+    <string name="core_thread_error_tip">J’ai rencontré un petit problème</string>
 
-    <string name="core_send_to_label">发送到...</string>
-    <string name="ui_minimum">最小化</string>
+    <string name="core_send_to_label">Envoyer à...</string>
+    <string name="ui_minimum">minimiser</string>
 
 </resources>
