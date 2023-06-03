@@ -74,7 +74,13 @@ open class TextElement : BaseElement() {
     /**文本属性*/
     var textProperty: TextProperty = TextProperty()
 
-    /**当前属性下, 是否支持曲线文本功能*/
+    /**是否已经是曲线文本*/
+    val isCurveText: Boolean
+        get() = textProperty.curvature != 0f
+
+    /**当前属性下, 是否支持曲线文本功能
+     * 目前只支持水平方向的文本
+     * */
     val isSupportCurve: Boolean
         get() {
             val text = textProperty.text
