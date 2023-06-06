@@ -67,6 +67,23 @@ open class TextElement : BaseElement() {
 
         /**斜体的倾斜系数*/
         const val ITALIC_SKEW = -0.25f
+
+        /**
+         * [TEXT_STYLE_BOLD]
+         * [TEXT_STYLE_ITALIC]
+         * [TEXT_STYLE_UNDER_LINE]
+         * [TEXT_STYLE_DELETE_LINE]
+         * */
+        fun updatePaintStyle(paint: Paint, style: Int) {
+            paint.let {
+                //删除线
+                it.isStrikeThruText = style.have(TEXT_STYLE_DELETE_LINE)
+                //下划线
+                it.isUnderlineText = style.have(TEXT_STYLE_UNDER_LINE)
+                it.isFakeBoldText = style.have(TEXT_STYLE_BOLD)
+                it.textSkewX = if (style.have(TEXT_STYLE_ITALIC)) ITALIC_SKEW else 0f //倾斜
+            }
+        }
     }
 
     //region---属性---
