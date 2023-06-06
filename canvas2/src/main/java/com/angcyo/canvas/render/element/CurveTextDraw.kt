@@ -35,6 +35,9 @@ data class CurveTextDraw(
     /**曲线绘制中心坐标*/
     var curveCx: Float = 0f,
     var curveCy: Float = 0f,
+    /**曲线内部最大空洞的高度和宽度*/
+    var curveInnerWidth: Float = 0f,
+    var curveInnerHeight: Float = 0f,
     /**曲线文本的宽高*/
     var curveTextWidth: Float = 0f,
     var curveTextHeight: Float = 0f,
@@ -84,13 +87,19 @@ data class CurveTextDraw(
         //计算宽高
         if (curvature.absoluteValue == 360f) {
             curveTextWidth = outerRadius * 2
-            curveTextHeight = outerRadius * 2
+            curveTextHeight = curveTextWidth
+            curveInnerWidth = innerRadius * 2
+            curveInnerHeight = curveInnerWidth
         } else if (curvature.absoluteValue >= 180) {
             curveTextWidth = outerRadius * 2
-
             val top = getPointOnCircle(0f, 0f, outerRadius, baseAngleDegrees)
             val bottom = getPointOnCircle(0f, 0f, outerRadius, leftAngleDegrees)
             curveTextHeight = (top.y - bottom.y).absoluteValue
+
+            curveInnerWidth = innerRadius * 2
+            val innerTop = getPointOnCircle(0f, 0f, innerRadius, baseAngleDegrees)
+            val innerBottom = getPointOnCircle(0f, 0f, innerRadius, leftAngleDegrees)
+            curveInnerHeight = (innerTop.y - innerBottom.y).absoluteValue
         } else {
             val left = getPointOnCircle(0f, 0f, outerRadius, leftAngleDegrees)
             val right = getPointOnCircle(0f, 0f, outerRadius, rightAngleDegrees)
@@ -99,6 +108,14 @@ data class CurveTextDraw(
             val top = getPointOnCircle(0f, 0f, outerRadius, baseAngleDegrees)
             val bottom = getPointOnCircle(0f, 0f, innerRadius, leftAngleDegrees)
             curveTextHeight = (top.y - bottom.y).absoluteValue
+
+            val innerLeft = getPointOnCircle(0f, 0f, innerRadius, leftAngleDegrees)
+            val innerRight = getPointOnCircle(0f, 0f, innerRadius, rightAngleDegrees)
+            curveInnerWidth = (innerLeft.x - innerRight.x).absoluteValue
+
+            val innerTop = getPointOnCircle(0f, 0f, innerRadius, baseAngleDegrees)
+            val innerBottom = getPointOnCircle(0f, 0f, innerRadius, leftAngleDegrees)
+            curveInnerHeight = (innerTop.y - innerBottom.y).absoluteValue
         }
 
         //计算相对于0,0位置应该绘制的中心位置
@@ -200,7 +217,7 @@ data class CurveTextDraw(
         var charStartAngle = startAngle
         for (char in text) {
             val fontMetrics = paint.fontMetrics
-            
+
             val charStr = char.toString()
             val charWidth = paint.textWidth(charStr)
             val charHeight = textHeight
