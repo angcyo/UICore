@@ -1,11 +1,13 @@
 package com.angcyo.canvas.render.element
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import androidx.core.graphics.withRotation
+import com.angcyo.canvas.render.BuildConfig
 import com.angcyo.library.ex.ensure
 import com.angcyo.library.ex.getPointOnCircle
 import com.angcyo.library.ex.textWidth
@@ -203,10 +205,7 @@ data class CurveTextDraw(
             val textRotateCenterX = curveCx + innerRadius + charHeight / 2
             val textRotateCenterY = curveCy /*+ charWidth / 2*/
             val drawX = textRotateCenterX - charWidth / 2
-            var drawY = textRotateCenterY + charHeight / 2
-            if (curvature < 0) {
-                drawY -= paint.descent()
-            }
+            var drawY = textRotateCenterY + charHeight / 2 - paint.descent() + paint.strokeWidth
 
             val charAngle = pixelAngle * charWidth
             val rotate =
@@ -217,14 +216,14 @@ data class CurveTextDraw(
                     canvas.drawText(charStr, drawX, drawY, paint)
                 }
             }
-            /*if (BuildConfig.DEBUG && charStartAngle == startAngle) {
+            if (BuildConfig.DEBUG && charStartAngle == startAngle) {
                 //调试, 在未自旋的位置绘制
                 canvas.drawText(charStr, drawX, drawY, paint)
                 paint.color = Color.MAGENTA
                 canvas.withRotation(charRotate, textRotateCenterX, textRotateCenterY) {
                     canvas.drawText(charStr, drawX, drawY, paint)
                 }
-            }*/
+            }
             if (curvature > 0) {
                 charStartAngle += gapAngle + charAngle
             } else {
