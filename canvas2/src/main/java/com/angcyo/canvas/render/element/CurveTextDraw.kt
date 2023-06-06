@@ -200,27 +200,29 @@ data class CurveTextDraw(
             val charStr = char.toString()
             val charWidth = paint.textWidth(charStr)
             val charHeight = textHeight
-            /*val charMinSize = min(charWidth, charHeight)
-            val charMaxSize = max(charWidth, charHeight)*/
             val textRotateCenterX = curveCx + innerRadius + charHeight / 2
             val textRotateCenterY = curveCy /*+ charWidth / 2*/
-            val x = textRotateCenterX - charWidth / 2
-            val y = textRotateCenterY + charHeight / 2 - paint.descent()
+            val drawX = textRotateCenterX - charWidth / 2
+            var drawY = textRotateCenterY + charHeight / 2
+            if (curvature < 0) {
+                drawY -= paint.descent()
+            }
 
             val charAngle = pixelAngle * charWidth
             val rotate =
                 if (curvature > 0) charStartAngle + charAngle / 2 else charStartAngle - charAngle / 2
-            canvas.withRotation(rotate, curveCx, curveCy) {
-                canvas.withRotation(charRotate, textRotateCenterX, textRotateCenterY) {
-                    //文本
-                    canvas.drawText(charStr, x, y, paint)
+            canvas.withRotation(rotate, curveCx, curveCy) {//旋转到曲线上
+                canvas.withRotation(charRotate, textRotateCenterX, textRotateCenterY) { //自旋角度
+                    //正常绘制文本
+                    canvas.drawText(charStr, drawX, drawY, paint)
                 }
             }
-            /*if (charStartAngle == startAngle) {
-                canvas.drawText(charStr, x, y, paint)
+            /*if (BuildConfig.DEBUG && charStartAngle == startAngle) {
+                //调试, 在未自旋的位置绘制
+                canvas.drawText(charStr, drawX, drawY, paint)
                 paint.color = Color.MAGENTA
                 canvas.withRotation(charRotate, textRotateCenterX, textRotateCenterY) {
-                    canvas.drawText(charStr, x, y, paint)
+                    canvas.drawText(charStr, drawX, drawY, paint)
                 }
             }*/
             if (curvature > 0) {
