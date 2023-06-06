@@ -199,6 +199,8 @@ data class CurveTextDraw(
         val charRotate = if (curvature > 0) 90f else -90f
         var charStartAngle = startAngle
         for (char in text) {
+            val fontMetrics = paint.fontMetrics
+            
             val charStr = char.toString()
             val charWidth = paint.textWidth(charStr)
             val charHeight = textHeight

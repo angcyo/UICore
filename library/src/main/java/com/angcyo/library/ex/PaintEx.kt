@@ -54,6 +54,10 @@ fun Paint.textWidth(text: String?): Float {
  * [textBounds]*/
 fun Paint?.textHeight(): Float = this?.run { descent() - ascent() } ?: 0f
 
+/*fun Paint?.drawHeight(): Float = this?.run { (descent() - ascent()) / 2 - descent() } ?: 0f*/
+
+/*fun Paint?.fontMetrics(): Paint.FontMetrics? = this?.fontMetrics*/
+
 /**文本绘制的高度, 在绘制文本时top-此高度值, 就是文本绘制时的左下角坐标*/
 fun Paint?.textDrawHeight(): Float = this?.run { -ascent() } ?: 0f
 
