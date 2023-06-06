@@ -2,7 +2,10 @@ package com.angcyo.library.ex
 
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
 import kotlin.experimental.and
+
 
 /**
  *
@@ -30,6 +33,17 @@ fun ByteArray.encrypt(algorithm: String = "MD5"): ByteArray? {
         e.printStackTrace()
         null
     }
+}
+
+/**https://stackoverflow.com/questions/6026339/how-to-generate-hmac-sha1-signature-in-android*/
+fun ByteArray.hmacSha1(key: String, type: String = "HmacSHA1"): ByteArray? {
+    // 生成HmacSHA1专属密钥
+    val secretKey = SecretKeySpec(key.toByteArray(), type)
+    // 生成一个指定 Mac 算法 的 Mac 对象
+    val mac = Mac.getInstance(type)
+    // 用给定密钥初始化 Mac 对象
+    mac.init(secretKey)
+    return mac.doFinal(this)
 }
 
 /**
