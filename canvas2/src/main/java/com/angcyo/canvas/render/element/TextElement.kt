@@ -93,7 +93,7 @@ open class TextElement : BaseElement() {
 
     /**是否已经是曲线文本*/
     val isCurveText: Boolean
-        get() = textProperty.curvature != 0f
+        get() = textProperty.curvature != 0f && textProperty.text.singleText().size() > 1
 
     /**当前属性下, 是否支持曲线文本功能
      * 目前只支持水平方向的文本
@@ -331,7 +331,15 @@ open class TextElement : BaseElement() {
             val text = textProperty.text.singleText() ?: return null
             val textWidth = calcLineTextWidth(text)
             val textHeight = calcLineTextHeight(text)
-            return CurveTextDraw.create(text, textProperty.curvature, textWidth, textHeight)
+            return CurveTextDraw.create(text, textProperty.curvature, textWidth, textHeight, paint)
+                .apply {
+                    measureTextWidthAction = {
+                        this@TextElement.measureTextWidth(it)
+                    }
+                    measureTextHeightAction = {
+                        this@TextElement.measureTextHeight(it)
+                    }
+                }
         }
 
     /**绘制曲线文本*/

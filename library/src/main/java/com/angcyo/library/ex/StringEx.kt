@@ -948,6 +948,9 @@ fun String.ensureName(end: String = ".json") = if (endsWith(end)) this else "$th
  * 如果是.开头, 则直接追加, 否则自动加上.*/
 fun String.ensureExtName() = if (startsWith(".")) this else ".$this"
 
+/**字符串的长度*/
+fun String?.size() = this?.length ?: 0
+
 /**首字母小写*/
 fun CharSequence.lowerFirst(): CharSequence {
     if (length > 0) {

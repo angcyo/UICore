@@ -260,6 +260,36 @@ fun getPointOnCircle(cx: Float, cy: Float, radius: Float, angleInDegrees: Float)
     return PointF(x, y)
 }
 
+/**[getRectOnCircle]*/
+fun getRectOnCircle(
+    height: Float,
+    cx: Float,
+    cy: Float,
+    radius: Float,
+    angleInDegrees: Float
+): RectF = getRectOnCircle(1f, height, cx, cy, radius, angleInDegrees)
+
+/**获取圆上指定角度的矩形坐标
+ * [cx] [cy] 圆心
+ * [radius] 半径
+ * [angleInDegrees] 角度, 非弧度*/
+fun getRectOnCircle(
+    width: Float,
+    height: Float,
+    cx: Float,
+    cy: Float,
+    radius: Float,
+    angleInDegrees: Float
+): RectF {
+    val result = RectF()
+    result.set(cx + radius, cy - height / 2, cx + radius + width, cy + height / 2)
+    val matrix = acquireTempMatrix()
+    matrix.setRotate(angleInDegrees, cx, cy)
+    matrix.mapRectSelf(result)
+    matrix.release()
+    return result
+}
+
 //<editor-fold desc="matrix">
 
 /**临时对象, 用来存储[Matrix]矩阵值*/
@@ -424,6 +454,10 @@ fun Matrix.mapPoint(point: PointD, result: PointD): PointD {
     result.y = _tempPoints[1].toDouble()
     return result
 }
+
+/**映射矩形
+ * [mapRectF]*/
+fun Matrix.mapRectSelf(rect: RectF, result: RectF = rect) = mapRectF(rect, result)
 
 /**[RectF]*/
 fun Matrix.mapRectF(rect: RectF, result: RectF = acquireTempRectF()): RectF {
