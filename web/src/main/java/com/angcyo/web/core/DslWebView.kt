@@ -6,11 +6,15 @@ import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.net.Uri
 import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.View
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
+import androidx.core.view.NestedScrollingChildHelper
+import androidx.core.view.ViewCompat
 import androidx.webkit.WebResourceErrorCompat
 import com.angcyo.library.L
 import com.angcyo.library.component.Web
@@ -101,12 +105,19 @@ open class DslWebView(context: Context, attributeSet: AttributeSet? = null) :
 
     var _loadUrl: String? = null
 
+    val childHelper: NestedScrollingChildHelper by lazy {
+        NestedScrollingChildHelper(this)
+    }
+
     init {
         Web.initWebView(this)
 
         setDownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
             downloadAction(url.decode(), userAgent, contentDisposition, mimetype, contentLength)
         }
+
+        overScrollMode = View.OVER_SCROLL_NEVER
+        isNestedScrollingEnabled = true
     }
 
     var _filePathCallback: ValueCallback<Array<Uri?>>? = null
@@ -309,5 +320,205 @@ open class DslWebView(context: Context, attributeSet: AttributeSet? = null) :
         "${nowTimeString()} $log \n".writeTo(LogFile.webview.toLogFilePath(), true)
         L.log(level, log)
     }
+
+    //region ---手势---
+
+    val scrollOffset = IntArray(2)
+    val scrollConsumed = IntArray(2)
+    val offsetInWindow: IntArray? = null
+
+    var nestedYOffset = 0
+
+    //原本需要滚动的距离, 用于计算内嵌滚动消耗量和未消耗量
+    var _targetScrollDx = 0
+    var _targetScrollDy = 0
+    var _oldScrollX = 0
+    var _oldScrollY = 0
+
+    override fun overScrollBy(
+        deltaX: Int,
+        deltaY: Int,
+        scrollX: Int,
+        scrollY: Int,
+        scrollRangeX: Int,
+        scrollRangeY: Int,
+        maxOverScrollX: Int,
+        maxOverScrollY: Int,
+        isTouchEvent: Boolean
+    ): Boolean {
+        parent?.requestDisallowInterceptTouchEvent(true)
+
+        _targetScrollDx = deltaX
+        _targetScrollDy = deltaY
+        _oldScrollX = scrollX
+        _oldScrollY = scrollY
+        scrollConsumed.fill(0)
+        dispatchNestedPreScroll(deltaX, deltaY, scrollConsumed, offsetInWindow)
+        val dY = deltaY - scrollConsumed[1]
+        _targetScrollDy = dY
+
+        L.e("pre滚动:$deltaY 前:${scrollY} 最大:$scrollRangeY 消耗:${scrollConsumed[1]} $isTouchEvent")
+
+        //nestedYOffset += scrollOffset[1]
+        nestedYOffset += -scrollConsumed[1]
+
+        return super.overScrollBy(
+            deltaX,
+            dY,
+            scrollX,
+            scrollY,
+            scrollRangeX,
+            scrollRangeY,
+            maxOverScrollX,
+            maxOverScrollY,
+            isTouchEvent
+        )
+    }
+
+    override fun onOverScrolled(scrollX: Int, scrollY: Int, clampedX: Boolean, clampedY: Boolean) {
+        super.onOverScrolled(scrollX, scrollY, clampedX, clampedY)
+
+        val scrolledDeltaY: Int = scrollY - _oldScrollY
+        val unconsumedY: Int = _targetScrollDy - scrolledDeltaY
+
+        L.e("滚动:$scrolledDeltaY 未消耗:${unconsumedY}")
+
+        dispatchNestedScroll(
+            0, scrolledDeltaY,
+            0, unconsumedY,
+            offsetInWindow
+        )
+        nestedYOffset += scrollOffset[1]
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        return super.dispatchTouchEvent(ev)
+    }
+
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        _handleTouchEvent(ev)
+        return super.onInterceptTouchEvent(ev)
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val actionMasked: Int = event.actionMasked
+
+        if (actionMasked == MotionEvent.ACTION_DOWN) {
+            nestedYOffset = 0
+        }
+
+        //offsetLocation 这一点很重要, 否则下层计算dx, dy时, 会有偏差
+        val vtev = MotionEvent.obtain(event)
+        vtev.offsetLocation(0f, nestedYOffset.toFloat())
+        L.e("事件偏移:${nestedYOffset}")
+
+        _handleTouchEvent(vtev)
+
+        vtev.recycle()
+        super.onTouchEvent(event)
+        return true
+    }
+
+    fun _handleTouchEvent(event: MotionEvent) {
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> startNestedScroll(
+                ViewCompat.SCROLL_AXIS_VERTICAL
+            )
+
+            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+                parent?.requestDisallowInterceptTouchEvent(false)
+                stopNestedScroll()
+            }
+        }
+    }
+
+    //endregion ---手势---
+
+    //region ---内嵌滚动---
+
+    /*override fun setNestedScrollingEnabled(enabled: Boolean) {
+        childHelper.isNestedScrollingEnabled = enabled
+    }
+
+    override fun isNestedScrollingEnabled(): Boolean {
+        return childHelper.isNestedScrollingEnabled
+    }
+
+    override fun startNestedScroll(axes: Int, type: Int): Boolean {
+        return childHelper.startNestedScroll(axes, type)
+    }
+
+    override fun stopNestedScroll(type: Int) {
+        childHelper.stopNestedScroll()
+    }
+
+    override fun hasNestedScrollingParent(type: Int): Boolean {
+        return childHelper.hasNestedScrollingParent()
+    }
+
+    override fun dispatchNestedScroll(
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int,
+        offsetInWindow: IntArray?,
+        type: Int,
+        consumed: IntArray
+    ) {
+        childHelper.dispatchNestedScroll(
+            dxConsumed,
+            dyConsumed,
+            dxUnconsumed,
+            dyUnconsumed,
+            offsetInWindow,
+            type,
+            consumed
+        )
+    }
+
+    override fun dispatchNestedScroll(
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int,
+        offsetInWindow: IntArray?,
+        type: Int
+    ): Boolean {
+        return childHelper.dispatchNestedScroll(
+            dxConsumed,
+            dyConsumed,
+            dxUnconsumed,
+            dyUnconsumed,
+            offsetInWindow
+        )
+    }
+
+    override fun dispatchNestedPreScroll(
+        dx: Int,
+        dy: Int,
+        consumed: IntArray?,
+        offsetInWindow: IntArray?,
+        type: Int
+    ): Boolean {
+        return childHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type)
+    }
+
+    override fun dispatchNestedPreFling(velocityX: Float, velocityY: Float): Boolean {
+        return childHelper.dispatchNestedPreFling(velocityX, velocityY)
+    }
+
+    override fun dispatchNestedFling(
+        velocityX: Float,
+        velocityY: Float,
+        consumed: Boolean
+    ): Boolean {
+        return childHelper.dispatchNestedFling(velocityX, velocityY, consumed)
+    }
+
+    override fun hasNestedScrollingParent(): Boolean {
+        return childHelper.hasNestedScrollingParent()
+    }*/
+
+    //endregion ---内嵌滚动---
 
 }
