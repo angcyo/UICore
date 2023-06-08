@@ -1,0 +1,14 @@
+apply from: allGradle.libBase
+
+dependencies {
+    implementation project(allModule.library)
+    implementation project(allModule.core)
+
+    //web 2023-6-8
+    implementation project(allModule.download) //downloadNotify
+    implementation project(allModule.picker) //dslPicker
+    //end web
+
+    // https://mvnrepository.com/artifact/androidx.webkit/webkit
+    api "androidx.webkit:webkit:1.7.0"
+}

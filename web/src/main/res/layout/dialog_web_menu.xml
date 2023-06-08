@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_dialog_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    tools:background="@color/lib_black">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/touch_back_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/lib_white_top_round_bg_big_shape"
+        app:layout_behavior="com.angcyo.behavior.effect.TouchBackBehavior">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/drag_tip_view"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/lib_dpi"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:srcCompat="@drawable/ic_drag_drop_hints" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/web_title_view"
+            style="@style/LibSubTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="@dimen/lib_hdpi"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/drag_tip_view"
+            tools:text="网页由 www.baidu.com 提供" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/web_des_view"
+            style="@style/LibSubTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="@dimen/lib_hdpi"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/web_title_view"
+            tools:text="网页描述"
+            tools:visibility="visible" />
+
+        <HorizontalScrollView
+            android:id="@+id/line1_wrap_layout"
+            style="@style/LibInnerRecyclerViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/web_des_view"
+            tools:background="@color/transparent10"
+            tools:layout_height="60dp">
+
+            <LinearLayout
+                android:id="@+id/line1_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+
+        </HorizontalScrollView>
+
+        <HorizontalScrollView
+            android:id="@+id/line2_wrap_layout"
+            style="@style/LibInnerRecyclerViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/line1_wrap_layout">
+
+            <LinearLayout
+                android:id="@+id/line2_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+
+        </HorizontalScrollView>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lib_cancel_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/lib_bg_selector"
+            android:gravity="center"
+            android:minHeight="@dimen/lib_item_min_height"
+            android:text="取消"
+            app:layout_constraintTop_toBottomOf="@id/line2_wrap_layout" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.angcyo.widget.layout.RCoordinatorLayout>

@@ -1,0 +1,14 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.angcyo.web">
+
+    <application>
+        <!--
+        当 EnableSafeBrowsing 的默认值为 true 时， 在某些情况下，您可能有时会希望仅根据条件启用安全浏览功能或停用此功能。
+        Android 8.0（API 级别 26）及更高版本支持使用 setSafeBrowsingEnabled() 来针对单个 WebView 对象启用或停用安全浏览。
+        -->
+        <meta-data
+            android:name="android.webkit.WebView.EnableSafeBrowsing"
+            android:value="false" />
+    </application>
+
+</manifest>

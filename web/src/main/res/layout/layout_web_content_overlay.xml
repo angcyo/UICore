@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.angcyo.widget.progress.DslProgressBar
+        android:id="@+id/lib_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        app:progress_enable_show_hide_progress="true"
+        app:progress_radius="0dp" />
+
+    <com.angcyo.widget.progress.ArcLoadingView
+        android:id="@+id/lib_arc_loading_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center" />
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_tip_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        tools:text="加载中...." />
+
+</FrameLayout>

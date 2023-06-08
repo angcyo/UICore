@@ -199,7 +199,9 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         return view
     }
 
-    /**[onCreateView]*/
+    /**
+     * 在[initBaseView]之后回调
+     * [onCreateView]*/
     open fun onCreateViewAfter(savedInstanceState: Bundle?) {
         if (enableBackItem()) {
             leftControl()?.append(onCreateBackItem())

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_white_top_round_bg_shape"
+    android:orientation="vertical"
+    android:padding="@dimen/lib_xhdpi">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_title_tip_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="打开应用"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/lib_hdpi"
+        android:paddingBottom="@dimen/lib_hdpi"
+        app:layout_constraintTop_toBottomOf="@id/lib_title_tip_view">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_image_view"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@android:mipmap/sym_def_app_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lib_text_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/lib_xhdpi"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toTopOf="@id/lib_sub_text_view"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintLeft_toRightOf="@id/lib_image_view"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="angcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyo" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lib_sub_text_view"
+            style="@style/LibSubTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintLeft_toLeftOf="@id/lib_text_view"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lib_text_view"
+            tools:text="angcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyoangcyo" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/lib_reject_button"
+        style="@style/DefaultButtonStyleNormal"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/lib_min_item_height"
+        android:layout_marginTop="@dimen/lib_xhdpi"
+        android:background="@drawable/lib_bg_selector"
+        android:gravity="center"
+        android:minWidth="130dp"
+        android:paddingLeft="@dimen/lib_xxhdpi"
+        android:paddingRight="@dimen/lib_xxhdpi"
+        android:text="拒绝"
+        android:textColor="@color/text_primary_color"
+        app:button_enable_background_style="false"
+        app:layout_constraintTop_toBottomOf="@id/wrap_layout" />
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/lib_open_button"
+        style="@style/DefaultButtonStyleNormal"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/lib_min_item_height"
+        android:gravity="center"
+        android:minWidth="130dp"
+        android:paddingLeft="@dimen/lib_xxhdpi"
+        android:paddingRight="@dimen/lib_xxhdpi"
+        android:text="打开"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/lib_reject_button" />
+
+</com.angcyo.widget.layout.RConstraintLayout>
