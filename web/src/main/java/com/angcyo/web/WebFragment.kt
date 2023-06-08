@@ -65,7 +65,7 @@ open class WebFragment : BaseWebFragment() {
     }
 
     /**[attachWebView]*/
-    open fun onInitWebView(webView: WebView) {
+    open fun onInitWebView(webView: DslWebView) {
 
     }
 
@@ -113,7 +113,13 @@ open class WebFragment : BaseWebFragment() {
     override fun getUserAgentString(): String? = webView?.settings?.userAgentString
 
     override fun loadUrl(url: String?) {
-        webView?.loadUrl2(url)
+        webView?.apply {
+            if (_loadUrl == url) {
+                reload()
+            } else {
+                loadUrl2(url)
+            }
+        }
     }
 
     override fun fileChooseResult(files: Array<Uri?>?) {
