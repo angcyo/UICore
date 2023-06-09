@@ -4,7 +4,6 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.library.ex.*
-import com.angcyo.library.ex.offsetTopTo
 
 /**
  * 刷新行为[RefreshContentBehavior]的UI效果处理类
@@ -63,13 +62,19 @@ interface IRefreshBehavior {
 
     /**当内容滚动时, 界面需要处理的回调*/
     fun onContentScrollTo(contentBehavior: BaseScrollBehavior<*>, x: Int, y: Int, scrollType: Int) {
-        val min = if (enableBottomOver) Int.MIN_VALUE else 0
-        val max = if (enableTopOver || this is RefreshHeaderBehavior) Int.MAX_VALUE else 0
-
-        val top = clamp(y, min, max)
+        /*val min = if (enableBottomOver) Int.MIN_VALUE else 0
+        val max = if (enableTopOver || this is RefreshHeaderBehavior) Int.MAX_VALUE else 0*/
 
         val childView = contentBehavior.childView
         val targetView = contentScrollView ?: contentBehavior.childView
+
+        //显示最大高度
+        val maxHeight = (childView?.measuredHeight ?: 0) * 3 / 4
+
+        val min = if (enableBottomOver) -maxHeight else 0
+        val max = if (enableTopOver || this is RefreshHeaderBehavior) maxHeight else 0
+
+        val top = clamp(y, min, max)
 
         if (childView == targetView) {
             childView?.offsetTopTo(
