@@ -114,7 +114,7 @@ open class WebFragment : BaseWebFragment() {
 
     override fun loadUrl(url: String?) {
         webView?.apply {
-            if (_loadUrl == url) {
+            if (getLoadUrl() == url) {
                 reload()
             } else {
                 loadUrl2(url)
