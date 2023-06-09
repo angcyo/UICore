@@ -94,7 +94,7 @@ class GCodeAdjust {
                 GCodeWriteHandler().apply {
                     this.writer = writer
                     this.isAutoCnc = isAutoCnc
-                    onPathEnd()
+                    onPathEnd(true)
                 }
             }
         }

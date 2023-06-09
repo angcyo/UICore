@@ -144,9 +144,10 @@ abstract class VectorWriteHandler {
 
     }
 
-    /**[Path]的终点*/
+    /**[Path]的终点
+     * [isPathFinish] [Path]路径是否全部结束, 有可能只是其中一段结束了*/
     @CallPoint
-    open fun onPathEnd() {
+    open fun onPathEnd(isPathFinish: Boolean) {
         clearLastPoint()
     }
 
@@ -264,7 +265,7 @@ abstract class VectorWriteHandler {
                         val a1 = VectorHelper.angle2(x2, y2, cPoint.x, cPoint.y)
                         val a2 = VectorHelper.angle2(x, y, cPoint.x, cPoint.y)
 
-                        first.circleDir = if (a2 > a1) {
+                        first.circleDir = if (a2 >= a1) {
                             //角度在变大, 顺时针枚举点位
                             Path.Direction.CW
                         } else {
@@ -273,12 +274,12 @@ abstract class VectorWriteHandler {
                         }
                     } else {
                         //判断和之前是否在同一个圆上
-                        val type = _valueChangedType(
+                        val circleType = _valueChangedType(
                             VectorPoint(circle.x, circle.y, POINT_TYPE_CIRCLE),
                             cPoint.x,
                             cPoint.y
                         )
-                        return if (type == POINT_TYPE_SAME || type == POINT_TYPE_GAP) {
+                        return if (circleType == POINT_TYPE_SAME) {
                             //圆心一致, 则
                             POINT_TYPE_CIRCLE
                         } else {
@@ -402,9 +403,14 @@ abstract class VectorWriteHandler {
             val x = unit?.convertPixelToValue(xPixel) ?: xPixel
             val y = unit?.convertPixelToValue(yPixel) ?: yPixel
 
-            if (index == 0 && contourIndex == 0) {
-                if (writeFirst) {
-                    onPathStart()
+            if (index == 0) {
+                if (contourIndex == 0) {
+                    if (writeFirst) {
+                        onPathStart()
+                    }
+                } else {
+                    //新的轮廓
+                    onPathEnd(false)
                 }
             }
 
@@ -412,7 +418,7 @@ abstract class VectorWriteHandler {
         }
         clearLastPoint()
         if (writeLast) {
-            onPathEnd()
+            onPathEnd(true)
         }
     }
 
@@ -524,7 +530,7 @@ abstract class VectorWriteHandler {
         }
         clearLastPoint()
         if (writeLast) {
-            onPathEnd()
+            onPathEnd(true)
         }
         scanPath.release()
         resultPath.release()
@@ -562,7 +568,7 @@ abstract class VectorWriteHandler {
         }
         clearLastPoint()
         if (writeLast) {
-            onPathEnd()
+            onPathEnd(true)
         }
     }
 
@@ -601,7 +607,7 @@ abstract class VectorWriteHandler {
         }
         clearLastPoint()
         if (writeLast) {
-            onPathEnd()
+            onPathEnd(true)
         }
     }
 

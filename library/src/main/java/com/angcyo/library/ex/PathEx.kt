@@ -242,10 +242,10 @@ fun Path.eachPath(
     block: (index: Int, ratio: Float, contourIndex: Int, posArray: FloatArray) -> Unit
 ) {
     val pathMeasure = PathMeasure(this, false)
-    var position = 0f
-    var length = pathMeasure.length
-    var index = 0
-    var contourIndex = 0
+    var position = 0f //路径上的问题只
+    var length = pathMeasure.length //路径总长度
+    var index = 0 //当前段回调次数
+    var contourIndex = 0 //当前第几段
 
     //func
     fun _each() {

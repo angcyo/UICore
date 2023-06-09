@@ -443,7 +443,7 @@ object CanvasDataHandleOperate {
             }
             gCodeWriteHandler.clearLastPoint()
             if (isFinish) {
-                gCodeWriteHandler.onPathEnd()
+                gCodeWriteHandler.onPathEnd(true)
             }
         }
         return outputFile

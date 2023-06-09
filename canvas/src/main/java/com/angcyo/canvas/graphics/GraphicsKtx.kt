@@ -394,7 +394,7 @@ fun CanvasDelegate.addParameterComparisonTable(
         gCodeWriter.appendLine("G1X${(gridLeft + gridWidthSum).toMm()}")
     }
 
-    gCodeHandler.onPathEnd()
+    gCodeHandler.onPathEnd(true)
     gCodeWriter.flush()
     gCodeWriter.close()
 

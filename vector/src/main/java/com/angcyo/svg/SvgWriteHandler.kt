@@ -28,9 +28,10 @@ class SvgWriteHandler : VectorWriteHandler() {
         //viewBox ?
     }
 
-    override fun onPathEnd() {
-        super.onPathEnd()
-        if (needClosePath) {
+    override fun onPathEnd(isPathFinish: Boolean) {
+        super.onPathEnd(isPathFinish)
+        if (isPathFinish || needClosePath) {
+            //一段路径结束, 或者整个路径完成
             closeSvg() //need?
         }
     }

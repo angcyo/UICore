@@ -47,16 +47,19 @@ class GCodeWriteHandler : VectorWriteHandler() {
         }
     }
 
-    override fun onPathEnd() {
-        super.onPathEnd()
+    override fun onPathEnd(isPathFinish: Boolean) {
+        super.onPathEnd(isPathFinish)
         closeCnc()
         if (isAutoCnc) {
             writer?.appendLine("S0 M5")
         }
-        if (LibLpHawkKeys.enableGCodeEndG0) {
-            writer?.appendLine("G0 X0 Y0")
+        if (isPathFinish) {
+            //整个路径结束
+            if (LibLpHawkKeys.enableGCodeEndG0) {
+                writer?.appendLine("G0 X0 Y0")
+            }
+            writer?.append("M2") //程序结束
         }
-        writer?.append("M2") //程序结束
     }
 
     override fun onNewPoint(x: Double, y: Double) {

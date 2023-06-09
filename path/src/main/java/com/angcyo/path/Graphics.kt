@@ -196,7 +196,7 @@ fun List<Path>.toGCodePathContent(
             }
         }
         if (writeLast) {
-            gCodeWriteHandler.onPathEnd()
+            gCodeWriteHandler.onPathEnd(true)
         }
     }
     return output
