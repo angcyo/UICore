@@ -26,9 +26,7 @@ import com.hjhrq1991.library.Message.Companion.toArrayList
 
 @SuppressLint("SetJavaScriptEnabled")
 open class BridgeWebView : WebView, WebViewJavascriptBridge {
-    private val TAG = "BridgeWebView"
-    protected var bridgeWebViewClient: BridgeWebViewClient? = null
-    var responseCallbacks: MutableMap<String, CallBackFunction> = HashMap()
+    var responseCallbacks: MutableMap<String, CallBackFunction> = hashMapOf()
     var messageHandlers: MutableMap<String, BridgeHandler> = hashMapOf()
 
     /**
@@ -39,7 +37,8 @@ open class BridgeWebView : WebView, WebViewJavascriptBridge {
 
     var startupMessage: MutableList<Message>? = mutableListOf()
 
-    private var uniqueId: Long = 0
+    protected var bridgeWebViewClient: BridgeWebViewClient? = null
+    protected var uniqueId: Long = 0
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context!!, attrs) {
         init()
