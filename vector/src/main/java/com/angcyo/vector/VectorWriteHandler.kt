@@ -121,6 +121,9 @@ abstract class VectorWriteHandler {
     /**路径填充类型*/
     var pathFillType: Int = PATH_FILL_TYPE_RECT
 
+    /**保留小数点后几位*/
+    var decimal = LibHawkKeys.vectorDecimal
+
     //---
 
     /**是否关闭Gap, 则所有的点都直接用G1/L*/
@@ -174,6 +177,10 @@ abstract class VectorWriteHandler {
     //endregion ---Core回调---
 
     //region ---Core---
+
+    fun Double.toValueString() = this.decimal(decimal)
+
+    fun Float.toValueString() = this.decimal(decimal)
 
     /**清理上一次最后的点, 通常在遇到新的点时调用*/
     fun clearLastPoint() {

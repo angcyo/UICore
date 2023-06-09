@@ -74,7 +74,13 @@ class SvgWriteHandler : VectorWriteHandler() {
                         //逆时针枚举点
                         if (a3 > 180) 0 else 1
                     }
-                    append("A${r.toLossyFloat()},${r.toLossyFloat()},0,$largeArcFlag,$sweepFlag,${xValue.toLossyFloat()},${yValue.toLossyFloat()}")
+                    append(buildString {
+                        append("A${r.toLossyFloat().toValueString()},")
+                        append("${r.toLossyFloat().toValueString()},")
+                        append("0,$largeArcFlag,$sweepFlag,")
+                        append("${xValue.toLossyFloat().toValueString()},")
+                        append(yValue.toLossyFloat().toValueString())
+                    })
                 })
             }
         } else {
@@ -84,7 +90,7 @@ class SvgWriteHandler : VectorWriteHandler() {
 
     override fun onLineToPoint(x: Double, y: Double) {
         //super.onLineToPoint(x, y)
-        writer?.append("L${x},$y")
+        writer?.append("L${x.toValueString()},${y.toValueString()}")
     }
 
     /**关闭路径*/

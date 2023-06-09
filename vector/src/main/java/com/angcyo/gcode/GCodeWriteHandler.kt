@@ -82,14 +82,18 @@ class GCodeWriteHandler : VectorWriteHandler() {
                     append(cmd)
                 }
                 if (isFirst || lastInfo.lastX != xFloat) {
-                    append("X$xFloat")
+                    append("X${xFloat.toValueString()}")
                 }
                 if (isFirst || lastInfo.lastY != yFloat) {
-                    append("Y$yFloat")
+                    append("Y${yFloat.toValueString()}")
                 }
             })
         } else {
-            writer?.appendLine("$cmd X${xFloat} Y${yFloat}")
+            writer?.appendLine(buildString {
+                append(cmd)
+                append(" X${xFloat.toValueString()}")
+                append(" Y${yFloat.toValueString()}")
+            })
         }
         lastInfo.lastCmd = cmd
         lastInfo.lastX = xFloat
@@ -142,21 +146,21 @@ class GCodeWriteHandler : VectorWriteHandler() {
                             append(cmd)
                         }
                         if (isFirst || lastInfo.lastX != x) {
-                            append("X$x")
+                            append("X${x.toValueString()}")
                         }
                         if (isFirst || lastInfo.lastY != y) {
-                            append("Y$y")
+                            append("Y${y.toValueString()}")
                         }
                         if (isFirst || lastInfo.lastI != i) {
-                            append("I$i")
+                            append("I${i.toValueString()}")
                         }
                         if (isFirst || lastInfo.lastJ != j) {
-                            append("J$j")
+                            append("J${j.toValueString()}")
                         }
                     } else {
                         append("$cmd ")
-                        append("X${x} Y${y} ")
-                        append("I${i} J${j}")
+                        append("X${x.toValueString()} Y${y.toValueString()} ")
+                        append("I${i.toValueString()} J${j.toValueString()}")
                     }
 
                     lastInfo.lastCmd = cmd
@@ -196,10 +200,10 @@ class GCodeWriteHandler : VectorWriteHandler() {
                     append(cmd)
                 }
                 if (isFirst || lastInfo.lastX != xFloat) {
-                    append("X$xFloat")
+                    append("X${xFloat.toValueString()}")
                 }
                 if (isFirst || lastInfo.lastY != yFloat) {
-                    append("Y$yFloat")
+                    append("Y${yFloat.toValueString()}")
                 }
             }
             if (gcode.isNotBlank()) {
@@ -209,10 +213,13 @@ class GCodeWriteHandler : VectorWriteHandler() {
             lastInfo.lastX = xFloat
             lastInfo.lastY = yFloat
         } else {
-            writer?.appendLine("G1 X${xValue.toLossyFloat()} Y${yValue.toLossyFloat()}")
+            writer?.appendLine(buildString {
+                append("G1")
+                append(" X${xValue.toLossyFloat().toValueString()}")
+                append(" Y${yValue.toLossyFloat().toValueString()}")
+            })
         }
     }
-
 
     //region ---core---
 

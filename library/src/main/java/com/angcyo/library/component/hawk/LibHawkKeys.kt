@@ -116,4 +116,7 @@ object LibHawkKeys {
      * https://scribblediffusion.com/
      * */
     var enableAIDraw: Boolean by HawkPropertyValue<Any, Boolean>(isDebug())
+
+    /**矢量存储的精度*/
+    var vectorDecimal: Int by HawkPropertyValue<Any, Int>(6)
 }
