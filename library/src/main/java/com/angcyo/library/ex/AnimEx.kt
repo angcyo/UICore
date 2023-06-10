@@ -295,8 +295,7 @@ fun colorAnimator(
     colorAnimator.interpolator = interpolator
     colorAnimator.duration = duration
     if (infinite) {
-        colorAnimator.repeatCount = ValueAnimator.INFINITE
-        colorAnimator.repeatMode = ValueAnimator.REVERSE
+        colorAnimator.infinite(ValueAnimator.REVERSE)
     }
     colorAnimator.config()
     colorAnimator.start()
@@ -365,8 +364,7 @@ fun colorListAnimator(
     animator.interpolator = LinearInterpolator()
     animator.duration = duration
     if (infinite) {
-        animator.repeatCount = ValueAnimator.INFINITE
-        animator.repeatMode = ValueAnimator.REVERSE
+        animator.infinite(ValueAnimator.REVERSE)
     }
     animator.config()
     animator.start()
@@ -623,8 +621,7 @@ fun rotateCameraAnimator(
     animatorConfig.config()
     return anim(from, to) {
         onAnimatorConfig = {
-            it.repeatCount = ValueAnimator.INFINITE
-            it.repeatMode = ValueAnimator.REVERSE
+            it.infinite(ValueAnimator.REVERSE)
 
             animatorConfig.onAnimatorConfig(it)
         }
@@ -700,8 +697,7 @@ fun View.rotateYAnimation(
     val animation = YRotateAnimation()
     animation.from = from
     animation.to = to
-    animation.repeatCount = ValueAnimator.INFINITE
-    animation.repeatMode = ValueAnimator.REVERSE
+    animation.infinite(ValueAnimator.REVERSE)
 
     animation.config()
 
@@ -710,6 +706,12 @@ fun View.rotateYAnimation(
 }
 
 /**无限循环*/
+fun ValueAnimator.infinite(mode: Int = ValueAnimator.RESTART) {
+    //repeatMode = ValueAnimator.REVERSE
+    repeatMode = mode
+    repeatCount = ValueAnimator.INFINITE
+}
+
 fun Animation.infinite(mode: Int = ValueAnimator.RESTART) {
     //repeatMode = ValueAnimator.REVERSE
     repeatMode = mode

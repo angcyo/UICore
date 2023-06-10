@@ -160,6 +160,12 @@ class DslSpan : Appendable {
         return this
     }
 
+    /**[append]*/
+    fun appendSpan(vararg spans: Any): DslSpan {
+        append("<span>", *spans)
+        return this
+    }
+
     /**通过配置指定[span]*/
     fun append(text: CharSequence?, action: DslSpanConfig.() -> Unit): DslSpan {
         _ignore(text) {
