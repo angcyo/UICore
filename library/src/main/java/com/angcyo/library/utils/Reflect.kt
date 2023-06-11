@@ -85,6 +85,107 @@ object Reflect {
         return obj
     }
 
+    /**获取指定对象[obj]的指定字段名称[fieldName]的值*/
+    fun getField(obj: Any, fieldName: String): Any? {
+        try {
+            obj.javaClass.apply {
+                val field = getDeclaredField(fieldName) ?: getField(fieldName)
+                field.isAccessible = true
+                return field.get(obj)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
+    /**设置指定对象[obj]的指定字段名称[fieldName]的值*/
+    fun setField(obj: Any, fieldName: String, value: Any?): Any? {
+        try {
+            obj.javaClass.apply {
+                val field = getDeclaredField(fieldName) ?: getField(fieldName)
+                field.isAccessible = true
+                field.set(obj, value)
+                return value
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
+    /**获取指定类的静态字段, 内部类需要使用`$`符号连接
+     * ```
+     * "android.os.Build$VERSION", "SDK_INT"
+     * ```
+     * */
+    fun getStaticField(className: String, fieldName: String): Any? {
+        try {
+            Class.forName(className).apply {
+                val field = getDeclaredField(fieldName) ?: getField(fieldName)
+                field.isAccessible = true
+                return field.get(null)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
+    fun setStaticField(className: String, fieldName: String, value: Any?): Any? {
+        try {
+            Class.forName(className).apply {
+                val field = getDeclaredField(fieldName) ?: getField(fieldName)
+                field.isAccessible = true
+                field.set(null, value)
+                return value
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
+    /**通过反射调用指定对象的指定方法*/
+    fun invokeMethod(
+        obj: Any,
+        methodName: String,
+        vararg args: Any?
+    ): Any? {
+        try {
+            val argTypes = args.map { it?.javaClass }.toTypedArray()
+            obj.javaClass.apply {
+                val method = getDeclaredMethod(methodName, *argTypes)
+                    ?: getMethod(methodName, *argTypes)
+                method.isAccessible = true
+                return method.invoke(obj, *args)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
+    /**通过反射调用静态方法*/
+    fun invokeStaticMethod(
+        className: String,
+        methodName: String,
+        vararg args: Any?
+    ): Any? {
+        try {
+            val argTypes = args.map { it?.javaClass }.toTypedArray()
+            Class.forName(className).apply {
+                val method = getDeclaredMethod(methodName, *argTypes)
+                    ?: getMethod(methodName, *argTypes)
+                method.isAccessible = true
+                return method.invoke(null, *args)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
 }
 
 /**
@@ -187,15 +288,19 @@ fun Any?.invokeMethod(cls: Class<*>, methodName: String, vararg params: Any): An
                 pClass.name.contains("Integer") -> {
                     Int::class.javaPrimitiveType
                 }
+
                 pClass.name.contains("Long") -> {
                     Long::class.javaPrimitiveType
                 }
+
                 pClass.name.contains("Float") -> {
                     Float::class.javaPrimitiveType
                 }
+
                 pClass.name.contains("Double") -> {
                     Double::class.javaPrimitiveType
                 }
+
                 else -> {
                     pClass
                 }
