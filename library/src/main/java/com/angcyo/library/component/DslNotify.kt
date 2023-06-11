@@ -195,6 +195,15 @@ class DslNotify {
 
         fun pendingBroadcast(
             context: Context,
+            action: String,
+            requestCode: Int = 0x999,
+            flags: Int = PendingIntent.FLAG_UPDATE_CURRENT
+        ): PendingIntent {
+            return pendingBroadcast(context, Intent(action), requestCode, flags)
+        }
+
+        fun pendingBroadcast(
+            context: Context,
             intent: Intent,
             requestCode: Int = 0x999,
             flags: Int = PendingIntent.FLAG_UPDATE_CURRENT

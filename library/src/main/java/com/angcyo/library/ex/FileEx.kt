@@ -13,6 +13,7 @@ import com.angcyo.library.model.Page
 import com.angcyo.library.toastQQ
 import java.io.*
 import java.nio.channels.FileChannel
+import java.nio.charset.Charset
 import java.security.DigestInputStream
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -461,11 +462,11 @@ fun String.writeText(text: String, append: Boolean = true) = file().writeText(te
 
 /**向文件中写入[text]
  * [append] 是否追加, 否则就是重写*/
-fun File.writeText(text: String, append: Boolean = true) {
+fun File.writeText(text: String, append: Boolean = true, charset: Charset = Charsets.UTF_8) {
     if (append) {
-        writeText(text)
+        appendText(text, charset)
     } else {
-        appendText(text)
+        writeText(text, charset)
     }
 }
 

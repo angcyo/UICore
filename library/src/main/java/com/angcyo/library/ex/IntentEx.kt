@@ -104,6 +104,10 @@ fun String.urlIntent(component: ComponentName? = null): Intent {
 /**打开网页
  * 打开url[url]
  * [url] 需要指定scheme, 比如http
+ *
+ * [com.angcyo.DslAHelper.open]
+ * [com.angcyo.tbs.DslTbsKt.open]
+ * [com.angcyo.tbs.DslTbsKt.dslTbsOpen]
  * */
 fun Context.openUrl(url: String?, component: ComponentName? = null): Boolean {
     return try {

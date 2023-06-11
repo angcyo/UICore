@@ -191,6 +191,14 @@ fun <T> T?.elseNull(action: () -> Unit = {}): T? {
     return this
 }
 
+/**如果[this]是null或空, 则返回[or], 否则返回[this]*/
+fun CharSequence?.elseBlank(or: CharSequence?): CharSequence? {
+    if (this.isNullOrBlank()) {
+        return or
+    }
+    return this
+}
+
 fun Any?.string(def: CharSequence = ""): CharSequence {
     return when {
         this == null -> return def
