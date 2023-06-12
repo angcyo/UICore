@@ -36,9 +36,9 @@ object OkType {
     private fun getCall(url: String, listener: OnImageTypeListener?): Call? {
         var call: Call? = null
         try {
-            val mRequest =
+            val request =
                 Request.Builder().url(url).build() //如果url不是 网址, 会报错
-            call = DslHttp.client.newCall(mRequest)
+            call = DslHttp.client.newCall(request)
         } catch (e: Exception) {
             e.printStackTrace()
             if (listener != null) {
