@@ -118,8 +118,12 @@ open class DslWebView(context: Context, attributeSet: AttributeSet? = null) :
             downloadAction(url.decode(), userAgent, contentDisposition, mimetype, contentLength)
         }
 
-        overScrollMode = View.OVER_SCROLL_NEVER
-        isNestedScrollingEnabled = true
+        try {
+            isNestedScrollingEnabled = true
+            overScrollMode = View.OVER_SCROLL_NEVER
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     var _filePathCallback: ValueCallback<Array<Uri?>>? = null
