@@ -607,6 +607,13 @@ fun clamp(value: Float, min: Float, max: Float): Float = min(max(value, min), ma
 
 fun clamp(value: Int, min: Int, max: Int): Int = min(max(value, min), max)
 
+/**都是正数, 或者都是负数*/
+fun isSameDirection(value1: Int, value2: Int) =
+    value1 == 0 || value2 == 0 || (value1 > 0 && value2 > 0) || (value1 < 0 && value2 < 0)
+
+fun isSameDirection(value1: Float, value2: Float) =
+    value1 == 0f || value2 == 0f || (value1 > 0 && value2 > 0) || (value1 < 0 && value2 < 0)
+
 /**[java.lang.reflect.Type]*/
 fun Type.toClass(): Class<*>? = if (this is Class<*>) {
     this

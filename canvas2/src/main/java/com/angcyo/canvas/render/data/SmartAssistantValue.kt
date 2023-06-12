@@ -3,6 +3,10 @@ package com.angcyo.canvas.render.data
 import android.graphics.RectF
 import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.renderer.CanvasElementRenderer
+import com.angcyo.library.component.hawk.LibHawkKeys
+import com.angcyo.library.ex.isSameDirection
+import com.angcyo.library.ex.nowTime
+import kotlin.math.absoluteValue
 
 /**
  * 智能推荐的参考值
@@ -18,7 +22,15 @@ data class SmartAssistantReferenceValue(
      * [com.angcyo.canvas.render.core.IRenderer]
      * [com.angcyo.canvas.render.core.CanvasAxisManager]
      * */
-    val obj: Any?
+    val obj: Any?,
+
+    //---
+
+    /**提示的时间*/
+    var smartAssistantTime: Long = nowTime(),
+
+    /**在吸附阶段, 总共忽略的值, 累加值*/
+    var ignoreDifferenceValue: Float = 0f
 ) {
 
     /**引用的元素Bounds*/
@@ -28,4 +40,25 @@ data class SmartAssistantReferenceValue(
         } else {
             null
         }
+
+    /**是否忽略当前的智能提示, 继续使用吸附值*/
+    fun ignoreSmartValue(newValue: Float, tx: Float, dx: Float, threshold: Float): Boolean {
+        ignoreDifferenceValue += dx
+        if (isSameDirection(ignoreDifferenceValue, dx) &&
+            ignoreDifferenceValue.absoluteValue < threshold
+        ) {
+            smartAssistantTime = nowTime()
+            return true
+        }
+        return nowTime() - smartAssistantTime < LibHawkKeys.minAdsorbTime //至少吸附时长
+    }
+
+    /**旋转吸附*/
+    fun ignoreSmartRotate(newValue: Float, threshold: Float): Boolean {
+        if ((value - newValue).absoluteValue < threshold) {
+            smartAssistantTime = nowTime()
+            return true
+        }
+        return false
+    }
 }

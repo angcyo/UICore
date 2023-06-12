@@ -50,19 +50,11 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
     var enableSmartWidth: Boolean = false
     var enableSmartHeight: Boolean = false
 
+    /**是否激活双向移动推荐
+     * 双向推荐, 效果不太好, 有点问题*/
+    var enableBothSmartAssistant: Boolean = false
+
     override var renderFlags: Int = 0xf
-
-    /**提示的延迟阈值, 2s之内只提示1次*/
-    var smartAssistantDelayThreshold = 600L
-
-    /**平移提示的延迟阈值, 2s之内只提示1次*/
-    var smartAssistantTranslateDelayThreshold = 300L
-
-    private var _lastSmartAssistantTimeDx = 0L
-    private var _lastSmartAssistantTimeDy = 0L
-    private var _lastSmartAssistantTimeWidth = 0L
-    private var _lastSmartAssistantTimeHeight = 0L
-    private var _lastSmartAssistantTimeRotate = 0L
 
     /**智能提示的颜色*/
     var smartAssistantColor = _color(
@@ -102,6 +94,9 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
     /**数据提供*/
     var valueProvider = SmartAssistantValueProvider(controlManager.delegate)
 
+    /**旋转吸附角度, 当和目标角度小于这个值时, 自动吸附到目标*/
+    var rotateAdsorbThreshold: Float = 5f
+
     /**吸附阈值, 当距离推荐线的距离小于等于此值时, 自动吸附
      * 值越小, 不容易吸附. 就会导致频繁计算推荐点.
      *
@@ -109,9 +104,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
      * */
     var translateAdsorbThreshold: Float = 3f * dp
 
-    /**旋转吸附角度, 当和目标角度小于这个值时, 自动吸附到目标*/
-    var rotateAdsorbThreshold: Float = 5f
-
+    /**[translateAdsorbThreshold]*/
     private val _translateAdsorbThreshold: Float
         get() = translateAdsorbThreshold / renderScale
 
@@ -150,23 +143,35 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
     fun findSmartDx(elementBounds: RectF?, tx: Float, dx: Float): Float? {
         if (!enableSmartDx) return null
         elementBounds ?: return null
-        var requestValue = if (tx > 0) {
+        if (lastSmartXValue == null && (dx == 0f || dx > translateAdsorbThreshold)) return null
+
+        var requestValue = if (!enableBothSmartAssistant)
+            elementBounds.left
+        else if (tx > 0) {
             //向右移动, 优先使用 right
             elementBounds.right
         } else {
             //向左移动, 优先使用 left
             elementBounds.left
         }
-        if (isIgnoreSmartAssistantDx(requestValue + tx)) return null
+
+        lastSmartXValue?.apply {
+            if (ignoreSmartValue(requestValue + tx, tx, dx, _translateAdsorbThreshold)) {
+                return value - requestValue
+            }
+            lastSmartXValue = null
+        }
 
         findSmartX(requestValue, tx, dx)?.let { ref ->
             return ref.value - requestValue
         }
 
         //如果还未找到, 则使用中点再次查询
-        requestValue = elementBounds.centerX()
-        findSmartX(requestValue, tx, dx)?.let { ref ->
-            return ref.value - requestValue
+        if (enableBothSmartAssistant) {
+            requestValue = elementBounds.centerX()
+            findSmartX(requestValue, tx, dx)?.let { ref ->
+                return ref.value - requestValue
+            }
         }
 
         return null
@@ -177,8 +182,15 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
     fun findSmartWidth(elementBounds: RectF?, tx: Float, dx: Float): Float? {
         if (!enableSmartWidth) return null
         elementBounds ?: return null
+        if (lastSmartXValue == null && (dx == 0f || dx > translateAdsorbThreshold)) return null
+
         val requestValue = elementBounds.right
-        if (isIgnoreSmartAssistantWidth(requestValue + tx)) return null
+        lastSmartXValue?.apply {
+            if (ignoreSmartValue(requestValue + tx, tx, dx, _translateAdsorbThreshold)) {
+                return value - elementBounds.left
+            }
+            lastSmartXValue = null
+        }
         findSmartX(requestValue, tx, dx)?.let { ref ->
             return ref.value - elementBounds.left
         }
@@ -191,7 +203,11 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
     fun findSmartDy(elementBounds: RectF?, ty: Float, dy: Float): Float? {
         if (!enableSmartDy) return null
         elementBounds ?: return null
-        var requestValue = if (ty > 0) {
+        if (lastSmartYValue == null && (dy == 0f || dy > translateAdsorbThreshold)) return null
+
+        var requestValue = if (!enableBothSmartAssistant)
+            elementBounds.top
+        else if (ty > 0) {
             //向下移动, 优先使用 bottom
             elementBounds.bottom
         } else {
@@ -199,16 +215,23 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
             elementBounds.top
         }
 
-        if (isIgnoreSmartAssistantDy(requestValue + ty)) return null
+        lastSmartYValue?.apply {
+            if (ignoreSmartValue(requestValue + ty, ty, dy, _translateAdsorbThreshold)) {
+                return value - requestValue
+            }
+            lastSmartYValue = null
+        }
 
         findSmartY(requestValue, ty, dy)?.let { ref ->
             return ref.value - requestValue
         }
 
         //如果还未找到, 则使用中点再次查询
-        requestValue = elementBounds.centerY()
-        findSmartY(requestValue, ty, dy)?.let { ref ->
-            return ref.value - requestValue
+        if (enableBothSmartAssistant) {
+            requestValue = elementBounds.centerY()
+            findSmartY(requestValue, ty, dy)?.let { ref ->
+                return ref.value - requestValue
+            }
         }
 
         return null
@@ -219,8 +242,16 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
     fun findSmartHeight(elementBounds: RectF?, ty: Float, dy: Float): Float? {
         if (!enableSmartHeight) return null
         elementBounds ?: return null
+        if (lastSmartYValue == null && (dy == 0f || dy > translateAdsorbThreshold)) return null
+
         val requestValue = elementBounds.bottom
-        if (isIgnoreSmartAssistantHeight(requestValue + ty)) return null
+        lastSmartYValue?.apply {
+            if (ignoreSmartValue(elementBounds.top + ty, ty, dy, _translateAdsorbThreshold)) {
+                return value - requestValue
+            }
+            lastSmartYValue = null
+        }
+
         findSmartY(requestValue, ty, dy)?.let { ref ->
             return ref.value - elementBounds.top
         }
@@ -235,11 +266,18 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
         if (!enableSmartRotate) return null
         var result: SmartAssistantReferenceValue? = null
         val referenceValue = lastSmartRotateValue
-        if (isIgnoreSmartAssistantRotate(angle)) return null
+
+        lastSmartRotateValue?.apply {
+            if (ignoreSmartRotate(angle, rotateAdsorbThreshold)) {
+                return value
+            }
+            lastSmartRotateValue = null
+        }
 
         result = if (referenceValue == null) {
             //之前没有推荐值, 则查找推荐值
             findSmartRotateValue(angle)?.apply {
+                smartAssistantTime = nowTime()
                 longFeedback()
                 logSmartValue("智能推荐角度", angle, this)
             }
@@ -253,6 +291,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
                 //查找最新的推荐值
                 findSmartRotateValue(angle)?.apply {
                     if (value != referenceValue.value) {
+                        smartAssistantTime = nowTime()
                         longFeedback()
                         logSmartValue("智能推荐角度", angle, this)
                     } else {
@@ -280,12 +319,13 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
         result = if (referenceValue == null) {
             //之前没有推荐值, 则查找推荐值
             findSmartXValue(newX, dx)?.apply {
+                smartAssistantTime = nowTime()
                 longFeedback()
                 logSmartValue("智能推荐x[${dx}]", x, this)
             }
         } else {
             //已有推荐值, 则判断是否要吸附
-            if (dx == 0f /*未移动时*/ && (referenceValue.value - newX).absoluteValue <= _translateAdsorbThreshold) {
+            if (dx == 0f /*未移动时*/ && (referenceValue.value - newX).absoluteValue <= translateAdsorbThreshold) {
                 referenceValue.apply {
                     logSmartValue("吸附x[${dx}]", x, this)
                 }
@@ -293,6 +333,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
                 //查找最新的推荐值
                 findSmartXValue(newX, dx)?.apply {
                     if (value != referenceValue.value) {
+                        smartAssistantTime = nowTime()
                         longFeedback()
                         logSmartValue("智能推荐x[$dx]", x, this)
                     } else {
@@ -319,12 +360,13 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
         result = if (referenceValue == null) {
             //之前没有推荐值, 则查找推荐值
             findSmartYValue(newY, dy)?.apply {
+                smartAssistantTime = nowTime()
                 longFeedback()
                 logSmartValue("智能推荐y[${dy}]", y, this)
             }
         } else {
             //已有推荐值, 则判断是否要吸附
-            if (dy == 0f /*未移动时*/ || (referenceValue.value - newY).absoluteValue <= _translateAdsorbThreshold) {
+            if (dy == 0f /*未移动时*/ || (referenceValue.value - newY).absoluteValue <= translateAdsorbThreshold) {
                 referenceValue.apply {
                     logSmartValue("吸附y[${dy}]", y, this)
                 }
@@ -332,6 +374,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
                 //查找最新的推荐值
                 findSmartYValue(newY, dy)?.apply {
                     if (value != referenceValue.value) {
+                        smartAssistantTime = nowTime()
                         longFeedback()
                         logSmartValue("智能推荐y[$dy]", y, this)
                     } else {
@@ -372,7 +415,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
                 }
             }
         }
-        if (result != null && (result.value - x).absoluteValue <= _translateAdsorbThreshold) {
+        if (result != null && (result.value - x).absoluteValue <= translateAdsorbThreshold) {
             return result
         }
         return null
@@ -402,7 +445,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
                 }
             }
         }
-        if (result != null && (result.value - y).absoluteValue <= _translateAdsorbThreshold) {
+        if (result != null && (result.value - y).absoluteValue <= translateAdsorbThreshold) {
             return result
         }
         return null
@@ -439,7 +482,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
 
     /**是否有推荐的值*/
     private fun haveSmartAssistantValue() =
-        lastSmartXValue != null && lastSmartYValue != null && lastSmartRotateValue != null
+        lastSmartXValue != null || lastSmartYValue != null || lastSmartRotateValue != null
 
     /**先绘制提示线*/
     override fun renderOnInside(canvas: Canvas, params: RenderParams) {
@@ -536,6 +579,7 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
 
     /**再绘制距离文本*/
     override fun renderOnOutside(canvas: Canvas, params: RenderParams) {
+        if (!haveSmartAssistantValue()) return
         val unit = controlManager.delegate.axisManager.renderUnit
         val renderViewBox = controlManager.delegate.renderViewBox
         val point = acquireTempPointF()
@@ -611,87 +655,6 @@ class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRende
                 LinearLayout.HORIZONTAL
             )
         )
-    }
-
-    /**是否要忽略提示*/
-    private fun isIgnoreSmartAssistantDx(newValue: Float): Boolean {
-        val nowTime = nowTime()
-        lastSmartXValue?.let {
-            if ((it.value - newValue).absoluteValue <= _translateAdsorbThreshold) {
-                //吸附状态
-                return false
-            }
-            lastSmartXValue = null
-        }
-        if ((nowTime - _lastSmartAssistantTimeDx) < smartAssistantTranslateDelayThreshold) {
-            return true
-        }
-        _lastSmartAssistantTimeDx = nowTime
-        return false
-    }
-
-    private fun isIgnoreSmartAssistantDy(newValue: Float): Boolean {
-        val nowTime = nowTime()
-        lastSmartYValue?.let {
-            if ((it.value - newValue).absoluteValue <= _translateAdsorbThreshold) {
-                //吸附状态
-                return false
-            }
-            lastSmartYValue = null
-        }
-        if ((nowTime - _lastSmartAssistantTimeDy) < smartAssistantTranslateDelayThreshold) {
-            return true
-        }
-        _lastSmartAssistantTimeDy = nowTime
-        return false
-    }
-
-    private fun isIgnoreSmartAssistantWidth(newValue: Float): Boolean {
-        val nowTime = nowTime()
-        lastSmartXValue?.let {
-            if ((it.value - newValue).absoluteValue <= _translateAdsorbThreshold) {
-                //吸附状态
-                return false
-            }
-            lastSmartXValue = null
-        }
-        if ((nowTime - _lastSmartAssistantTimeWidth) < smartAssistantDelayThreshold) {
-            return true
-        }
-        _lastSmartAssistantTimeWidth = nowTime
-        return false
-    }
-
-    private fun isIgnoreSmartAssistantHeight(newValue: Float): Boolean {
-        val nowTime = nowTime()
-        lastSmartYValue?.let {
-            if ((it.value - newValue).absoluteValue <= _translateAdsorbThreshold) {
-                //吸附状态
-                return false
-            }
-            lastSmartYValue = null
-        }
-        if ((nowTime - _lastSmartAssistantTimeHeight) < smartAssistantDelayThreshold) {
-            return true
-        }
-        _lastSmartAssistantTimeHeight = nowTime
-        return false
-    }
-
-    private fun isIgnoreSmartAssistantRotate(newValue: Float): Boolean {
-        val nowTime = nowTime()
-        lastSmartYValue?.let {
-            if ((it.value - newValue).absoluteValue <= rotateAdsorbThreshold) {
-                //吸附状态
-                return false
-            }
-            lastSmartYValue = null
-        }
-        if (nowTime - _lastSmartAssistantTimeRotate < smartAssistantDelayThreshold) {
-            return true
-        }
-        _lastSmartAssistantTimeRotate = nowTime
-        return false
     }
 
     private fun longFeedback() {

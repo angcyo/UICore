@@ -119,4 +119,7 @@ object LibHawkKeys {
 
     /**矢量存储的精度*/
     var vectorDecimal: Int by HawkPropertyValue<Any, Int>(6)
+
+    /**最小吸附时间*/
+    var minAdsorbTime: Long by HawkPropertyValue<Any, Long>(300)
 }
