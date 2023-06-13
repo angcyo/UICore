@@ -1,6 +1,8 @@
 package com.angcyo.core.component.model
 
+import android.view.MotionEvent
 import androidx.lifecycle.ViewModel
+import com.angcyo.library.ex.TouchAction
 import com.angcyo.viewmodel.vmDataOnce
 import java.io.File
 
@@ -12,6 +14,8 @@ import java.io.File
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
 class DataShareModel : ViewModel() {
+
+    //region ---共享数据---
 
     /**共享数据通知, [Any]类型*/
     val shareOnceData = vmDataOnce<Any?>()
@@ -30,4 +34,29 @@ class DataShareModel : ViewModel() {
 
     /**共享需要更新[com.angcyo.dsladapter.DslAdapterItem]状态通知, 当收到此通知时, 表示需要更新对应的item*/
     val shareUpdateAdapterItemOnceData = vmDataOnce<Any?>()
+
+    //endregion ---共享数据---
+
+    //region ---共享回调---
+
+    /**[activityDispatchTouchEvent]*/
+    val activityDispatchTouchEventAction = mutableListOf<TouchAction>()
+
+    /**
+     * 手势触发时回调
+     * [com.angcyo.core.activity.BaseCoreAppCompatActivity.dispatchTouchEvent]
+     * */
+    @Synchronized
+    fun activityDispatchTouchEvent(ev: MotionEvent) {
+        for (action in activityDispatchTouchEventAction) {
+            try {
+                action(ev)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    //endregion ---共享回调---
+
 }

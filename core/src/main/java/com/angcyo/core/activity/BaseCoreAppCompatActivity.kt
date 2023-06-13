@@ -2,12 +2,14 @@ package com.angcyo.core.activity
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.MotionEvent
 import com.angcyo.activity.BaseAppCompatActivity
 import com.angcyo.base.enableHighRefresh
 import com.angcyo.core.R
 import com.angcyo.core.checkShowCrashDialog
 import com.angcyo.core.component.ComplianceCheck
 import com.angcyo.core.component.StateModel
+import com.angcyo.core.component.model.DataShareModel
 import com.angcyo.core.component.model.LanguageModel
 import com.angcyo.core.vmApp
 import com.angcyo.library.annotation.CallComplianceAfter
@@ -90,6 +92,11 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         vmApp<LanguageModel>().onConfigurationChanged(this, newConfig)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        vmApp<DataShareModel>().activityDispatchTouchEvent(ev)
+        return super.dispatchTouchEvent(ev)
     }
 
     //<editor-fold desc="双击Back回调">
