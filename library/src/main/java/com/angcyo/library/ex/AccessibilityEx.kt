@@ -330,10 +330,12 @@ fun AccessibilityNodeInfo.setNodeText(text: CharSequence?): Boolean {
                 )
                 performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
             }
+
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 -> {
                 text?.copy()
                 performAction(AccessibilityNodeInfo.ACTION_PASTE)
             }
+
             else -> {
                 AccessibilityNodeInfoCompat.wrap(this).text = text
                 //tip("设备不支持\n设置文本", R.drawable.lib_ic_error)
@@ -649,6 +651,9 @@ fun List<AccessibilityNodeInfo>.toWrapList() =
     mapTo(ArrayList<AccessibilityNodeInfoCompat>()) { it.wrap() }
 
 /**获取有文本的文本*/
+fun AccessibilityNodeInfoCompat.nodeText() = text()
+
+/**获取有文本的文本*/
 fun AccessibilityNodeInfoCompat.text() =
     text ?: (contentDescription ?: (hintText ?: (paneTitle ?: tooltipText)))
 
@@ -805,10 +810,12 @@ fun AccessibilityNodeInfoCompat.setNodeText(text: CharSequence?): Boolean {
                 )
                 performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
             }
+
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 -> {
                 text?.copy()
                 performAction(AccessibilityNodeInfo.ACTION_PASTE)
             }
+
             else -> {
                 this.text = text
                 //tip("设备不支持\n设置文本", R.drawable.lib_ic_error)
@@ -1042,18 +1049,23 @@ fun Int.toWindowTypeStr(): String {
         AccessibilityWindowInfo.TYPE_APPLICATION -> {
             "TYPE_APPLICATION"
         }
+
         AccessibilityWindowInfo.TYPE_INPUT_METHOD -> {
             "TYPE_INPUT_METHOD"
         }
+
         AccessibilityWindowInfo.TYPE_SYSTEM -> {
             "TYPE_SYSTEM"
         }
+
         AccessibilityWindowInfo.TYPE_ACCESSIBILITY_OVERLAY -> {
             "TYPE_ACCESSIBILITY_OVERLAY"
         }
+
         AccessibilityWindowInfo.TYPE_SPLIT_SCREEN_DIVIDER -> {
             "TYPE_SPLIT_SCREEN_DIVIDER"
         }
+
         else -> "<UNKNOWN>"
     }
 }

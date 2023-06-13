@@ -84,6 +84,13 @@ fun _runMainRunnableDelay(
     MainExecutor.delay(runnable, delayMillis)
 }
 
+fun onMainDelay(
+    delayMillis: Long = app().resources.getInteger(R.integer.lib_animation_delay).toLong(),
+    runnable: Runnable
+) {
+    _runMainRunnableDelay(delayMillis, runnable)
+}
+
 /**延迟处理*/
 fun _delay(
     delayMillis: Long = app().resources.getInteger(R.integer.lib_animation_delay).toLong(),

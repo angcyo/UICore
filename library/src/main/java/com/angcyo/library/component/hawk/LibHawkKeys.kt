@@ -122,4 +122,7 @@ object LibHawkKeys {
 
     /**最小吸附时间*/
     var minAdsorbTime: Long by HawkPropertyValue<Any, Long>(300)
+
+    /**最小检测运行脚本时间*/
+    var minCheckScriptTime: Long by HawkPropertyValue<Any, Long>(5_000)
 }

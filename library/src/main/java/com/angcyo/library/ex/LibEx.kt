@@ -7,6 +7,7 @@ import android.graphics.Point
 import android.graphics.PointF
 import android.os.Build
 import android.os.Debug
+import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import androidx.collection.SimpleArrayMap
@@ -43,6 +44,7 @@ typealias Action = () -> Unit
 typealias Action1 = (Any?) -> Unit
 typealias Action2 = (Any?, Any?) -> Unit
 typealias ClickAction = (View) -> Unit
+typealias TouchAction = (ev: MotionEvent) -> Boolean
 
 /**别名*/
 typealias ResultThrowable = (error: Throwable?) -> Unit

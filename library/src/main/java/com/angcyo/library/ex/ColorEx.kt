@@ -158,7 +158,8 @@ fun Int.alpha(alpha: Int): Int {
     return ColorUtils.setAlphaComponent(this, MathUtils.clamp(alpha, 0, 255))
 }
 
-/**[alpha]不透明度比例, 值越小越透明, 值越大越不透明.*/
+/**[alpha]不透明度比例, 值越小越透明, 值越大越不透明.
+ * [alpha] [0~1f]*/
 fun Int.alphaRatio(alpha: Float): Int {
     return alpha(alpha * 255)
 }
