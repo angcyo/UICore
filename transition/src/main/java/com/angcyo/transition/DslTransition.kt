@@ -129,6 +129,7 @@ class DslTransition {
     //</editor-fold desc="Scene 转场">
 }
 
+/**[dslTransition]*/
 fun ViewGroup.transition(action: DslTransition.() -> Unit) {
     dslTransition(this, action)
 }
