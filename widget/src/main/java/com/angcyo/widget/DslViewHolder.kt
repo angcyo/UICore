@@ -574,6 +574,12 @@ open class DslViewHolder(
         }
     }
 
+    fun gone(@IdRes vararg resId: Int) {
+        for (id in resId) {
+            gone(id)
+        }
+    }
+
     fun gone(view: View?): DslViewHolder {
         if (view != null) {
             if (view.visibility != View.GONE) {
