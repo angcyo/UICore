@@ -9,6 +9,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.util.SparseArray
+import androidx.lifecycle.LifecycleOwner
 import com.angcyo.library.app
 import java.lang.ref.WeakReference
 
@@ -266,3 +267,13 @@ val lastActivity: Activity?
 /**[Context]*/
 val lastContext: Context
     get() = lastActivity ?: app()
+
+/**[LifecycleOwner]*/
+val lastLifecycleOwner: LifecycleOwner?
+    get() = if (lastContext is LifecycleOwner) {
+        lastContext as LifecycleOwner
+    } else if (app() is LifecycleOwner) {
+        app() as LifecycleOwner
+    } else {
+        null
+    }
