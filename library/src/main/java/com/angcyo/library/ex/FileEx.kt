@@ -530,11 +530,12 @@ fun File.deleteSafe() {
     }
 }
 
-fun File.deleteRecursivelySafe() {
-    try {
+fun File.deleteRecursivelySafe(): Boolean {
+    return try {
         deleteRecursively()
     } catch (e: Exception) {
         e.printStackTrace()
+        false
     }
 }
 
