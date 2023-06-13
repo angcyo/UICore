@@ -608,6 +608,17 @@ fun List<Path>.transform(bounds: RectF, rotate: Float): List<Path> {
     return newPathList
 }
 
+/**所有[Path]都进行变换*/
+fun List<Path>.transform(matrix: Matrix): List<Path> {
+    val newPathList = mutableListOf<Path>()
+    for (path in this) {
+        val newPath = Path(path)
+        newPath.transform(matrix)
+        newPathList.add(newPath)
+    }
+    return newPathList
+}
+
 /**水平/垂直翻转路径*/
 fun List<Path>.flip(scaleX: Float, scaleY: Float): List<Path> {
     if (scaleX == 1f && scaleY == 1f) {

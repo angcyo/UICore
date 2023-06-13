@@ -3,6 +3,7 @@ package com.angcyo.canvas.render.util
 import android.graphics.Path
 import android.graphics.RectF
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.computePathBounds
 import com.angcyo.library.ex.translateToOrigin
@@ -25,6 +26,7 @@ object RenderHelper {
     }
 
     /**将原始[pathList]数据, 转换成目标位置(旋转/缩放/倾斜)的数据*/
+    @Pixel
     fun translateToRender(
         pathList: List<Path>?,
         renderProperty: CanvasRenderProperty?
