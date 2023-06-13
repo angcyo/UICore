@@ -50,9 +50,6 @@ class GCodeWriteHandler : VectorWriteHandler() {
     override fun onPathEnd(isPathFinish: Boolean) {
         super.onPathEnd(isPathFinish)
         closeCnc()
-        if (isAutoCnc) {
-            writer?.appendLine("S0 M5")
-        }
         if (isPathFinish) {
             //整个路径结束
             if (LibLpHawkKeys.enableGCodeEndG0) {
@@ -63,9 +60,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
     }
 
     override fun onNewPoint(x: Double, y: Double) {
-        if (isAutoCnc) {
-            writer?.appendLine("S255")
-        } else {
+        if (!isAutoCnc) {
             closeCnc()
         }
 
@@ -235,8 +230,9 @@ class GCodeWriteHandler : VectorWriteHandler() {
             if (isAutoCnc) {
                 //no op
             } else {
-                writer?.appendLine("M05 S0")//S电压控制 M5关闭主轴
+                writer?.appendLine("M05 ")//S电压控制 M5关闭主轴
             }
+            writer?.appendLine("S0")
             isClosedCnc = true
         }
     }
@@ -248,8 +244,9 @@ class GCodeWriteHandler : VectorWriteHandler() {
             if (isAutoCnc) {
                 //no op
             } else {
-                writer?.appendLine("M03 S255")
+                writer?.append("M03 ")
             }
+            writer?.appendLine("S255")
             isClosedCnc = false
         }
     }
