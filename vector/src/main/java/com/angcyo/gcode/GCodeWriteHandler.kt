@@ -50,10 +50,10 @@ class GCodeWriteHandler : VectorWriteHandler() {
     override fun onPathEnd(isPathFinish: Boolean) {
         super.onPathEnd(isPathFinish)
         closeCnc()
+        if (isAutoCnc) {
+            writer?.appendLine("S0 M5")
+        }
         if (isPathFinish) {
-            if (isAutoCnc) {
-                writer?.appendLine("S0 M5")
-            }
             //整个路径结束
             if (LibLpHawkKeys.enableGCodeEndG0) {
                 writer?.appendLine("G0 X0 Y0")
@@ -63,7 +63,9 @@ class GCodeWriteHandler : VectorWriteHandler() {
     }
 
     override fun onNewPoint(x: Double, y: Double) {
-        if (!isAutoCnc) {
+        if (isAutoCnc) {
+            writer?.appendLine("S255")
+        } else {
             closeCnc()
         }
 
