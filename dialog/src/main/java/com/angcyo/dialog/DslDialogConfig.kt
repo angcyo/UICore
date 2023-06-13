@@ -342,6 +342,27 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
      */
     var windowFlags: IntArray? = null
 
+    /**设置全屏对话框
+     * [com.angcyo.dialog.IosFullScreenDialogConfig]*/
+    fun setFullScreen() {
+        animStyleResId = R.style.LibNoAnimation
+
+        //navigationBarColor = Color.TRANSPARENT
+        //navigationBarDividerColor = Color.TRANSPARENT
+        //statusBarColor = Color.TRANSPARENT
+
+        //dialogGravity = Gravity.TOP
+
+        //取消变暗
+        dimAmount = 0f
+
+        //全屏的三金刚属性
+        dialogWidth = -1
+        //很关键的一点, 高度一定要撑满全屏. 撑满之后, 如果导航栏显示了, 内部View布局会有点BUG, 顶部偏移有问题.
+        dialogHeight = -1 //getRootHeight()
+        setDialogBgColor(Color.TRANSPARENT)
+    }
+
     /** 宽度全屏 */
     fun setWidthFullScreen() {
         setDialogBgColor(Color.TRANSPARENT)

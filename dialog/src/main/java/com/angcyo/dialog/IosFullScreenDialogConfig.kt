@@ -36,23 +36,8 @@ class IosFullScreenDialogConfig : BaseDialogConfig() {
     var amountColor: Int = "#33000000".toColorInt()
 
     init {
-        animStyleResId = R.style.LibNoAnimation
         dialogLayoutId = R.layout.lib_dialog_ios_full_screen_layout
-
-        //navigationBarColor = Color.TRANSPARENT
-        //navigationBarDividerColor = Color.TRANSPARENT
-        //statusBarColor = Color.TRANSPARENT
-
-        //dialogGravity = Gravity.TOP
-
-        //取消变暗
-        dimAmount = 0f
-
-        //全屏的三金刚属性
-        dialogWidth = -1
-        //很关键的一点, 高度一定要撑满全屏. 撑满之后, 如果导航栏显示了, 内部View布局会有点BUG, 顶部偏移有问题.
-        dialogHeight = -1 //getRootHeight()
-        setDialogBgColor(Color.TRANSPARENT)
+        setFullScreen()
     }
 
     override fun configWindow(window: Window) {
