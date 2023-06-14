@@ -46,6 +46,9 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         /**快速自减*/
         const val CONTROL_FAST_DECREMENT = "--1"
 
+        /**正负切花*/
+        const val CONTROL_PLUS_MINUS = "±"
+
         //---
 
         /**需要点输入, 小数输入*/
@@ -53,6 +56,9 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
 
         /**需要自增/自减*/
         const val STYLE_INCREMENT = 0x02
+
+        /**需要正负切换*/
+        const val STYLE_PLUS_MINUS = 0x04
 
         /**输入延迟*/
         var DEFAULT_INPUT_DELAY = 2000L
@@ -111,6 +117,24 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                         ?: "$step")
                 }
 
+                CONTROL_PLUS_MINUS -> {
+                    //正负切换
+                    oldValue?.apply {
+                        if (contains(".")) {
+                            toDoubleOrNull()
+                        } else {
+                            toLongOrNull()
+                        }?.run {
+                            newValueBuild.clear()
+                            if (this is Double) {
+                                newValueBuild.append(if (this > 0) "-$this" else "${-this}")
+                            } else if (this is Long) {
+                                newValueBuild.append(if (this > 0) "-$this" else "${-this}")
+                            }
+                        }
+                    }
+                }
+
                 "." -> {
                     val value = newValueBuild.toString()
                     if (value.contains(".")) {
@@ -131,7 +155,13 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
 
         /**是否是控制输入[number]*/
         fun isControlInputNumber(number: String): Boolean =
-            number == CONTROL_BACKSPACE || number == CONTROL_DECREMENT || number == CONTROL_FAST_DECREMENT || number == CONTROL_INCREMENT || number == CONTROL_FAST_INCREMENT || number == "."
+            number == CONTROL_BACKSPACE ||
+                    number == CONTROL_DECREMENT ||
+                    number == CONTROL_FAST_DECREMENT ||
+                    number == CONTROL_INCREMENT ||
+                    number == CONTROL_FAST_INCREMENT ||
+                    number == CONTROL_PLUS_MINUS ||
+                    number == "."
     }
 
     /**按键的大小*/
@@ -143,6 +173,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
      * [number] --1,表示长按--
      * [number] +1,表示++
      * [number] ++1,表示长按++
+     * [number] ±, 表示切换正负值
      * @return true 表示自动销毁window*/
     var onClickNumberAction: (number: String) -> Boolean = { onInputValue(it) }
 
@@ -174,7 +205,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
      * [STYLE_DECIMAL]
      * [STYLE_INCREMENT]
      * */
-    var keyboardStyle: Int = 0xff
+    var keyboardStyle: Int = 0xff.remove(STYLE_PLUS_MINUS)
 
     /**自动绑定输入的控件*/
     var keyboardBindTextView: TextView? = null
@@ -299,6 +330,9 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
     /**自增/自减键*/
     fun createNumberIncrementItem(window: TargetWindow): DslAdapterItem =
         KeyboardNumberIncrementItem().apply {
+            itemShowPlusMinus = keyboardStyle.have(STYLE_PLUS_MINUS)
+
+            //自增/自减
             itemIncrementAction = { plus, longPress ->
                 val value = if (longPress) {
                     if (plus) CONTROL_FAST_INCREMENT else CONTROL_FAST_DECREMENT
@@ -306,6 +340,14 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                     if (plus) CONTROL_INCREMENT else CONTROL_DECREMENT
                 }
                 if (onClickNumberAction(value)) {
+                    if (window is PopupWindow) {
+                        window.dismiss()
+                    }
+                }
+            }
+            //正负切换
+            itemPlusMinusAction = {
+                if (onClickNumberAction(CONTROL_PLUS_MINUS)) {
                     if (window is PopupWindow) {
                         window.dismiss()
                     }
@@ -367,9 +409,14 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
     /**移除键盘样式
      * [com.angcyo.item.keyboard.NumberKeyboardPopupConfig.STYLE_DECIMAL]
      * [com.angcyo.item.keyboard.NumberKeyboardPopupConfig.STYLE_INCREMENT]
+     * [com.angcyo.item.keyboard.NumberKeyboardPopupConfig.STYLE_PLUS_MINUS]
      * */
     fun removeKeyboardStyle(style: Int) {
         keyboardStyle = keyboardStyle.remove(style)
+    }
+
+    fun addKeyboardStyle(style: Int) {
+        keyboardStyle = keyboardStyle.add(style)
     }
 
     override fun dismissPopupWindow(window: TargetWindow): Boolean {

@@ -11,8 +11,16 @@ import com.angcyo.widget.DslViewHolder
  */
 class KeyboardNumberIncrementItem : DslAdapterItem() {
 
-    /**回调*/
+    /**是否显示正负号按钮*/
+    var itemShowPlusMinus: Boolean = false
+
+    /**自增/自减 回调*/
     var itemIncrementAction: (plus: Boolean, longPress: Boolean) -> Unit = { _, _ ->
+
+    }
+
+    /**正负切换回调 回调*/
+    var itemPlusMinusAction: () -> Unit = {
 
     }
 
@@ -28,6 +36,7 @@ class KeyboardNumberIncrementItem : DslAdapterItem() {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+        itemHolder.visible(R.id.plus_minus_view, itemShowPlusMinus)
         itemHolder.longTouch(R.id.minus_increment_view, true) { view, event, eventType ->
             eventType?.let {
                 itemIncrementAction(false, it == DslViewHolder.EVENT_TYPE_LONG_PRESS)
@@ -39,6 +48,9 @@ class KeyboardNumberIncrementItem : DslAdapterItem() {
                 itemIncrementAction(true, it == DslViewHolder.EVENT_TYPE_LONG_PRESS)
             }
             true
+        }
+        itemHolder.click(R.id.plus_minus_view) {
+            itemPlusMinusAction()
         }
     }
 }

@@ -157,6 +157,7 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
 
         //视图可用空间
         val viewAvailableWidth = measureWidthSize - paddingLeft - paddingRight
+        val viewAvailableHeight = measureHeightSize - paddingTop - paddingBottom
 
         //child总数
         val count = childCount
@@ -222,7 +223,19 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
                         heightMeasureSpec
                     )
                 } else {
-                    measureChild(child, widthMeasureSpec, heightMeasureSpec)
+                    var childWidthMeasureSpec = widthMeasureSpec
+                    var childHeightMeasureSpec = heightMeasureSpec
+                    if (params.width == ViewGroup.LayoutParams.MATCH_PARENT) {
+                        var childWidth = max(width, lineWidth)
+                        if (childWidth < 0) {
+                            childWidth = viewAvailableWidth
+                        }
+                        childWidthMeasureSpec = exactly(childWidth + paddingLeft + paddingRight)
+                    }
+                    if (params.height == ViewGroup.LayoutParams.MATCH_PARENT) {
+                        childHeightMeasureSpec = exactly(max(height, viewAvailableHeight))
+                    }
+                    measureChild(child, childWidthMeasureSpec, childHeightMeasureSpec)
                 }
             }
             childWidth = child.measuredWidth + params.leftMargin + params.rightMargin
