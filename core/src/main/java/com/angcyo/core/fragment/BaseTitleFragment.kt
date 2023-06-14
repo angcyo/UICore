@@ -27,6 +27,7 @@ import com.angcyo.core.R
 import com.angcyo.core.behavior.ArcLoadingHeaderBehavior
 import com.angcyo.library.L
 import com.angcyo.library.component.dslIntent
+import com.angcyo.library.component.onMain
 import com.angcyo.library.ex.*
 import com.angcyo.library.model.Page
 import com.angcyo.lifecycle.onStart
@@ -65,7 +66,13 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     /**自定义的刷新头部*/
     var refreshLayoutId: Int = -1
 
-    /**自定义标题栏布局*/
+    /**自定义标题栏布局
+     * [R.layout.lib_title_layout]
+     * [R.layout.lib_search_title_layout] 带过滤的标题栏
+     * [com.angcyo.item.component.SearchAdapterFilter.initSearchAdapterFilter]
+     *
+     * [R.layout.lib_search_layout]
+     * */
     var titleLayoutId: Int = -1
 
     /**是否激活刷新回调*/
@@ -410,15 +417,19 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     /**开始刷新*/
     open fun startRefresh() {
-        _laidOut {
-            refreshContentBehavior?.setRefreshContentStatus(IRefreshBehavior.STATUS_REFRESH)
+        onMain(true) {
+            _laidOut {
+                refreshContentBehavior?.setRefreshContentStatus(IRefreshBehavior.STATUS_REFRESH)
+            }
         }
     }
 
     /**结束刷新*/
     open fun finishRefresh() {
-        _laidOut {
-            refreshContentBehavior?.setRefreshContentStatus(IRefreshBehavior.STATUS_FINISH)
+        onMain(true) {
+            _laidOut {
+                refreshContentBehavior?.setRefreshContentStatus(IRefreshBehavior.STATUS_FINISH)
+            }
         }
     }
 
@@ -439,6 +450,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     //<editor-fold desc="扩展方法">
 
+    /**颜色受到影响*/
     fun appendLeftItem(
         text: CharSequence? = null,
         @DrawableRes ico: Int = undefined_res,
@@ -448,6 +460,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         return leftControl()?.appendItem(text, ico, action, onClick)
     }
 
+    /**颜色受到影响*/
     fun appendRightItem(
         text: CharSequence? = null,
         @DrawableRes ico: Int = undefined_res,
