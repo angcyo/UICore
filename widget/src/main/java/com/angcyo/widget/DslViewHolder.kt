@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
+import androidx.annotation.MainThread
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.angcyo.library.L
@@ -31,6 +32,8 @@ import java.lang.ref.WeakReference
  * @date 2019/08/09
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+@MainThread
 open class DslViewHolder(
     itemView: View,
     initialCapacity: Int = DEFAULT_INITIAL_CAPACITY
@@ -566,12 +569,33 @@ open class DslViewHolder(
         return gone(v<View>(resId))
     }
 
-    fun gone(@IdRes resId: Int, gone: Boolean) {
+    fun goneIndex(index: Int, gone: Boolean = true): DslViewHolder {
+        val view = itemView
+        if (view is ViewGroup) {
+            val child = view.getChildAt(index)
+            if (child != null) {
+                gone(child, gone)
+            }
+        }
+        return this
+    }
+
+    fun gone(view: View, gone: Boolean): DslViewHolder {
+        if (gone) {
+            gone(view)
+        } else {
+            visible(view)
+        }
+        return this
+    }
+
+    fun gone(@IdRes resId: Int, gone: Boolean): DslViewHolder {
         if (gone) {
             gone(v<View>(resId))
         } else {
             visible(resId)
         }
+        return this
     }
 
     fun gone(@IdRes vararg resId: Int) {
