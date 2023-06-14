@@ -9,7 +9,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.filter.BaseFilterInterceptor
 import com.angcyo.dsladapter.filter.FilterChain
 import com.angcyo.dsladapter.filter.IFilterInterceptor
-import com.angcyo.dsladapter.toNone
+import com.angcyo.dsladapter.noneStatus
 import com.angcyo.item.R
 import com.angcyo.item.style.IDesItem
 import com.angcyo.item.style.ITextItem
@@ -58,6 +58,7 @@ class SearchAdapterFilter {
                             need = true
                         }
                     }
+
                     is IDesItem -> {
                         //IDesItem
                         item.itemUpdateFlag = true
@@ -67,6 +68,7 @@ class SearchAdapterFilter {
                             need = true
                         }
                     }
+
                     is IToText -> {
                         //IToText
                         val itemText = item.toText()
@@ -75,6 +77,7 @@ class SearchAdapterFilter {
                             need = true
                         }
                     }
+
                     is IFilterItem -> {
                         //IFilterItem
                         if (item.containsFilterText(filterText)) {
@@ -158,7 +161,8 @@ class SearchAdapterFilter {
 
         _adapter?.apply {
             if (adapterItems.isNotEmpty()) {
-                toNone()
+                //toNone()
+                noneStatus()
             }
             //触发流程
             updateItemDepend()

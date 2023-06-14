@@ -352,7 +352,11 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         }
         dslAdapterStatusItem.itemDslAdapter = this
         dslAdapterStatusItem.itemState = status
-        dslAdapterStatusItem.itemChanging = true
+        if (dslAdapterStatusItem.itemChanging && dslAdapterStatusItem.itemChanged) {
+            //可能正在更新中
+        } else {
+            dslAdapterStatusItem.itemChanging = true
+        }
     }
 
     /**自动设置状态
