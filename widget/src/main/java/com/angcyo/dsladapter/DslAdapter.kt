@@ -68,8 +68,8 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     var onceFilterParams: FilterParams? = null
 
     /**默认的[FilterParams]*/
-    @NonNull
     var defaultFilterParams: FilterParams? = null
+        @NonNull
         get() {
             return onceFilterParams ?: (field ?: _defaultFilterParams())
         }
@@ -126,6 +126,9 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     override fun getItemCount(): Int {
         return getValidFilterDataList().size
     }
+
+    /**当前的适配器数据是否为空*/
+    fun isEmpty() = adapterItems.isEmpty()
 
     override fun onBindViewHolder(
         holder: DslViewHolder,
