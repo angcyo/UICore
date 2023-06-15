@@ -67,7 +67,7 @@
             android:layout_height="60dp"
             android:layout_marginTop="@dimen/lib_xhdpi"
             android:layout_marginRight="60dp"
-            android:background="@android:color/white"
+            android:background="@color/lib_theme_white_color"
             android:orientation="horizontal"
             app:borderColor="@android:color/darker_gray"
             app:borderSize="1dp"

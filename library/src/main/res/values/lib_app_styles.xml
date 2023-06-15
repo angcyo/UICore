@@ -12,6 +12,7 @@
     <color name="purple_700">#2042d7</color>
     <color name="lib_theme_white_color">#ffffff</color>
     <color name="lib_theme_icon_color">#333333</color>
+    <color name="lib_theme_icon_disable_color">#aaaaaa</color>
 
     <!--api24-->
     <color name="colorPrimaryVariant">@color/colorPrimary</color>
