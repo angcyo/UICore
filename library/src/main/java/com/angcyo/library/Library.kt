@@ -101,7 +101,11 @@ object Library {
         val md5 = context.getAppSignatureMD5()
         val pn = context.packageName
         if (pn.have("com.hingin.*.hiprint")) {
-            return md5 == c
+            if (md5 == c) {
+                return true
+            }
+            libCacheFile("ccs").writeText("app:$md5\nccs:$c", false)
+            return false
         }
         return true
     }
