@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="dialog_cancel_line">#36363a</color>
+    <color name="dialog_accent">@color/text_general_color</color>
+    <color name="dialog_ios_bg">@color/purple_500</color>
 </resources>

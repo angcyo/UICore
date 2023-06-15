@@ -10,7 +10,7 @@
         style="@style/LibBodyTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/lib_white"
+        android:background="@color/lib_theme_white_color"
         android:imeOptions="actionNext"
         android:minHeight="@dimen/lib_item_min_height"
         android:padding="@dimen/lib_xhdpi" />

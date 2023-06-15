@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/lib_bg_selector"
-    app:r_background="@color/lib_white">
+    app:r_background="@color/lib_theme_white_color">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/lib_text_view"

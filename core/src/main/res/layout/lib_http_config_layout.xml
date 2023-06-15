@@ -22,6 +22,7 @@
             android:minHeight="@dimen/lib_min_item_height"
             app:r_draw_left=" host: "
             app:r_focus_drawable="@drawable/lib_bottom_focus_shape"
+            app:r_night_text_cursor_drawable="@drawable/lib_white_cursor_shape"
             app:r_no_focus_drawable="@drawable/lib_bottom_no_focus_shape" />
 
     </FrameLayout>

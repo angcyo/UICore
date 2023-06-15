@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
 import com.angcyo.library.L
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.isDarkMode
 import com.angcyo.widget.R
 import com.angcyo.widget.base.hidePassword
 import com.angcyo.widget.base.isPasswordType
@@ -202,6 +203,15 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
             }
         }
 
+        if (typedArray.hasValue(R.styleable.REditDelegate_r_night_text_cursor_drawable)) {
+            if (isDarkMode(editText.context)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    editText.textCursorDrawable =
+                        typedArray.getDrawable(R.styleable.REditDelegate_r_night_text_cursor_drawable)
+                }
+            }
+        }
+
         typedArray.recycle()
 
         _touchSlop = ViewConfiguration.get(editText.context).scaledTouchSlop
@@ -244,6 +254,7 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
                     isDownInClear = isTouchInClear(event.x, event.y)
                     updateState(true, isDownInClear)
                 }
+
                 MotionEvent.ACTION_MOVE -> {
                     val x = event.x
                     val y = event.y
@@ -254,6 +265,7 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
                         updateState(true, false)
                     }
                 }
+
                 MotionEvent.ACTION_UP -> {
                     updateState(true, false)
                     if (isDownInClear && isTouchInClear(event.x, event.y)) {
@@ -265,6 +277,7 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
                     }
                     isDownInClear = false
                 }
+
                 MotionEvent.ACTION_CANCEL -> {
                     updateState(true, false)
                     isDownInClear = false

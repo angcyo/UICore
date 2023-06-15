@@ -22,6 +22,7 @@
         tools:text="标题" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/message_wrap_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/lib_xhdpi"
@@ -49,7 +50,7 @@
         android:layout_marginTop="@dimen/lib_hdpi"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dialog_message_view">
+        app:layout_constraintTop_toBottomOf="@id/message_wrap_layout">
 
         <com.angcyo.widget.DslButton
             android:id="@+id/dialog_neutral_button"

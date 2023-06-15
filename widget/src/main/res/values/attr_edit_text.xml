@@ -15,6 +15,9 @@
     <attr name="r_hide_soft_input_on_detached" format="boolean" />
     <attr name="r_hide_soft_input_on_invisible" format="boolean" />
 
+    <!--暗色模式下, 光标的资源-->
+    <attr name="r_night_text_cursor_drawable" format="reference" />
+
     <!--相同[Edit]属性代理读取设置¬-->
     <declare-styleable name="REditDelegate">
         <attr name="r_show_clear" />
@@ -28,6 +31,7 @@
         <attr name="r_hide_soft_input_on_lost_focus" />
         <attr name="r_hide_soft_input_on_detached" />
         <attr name="r_hide_soft_input_on_invisible" />
+        <attr name="r_night_text_cursor_drawable" />
     </declare-styleable>
 
     <!--焦点动画配置-->
@@ -104,6 +108,8 @@
 
         <attr name="r_pattern_enable" />
         <attr name="r_pattern_string" />
+
+        <attr name="r_night_text_cursor_drawable" />
     </declare-styleable>
 
     <declare-styleable name="ClearCompleteEditText">
@@ -123,6 +129,8 @@
 
         <attr name="r_pattern_enable" />
         <attr name="r_pattern_string" />
+
+        <attr name="r_night_text_cursor_drawable" />
     </declare-styleable>
 
     <declare-styleable name="AutoCompleteEditText">
