@@ -23,6 +23,7 @@
     <color name="lib_disable_bg_color">@color/lib_theme_icon_disable_color</color>
     <color name="lib_dark">@color/purple_700</color>
     <color name="lib_dark_gray">#dde3e7</color>
+    <color name="lib_line">#46464a</color>
 
     <!--主要文本-->
     <color name="text_primary_color">#dde3e7</color>
