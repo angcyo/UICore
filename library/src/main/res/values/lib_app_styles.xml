@@ -11,6 +11,7 @@
     <color name="purple_500">#2d52f2</color>
     <color name="purple_700">#2042d7</color>
     <color name="lib_theme_white_color">#ffffff</color>
+    <color name="lib_theme_white_bg_color">#f9f9f9</color>
     <color name="lib_theme_icon_color">#333333</color>
     <color name="lib_theme_icon_disable_color">#aaaaaa</color>
 

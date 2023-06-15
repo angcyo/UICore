@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="lib_search_solid_color">#46464a</color>
+    <color name="lib_search_solid_press_color">@color/purple_200</color>
+</resources>

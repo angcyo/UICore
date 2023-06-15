@@ -16,6 +16,7 @@
     <color name="bg_primary_color">@color/purple_500</color>
     <color name="bg_sub_color">@color/purple_700</color>
     <color name="lib_theme_white_color">@color/purple_500</color>
+    <color name="lib_theme_white_bg_color">@color/purple_200</color>
     <color name="lib_theme_icon_color">#dde3e7</color>
     <color name="lib_theme_icon_disable_color">#5E5E5E</color>
     <color name="lib_bg_press">#20ffffff</color>
