@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="doodle_item_layout">@color/lib_theme_white_color</color>
+</resources>
