@@ -25,6 +25,8 @@
     <color name="lib_dark">@color/purple_700</color>
     <color name="lib_dark_gray">#dde3e7</color>
     <color name="lib_line">#46464a</color>
+    <color name="lib_tab_select_color">@color/text_general_color</color>
+    <color name="lib_tab_deselect_color">@color/text_sub_color</color>
 
     <!--主要文本-->
     <color name="text_primary_color">#dde3e7</color>

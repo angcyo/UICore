@@ -16,7 +16,7 @@
         style="@style/LibTabCommonStyle"
         android:layout_width="match_parent"
         android:layout_height="@dimen/lib_item_min_height"
-        android:background="@color/lib_white"
+        android:background="@color/lib_theme_white_color"
         app:tab_badge_anchor_child_index="0"
         app:tab_badge_circle_offset_x="-10dp"
         app:tab_badge_circle_offset_y="2dp"
@@ -24,7 +24,7 @@
         app:tab_badge_offset_x="-10dp"
         app:tab_badge_offset_y="2dp"
         app:tab_badge_text="9"
-        app:tab_deselect_color="@color/text_general_color"
+        app:tab_deselect_color="@color/lib_tab_deselect_color"
         app:tab_draw_badge="true"
         app:tab_enable_gradient_color="true"
         app:tab_enable_gradient_scale="true"
@@ -39,6 +39,6 @@
         app:tab_max_scale="1.2"
         app:tab_min_scale="1"
         app:tab_preview_item_layout_id="@layout/lib_tab_text_item_layout"
-        app:tab_select_color="@color/colorPrimary" />
+        app:tab_select_color="@color/lib_tab_select_color" />
 
 </FrameLayout>
