@@ -41,7 +41,7 @@
         <item name="tab_deselect_color">@color/colorAccent</item>
         <!--边框圆角/颜色/描边/填充-->
         <item name="tab_border_radius_size">@dimen/lib_radius_max</item>
-        <item name="tab_border_solid_color">@color/lib_white</item>
+        <item name="tab_border_solid_color">@color/lib_theme_white_color</item>
         <item name="tab_border_stroke_color">@color/colorAccent</item>
         <!--激活边框-->
         <item name="tab_draw_border">true</item>

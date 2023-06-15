@@ -19,6 +19,7 @@
     <color name="lib_theme_icon_color">#dde3e7</color>
     <color name="lib_theme_icon_disable_color">#5E5E5E</color>
     <color name="lib_bg_press">#20ffffff</color>
+    <color name="lib_segment_tab_bg_color">@color/purple_700</color>
 
     <!--主要文本-->
     <color name="text_primary_color">#dde3e7</color>
