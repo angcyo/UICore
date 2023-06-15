@@ -20,7 +20,8 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/lib_title_back_view"
             style="@style/LibTitleIcoStyle"
-            app:srcCompat="@drawable/dialog_back_svg" />
+            app:srcCompat="@drawable/dialog_back_svg"
+            app:tint="@color/lib_night_icon_colors_selector" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/lib_title_text_view"
