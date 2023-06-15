@@ -4,15 +4,19 @@ import android.app.Dialog
 import android.content.Context
 import android.view.Gravity
 import androidx.annotation.Px
+import com.angcyo.core.component.model.NightModel
+import com.angcyo.core.vmApp
 import com.angcyo.dialog.BaseDialogConfig
 import com.angcyo.dialog.configBottomDialog
 import com.angcyo.library.L
+import com.angcyo.library.ex._color
 import com.angcyo.library.ex._dimen
 import com.angcyo.widget.DslViewHolder
 import com.bigkoo.pickerview.view.WheelTime
 import com.bigkoo.pickerview.view.WheelTime.dateFormat
 import com.contrarywind.view.WheelView
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 
 /**
  * 日期时间选择对话框配置
@@ -59,6 +63,7 @@ open class WheelDateDialogConfig : BaseDialogConfig() {
     var dividerColor = -0x2a2a2b //分割线的颜色
     var textColorOut = -0x575758 //分割线以外的文字颜色
     var textColorCenter = -0xd5d5d6 //分割线之间的文字颜色
+    var textColorCenterNight = _color(R.color.text_general_color)
     var isCenterLabel = false//是否只显示中间的label,默认每个item都显示
     var isDrawLabelOnTextBehind = true
 
@@ -173,7 +178,11 @@ open class WheelDateDialogConfig : BaseDialogConfig() {
             setDividerType(dividerType)
             setLineSpacingMultiplier(lineSpacingMultiplier)
             setTextColorOut(textColorOut)
-            setTextColorCenter(textColorCenter)
+            if (vmApp<NightModel>().isDarkMode) {
+                setTextColorCenter(textColorCenterNight)
+            } else {
+                setTextColorCenter(textColorCenter)
+            }
             isCenterLabel(isCenterLabel)
 
             dialogViewHolder.v<WheelView>(R.id.year)?.isDrawLabelOnTextBehind =
