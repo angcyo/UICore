@@ -11,6 +11,7 @@ import com.angcyo.core.component.ComplianceCheck
 import com.angcyo.core.component.StateModel
 import com.angcyo.core.component.model.DataShareModel
 import com.angcyo.core.component.model.LanguageModel
+import com.angcyo.core.component.model.NightModel
 import com.angcyo.core.vmApp
 import com.angcyo.library.annotation.CallComplianceAfter
 import com.angcyo.library.component.hawk.LibHawkKeys
@@ -91,6 +92,7 @@ abstract class BaseCoreAppCompatActivity : BaseAppCompatActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        vmApp<NightModel>().onConfigurationChanged(this, newConfig)
         vmApp<LanguageModel>().onConfigurationChanged(this, newConfig)
     }
 

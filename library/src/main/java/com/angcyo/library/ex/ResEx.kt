@@ -13,14 +13,21 @@ import android.os.LocaleList
 import android.util.AttributeSet
 import android.view.View
 import android.view.Window
-import androidx.annotation.*
+import androidx.annotation.ArrayRes
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.IntegerRes
+import androidx.annotation.Px
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import com.angcyo.library.L
 import com.angcyo.library.PlaceholderApplication
-import com.angcyo.library.app
 import com.angcyo.library.component.defaultDensityAdapter
-import java.util.*
+import com.angcyo.library.component.lastContext
+import java.util.Locale
 
 /**
  *
@@ -106,8 +113,12 @@ fun Context.loadDrawable(id: Int): Drawable? {
     }
 }
 
+/**不同的上下文
+ * lastContext.resources.configuration.uiMode
+ * context.resources.configuration.uiMode
+ * */
 @ColorInt
-fun getColor(@ColorRes id: Int, context: Context = app()): Int {
+fun getColor(@ColorRes id: Int, context: Context = lastContext): Int {
     if (context is PlaceholderApplication) {
         return Color.YELLOW
     }
@@ -115,29 +126,29 @@ fun getColor(@ColorRes id: Int, context: Context = app()): Int {
 }
 
 @Px
-fun getDimen(@DimenRes id: Int, context: Context = app()): Int {
+fun getDimen(@DimenRes id: Int, context: Context = lastContext): Int {
     return context.getDimen(id)
 }
 
-fun getInteger(@IntegerRes id: Int, context: Context = app()): Int {
+fun getInteger(@IntegerRes id: Int, context: Context = lastContext): Int {
     return context.resources.getInteger(id)
 }
 
 @ColorInt
-fun _color(@ColorRes id: Int, context: Context = app()): Int {
+fun _color(@ColorRes id: Int, context: Context = lastContext): Int {
     return getColor(id, context)
 }
 
 @Px
-fun _dimen(@DimenRes id: Int, context: Context = app()): Int {
+fun _dimen(@DimenRes id: Int, context: Context = lastContext): Int {
     return getDimen(id, context)
 }
 
-fun _integer(@IntegerRes id: Int, context: Context = app()): Int {
+fun _integer(@IntegerRes id: Int, context: Context = lastContext): Int {
     return getInteger(id, context)
 }
 
-fun _drawable(@DrawableRes id: Int, context: Context = app()): Drawable? {
+fun _drawable(@DrawableRes id: Int, context: Context = lastContext): Drawable? {
     return context.loadDrawable(id)
 }
 
@@ -153,24 +164,24 @@ fun _colorDrawable(color: Int): Drawable {
 }
 
 fun _string(@StringRes id: Int): String {
-    return app().resources.getString(id)
+    return lastContext.resources.getString(id)
 }
 
 fun _string(@StringRes id: Int, vararg formatArgs: Any): String {
-    return app().resources.getString(id, *formatArgs)
+    return lastContext.resources.getString(id, *formatArgs)
 }
 
 fun _stringArray(@ArrayRes id: Int): Array<String> {
-    return app().resources.getStringArray(id)
+    return lastContext.resources.getStringArray(id)
 }
 
 /**获取指定语种的字符串资源*/
 fun _string(@StringRes id: Int, locale: Locale?): String {
-    return localResources(app(), locale).getString(id)
+    return localResources(lastContext, locale).getString(id)
 }
 
 fun _stringArray(@ArrayRes id: Int, locale: Locale?): Array<String> {
-    return localResources(app(), locale).getStringArray(id)
+    return localResources(lastContext, locale).getStringArray(id)
 }
 
 /**获取某个语种下的 Resources对象*/
@@ -194,18 +205,19 @@ fun localResources(context: Context, locale: Locale?): Resources {
 //---
 
 /**是否是暗黑模式*/
-fun isDarkMode(context: Context = app()): Boolean {
+fun isDarkMode(context: Context = lastContext): Boolean {
     return when (AppCompatDelegate.getDefaultNightMode()) {
         AppCompatDelegate.MODE_NIGHT_YES -> true
         AppCompatDelegate.MODE_NIGHT_NO -> false
         AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
         AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY,
         AppCompatDelegate.MODE_NIGHT_UNSPECIFIED -> isDarkModeOnSystem(context)
+
         else -> false
     }
 }
 
-fun isDarkModeOnSystem(context: Context = app()): Boolean {
+fun isDarkModeOnSystem(context: Context = lastContext): Boolean {
     return when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
         Configuration.UI_MODE_NIGHT_YES -> true
         Configuration.UI_MODE_NIGHT_NO -> false

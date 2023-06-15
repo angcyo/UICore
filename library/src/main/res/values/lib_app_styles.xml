@@ -4,11 +4,14 @@
     <color name="colorPrimary">@color/purple_500</color>
     <color name="colorPrimaryDark">@color/purple_700</color>
     <color name="colorAccent">@color/purple_200</color>
+    <color name="colorAccentNight">@color/colorAccent</color>
 
     <!--2023-4-11 兼容新的配色规则-->
     <color name="purple_200">#4467ff</color>
     <color name="purple_500">#2d52f2</color>
     <color name="purple_700">#2042d7</color>
+    <color name="lib_theme_white_color">#ffffff</color>
+    <color name="lib_theme_icon_color">#333333</color>
 
     <!--api24-->
     <color name="colorPrimaryVariant">@color/colorPrimary</color>

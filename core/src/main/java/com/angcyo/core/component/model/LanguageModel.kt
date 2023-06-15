@@ -15,6 +15,7 @@ import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.angcyo.core.vmApp
+import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.app
 import com.angcyo.viewmodel.vmData
 import java.util.*
@@ -299,7 +300,7 @@ class LanguageModel : ViewModel() {
     /**当前app的语言 */
     val localData: MutableLiveData<Locale?> = vmData(null)
 
-    val languageActivityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
+    private val languageActivityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
             changeAppLanguage(activity, localData.value, false)
         }
@@ -330,6 +331,7 @@ class LanguageModel : ViewModel() {
     }
 
     /**需要为每一个[Activity]都更新语言配置*/
+    @CallPoint
     fun onCreate(application: Application) {
         readLocal(application).apply {
             localData.value = this
@@ -343,6 +345,7 @@ class LanguageModel : ViewModel() {
      * 如果app强制设置了语言, 那么需要更新[Configuration], 此时不需要通知界面更新
      * [androidx.appcompat.app.AppCompatActivity.onConfigurationChanged]
      * */
+    @CallPoint
     fun onConfigurationChanged(activity: Activity, newConfig: Configuration) {
         val settingLocal = settingLocalData.value
         val targetLocal = settingLocalData.value ?: getLocaleList(newConfig).first()

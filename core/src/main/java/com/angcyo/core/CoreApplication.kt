@@ -13,6 +13,7 @@ import com.angcyo.core.component.StateModel
 import com.angcyo.core.component.file.writeErrorLog
 import com.angcyo.core.component.interceptor.LogFileInterceptor
 import com.angcyo.core.component.model.LanguageModel
+import com.angcyo.core.component.model.NightModel
 import com.angcyo.core.dslitem.DslLastDeviceInfoItem
 import com.angcyo.coroutine.CoroutineErrorHandler
 import com.angcyo.dialog.hideLoading
@@ -102,6 +103,8 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
             ActivityDebugInfo.install(this)
         }
 
+        //暗色模式
+        vmApp<NightModel>().onCreate(this)
         //语言
         vmApp<LanguageModel>().onCreate(this)
 

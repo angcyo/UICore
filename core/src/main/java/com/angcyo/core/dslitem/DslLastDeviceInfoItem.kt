@@ -10,6 +10,8 @@ import com.angcyo.core.component.ComplianceCheck
 import com.angcyo.core.component.HttpConfigDialog
 import com.angcyo.core.component.fileSelector
 import com.angcyo.core.component.model.LanguageModel
+import com.angcyo.core.component.model.NightModel
+import com.angcyo.core.vmApp
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.isItemLastInAdapter
 import com.angcyo.dsladapter.item.IFragmentItem
@@ -87,7 +89,7 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
                 append(getWifiIP())
             }
 
-            //gmt
+            //gmt 语言
             appendln()
             append(LanguageModel.getTimeZoneDes())
             appendln()
@@ -113,18 +115,22 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
 
             appendln()
             //id
+            val isDarkMode = vmApp<NightModel>().isDarkMode
             if (isCompliance) {
                 append("${Device.androidId}/${Device.serial}") {
-                    foregroundColor = getColor(R.color.colorPrimary)
+                    foregroundColor =
+                        if (isDarkMode) getColor(R.color.text_primary_color) else getColor(R.color.colorPrimary)
                 }
                 appendln()
             }
             append(Device.deviceId) {
-                foregroundColor = getColor(R.color.colorPrimaryDark)
+                foregroundColor =
+                    if (isDarkMode) getColor(R.color.text_general_color) else getColor(R.color.colorPrimaryDark)
             }
             appendln()
             append(ID.id) {
-                foregroundColor = getColor(R.color.colorPrimary)
+                foregroundColor =
+                    if (isDarkMode) getColor(R.color.text_primary_color) else getColor(R.color.colorPrimary)
             }
             appendln()
 

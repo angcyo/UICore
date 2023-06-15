@@ -1,6 +1,5 @@
 package com.angcyo.item
 
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
@@ -8,6 +7,7 @@ import androidx.annotation.LayoutRes
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.ITextInfoItem
 import com.angcyo.item.style.TextInfoItemConfig
+import com.angcyo.library.ex._color
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.color
 import com.angcyo.library.ex.inflate
@@ -39,7 +39,8 @@ open class DslBaseInfoItem : DslAdapterItem(), ITextInfoItem {
     @LayoutRes
     var itemExtendLayoutId: Int = undefined_res
 
-    var itemRBackgroundDrawable: Drawable? = ColorDrawable(Color.WHITE)
+    /**item的背景色, 不影响click ripple效果*/
+    var itemRBackgroundDrawable: Drawable? = ColorDrawable(_color(R.color.lib_theme_white_color))
 
     override var textInfoItemConfig: TextInfoItemConfig = TextInfoItemConfig()
 

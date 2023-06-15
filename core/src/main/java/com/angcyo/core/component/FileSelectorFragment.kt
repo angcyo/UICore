@@ -13,8 +13,10 @@ import com.angcyo.core.R
 import com.angcyo.core.component.file.DslFileLoader
 import com.angcyo.core.component.file.FileItem
 import com.angcyo.core.component.file.file
+import com.angcyo.core.component.model.NightModel
 import com.angcyo.core.dslitem.DslFileSelectorItem
 import com.angcyo.core.fragment.BaseFragment
+import com.angcyo.core.vmApp
 import com.angcyo.coroutine.onBack
 import com.angcyo.dialog.dslLoading
 import com.angcyo.dialog.hideLoading
@@ -185,11 +187,12 @@ open class FileSelectorFragment : BaseFragment() {
                             canceledOnTouchOutside = true
                             dialogBottomCancelItem = null
 
+                            val nightModel = vmApp<NightModel>()
                             addDialogItem {
                                 itemTextGravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
                                 itemText = span {
                                     drawable {
-                                        backgroundDrawable = _drawable(R.drawable.ic_file_open)
+                                        backgroundDrawable = nightModel.tintDrawableNight(_drawable(R.drawable.ic_file_open))
                                     }
                                     append(" 打开")
                                 }
@@ -225,7 +228,11 @@ open class FileSelectorFragment : BaseFragment() {
                                                     removeItem(this@loadSingleData2)
                                                 }
                                             } else {
-                                                toastWX("删除失败", fContext(), R.drawable.lib_ic_error)
+                                                toastWX(
+                                                    "删除失败",
+                                                    fContext(),
+                                                    R.drawable.lib_ic_error
+                                                )
                                             }
                                         }
                                     }

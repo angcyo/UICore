@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.res.ColorStateList
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -14,6 +15,7 @@ import android.view.animation.DecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.CompoundButton
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
@@ -23,6 +25,7 @@ import androidx.core.math.MathUtils.clamp
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
+import androidx.core.widget.ImageViewCompat
 import com.angcyo.library.component.pool.acquireTempRect
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
@@ -636,6 +639,18 @@ fun View.appRootView(): View {
 fun View.tooltipText(text: CharSequence?) {
     TooltipCompat.setTooltipText(this, text)
     //performLongClick()
+}
+
+/**着色*/
+fun ImageView?.setTintList(color: Int) {
+    this ?: return
+    ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(color))
+}
+
+/**着色*/
+fun ImageView?.setTintList(tintList: ColorStateList?) {
+    this ?: return
+    ImageViewCompat.setImageTintList(this, tintList)
 }
 
 //</editor-fold desc="其他">

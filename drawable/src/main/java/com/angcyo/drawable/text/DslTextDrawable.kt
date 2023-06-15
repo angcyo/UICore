@@ -149,7 +149,7 @@ fun dslFullTextDrawable(
 
         drawableWidth = -1
         drawableHeight = -1
-        textBgDrawable = ColorDrawable(Color.WHITE)
+        textBgDrawable = ColorDrawable(_color(R.color.lib_theme_white_color))
         textColor = _color(R.color.text_primary_color)
 
         action()

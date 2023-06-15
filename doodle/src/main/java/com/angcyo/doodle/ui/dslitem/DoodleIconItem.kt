@@ -4,6 +4,8 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import com.angcyo.core.component.model.NightModel
+import com.angcyo.core.vmApp
 import com.angcyo.doodle.R
 import com.angcyo.drawable.base.dslGradientDrawable
 import com.angcyo.drawable.base.solidCircle
@@ -71,7 +73,9 @@ open class DoodleIconItem : DslAdapterItem(), INewItem {
 
         //
         val imageView = itemHolder.img(R.id.lib_image_view)
+
         if (itemEnable) {
+            vmApp<NightModel>().tintImageViewNight(imageView)
             imageView?.setImageResource(itemIco)
         } else {
             val drawable = _drawable(itemIco)?.run {

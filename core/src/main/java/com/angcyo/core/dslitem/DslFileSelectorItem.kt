@@ -128,7 +128,11 @@ class DslFileSelectorItem : DslAdapterItem() {
         }
 
         if (itemIsSelected) {
-            itemHolder.itemView.setRBgDrawable(ColorDrawable(_color(R.color.colorAccent).alpha(0x30)))
+            itemHolder.itemView.setRBgDrawable(
+                ColorDrawable(
+                    _color(R.color.colorAccentNight).alpha(0x30)
+                )
+            )
         } else {
             itemHolder.itemView.setRBgDrawable(null)
         }
