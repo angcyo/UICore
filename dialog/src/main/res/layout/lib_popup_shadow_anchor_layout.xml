@@ -15,7 +15,7 @@
         android:layout_marginVertical="12dp"
         android:scaleType="fitXY"
         app:srcCompat="@drawable/ic_triangle"
-        app:tint="@color/lib_white" />
+        app:tint="@color/lib_theme_white_color" />
 
     <!--阴影内容包裹层-->
     <FrameLayout

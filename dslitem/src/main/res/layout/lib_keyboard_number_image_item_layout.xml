@@ -5,4 +5,5 @@
     android:layout_height="50dp"
     android:background="@drawable/lib_keyboard_number_selector"
     android:scaleType="center"
-    app:srcCompat="@drawable/keyboard_backspace" />
+    app:srcCompat="@drawable/keyboard_backspace"
+    app:tint="@color/lib_night_icon_colors_selector" />
