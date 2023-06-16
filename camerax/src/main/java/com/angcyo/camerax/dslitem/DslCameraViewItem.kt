@@ -19,10 +19,11 @@ import com.angcyo.widget.DslViewHolder
 
 open class DslCameraViewItem : DslAdapterItem() {
 
-    var cameraLifecycleOwner: LifecycleOwner? = null
+    /**需要绑定的生命周期, 不指定则使用[DslAdapterItem]的生命周期*/
+    var itemCameraLifecycleOwner: LifecycleOwner? = null
 
-    /**camera的生命周期控制*/
-    var lifecycleCameraController: LifecycleCameraController? = null
+    /**camera的生命周期控制管理器*/
+    var itemLifecycleCameraController: LifecycleCameraController? = null
 
     /**需要激活的使用用例*/
     @SuppressLint("UnsafeOptInUsageError")
@@ -43,18 +44,18 @@ open class DslCameraViewItem : DslAdapterItem() {
 
         val cameraView = itemHolder.v<PreviewView>(R.id.lib_camera_view)
         try {
-            if (lifecycleCameraController == null) {
-                lifecycleCameraController = LifecycleCameraController(itemHolder.context)
-                lifecycleCameraController?.apply {
+            if (itemLifecycleCameraController == null) {
+                itemLifecycleCameraController = LifecycleCameraController(itemHolder.context)
+                itemLifecycleCameraController?.apply {
                     //setEnabledUseCases(itemEnabledUseCases)
                     cameraView?.controller = this
 
-                    bindToLifecycle(cameraLifecycleOwner ?: this@DslCameraViewItem)
+                    bindToLifecycle(itemCameraLifecycleOwner ?: this@DslCameraViewItem)
                 }
             }
 
-            if (cameraView?.controller != lifecycleCameraController) {
-                cameraView?.controller = lifecycleCameraController
+            if (cameraView?.controller != itemLifecycleCameraController) {
+                cameraView?.controller = itemLifecycleCameraController
             }
         } catch (e: Exception) {
             L.w(e)
