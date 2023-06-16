@@ -12,7 +12,7 @@
     <color name="purple_700">#2042d7</color>
     <color name="lib_theme_white_color">#ffffff</color>
     <color name="lib_theme_white_bg_color">#f9f9f9</color>
-    <color name="lib_theme_icon_color">#333333</color>
+    <color name="lib_theme_icon_color">@color/lib_text_color</color>
     <color name="lib_theme_icon_disable_color">#aaaaaa</color>
     <color name="lib_tab_select_color">@color/colorPrimary</color>
     <color name="lib_tab_deselect_color">@color/text_general_color</color>

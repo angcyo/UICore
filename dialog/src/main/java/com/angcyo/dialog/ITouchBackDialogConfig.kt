@@ -4,9 +4,10 @@ import android.app.Dialog
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.IScrollBehaviorListener
 import com.angcyo.behavior.effect.TouchBackBehavior
+import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.ex.mH
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.behavior
-import com.angcyo.library.ex.mH
 
 /**
  *
@@ -30,7 +31,9 @@ interface ITouchBackDialogConfig {
         return touchBackBehavior
     }
 
+
     /**初始化*/
+    @CallPoint
     fun initTouchBackLayout(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         //暗淡量，从 0 表示没有暗淡到 1 表示完全暗淡。
         val dimAmount = dialog.window?.attributes?.dimAmount ?: 1f
@@ -62,6 +65,7 @@ interface ITouchBackDialogConfig {
     }
 
     /**主动back*/
+    @CallPoint
     fun touchBack(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         touchBackBehavior(dialogViewHolder) ?: dialog.cancel()
     }

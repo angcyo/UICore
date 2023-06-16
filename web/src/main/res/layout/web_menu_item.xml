@@ -24,6 +24,7 @@
         app:r_badge_offset_y="12dp"
         app:r_draw_badge="true"
         app:r_enable_shape="false"
+        app:tint="@color/lib_theme_icon_color"
         tools:r_badge_text="9"
         tools:src="@drawable/lib_ic_succeed" />
 
