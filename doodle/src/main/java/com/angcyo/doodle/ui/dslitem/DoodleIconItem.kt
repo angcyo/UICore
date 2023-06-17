@@ -16,6 +16,7 @@ import com.angcyo.library.ex._color
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.color
 import com.angcyo.library.ex.setBgDrawable
+import com.angcyo.library.ex.setTintList
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.span.span
 
@@ -73,11 +74,11 @@ open class DoodleIconItem : DslAdapterItem(), INewItem {
 
         //
         val imageView = itemHolder.img(R.id.lib_image_view)
-
         if (itemEnable) {
             vmApp<NightModel>().tintImageViewNight(imageView)
             imageView?.setImageResource(itemIco)
         } else {
+            imageView?.setTintList(null)
             val drawable = _drawable(itemIco)?.run {
                 color(itemIcoDisableColor)
             }
