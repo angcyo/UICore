@@ -29,6 +29,13 @@ interface INewItem : IAutoInitItem {
     }
 }
 
+/**默认是否有更新*/
+var INewItem.itemDefaultNew: Boolean
+    get() = newItemConfig.itemDefaultNew
+    set(value) {
+        newItemConfig.itemDefaultNew = value
+    }
+
 /**设置Key*/
 var INewItem.itemNewHawkKeyStr: String?
     get() = newItemConfig.itemNewHawkKeyStr

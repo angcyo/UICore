@@ -29,6 +29,13 @@ var INewFlagItem.itemNewFlagHawkKeyStr: String?
         newFlagItemConfig.itemNewFlagHawkKeyStr = value
     }
 
+/**默认是否有更新*/
+var INewFlagItem.itemDefaultNewFlag: Boolean
+    get() = newFlagItemConfig.itemDefaultNewFlag
+    set(value) {
+        newFlagItemConfig.itemDefaultNewFlag = value
+    }
+
 /**是否有new*/
 var INewFlagItem.itemHaveNewFlag: Boolean
     get() = itemNewFlagHawkKeyStr.hawkGetBoolean(newFlagItemConfig.itemDefaultNewFlag && !itemNewFlagHawkKeyStr.isNullOrEmpty())
