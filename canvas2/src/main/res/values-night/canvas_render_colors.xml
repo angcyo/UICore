@@ -2,4 +2,7 @@
 <resources>
     <!--画布选择框颜色-->
     <color name="canvas_render_select">@color/colorAccentNight</color>
+    <color name="canvas_axis_label">@color/lib_dark_gray</color>
+    <color name="canvas_axis_line_primary">#A39CA3</color>
+    <color name="canvas_axis_line_secondary">#878287</color>
 </resources>

@@ -3,6 +3,7 @@
 
     <color name="lib_bg_press">#20000000</color>
     <color name="lib_white">#FFFFFF</color>
+    <color name="lib_gray">#888888</color>
     <color name="lib_white_press">#E0E0E0</color>
     <color name="lib_dark">#F4F4F4</color>
     <color name="lib_dark_bg">#F5F6FA</color>
@@ -10,6 +11,7 @@
 
     <color name="lib_white_dark">#F5F5F5</color>
     <color name="lib_black">#000000</color>
+    <color name="lib_theme_black">#000000</color>
     <color name="lib_line">#D5D5D5</color>
     <color name="lib_line_dark">#E1E2E6</color>
     <color name="lib_disable_bg_color">#C9CACC</color>

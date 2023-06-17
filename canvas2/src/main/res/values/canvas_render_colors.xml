@@ -6,4 +6,9 @@
     <color name="canvas_render_async">@color/colorAccent</color>
     <!--提示线颜色-->
     <color name="canvas_render_assistant">#8200f1</color>
+    <color name="canvas_axis_label">@color/lib_gray</color>
+    <color name="canvas_axis_line_primary">@color/lib_gray</color>
+    <color name="canvas_axis_line_secondary">#d0d0d0</color>
+    <color name="canvas_axis_line_normal">@color/canvas_axis_line_secondary</color>
+    <color name="canvas_monitor_text">@color/lib_white</color>
 </resources>

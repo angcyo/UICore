@@ -2,11 +2,13 @@ package com.angcyo.canvas.render.renderer
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.util.createRenderPaint
 import com.angcyo.library.Fps
+import com.angcyo.library.ex._color
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.textHeight
@@ -20,7 +22,7 @@ import kotlin.math.roundToInt
  */
 class CanvasMonitorRenderer(val delegate: CanvasRenderDelegate) : IRenderer {
 
-    val paint = createRenderPaint().apply {
+    val paint = createRenderPaint(_color(R.color.lib_theme_black)).apply {
         textSize = 9 * dp
     }
 

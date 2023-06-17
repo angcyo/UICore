@@ -1,7 +1,6 @@
 package com.angcyo.canvas.render.core
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
@@ -21,7 +20,6 @@ import com.angcyo.library.ex.remove
 import com.angcyo.library.ex.textDrawHeight
 import com.angcyo.library.ex.textHeight
 import com.angcyo.library.ex.textWidth
-import com.angcyo.library.ex.toColor
 import com.angcyo.library.unit.IRenderUnit
 import com.angcyo.library.unit.MmRenderUnit
 
@@ -49,13 +47,13 @@ class CanvasAxisManager(val delegate: CanvasRenderDelegate) : IRenderer {
     val yAxisList = mutableListOf<AxisPoint>()
 
     /**主要刻度线的画笔*/
-    val axisLinePrimaryPaint = createRenderPaint(Color.GRAY)
+    val axisLinePrimaryPaint = createRenderPaint(_color(R.color.canvas_axis_line_primary))
 
     /**次要刻度线的画笔*/
-    val axisLineSecondaryPaint = createRenderPaint("#d0d0d0".toColor())
+    val axisLineSecondaryPaint = createRenderPaint(_color(R.color.canvas_axis_line_secondary))
 
     /**普通刻度线的画笔*/
-    val axisLineNormalPaint = createRenderPaint("#d0d0d0".toColor())
+    val axisLineNormalPaint = createRenderPaint(_color(R.color.canvas_axis_line_normal))
 
     /**label的文本大小*/
     var labelTextSize = 9 * dp
@@ -64,7 +62,7 @@ class CanvasAxisManager(val delegate: CanvasRenderDelegate) : IRenderer {
     var labelOffset = 3 * dp
 
     /**刻度文本画笔*/
-    val axisLabelPaint = createRenderPaint(Color.GRAY).apply {
+    val axisLabelPaint = createRenderPaint(_color(R.color.canvas_axis_label)).apply {
         style = Paint.Style.FILL
     }
 
