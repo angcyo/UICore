@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.renderer
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.PointF
@@ -54,6 +55,7 @@ import kotlin.math.min
  * @since 2023/02/17
  */
 
+/**额外的渲染动作*/
 typealias RenderAction = (renderer: CanvasElementRenderer, canvas: Canvas, renderProperty: CanvasRenderProperty, params: RenderParams) -> Unit
 
 open class CanvasGroupRenderer : BaseRenderer() {
@@ -137,13 +139,15 @@ open class CanvasGroupRenderer : BaseRenderer() {
          * [overrideSize] 需要等比覆盖输出的大小
          * [bounds] 指定输出的绘制位置
          * [ignoreVisible] 是否要忽略可见性, false: 只有可见的才会绘制
+         * [backgroundColor] 背景颜色
          * */
         fun createRenderBitmap(
             rendererList: List<BaseRenderer>?,
             overrideSize: Float? = null,
             @Pixel bounds: RectF? = null,
             ignoreVisible: Boolean = false,
-            renderAction: RenderAction? = null
+            backgroundColor: Int = Color.TRANSPARENT,
+            renderAfterAction: RenderAction? = null
         ): Bitmap? {
             rendererList ?: return null
             val rect = computeBounds(rendererList, bounds) ?: return null
@@ -155,6 +159,9 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 rect.height(),
                 overrideSize
             ) {
+                if (backgroundColor != Color.TRANSPARENT) {
+                    drawColor(backgroundColor)
+                }
                 translate(-rect.left, -rect.top)
                 val params = RenderParams()
                 params.apply {
@@ -162,17 +169,19 @@ open class CanvasGroupRenderer : BaseRenderer() {
                         renderDst = overrideSize / rect.width()
                     }
                 }
-                renderRenderer(this, rendererList, params, ignoreVisible, renderAction)
+                renderRenderer(this, rendererList, params, ignoreVisible, renderAfterAction)
             }
         }
 
-        /**使用[canvas]绘制[rendererList]*/
+        /**使用[canvas]绘制[rendererList]
+         *
+         * [renderAfterAction] 元素渲染后的额外动作*/
         fun renderRenderer(
             canvas: Canvas,
             rendererList: List<BaseRenderer>,
             params: RenderParams,
             ignoreVisible: Boolean = false,
-            renderAction: RenderAction? = null
+            renderAfterAction: RenderAction? = null
         ) {
             val bounds = acquireTempRectF()
             for (renderer in rendererList) {
@@ -188,14 +197,15 @@ open class CanvasGroupRenderer : BaseRenderer() {
                             drawable,
                             params
                         )
-                        renderAction?.invoke(renderer, canvas, renderProperty, params)
+                        //
+                        renderAfterAction?.invoke(renderer, canvas, renderProperty, params)
                     } else if (renderer is CanvasGroupRenderer) {
                         renderRenderer(
                             canvas,
                             renderer.rendererList,
                             params,
                             ignoreVisible,
-                            renderAction
+                            renderAfterAction
                         )
                     }
                 }

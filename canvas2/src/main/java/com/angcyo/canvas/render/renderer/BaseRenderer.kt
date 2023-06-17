@@ -392,8 +392,14 @@ abstract class BaseRenderer : IRenderer {
     /**获取渲染器用来渲染的[Bitmap]
      * [requestRenderDrawable]
      * */
-    open fun requestRenderBitmap(overrideSize: Float? = null): Bitmap? =
-        createRenderBitmap(getSingleRendererList(false), overrideSize)
+    open fun requestRenderBitmap(
+        overrideSize: Float? = null,
+        backgroundColor: Int = Color.TRANSPARENT
+    ): Bitmap? = createRenderBitmap(
+            getSingleRendererList(false),
+            overrideSize,
+            backgroundColor = backgroundColor
+        )
 
     /**是否在当前的可视坐标范围内可见
      * [fullIn] 是否要全部可见, 否则露出一部分也视为可见*/
