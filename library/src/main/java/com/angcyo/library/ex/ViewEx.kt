@@ -641,6 +641,9 @@ fun View.tooltipText(text: CharSequence?) {
     //performLongClick()
 }
 
+/**[ColorStateList]*/
+fun Int.toColorStateList() = ColorStateList.valueOf(this)
+
 /**着色*/
 fun ImageView?.setTintList(color: Int) {
     this ?: return

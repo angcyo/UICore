@@ -1,9 +1,11 @@
 package com.angcyo.doodle.ui.dslitem
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import androidx.core.graphics.toColor
 import com.angcyo.core.component.model.NightModel
 import com.angcyo.core.vmApp
 import com.angcyo.doodle.R
@@ -13,8 +15,6 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.INewItem
 import com.angcyo.item.style.NewItemConfig
 import com.angcyo.library.ex._color
-import com.angcyo.library.ex._drawable
-import com.angcyo.library.ex.color
 import com.angcyo.library.ex.setBgDrawable
 import com.angcyo.library.ex.setTintList
 import com.angcyo.widget.DslViewHolder
@@ -76,14 +76,11 @@ open class DoodleIconItem : DslAdapterItem(), INewItem {
         val imageView = itemHolder.img(R.id.lib_image_view)
         if (itemEnable) {
             vmApp<NightModel>().tintImageViewNight(imageView)
-            imageView?.setImageResource(itemIco)
         } else {
-            imageView?.setTintList(null)
-            val drawable = _drawable(itemIco)?.run {
-                color(itemIcoDisableColor)
-            }
-            imageView?.setImageDrawable(drawable)
+            itemIcoDisableColor.toColor()
+            imageView?.setTintList(ColorStateList.valueOf(itemIcoDisableColor))
         }
+        imageView?.setImageResource(itemIco)
 
         //
         itemHolder.gone(R.id.lib_text_view, itemText == null)

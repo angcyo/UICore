@@ -2,5 +2,5 @@
 <resources>
     <color name="doodle_color">#333333</color>
     <color name="doodle_item_layout">#f9f9f9</color>
-    <color name="doodle_item_disable">#aaaaaa</color>
+    <color name="doodle_item_disable">@color/lib_theme_icon_disable_color</color>
 </resources>
