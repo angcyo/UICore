@@ -14,21 +14,33 @@
 
     <!--暗色主题颜色适配-->
     <color name="bg_primary_color">@color/purple_500</color>
+    <color name="bg_primary_color_night">@color/purple_200</color>
     <color name="bg_sub_color">@color/purple_700</color>
+
     <color name="lib_theme_white_color">@color/purple_500</color>
     <color name="lib_theme_black">#FFFFFF</color>
     <color name="lib_theme_white_bg_color">@color/purple_200</color>
     <color name="lib_theme_icon_color">#dde3e7</color>
     <color name="lib_theme_icon_disable_color">#5E5E5E</color>
     <color name="lib_bg_press">#20ffffff</color>
+
     <color name="lib_segment_tab_bg_color">@color/purple_700</color>
     <color name="lib_disable_bg_color">@color/lib_theme_icon_disable_color</color>
+
     <color name="lib_dark">@color/purple_700</color>
     <color name="lib_dark_gray">#dde3e7</color>
+
     <color name="lib_line">#46464a</color>
     <color name="lib_line_dark">@color/purple_700</color>
+
     <color name="lib_tab_select_color">@color/text_general_color</color>
     <color name="lib_tab_deselect_color">@color/text_sub_color</color>
+    <color name="lib_tab_segment_border_item_background_solid_color">@color/colorPrimary</color>
+    <color name="lib_tab_segment_border_solid_color">@color/bg_sub_color</color>
+    <color name="lib_tab_segment_border_stroke_color">@color/bg_sub_color</color>
+
+    <color name="lib_normal_disable_bg_color">@color/lib_theme_icon_disable_color</color>
+    <color name="lib_normal_check_bg_color">@color/purple_700</color>
 
     <!--主要文本-->
     <color name="text_primary_color">#dde3e7</color>
@@ -38,4 +50,5 @@
 
     <color name="lib_text_color">#dde3e7</color>
     <color name="lib_text_disable_color">#5E5E5E</color>
+
 </resources>

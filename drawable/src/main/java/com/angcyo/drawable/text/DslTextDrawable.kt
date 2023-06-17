@@ -1,7 +1,6 @@
 package com.angcyo.drawable.text
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -33,7 +32,7 @@ open class DslTextDrawable : AbsDslDrawable() {
         }
 
     /**文本颜色*/
-    var textColor = Color.parseColor("#333333")
+    var textColor = _color(R.color.lib_text_color)
         set(value) {
             field = value
             textPaint.color = field

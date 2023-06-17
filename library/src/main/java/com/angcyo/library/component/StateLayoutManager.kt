@@ -1,6 +1,7 @@
 package com.angcyo.library.component
 
 import android.animation.LayoutTransition
+import android.content.res.ColorStateList
 import android.os.Build
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,15 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.forEach
 import com.angcyo.library.R
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex._color
+import com.angcyo.library.ex.cancelAnimator
+import com.angcyo.library.ex.clipBoundsAnimatorFromLeft
+import com.angcyo.library.ex.clipBoundsAnimatorFromRightHide
+import com.angcyo.library.ex.find
+import com.angcyo.library.ex.inflate
+import com.angcyo.library.ex.rotateYAnimation
+import com.angcyo.library.ex.setTintList
+import com.angcyo.library.ex.uuid
 
 /**状态提示布局管理
  * [group] 推荐使用 [LinearLayout]
@@ -80,7 +89,10 @@ class StateLayoutManager {
     /**更新控件信息*/
     fun updateStateLayout(rootView: View?, info: StateLayoutInfo) {
         val imageView = rootView.find<ImageView>(R.id.lib_state_image_view)
-        imageView?.setImageResource(info.ico)
+        imageView?.apply {
+            setTintList(info.icoTint)
+            setImageResource(info.ico)
+        }
         rootView.find<TextView>(R.id.lib_state_text_view)?.text = info.text
     }
 
@@ -120,6 +132,8 @@ data class StateLayoutInfo(
     var text: CharSequence? = null,
     /**状态图标*/
     var ico: Int = R.drawable.lib_state_tip_ico,
+    /**[ico]着色*/
+    var icoTint: ColorStateList? = ColorStateList.valueOf(_color(R.color.lib_theme_icon_color)),
     /**激活添加时的clip动画*/
     var clipAnim: Boolean = true,
     /**激活更新时的clip动画*/

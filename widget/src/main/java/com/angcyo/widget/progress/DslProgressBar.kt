@@ -130,7 +130,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     var progressTextMinWidth = 40.toDp()
 
     /**文本颜色*/
-    var progressTextColor = Color.parseColor("#333333")
+    var progressTextColor = _color(R.color.lib_text_color)
 
     /**文本距离进度偏移的距离*/
     var progressTextOffset = 10.toDpi()
@@ -150,7 +150,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     var showProgressCenterText = false
     var progressCenterTextFormat = "%s%%"
     var progressCenterTextSize = 14.toDp()
-    var progressCenterTextColor = Color.parseColor("#333333")
+    var progressCenterTextColor = _color(R.color.lib_text_color)
 
     //在进度上clip时的文本颜色
     var progressCenterTextClipColor = Color.WHITE
@@ -380,8 +380,8 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             drawSecondProgress(canvas)
             drawTrack(canvas) //进度
         }
-        drawProgressText(canvas)
-        drawCenterProgressText(canvas)
+        drawProgressText(canvas) //右边的进度文本
+        drawCenterProgressText(canvas) //居中的进度文本
     }
 
     override fun onAttachedToWindow() {

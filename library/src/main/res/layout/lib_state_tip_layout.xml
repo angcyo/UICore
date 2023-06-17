@@ -16,7 +16,8 @@
         android:id="@+id/lib_state_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/lib_state_tip_ico" />
+        android:src="@drawable/lib_state_tip_ico"
+        tools:tint="@color/lib_theme_icon_color" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/lib_state_text_view"

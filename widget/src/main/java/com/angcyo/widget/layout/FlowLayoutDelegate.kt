@@ -227,7 +227,7 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
                     var childHeightMeasureSpec = heightMeasureSpec
                     if (params.width == ViewGroup.LayoutParams.MATCH_PARENT) {
                         var childWidth = max(width, lineWidth)
-                        if (childWidth < 0) {
+                        if (childWidth <= 0) {
                             childWidth = viewAvailableWidth
                         }
                         childWidthMeasureSpec = exactly(childWidth + paddingLeft + paddingRight)

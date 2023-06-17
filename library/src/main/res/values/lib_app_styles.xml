@@ -10,12 +10,6 @@
     <color name="purple_200">#4467ff</color>
     <color name="purple_500">#2d52f2</color>
     <color name="purple_700">#2042d7</color>
-    <color name="lib_theme_white_color">#ffffff</color>
-    <color name="lib_theme_white_bg_color">#f9f9f9</color>
-    <color name="lib_theme_icon_color">@color/lib_text_color</color>
-    <color name="lib_theme_icon_disable_color">#aaaaaa</color>
-    <color name="lib_tab_select_color">@color/colorPrimary</color>
-    <color name="lib_tab_deselect_color">@color/text_general_color</color>
 
     <!--api24-->
     <color name="colorPrimaryVariant">@color/colorPrimary</color>
@@ -24,6 +18,17 @@
     <color name="colorSecondary">@color/colorPrimaryDark</color>
     <color name="colorSecondaryVariant">@color/colorPrimaryDark</color>
     <color name="colorOnSecondary">@color/colorPrimaryDark</color>
+
+    <!--配色-->
+    <color name="lib_theme_white_color">#ffffff</color>
+    <color name="lib_theme_white_bg_color">#f9f9f9</color>
+    <color name="lib_theme_icon_color">@color/lib_text_color</color>
+    <color name="lib_theme_icon_disable_color">#aaaaaa</color>
+    <color name="lib_tab_select_color">@color/colorPrimary</color>
+    <color name="lib_tab_deselect_color">@color/text_general_color</color>
+    <color name="lib_tab_segment_border_item_background_solid_color">@color/colorAccent</color>
+    <color name="lib_tab_segment_border_solid_color">@color/bg_primary_color</color>
+    <color name="lib_tab_segment_border_stroke_color">@color/bg_primary_color</color>
 
     <!--app功能色配置-->
     <color name="info">#4b7efe</color>
@@ -50,6 +55,7 @@
 
     <!--app背景色颜色配置-->
     <color name="bg_primary_color">#f4f4f4</color>
+    <color name="bg_primary_color_night">@color/bg_primary_color</color>
     <color name="bg_sub_color">#d8d8d8</color>
     <color name="lib_segment_tab_bg_color">#f6f6f6</color>
 

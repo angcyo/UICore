@@ -30,7 +30,7 @@
             android:background="@drawable/lib_solid_tag_right_selector"
             android:paddingHorizontal="@dimen/lib_hdpi"
             android:paddingVertical="@dimen/lib_sdpi"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorAccentNight"
             tools:text="angcyo\nangcyo" />
 
     </LinearLayout>

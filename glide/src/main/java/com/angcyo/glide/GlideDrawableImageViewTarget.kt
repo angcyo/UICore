@@ -12,9 +12,14 @@ import com.bumptech.glide.request.transition.Transition
  * @author angcyo
  * @date 2020/01/21
  */
-class GlideDrawableImageViewTarget(imageView: ImageView) : DrawableImageViewTarget(imageView) {
+class GlideDrawableImageViewTarget(
+    imageView: ImageView,
+    waitForLayout: Boolean = !imageView.isLaidOut
+) :
+    DrawableImageViewTarget(imageView, waitForLayout) {
+
     init {
-        waitForLayout()
+        //waitForLayout()
     }
 
     override fun getSize(cb: SizeReadyCallback) {
