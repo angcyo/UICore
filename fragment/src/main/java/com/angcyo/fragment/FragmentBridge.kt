@@ -172,17 +172,15 @@ fun dslBridge(fragmentManager: FragmentManager?, action: FragmentBridge.() -> Un
 fun Context.requestPermissions(
     permissions: List<String>,
     result: (granted: Boolean) -> Unit
-) {
-    requestPermissions(permissions.toTypedArray(), result)
-}
+) = requestPermissions(permissions.toTypedArray(), result)
 
 fun Context.requestPermissions(
     permissions: Array<out String>,
     result: (granted: Boolean) -> Unit
-) {
+): Boolean {
     if (havePermissions(*permissions)) {
         result(true)
-        return
+        return true
     }
 
     if (this is FragmentActivity) {
@@ -198,7 +196,9 @@ fun Context.requestPermissions(
         } else {
             L.w("$this is not Activity, cancel request!")
         }
+        result(false)
     }
+    return false
 }
 
 /**快速回调[ActivityResult]*/

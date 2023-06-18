@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.camera.view.LifecycleCameraController
 import androidx.core.app.ActivityCompat
-import com.angcyo.camerax.dslitem.DslCameraViewHelper
+import com.angcyo.camerax.control.DslCameraViewHelper
 import com.angcyo.core.fragment.BaseFragment
 import com.angcyo.dialog.hideLoading
 import com.angcyo.dialog.loadingDialog

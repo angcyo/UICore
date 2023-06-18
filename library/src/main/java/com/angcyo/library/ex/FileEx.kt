@@ -473,24 +473,21 @@ fun File.writeText(text: String, append: Boolean = true, charset: Charset = Char
 fun File.toUri(context: Context = app()) = fileUri(context, this)
 
 fun generateFileName(name: String?, directory: File): File? {
-    var _name = name
-    if (_name == null) {
-        return null
-    }
-    var file = File(directory, _name)
+    var newName = name ?: return null
+    var file = File(directory, newName)
     if (file.exists()) {
-        var fileName: String = _name
+        var fileName: String = newName
         var extension = ""
-        val dotIndex = _name.lastIndexOf('.')
+        val dotIndex = newName.lastIndexOf('.')
         if (dotIndex > 0) {
-            fileName = _name.substring(0, dotIndex)
-            extension = _name.substring(dotIndex)
+            fileName = newName.substring(0, dotIndex)
+            extension = newName.substring(dotIndex)
         }
         var index = 0
         while (file.exists()) {
             index++
-            _name = "$fileName($index)$extension"
-            file = File(directory, _name)
+            newName = "$fileName($index)$extension"
+            file = File(directory, newName)
         }
     }
     try {

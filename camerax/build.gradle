@@ -10,14 +10,14 @@ dependencies {
     //https://mvnrepository.com/artifact/androidx.camera
 
     //https://mvnrepository.com/artifact/androidx.camera/camera-core
-    def camerax_version = '1.2.2'
+    def camerax_version = '1.2.3'
     api "androidx.camera:camera-core:${camerax_version}"
     //https://mvnrepository.com/artifact/androidx.camera/camera-camera2
     api "androidx.camera:camera-camera2:${camerax_version}"
     api "androidx.camera:camera-lifecycle:${camerax_version}"
 
     //https://mvnrepository.com/artifact/androidx.camera/camera-view
-    def camerax_ex = '1.2.2'
+    def camerax_ex = camerax_version
     api "androidx.camera:camera-view:${camerax_ex}"
     //https://mvnrepository.com/artifact/androidx.camera/camera-extensions
     api "androidx.camera:camera-extensions:${camerax_ex}"
@@ -29,9 +29,13 @@ dependencies {
 
     // Machine learning for mobile developers 机器学习
 
+    //https://mvnrepository.com/artifact/androidx.camera/camera-mlkit-vision
+    //implementation 'androidx.camera:camera-mlkit-vision:1.3.0-alpha07'
+
     //https://github.com/jenly1314/MLKit
 
     //https://mvnrepository.com/artifact/com.google.mlkit/barcode-scanning
     //https://developers.google.com/ml-kit/vision/barcode-scanning/android
-    //implementation 'com.google.mlkit:barcode-scanning:17.0.2'
+    //条形码扫描 https://developers.google.com/ml-kit/vision/barcode-scanning?hl=zh-cn
+    //implementation 'com.google.mlkit:barcode-scanning:17.1.0'
 }

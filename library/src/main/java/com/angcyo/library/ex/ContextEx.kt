@@ -25,6 +25,7 @@ import android.view.View
 import android.view.Window
 import android.webkit.MimeTypeMap
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.angcyo.library.L
 import java.io.File
 import java.io.FileNotFoundException
@@ -420,3 +421,6 @@ fun Context.vibrate(milliseconds: Long = 50) {
     val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     vibrator.vibrate(milliseconds)
 }
+
+/**主要的执行调度器*/
+fun Context.mainExecutor() = ContextCompat.getMainExecutor(this)
