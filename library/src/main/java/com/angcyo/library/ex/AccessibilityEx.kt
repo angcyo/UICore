@@ -53,6 +53,10 @@ fun Context.kill(packageName: String): Boolean {
     }
 }
 
+fun yield() = Thread.yield()
+
+fun sleep(delay: Int = 160) = sleep(delay.toLong(), null)
+
 fun sleep(delay: Long = 160, action: Action? = null) {
     try {
         if (delay > 0) {
