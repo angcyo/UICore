@@ -3,6 +3,8 @@ package com.angcyo.core.component.model
 import android.view.MotionEvent
 import androidx.lifecycle.ViewModel
 import com.angcyo.library.ex.TouchAction
+import com.angcyo.viewmodel.updateValue
+import com.angcyo.viewmodel.vmData
 import com.angcyo.viewmodel.vmDataOnce
 import java.io.File
 
@@ -34,6 +36,21 @@ class DataShareModel : ViewModel() {
 
     /**共享需要更新[com.angcyo.dsladapter.DslAdapterItem]状态通知, 当收到此通知时, 表示需要更新对应的item*/
     val shareUpdateAdapterItemOnceData = vmDataOnce<Any?>()
+
+    /**共享字符串数据[key:value]*/
+    val shareTextMapData = vmData(mutableMapOf<String, CharSequence>())
+
+    /**更新/删除共享[shareTextMapData]
+     * [value] 为空时, 删除key*/
+    fun updateShareTextMapData(key: String, value: CharSequence?) {
+        val map = shareTextMapData.value ?: mutableMapOf()
+        if (value == null) {
+            map.remove(key)
+        } else {
+            map[key] = value
+        }
+        shareTextMapData.updateValue(map)
+    }
 
     //endregion ---共享数据---
 
