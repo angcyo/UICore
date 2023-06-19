@@ -1,33 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
-    <com.angcyo.glide.GlideImageView
-        android:id="@+id/lib_image_view"
-        android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:r_draw_border="false"
-        app:r_enable_shape="true"
-        app:r_image_radius="@dimen/lib_radius_common2"
-        app:srcCompat="@color/lib_image_placeholder_color"
-        tools:background="@color/transparent20"
-        tools:layout_height="200dp"
-        tools:r_draw_border="true"
-        tools:srcCompat="@drawable/lib_ic_succeed" />
+        android:layout_gravity="center"
+        android:layout_margin="35dp">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/lib_close_view"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="@dimen/lib_hdpi"
-        android:background="@drawable/lib_iview_circle_selector"
-        android:padding="@dimen/lib_sdpi"
-        app:layout_constraintLeft_toLeftOf="@id/lib_image_view"
-        app:layout_constraintRight_toRightOf="@id/lib_image_view"
-        app:layout_constraintTop_toBottomOf="@id/lib_image_view"
-        app:srcCompat="@drawable/lib_iview_close" />
+        <com.angcyo.glide.GlideImageView
+            android:id="@+id/lib_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="200dp"
+            android:minHeight="200dp"
+            android:scaleType="fitCenter"
+            app:r_draw_border="false"
+            app:r_enable_shape="true"
+            app:r_image_radius="@dimen/lib_radius_normal"
+            app:srcCompat="@color/lib_image_placeholder_color"
+            tools:background="@color/transparent20"
+            tools:layout_height="200dp"
+            tools:r_draw_border="true"
+            tools:srcCompat="@drawable/lib_ic_succeed" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_close_view"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="@dimen/lib_hdpi"
+            android:background="@drawable/lib_iview_circle_selector"
+            android:padding="@dimen/lib_sdpi"
+            app:layout_constraintLeft_toLeftOf="@id/lib_image_view"
+            app:layout_constraintRight_toRightOf="@id/lib_image_view"
+            app:layout_constraintTop_toBottomOf="@id/lib_image_view"
+            app:srcCompat="@drawable/lib_iview_close" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

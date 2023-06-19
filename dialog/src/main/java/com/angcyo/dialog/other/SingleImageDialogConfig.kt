@@ -14,6 +14,7 @@ import com.angcyo.glide.giv
 import com.angcyo.library._screenWidth
 import com.angcyo.library.annotation.DSL
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.setWidthHeight
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -29,6 +30,10 @@ class SingleImageDialogConfig(context: Context? = null) : DslDialogConfig(contex
     /**本地内存对象*/
     var loadDrawable: Drawable? = null
 
+    /**强行指定图片控件的宽高*/
+    var imageWidth: Int = -1
+    var imageHeight: Int = -1
+
     init {
         dialogLayoutId = R.layout.lib_dialog_single_image_layout
         dialogBgDrawable = ColorDrawable(Color.TRANSPARENT)
@@ -42,10 +47,31 @@ class SingleImageDialogConfig(context: Context? = null) : DslDialogConfig(contex
         }
 
         dialogViewHolder.giv(R.id.lib_image_view)?.apply {
+            if (imageWidth == -1 && imageHeight == -1) {
+                parseImageSize()
+            }
+            if (imageWidth > 0 && imageHeight > 0) {
+                setWidthHeight(imageWidth, imageHeight)
+            }
             if (loadUri != null) {
                 load(loadUri)
             } else {
                 loadDrawable?.let { setImageDrawable(it) }
+            }
+        }
+    }
+
+    private fun parseImageSize() {
+        loadUri?.let {
+            val text = "$it"
+            text.split("&").forEach { value ->
+                val list = value.split("=")
+                val key = list.getOrNull(0)?.toString()?.lowercase()
+                if (key == "w" || key == "width") {
+                    imageWidth = list.getOrNull(1)?.toIntOrNull() ?: -1
+                } else if (key == "h" || key == "height") {
+                    imageHeight = list.getOrNull(1)?.toIntOrNull() ?: -1
+                }
             }
         }
     }
@@ -71,7 +97,7 @@ fun Context.singleImageDialog(
 @MainThread
 fun Context.singleImageDialog(uri: Uri?, config: SingleImageDialogConfig.() -> Unit = {}): Dialog {
     return SingleImageDialogConfig(this).run {
-        configCenterDialog(_screenWidth - 2 * 36 * dpi, -2)
+        configCenterDialog(-1, -1)
         loadUri = uri
         config()
         show()
