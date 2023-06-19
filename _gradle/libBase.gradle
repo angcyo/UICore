@@ -2,13 +2,13 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 def haveLibMSdk = project.hasProperty("M_SDK_LIB")
-def C_SDK = 31
+def C_SDK = 33
 def M_SDK = haveLibMSdk ? project.ext.M_SDK_LIB : 21
-def T_SDK = 31
+def T_SDK = 33
 def V_CODE = 1
 def V_NAME = "1.0"
 
-def _kotlin_version = project.hasProperty("kotlin_version") ? project.ext.kotlin_version : '1.6.21'
+def _kotlin_version = project.hasProperty("kotlin_version") ? project.ext.kotlin_version : '1.8.22'
 
 def lib_minify_enabled_debug = project.hasProperty("lib_minify_enabled_debug") ? (project.ext.lib_minify_enabled_debug == "true") : false
 def lib_use_proguard_debug = project.hasProperty("lib_use_proguard_debug") ? (project.ext.lib_use_proguard_debug == "true") : false
