@@ -52,6 +52,20 @@ class DataShareModel : ViewModel() {
         shareTextMapData.updateValue(map)
     }
 
+    /**[updateShareTextMapData]*/
+    fun updateShareTextMapData(map: Map<String, Any?>?) {
+        map ?: return
+        val textMap = shareTextMapData.value ?: mutableMapOf()
+        map.forEach { (key, value) ->
+            if (value == null) {
+                textMap.remove(key)
+            } else {
+                textMap[key] = value.toString()
+            }
+        }
+        shareTextMapData.updateValue(textMap)
+    }
+
     //endregion ---共享数据---
 
     //region ---共享回调---
