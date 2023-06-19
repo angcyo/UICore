@@ -363,6 +363,15 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
         setDialogBgColor(Color.TRANSPARENT)
     }
 
+    /**是否是透明背景*/
+    fun isTransparentBackground(): Boolean {
+        val drawable = dialogBgDrawable
+        if (drawable is ColorDrawable) {
+            return drawable.color == Color.TRANSPARENT
+        }
+        return false
+    }
+
     /** 宽度全屏 */
     fun setWidthFullScreen() {
         setDialogBgColor(Color.TRANSPARENT)
@@ -375,6 +384,12 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
 
     fun setDialogBgResource(@DrawableRes drawable: Int) {
         dialogBgDrawable = _drawable(drawable)
+    }
+
+    /**设置透明背景*/
+    fun setTransparentBackground() {
+        dialogBgDrawable = ColorDrawable(Color.TRANSPARENT)
+        contentBgDrawable = ColorDrawable(Color.TRANSPARENT)
     }
 
     //保存[Dialog]对象
@@ -549,7 +564,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
     /**[com.angcyo.dialog.DslDialogConfig.showAndConfigDialog]*/
     open fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         //背景替换
-        if (contentBgDrawable is UndefinedDrawable) {
+        if (contentBgDrawable is UndefinedDrawable && !isTransparentBackground()) {
             if (dialogGravity.isGravityCenterVertical()) {
                 dialogViewHolder.itemView.setBackgroundResource(R.drawable.dialog_white_round_bg_shape)
             }

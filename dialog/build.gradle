@@ -16,4 +16,7 @@ dependencies {
     //AlphaTileView
     //https://github.com/LaserPeckerIst/ColorPickerView
     api 'com.github.LaserPeckerIst:ColorPickerView:2.2.4.5'
+
+    //2023-6-19
+    compileOnly project(allModule.glide)//GlideImageView
 }
