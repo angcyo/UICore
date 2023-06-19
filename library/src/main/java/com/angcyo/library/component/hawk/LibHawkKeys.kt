@@ -125,4 +125,13 @@ object LibHawkKeys {
 
     /**最小检测运行脚本时间*/
     var minCheckScriptTime: Long by HawkPropertyValue<Any, Long>(5_000)
+
+    /**是否激活脚本手势触发监听*/
+    var enableScriptTouchListen: Boolean by HawkPropertyValue<Any, Boolean>(true)
+
+    /**是否激活默认脚本执行*/
+    var enableDefaultScript: Boolean by HawkPropertyValue<Any, Boolean>(true)
+
+    /**是否激活App启动脚本执行*/
+    var enableAppScript: Boolean by HawkPropertyValue<Any, Boolean>(true)
 }
