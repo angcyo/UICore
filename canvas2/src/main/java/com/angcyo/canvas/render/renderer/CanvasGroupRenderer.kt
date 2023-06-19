@@ -32,6 +32,7 @@ import com.angcyo.drawable.isGravityRight
 import com.angcyo.drawable.isGravityTop
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.Strategy
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.add
@@ -214,13 +215,15 @@ open class CanvasGroupRenderer : BaseRenderer() {
         }
 
         /**获取一组渲染器对应的边界矩形
+         * [keepSingle] 只有一个元素时, 是否保持原样
          * [CanvasRenderProperty]*/
         fun getRendererListRenderProperty(
             rendererList: List<BaseRenderer>,
+            keepSingle: Boolean = true,
             result: CanvasRenderProperty = CanvasRenderProperty()
         ): CanvasRenderProperty {
             result.reset()
-            if (rendererList.size() == 1) {
+            if (rendererList.size() == 1 && keepSingle) {
                 //只有一个元素
                 val renderer = rendererList.first()
                 renderer.renderProperty?.let {
@@ -579,7 +582,11 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
     /**重新计算渲染属性*/
     fun getGroupRenderProperty(result: CanvasRenderProperty = _tempGroupRenderProperty): CanvasRenderProperty {
-        return getRendererListRenderProperty(rendererList, result)
+        return getRendererListRenderProperty(
+            rendererList,
+            LibHawkKeys.keepSingleRenderProperty,
+            result
+        )
     }
 
     /**摆正角度到0度, 方便Bounds的计算及显示*/
