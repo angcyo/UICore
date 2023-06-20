@@ -13,9 +13,12 @@ import com.angcyo.dialog.configCenterDialog
 import com.angcyo.glide.giv
 import com.angcyo.library._screenWidth
 import com.angcyo.library.annotation.DSL
+import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.openUrl
 import com.angcyo.library.ex.setWidthHeight
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.clickIt
 
 /**
  * 简单的显示单图的对话框配置
@@ -33,6 +36,9 @@ class SingleImageDialogConfig(context: Context? = null) : DslDialogConfig(contex
     /**强行指定图片控件的宽高*/
     var imageWidth: Int = -1
     var imageHeight: Int = -1
+
+    /**点击图片需要打开的页面, 如果有*/
+    var openUrl: String? = null
 
     init {
         dialogLayoutId = R.layout.lib_dialog_single_image_layout
@@ -57,6 +63,11 @@ class SingleImageDialogConfig(context: Context? = null) : DslDialogConfig(contex
                 load(loadUri)
             } else {
                 loadDrawable?.let { setImageDrawable(it) }
+            }
+            openUrl?.let { url ->
+                clickIt {
+                    lastContext.openUrl(url)
+                }
             }
         }
     }

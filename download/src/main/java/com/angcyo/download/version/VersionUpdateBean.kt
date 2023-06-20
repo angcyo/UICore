@@ -8,7 +8,8 @@ package com.angcyo.download.version
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
 data class VersionUpdateBean(
-    /**版本时间*/
+    /**版本时间, 在历史记录中使用
+     * [com.angcyo.download.dslitem.DslVersionChangeItem]*/
     var versionDate: String? = null,
     /**需要更新的版本名称*/
     var versionName: String? = null,
