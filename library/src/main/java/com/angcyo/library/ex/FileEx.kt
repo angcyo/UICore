@@ -463,6 +463,11 @@ fun String.writeText(text: String, append: Boolean = true) = file().writeText(te
 /**向文件中写入[text]
  * [append] 是否追加, 否则就是重写*/
 fun File.writeText(text: String, append: Boolean = true, charset: Charset = Charsets.UTF_8) {
+    parentFile?.apply {
+        if (!exists()) {
+            mkdirs()
+        }
+    }
     if (append) {
         appendText(text, charset)
     } else {
