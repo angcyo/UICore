@@ -3,12 +3,17 @@
  * - In plugin 'com.android.internal.version-check' type 'com.android.build.gradle.internal.tasks.ListingFileRedirectTask'
  * property 'listingFile' specifies file 'E:\AndroidProjects\BackManage\manage\build\outputs\apk\apk\release\output-metadata.json' which doesn't exist.
  *
+ * 关闭这个任务之后, 会引发新的错误在debug运行时
+ * Unable to determine application id: com.android.tools.idea.run.ApkProvisionException:
+ * Error loading build artifacts from: /Users/angcyo/project/android/AutoCalibrate/calibrate/build/intermediates/apk_ide_redirect_file/_devDebug/redirect.txt
+ *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/08/02
  */
 
 tasks.whenTaskAdded { task ->
-    if (task.name.contains("ListingFileRedirect")) {
+    def taskName = task.name
+    if (taskName.contains("ListingFileRedirect") && !taskName.contains("Debug")) {
         task.enabled = false
     }
 }

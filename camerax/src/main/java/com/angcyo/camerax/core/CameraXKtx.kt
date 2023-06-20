@@ -1,6 +1,12 @@
 package com.angcyo.camerax.core
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
+import android.util.Log
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.internal.utils.ImageUtil
+import java.nio.ByteBuffer
 
 /**
  * Email:angcyo@126.com
@@ -29,4 +35,41 @@ fun Int.toImageFormatStr() = when (this) {
     ImageFormat.YUY2 -> "YUY2"
     ImageFormat.YV12 -> "YV12"
     else -> "未知"
+}
+
+/**CameraXBasic*/
+fun ByteBuffer.toByteArray(): ByteArray {
+    rewind()    // Rewind the buffer to zero
+    val data = ByteArray(remaining())
+    get(data)   // Copy the buffer into a byte array
+    return data // Return the byte array
+}
+
+fun ImageProxy.toBitmap(): Bitmap? {
+    val image = this
+    val jpegQuality = 100
+
+    val shouldCropImage =
+        image.cropRect.width() > 0 && image.cropRect.height() > 0 && ImageUtil.shouldCropImage(image)
+    val imageFormat = image.format
+    val bytes = if (imageFormat == ImageFormat.JPEG) {
+        if (!shouldCropImage) {
+            // When cropping is unnecessary, the byte array doesn't need to be decoded and
+            // re-encoded again. Therefore, jpegQuality is unnecessary in this case.
+            ImageUtil.jpegImageToJpegByteArray(image)
+        } else {
+            ImageUtil.jpegImageToJpegByteArray(image, image.cropRect, jpegQuality)
+        }
+    } else if (imageFormat == ImageFormat.YUV_420_888) {
+        ImageUtil.yuvImageToJpegByteArray(
+            image,
+            if (shouldCropImage) image.cropRect else null,
+            jpegQuality
+        )
+    } else {
+        Log.w("angcyo", "Unrecognized image format: $imageFormat")
+        return null
+    }
+
+    return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
 }
