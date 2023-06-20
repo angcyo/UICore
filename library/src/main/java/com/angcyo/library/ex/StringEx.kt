@@ -761,8 +761,11 @@ fun String.byteSize(): Int {
     return toByteArray(Charsets.UTF_8).size
 }
 
-/**[CharSequence]中是否包含指定[text]
- * [match] 是否是全匹配, 否则包含即可*/
+/**[CharSequence]中是否包含指定[text], 支持正则表达式
+ * [match] 是否是全匹配, 否则包含即可
+ *
+ * [contains] 也可以使用 [String.contains], 但是不支持正则表达式
+ * */
 fun CharSequence?.have(text: CharSequence?, match: Boolean = false): Boolean {
     if (text == null) {
         return false
