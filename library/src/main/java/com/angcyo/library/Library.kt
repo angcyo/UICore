@@ -452,6 +452,10 @@ fun libFile(name: String = fileNameUUID(), folderName: String = ""): File {
     return File(libFolderPath(folderName), name)
 }
 
+/**[libFile]*/
+fun libAppFile(name: String = fileNameUUID(), folderName: String = ""): File =
+    libFile(name, folderName)
+
 /**获取一个缓存文件*/
 fun libCacheFile(name: String = fileNameUUID(), folderName: String = ""): File {
     return File(libCacheFolderPath(folderName), name)
