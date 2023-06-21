@@ -42,6 +42,8 @@ class RGBImageAnalysisAnalyzer : ImageAnalysis.Analyzer {
         //val uBuffer = image.planes[1].buffer
         //val vBuffer = image.planes[2].buffer
 
+        val bitmap = image.toBitmap()
+
         _delay(3_000) {
             image.close() //关闭之后, 才有下一帧
         }

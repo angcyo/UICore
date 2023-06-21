@@ -1,11 +1,12 @@
 package com.angcyo.camerax.core
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
-import android.util.Log
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.internal.utils.ImageUtil
+import com.angcyo.library.L
 import java.nio.ByteBuffer
 
 /**
@@ -45,12 +46,11 @@ fun ByteBuffer.toByteArray(): ByteArray {
     return data // Return the byte array
 }
 
-fun ImageProxy.toBitmap(): Bitmap? {
+@SuppressLint("RestrictedApi")
+fun ImageProxy.toBitmap(jpegQuality: Int = 100): Bitmap? {
     val image = this
-    val jpegQuality = 100
 
-    val shouldCropImage =
-        image.cropRect.width() > 0 && image.cropRect.height() > 0 && ImageUtil.shouldCropImage(image)
+    val shouldCropImage = !image.cropRect.isEmpty && ImageUtil.shouldCropImage(image)
     val imageFormat = image.format
     val bytes = if (imageFormat == ImageFormat.JPEG) {
         if (!shouldCropImage) {
@@ -67,7 +67,7 @@ fun ImageProxy.toBitmap(): Bitmap? {
             jpegQuality
         )
     } else {
-        Log.w("angcyo", "Unrecognized image format: $imageFormat")
+        L.w("angcyo", "Unrecognized image format: $imageFormat")
         return null
     }
 

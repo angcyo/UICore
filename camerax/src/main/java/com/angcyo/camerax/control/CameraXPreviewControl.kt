@@ -13,8 +13,9 @@ import com.angcyo.fragment.requestPermissions
 import com.angcyo.library.BuildConfig
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.component.ThreadExecutor
 import com.angcyo.library.component.lastContext
-import com.angcyo.library.ex.mainExecutor
+import com.angcyo.library.ex.havePermission
 
 /**
  * 摄像机预览控制
@@ -44,27 +45,34 @@ class CameraXPreviewControl {
     /**核心[CameraView]*/
     var cameraView: PreviewView? = null
 
+    /**控制器*/
+    var _lifecycleCameraController: LifecycleCameraController? = null
+
     init {
         //CameraXConfig.Provider
     }
 
-    /**绑定到声明周期, 并且开始预览*/
+    /**绑定到声明周期, 并且开始预览
+     * 需要权限[Manifest.permission.CAMERA]
+     * [requestPermission]*/
     @CallPoint
     @MainThread
     fun bindToLifecycle(
         previewView: PreviewView,
         lifecycleOwner: LifecycleOwner
     ): CameraController {
-        requestPermission()
         cameraView = previewView
         if (previewView.controller == null) {
-            previewView.controller = LifecycleCameraController(previewView.context).apply {
+            val lifecycleCameraController = LifecycleCameraController(previewView.context).apply {
                 //setEnabledUseCases(itemEnabledUseCases)
                 isPinchToZoomEnabled
                 isTapToFocusEnabled
                 //isVideoCaptureEnabled
                 isImageCaptureEnabled
                 isImageAnalysisEnabled
+
+                //设置需要使用的功能, 默认IMAGE_CAPTURE | IMAGE_ANALYSIS
+                //IMAGE_CAPTURE | IMAGE_ANALYSIS | VIDEO_CAPTURE
 
                 //前置摄像头
                 if (BuildConfig.DEBUG) {
@@ -74,11 +82,18 @@ class CameraXPreviewControl {
                 //cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
                 //开始分析图像
+                setEnabledUseCases(CameraController.IMAGE_ANALYSIS)
                 setImageAnalysisAnalyzer(
-                    previewView.context.mainExecutor(),
+                    ThreadExecutor /*previewView.context.mainExecutor()*/,
                     RGBImageAnalysisAnalyzer()
                 )
                 //clearImageAnalysisAnalyzer()
+
+                //图片捕获模式, 质量优先or速度优先
+                imageCaptureMode
+
+                //闪光灯模式
+                imageCaptureFlashMode
 
                 //缩放状态发生更改回调
                 zoomState.observe(lifecycleOwner) {
@@ -90,18 +105,30 @@ class CameraXPreviewControl {
                 }
 
                 bindToLifecycle(lifecycleOwner)
-
-                //获取当前连接的摄像头信息
-                L.d("摄像头信息:$cameraInfo")
             }
+
+            //设置预览控制器
+            previewView.controller = lifecycleCameraController
+
+            //获取当前连接的摄像头信息
+            L.d("摄像头信息:${lifecycleCameraController.cameraInfo}")
+
+            //Camera相关操作需要等待
+            //[androidx.camera.view.CameraController.startCameraAndTrackStates(java.lang.Runnable)]
+            //方法执行完毕后, 才能获取到正确的信息
+
+            lifecycleCameraController.cameraControl?.cancelFocusAndMetering()
+            //lifecycleCameraController.cameraControl?.startFocusAndMetering()
         }
         return previewView.controller!!
     }
 
     /**请求权限*/
-    fun requestPermission(): Boolean = lastContext.requestPermissions(previewPermissionList) {
-        //no op
-    }
+    fun requestPermission(result: (granted: Boolean) -> Unit): Boolean =
+        lastContext.requestPermissions(previewPermissionList, result)
+
+    /**是否有权限*/
+    fun havePermission(): Boolean = lastContext.havePermission(previewPermissionList)
 
     /**解绑, 并停止相机*/
     @CallPoint

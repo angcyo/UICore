@@ -24,15 +24,32 @@ open class CameraXPreviewFragment : BaseTitleFragment() {
 
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
+    }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onFragmentFirstShow(bundle: Bundle?) {
+        super.onFragmentFirstShow(bundle)
         initCameraXLayout()
     }
 
     @OverridePoint
     open fun initCameraXLayout() {
         //
-        _vh.v<PreviewView>(R.id.lib_camera_view)?.let {
-            cameraXPreviewControl.bindToLifecycle(it, this)
+        _vh.v<PreviewView>(R.id.lib_camera_view)?.let { view ->
+            if (cameraXPreviewControl.havePermission()) {
+                cameraXPreviewControl.bindToLifecycle(view, this)
+            } else {
+                view.post {
+                    cameraXPreviewControl.requestPermission {
+                        if (it) {
+                            cameraXPreviewControl.bindToLifecycle(view, this)
+                        }
+                    }
+                }
+            }
         }
     }
 
