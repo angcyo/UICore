@@ -15,6 +15,9 @@ import com.angcyo.library.ex.isDebug
 @Keep
 object LibHawkKeys {
 
+    /**是否合规*/
+    var isCompliance: Boolean by HawkPropertyValue<Any, Boolean>(false)
+
     /**[com.angcyo.component.luban.DslLuban]
      * 压缩时, 最小的压缩像素大小 [kb]
      * */

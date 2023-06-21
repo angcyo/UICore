@@ -20,6 +20,7 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import com.angcyo.library.*
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.component.pad.Pad
 import com.angcyo.library.ex.connect
@@ -61,9 +62,11 @@ object Device {
     var androidId: String = ""
         @SuppressLint("HardwareIds")
         get() = field.ifEmpty {
-            Settings.Secure.getString(
-                app().contentResolver, Settings.Secure.ANDROID_ID
-            )
+            if (LibHawkKeys.isCompliance) {
+                Settings.Secure.getString(app().contentResolver, Settings.Secure.ANDROID_ID)
+            } else {
+                "Unknown-${com.angcyo.library.ex.uuid()}"
+            }
         }
 
     //00000000-4759-42f8-ffff-ffffeabf4809

@@ -26,6 +26,7 @@ import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
 import com.angcyo.library.LibApplication
 import com.angcyo.library.annotation.CallComplianceAfter
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.*
 import com.angcyo.library.getAppString
 import com.angcyo.library.toastQQ
@@ -149,6 +150,7 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
             ComplianceCheck.TYPE_COMPLIANCE_STATE,
             false
         ) { data, throwable ->
+            LibHawkKeys.isCompliance = throwable == null
             if (throwable == null) {
                 //合规后
                 onComplianceAfter()
