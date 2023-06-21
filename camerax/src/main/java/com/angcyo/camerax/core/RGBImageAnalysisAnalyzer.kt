@@ -42,6 +42,7 @@ class RGBImageAnalysisAnalyzer : ImageAnalysis.Analyzer {
         //val uBuffer = image.planes[1].buffer
         //val vBuffer = image.planes[2].buffer
 
+        //YUV420 转成 RGB
         val bitmap = image.toBitmap()
 
         _delay(3_000) {
@@ -53,6 +54,10 @@ class RGBImageAnalysisAnalyzer : ImageAnalysis.Analyzer {
         return super.getDefaultTargetResolution()
     }
 
+    /**
+     * [androidx.camera.view.CameraController.COORDINATE_SYSTEM_VIEW_REFERENCED]
+     * [androidx.camera.core.ImageAnalysis.COORDINATE_SYSTEM_ORIGINAL] 默认
+     * */
     override fun getTargetCoordinateSystem(): Int {
         return super.getTargetCoordinateSystem()
     }

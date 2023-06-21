@@ -110,15 +110,17 @@ class CameraXPreviewControl {
             //设置预览控制器
             previewView.controller = lifecycleCameraController
 
-            //获取当前连接的摄像头信息
-            L.d("摄像头信息:${lifecycleCameraController.cameraInfo}")
+            previewView.post {
+                //获取当前连接的摄像头信息
+                L.d("摄像头信息:${lifecycleCameraController.cameraInfo}")
 
-            //Camera相关操作需要等待
-            //[androidx.camera.view.CameraController.startCameraAndTrackStates(java.lang.Runnable)]
-            //方法执行完毕后, 才能获取到正确的信息
+                //Camera相关操作需要等待
+                //[androidx.camera.view.CameraController.startCameraAndTrackStates(java.lang.Runnable)]
+                //方法执行完毕后, 才能获取到正确的信息
 
-            lifecycleCameraController.cameraControl?.cancelFocusAndMetering()
-            //lifecycleCameraController.cameraControl?.startFocusAndMetering()
+                lifecycleCameraController.cameraControl?.cancelFocusAndMetering()
+                //lifecycleCameraController.cameraControl?.startFocusAndMetering()
+            }
         }
         return previewView.controller!!
     }
