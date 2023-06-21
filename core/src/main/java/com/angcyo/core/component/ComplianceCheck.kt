@@ -4,7 +4,6 @@ import android.app.Activity
 import com.angcyo.core.vmApp
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.Action
-import com.angcyo.library.ex.hawkGet
 import com.angcyo.library.ex.hawkPut
 import com.angcyo.library.getAppVersionCode
 
@@ -24,8 +23,7 @@ object ComplianceCheck {
     const val TYPE_COMPLIANCE_INIT_AFTER = "TYPE_COMPLIANCE_INIT_AFTER"
 
     /**是否合规*/
-    fun isCompliance() =
-        "${LibHawkKeys.KEY_COMPLIANCE_STATE}_${getAppVersionCode()}".hawkGet() == "true"
+    fun isCompliance() = LibHawkKeys.isCompliance
 
     /**检查当前版本是否同意了合规请求*/
     fun check(complianceAction: Action): Boolean {

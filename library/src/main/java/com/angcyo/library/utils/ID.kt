@@ -19,6 +19,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.md5
 import java.io.*
 import java.lang.reflect.Method
@@ -282,14 +283,16 @@ object ID {
     private fun getSerialNumbers(): String? {
         var serial: String? = ""
         try {
-            serial = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) { //9.0+
-                Build.getSerial()
-            } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) { //8.0+
-                Build.SERIAL
-            } else { //8.0-
-                val c = Class.forName("android.os.SystemProperties")
-                val get = c.getMethod("get", String::class.java)
-                get.invoke(c, "ro.serialno") as String
+            if (LibHawkKeys.isCompliance) {
+                serial = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) { //9.0+
+                    Build.getSerial()
+                } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) { //8.0+
+                    Build.SERIAL
+                } else { //8.0-
+                    val c = Class.forName("android.os.SystemProperties")
+                    val get = c.getMethod("get", String::class.java)
+                    get.invoke(c, "ro.serialno") as String
+                }
             }
         } catch (e: Exception) {
             //e.printStackTrace()
@@ -433,13 +436,15 @@ object ID {
      * @return
      */
     private fun getMacAddress(): String? {
-        var mac: String? = "02:00:00:00:00:00"
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            mac = getMacDefault()
-        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            mac = getMacAddresss()
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            mac = getMacFromHardware()
+        var mac: String? = "10:00:00:00:00:01"
+        if (LibHawkKeys.isCompliance) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                mac = getMacDefault()
+            } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                mac = getMacAddresss()
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                mac = getMacFromHardware()
+            }
         }
         return mac
     }
