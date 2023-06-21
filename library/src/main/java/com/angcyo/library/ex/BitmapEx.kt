@@ -430,3 +430,10 @@ fun bitmapCanvas(
     canvas.action()
     return bitmap
 }
+
+/**日志信息*/
+fun Bitmap.logInfo(): String = buildString {
+    append("图片宽:$width")
+    append(" 高:$height")
+    append(" :${byteCount.toSizeString()}")
+}

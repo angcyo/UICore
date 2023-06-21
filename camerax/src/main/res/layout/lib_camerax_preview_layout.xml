@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.angcyo.widget.layout.RConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -7,5 +8,19 @@
         android:id="@+id/lib_camera_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <!-- Camera control and gallery buttons -->
+    <ImageButton
+        android:id="@+id/lib_camera_switch_view"
+        android:layout_width="@dimen/round_button_medium"
+        android:layout_height="@dimen/round_button_medium"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginBottom="@dimen/margin_xlarge"
+        android:background="@android:color/transparent"
+        android:padding="@dimen/spacing_small"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:srcCompat="@drawable/ic_switch" />
 
 </com.angcyo.widget.layout.RConstraintLayout>

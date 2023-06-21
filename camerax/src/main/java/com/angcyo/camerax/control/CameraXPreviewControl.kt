@@ -1,13 +1,16 @@
 package com.angcyo.camerax.control
 
 import android.Manifest
+import android.graphics.ImageFormat
 import androidx.annotation.MainThread
+import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraXConfig
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.lifecycle.LifecycleOwner
+import com.angcyo.camerax.core.Camera
 import com.angcyo.camerax.core.RGBImageAnalysisAnalyzer
 import com.angcyo.fragment.requestPermissions
 import com.angcyo.library.BuildConfig
@@ -90,10 +93,20 @@ class CameraXPreviewControl {
                 //clearImageAnalysisAnalyzer()
 
                 //图片捕获模式, 质量优先or速度优先
-                imageCaptureMode
+                imageCaptureMode //CAPTURE_MODE_MINIMIZE_LATENCY 1
 
                 //闪光灯模式
-                imageCaptureFlashMode
+                imageCaptureFlashMode //FLASH_MODE_OFF 2
+
+                //图片捕获目标大小
+                previewTargetSize
+                imageAnalysisTargetSize
+                imageCaptureTargetSize
+                videoCaptureTargetSize
+
+                //16:9
+                imageAnalysisTargetSize = CameraController.OutputSize(AspectRatio.RATIO_16_9)
+                //imageAnalysisTargetSize = CameraController.OutputSize(Size(3280, 2464))
 
                 //缩放状态发生更改回调
                 zoomState.observe(lifecycleOwner) {
@@ -106,6 +119,7 @@ class CameraXPreviewControl {
 
                 bindToLifecycle(lifecycleOwner)
             }
+            _lifecycleCameraController = lifecycleCameraController
 
             //设置预览控制器
             previewView.controller = lifecycleCameraController
@@ -132,6 +146,14 @@ class CameraXPreviewControl {
     /**是否有权限*/
     fun havePermission(): Boolean = lastContext.havePermission(previewPermissionList)
 
+    fun hasCamera() = hasBackCamera() || hasFrontCamera()
+
+    fun hasBackCamera() =
+        _lifecycleCameraController?.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA) == true
+
+    fun hasFrontCamera() =
+        _lifecycleCameraController?.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA) == true
+
     /**解绑, 并停止相机*/
     @CallPoint
     @MainThread
@@ -142,6 +164,33 @@ class CameraXPreviewControl {
             } else {
                 L.w("不支持的解绑操作")
             }
+        }
+        _lifecycleCameraController = null
+    }
+
+    /**切换摄像头*/
+    fun switchCamera() {
+        cameraView?.controller?.apply {
+            if (this is LifecycleCameraController) {
+                cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
+                    CameraSelector.DEFAULT_FRONT_CAMERA
+                } else {
+                    CameraSelector.DEFAULT_BACK_CAMERA
+                }
+            } else {
+                L.w("不支持的切换操作")
+            }
+        }
+    }
+
+    fun updateImageAnalysisTargetSize() {
+        _lifecycleCameraController?.apply {
+            Camera.getStreamConfigurationMap(cameraInfo)
+                ?.getOutputSizes(ImageFormat.YUV_420_888)?.apply {
+                    val size = get(0)
+                    imageAnalysisTargetSize = CameraController.OutputSize(size)
+                    L.i("更新分析目标大小:$size")
+                }
         }
     }
 }

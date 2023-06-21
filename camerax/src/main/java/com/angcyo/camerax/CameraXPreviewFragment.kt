@@ -51,6 +51,13 @@ open class CameraXPreviewFragment : BaseTitleFragment() {
                 }
             }
         }
+
+        //切换摄像头
+        _vh.click(R.id.lib_camera_switch_view) {
+            it.isEnabled = cameraXPreviewControl.hasCamera()
+            cameraXPreviewControl.switchCamera()
+            cameraXPreviewControl.updateImageAnalysisTargetSize()
+        }
     }
 
 }

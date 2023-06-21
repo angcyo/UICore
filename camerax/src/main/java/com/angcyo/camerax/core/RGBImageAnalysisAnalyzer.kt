@@ -7,6 +7,7 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.angcyo.library.L
 import com.angcyo.library.component._delay
+import com.angcyo.library.ex.logInfo
 
 /**
  *  将[ImageFormat.YUV_420_888]转换成[ImageFormat.RGB_565]
@@ -29,23 +30,45 @@ class RGBImageAnalysisAnalyzer : ImageAnalysis.Analyzer {
      *
      * */
     override fun analyze(image: ImageProxy) {
+        //Pixel 6
+        //1:前后摄像头出来的数据大小一致
+        //imageAnalysisTargetSize = CameraController.OutputSize(AspectRatio.RATIO_16_9)
+        //w:1280 h:720 -> 宽:1280 高:666
+
+        //2:
+        //imageAnalysisTargetSize = CameraController.OutputSize(AspectRatio.RATIO_4_3)
+        //w:640 h:480 -> 宽:640 高:332
+
+        //OnePlus Ace2 Pro
+        //1:
+        //imageAnalysisTargetSize = CameraController.OutputSize(AspectRatio.RATIO_16_9)
+        //w:864 h:480 -> 宽:864 高:442
+
+        //2:
+        //imageAnalysisTargetSize = CameraController.OutputSize(AspectRatio.RATIO_4_3)
+        //w:640 h:480 -> 宽:640 高:328
+
+        //realme 11 Pro+
+        //1:
+        //imageAnalysisTargetSize = CameraController.OutputSize(AspectRatio.RATIO_16_9)
+        //w:960 h:544 -> 宽:960 高:490
+
+        //2:
+        //imageAnalysisTargetSize = CameraController.OutputSize(AspectRatio.RATIO_4_3)
+        //w:640 h:480 -> 宽:640 高:326
+
         L.d(
             image.format.toImageFormatStr(),
             "w:${image.width} h:${image.height}",
             image.cropRect,
             image.imageInfo
-        )
-
-        //ImageFormat.YUV_420_888 转 ImageFormat.RGB_565
-        //获取YUV
-        //val yBuffer = image.planes[0].buffer
-        //val uBuffer = image.planes[1].buffer
-        //val vBuffer = image.planes[2].buffer
+        )//w:640 h:480
 
         //YUV420 转成 RGB
-        val bitmap = image.toBitmap()
+        val bitmap = image.toBitmap() //w:640 h:332
+        L.d(bitmap?.logInfo())
 
-        _delay(3_000) {
+        _delay(5_000) {
             image.close() //关闭之后, 才有下一帧
         }
     }
