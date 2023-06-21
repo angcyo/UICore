@@ -94,7 +94,11 @@ android {
 //        }
 //    }
 
-    flavorDimensions "flavor"
+    if (gradle.gradleVersion.charAt(0) >= '8') {
+        flavorDimensions = ['flavor']
+    } else {
+        flavorDimensions 'flavor'
+    }
     productFlavors {
         //develop
         _dev {

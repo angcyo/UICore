@@ -82,7 +82,7 @@ afterEvaluate {
             def outputPath = "${project.rootDir.absolutePath}/${output}/"
 
             //output
-            println outputPath
+            println "[collectMR.gradle] 输出目录:" + outputPath
 
             file(outputPath).mkdirs()
             //不同的风味, 收集到不同的文件夹
