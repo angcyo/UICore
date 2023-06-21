@@ -4,7 +4,9 @@ import androidx.annotation.Keep
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.HawkPropertyValue
+import com.angcyo.library.ex.hawkGet
 import com.angcyo.library.ex.isDebug
+import com.angcyo.library.getAppVersionCode
 
 /**
  * 内部库中的一些持久化数据
@@ -15,8 +17,12 @@ import com.angcyo.library.ex.isDebug
 @Keep
 object LibHawkKeys {
 
+    /**合规key, 用来保存当前版本的合规状态*/
+    const val KEY_COMPLIANCE_STATE = "KEY_COMPLIANCE_STATE"
+
     /**是否合规*/
-    var isCompliance: Boolean by HawkPropertyValue<Any, Boolean>(false)
+    val isCompliance: Boolean
+        get() = "${KEY_COMPLIANCE_STATE}_${getAppVersionCode()}".hawkGet() == "true"
 
     /**[com.angcyo.component.luban.DslLuban]
      * 压缩时, 最小的压缩像素大小 [kb]

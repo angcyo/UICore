@@ -2,6 +2,7 @@ package com.angcyo.core.component
 
 import android.app.Activity
 import com.angcyo.core.vmApp
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.Action
 import com.angcyo.library.ex.hawkGet
 import com.angcyo.library.ex.hawkPut
@@ -22,11 +23,9 @@ object ComplianceCheck {
     /**合规初始化之后的通知类型*/
     const val TYPE_COMPLIANCE_INIT_AFTER = "TYPE_COMPLIANCE_INIT_AFTER"
 
-    /**合规key, 用来保存当前版本的合规状态*/
-    const val KEY_COMPLIANCE_STATE = "KEY_COMPLIANCE_STATE"
-
     /**是否合规*/
-    fun isCompliance() = "${KEY_COMPLIANCE_STATE}_${getAppVersionCode()}".hawkGet() == "true"
+    fun isCompliance() =
+        "${LibHawkKeys.KEY_COMPLIANCE_STATE}_${getAppVersionCode()}".hawkGet() == "true"
 
     /**检查当前版本是否同意了合规请求*/
     fun check(complianceAction: Action): Boolean {
@@ -43,13 +42,13 @@ object ComplianceCheck {
 
     /**合规同意后调用此方法*/
     fun agree() {
-        "${KEY_COMPLIANCE_STATE}_${getAppVersionCode()}".hawkPut("true")
+        "${LibHawkKeys.KEY_COMPLIANCE_STATE}_${getAppVersionCode()}".hawkPut("true")
         vmApp<StateModel>().updateState(TYPE_COMPLIANCE_STATE, true)
     }
 
     /**合规拒绝后调用此方法*/
     fun reject(activity: Activity) {
-        "${KEY_COMPLIANCE_STATE}_${getAppVersionCode()}".hawkPut(null)
+        "${LibHawkKeys.KEY_COMPLIANCE_STATE}_${getAppVersionCode()}".hawkPut(null)
         activity.finish()
     }
 
