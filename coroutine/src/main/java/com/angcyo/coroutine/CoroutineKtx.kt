@@ -15,6 +15,12 @@ import kotlin.coroutines.CoroutineContext
 
 //<editor-fold desc="GlobalScope">
 
+/**默认的协程调度器
+ * [java.util.concurrent.Executors.newSingleThreadExecutor]
+ * [ContextCompat.getMainExecutor(this)]
+ * */
+fun dispatcherExecutor() = Dispatchers.Default.asExecutor()
+
 /**在全局域中启动协程*/
 @DelicateCoroutinesApi
 fun <T> launchMain(onBack: CoroutineScope.() -> T, onMain: (T) -> Unit = {}): Job {

@@ -267,6 +267,9 @@ fun RectF.rotate(
     pivotY: Float = centerY(),
     result: RectF = this
 ): RectF {
+    if (degrees == 0f) {
+        return result
+    }
     val matrix = acquireTempMatrix()
     matrix.reset()
     matrix.setRotate(degrees, pivotX, pivotY)
@@ -319,6 +322,7 @@ fun RectF.adjustSize(width: Float, height: Float, adjustType: Int = ADJUST_TYPE_
         ADJUST_TYPE_CENTER -> {
             inset(ws / 2, hs / 2)
         }
+
         ADJUST_TYPE_LT -> {
             right -= ws
             bottom -= hs
@@ -334,14 +338,17 @@ fun RectF.adjustSize(width: Float, height: Float, adjustType: Int = ADJUST_TYPE_
                 bottom -= hs
             }*/
         }
+
         ADJUST_TYPE_LB -> {
             right -= ws
             top += hs
         }
+
         ADJUST_TYPE_RT -> {
             left += ws
             bottom -= hs
         }
+
         ADJUST_TYPE_RB -> {
             left += ws
             top += hs

@@ -15,6 +15,9 @@ import kotlin.math.max
  *
  * [com.angcyo.library.component.MainExecutor]
  *
+ * [java.util.concurrent.Executors.newSingleThreadExecutor]
+ * [android.content.Context.mainExecutor]
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/02/14

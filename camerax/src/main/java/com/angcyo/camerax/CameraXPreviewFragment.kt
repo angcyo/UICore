@@ -15,6 +15,7 @@ import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
 import com.angcyo.camerax.control.CameraXPreviewControl
 import com.angcyo.camerax.ui.FocusPointDrawable
+import com.angcyo.camerax.ui.RectFDrawable
 import com.angcyo.core.fragment.BaseTitleFragment
 import com.angcyo.http.rx.doMain
 import com.angcyo.library.annotation.OverridePoint
@@ -35,9 +36,20 @@ open class CameraXPreviewFragment : BaseTitleFragment() {
         private const val SPRING_DAMPING_RATIO = 0.35f
     }
 
+    /**核心控制器*/
     val cameraXPreviewControl: CameraXPreviewControl by lazy {
-        CameraXPreviewControl()
+        CameraXPreviewControl().apply {
+            rgbImageAnalysisAnalyzer.onRectTestAction = {
+                previewView?.apply {
+                    overlay.clear()
+                    overlay.add(RectFDrawable(it))
+                }
+            }
+        }
     }
+
+    val previewView: PreviewView?
+        get() = _vh.v(R.id.lib_camera_view)
 
     init {
         //fragmentLayoutId = R.layout.lib_camerax_preview_layout
@@ -60,7 +72,7 @@ open class CameraXPreviewFragment : BaseTitleFragment() {
     @OverridePoint
     open fun initCameraXLayout() {
         //预览
-        _vh.v<PreviewView>(R.id.lib_camera_view)?.let { view ->
+        previewView?.let { view ->
             if (cameraXPreviewControl.havePermission()) {
                 cameraXPreviewControl.bindToLifecycle(view, this)
             } else {

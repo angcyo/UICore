@@ -20,6 +20,12 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import kotlin.math.min
 
+/**
+ * 焦点对焦动画
+ * Email:angcyo@126.com
+ * @author angcyo
+ * @date 2023/06/18
+ */
 class FocusPointDrawable : Drawable() {
     private val paint = Paint().apply {
         isAntiAlias = true
