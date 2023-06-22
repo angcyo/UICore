@@ -9,6 +9,7 @@ import android.content.ContextWrapper
 import android.content.res.ColorStateList
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Build
 import android.view.*
 import android.view.animation.DecelerateInterpolator
@@ -654,6 +655,11 @@ fun ImageView?.setTintList(color: Int) {
 fun ImageView?.setTintList(tintList: ColorStateList?) {
     this ?: return
     ImageViewCompat.setImageTintList(this, tintList)
+}
+
+/**加载[uri]对应的图片, 会自动旋转*/
+fun ImageView?.load(uri: Uri?) {
+    this?.setImageURI(uri)
 }
 
 //</editor-fold desc="其他">

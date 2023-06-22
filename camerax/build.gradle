@@ -7,6 +7,12 @@ android {
 }
 
 dependencies {
+
+    //https://mvnrepository.com/artifact/androidx.dynamicanimation/dynamicanimation
+    api 'androidx.dynamicanimation:dynamicanimation:1.1.0-alpha03'
+    //https://mvnrepository.com/artifact/androidx.dynamicanimation/dynamicanimation-ktx
+    api 'androidx.dynamicanimation:dynamicanimation-ktx:1.0.0-alpha03'
+
     //https://mvnrepository.com/artifact/androidx.camera
 
     //https://mvnrepository.com/artifact/androidx.camera/camera-core
@@ -26,6 +32,10 @@ dependencies {
     implementation project(allModule.core)
     implementation project(allModule.media)
     implementation project(allModule.record)
+
+    //---
+    //https://mvnrepository.com/artifact/androidx.camera/camera-video
+    //api "androidx.camera:camera-video:${camerax_ex}"
 
     // Machine learning for mobile developers 机器学习
 

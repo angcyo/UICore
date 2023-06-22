@@ -281,6 +281,12 @@ fun Bitmap.rotate(degrees: Float = 0f): Bitmap = if (degrees != 0f) {
     this
 }
 
+/**变换图片*/
+fun Bitmap.transform(matrix: Matrix?): Bitmap {
+    if (matrix == null) return this
+    return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+}
+
 /**如果图片的宽/高小于指定的大小, 则将其缩放方法处理*/
 fun Bitmap.scaleToMinSize(minWidth: Int, minHeight: Int): Bitmap {
     val sw = minWidth * 1f / width

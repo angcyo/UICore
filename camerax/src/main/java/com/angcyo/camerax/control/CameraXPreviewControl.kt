@@ -2,10 +2,16 @@ package com.angcyo.camerax.control
 
 import android.Manifest
 import android.graphics.ImageFormat
+import android.net.Uri
 import androidx.annotation.MainThread
+import androidx.annotation.WorkerThread
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraXConfig
+import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.MeteringPoint
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
@@ -19,6 +25,11 @@ import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.component.ThreadExecutor
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.havePermission
+import com.angcyo.library.ex.toFileUri
+import com.angcyo.library.libCacheFile
+import com.angcyo.library.utils.fileNameUUID
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asExecutor
 
 /**
  * 摄像机预览控制
@@ -51,6 +62,12 @@ class CameraXPreviewControl {
     /**控制器*/
     var _lifecycleCameraController: LifecycleCameraController? = null
 
+    /**RGB图片分析*/
+    var rgbImageAnalysisAnalyzer = RGBImageAnalysisAnalyzer()
+
+    /**当前使用的摄像头*/
+    var _cameraSelector: CameraSelector? = null
+
     init {
         //CameraXConfig.Provider
     }
@@ -68,13 +85,13 @@ class CameraXPreviewControl {
         if (previewView.controller == null) {
             val lifecycleCameraController = LifecycleCameraController(previewView.context).apply {
                 //setEnabledUseCases(itemEnabledUseCases)
-                isPinchToZoomEnabled
-                isTapToFocusEnabled
+                isPinchToZoomEnabled //是否支持缩放
+                isTapToFocusEnabled //是否支持点击对焦
                 //isVideoCaptureEnabled
                 isImageCaptureEnabled
                 isImageAnalysisEnabled
 
-                //设置需要使用的功能, 默认IMAGE_CAPTURE | IMAGE_ANALYSIS
+                //设置需要使用的功能, 默认IMAGE_CRGBImageAnalysisAnalyzer()APTURE | IMAGE_ANALYSIS
                 //IMAGE_CAPTURE | IMAGE_ANALYSIS | VIDEO_CAPTURE
 
                 //前置摄像头
@@ -85,10 +102,12 @@ class CameraXPreviewControl {
                 //cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
                 //开始分析图像
-                setEnabledUseCases(CameraController.IMAGE_ANALYSIS)
+                //setEnabledUseCases(CameraController.IMAGE_ANALYSIS) //仅分析图像
                 setImageAnalysisAnalyzer(
                     ThreadExecutor /*previewView.context.mainExecutor()*/,
-                    RGBImageAnalysisAnalyzer()
+                    rgbImageAnalysisAnalyzer.apply {
+                        analyzerCameraSelector = cameraSelector
+                    }
                 )
                 //clearImageAnalysisAnalyzer()
 
@@ -117,6 +136,7 @@ class CameraXPreviewControl {
                     L.d("摄像头对焦:$it")
                 }
 
+                _cameraSelector = cameraSelector
                 bindToLifecycle(lifecycleOwner)
             }
             _lifecycleCameraController = lifecycleCameraController
@@ -177,12 +197,43 @@ class CameraXPreviewControl {
                 } else {
                     CameraSelector.DEFAULT_BACK_CAMERA
                 }
+                _cameraSelector = cameraSelector
+                rgbImageAnalysisAnalyzer.analyzerCameraSelector = cameraSelector
             } else {
                 L.w("不支持的切换操作")
             }
         }
     }
 
+    /**对焦*/
+    fun focus(x: Float, y: Float) {
+        cameraView?.let {
+            val meteringPointFactory = it.meteringPointFactory
+            val focusPoint = meteringPointFactory.createPoint(x, y)
+            focus(focusPoint)
+        }
+    }
+
+    /**对焦*/
+    fun focus(meteringPoint: MeteringPoint) {
+        cameraView?.controller?.cameraControl?.apply {
+            val meteringAction = FocusMeteringAction.Builder(meteringPoint).build()
+            startFocusAndMetering(meteringAction)
+        }
+    }
+
+    /**缩放
+     * [scaleFactor] 在现有基础上缩放的比例*/
+    fun scale(scaleFactor: Float) {
+        cameraView?.controller?.apply {
+            cameraControl?.apply {
+                val currentZoomRatio: Float = cameraInfo?.zoomState?.value?.zoomRatio ?: 1f
+                setZoomRatio(scaleFactor * currentZoomRatio)
+            }
+        }
+    }
+
+    /**更新分析图片目标大小*/
     fun updateImageAnalysisTargetSize() {
         _lifecycleCameraController?.apply {
             Camera.getStreamConfigurationMap(cameraInfo)
@@ -191,6 +242,45 @@ class CameraXPreviewControl {
                     imageAnalysisTargetSize = CameraController.OutputSize(size)
                     L.i("更新分析目标大小:$size")
                 }
+        }
+    }
+
+    //---
+
+    /**拍照
+     * [action] 回调*/
+    fun capturePhoto(@WorkerThread action: (uri: Uri?, exception: Exception?) -> Unit) {
+        val photoFile = libCacheFile(fileNameUUID(".jpg"))
+        val metadata = ImageCapture.Metadata().apply {
+            // Mirror image when using the front camera
+            isReversedHorizontal = _cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA
+        }
+        val outputFileOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
+            .setMetadata(metadata)
+            .build()
+
+        if (_lifecycleCameraController == null) {
+            action(null, IllegalStateException("未绑定相机"))
+            return
+        }
+
+        try {
+            _lifecycleCameraController?.takePicture(
+                outputFileOptions,
+                Dispatchers.Default.asExecutor(),
+                @WorkerThread
+                object : ImageCapture.OnImageSavedCallback {
+                    override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                        action(outputFileResults.savedUri ?: photoFile.toFileUri(), null)
+                    }
+
+                    override fun onError(exception: ImageCaptureException) {
+                        action(null, exception)
+                    }
+                })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            action(null, e)
         }
     }
 }

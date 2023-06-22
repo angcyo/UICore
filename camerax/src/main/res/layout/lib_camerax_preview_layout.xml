@@ -1,26 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.angcyo.widget.layout.RConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.camera.view.PreviewView
         android:id="@+id/lib_camera_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:background="@color/transparent20" />
 
     <!-- Camera control and gallery buttons -->
-    <ImageButton
+    <View
+        android:id="@+id/lib_camera_focus_point"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/lib_camera_switch_view"
-        android:layout_width="@dimen/round_button_medium"
-        android:layout_height="@dimen/round_button_medium"
-        android:layout_marginStart="@dimen/margin_small"
-        android:layout_marginBottom="@dimen/margin_xlarge"
-        android:background="@android:color/transparent"
-        android:padding="@dimen/spacing_small"
-        android:scaleType="fitCenter"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="32dp"
+        android:background="@drawable/camerax_circle_background"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/lib_camera_shutter_view"
+        app:layout_constraintEnd_toStartOf="@id/lib_camera_shutter_view"
+        app:layout_constraintTop_toTopOf="@id/lib_camera_shutter_view"
+        app:srcCompat="@drawable/camerax_ic_switch"
+        app:tint="@color/camerax_button_tint" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_camera_shutter_view"
+        android:layout_width="92dp"
+        android:layout_height="92dp"
+        android:layout_margin="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:srcCompat="@drawable/ic_switch" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/camerax_ic_camera_shutter"
+        app:tint="@color/camerax_button_tint" />
+
+    <!--preview-->
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_camera_photo_preview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_camera_close_photo_preview"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/camerax_circle_background"
+        android:padding="4dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/camerax_ic_close"
+        app:tint="@color/camerax_button_tint"
+        tools:visibility="visible" />
 
 </com.angcyo.widget.layout.RConstraintLayout>

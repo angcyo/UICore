@@ -23,6 +23,11 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowContentOverlay">@null</item>
+
+        <!--<item name="android:immersive">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>-->
     </style>
 
     <style name="BaseWhiteAppTheme" parent="BaseAppTheme">

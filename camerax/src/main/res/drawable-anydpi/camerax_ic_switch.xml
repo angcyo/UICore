@@ -17,7 +17,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:width="24dp"
     android:height="24dp"
-    android:tint="@color/selector_ic"
+    android:tint="@color/camerax_selector_ic"
     android:viewportWidth="46.0"
     android:viewportHeight="46.0"
     tools:ignore="VectorRaster">

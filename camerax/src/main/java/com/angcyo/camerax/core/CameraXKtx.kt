@@ -46,11 +46,16 @@ fun ByteBuffer.toByteArray(): ByteArray {
     return data // Return the byte array
 }
 
+/**
+ * [shouldCropImage] 是否需要裁剪图片
+ * [jpegQuality] 图片质量
+ * */
 @SuppressLint("RestrictedApi")
-fun ImageProxy.toBitmap(jpegQuality: Int = 100): Bitmap? {
+fun ImageProxy.toBitmap(shouldCropImage: Boolean = false, jpegQuality: Int = 100): Bitmap? {
     val image = this
+    //image.image.transformMatrix
 
-    val shouldCropImage = !image.cropRect.isEmpty && ImageUtil.shouldCropImage(image)
+    //val shouldCropImage = !image.cropRect.isEmpty && ImageUtil.shouldCropImage(image)
     val imageFormat = image.format
     val bytes = if (imageFormat == ImageFormat.JPEG) {
         if (!shouldCropImage) {
