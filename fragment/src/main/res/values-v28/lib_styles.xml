@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="BaseAppTheme28" parent="BaseAppTheme27">
+        <!--屏幕缺口配置-->
+        <!--https://developer.android.com/develop/ui/views/layout/display-cutout-->
+        <!--LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT ：使用此默认设置，内容在纵向模式下显示时呈现到剪切区域，但在横向模式下显示时，内容将呈现为上下黑边。-->
+        <!--LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES ：内容以纵向和横向模式呈现到剪切区域。-->
+        <!--LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER ：内容永远不会渲染到剪切区域。-->
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    </style>
+
+</resources>
