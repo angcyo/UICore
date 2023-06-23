@@ -4,7 +4,7 @@
     <item
         tools:height="2400dp"
         tools:width="1080dp">
-        <color android:color="@color/lib_white" />
+        <color android:color="@color/lib_theme_white_color" />
     </item>
     <item
         android:width="200dp"
