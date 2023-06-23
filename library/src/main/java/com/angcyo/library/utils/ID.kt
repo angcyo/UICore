@@ -117,6 +117,10 @@ object ID {
         }
     }
 
+    private fun haveReadPhoneStatePermission(): Boolean {
+        return isHaveSelfPermission(Manifest.permission.READ_PHONE_STATE)
+    }
+
 
     /**
      * 生成文件
@@ -259,11 +263,7 @@ object ID {
      */
     @SuppressLint("MissingPermission")
     private fun getJudgeSIMCount(): Int {
-        if (ActivityCompat.checkSelfPermission(
-                app(),
-                Manifest.permission.READ_PHONE_STATE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+        if (haveReadPhoneStatePermission()) {
             return 0
         }
         var count = 0
@@ -283,7 +283,7 @@ object ID {
     private fun getSerialNumbers(): String? {
         var serial: String? = ""
         try {
-            if (LibHawkKeys.isCompliance) {
+            if (LibHawkKeys.isCompliance && haveReadPhoneStatePermission()) {
                 serial = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) { //9.0+
                     Build.getSerial()
                 } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) { //8.0+
@@ -360,7 +360,7 @@ object ID {
     @SuppressLint("MissingPermission")
     private fun getImeiOrMeId(isImei: Boolean): String? {
         return null
-        /*if (!isHaveSelfPermission(Manifest.permission.READ_PHONE_STATE)) {
+        /*if (!haveReadPhoneStatePermission()) {
             return ""
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
