@@ -8,7 +8,11 @@ import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.ensure
 import com.angcyo.library.ex.getPointOnCircle
 import com.angcyo.library.ex.textWidth
+import com.angcyo.library.ex.toRadians
 import kotlin.math.absoluteValue
+import kotlin.math.min
+import kotlin.math.roundToInt
+import kotlin.math.tan
 
 /**
  * 曲线文本绘制信息
@@ -42,6 +46,10 @@ data class CurveTextDraw(
     /**曲线文本的宽高*/
     var curveTextWidth: Float = 0f,
     var curveTextHeight: Float = 0f,
+
+    /**在绘制中文的时候, 无法全部包裹住, 此时需要额外撑一点高度*/
+    var offsetWidth: Float = 0f,
+    var offsetHeight: Float = 0f
 ) {
 
     companion object {
@@ -154,11 +162,21 @@ data class CurveTextDraw(
         curveTextWidth += offset
         curveTextHeight += offset
 
+        //高度补偿
+        offsetHeight = measureTextWidth("${text[(text.length / 2f).roundToInt()]}", paint) / 4
+        /*if (text.length % 2 == 0) {
+            offsetHeight /= 2
+        }*/
+        //offsetHeight *= tan(min(curvature.absoluteValue, 45f).toRadians())
+        offsetWidth = offsetHeight * tan(min(curvature.absoluteValue, 45f).toRadians())
+        curveTextWidth += offsetWidth
+        curveTextHeight += offsetHeight
+
         //计算相对于0,0位置应该绘制的中心位置
         val textHeight = outerRadius - innerRadius
         val cx = curveTextWidth / 2
         val cy = if (curvature > 0) {
-            textHeight + innerRadius
+            textHeight + innerRadius + offsetHeight
         } else {
             curveTextHeight - textHeight - innerRadius
         }
@@ -166,51 +184,15 @@ data class CurveTextDraw(
         curveCy = cy
     }
 
-    /**测量每个字符应该绘制的角度
-     * 文本的中垂线在这个角度上*/
-    /*fun measureCharAngle(paint: Paint) {
-        charInfoList.clear()
-        val textSize = text.size()
-        if (textSize <= 0) {
-            return
-        }
-        if (textSize == 1) {
-            charInfoList.add(CharInfo(text, textWidth, textHeight, baseAngleDegrees).apply {
-                initRect(this@CurveTextDraw)
-            })
-            return
-        }
-        val absCurvature = curvature.absoluteValue
-        val spaceAngle = absCurvature / (textSize - 1) //间隙角度
-        var startAngle = baseAngleDegrees
-        if (curvature > 0) {
-            startAngle -= absCurvature / 2
-        } else {
-            startAngle += absCurvature / 2
-        }
-
-        for (char in text) {
-            val charStr = char.toString()
-            val charInfo = CharInfo(
-                charStr,
-                measureTextWidth(charStr, paint),
-                measureTextHeight(charStr),
-                startAngle
-            )
-            charInfo.initRect(this)
-            charInfoList.add(charInfo)
-
-            if (curvature > 0) {
-                startAngle += spaceAngle
-            } else {
-                startAngle -= spaceAngle
-            }
-        }
-    }*/
-
     /**测量单字符的高度*/
     fun measureTextHeight(text: String): Float {
         return measureTextHeightAction?.invoke(text) ?: textHeight
+    }
+
+    /**补偿文本的高度
+     * [measureTextHeight]*/
+    fun wrapTextHeight(text: String): Float {
+        return measureTextHeight(text) + offsetHeight
     }
 
     /**测量单字符的宽度*/
@@ -298,10 +280,10 @@ data class CurveTextDraw(
             /*if (BuildConfig.DEBUG && charStartAngle == startAngle) {
                 //调试, 在未自旋的位置绘制
                 canvas.drawText(charStr, drawX, drawY, paint)
-                paint.color = Color.MAGENTA
                 canvas.withRotation(charRotate, textRotateCenterX, textRotateCenterY) {
                     canvas.drawText(charStr, drawX, drawY, paint)
                 }
+                paint.color = Color.MAGENTA//后面绘制的都是紫色
             }*/
             if (curvature > 0) {
                 charStartAngle += gapAngle + charAngle
@@ -310,89 +292,4 @@ data class CurveTextDraw(
             }
         }
     }
-
-    /**绘制曲线文本,按照角度变化, 一个一个字符绘制 */
-    /*fun draw(canvas: Canvas, paint: Paint) {
-        for (charInfo in charInfoList) {
-            val charStr = charInfo.char
-            val charWidth = charInfo.width
-            val charHeight = charInfo.height
-            val metrics = paint.fontMetrics
-            val offset = (metrics.bottom - metrics.descent)
-            val charDrawHeight = charInfo.height - paint.descent() + offset / 2
-            val textRotateCenterX = curveCx + innerRadius + charHeight / 2 - offset
-            val textRotateCenterY = curveCy
-            val drawX = textRotateCenterX - charWidth / 2
-            val drawY = textRotateCenterY + charHeight / 2 - paint.descent()
-
-            canvas.withRotation(charInfo.angle, curveCx, curveCy) {//旋转到曲线上
-                canvas.withRotation(charRotate, textRotateCenterX, textRotateCenterY) { //自旋角度
-                    canvas.drawText(charStr, drawX, drawY, paint)
-                }
-            }
-            if (BuildConfig.DEBUG && charInfo.angle == startAngle) {
-                //调试, 在未自旋的位置绘制
-                canvas.drawText(charStr, drawX, drawY, paint)
-                val oldColor = paint.color
-                paint.color = Color.MAGENTA
-                canvas.withRotation(charRotate, textRotateCenterX, textRotateCenterY) {
-                    canvas.drawText(charStr, drawX, drawY, paint)
-                }
-                paint.color = oldColor
-            }
-        }
-    }*/
-
-    /**每个字符信息*/
-    /*data class CharInfo(
-        */
-    /**字符*//*
-        val char: String,
-        */
-    /**宽度*//*
-        val width: Float,
-        */
-    /**高度*//*
-        val height: Float,
-        */
-    /**中垂线所在角度*//*
-        val angle: Float,
-        //---
-        */
-    /**距离圆心绘制的坐标
-     * 未自旋*//*
-        val drawRect: RectF = RectF(),
-        */
-    /**
-     * [drawRect]自旋之后, 并且旋转到了曲线上的坐标
-     * 用来计算曲线文本的宽高
-     * *//*
-        val targetRect: RectF = RectF()
-    ) {
-        fun initRect(curveText: CurveTextDraw) {
-            //在中点绘制
-            val centerX = curveText.curveCx + height / 2
-            val centerY = curveText.curveCy
-
-            //在线的下面绘制
-            *//*val centerX = curveText.curveCx + height / 2
-            val centerY = curveText.curveCy + width / 2*//*
-
-            drawRect.set(
-                centerX - width / 2,
-                centerY - height / 2,
-                centerX + width / 2,
-                centerY + height / 2
-            )
-            //自旋
-            val matrix = acquireTempMatrix()
-            matrix.setRotate(curveText.charRotate, centerX, centerY)
-            matrix.mapRect(targetRect, drawRect)
-
-            //旋转到曲线上
-            matrix.setRotate(angle, curveText.curveCx, curveText.curveCy)
-            matrix.mapRectF(targetRect)
-            matrix.release()
-        }
-    }*/
 }
