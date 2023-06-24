@@ -75,6 +75,7 @@ open class DoodleIconItem : DslAdapterItem(), INewItem {
         //
         val imageView = itemHolder.img(R.id.lib_image_view)
         if (itemEnable) {
+            imageView?.setTintList(null)
             vmApp<NightModel>().tintImageViewNight(imageView)
         } else {
             itemIcoDisableColor.toColor()
