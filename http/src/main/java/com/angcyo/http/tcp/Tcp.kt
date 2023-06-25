@@ -95,6 +95,11 @@ class Tcp : ICancel {
         //L.i("test")
     }
 
+    /**TCP是否已连上*/
+    fun isConnected(): Boolean {
+        return socket?.run { isConnected && !isClosed } ?: false
+    }
+
     /**连接到服务器*/
     fun connect() {
         init()
