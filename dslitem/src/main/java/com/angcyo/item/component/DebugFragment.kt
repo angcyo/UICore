@@ -19,12 +19,27 @@ import com.angcyo.dsladapter.drawBottom
 import com.angcyo.item.DslPropertyNumberItem
 import com.angcyo.item.DslPropertyStringItem
 import com.angcyo.item.DslPropertySwitchItem
-import com.angcyo.item.style.*
+import com.angcyo.item.style.itemDes
+import com.angcyo.item.style.itemEditText
+import com.angcyo.item.style.itemLabel
+import com.angcyo.item.style.itemSwitchChangedAction
+import com.angcyo.item.style.itemSwitchChecked
 import com.angcyo.library.Library
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.file
+import com.angcyo.library.ex.find
+import com.angcyo.library.ex.hawkGet
+import com.angcyo.library.ex.hawkGetBoolean
+import com.angcyo.library.ex.hawkPut
+import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.isFile
+import com.angcyo.library.ex.isFolder
+import com.angcyo.library.ex.nowTimeString
 import com.angcyo.library.libFolderPath
 import com.angcyo.library.toast
-import com.angcyo.library.utils.*
+import com.angcyo.library.utils.Constant
+import com.angcyo.library.utils.LogFile
+import com.angcyo.library.utils.logFileName
+import com.angcyo.library.utils.toLogFilePath
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.base.resetChild
 
@@ -186,12 +201,15 @@ open class DebugFragment : BaseDslFragment() {
                         DslPropertyNumberItem.isInt(debugAction.type) -> debugAction.key.hawkGet(
                             (debugAction.defValue as? Int) ?: 0
                         )
+
                         DslPropertyNumberItem.isLong(debugAction.type) -> debugAction.key.hawkGet(
                             (debugAction.defValue as? Long) ?: 0L
                         )
+
                         DslPropertyNumberItem.isFloat(debugAction.type) -> debugAction.key.hawkGet(
                             (debugAction.defValue as? Float) ?: 0f
                         )
+
                         else -> debugAction.defValue as? Number
                     }
 
