@@ -1,3 +1,11 @@
+/**
+ * 1: apply from: "$gradleHost/master/publish.gradle"
+ * 2: libGroupId = 'com.angcyo'
+ * 3: libVersionName = '0.0.1'
+ * 4: libWinRepo = 'E:/maven'
+ * 5: libMacRepo = '/Users/angcyo'
+ * 6: gradlew publish
+ * */
 apply plugin: 'maven-publish'
 
 /// 构建源码jar包
