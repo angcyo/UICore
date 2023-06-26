@@ -7,11 +7,11 @@ import androidx.core.graphics.withRotation
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.ensure
 import com.angcyo.library.ex.getPointOnCircle
+import com.angcyo.library.ex.textHeight
 import com.angcyo.library.ex.textWidth
 import com.angcyo.library.ex.toRadians
 import kotlin.math.absoluteValue
 import kotlin.math.min
-import kotlin.math.roundToInt
 import kotlin.math.tan
 
 /**
@@ -49,7 +49,10 @@ data class CurveTextDraw(
 
     /**在绘制中文的时候, 无法全部包裹住, 此时需要额外撑一点高度*/
     var offsetWidth: Float = 0f,
-    var offsetHeight: Float = 0f
+    var offsetHeight: Float = 0f,
+    /**中心点需要的偏移量*/
+    var offsetX: Float = 0f,
+    var offsetY: Float = 0f,
 ) {
 
     companion object {
@@ -158,25 +161,36 @@ data class CurveTextDraw(
 
         //
         val metrics = paint.fontMetrics
-        val offset = (metrics.bottom - metrics.descent)
+        val offset = metrics.bottom//(metrics.bottom - metrics.descent)
         curveTextWidth += offset
         curveTextHeight += offset
 
+        val ref = paint.textHeight() / 2
+        val s = tan(min(curvature.absoluteValue / 8, 45f).toRadians())
         //高度补偿
-        offsetHeight = measureTextWidth("${text[(text.length / 2f).roundToInt()]}", paint) / 4
-        /*if (text.length % 2 == 0) {
-            offsetHeight /= 2
-        }*/
-        //offsetHeight *= tan(min(curvature.absoluteValue, 45f).toRadians())
-        offsetWidth = offsetHeight * tan(min(curvature.absoluteValue, 45f).toRadians())
+        offsetHeight = ref * s
+        //宽度补偿
+        offsetWidth = ref * s
+
+        offsetX = offsetWidth / 2
+        offsetY = offsetHeight + metrics.descent
+        if (curvature.absoluteValue >= 180f) {
+            offsetX = 0f
+            offsetWidth *= 2
+            offsetY = offsetHeight
+            if (curvature >= 360f) {
+                offsetY = offsetHeight / 2
+            }
+        }
+
         curveTextWidth += offsetWidth
         curveTextHeight += offsetHeight
 
         //计算相对于0,0位置应该绘制的中心位置
         val textHeight = outerRadius - innerRadius
-        val cx = curveTextWidth / 2
+        val cx = curveTextWidth / 2 + offsetX
         val cy = if (curvature > 0) {
-            textHeight + innerRadius + offsetHeight
+            textHeight + innerRadius + offsetY
         } else {
             curveTextHeight - textHeight - innerRadius
         }
