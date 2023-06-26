@@ -30,7 +30,7 @@ class ByteArrayReader(val bytes: ByteArray) {
 
     /**在指针位置读取[size]个字节, 并且自动偏移滞后*/
     fun read(size: Int): ByteArray {
-        if (_index + size > byteSize) {
+        if (_index + size > byteSize || size <= 0) {
             //超出范围
             return byteArrayOf()
         }
