@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="100dp"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:background="@color/lib_theme_white_bg_color">
 
     <com.angcyo.tablayout.DslTabLayout
         android:id="@+id/lib_tab_layout"
@@ -50,7 +51,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lib_tab_layout"
-        app:srcCompat="@drawable/lib_direction_up_svg" />
+        app:srcCompat="@drawable/lib_direction_up_svg"
+        app:tint="@color/lib_night_icon_colors_selector" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/lib_direction_left_view"
@@ -61,7 +63,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/lib_direction_up_view"
         app:layout_constraintTop_toBottomOf="@id/lib_direction_up_view"
-        app:srcCompat="@drawable/lib_direction_left_svg" />
+        app:srcCompat="@drawable/lib_direction_left_svg"
+        app:tint="@color/lib_night_icon_colors_selector" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/lib_direction_down_view"
@@ -74,7 +77,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lib_direction_left_view"
-        app:srcCompat="@drawable/lib_direction_down_svg" />
+        app:srcCompat="@drawable/lib_direction_down_svg"
+        app:tint="@color/lib_night_icon_colors_selector" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/lib_direction_right_view"
@@ -84,7 +88,8 @@
         app:layout_constraintLeft_toRightOf="@id/lib_direction_up_view"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/lib_direction_left_view"
-        app:srcCompat="@drawable/lib_direction_right_svg" />
+        app:srcCompat="@drawable/lib_direction_right_svg"
+        app:tint="@color/lib_night_icon_colors_selector" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/lib_direction_center_view"
@@ -95,7 +100,8 @@
         app:layout_constraintLeft_toRightOf="@id/lib_direction_left_view"
         app:layout_constraintRight_toLeftOf="@id/lib_direction_right_view"
         app:layout_constraintTop_toBottomOf="@id/lib_direction_up_view"
-        app:srcCompat="@drawable/lib_direction_center_ico" />
+        app:srcCompat="@drawable/lib_direction_center_ico"
+        app:tint="@color/lib_night_icon_colors_selector" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/lib_direction_rotate_ccw_view"
@@ -106,7 +112,8 @@
         app:layout_constraintLeft_toLeftOf="@id/lib_direction_left_view"
         app:layout_constraintRight_toRightOf="@id/lib_direction_left_view"
         app:layout_constraintTop_toTopOf="@id/lib_direction_down_view"
-        app:srcCompat="@drawable/lib_direction_rotate_ccw_svg" />
+        app:srcCompat="@drawable/lib_direction_rotate_ccw_svg"
+        app:tint="@color/lib_night_icon_colors_selector" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/lib_direction_rotate_cw_view"
@@ -117,6 +124,7 @@
         app:layout_constraintLeft_toLeftOf="@id/lib_direction_right_view"
         app:layout_constraintRight_toRightOf="@id/lib_direction_right_view"
         app:layout_constraintTop_toTopOf="@id/lib_direction_down_view"
-        app:srcCompat="@drawable/lib_direction_rotate_cw_svg" />
+        app:srcCompat="@drawable/lib_direction_rotate_cw_svg"
+        app:tint="@color/lib_night_icon_colors_selector" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

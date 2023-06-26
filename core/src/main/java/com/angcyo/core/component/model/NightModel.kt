@@ -42,7 +42,7 @@ class NightModel : ViewModel() {
     @delegate:Keep
     var nightMode: Int by HawkPropertyValue<Any, Int>(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
 
-    /**是否是暗色模式*/
+    /**是否是暗色模式/深色模式*/
     val isDarkMode: Boolean
         get() = if (enableNightModel) isDarkMode(lastContext) else false  //isDarkMode()
 

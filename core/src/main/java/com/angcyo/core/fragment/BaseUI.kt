@@ -10,6 +10,8 @@ import com.angcyo.base.back
 import com.angcyo.base.dslFHelper
 import com.angcyo.base.isInDetailContainer
 import com.angcyo.core.R
+import com.angcyo.core.component.model.NightModel
+import com.angcyo.core.vmApp
 import com.angcyo.library.ex.*
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.span.span
@@ -126,9 +128,14 @@ open class FragmentUI {
  * [com.angcyo.fragment.AbsFragment.onCreate]前调用*/
 fun FragmentConfig.lightStyle() {
     titleBarBackgroundDrawable = colorDrawable(R.color.lib_light_title_bar_bg)
-    titleItemIconColor = _color(R.color.lib_light_title_icon_color)
-    titleItemTextColor = titleItemIconColor
     titleTextColor = _color(R.color.lib_light_title_text_color)
     titleTextType = Typeface.BOLD
-    isLightStyle = true //白色底标题栏
+    if (vmApp<NightModel>().isDarkMode) {
+        //深色模式
+        titleItemIconColor = _color(R.color.lib_theme_icon_color)
+    } else {
+        titleItemIconColor = _color(R.color.lib_light_title_icon_color)
+        isLightStyle = true //白色底标题栏
+    }
+    titleItemTextColor = titleItemIconColor
 }
