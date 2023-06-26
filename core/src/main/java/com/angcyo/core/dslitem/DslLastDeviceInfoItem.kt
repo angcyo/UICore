@@ -17,13 +17,13 @@ import com.angcyo.dsladapter.isItemLastInAdapter
 import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.library.app
 import com.angcyo.library.component.RBackground
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.copy
 import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.ex.getColor
 import com.angcyo.library.ex.getMobileIP
 import com.angcyo.library.ex.getWifiIP
-import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.nowTimeString
 import com.angcyo.library.libFolderPath
 import com.angcyo.library.toast
@@ -76,17 +76,16 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
         /**[isCompliance] 是否合规了*/
         fun deviceInfo(
             context: Context = app(),
-            isCompliance: Boolean = true,
+            isCompliance: Boolean = LibHawkKeys.isCompliance,
             config: DslSpan.() -> Unit = {}
         ) = span {
             val api = HttpConfigDialog.appBaseUrl //getAppString("base_api")
             if (api.isNotEmpty()) {
                 appendLine(api)
             }
-            if (isCompliance && isDebug()) {
+
+            if (isCompliance) {
                 append(getWifiIP()).append(SPLIT).append(getMobileIP())
-            } else {
-                append(getWifiIP())
             }
 
             //gmt 语言
@@ -100,16 +99,18 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             append(LanguageModel.getCurrentLanguageTag())
 
             //vpn 代理
-            val vpn = Device.vpnInfo()
-            val proxy = Device.proxyInfo()
-            if (!vpn.isNullOrBlank() || !proxy.isNullOrBlank()) {
-                vpn?.run {
-                    append(SPLIT)
-                    append(this)
-                }
-                proxy?.run {
-                    append(SPLIT)
-                    append(this)
+            if (isCompliance) {
+                val vpn = Device.vpnInfo()
+                val proxy = Device.proxyInfo()
+                if (!vpn.isNullOrBlank() || !proxy.isNullOrBlank()) {
+                    vpn?.run {
+                        append(SPLIT)
+                        append(this)
+                    }
+                    proxy?.run {
+                        append(SPLIT)
+                        append(this)
+                    }
                 }
             }
 
@@ -140,12 +141,16 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             Device.screenInfo(context, this._builder)
 
             //机型信息
-            appendln()
-            Device.deviceInfoLess(this._builder)
+            if (isCompliance) {
+                appendln()
+                Device.deviceInfoLess(this._builder)
+            }
 
             //网络信息
-            appendln()
-            append(Trackers.getInstance().networkStateTracker.activeNetworkState.toString())
+            if (isCompliance) {
+                appendln()
+                append(Trackers.getInstance().networkStateTracker.activeNetworkState.toString())
+            }
 
             //sd memory
             appendln()

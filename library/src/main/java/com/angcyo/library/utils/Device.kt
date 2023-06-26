@@ -25,6 +25,7 @@ import com.angcyo.library.component.lastContext
 import com.angcyo.library.component.pad.Pad
 import com.angcyo.library.ex.connect
 import com.angcyo.library.ex.fileSizeString
+import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.toSizeString
 import com.angcyo.library.ex.toStr
 import com.angcyo.library.unit.toPixel
@@ -72,11 +73,12 @@ object Device {
     //00000000-4759-42f8-ffff-ffffeabf4809
     @Deprecated("相同型号的手机会重复, 请使用[androidId]")
     var deviceId: String = ""
-        get() = field.ifEmpty { getUniqueDeviceId() }
+        get() = field.ifEmpty { if (LibHawkKeys.isCompliance) getUniqueDeviceId() else com.angcyo.library.ex.uuid() }
 
     //https://www.jianshu.com/p/59440efa020c
     //设备序列号 //unknown
-    val serial = Build.SERIAL
+    val serial: String
+        get() = if (LibHawkKeys.isCompliance) Build.SERIAL else com.angcyo.library.ex.uuid()
 
     const val PERFORMANCE_HIGH = 10
     const val PERFORMANCE_MEDIUM = 5
@@ -223,7 +225,7 @@ object Device {
 
     fun getMemoryInfo(context: Context): ActivityManager.MemoryInfo {
         val am =
-            context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            context.getSystemService(ACTIVITY_SERVICE) as ActivityManager
         val memoryInfo = ActivityManager.MemoryInfo()
         am.getMemoryInfo(memoryInfo)
         return memoryInfo
@@ -287,15 +289,17 @@ object Device {
 
     /**设备信息*/
     fun deviceInfo(context: Context, builder: Appendable): Appendable {
-        val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val manager = context.getSystemService(ACTIVITY_SERVICE) as ActivityManager
 
         builder.appendLine("deviceId/psuedoID: $deviceId")
         builder.appendLine("androidId: $androidId")
         builder.appendLine("id: ${ID.id}")
 
-        builder.appendLine()
-        deviceInfoLess(builder)
-        builder.appendLine()
+        if (LibHawkKeys.isCompliance || isDebug()) {
+            builder.appendLine()
+            deviceInfoLess(builder)
+            builder.appendLine()
+        }
 
         builder.append("App使用内存:${(getProcessMemoryUsage() * 1024).toSizeString()}")
         builder.appendLine()
