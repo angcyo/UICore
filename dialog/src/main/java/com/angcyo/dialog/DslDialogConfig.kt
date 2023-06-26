@@ -248,11 +248,26 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
      * */
     var softInputMode = SOFT_INPUT_ADJUST_RESIZE
 
+    /**是否隐藏3个控制按钮*/
+    var hideControlButton: Boolean? = null
+
     /** 系统默认3个按钮设置
      * [BaseDialogConfig]*/
     var positiveButtonText: CharSequence? = null //确定
     var negativeButtonText: CharSequence? = null //取消
     var neutralButtonText: CharSequence? = null //中立
+
+    val isGonePositiveButton: Boolean
+        get() = positiveButtonText == null || (hideControlButton != null && hideControlButton == true)
+
+    val isGoneNegativeButton: Boolean
+        get() = negativeButtonText == null || (hideControlButton != null && hideControlButton == true)
+
+    val isGoneNeutralButton: Boolean
+        get() = neutralButtonText == null || (hideControlButton != null && hideControlButton == true)
+
+    val isGoneControlButton: Boolean
+        get() = isGonePositiveButton && isGoneNegativeButton && isGoneNeutralButton
 
     //确定
     var positiveButtonListener: ((dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit)? =

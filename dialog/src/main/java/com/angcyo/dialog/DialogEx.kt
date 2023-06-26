@@ -269,6 +269,17 @@ fun Context.verifyCodeInputDialog(config: VerifyCodeInputDialogConfig.() -> Unit
     }
 }
 
+/**展示列表*/
+fun Context.recyclerDialog(config: SingleRecyclerDialogConfig.() -> Unit): Dialog {
+    return SingleRecyclerDialogConfig(this).run {
+        //dialogWidth = getRootWidth()
+        //dialogHeight = getRootHeight()
+        configBottomDialog()
+        config()
+        show()
+    }
+}
+
 //</editor-fold desc="高级对话框">
 
 //<editor-fold desc="popupWindow">

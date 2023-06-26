@@ -83,7 +83,7 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
         //确定按钮
         val positiveButton = dialogViewHolder.view(R.id.dialog_positive_button)
         positiveButton?.apply {
-            visibility = if (positiveButtonText == null) View.GONE else View.VISIBLE
+            visibility = if (isGonePositiveButton) View.GONE else View.VISIBLE
 
             if (positiveButton is TextView) {
                 positiveButton.text = positiveButtonText
@@ -97,7 +97,7 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
         //取消按钮
         val negativeButton = dialogViewHolder.view(R.id.dialog_negative_button)
         negativeButton?.apply {
-            visibility = if (negativeButtonText == null) View.GONE else View.VISIBLE
+            visibility = if (isGoneNegativeButton) View.GONE else View.VISIBLE
             if (negativeButton is TextView) {
                 negativeButton.text = negativeButtonText
             }
@@ -111,7 +111,7 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
         val neutralButton = dialogViewHolder.view(R.id.dialog_neutral_button)
 
         neutralButton?.apply {
-            visibility = if (neutralButtonText == null) View.GONE else View.VISIBLE
+            visibility = if (isGoneNeutralButton) View.GONE else View.VISIBLE
             if (neutralButton is TextView) {
                 neutralButton.text = neutralButtonText
             }
@@ -122,10 +122,7 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
         }
 
         //3个按钮都没有文本, 隐藏底部控制栏
-        if (positiveButtonText == null &&
-            negativeButtonText == null &&
-            neutralButtonText == null
-        ) {
+        if (isGoneControlButton) {
             dialogViewHolder.view(R.id.dialog_control_layout)?.visibility = View.GONE
         }
     }
