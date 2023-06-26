@@ -6,6 +6,12 @@ import java.io.ByteArrayOutputStream
 import kotlin.math.min
 
 /**
+ * 大端 [java.nio.ByteOrder.BIG_ENDIAN]
+ *
+ * 小端 [java.nio.ByteOrder.LITTLE_ENDIAN]
+ *
+ * [java.nio.ByteBuffer]
+ *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/05/31
  */
