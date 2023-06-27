@@ -13,12 +13,11 @@ apply plugin: 'kotlin-android'
 //apply from: 'build_time.gradle'
 
 //plugins {
-//    id 'com.android.library'
-//    id 'org.jetbrains.kotlin.android'
+//  id 'com.android.application'
+//  id 'com.android.library'
+//  id 'org.jetbrains.kotlin.android'
 //}
 
-apply from: allGradle.appBase
-//apply from: allGradle.aar //2022-05-08 remove
 apply from: allGradle.key
 
 def _C_SDK = project.hasProperty("C_SDK") ? project.ext.C_SDK : '33'
@@ -187,6 +186,8 @@ android {
         }
     }
 }
+
+apply from: allGradle.appBase
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

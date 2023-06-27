@@ -1,11 +1,32 @@
 def build_time = getBuildTime()
 
 def schema = project.hasProperty("schema") ? project.ext.schema : 'default'
+def versionCode = ''
+def versionName = ''
 
-println "appBase.gradle↓\n开始编译:schema:" + schema + " time->" + build_time + "\n" + osName() + "/" + userName()
+println "appRes.gradle↓\n开始编译:schema:" + schema + " time->" + build_time + "\n" + osName() + "/" + userName()
+
+//[libBase.gradle]
+def childProjects = rootProject.getChildProjects()
+childProjects.each {
+    def application = "com.android.application"
+
+    def projectObj = it.value
+    def isApp = projectObj.plugins.hasPlugin(application)
+
+    if (isApp) {
+        def applicationPlugin = projectObj.plugins.findPlugin(application)
+        //自动获取 主工程的 sdk配置信息
+        //println applicationPlugin.extension.defaultConfig
+        versionCode = applicationPlugin.extension.defaultConfig.versionCode
+        versionName = applicationPlugin.extension.defaultConfig.versionName
+    }
+}
 
 android {
 
+    /**2023-6-27
+     * 向app内注入一些资源*/
     defaultConfig {
         resValue "string", "build_time", build_time
         resValue "string", "os_name", osName()
@@ -13,6 +34,8 @@ android {
         resValue "string", "schema", schema
         resValue "bool", "show_debug", "false"
         resValue "string", "local_ip", getLocalIp()
+        resValue "string", "versionCode", '"' + versionCode + '"'
+        resValue "string", "versionName", '"' + versionName + '"'
 
         buildConfigField "String", "USER_NAME", '"' + userName() + '"'
         buildConfigField "String", "BUILD_TIME", '"' + build_time + '"'
