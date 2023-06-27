@@ -165,22 +165,27 @@ data class CurveTextDraw(
         curveTextWidth += offset
         curveTextHeight += offset
 
-        val ref = paint.textHeight() / 2
-        val s = tan(min(curvature.absoluteValue / 8, 45f).toRadians())
-        //高度补偿
-        offsetHeight = ref * s
-        //宽度补偿
-        offsetWidth = ref * s
+        if (curvature > 0) {
+            //下弧
+            val ref = paint.textHeight() / 2
+            val s = tan(min(curvature.absoluteValue / 8, 45f).toRadians())
+            //高度补偿
+            offsetHeight = ref * s
+            //宽度补偿
+            offsetWidth = ref * s
 
-        offsetX = offsetWidth / 2
-        offsetY = offsetHeight + metrics.descent
-        if (curvature.absoluteValue >= 180f) {
-            offsetX = 0f
-            offsetWidth *= 2
-            offsetY = offsetHeight
-            if (curvature >= 360f) {
-                offsetY = offsetHeight / 2
+            offsetX = offsetWidth / 2
+            offsetY = offsetHeight + metrics.descent
+            if (curvature.absoluteValue >= 180f) {
+                offsetX = 0f
+                offsetWidth *= 2
+                offsetY = offsetHeight
+                if (curvature.absoluteValue >= 360f) {
+                    offsetY = offsetHeight / 2
+                }
             }
+        } else {
+            //上弧,不需要额外处理
         }
 
         curveTextWidth += offsetWidth
@@ -190,8 +195,10 @@ data class CurveTextDraw(
         val textHeight = outerRadius - innerRadius
         val cx = curveTextWidth / 2 + offsetX
         val cy = if (curvature > 0) {
+            //下弧
             textHeight + innerRadius + offsetY
         } else {
+            //上弧
             curveTextHeight - textHeight - innerRadius
         }
         curveCx = cx
@@ -281,7 +288,7 @@ data class CurveTextDraw(
             val drawX = textRotateCenterX - charWidth / 2
             val drawY = textRotateCenterY + charHeight / 2 - descent
 
-            val charAngle = pixelAngle * (charWidth - offset)
+            val charAngle = pixelAngle * charWidth
             val offsetAngle = if (drawCenter) charAngle / 2 else 0f
             val rotate =
                 if (curvature > 0) charStartAngle + offsetAngle else charStartAngle - offsetAngle
