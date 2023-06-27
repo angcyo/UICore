@@ -20,6 +20,7 @@ import android.view.WindowManager
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LifecycleOwner
+import com.angcyo.library.annotation.CallComplianceAfter
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.*
@@ -195,16 +196,14 @@ fun Context.getAppVersionName(): String {
  * @param context the context
  * @return app version code
  */
+@CallComplianceAfter
 fun Context.getAppVersionCode(): Long { // 获取package manager的实例
     val packageManager = packageManager
     // getPackageName()是你当前类的包名，0代表是获取版本信息
     var code = 1L
     val packInfo: PackageInfo
     try {
-        packInfo = packageManager.getPackageInfo(
-            packageName,
-            0
-        )
+        packInfo = packageManager.getPackageInfo(packageName, 0)
         code = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             packInfo.longVersionCode
         } else {

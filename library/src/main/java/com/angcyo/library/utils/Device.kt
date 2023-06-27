@@ -20,6 +20,7 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import com.angcyo.library.*
+import com.angcyo.library.annotation.CallComplianceAfter
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.component.pad.Pad
@@ -90,6 +91,7 @@ object Device {
      * https://www.jianshu.com/p/130918ed8b2f
      * */
     @Deprecated("相同型号的手机会重复, 请使用[androidId]")
+    @CallComplianceAfter
     private fun getUniqueDeviceId(): String {
         var result: String
         var serial: String?

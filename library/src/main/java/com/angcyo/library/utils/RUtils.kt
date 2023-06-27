@@ -19,8 +19,10 @@ import android.os.Process.myUid
 import android.telephony.*
 import android.view.Surface
 import com.angcyo.library.L
+import com.angcyo.library.annotation.CallComplianceAfter
 import com.angcyo.library.app
 import com.angcyo.library.component.RNetwork.isWifiConnect
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.checkPermissions
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.patternList
@@ -200,11 +202,15 @@ object RUtils {
      * [ApplicationInfo.FLAG_DEBUGGABLE]*/
     fun isAppDebug(context: Context = app(), packageName: String = app().packageName): Boolean {
         try {
-            /*val info = context.applicationInfo
-            return info.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0*/
-            val packageInfo = context.packageManager.getPackageInfo(packageName, GET_ACTIVITIES)
-            if (packageInfo != null) {
-                val info = packageInfo.applicationInfo
+            if (LibHawkKeys.isCompliance) {
+                @CallComplianceAfter
+                val packageInfo = context.packageManager.getPackageInfo(packageName, GET_ACTIVITIES)
+                if (packageInfo != null) {
+                    val info = packageInfo.applicationInfo
+                    return info.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+                }
+            } else {
+                val info = context.applicationInfo
                 return info.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
             }
         } catch (e: Exception) {

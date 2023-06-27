@@ -6,7 +6,7 @@ import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.HawkPropertyValue
 import com.angcyo.library.ex.hawkGet
 import com.angcyo.library.ex.isDebug
-import com.angcyo.library.getAppVersionCode
+import com.angcyo.library.getAppString
 
 /**
  * 内部库中的一些持久化数据
@@ -20,9 +20,13 @@ object LibHawkKeys {
     /**合规key, 用来保存当前版本的合规状态*/
     const val KEY_COMPLIANCE_STATE = "KEY_COMPLIANCE_STATE"
 
-    /**是否合规*/
+    /**Hawk Key
+     * [com.angcyo.library.LibraryKt.getAppVersionCode]*/
+    var KEY_COMPLIANCE = "${KEY_COMPLIANCE_STATE}_${getAppString("versionCode")}"
+
+    /**是否合规了, 持久化*/
     val isCompliance: Boolean
-        get() = "${KEY_COMPLIANCE_STATE}_${getAppVersionCode()}".hawkGet() == "true"
+        get() = KEY_COMPLIANCE.hawkGet() == "true"
 
     /**[com.angcyo.component.luban.DslLuban]
      * 压缩时, 最小的压缩像素大小 [kb]
