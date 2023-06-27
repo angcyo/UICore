@@ -94,6 +94,7 @@ object Library {
 
     @Keep
     @JvmStatic
+    @CallComplianceAfter
     fun ccs(c: String?): Boolean {
         if (c.isNullOrBlank()) {
             return true

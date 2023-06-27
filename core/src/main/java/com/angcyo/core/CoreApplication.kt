@@ -166,6 +166,9 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
      * */
     @CallComplianceAfter
     open fun onComplianceAfter() {
+        L.i("MD5->", getAppSignatureMD5())
+        L.i("SHA1->", getAppSignatureSHA1())
+
         //device, 需要合规
         DslLastDeviceInfoItem.saveDeviceInfo(this, true)
 
@@ -175,8 +178,6 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
 
     override fun onCreateMain() {
         super.onCreateMain()
-        L.i("MD5->", getAppSignatureMD5())
-        L.i("SHA1->", getAppSignatureSHA1())
     }
 
     override fun attachBaseContext(base: Context) {

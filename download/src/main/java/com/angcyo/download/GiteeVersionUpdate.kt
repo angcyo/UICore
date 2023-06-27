@@ -7,6 +7,7 @@ import com.angcyo.http.base.bean
 import com.angcyo.http.base.listType
 import com.angcyo.http.gitee.Gitee
 import com.angcyo.http.toBean
+import com.angcyo.library.annotation.CallComplianceAfter
 
 /**
  * Gitee版本更新助手
@@ -19,6 +20,7 @@ import com.angcyo.http.toBean
  * [version.json]
  * [debug] 是否强制显示版本更新界面
  * */
+@CallComplianceAfter
 fun Context.giteeVersionUpdate(versionJson: String = "version.json", debug: Boolean = false) {
     Gitee.get(versionJson) { data, error ->
         data?.toBean<VersionUpdateBean>(bean(VersionUpdateBean::class.java))?.let {

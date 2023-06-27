@@ -10,6 +10,7 @@ import android.content.pm.Signature
 import android.net.Uri
 import android.os.Build
 import android.os.Process
+import com.angcyo.library.annotation.CallComplianceAfter
 import com.angcyo.library.app
 import com.angcyo.library.utils.Device
 import java.io.File
@@ -24,16 +25,19 @@ import kotlin.system.exitProcess
  */
 
 /**获取应用md5签名*/
+@CallComplianceAfter
 fun Context.getAppSignatureMD5() =
     getAppSignature(this, this.packageName)?.getOrNull(0)?.toByteArray()?.encrypt("MD5")
         ?.toHexString()?.beautifyHex()
 
 /**获取应用sha1签名*/
+@CallComplianceAfter
 fun Context.getAppSignatureSHA1() =
     getAppSignature(this, this.packageName)?.getOrNull(0)?.toByteArray()?.encrypt("SHA1")
         ?.toHexString()?.beautifyHex()
 
 /**获取应用签名*/
+@CallComplianceAfter
 fun getAppSignature(
     context: Context,
     packageName: String

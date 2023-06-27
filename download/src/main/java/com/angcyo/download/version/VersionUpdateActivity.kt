@@ -13,6 +13,7 @@ import com.angcyo.download.getTaskStatus
 import com.angcyo.download.version.VersionUpdateActivity.Companion.isUpdateIgnore
 import com.angcyo.getData
 import com.angcyo.library.L
+import com.angcyo.library.annotation.CallComplianceAfter
 import com.angcyo.library.app
 import com.angcyo.library.component.VersionMatcher
 import com.angcyo.library.ex.installApk
@@ -179,6 +180,7 @@ open class VersionUpdateActivity : BaseAppCompatActivity() {
 /**版本更新界面配置
  * 返回值表示是否有新版本
  * [debug] 调试模式下, 强制弹出界面*/
+@CallComplianceAfter
 fun Context.versionUpdate(
     updateBean: VersionUpdateBean?,
     force: Boolean = false,
