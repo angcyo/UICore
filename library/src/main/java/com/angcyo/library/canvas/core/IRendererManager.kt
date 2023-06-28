@@ -11,7 +11,7 @@ interface IRendererManager {
 
     /**通过相对于画板原点的点[point], 查找画板内部符合条件的渲染器
      * [reverse] 是否要反序元素, true:最上层的元素优先, false:最下层的元素优先*/
-    fun findRendererList(@CanvasInsideCoordinate point: PointF): List<IRenderElement>
+    fun findRendererList(@CanvasInsideCoordinate point: PointF): List<IRenderElement> = emptyList()
 
     /**添加一个渲染器*/
     fun addRenderer(renderer: IRenderInside) {
@@ -19,6 +19,14 @@ interface IRendererManager {
 
     /**移除一个渲染器*/
     fun removeRenderer(renderer: IRenderInside) {
+    }
+
+    /**添加一个渲染器集合*/
+    fun addRendererList(list: List<IRenderInside>) {
+    }
+
+    /**移除一个渲染器集合*/
+    fun removeRendererList(list: List<IRenderInside>) {
     }
 
 }

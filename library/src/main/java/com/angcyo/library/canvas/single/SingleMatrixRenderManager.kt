@@ -74,4 +74,18 @@ class SingleMatrixRenderManager(val delegate: SingleMatrixDelegate) : IRendererM
         }
     }
 
+    override fun addRendererList(list: List<IRenderInside>) {
+        for (renderer in list) {
+            if (rendererList.contains(renderer)) {
+                continue
+            }
+            rendererList.add(renderer)
+        }
+        delegate.refresh()
+    }
+
+    override fun removeRendererList(list: List<IRenderInside>) {
+        rendererList.removeAll(list)
+        delegate.refresh()
+    }
 }
