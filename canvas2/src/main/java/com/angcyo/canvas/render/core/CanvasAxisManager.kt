@@ -7,11 +7,12 @@ import android.graphics.RectF
 import androidx.core.graphics.withRotation
 import androidx.core.graphics.withSave
 import com.angcyo.canvas.render.R
-import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.data.AxisPoint
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.util.createRenderPaint
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.alpha
 import com.angcyo.library.ex.dp

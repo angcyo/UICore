@@ -2,7 +2,7 @@ package com.angcyo.canvas.render.core.component
 
 import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.core.CanvasControlManager
-import com.angcyo.canvas.render.core.Reason
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.ex._drawable
 
 /**

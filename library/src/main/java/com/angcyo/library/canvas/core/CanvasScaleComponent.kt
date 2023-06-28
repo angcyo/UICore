@@ -1,14 +1,12 @@
-package com.angcyo.canvas.render.core.component
+package com.angcyo.library.canvas.core
 
 import android.graphics.PointF
 import android.view.MotionEvent
-import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.canvas.render.core.Reason
-import com.angcyo.canvas.render.util.midPoint
-import com.angcyo.canvas.render.util.spacing
 import com.angcyo.library.L
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.midPoint
 import com.angcyo.library.ex.size
+import com.angcyo.library.ex.spacing
 import com.angcyo.library.gesture.DoubleGestureDetector2
 import kotlin.math.absoluteValue
 
@@ -18,7 +16,7 @@ import kotlin.math.absoluteValue
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/02/16
  */
-class CanvasScaleComponent(val delegate: CanvasRenderDelegate) : BaseTouchComponent() {
+class CanvasScaleComponent(val iCanvasView: ICanvasView) : BaseCanvasTouchComponent() {
 
     /**当手指缩放/放大的距离大于此值, 是否有效的缩放*/
     var scaleThreshold = 10 * dp
@@ -27,24 +25,26 @@ class CanvasScaleComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
     var doubleScaleValue = 1.5f
 
     /**双击检测*/
-    private val doubleGestureDetector = DoubleGestureDetector2(delegate.view.context) { event ->
-        if (isEnableComponent && !ignoreHandle) {
-            isHandleTouch = true
-            //双击
-            _tempPoint.set(event.x, event.y)
-            //delegate.renderViewBox.transformToInside(_tempPoint)
-            delegate.renderViewBox.offsetToOrigin(_tempPoint)
-            delegate.renderViewBox.scaleBy(
-                doubleScaleValue,
-                doubleScaleValue,
-                _tempPoint.x,
-                _tempPoint.y,
-                true,
-                Reason.user
-            )
-            L.d("双击缩放手势:sx:${doubleScaleValue} sy:${doubleScaleValue} px:${_tempPoint.x} py:${_tempPoint.y}")
+    private val doubleGestureDetector =
+        DoubleGestureDetector2(iCanvasView.getRawView().context) { event ->
+            if (isEnableComponent && !ignoreHandle) {
+                isHandleTouch = true
+                //双击
+                _tempPoint.set(event.x, event.y)
+                //delegate.renderViewBox.transformToInside(_tempPoint)
+                val canvasViewBox = iCanvasView.getCanvasViewBox()
+                canvasViewBox.offsetToOrigin(_tempPoint)
+                canvasViewBox.scaleBy(
+                    doubleScaleValue,
+                    doubleScaleValue,
+                    _tempPoint.x,
+                    _tempPoint.y,
+                    true,
+                    Reason.user
+                )
+                L.d("双击缩放手势:sx:${doubleScaleValue} sy:${doubleScaleValue} px:${_tempPoint.x} py:${_tempPoint.y}")
+            }
         }
-    }
 
     private val _tempPoint = PointF()
 
@@ -80,14 +80,14 @@ class CanvasScaleComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
             val sy = sx
             midPoint(_movePointList[0], _movePointList[1], _tempPoint)
             //delegate.renderViewBox.transformToInside(_tempPoint)
-            delegate.renderViewBox.offsetToOrigin(_tempPoint)
+            iCanvasView.getCanvasViewBox().offsetToOrigin(_tempPoint)
             scaleBy(sx, sy, _tempPoint.x, _tempPoint.y)
         }
     }
 
     private fun scaleBy(sx: Float, sy: Float, px: Float, py: Float, anim: Boolean = false) {
         L.d("缩放手势:sx:${sx} sy:${sy} px:${px} py:${py}")
-        delegate.renderViewBox.scaleBy(sx, sy, px, py, anim, Reason.user)
+        iCanvasView.getCanvasViewBox().scaleBy(sx, sy, px, py, anim, Reason.user)
         isHandleTouch = true
         updateDownPointList()
     }

@@ -4,7 +4,7 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import com.angcyo.canvas.render.core.BaseCanvasRenderListener
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.canvas.render.core.IComponent
+import com.angcyo.library.canvas.core.ICanvasComponent
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.hawk.LibHawkKeys
@@ -24,7 +24,7 @@ import kotlin.math.max
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/03/14
  */
-class LimitMatrixComponent : BaseCanvasRenderListener(), IComponent {
+class LimitMatrixComponent : BaseCanvasRenderListener(), ICanvasComponent {
 
     companion object {
 

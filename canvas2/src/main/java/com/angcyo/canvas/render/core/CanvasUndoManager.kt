@@ -3,6 +3,7 @@ package com.angcyo.canvas.render.core
 import com.angcyo.canvas.render.data.ControlRendererInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.state.IStateStack
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.component.Strategy
 import com.angcyo.library.component.UndoManager
 

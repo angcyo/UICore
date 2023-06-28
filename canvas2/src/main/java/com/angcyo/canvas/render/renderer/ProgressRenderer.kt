@@ -9,7 +9,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import androidx.core.graphics.withClip
 import com.angcyo.canvas.render.R
-import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.data.RenderParams

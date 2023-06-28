@@ -5,9 +5,9 @@ import android.graphics.RectF
 import android.widget.LinearLayout
 import androidx.core.graphics.withRotation
 import com.angcyo.canvas.render.R
-import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.core.CanvasControlManager
-import com.angcyo.canvas.render.core.IComponent
+import com.angcyo.library.canvas.core.ICanvasComponent
 import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.SmartAssistantDistanceTextData
@@ -35,7 +35,7 @@ import kotlin.math.min
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/03/27
  */
-class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRenderer, IComponent {
+class SmartAssistantComponent(val controlManager: CanvasControlManager) : IRenderer, ICanvasComponent {
 
     override var isEnableComponent: Boolean = true
 

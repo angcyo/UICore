@@ -3,9 +3,9 @@ package com.angcyo.canvas.render.core.component
 import android.graphics.PointF
 import android.view.MotionEvent
 import com.angcyo.canvas.render.R
-import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.core.CanvasControlManager
-import com.angcyo.canvas.render.core.Reason
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.ex._drawable
 import kotlin.math.atan2
 

@@ -3,7 +3,7 @@ package com.angcyo.canvas.render.element
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.canvas.render.core.Reason
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.core.component.ElementHitComponent
 import com.angcyo.canvas.render.data.RenderParams

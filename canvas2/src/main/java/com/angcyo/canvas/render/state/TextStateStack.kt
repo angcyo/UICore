@@ -1,7 +1,7 @@
 package com.angcyo.canvas.render.state
 
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.canvas.render.core.Reason
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.canvas.render.data.TextProperty
 import com.angcyo.canvas.render.element.TextElement
 import com.angcyo.canvas.render.renderer.BaseRenderer

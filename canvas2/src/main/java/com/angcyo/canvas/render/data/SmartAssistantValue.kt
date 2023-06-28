@@ -1,7 +1,7 @@
 package com.angcyo.canvas.render.data
 
 import android.graphics.RectF
-import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.renderer.CanvasElementRenderer
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.isSameDirection

@@ -1,10 +1,7 @@
 package com.angcyo.canvas.render.core
 
-import android.graphics.Canvas
 import android.graphics.Matrix
-import android.graphics.RectF
 import android.view.MotionEvent
-import android.widget.OverScroller
 import androidx.annotation.WorkerThread
 import com.angcyo.canvas.render.core.component.BaseControl
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
@@ -14,6 +11,8 @@ import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.canvas.render.state.IStateStack
+import com.angcyo.library.canvas.core.ICanvasView
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.unit.IRenderUnit
 
 /**
@@ -22,31 +21,7 @@ import com.angcyo.library.unit.IRenderUnit
  */
 
 @WorkerThread
-interface ICanvasRenderView {
-
-    //region---View视图方法---
-
-    /**[OverScroller]滚动支持*/
-    fun computeScroll()
-
-    /**绘制窗口大小改变*/
-    fun onSizeChanged(w: Int, h: Int)
-
-    /**绘制核心入口方法*/
-    fun onDraw(canvas: Canvas)
-
-    /**手势核心入口方法*/
-    fun dispatchTouchEvent(event: MotionEvent): Boolean
-
-    /**重绘刷新
-     * [just] 是否立即刷新*/
-    fun refresh(just: Boolean = false)
-
-    fun onAttachedToWindow()
-
-    fun onDetachedFromWindow()
-
-    //endregion---View视图方法---
+interface ICanvasRenderView : ICanvasView {
 
     //region---Base---
 
@@ -147,22 +122,6 @@ interface ICanvasRenderView {
     fun dispatchCanvasTouchEvent(event: MotionEvent)
 
     //endregion---Base---
-
-    //region---CanvasRenderViewBox---
-
-    /**当[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderBounds]更新时回调*/
-    fun dispatchRenderBoxBoundsUpdate(newBounds: RectF)
-
-    /**当[com.angcyo.canvas.render.core.CanvasRenderViewBox.originGravity]更新时回调*/
-    fun dispatchRenderBoxOriginGravityUpdate(newGravity: Int)
-
-    /**当[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderMatrix]更新时回调*/
-    fun dispatchRenderBoxMatrixUpdate(newMatrix: Matrix, reason: Reason, finish: Boolean)
-
-    /**当[com.angcyo.canvas.render.core.CanvasRenderViewBox.renderMatrix]更新时回调*/
-    fun dispatchRenderBoxMatrixChange(fromMatrix: Matrix, toMatrix: Matrix, reason: Reason)
-
-    //endregion---CanvasRenderViewBox---
 
     //region---CanvasRenderer---
 

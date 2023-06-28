@@ -4,7 +4,7 @@ import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.canvas.render.core.IComponent
+import com.angcyo.library.canvas.core.ICanvasComponent
 import com.angcyo.canvas.render.element.BaseElement
 import com.angcyo.canvas.render.element.IElement
 import com.angcyo.library.annotation.Pixel
@@ -20,7 +20,7 @@ import kotlin.math.min
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/03/20
  */
-class ElementHitComponent(val element: IElement) : IComponent {
+class ElementHitComponent(val element: IElement) : ICanvasComponent {
 
     companion object {
         internal val elementBoundsPath = Path()

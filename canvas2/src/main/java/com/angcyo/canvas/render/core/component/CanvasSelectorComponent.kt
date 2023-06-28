@@ -10,8 +10,8 @@ import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.annotation.RenderFlag
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.canvas.render.core.IComponent
-import com.angcyo.canvas.render.core.Reason
+import com.angcyo.library.canvas.core.ICanvasComponent
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasElementRenderer
@@ -34,7 +34,7 @@ import com.angcyo.library.unit.IRenderUnit
  * @since 2023/02/17
  */
 class CanvasSelectorComponent(val delegate: CanvasRenderDelegate) : CanvasGroupRenderer(),
-    IComponent {
+    ICanvasComponent {
 
     companion object {
 

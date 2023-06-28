@@ -4,7 +4,7 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
-import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty.Companion.ANCHOR_X_RIGHT
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty.Companion.ANCHOR_Y_CENTER
 import com.angcyo.library.annotation.Pixel

@@ -2,7 +2,7 @@ package com.angcyo.canvas.render.state
 
 import android.graphics.Bitmap
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.canvas.render.core.Reason
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.canvas.render.element.BitmapElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.util.element

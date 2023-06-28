@@ -14,6 +14,7 @@ import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.canvas.render.state.IStateStack
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.unit.IRenderUnit
 
 /**

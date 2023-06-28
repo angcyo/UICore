@@ -6,7 +6,7 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import androidx.core.graphics.withSave
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.canvas.render.core.Reason
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement

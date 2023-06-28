@@ -1,8 +1,6 @@
-package com.angcyo.canvas.render.core.component
+package com.angcyo.library.canvas.core
 
 import android.view.MotionEvent
-import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.canvas.render.core.Reason
 import com.angcyo.library.L
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.size
@@ -17,7 +15,7 @@ import kotlin.math.min
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/02/16
  */
-class CanvasTranslateComponent(val delegate: CanvasRenderDelegate) : BaseTouchComponent() {
+class CanvasTranslateComponent(val iCanvasView: ICanvasView) : BaseCanvasTouchComponent() {
 
     /**当手指移动的距离大于此值, 是否有效的移动*/
     var translateThreshold = 3 * dp
@@ -61,7 +59,7 @@ class CanvasTranslateComponent(val delegate: CanvasRenderDelegate) : BaseTouchCo
 
     private fun translateBy(dx: Float, dy: Float, anim: Boolean = false) {
         L.d("平移手势:dx:${dx} dy:${dy}")
-        delegate.renderViewBox.translateBy(dx, dy, anim, Reason.user)
+        iCanvasView.getCanvasViewBox().translateBy(dx, dy, anim, Reason.user)
         isHandleTouch = true
         updateDownPointList()
     }

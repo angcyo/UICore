@@ -1,7 +1,7 @@
 package com.angcyo.canvas.render.data
 
 import android.graphics.PointF
-import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasOutsideCoordinate
 import com.angcyo.canvas.render.renderer.BaseRenderer
 
 /**

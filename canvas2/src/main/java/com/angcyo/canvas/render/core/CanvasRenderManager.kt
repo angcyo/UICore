@@ -1,6 +1,7 @@
 package com.angcyo.canvas.render.core
 
 import android.graphics.Canvas
+import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
@@ -13,6 +14,9 @@ import com.angcyo.canvas.render.renderer.CanvasMonitorRenderer
 import com.angcyo.canvas.render.renderer.ProgressRenderer
 import com.angcyo.canvas.render.renderer.SimpleInsideRenderer
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.canvas.core.IRenderElement
+import com.angcyo.library.canvas.core.IRendererManager
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.component.Strategy
 import com.angcyo.library.ex.isChange
 import com.angcyo.library.ex.resetAll
@@ -23,7 +27,8 @@ import java.util.concurrent.CopyOnWriteArrayList
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/02/11
  */
-class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispatch(), IRenderer {
+class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispatch(), IRenderer,
+    IRendererManager {
 
     companion object {
         /**前进, 图层上移*/
@@ -320,6 +325,9 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     /**通过[uuid]查询对应的渲染器*/
     fun findElementRenderer(uuid: String?): BaseRenderer? =
         elementRendererList.find { it.uuid == uuid }
+
+    /**[com.angcyo.canvas.render.core.CanvasSelectorManager.findRendererList]*/
+    override fun findRendererList(point: PointF): List<IRenderElement> = mutableListOf()
 
     /**查找[subRenderer] 所对应的[CanvasGroupRenderer]*/
     fun findElementGroupRenderer(

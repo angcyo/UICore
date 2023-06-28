@@ -6,7 +6,6 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
-import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.annotation.RenderFlag
 import com.angcyo.canvas.render.core.component.BaseControl
 import com.angcyo.canvas.render.core.component.BaseControlPoint
@@ -22,6 +21,11 @@ import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.core.CanvasTouchManager
+import com.angcyo.library.canvas.core.CanvasViewBox
+import com.angcyo.library.canvas.core.IRendererManager
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.component.Strategy
 import com.angcyo.library.component.SupportUndo
 import com.angcyo.library.component.onMain
@@ -90,6 +94,10 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     }
 
     //region---View视图方法---
+
+    override fun getRawView(): View = view
+
+    override fun getRenderManager(): IRendererManager = renderManager
 
     override fun computeScroll() {
         touchManager.flingComponent.onComputeScroll()
@@ -173,15 +181,6 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         return handle
     }
 
-    override fun refresh(just: Boolean) {
-        if (just) {
-            view.invalidate()
-        } else {
-            view.postInvalidate()
-        }
-        //view.postInvalidateDelayed(LibHawkKeys.minInvalidateDelay) //2023-5-15
-    }
-
     override fun onAttachedToWindow() {
         asyncManager.startAsync()
     }
@@ -194,6 +193,8 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     fun longFeedback() {
         view.longFeedback()
     }
+
+    override fun getCanvasViewBox(): CanvasViewBox = renderViewBox
 
     //endregion---View视图方法---
 

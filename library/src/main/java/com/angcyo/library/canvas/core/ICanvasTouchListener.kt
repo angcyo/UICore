@@ -1,7 +1,7 @@
-package com.angcyo.canvas.render.core
+package com.angcyo.library.canvas.core
 
 import android.view.MotionEvent
-import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasOutsideCoordinate
 
 /**
  * 手势回调监听, 事件坐标均是相对于画板左上角的坐标,
@@ -14,14 +14,15 @@ interface ICanvasTouchListener {
 
     /**派发手势的回调, 此方法一定会触发*/
     @CanvasOutsideCoordinate
-    fun dispatchTouchEvent(event: MotionEvent)
+    fun dispatchTouchEvent(event: MotionEvent) {
+    }
 
     /**是否要拦截手势处理, 拦截后. 其他对象将不接收事件回调, 但是[dispatchTouchEvent]还是会触发*/
     @CanvasOutsideCoordinate
-    fun onInterceptTouchEvent(event: MotionEvent): Boolean
+    fun onInterceptTouchEvent(event: MotionEvent): Boolean = false
 
     /**当[onInterceptTouchEvent]返回true时, 则之后的事件会走此方法*/
     @CanvasOutsideCoordinate
-    fun onTouchEvent(event: MotionEvent): Boolean
+    fun onTouchEvent(event: MotionEvent): Boolean = false
 
 }

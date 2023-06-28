@@ -1,6 +1,6 @@
 package com.angcyo.canvas.render.data
 
-import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.have
 import com.angcyo.library.unit.IRenderUnit

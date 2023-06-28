@@ -4,12 +4,12 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import androidx.core.graphics.withSave
 import com.angcyo.canvas.render.R
-import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
-import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasOutsideCoordinate
 import com.angcyo.canvas.render.annotation.RenderFlag
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IRenderer
-import com.angcyo.canvas.render.core.Reason
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams

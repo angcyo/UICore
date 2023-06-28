@@ -1,11 +1,11 @@
 package com.angcyo.canvas.render.core
 
 import android.graphics.Canvas
-import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
-import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
 import com.angcyo.canvas.render.annotation.RenderFlag
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasOutsideCoordinate
 
 /**
  * 声明一个可以渲染的组件

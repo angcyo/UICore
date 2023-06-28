@@ -6,9 +6,9 @@ import android.view.MotionEvent
 import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.core.CanvasSelectorManager
 import com.angcyo.canvas.render.core.IRenderer
-import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.util.createRenderPaint
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.alpha
 import com.angcyo.library.ex.dp

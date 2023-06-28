@@ -3,7 +3,7 @@ package com.angcyo.canvas.render.data
 import android.graphics.Color
 import android.graphics.Path
 import android.graphics.RectF
-import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.dp
 

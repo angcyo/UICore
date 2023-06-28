@@ -15,6 +15,7 @@ import com.angcyo.canvas.render.data.TouchSelectorInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.library.L
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.component.MainExecutor
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.isChange
@@ -302,7 +303,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
 
     /**通过相对于画板原点的点[point], 查找画板内部符合条件的渲染器
      * [reverse] 是否要反序元素, true:最上层的元素优先, false:最下层的元素优先*/
-    private fun findRendererList(point: PointF): List<BaseRenderer> {
+    internal fun findRendererList(point: PointF): List<BaseRenderer> {
         val result = mutableListOf<BaseRenderer>()
         val elementRendererList = delegate.renderManager.elementRendererList
         for (element in elementRendererList) {

@@ -1,7 +1,7 @@
 package com.angcyo.canvas.render.data
 
 import android.widget.LinearLayout
-import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.library.annotation.Pixel
 
 /**

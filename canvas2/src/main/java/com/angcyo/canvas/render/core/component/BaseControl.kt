@@ -4,16 +4,16 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
-import com.angcyo.canvas.render.annotation.CanvasInsideCoordinate
-import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
 import com.angcyo.canvas.render.core.CanvasControlManager
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.canvas.render.core.ICanvasTouchListener
-import com.angcyo.canvas.render.core.IComponent
-import com.angcyo.canvas.render.core.Reason
 import com.angcyo.canvas.render.data.ControlRendererInfo
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.library.L
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasOutsideCoordinate
+import com.angcyo.library.canvas.core.ICanvasComponent
+import com.angcyo.library.canvas.core.ICanvasTouchListener
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.component.Strategy
 import com.angcyo.library.ex.dp
 
@@ -23,7 +23,7 @@ import com.angcyo.library.ex.dp
  * @since 2023/02/24
  */
 abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTouchListener,
-    IComponent {
+    ICanvasComponent {
 
     /**当前控制产生的编辑矩阵, 最后要映射到[CanvasRenderProperty]中*/
     var controlMatrix: Matrix = Matrix()

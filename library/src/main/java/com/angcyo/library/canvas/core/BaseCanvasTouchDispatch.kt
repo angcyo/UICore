@@ -1,8 +1,8 @@
-package com.angcyo.canvas.render.core
+package com.angcyo.library.canvas.core
 
 import android.view.MotionEvent
-import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.canvas.annotation.CanvasOutsideCoordinate
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -10,9 +10,10 @@ import java.util.concurrent.CopyOnWriteArrayList
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/02/23
  */
-abstract class BaseTouchDispatch : IComponent {
+abstract class BaseCanvasTouchDispatch : ICanvasComponent {
 
     /**事件监听列表*/
+    @CanvasOutsideCoordinate
     val touchListenerList = CopyOnWriteArrayList<ICanvasTouchListener>()
 
     /**手势是否按下*/
@@ -45,7 +46,7 @@ abstract class BaseTouchDispatch : IComponent {
         val size = touchListenerList.size
         for (i in size - 1 downTo 0) {
             val listener = touchListenerList[i]
-            if (listener is IComponent && !listener.isEnableComponent) {
+            if (listener is ICanvasComponent && !listener.isEnableComponent) {
                 continue
             }
             listener.dispatchTouchEvent(event)
@@ -59,7 +60,7 @@ abstract class BaseTouchDispatch : IComponent {
             //2:onInterceptTouchEvent
             for (i in size - 1 downTo 0) {
                 val listener = touchListenerList[i]
-                if (listener is IComponent && !listener.isEnableComponent) {
+                if (listener is ICanvasComponent && !listener.isEnableComponent) {
                     continue
                 }
 
@@ -77,7 +78,7 @@ abstract class BaseTouchDispatch : IComponent {
         } else {
             //3:onTouchEvent
 
-            if (target is IComponent && target.isEnableComponent) {
+            if (target is ICanvasComponent && target.isEnableComponent) {
                 handle = target.onTouchEvent(event)
             }
         }

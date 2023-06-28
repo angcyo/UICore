@@ -4,8 +4,10 @@ import android.os.Handler
 import android.os.HandlerThread
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.ex.nowTime
-import java.util.*
+import java.util.LinkedList
+import java.util.Queue
 
 /**
  * 异步调度管理

@@ -77,6 +77,29 @@ fun c(a: Double, b: Double): Double {
     return hypot(a, b)
 }
 
+/**获取2个点之间的距离, 勾股定律*/
+fun spacing(x1: Double, y1: Double, x2: Double, y2: Double): Double {
+    val x = x2 - x1
+    val y = y2 - y1
+    return sqrt(x * x + y * y)
+}
+
+fun spacing(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+    val x = x2 - x1
+    val y = y2 - y1
+    return sqrt(x * x + y * y)
+}
+
+/**获取2个点的中点坐标*/
+fun midPoint(x1: Float, y1: Float, x2: Float, y2: Float, result: PointF) {
+    result.x = (x1 + x2) / 2f
+    result.y = (y1 + y2) / 2f
+}
+
+fun midPoint(p1: PointF, p2: PointF, result: PointF) {
+    midPoint(p1.x, p1.y, p2.x, p2.y, result)
+}
+
 /**根据半径[radius],原点[pivotX,pivotY]坐标, 计算出角度[degrees]对应的圆上坐标点
  * 圆上任意一点的坐标
  * [degrees] 角度

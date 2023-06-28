@@ -7,7 +7,7 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import com.angcyo.canvas.render.R
-import com.angcyo.canvas.render.annotation.CanvasOutsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasOutsideCoordinate
 import com.angcyo.canvas.render.core.CanvasControlManager
 import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.data.RenderParams

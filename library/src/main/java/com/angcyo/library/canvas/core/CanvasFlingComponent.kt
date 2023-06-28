@@ -1,11 +1,9 @@
-package com.angcyo.canvas.render.core.component
+package com.angcyo.library.canvas.core
 
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.view.ViewConfiguration
 import android.widget.OverScroller
-import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.canvas.render.core.Reason
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.ex.abs
@@ -18,13 +16,13 @@ import com.angcyo.library.ex.size
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/02/16
  */
-class CanvasFlingComponent(val delegate: CanvasRenderDelegate) : BaseTouchComponent() {
+class CanvasFlingComponent(val iCanvasView: ICanvasView) : BaseCanvasTouchComponent() {
 
     /**速度检测*/
     private var velocityTracker: VelocityTracker? = null
 
     /**fling执行*/
-    private val overScroller: OverScroller = OverScroller(delegate.view.context)
+    private val overScroller: OverScroller = OverScroller(iCanvasView.getRawView().context)
 
     /**是否发生过fling*/
     private var isFlingHappen = false
@@ -36,7 +34,7 @@ class CanvasFlingComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
     private var maximumFlingVelocity: Int
 
     init {
-        val configuration = ViewConfiguration.get(delegate.view.context)
+        val configuration = ViewConfiguration.get(iCanvasView.getRawView().context)
         minimumFlingVelocity = 3000 //configuration.scaledMinimumFlingVelocity
         maximumFlingVelocity = configuration.scaledMaximumFlingVelocity
     }
@@ -56,13 +54,13 @@ class CanvasFlingComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
     fun onComputeScroll() {
         if (isEnableComponent && isFlingHappen && overScroller.computeScrollOffset()) {
             //fling支持
-            delegate.renderViewBox.translateTo(
+            iCanvasView.getCanvasViewBox().translateTo(
                 overScroller.currX.toFloat(),
                 overScroller.currY.toFloat(),
                 false,
                 Reason.user
             )
-            delegate.refresh()
+            iCanvasView.refresh()
         }
     }
 
@@ -80,6 +78,7 @@ class CanvasFlingComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
                 lastVelocityX = null
                 lastVelocityY = null
             }
+
             MotionEvent.ACTION_POINTER_UP -> {
                 if (isFlingIntent()) {
                     velocityTracker?.computeCurrentVelocity(1000, maximumFlingVelocity.toFloat())
@@ -96,6 +95,7 @@ class CanvasFlingComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
                     }
                 }
             }
+
             MotionEvent.ACTION_UP -> {
                 if (isHandleTouch) {
                     startFling(lastVelocityX!!, lastVelocityY!!)
@@ -111,7 +111,7 @@ class CanvasFlingComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
     private fun startFling(velocityX: Float, velocityY: Float) {
         L.d("快滑手势:velocityX:${velocityX} velocityY:${velocityY}")
         isFlingHappen = true
-        val renderViewBox = delegate.renderViewBox
+        val renderViewBox = iCanvasView.getCanvasViewBox()
         overScroller.fling(
             renderViewBox.getTranslateX().toInt(),
             renderViewBox.getTranslateY().toInt(),
@@ -122,7 +122,7 @@ class CanvasFlingComponent(val delegate: CanvasRenderDelegate) : BaseTouchCompon
             Int.MIN_VALUE,
             Int.MAX_VALUE,
         )
-        delegate.refresh()
+        iCanvasView.refresh()
     }
 
     /**是否是fling意图*/

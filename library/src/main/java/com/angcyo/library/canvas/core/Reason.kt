@@ -1,9 +1,4 @@
-package com.angcyo.canvas.render.core
-
-import com.angcyo.canvas.render.core.Reason.Companion.REASON_CODE
-import com.angcyo.canvas.render.core.Reason.Companion.REASON_INIT
-import com.angcyo.canvas.render.core.Reason.Companion.REASON_PREVIEW
-import com.angcyo.canvas.render.core.Reason.Companion.REASON_USER
+package com.angcyo.library.canvas.core
 
 /**
  * 更新数据的原因描述

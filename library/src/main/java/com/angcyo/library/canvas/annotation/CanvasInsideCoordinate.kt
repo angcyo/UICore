@@ -1,7 +1,7 @@
-package com.angcyo.canvas.render.annotation
+package com.angcyo.library.canvas.annotation
 
 /**
- * 相对于画板左上角的坐标
+ * 画板内部坐标, 相对于画板原点的坐标
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/2/23
  */
@@ -16,4 +16,4 @@ package com.angcyo.canvas.render.annotation
     AnnotationTarget.CLASS,
     AnnotationTarget.VALUE_PARAMETER,
 )
-annotation class CanvasOutsideCoordinate
+annotation class CanvasInsideCoordinate

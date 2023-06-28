@@ -16,6 +16,9 @@ import com.angcyo.canvas.render.core.component.SmartAssistantComponent
 import com.angcyo.canvas.render.core.component.TranslateRendererControl
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
+import com.angcyo.library.canvas.core.BaseCanvasTouchDispatch
+import com.angcyo.library.canvas.core.ICanvasTouchListener
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.ex.mapPoint
 import com.angcyo.library.ex.remove
 
@@ -24,7 +27,7 @@ import com.angcyo.library.ex.remove
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/02/22
  */
-class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseTouchDispatch(),
+class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseCanvasTouchDispatch(),
     ICanvasRenderListener, ICanvasTouchListener, IRenderer {
 
     /**元素删除控制点*/
