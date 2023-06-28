@@ -143,7 +143,8 @@ inline fun <reified VM : ViewModel> Fragment.vmCore(): VM {
     return requireActivity().vmCore()
 }
 
-/**返回CoreApplication级别的[ViewModel]*/
+/**返回CoreApplication级别的[ViewModel]
+ * [com.angcyo.viewmodel.ViewModelEx.kt]*/
 inline fun <reified VM : ViewModel> vmCore(): VM {
     return ViewModelProvider(
         coreApp(),
