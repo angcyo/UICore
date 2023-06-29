@@ -57,6 +57,11 @@ class ByteArrayWriter(
         write(byte.toInt())
     }
 
+    /**写入无符号的[byte]字节, 支持负数*/
+    fun writeUByte(byte: Byte) {
+        write(byte.toUByte().toInt())
+    }
+
     fun write(string: String) {
         write(string.toByteArray())
     }
