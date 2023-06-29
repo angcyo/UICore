@@ -4,6 +4,7 @@ import android.graphics.PointF
 import android.view.MotionEvent
 import com.angcyo.library.BuildConfig
 import com.angcyo.library.L
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.library.canvas.core.ICanvasComponent
 import com.angcyo.library.canvas.core.ICanvasTouchListener
 import com.angcyo.library.canvas.core.ICanvasView
@@ -14,6 +15,7 @@ import com.angcyo.library.canvas.core.IRenderElement
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/06/28
  */
+@CanvasInsideCoordinate
 open class ElementClickComponent(
     protected val iCanvasView: ICanvasView,
     /**回调*/

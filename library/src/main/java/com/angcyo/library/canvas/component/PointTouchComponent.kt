@@ -16,6 +16,7 @@ import com.angcyo.library.ex.nowTime
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/03/25
  */
+@ViewCoordinate
 open class PointTouchComponent(
     /**关键: 点位的范围
      * 左上角初始点位坐标*/
