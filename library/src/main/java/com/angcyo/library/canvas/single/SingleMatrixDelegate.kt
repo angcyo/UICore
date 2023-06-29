@@ -6,6 +6,8 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
 import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.annotation.ViewCoordinate
+import com.angcyo.library.canvas.component.PointTouchComponent
 import com.angcyo.library.canvas.core.CanvasTouchManager
 import com.angcyo.library.canvas.core.CanvasViewBox
 import com.angcyo.library.canvas.core.ICanvasView
@@ -31,6 +33,10 @@ class SingleMatrixDelegate(val view: View) : ICanvasView {
     /**手势管理*/
     var touchManager = CanvasTouchManager(this)
 
+    /**视图坐标系, 点击事件处理*/
+    @ViewCoordinate
+    val pointTouchComponentList = mutableListOf<PointTouchComponent>()
+
     override fun getRawView(): View = view
 
     override fun computeScroll() {
@@ -49,6 +55,11 @@ class SingleMatrixDelegate(val view: View) : ICanvasView {
     var _isTouchDownInCanvas = false
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        //提前处理事件, 此时的点位坐标是相对于View左上角的, 之后全部会偏移至相对于画布左上角
+        for (pointTouch in pointTouchComponentList) {
+            pointTouch.dispatchTouchEvent(event)
+        }
+
         //inner
         val renderBounds = getCanvasViewBox().renderBounds
 
