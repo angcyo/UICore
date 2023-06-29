@@ -7,9 +7,12 @@ import androidx.core.graphics.withMatrix
 import androidx.core.graphics.withTranslation
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.core.IRender
 import com.angcyo.library.canvas.core.IRenderElement
 import com.angcyo.library.canvas.core.IRenderInside
+import com.angcyo.library.canvas.core.IRenderOutside
 import com.angcyo.library.canvas.core.IRendererManager
+import com.angcyo.library.canvas.element.MonitorRenderElement
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.max
 import kotlin.math.min
@@ -20,11 +23,27 @@ import kotlin.math.min
  */
 class SingleMatrixRenderManager(val delegate: SingleMatrixDelegate) : IRendererManager {
 
+    val beforeRendererList = CopyOnWriteArrayList<IRender>()
+
     /**所有的元素渲染器集合*/
-    val rendererList = CopyOnWriteArrayList<IRenderInside>()
+    val rendererList = CopyOnWriteArrayList<IRender>()
+
+    val afterRendererList = CopyOnWriteArrayList<IRender>()
+
+    init {
+        afterRendererList.add(MonitorRenderElement())
+    }
 
     @CallPoint
     fun render(canvas: Canvas) {
+        //before
+        for (renderer in beforeRendererList) {
+            if (renderer is IRenderOutside) {
+                renderer.renderOnOutside(delegate, canvas)
+            }
+        }
+
+        //inside
         val renderViewBox = delegate.renderViewBox
 
         val renderBounds = renderViewBox.renderBounds
@@ -35,11 +54,36 @@ class SingleMatrixRenderManager(val delegate: SingleMatrixDelegate) : IRendererM
             clipRect(0f, 0f, renderBounds.width(), renderBounds.height())//剪切画布
             //平移到画布原点
             translate(originPoint.x, originPoint.y)
+            //before
+            for (renderer in beforeRendererList) {
+                if (renderer is IRenderInside) {
+                    canvas.withMatrix(renderViewBox.renderMatrix) {
+                        renderer.renderOnInside(delegate, canvas)
+                    }
+                }
+            }
             //---
             for (renderer in rendererList) {
-                canvas.withMatrix(renderViewBox.renderMatrix) {
-                    renderer.renderOnInside(canvas)
+                if (renderer is IRenderInside) {
+                    canvas.withMatrix(renderViewBox.renderMatrix) {
+                        renderer.renderOnInside(delegate, canvas)
+                    }
                 }
+            }
+            //after
+            for (renderer in afterRendererList) {
+                if (renderer is IRenderInside) {
+                    canvas.withMatrix(renderViewBox.renderMatrix) {
+                        renderer.renderOnInside(delegate, canvas)
+                    }
+                }
+            }
+        }
+
+        //after
+        for (renderer in afterRendererList) {
+            if (renderer is IRenderOutside) {
+                renderer.renderOnOutside(delegate, canvas)
             }
         }
     }

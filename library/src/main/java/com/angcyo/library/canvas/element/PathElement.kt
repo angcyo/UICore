@@ -7,6 +7,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import androidx.core.graphics.withSave
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.canvas.core.ICanvasView
 import com.angcyo.library.canvas.core.IRenderElement
 import com.angcyo.library.ex.computePathBounds
 import com.angcyo.library.ex.createPaint
@@ -48,7 +49,7 @@ open class PathElement : IRenderElement {
         return bounds
     }
 
-    override fun renderOnInside(canvas: Canvas) {
+    override fun renderOnInside(iCanvasView: ICanvasView, canvas: Canvas) {
         canvas.withSave {
             val renderBounds = getRenderBounds()
             translate(renderBounds.left, renderBounds.top)//平移到指定位置
