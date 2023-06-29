@@ -62,8 +62,8 @@
         <item name="tab_border_radius_size">@dimen/lib_radius_normal</item>
         <item name="tab_border_solid_color">@color/lib_tab_segment_border_solid_color</item>
         <item name="tab_border_stroke_color">@color/lib_tab_segment_border_stroke_color</item>
-        <item name="tab_deselect_color">@color/text_primary_color</item>
-        <item name="tab_select_color">@color/text_primary_color</item>
+        <item name="tab_deselect_color">@color/lib_tab_segment_solid_deselect_color</item>
+        <item name="tab_select_color">@color/lib_tab_segment_solid_select_color</item>
         <!--等宽-->
         <item name="tab_item_is_equ_width">false</item>
         <!--3个及以上child数量时,才开启等宽-->

@@ -29,6 +29,8 @@
     <color name="lib_tab_segment_border_item_background_solid_color">@color/colorAccent</color>
     <color name="lib_tab_segment_border_solid_color">@color/bg_primary_color</color>
     <color name="lib_tab_segment_border_stroke_color">@color/bg_primary_color</color>
+    <color name="lib_tab_segment_solid_deselect_color">@color/text_primary_color</color>
+    <color name="lib_tab_segment_solid_select_color">@color/text_primary_color</color>
 
     <!--app功能色配置-->
     <color name="info">#4b7efe</color>
