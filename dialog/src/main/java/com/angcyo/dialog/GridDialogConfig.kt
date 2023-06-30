@@ -8,7 +8,7 @@ import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.recycler.resetLayoutManager
 
 /**
- *
+ * 网格对话框配置, 不带标题栏
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/05

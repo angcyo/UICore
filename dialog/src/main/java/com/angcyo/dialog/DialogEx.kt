@@ -215,7 +215,7 @@ fun Context.multiInputDialog(config: InputDialogConfig.() -> Unit): Dialog {
 }
 
 /**
- * 底部网格对话框
+ * 底部网格对话框, 不带标题栏
  * */
 fun Context.gridDialog(config: GridDialogConfig.() -> Unit): Dialog {
     return GridDialogConfig(this).run {
@@ -226,7 +226,7 @@ fun Context.gridDialog(config: GridDialogConfig.() -> Unit): Dialog {
 }
 
 /**
- * 底部网格菜单对话框
+ * 底部网格菜单对话框, 带标题
  * */
 fun Context.gridMenuDialog(config: GridMenuDialogConfig.() -> Unit): Dialog {
     return GridMenuDialogConfig(this).run {

@@ -3,7 +3,7 @@ package com.angcyo.dialog
 import android.content.Context
 
 /**
- * 网格菜单dialog
+ * 网格菜单dialog, 带标题
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2022/02/25
