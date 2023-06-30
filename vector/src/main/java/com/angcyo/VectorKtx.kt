@@ -127,10 +127,17 @@ fun List<Path>.toGCodeStrokeContent(
 
 /**简单的将[Path]转成GCode
  * [lastPoint] 最后一次的点, 如果有*/
-fun Path.toGCodeStrokeSingleContent(lastPoint: PointD? = null): String {
+fun Path.toGCodeStrokeSingleContent(
+    lastPoint: PointD? = null,
+    writeFirst: Boolean = false,
+    writeLast: Boolean = false,
+    action: GCodeWriteHandler.() -> Unit = {}
+): String {
     val gCodeHandler = GCodeWriteHandler()
     gCodeHandler.unit = IValueUnit.MM_UNIT
     gCodeHandler.isAutoCnc = false
+    gCodeHandler.action()
+    //---
     StringWriter().use { writer ->
         gCodeHandler.writer = writer
         lastPoint?.let {
@@ -142,7 +149,7 @@ fun Path.toGCodeStrokeSingleContent(lastPoint: PointD? = null): String {
                 )
             )
         }
-        gCodeHandler.pathStrokeToVector(this, false, false)
+        gCodeHandler.pathStrokeToVector(this, writeFirst, writeLast)
         return writer.toString()
     }
 }
