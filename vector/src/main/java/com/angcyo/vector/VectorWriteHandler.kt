@@ -16,6 +16,8 @@ import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.*
 import com.angcyo.library.model.PointD
 import com.angcyo.library.unit.IValueUnit
+import com.angcyo.library.unit.MmValueUnit
+import com.angcyo.library.unit.PixelValueUnit
 import kotlin.math.absoluteValue
 
 /**
@@ -135,6 +137,18 @@ abstract class VectorWriteHandler {
 
     //region ---Core回调---
 
+    /**更新单位, 并且*/
+    open fun updateUnit(unit: IValueUnit?) {
+        this.unit = unit
+        if (unit is MmValueUnit) {
+            gapValue = PATH_SPACE_GAP
+            gapMaxValue = PATH_SPACE_GAP * 2
+        } else if (unit == null || unit is PixelValueUnit) {
+            gapValue = 1f
+            gapMaxValue = 1f
+        }
+    }
+
     /**[Path]的起点
      * GCode 数据的一些初始化配置
      * Svg 数据的M操作
@@ -237,7 +251,7 @@ abstract class VectorWriteHandler {
     }
 
     /**计算当前的点, 和上一个点的类型*/
-    fun _valueChangedType(x: Double, y: Double): Int {
+    open fun _valueChangedType(x: Double, y: Double): Int {
         val last = _pointList.lastOrNull() ?: return POINT_TYPE_NEW //之前没有点, 那当前的点肯定是最新的
         //val first = _pointList.first()
         val pointType = _valueChangedType(last, x, y) //当前点的类型
@@ -335,7 +349,7 @@ abstract class VectorWriteHandler {
     }
 
     /**创建一个新的点*/
-    fun generatePoint(x: Double, y: Double): VectorPoint =
+    open fun generatePoint(x: Double, y: Double): VectorPoint =
         VectorPoint(x, y, _valueChangedType(x, y))
 
     /**
@@ -350,7 +364,7 @@ abstract class VectorWriteHandler {
      * [x] [y] 非像素值, 真实值
      * */
     @CallPoint
-    fun writePoint(x: Double, y: Double) {
+    open fun writePoint(x: Double, y: Double) {
         val point = generatePoint(x, y)
 
         when (point.pointType) {
