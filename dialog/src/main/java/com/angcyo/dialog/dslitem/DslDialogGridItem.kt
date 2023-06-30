@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import com.angcyo.dialog.R
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.ex.undefined_res
+import com.angcyo.library.ex.visible
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.updateConstraintParams
 
@@ -46,6 +47,8 @@ class DslDialogGridItem : DslDialogTextItem() {
             } else {
                 setImageDrawable(itemGridDrawable)
             }
+
+            visible(itemGridIcon != undefined_res || itemGridDrawable != null)
         }
     }
 }

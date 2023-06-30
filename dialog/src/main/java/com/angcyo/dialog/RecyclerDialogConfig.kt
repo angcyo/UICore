@@ -187,7 +187,22 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
         }
     }
 
-    /**添加[DslDialogGridItem]*/
+    /**添加[DslDialogGridItem]
+     * ```
+     * addGridItem {
+     *     itemText = span {
+     *         append(" ${tx()} $i")
+     *     }
+     *
+     *     itemGridIcon = when (i % 4) {
+     *         1 -> R.drawable.lib_ic_info
+     *         2 -> R.drawable.lib_ic_error
+     *         3 -> R.drawable.lib_ic_waring
+     *         else -> R.drawable.lib_ic_succeed
+     *     }
+     * }
+     * ```
+     * */
     open fun addGridItem(action: DslDialogGridItem.() -> Unit) {
         _recyclerConfig.addItem(DslDialogGridItem().apply {
             itemFlag = FLAG_ITEM_DISMISS
