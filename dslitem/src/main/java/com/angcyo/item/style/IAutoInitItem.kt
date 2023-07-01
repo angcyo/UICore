@@ -78,5 +78,9 @@ interface IAutoInitItem : IDslItem {
         if (this is INewItem) {
             initNewItem(itemHolder, itemPosition, adapterItem, payloads)
         }
+        //2023-7-1
+        if (this is IStepAdjustItem) {
+            initStepAdjustItem(itemHolder, itemPosition, adapterItem, payloads)
+        }
     }
 }

@@ -7,6 +7,14 @@
     <dimen name="lib_new_icon_size">18dp</dimen>
     <dimen name="lib_direction_icon_size">24dp</dimen>
 
+    <dimen name="lib_step_adjust_stroke_width">2dp</dimen>
+    <dimen name="lib_step_adjust_radius">6dp</dimen>
+    <dimen name="lib_step_adjust_padding">6dp</dimen>
+    <dimen name="lib_step_adjust_width">36dp</dimen>
+    <dimen name="lib_step_adjust_value_width">50dp</dimen>
+    <dimen name="lib_step_adjust_height">30dp</dimen>
+    <color name="lib_step_adjust_tint_color">@color/text_general_color</color>
+
     <!--显示时, 标签的样式-->
     <style name="ItemLabelStyle" parent="LibSubTextStyle">
         <item name="android:layout_width">wrap_content</item>

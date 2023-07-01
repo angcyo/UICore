@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/lib_step_adjust_wrap_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/lib_step_adjust_height"
+        android:background="@drawable/lib_step_adjust_bg_shape"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_step_adjust_decrease_view"
+            android:layout_width="@dimen/lib_step_adjust_width"
+            android:layout_height="@dimen/lib_step_adjust_height"
+            android:background="@drawable/lib_step_adjust_decrease_bg_selector"
+            android:padding="@dimen/lib_step_adjust_padding"
+            app:srcCompat="@drawable/ic_step_adjust_decrease_svg"
+            app:tint="@color/lib_step_adjust_tint_color" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lib_step_adjust_value_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="@dimen/lib_step_adjust_value_width"
+            android:layout_height="@dimen/lib_step_adjust_height"
+            android:background="@drawable/lib_step_adjust_value_bg_selector"
+            android:ellipsize="none"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingHorizontal="@dimen/lib_hdpi"
+            android:singleLine="true"
+            android:textColor="@color/lib_step_adjust_tint_color"
+            android:textStyle="bold"
+            tools:text="9999999" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_step_adjust_increase_view"
+            android:layout_width="@dimen/lib_step_adjust_width"
+            android:layout_height="@dimen/lib_step_adjust_height"
+            android:background="@drawable/lib_step_adjust_increase_bg_selector"
+            android:padding="@dimen/lib_step_adjust_padding"
+            app:srcCompat="@drawable/ic_step_adjust_increase_svg"
+            app:tint="@color/lib_step_adjust_tint_color" />
+
+    </LinearLayout>
+
+
+</FrameLayout>
