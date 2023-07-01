@@ -24,6 +24,7 @@ import com.angcyo.library.annotation.CallComplianceAfter
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.*
+import com.angcyo.library.utils.FileUtils.appRootExternalFolder
 import com.angcyo.library.utils.fileNameUUID
 import com.orhanobut.hawk.Hawk
 import java.io.File
@@ -452,9 +453,9 @@ fun libFile(name: String = fileNameUUID(), folderName: String = ""): File {
     return File(libFolderPath(folderName), name)
 }
 
-/**[libFile]*/
+/**[libAppFolderFile]*/
 fun libAppFile(name: String = fileNameUUID(), folderName: String = ""): File =
-    libFile(name, folderName)
+    File(libAppFolderFile(folderName), name)
 
 /**获取一个缓存文件*/
 fun libCacheFile(name: String = fileNameUUID(), folderName: String = ""): File {
@@ -463,7 +464,7 @@ fun libCacheFile(name: String = fileNameUUID(), folderName: String = ""): File {
 
 /**获取一个app文件目录文件对象*/
 fun libAppFolderFile(folderName: String): File {
-    return File(libFolderPath(folderName))
+    return appRootExternalFolder(folderName)
 }
 
 /**获取一个缓存目录文件对象*/

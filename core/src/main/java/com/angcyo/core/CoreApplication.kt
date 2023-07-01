@@ -166,12 +166,17 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
      * */
     @CallComplianceAfter
     open fun onComplianceAfter() {
-        L.i("MD5->", getAppSignatureMD5())
-        L.i("SHA1->", getAppSignatureSHA1())
-
         //device, 需要合规
-        DslLastDeviceInfoItem.saveDeviceInfo(this, true)
-
+        DslLastDeviceInfoItem.saveDeviceInfo(this, true) {
+            L.i("MD5->", getAppSignatureMD5()?.apply {
+                append("MD5->")
+                appendLine(this)
+            })
+            L.i("SHA1->", getAppSignatureSHA1()?.apply {
+                append("SHA1->")
+                appendLine(this)
+            })
+        }
         DslCrashHandler.init(this)
         vmApp<StateModel>().updateState(ComplianceCheck.TYPE_COMPLIANCE_INIT_AFTER, true)
     }
