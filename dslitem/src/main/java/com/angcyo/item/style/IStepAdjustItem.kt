@@ -117,6 +117,20 @@ var IStepAdjustItem.itemStepAdjustValue: CharSequence?
         stepAdjustItemConfig.itemStepAdjustValue = value
     }
 
+/**步长*/
+var IStepAdjustItem.itemStepAdjustStep: Any
+    get() = stepAdjustItemConfig.itemStepAdjustStep
+    set(value) {
+        stepAdjustItemConfig.itemStepAdjustStep = value
+    }
+
+/**长按步长*/
+var IStepAdjustItem.itemStepAdjustLongStep: Any
+    get() = stepAdjustItemConfig.itemStepAdjustLongStep
+    set(value) {
+        stepAdjustItemConfig.itemStepAdjustLongStep = value
+    }
+
 class StepAdjustItemConfig : IDslItemConfig {
 
     /**关键控件id: 减*/
