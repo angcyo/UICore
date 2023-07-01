@@ -460,3 +460,13 @@ fun libAppFile(name: String = fileNameUUID(), folderName: String = ""): File =
 fun libCacheFile(name: String = fileNameUUID(), folderName: String = ""): File {
     return File(libCacheFolderPath(folderName), name)
 }
+
+/**获取一个app文件目录文件对象*/
+fun libAppFolderFile(folderName: String): File {
+    return File(libFolderPath(folderName))
+}
+
+/**获取一个缓存目录文件对象*/
+fun libCacheFolderFile(folderName: String): File {
+    return File(libCacheFolderPath(folderName))
+}
