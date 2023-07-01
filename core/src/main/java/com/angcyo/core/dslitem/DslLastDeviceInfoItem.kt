@@ -16,7 +16,6 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.isItemLastInAdapter
 import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.library.app
-import com.angcyo.library.component.RBackground
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.copy
@@ -60,7 +59,7 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
          * [com.angcyo.library.utils.LogFile.device]*/
         fun saveDeviceInfo(
             context: Context = app(),
-            isCompliance: Boolean = ComplianceCheck.isCompliance() && !RBackground.isBackground(),
+            isCompliance: Boolean = ComplianceCheck.isCompliance() /*&& !RBackground.isBackground()*/,
             config: DslSpan.() -> Unit = {}
         ) {
             deviceInfo(context, isCompliance) {

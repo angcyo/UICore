@@ -110,6 +110,13 @@ interface IStepAdjustItem : IAutoInitItem {
     }
 }
 
+/**值*/
+var IStepAdjustItem.itemStepAdjustValue: CharSequence?
+    get() = stepAdjustItemConfig.itemStepAdjustValue
+    set(value) {
+        stepAdjustItemConfig.itemStepAdjustValue = value
+    }
+
 class StepAdjustItemConfig : IDslItemConfig {
 
     /**关键控件id: 减*/
