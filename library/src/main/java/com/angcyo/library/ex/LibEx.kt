@@ -44,7 +44,9 @@ typealias Action = () -> Unit
 typealias Action1 = (Any?) -> Unit
 typealias Action2 = (Any?, Any?) -> Unit
 typealias ClickAction = (View) -> Unit
+typealias ViewAction = ClickAction
 typealias TouchAction = (ev: MotionEvent) -> Boolean
+typealias BooleanAction = (Boolean) -> Unit
 
 /**别名*/
 typealias ResultThrowable = (error: Throwable?) -> Unit

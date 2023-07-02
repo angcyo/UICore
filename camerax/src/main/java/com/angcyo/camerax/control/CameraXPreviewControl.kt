@@ -194,17 +194,13 @@ class CameraXPreviewControl {
     /**切换摄像头*/
     fun switchCamera() {
         cameraView?.controller?.apply {
-            if (this is LifecycleCameraController) {
-                cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
-                    CameraSelector.DEFAULT_FRONT_CAMERA
-                } else {
-                    CameraSelector.DEFAULT_BACK_CAMERA
-                }
-                _cameraSelector = cameraSelector
-                rgbImageAnalysisAnalyzer.analyzerCameraSelector = cameraSelector
+            cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
+                CameraSelector.DEFAULT_FRONT_CAMERA
             } else {
-                L.w("不支持的切换操作")
+                CameraSelector.DEFAULT_BACK_CAMERA
             }
+            _cameraSelector = cameraSelector
+            rgbImageAnalysisAnalyzer.analyzerCameraSelector = cameraSelector
         }
     }
 

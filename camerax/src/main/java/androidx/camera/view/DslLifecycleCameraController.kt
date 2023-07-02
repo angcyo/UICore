@@ -8,6 +8,7 @@ import androidx.annotation.MainThread
 import androidx.annotation.RequiresPermission
 import androidx.annotation.RestrictTo
 import androidx.camera.core.Camera
+import androidx.camera.core.UseCase
 import androidx.camera.core.UseCaseGroup
 import androidx.camera.core.impl.utils.Threads
 import androidx.lifecycle.LifecycleOwner
@@ -25,11 +26,19 @@ class DslLifecycleCameraController(context: Context) : CameraController(context)
 
     val TAG = "CamLifecycleController"
 
-    /**自定义的Case
+    /**自定义的Case, 额外需要开启的功能
      * [androidx.camera.core.UseCase]*/
-    private var useCaseGroup: UseCaseGroup? = null
+    var useCaseGroup: UseCaseGroup? = null
 
     private var lifecycleOwner: LifecycleOwner? = null
+
+    init {
+        //关闭所有的默认功能
+        //setEnabledUseCases(0)
+        setEnabledUseCases(IMAGE_CAPTURE/*or IMAGE_ANALYSIS or VIDEO_CAPTURE*/) //仅开启预览功能
+        //选择摄像头
+        cameraSelector
+    }
 
     /**
      * Sets the [LifecycleOwner] to be bound with the controller.
@@ -51,18 +60,45 @@ class DslLifecycleCameraController(context: Context) : CameraController(context)
         startCameraAndTrackStates()
     }
 
+    /**[bindToLifecycle]
+     * [caseList] 额外需要开启的功能*/
+    @SuppressLint("MissingPermission")
+    @MainThread
+    fun bindToLifecycle(lifecycleOwner: LifecycleOwner, caseList: List<UseCase>?) {
+        if (caseList.isNullOrEmpty()) {
+            bindToLifecycle(lifecycleOwner)
+        } else {
+            bindToLifecycle(lifecycleOwner, UseCaseGroup.Builder().apply {
+                caseList.forEach {
+                    addUseCase(it)
+                }
+            }.build())
+        }
+    }
+
+    /**[bindToLifecycle]*/
     @SuppressLint("MissingPermission")
     @MainThread
     fun bindToLifecycle(lifecycleOwner: LifecycleOwner, useCaseGroup: UseCaseGroup) {
-        Threads.checkMainThread()
         this.useCaseGroup = useCaseGroup
-        this.lifecycleOwner = lifecycleOwner
-        startCameraAndTrackStates()
+        bindToLifecycle(lifecycleOwner)
     }
 
     override fun createUseCaseGroup(): UseCaseGroup? {
         //mImageAnalysis
-        return useCaseGroup ?: super.createUseCaseGroup()
+        val originGroup = super.createUseCaseGroup()
+        if (originGroup == null && useCaseGroup == null) {
+            return null
+        }
+        val resultGroup = UseCaseGroup.Builder().apply {
+            originGroup?.useCases?.forEach {
+                addUseCase(it)
+            }
+            useCaseGroup?.useCases?.forEach {
+                addUseCase(it)
+            }
+        }.build()
+        return resultGroup
     }
 
     /**
