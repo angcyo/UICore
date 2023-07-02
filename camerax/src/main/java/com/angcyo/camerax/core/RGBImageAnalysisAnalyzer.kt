@@ -7,13 +7,13 @@ import android.graphics.RectF
 import android.util.Size
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageInfo
 import androidx.camera.core.ImageProxy
 import androidx.camera.view.CameraController.COORDINATE_SYSTEM_VIEW_REFERENCED
 import androidx.camera.view.transform.CoordinateTransform
 import androidx.camera.view.transform.ImageProxyTransformFactory
 import androidx.camera.view.transform.OutputTransform
 import com.angcyo.library.L
+import com.angcyo.library.LTime
 import com.angcyo.library.component._delay
 import com.angcyo.library.ex.logInfo
 import com.angcyo.library.ex.rotate
@@ -105,36 +105,16 @@ class RGBImageAnalysisAnalyzer : ImageAnalysis.Analyzer {
         onRectTestAction.invoke(result)
 
         //YUV420 转成 RGB
-        val bitmap =
-            imageProxy.toBitmap()?.transform(getBitmapTransform(imageProxy.imageInfo)) //w:640 h:332
-        val bitmap2 = imageProxy.toBitmapConverter()
-        L.d(bitmap?.logInfo())
-        L.d(bitmap2.logInfo())
+        LTime.tick()
+        val bitmap = imageProxy.toBitmap()
+            ?.transform(imageProxy.getBitmapTransform(analyzerCameraSelector)) //w:640 h:332
+        L.d(bitmap?.logInfo() + " 耗时:${LTime.time()}")
+        /*val bitmap2 =
+            imageProxy.toBitmapConverter().transform(getBitmapTransform(imageProxy.imageInfo))
+        L.d(bitmap2.logInfo() + " 耗时:${LTime.time()}")//w:640 h:332*/
 
         _delay(5_000) {
             imageProxy.close() //关闭之后, 才有下一帧
-        }
-    }
-
-    /**拍出来的照片, 需要进行的矩阵变换
-     * 默认拍出来的照片都是带旋转的.
-     * 前摄拍出来的照片水平是翻转的*/
-    fun getBitmapTransform(imageInfo: ImageInfo?): Matrix? {
-        val cameraSelector = analyzerCameraSelector ?: return null
-        val degrees = (imageInfo?.rotationDegrees ?: 0).toFloat()
-        return when (cameraSelector) {
-            CameraSelector.DEFAULT_BACK_CAMERA -> Matrix().apply {
-                postRotate(degrees)
-            }
-
-            CameraSelector.DEFAULT_FRONT_CAMERA -> Matrix().apply {
-                postRotate(degrees)
-                postScale(-1f, 1f)
-            }
-
-            else -> {
-                null
-            }
         }
     }
 

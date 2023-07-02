@@ -1,6 +1,7 @@
 package com.angcyo.camerax.control
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.graphics.ImageFormat
 import android.net.Uri
 import androidx.annotation.MainThread
@@ -22,6 +23,7 @@ import com.angcyo.fragment.requestPermissions
 import com.angcyo.library.BuildConfig
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.annotation.TestPoint
 import com.angcyo.library.component.ThreadExecutor
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.havePermission
@@ -75,6 +77,7 @@ class CameraXPreviewControl {
     /**绑定到声明周期, 并且开始预览
      * 需要权限[Manifest.permission.CAMERA]
      * [requestPermission]*/
+    @SuppressLint("UnsafeOptInUsageError")
     @CallPoint
     @MainThread
     fun bindToLifecycle(
@@ -234,6 +237,7 @@ class CameraXPreviewControl {
     }
 
     /**更新分析图片目标大小*/
+    @TestPoint
     fun updateImageAnalysisTargetSize() {
         _lifecycleCameraController?.apply {
             Camera.getStreamConfigurationMap(cameraInfo)

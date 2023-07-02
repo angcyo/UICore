@@ -93,7 +93,7 @@ open class CameraXPreviewFragment : BaseTitleFragment() {
         _vh.click(R.id.lib_camera_switch_view) {
             it.isEnabled = cameraXPreviewControl.hasCamera()
             cameraXPreviewControl.switchCamera()
-            cameraXPreviewControl.updateImageAnalysisTargetSize()
+            //cameraXPreviewControl.updateImageAnalysisTargetSize()
         }
 
         //拍照
