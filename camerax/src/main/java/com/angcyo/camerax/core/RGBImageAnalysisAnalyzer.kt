@@ -1,7 +1,6 @@
 package com.angcyo.camerax.core
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.graphics.ImageFormat
 import android.graphics.Matrix
 import android.graphics.RectF
@@ -14,7 +13,6 @@ import androidx.camera.view.CameraController.COORDINATE_SYSTEM_VIEW_REFERENCED
 import androidx.camera.view.transform.CoordinateTransform
 import androidx.camera.view.transform.ImageProxyTransformFactory
 import androidx.camera.view.transform.OutputTransform
-import com.angcyo.camerax.utils.YuvToRgbConverter
 import com.angcyo.library.L
 import com.angcyo.library.component._delay
 import com.angcyo.library.ex.logInfo
@@ -109,10 +107,9 @@ class RGBImageAnalysisAnalyzer : ImageAnalysis.Analyzer {
         //YUV420 转成 RGB
         val bitmap =
             imageProxy.toBitmap()?.transform(getBitmapTransform(imageProxy.imageInfo)) //w:640 h:332
-        val bitmap2 =
-            Bitmap.createBitmap(imageProxy.width, imageProxy.height, Bitmap.Config.ARGB_8888)
-        YuvToRgbConverter().yuvToRgb(imageProxy.image!!, bitmap2)
+        val bitmap2 = imageProxy.toBitmapConverter()
         L.d(bitmap?.logInfo())
+        L.d(bitmap2.logInfo())
 
         _delay(5_000) {
             imageProxy.close() //关闭之后, 才有下一帧

@@ -26,7 +26,7 @@ dependencies {
     def camerax_ex = camerax_version
     api "androidx.camera:camera-view:${camerax_ex}"
     //https://mvnrepository.com/artifact/androidx.camera/camera-extensions
-    api "androidx.camera:camera-extensions:${camerax_ex}"
+    //api "androidx.camera:camera-extensions:${camerax_ex}"
 
     implementation project(allModule.dslitem)
     implementation project(allModule.core)

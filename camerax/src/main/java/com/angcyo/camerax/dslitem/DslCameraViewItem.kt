@@ -25,7 +25,7 @@ open class DslCameraViewItem : DslAdapterItem() {
     /**camera的生命周期控制管理器*/
     var itemLifecycleCameraController: LifecycleCameraController? = null
 
-    /**需要激活的使用用例*/
+    /**需要启用的功能*/
     @SuppressLint("UnsafeOptInUsageError")
     var itemEnabledUseCases: Int =
         CameraController.IMAGE_CAPTURE or CameraController.IMAGE_ANALYSIS or CameraController.VIDEO_CAPTURE
@@ -47,7 +47,7 @@ open class DslCameraViewItem : DslAdapterItem() {
             if (itemLifecycleCameraController == null) {
                 itemLifecycleCameraController = LifecycleCameraController(itemHolder.context)
                 itemLifecycleCameraController?.apply {
-                    //setEnabledUseCases(itemEnabledUseCases)
+                    setEnabledUseCases(itemEnabledUseCases)
                     cameraView?.controller = this
 
                     bindToLifecycle(itemCameraLifecycleOwner ?: this@DslCameraViewItem)

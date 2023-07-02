@@ -25,6 +25,10 @@ class DslLifecycleCameraController(context: Context) : CameraController(context)
 
     val TAG = "CamLifecycleController"
 
+    /**自定义的Case
+     * [androidx.camera.core.UseCase]*/
+    private var useCaseGroup: UseCaseGroup? = null
+
     private var lifecycleOwner: LifecycleOwner? = null
 
     /**
@@ -47,9 +51,18 @@ class DslLifecycleCameraController(context: Context) : CameraController(context)
         startCameraAndTrackStates()
     }
 
+    @SuppressLint("MissingPermission")
+    @MainThread
+    fun bindToLifecycle(lifecycleOwner: LifecycleOwner, useCaseGroup: UseCaseGroup) {
+        Threads.checkMainThread()
+        this.useCaseGroup = useCaseGroup
+        this.lifecycleOwner = lifecycleOwner
+        startCameraAndTrackStates()
+    }
+
     override fun createUseCaseGroup(): UseCaseGroup? {
-        mImageAnalysis
-        return super.createUseCaseGroup()
+        //mImageAnalysis
+        return useCaseGroup ?: super.createUseCaseGroup()
     }
 
     /**
@@ -72,21 +85,23 @@ class DslLifecycleCameraController(context: Context) : CameraController(context)
      */
     @RequiresPermission(Manifest.permission.CAMERA)
     override fun startCamera(): Camera? {
-        if (lifecycleOwner == null) {
+        val owner = lifecycleOwner
+        if (owner == null) {
             Log.d(TAG, "Lifecycle is not set.")
             return null
         }
-        if (mCameraProvider == null) {
+        val cameraProvider = mCameraProvider
+        if (cameraProvider == null) {
             Log.d(TAG, "CameraProvider is not ready.")
             return null
         }
-        val useCaseGroup: UseCaseGroup = createUseCaseGroup()
-            ?: // Use cases can't be created.
-            return null
-        return mCameraProvider!!.bindToLifecycle(lifecycleOwner!!, mCameraSelector, useCaseGroup)
+        // Use cases can't be created.
+        val useCaseGroup: UseCaseGroup = createUseCaseGroup() ?: return null
+        return cameraProvider.bindToLifecycle(owner, mCameraSelector, useCaseGroup)
     }
 
     /**
+     * 关闭所有的相机, 并且释放资源
      * @hide
      */
     @RestrictTo(RestrictTo.Scope.TESTS)
@@ -94,4 +109,8 @@ class DslLifecycleCameraController(context: Context) : CameraController(context)
         mCameraProvider?.unbindAll()
         mCameraProvider?.shutdown()
     }
+
+    //region ---
+
+    //endregion
 }

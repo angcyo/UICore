@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.internal.utils.ImageUtil
+import com.angcyo.camerax.utils.YuvToRgbConverter
 import com.angcyo.library.L
 import java.nio.ByteBuffer
 
@@ -78,3 +79,12 @@ fun ImageProxy.toBitmap(shouldCropImage: Boolean = false, jpegQuality: Int = 100
 
     return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
 }
+
+/**这种方法, 在某种情况下会出现绿屏*/
+@SuppressLint("UnsafeOptInUsageError")
+fun ImageProxy.toBitmapConverter(): Bitmap {
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    YuvToRgbConverter().yuvToRgb(image!!, bitmap)
+    return bitmap
+}
+
