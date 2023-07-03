@@ -367,13 +367,15 @@ fun Context?.getNavBarHeightShow() = activityContent()?.navBarHeight() ?: 0
 /**获取屏幕圆角信息
  * https://developer.android.com/guide/topics/ui/look-and-feel/rounded-corners?hl=zh-cn
  *
- * Only visual Contexts (such as Activity or one created with Context#createWindowContext) or ones created with Context#createDisplayContext are associated with displays.*/
+ * Only visual Contexts (such as Activity or one created with Context#createWindowContext) or
+ * ones created with Context#createDisplayContext are associated with displays.*/
 fun Context.getRoundedCorner(position: Int? = null) =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         try {
             display?.getRoundedCorner(position ?: RoundedCorner.POSITION_TOP_LEFT)
         } catch (e: Exception) {
-            e.printStackTrace()
+            //e.printStackTrace()
+            L.w("异常操作:${e.message}")
             null
         }
     } else {
