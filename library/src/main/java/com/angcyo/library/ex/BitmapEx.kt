@@ -254,11 +254,15 @@ fun File.bitmapSize(): IntArray {
 fun Bitmap.save(
     path: String = filePath(PICTURE_FOLDER_NAME, fileNameUUID(".png")),
     format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG, //JPEG才支持压缩
-    quality: Int = 90 //PNG时,此属性无效.
+    quality: Int = 90, //PNG时,此属性无效.
+    recycle: Boolean = false //保存完成之后, 是否自动回收图片
 ): File {
     return path.file().apply {
         outputStream().use {
             compress(format, quality, it)
+        }
+        if (recycle) {
+            recycle()
         }
     }
 }
