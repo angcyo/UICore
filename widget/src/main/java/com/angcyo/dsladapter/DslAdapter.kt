@@ -13,6 +13,8 @@ import com.angcyo.dsladapter.internal.AdapterStatusFilterInterceptor
 import com.angcyo.dsladapter.internal.AnimateDelayHandler
 import com.angcyo.dsladapter.internal.LoadMoreFilterInterceptor
 import com.angcyo.library.L
+import com.angcyo.library.ex.addAfterWith
+import com.angcyo.library.ex.addBeforeWith
 import com.angcyo.library.ex.className
 import com.angcyo.widget.DslViewHolder
 import kotlin.math.min
@@ -575,6 +577,81 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         removeItem(list)
         removeHeaderItem(list)
         removeFooterItem(list)
+    }
+
+    /**在指定的item[with], 后面插入新的item[newItem]
+     * 调用 [updateItemDepend] 更新数据*/
+    @UpdateFlag
+    fun insertItemAfter(
+        with: DslAdapterItem,
+        newItem: DslAdapterItem,
+        updateOther: Boolean = true
+    ): Boolean {
+        var result = false
+        result = result || insertItemAfter(dataItems, with, newItem, updateOther) != -1
+        result = result || insertItemAfter(headerItems, with, newItem, updateOther) != -1
+        result = result || insertItemAfter(footerItems, with, newItem, updateOther) != -1
+        return result
+    }
+
+    /**在指定的item[with], 前面插入新的item[newItem]
+     *
+     * 调用 [updateItemDepend] 更新数据*/
+    @UpdateFlag
+    fun insertItemBefore(
+        with: DslAdapterItem,
+        newItem: DslAdapterItem,
+        updateOther: Boolean = true
+    ): Boolean {
+        var result = false
+        result = result || insertItemBefore(dataItems, with, newItem, updateOther) != -1
+        result = result || insertItemBefore(headerItems, with, newItem, updateOther) != -1
+        result = result || insertItemBefore(footerItems, with, newItem, updateOther) != -1
+        return result
+    }
+
+    /**[insertItemBefore]*/
+    @UpdateFlag
+    fun insertItemBefore(
+        fromList: MutableList<DslAdapterItem>,
+        with: DslAdapterItem,
+        newItem: DslAdapterItem,
+        updateOther: Boolean = true
+    ): Int {
+        val index = fromList.addBeforeWith(with, newItem)
+        if (index != -1) {
+            //插入成功
+            if (updateOther) {
+                for (i in 0 until index) {
+                    //更新之后的item
+                    adapterItems.getOrNull(i)?.itemUpdateFlag = true
+                }
+            }
+            _updateAdapterItems()
+        }
+        return index
+    }
+
+    /**[insertItemAfter]*/
+    @UpdateFlag
+    fun insertItemAfter(
+        fromList: MutableList<DslAdapterItem>,
+        with: DslAdapterItem,
+        newItem: DslAdapterItem,
+        updateOther: Boolean = true
+    ): Int {
+        val index = fromList.addAfterWith(with, newItem)
+        if (index != -1) {
+            //插入成功
+            if (updateOther) {
+                for (i in (index + 1) until fromList.size) {
+                    //更新之后的item
+                    adapterItems.getOrNull(i)?.itemUpdateFlag = true
+                }
+            }
+            _updateAdapterItems()
+        }
+        return index
     }
 
     /**移除数据*/
