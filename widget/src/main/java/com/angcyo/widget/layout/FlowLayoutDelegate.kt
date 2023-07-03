@@ -38,6 +38,14 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
     /** 每一行的Item等宽 */
     var itemEquWidth: Boolean = false
 
+    /**当子Item数量在此范围内时,开启等宽,此属性优先级最高
+     * [~3] 小于等于3个
+     * [3~] 大于等于3个
+     * [3~5] 3<= <=5
+     * [itemEquWidth]
+     * */
+    var itemEquWidthCountRange: IntRange? = null
+
     /**配合[itemEquWidth]使用, 开启仅支持单行样式*/
     var singleLine: Boolean = false
 
@@ -72,6 +80,23 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
         maxLineCount = array.getInt(R.styleable.FlowLayoutDelegate_r_flow_max_line_count, -1)
         itemEquWidth =
             array.getBoolean(R.styleable.FlowLayoutDelegate_r_flow_equ_width, itemEquWidth)
+        if (array.hasValue(R.styleable.FlowLayoutDelegate_r_flow_equ_width_count_range)) {
+            val equWidthCountRangeString =
+                array.getString(R.styleable.FlowLayoutDelegate_r_flow_equ_width_count_range)
+            if (equWidthCountRangeString.isNullOrBlank()) {
+                itemEquWidthCountRange = null
+            } else {
+                val rangeList = equWidthCountRangeString.split("~")
+                if (rangeList.size() >= 2) {
+                    val min = rangeList.getOrNull(0)?.toIntOrNull() ?: 0
+                    val max = rangeList.getOrNull(1)?.toIntOrNull() ?: Int.MAX_VALUE
+                    itemEquWidthCountRange = IntRange(min, max)
+                } else {
+                    val min = rangeList.getOrNull(0)?.toIntOrNull() ?: Int.MAX_VALUE
+                    itemEquWidthCountRange = IntRange(min, Int.MAX_VALUE)
+                }
+            }
+        }
         singleLine =
             array.getBoolean(R.styleable.FlowLayoutDelegate_r_flow_single_line, singleLine)
         itemHorizontalSpace = array.getDimensionPixelOffset(
@@ -173,8 +198,11 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
             visibleCount++
         }
 
+        //等宽模式
+        val equWidth = itemEquWidth || itemEquWidthCountRange?.contains(visibleCount) == true
+
         var singleLineChildWidthMeasureSpec = 0
-        if (itemEquWidth && singleLine) {
+        if (equWidth && singleLine) {
             //单行模式下, 等宽测量模式
 
             var useWidth = paddingLeft + paddingRight
@@ -195,7 +223,7 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
         for (i in 0 until visibleCount) {
             val child = _allVisibleViews[i]
             val params = child.layoutParams as LinearLayout.LayoutParams
-            if (itemEquWidth) {
+            if (equWidth) {
                 if (singleLine) {
                     val lp = child.layoutParams
                     val childWidthMeasureSpec = singleLineChildWidthMeasureSpec
@@ -256,7 +284,7 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
             }
 
             if (needWidth > viewAvailableWidth || outOfLineCount) { //需要换新行
-                if (itemEquWidth) { //margin,padding 消耗的宽度
+                if (equWidth) { //margin,padding 消耗的宽度
                     childWidth = measureLineEquWidth(
                         lineViews,
                         measureWidthSize,
@@ -301,7 +329,7 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
         } else {
             _lineHeight.add(lineHeight)
             _allViews.add(lineViews)
-            if (itemEquWidth) {
+            if (equWidth) {
                 if (!singleLine) {
                     measureLineEquWidth(lineViews, measureWidthSize, heightMeasureSpec)
                 }

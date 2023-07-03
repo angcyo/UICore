@@ -4,6 +4,7 @@
     <attr name="r_flow_max_line_child_count" format="integer" />
     <attr name="r_flow_max_line_count" format="integer" />
     <attr name="r_flow_equ_width" format="boolean" />
+    <attr name="r_flow_equ_width_count_range" format="string" />
     <attr name="r_flow_single_line" format="boolean" />
     <attr name="r_flow_item_vertical_space" format="dimension" />
     <attr name="r_flow_item_horizontal_space" format="dimension" />
@@ -20,6 +21,7 @@
         <attr name="r_flow_max_line_child_count" />
         <attr name="r_flow_max_line_count" />
         <attr name="r_flow_equ_width" />
+        <attr name="r_flow_equ_width_count_range" />
         <attr name="r_flow_single_line" />
         <attr name="r_flow_item_vertical_space" />
         <attr name="r_flow_item_horizontal_space" />
@@ -37,6 +39,7 @@
         <attr name="r_flow_max_line_child_count" />
         <attr name="r_flow_max_line_count" />
         <attr name="r_flow_equ_width" />
+        <attr name="r_flow_equ_width_count_range" />
         <attr name="r_flow_single_line" />
         <attr name="r_flow_item_vertical_space" />
         <attr name="r_flow_item_horizontal_space" />
@@ -57,6 +60,7 @@
         <attr name="r_flow_max_line_child_count" />
         <attr name="r_flow_max_line_count" />
         <attr name="r_flow_equ_width" />
+        <attr name="r_flow_equ_width_count_range" />
         <attr name="r_flow_single_line" />
         <attr name="r_flow_item_vertical_space" />
         <attr name="r_flow_item_horizontal_space" />
