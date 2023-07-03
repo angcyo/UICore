@@ -11,6 +11,7 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.View
+import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.Camera
@@ -25,12 +26,16 @@ import androidx.camera.core.MeteringPoint
 import androidx.camera.core.Preview
 import androidx.camera.core.UseCase
 import androidx.camera.core.UseCaseGroup
+import androidx.camera.core.VideoCapture
 import androidx.camera.core.impl.utils.executor.CameraXExecutors
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.CameraController
 import androidx.camera.view.DslLifecycleCameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
+import androidx.camera.view.video.OnVideoSavedCallback
+import androidx.camera.view.video.OutputFileOptions
+import androidx.camera.view.video.OutputFileResults
 import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.isVisible
@@ -51,9 +56,11 @@ import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.BooleanAction
+import com.angcyo.library.ex.UriAction
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.havePermission
 import com.angcyo.library.ex.load
+import com.angcyo.library.ex.saveToDCIM
 import com.angcyo.library.ex.toFileUri
 import com.angcyo.library.ex.toListOf
 import com.angcyo.library.ex.transform
@@ -113,13 +120,19 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
         //拍照, 预览/显示
         itemHolder.click(R.id.lib_camera_shutter_view) {
             captureCameraPhoto { uri, exception ->
-                exception?.let {
-                    toastQQ(it.message)
-                }
-                uri?.let {
-                    doMain {
-                        showCameraPreviewPhoto(it)
+                val action = cameraItemConfig.itemCaptureCameraPhotoAction
+                if (action == null) {
+                    exception?.let {
+                        toastQQ(it.message)
                     }
+                    uri?.let {
+                        doMain {
+                            showCameraPreviewPhoto(it)
+                        }
+                    }
+                } else {
+                    //自定义处理
+                    action(uri, exception)
                 }
             }
         }
@@ -129,7 +142,9 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
     }
 
     /**初始化一个控制器
-     * [com.angcyo.camerax.dslitem.CameraItemConfig.itemCameraPriorityUseController]*/
+     * [com.angcyo.camerax.dslitem.CameraItemConfig.itemCameraPriorityUseController]
+     * [initCameraXWithController]
+     * */
     fun initItemCameraControllerIfNeed(action: () -> CameraController) {
         if (cameraItemConfig.itemCameraController == null) {
             cameraItemConfig.itemCameraPriorityUseController = true
@@ -433,15 +448,20 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
      *
      * [androidx.camera.core.ImageProxy.getBitmapTransform]
      * */
+    @MainThread
     fun captureCameraPhoto(
         photoFile: File = libCacheFile(fileNameUUID(".jpg")),
-        @WorkerThread action: (uri: Uri?, exception: Exception?) -> Unit
-    ) {
+        @WorkerThread action: UriAction
+    ): Boolean {
         if (cameraItemConfig.itemCameraPriorityUseController) {
             val controller = cameraItemConfig.itemCameraController
             if (controller == null) {
                 action(null, IllegalStateException("未绑定相机"))
-                return
+                return false
+            }
+            if (!controller.isImageCaptureEnabled) {
+                action(null, IllegalStateException("未开启拍照功能"))
+                return false
             }
             val metadata = ImageCapture.Metadata().apply {
                 // Mirror image when using the front camera
@@ -459,6 +479,9 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
                     @WorkerThread
                     object : ImageCapture.OnImageSavedCallback {
                         override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                            if (cameraItemConfig.itemCaptureToDCIM) {
+                                saveFileToDCIM(photoFile)
+                            }
                             action(outputFileResults.savedUri ?: photoFile.toFileUri(), null)
                         }
 
@@ -466,12 +489,91 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
                             action(null, exception)
                         }
                     })
+                return true
             } catch (e: Exception) {
                 e.printStackTrace()
                 action(null, e)
             }
         } else {
             action(null, IllegalStateException("请主动调用[ImageCapture.takePicture]"))
+        }
+        return false
+    }
+
+    /**录像, 需要主动请求权限
+     * 如果使用的是[itemCameraController], 则需要开启[CameraController.VIDEO_CAPTURE]用例
+     * 如果使用的是[androidx.camera.lifecycle.ProcessCameraProvider], 则需要主动调用[ImageCapture.takePicture]方法
+     *
+     * [buildVideoCaptureUseCase]
+     * */
+    @SuppressLint("UnsafeOptInUsageError")
+    @MainThread
+    fun startRecordingCamera(
+        videoFile: File = libCacheFile(fileNameUUID(".mp4")),
+        @WorkerThread action: (uri: Uri?, exception: Exception?) -> Unit
+    ): Boolean {
+        if (cameraItemConfig.itemCameraPriorityUseController) {
+            val controller = cameraItemConfig.itemCameraController
+            if (controller == null) {
+                action(null, IllegalStateException("未绑定相机"))
+                return false
+            }
+            if (!controller.isVideoCaptureEnabled) {
+                action(null, IllegalStateException("未开启录像功能"))
+                return false
+            }
+
+            val outputFileOptions = OutputFileOptions.builder(videoFile)
+                .build()
+
+            try {
+                controller.startRecording(
+                    outputFileOptions,
+                    Dispatchers.Default.asExecutor(),
+                    @WorkerThread
+                    object : OnVideoSavedCallback {
+
+                        override fun onVideoSaved(outputFileResults: OutputFileResults) {
+                            if (cameraItemConfig.itemCaptureToDCIM) {
+                                saveFileToDCIM(videoFile)
+                            }
+                            action(outputFileResults.savedUri ?: videoFile.toFileUri(), null)
+                        }
+
+                        override fun onError(
+                            videoCaptureError: Int,
+                            message: String,
+                            cause: Throwable?
+                        ) {
+                            L.w("$videoCaptureError $message $cause")
+                            action(null, Exception(message, cause))
+                        }
+                    })
+                return true
+            } catch (e: Exception) {
+                e.printStackTrace()
+                action(null, e)
+            }
+        } else {
+            action(null, IllegalStateException("请主动调用[VideoCapture.startRecording]"))
+        }
+        return false
+    }
+
+    /**将文件保存至DCIM*/
+    fun saveFileToDCIM(file: File) {
+        (cameraItemConfig._itemHolder?.context ?: lastContext).saveToDCIM(file)
+    }
+
+    /**停止录制, 请在[startRecordingCamera]后调用*/
+    @SuppressLint("UnsafeOptInUsageError")
+    @MainThread
+    fun stopRecordingCamera() {
+        if (cameraItemConfig.itemCameraPriorityUseController) {
+            val controller = cameraItemConfig.itemCameraController
+            controller?.stopRecording()
+        } else {
+            L.w("请主动调用[VideoCapture.startRecording]")
         }
     }
 
@@ -501,6 +603,22 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
             .setTargetRotation(rotation)
             .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
             .apply(action)
+            .build()
+    }
+
+    /**创建一个录像的用例*/
+    @SuppressLint("RestrictedApi")
+    fun buildVideoCaptureUseCase(
+        rotation: Int = Surface.ROTATION_0,
+        action: VideoCapture.Builder.() -> Unit = {},
+    ): VideoCapture {
+        return VideoCapture.Builder()
+            .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+            .setTargetRotation(rotation)
+            .setVideoFrameRate(30)
+            .setBitRate(3 * 1024 * 1024)
+            .setAudioBitRate(128 * 1024)
+            .setAudioSampleRate(44100)
             .build()
     }
 
@@ -623,6 +741,18 @@ var ICameraXItem.itemEnableCameraTouch: Boolean
         cameraItemConfig.itemEnableCameraTouch = value
     }
 
+var ICameraXItem.itemCaptureToDCIM: Boolean
+    get() = cameraItemConfig.itemCaptureToDCIM
+    set(value) {
+        cameraItemConfig.itemCaptureToDCIM = value
+    }
+
+var ICameraXItem.itemCaptureCameraPhotoAction: UriAction?
+    get() = cameraItemConfig.itemCaptureCameraPhotoAction
+    set(value) {
+        cameraItemConfig.itemCaptureCameraPhotoAction = value
+    }
+
 /**Camera手势监听*/
 interface ICameraTouchListener {
     /**简单的点击, 需要手动对焦*/
@@ -662,6 +792,12 @@ class CameraItemConfig : IDslItemConfig {
      * [CameraController.VIDEO_CAPTURE]
      * */
     //var itemEnableUseCases: Int = CameraController.IMAGE_CAPTURE
+
+    /**拍照捕捉回调, 不设置会使用默认的处理*/
+    var itemCaptureCameraPhotoAction: UriAction? = null
+
+    /**捕捉的图片/视频是否保存一份到DCIM*/
+    var itemCaptureToDCIM: Boolean = false
 
     //--
 

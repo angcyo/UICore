@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.pm.ApplicationInfo
 import android.graphics.Point
 import android.graphics.PointF
+import android.net.Uri
 import android.os.Build
 import android.os.Debug
 import android.view.MotionEvent
@@ -47,6 +48,7 @@ typealias ClickAction = (View) -> Unit
 typealias ViewAction = ClickAction
 typealias TouchAction = (ev: MotionEvent) -> Boolean
 typealias BooleanAction = (Boolean) -> Unit
+typealias UriAction = (uri: Uri?, exception: Exception?) -> Unit
 
 /**别名*/
 typealias ResultThrowable = (error: Throwable?) -> Unit
