@@ -116,6 +116,15 @@ class DslLifecycleCameraController(context: Context) : CameraController(context)
         return resultGroup
     }
 
+    /**
+     * ```
+     * Matrix{[2.25, 0.0, 0.0][0.0, 2.25, -180.0][0.0, 0.0, 1.0]}
+     * ```
+     *
+     * ```
+     * Matrix{[1.2656251, 0.0, 236.25][0.0, 1.2656251, 0.0][0.0, 0.0, 1.0]}
+     * ```
+     * */
     @SuppressLint("UnsafeOptInUsageError")
     override fun updatePreviewViewTransform(outputTransform: OutputTransform?) {
         super.updatePreviewViewTransform(outputTransform)
