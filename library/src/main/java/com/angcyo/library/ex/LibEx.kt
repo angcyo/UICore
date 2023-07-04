@@ -317,6 +317,19 @@ fun <T> Iterable<T>.isAllMatch(predicate: (T) -> Boolean): Boolean {
     return isAllMatch
 }
 
+/**将多维数组抹平成一维数组*/
+fun <T> Iterable<*>.toSingleList(): List<T> {
+    val result = mutableListOf<T>()
+    forEach {
+        if (it is Iterable<*>) {
+            result.addAll(it.toSingleList())
+        } else {
+            result.add(it as T)
+        }
+    }
+    return result
+}
+
 fun Stack<*>.popSafe() = if (isEmpty()) null else pop()
 
 fun <T> List<T?>?.randomGetOnce(): T? = randomGet(1).firstOrNull()
