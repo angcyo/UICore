@@ -1,5 +1,6 @@
 package com.angcyo.dsladapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -69,8 +70,12 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
      * */
     var onceFilterParams: FilterParams? = null
 
+
     /**默认的[FilterParams]*/
+    @SuppressLint("KotlinNullnessAnnotation")
+    @NonNull
     var defaultFilterParams: FilterParams? = null
+        @SuppressLint("KotlinNullnessAnnotation")
         @NonNull
         get() {
             return onceFilterParams ?: (field ?: _defaultFilterParams())
