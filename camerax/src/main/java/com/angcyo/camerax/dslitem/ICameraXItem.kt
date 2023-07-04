@@ -601,7 +601,8 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
         return ImageCapture.Builder()
             .setTargetAspectRatio(AspectRatio.RATIO_4_3)
             .setTargetRotation(rotation)
-            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+            //.setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY) //最大化质量
+            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY) //最小化延迟
             .apply(action)
             .build()
     }
@@ -630,6 +631,7 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
         return ImageAnalysis.Builder()
             .setTargetAspectRatio(AspectRatio.RATIO_4_3)
             .setTargetRotation(rotation)
+            //.setOutputImageRotationEnabled()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
             .apply(action)
