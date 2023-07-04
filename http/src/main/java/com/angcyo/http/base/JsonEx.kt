@@ -1,7 +1,13 @@
 package com.angcyo.http.base
 
 import android.text.TextUtils
-import com.google.gson.*
+import com.angcyo.library.L
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
@@ -331,7 +337,7 @@ fun Any?.toJson(config: (GsonBuilder.() -> Unit)? = null): String? {
         try {
             gson(config).toJson(this)
         } catch (e: Exception) {
-            e.printStackTrace()
+            L.w("toJson异常:${e.message}")
             null
         }
     }
@@ -347,7 +353,7 @@ fun <T> String?.fromJson(typeOfT: Type, exception: Boolean = false): T? {
         try {
             gson().fromJson<T>(this, typeOfT)
         } catch (e: Exception) {
-            e.printStackTrace()
+            L.w("fromJson转换异常:${e.message}")
             if (exception) {
                 throw e
             }
@@ -362,7 +368,7 @@ fun <T> String?.fromJson(classOfT: Class<T>, throwError: Boolean = false): T? {
         try {
             gson().fromJson<T>(this, classOfT)
         } catch (e: Exception) {
-            e.printStackTrace()
+            L.w("fromJson转换异常:${e.message}")
             if (throwError) {
                 throw e
             }
