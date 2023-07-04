@@ -32,10 +32,10 @@ class Tcp : ICancel {
         /**连接中*/
         const val CONNECT_STATE_CONNECTING = 1
 
-        /**已连接*/
+        /**已连接, 重复触发连接的状态*/
         const val CONNECT_STATE_CONNECTED = 2
 
-        /**连接成功*/
+        /**连接成功, 首次连接成功*/
         const val CONNECT_STATE_CONNECT_SUCCESS = 3
 
         /**断开连接*/
@@ -101,16 +101,16 @@ class Tcp : ICancel {
     }
 
     /**连接到服务器*/
-    fun connect() {
+    fun connect(data: Any?) {
         init()
         if (socket?.isConnected == true) {
             for (listener in listeners) {
-                listener.onConnectStateChanged(this, CONNECT_STATE_CONNECTED)
+                listener.onConnectStateChanged(this, TcpState(this, CONNECT_STATE_CONNECTED, data))
             }
             return
         }
         for (listener in listeners) {
-            listener.onConnectStateChanged(this, CONNECT_STATE_CONNECTING)
+            listener.onConnectStateChanged(this, TcpState(this, CONNECT_STATE_CONNECTING, data))
         }
         doBack {
             try {
@@ -119,7 +119,7 @@ class Tcp : ICancel {
                     try {
                         L.d("TCP准备连接:$address:$port /$tryCount")
                         socket?.connect(InetSocketAddress(address, port), soTimeout)
-                        onSocketConnectSuccess()
+                        onSocketConnectSuccess(data)
                     } catch (e: ConnectException) {
                         e.printStackTrace()
                         throw e
@@ -135,20 +135,20 @@ class Tcp : ICancel {
             } catch (e: Exception) {
                 e.printStackTrace()
                 for (listener in listeners) {
-                    listener.onConnectStateChanged(this, CONNECT_STATE_ERROR)
+                    listener.onConnectStateChanged(this, TcpState(this, CONNECT_STATE_ERROR, data))
                 }
             }
         }
     }
 
     /**重连*/
-    private fun reconnect() {
+    private fun reconnect(data: Any?) {
         val socket = socket ?: return
         while (!socket.isConnected) {
             sleep(1000)
             try {
                 socket.connect(InetSocketAddress(address, port), soTimeout)
-                onSocketConnectSuccess()
+                onSocketConnectSuccess(data)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -157,11 +157,11 @@ class Tcp : ICancel {
 
     override fun cancel() {
         socket ?: return
-        release()
+        release(null)
     }
 
     /**释放资源*/
-    fun release() {
+    fun release(data: Any?) {
         _inputThread?.interrupt()
         _outputThread?.interrupt()
         try {
@@ -177,7 +177,10 @@ class Tcp : ICancel {
                     e.printStackTrace()
                 }
                 for (listener in listeners) {
-                    listener.onConnectStateChanged(this, CONNECT_STATE_DISCONNECT)
+                    listener.onConnectStateChanged(
+                        this,
+                        TcpState(this, CONNECT_STATE_DISCONNECT, data)
+                    )
                 }
             }
         } catch (e: Exception) {
@@ -192,20 +195,23 @@ class Tcp : ICancel {
     private var _socketOutputStream: OutputStream? = null
 
     /**连接成功后触发, 启动2个读写线程*/
-    private fun onSocketConnectSuccess() {
+    private fun onSocketConnectSuccess(data: Any?) {
         val socket = socket ?: return
         _socketInputStream = socket.getInputStream()
         _socketOutputStream = socket.getOutputStream()
         startInputThread()
         for (listener in listeners) {
-            listener.onConnectStateChanged(this, CONNECT_STATE_CONNECT_SUCCESS)
+            listener.onConnectStateChanged(
+                this,
+                TcpState(this, CONNECT_STATE_CONNECT_SUCCESS, data)
+            )
         }
     }
 
     /**socket被关闭后触发*/
-    private fun onSocketClose() {
+    private fun onSocketClose(data: Any?) {
         for (listener in listeners) {
-            listener.onConnectStateChanged(this, CONNECT_STATE_DISCONNECT)
+            listener.onConnectStateChanged(this, TcpState(this, CONNECT_STATE_DISCONNECT, data))
         }
     }
 
@@ -354,7 +360,7 @@ class Tcp : ICancel {
     interface TcpListener {
 
         /**连接状态改变通知*/
-        fun onConnectStateChanged(tcp: Tcp, state: Int) {
+        fun onConnectStateChanged(tcp: Tcp, state: TcpState) {
 
         }
 
