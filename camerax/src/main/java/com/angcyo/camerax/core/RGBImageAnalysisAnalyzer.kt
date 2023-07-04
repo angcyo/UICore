@@ -2,16 +2,10 @@ package com.angcyo.camerax.core
 
 import android.annotation.SuppressLint
 import android.graphics.ImageFormat
-import android.graphics.Matrix
 import android.graphics.RectF
 import android.util.Size
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import androidx.camera.view.CameraController.COORDINATE_SYSTEM_VIEW_REFERENCED
-import androidx.camera.view.transform.CoordinateTransform
-import androidx.camera.view.transform.ImageProxyTransformFactory
-import androidx.camera.view.transform.OutputTransform
 import com.angcyo.library.L
 import com.angcyo.library.LTime
 import com.angcyo.library.component._delay
@@ -25,14 +19,7 @@ import com.angcyo.library.ex.transform
  * @author angcyo
  * @date 2023/06/18
  */
-class RGBImageAnalysisAnalyzer : ImageAnalysis.Analyzer {
-
-    /**需要使用的坐标系统
-     * [androidx.camera.view.CameraController.COORDINATE_SYSTEM_VIEW_REFERENCED]
-     * [androidx.camera.core.ImageAnalysis.COORDINATE_SYSTEM_ORIGINAL] 默认
-     * */
-    var analyzerTargetCoordinateSystem: Int =
-        COORDINATE_SYSTEM_VIEW_REFERENCED //COORDINATE_SYSTEM_ORIGINAL
+class RGBImageAnalysisAnalyzer : ImageAnalysisAnalyzer() {
 
     /**当前使用的摄像头*/
     var analyzerCameraSelector: CameraSelector? = null
@@ -100,7 +87,10 @@ class RGBImageAnalysisAnalyzer : ImageAnalysis.Analyzer {
         )
         val matrix = getCoordinateTransform(imageProxy, false)
         val result = RectF()
-        matrix.mapRect(result, centerRect)
+        if (matrix == null) {
+            result.set(centerRect)
+        }
+        matrix?.mapRect(result, centerRect)
         result.rotate(imageProxy.imageInfo.rotationDegrees.toFloat())//这个时候再旋转
         onRectTestAction.invoke(result)
 
@@ -115,62 +105,6 @@ class RGBImageAnalysisAnalyzer : ImageAnalysis.Analyzer {
 
         _delay(5_000) {
             imageProxy.close() //关闭之后, 才有下一帧
-        }
-    }
-
-    /**在数据中的坐标, 偏移到预览界面上的坐标, 需要进行的转换矩阵
-     * [isUsingRotationDegrees] [androidx.camera.view.transform.ImageProxyTransformFactory.setUsingRotationDegrees]*/
-    @SuppressLint("UnsafeOptInUsageError", "RestrictedApi")
-    fun getCoordinateTransform(
-        imageProxy: ImageProxy,
-        isUsingRotationDegrees: Boolean = true
-    ): Matrix {
-        // By default, the matrix is identity for COORDINATE_SYSTEM_ORIGINAL.
-        val transform = Matrix()
-        if (targetCoordinateSystem != ImageAnalysis.COORDINATE_SYSTEM_ORIGINAL) {
-            // Calculate the transform if not COORDINATE_SYSTEM_ORIGINAL.
-            val sensorToTarget: Matrix? = sensorToTarget
-            if (sensorToTarget == null) {
-                // If the app set a target coordinate system, do not perform detection until the
-                // transform is ready.
-                L.d("Transform is null.")
-                return transform
-            }
-            val transformFactory = ImageProxyTransformFactory()
-            transformFactory.isUsingRotationDegrees = isUsingRotationDegrees
-            val analysisTransform: OutputTransform = transformFactory.getOutputTransform(imageProxy)
-            val cropRectSize = Size(imageProxy.cropRect.width(), imageProxy.cropRect.height())
-            val coordinateTransform = CoordinateTransform(
-                analysisTransform,
-                OutputTransform(sensorToTarget, cropRectSize)
-            )
-            coordinateTransform.transform(transform)
-        }
-        return transform
-    }
-
-    /**缺省的图片大小*/
-    override fun getDefaultTargetResolution(): Size? {
-        return super.getDefaultTargetResolution()
-    }
-
-    /**
-     * [androidx.camera.view.CameraController.COORDINATE_SYSTEM_VIEW_REFERENCED]
-     * [androidx.camera.core.ImageAnalysis.COORDINATE_SYSTEM_ORIGINAL] 默认
-     * */
-    override fun getTargetCoordinateSystem(): Int {
-        return analyzerTargetCoordinateSystem
-    }
-
-    private var sensorToTarget: Matrix? = null
-
-    /**只有在[androidx.camera.view.CameraController.COORDINATE_SYSTEM_VIEW_REFERENCED]时才有效
-     * [getTargetCoordinateSystem]*/
-    override fun updateTransform(matrix: Matrix?) {
-        sensorToTarget = if (matrix == null) {
-            null
-        } else {
-            Matrix(matrix)
         }
     }
 }

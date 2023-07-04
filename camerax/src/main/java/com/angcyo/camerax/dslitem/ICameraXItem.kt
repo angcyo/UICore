@@ -667,6 +667,7 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
         onImageAvailable: (imageProxy: ImageProxy, bitmap: Bitmap) -> Unit
     ): ImageAnalysis {
         return buildImageAnalysisUseCase(rotation, action).apply {
+
             setAnalyzer(CameraXExecutors.directExecutor()) { imageProxy ->
                 var bitmap = Bitmap.createBitmap(
                     imageProxy.width,
@@ -680,6 +681,18 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
                 //关闭之后, 才有下一帧
                 //imageProxy.close()
             }
+        }
+    }
+
+    /**[buildBitmapAnalysisUseCase]*/
+    @SuppressLint("RestrictedApi")
+    fun buildBitmapAnalysisUseCase(
+        rotation: Int = Surface.ROTATION_0,
+        action: ImageAnalysis.Builder.() -> Unit = {},
+        analyzer: ImageAnalysis.Analyzer
+    ): ImageAnalysis {
+        return buildImageAnalysisUseCase(rotation, action).apply {
+            setAnalyzer(CameraXExecutors.directExecutor(), analyzer)
         }
     }
 
