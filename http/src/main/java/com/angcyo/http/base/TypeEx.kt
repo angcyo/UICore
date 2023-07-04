@@ -15,7 +15,10 @@ import kotlin.reflect.KClass
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-/**String*/
+//region ---泛型---
+
+/**String
+ * [Class]*/
 fun bean(rootClass: Class<*>, typeClass: Class<*>? = null): Type {
     return TypeBuilder.newInstance(rootClass).apply {
         if (typeClass != null) {
@@ -24,6 +27,7 @@ fun bean(rootClass: Class<*>, typeClass: Class<*>? = null): Type {
     }.build()
 }
 
+/**[KClass]*/
 fun bean(rootClass: KClass<*>, typeClass: KClass<*>? = null): Type =
     bean(rootClass.java, typeClass?.java)
 
@@ -34,9 +38,17 @@ fun type(rootClass: Class<*>, typeClass: Class<*>): Type {
 
 fun type(rootClass: KClass<*>, typeClass: KClass<*>): Type = type(rootClass.java, typeClass.java)
 
+//endregion ---泛型---
+
+//region ---List---
+
 fun listType(typeClass: Class<*>): Type = type(List::class.java, typeClass)
 
 fun listType(typeClass: KClass<*>): Type = listType(typeClass.java)
+
+//endregion ---List---
+
+//region ---高阶---
 
 /**List<? super String>*/
 fun typeSuper(rootClass: Class<*>, typeClass: Class<*>): Type {
@@ -53,7 +65,16 @@ fun type(rootClass: Class<*>, type: Type): Type {
     return TypeBuilder.newInstance(rootClass).addTypeParam(type).build()
 }
 
-/**Map<String, String[]*/
+/**
+ * List<List<String>>
+ * ```
+ * type(List::class, listType(String::class))
+ * ```*/
+fun type(rootClass: KClass<*>, type: Type): Type {
+    return TypeBuilder.newInstance(rootClass.java).addTypeParam(type).build()
+}
+
+/**Map<String, String[]>*/
 fun type(rootClass: Class<*>, typeClass1: Class<*>, typeClass2: Class<*>): Type {
     return TypeBuilder.newInstance(rootClass)
         .addTypeParam(typeClass1)
@@ -61,9 +82,16 @@ fun type(rootClass: Class<*>, typeClass1: Class<*>, typeClass2: Class<*>): Type 
         .build()
 }
 
+//endregion ---高阶---
+
+//region ---Map---
+
+/**Map<String, String>*/
 fun mapType(key: Class<*>, value: Class<*>) = type(Map::class.java, key, value)
 
-/**Map<String, List<String>*/
+fun mapType(key: KClass<*>, value: KClass<*>) = type(Map::class.java, key.java, value.java)
+
+/**Map<String, List<String>>*/
 fun type(
     rootClass1: Class<*>,
     typeClass1: Class<*>,
@@ -78,7 +106,7 @@ fun type(
         .build()
 }
 
-/**Map<String, List<String>*/
+/**Map<String, List<String>>*/
 fun type(
     rootClass: Class<*>,
     typeClass1: Class<*>,
@@ -89,6 +117,8 @@ fun type(
         .addTypeParam(type2)
         .build()
 }
+
+//endregion ---Map---
 
 
 
