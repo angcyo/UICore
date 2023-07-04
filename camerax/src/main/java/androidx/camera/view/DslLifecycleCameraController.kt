@@ -8,10 +8,14 @@ import androidx.annotation.MainThread
 import androidx.annotation.RequiresPermission
 import androidx.annotation.RestrictTo
 import androidx.camera.core.Camera
+import androidx.camera.core.CameraEffect
+import androidx.camera.core.CameraSelector
 import androidx.camera.core.UseCase
 import androidx.camera.core.UseCaseGroup
 import androidx.camera.core.impl.utils.Threads
+import androidx.camera.view.transform.OutputTransform
 import androidx.lifecycle.LifecycleOwner
+import com.angcyo.library.ex.MatrixAction
 
 /**
  *
@@ -28,7 +32,10 @@ class DslLifecycleCameraController(context: Context) : CameraController(context)
 
     /**自定义的Case, 额外需要开启的功能
      * [androidx.camera.core.UseCase]*/
-    var useCaseGroup: UseCaseGroup? = null
+    var useCaseList: List<UseCase>? = null
+
+    /**预览变换监听*/
+    var updatePreviewViewTransformList = mutableListOf<MatrixAction>()
 
     private var lifecycleOwner: LifecycleOwner? = null
 
@@ -65,40 +72,56 @@ class DslLifecycleCameraController(context: Context) : CameraController(context)
     @SuppressLint("MissingPermission")
     @MainThread
     fun bindToLifecycle(lifecycleOwner: LifecycleOwner, caseList: List<UseCase>?) {
-        if (caseList.isNullOrEmpty()) {
-            bindToLifecycle(lifecycleOwner)
-        } else {
-            bindToLifecycle(lifecycleOwner, UseCaseGroup.Builder().apply {
-                caseList.forEach {
-                    addUseCase(it)
-                }
-            }.build())
+        useCaseList = caseList
+        bindToLifecycle(lifecycleOwner)
+    }
+
+    /**添加一个用例*/
+    fun addCameraUseCase(useCase: UseCase) {
+        if (useCaseList == null) {
+            useCaseList = mutableListOf()
+        }
+        useCaseList = useCaseList?.toMutableList()?.apply {
+            add(useCase)
         }
     }
 
-    /**[bindToLifecycle]*/
-    @SuppressLint("MissingPermission")
-    @MainThread
-    fun bindToLifecycle(lifecycleOwner: LifecycleOwner, useCaseGroup: UseCaseGroup) {
-        this.useCaseGroup = useCaseGroup
-        bindToLifecycle(lifecycleOwner)
+    private var _effects: List<CameraEffect>? = null
+
+    override fun setEffects(effects: MutableList<CameraEffect>) {
+        super.setEffects(effects)
+        _effects = effects
     }
 
     override fun createUseCaseGroup(): UseCaseGroup? {
         //mImageAnalysis
         val originGroup = super.createUseCaseGroup()
-        if (originGroup == null && useCaseGroup == null) {
-            return null
+        if (useCaseList == null || originGroup == null) {
+            return originGroup
         }
         val resultGroup = UseCaseGroup.Builder().apply {
-            originGroup?.useCases?.forEach {
-                addUseCase(it)
+            mViewPort?.let { viewPort ->
+                setViewPort(viewPort)
             }
-            useCaseGroup?.useCases?.forEach {
-                addUseCase(it)
+            _effects?.forEach { effect ->
+                addEffect(effect)
+            }
+            originGroup.useCases.forEach { case ->
+                addUseCase(case)
+            }
+            useCaseList?.forEach { case ->
+                addUseCase(case)
             }
         }.build()
         return resultGroup
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    override fun updatePreviewViewTransform(outputTransform: OutputTransform?) {
+        super.updatePreviewViewTransform(outputTransform)
+        for (action in updatePreviewViewTransformList) {
+            action.invoke(outputTransform?.matrix)
+        }
     }
 
     /**
@@ -112,6 +135,18 @@ class DslLifecycleCameraController(context: Context) : CameraController(context)
         lifecycleOwner = null
         mCamera = null
         mCameraProvider?.unbindAll()
+    }
+
+    override fun setCameraSelector(cameraSelector: CameraSelector) {
+        Threads.checkMainThread()
+        if (mCameraSelector == cameraSelector) {
+            return
+        }
+        useCaseList?.let {
+            //必须要解绑所有
+            mCameraProvider?.unbind(*it.toTypedArray())
+        }
+        super.setCameraSelector(cameraSelector)
     }
 
     /**

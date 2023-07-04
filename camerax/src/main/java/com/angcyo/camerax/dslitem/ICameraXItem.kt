@@ -152,7 +152,7 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
         }
     }
 
-    /**添加一个用例
+    /**添加一个用例, 只在使用默认的控制器时, 才会自动添加[com.angcyo.camerax.dslitem.ICameraXItem.initCameraXWithController]
      * [buildImageCaptureUseCase]
      * [buildYUVImageAnalysisUseCase]
      * [buildBitmapAnalysisUseCase]
@@ -191,11 +191,7 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
                     setEnabledUseCases(CameraController.IMAGE_CAPTURE)
                     cameraSelector = cameraItemConfig.itemCameraSelector
                     if (cameraItemConfig.itemCameraUseCaseList.isNotEmpty()) {
-                        useCaseGroup = UseCaseGroup.Builder().apply {
-                            cameraItemConfig.itemCameraUseCaseList.forEach {
-                                addUseCase(it)
-                            }
-                        }.build()
+                        useCaseList = cameraItemConfig.itemCameraUseCaseList
                     }
                 }
             cameraController = cameraItemConfig.itemCameraController

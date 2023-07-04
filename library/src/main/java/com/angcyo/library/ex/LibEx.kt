@@ -3,6 +3,7 @@ package com.angcyo.library.ex
 import android.app.Activity
 import android.app.Application
 import android.content.pm.ApplicationInfo
+import android.graphics.Matrix
 import android.graphics.Point
 import android.graphics.PointF
 import android.net.Uri
@@ -48,6 +49,7 @@ typealias ClickAction = (View) -> Unit
 typealias ViewAction = ClickAction
 typealias TouchAction = (ev: MotionEvent) -> Boolean
 typealias BooleanAction = (Boolean) -> Unit
+typealias MatrixAction = (Matrix?) -> Unit
 typealias UriAction = (uri: Uri?, exception: Exception?) -> Unit
 
 /**别名*/
