@@ -10,6 +10,7 @@ import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.sleep
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
+import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.net.ConnectException
@@ -123,19 +124,21 @@ class Tcp : ICancel {
                     } catch (e: ConnectException) {
                         e.printStackTrace()
                         throw e
-                    } catch (e: SocketException) {
+                    } catch (e: IOException) {
+                        //SocketException SocketTimeoutException
                         this.socket = null
                         init()
                         tryCount++
                         if (tryCount > 5) {
-                            break
+                            throw e
                         }
+                        sleep(1000)
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 for (listener in listeners) {
-                    listener.onConnectStateChanged(this, TcpState(this, CONNECT_STATE_ERROR, data))
+                    listener.onConnectStateChanged(this, TcpState(this, CONNECT_STATE_ERROR, e))
                 }
             }
         }
