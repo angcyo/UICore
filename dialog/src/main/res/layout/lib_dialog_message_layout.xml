@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/lib_hdpi"
         android:button="@drawable/lib_check_rect_fill_selector"
-        android:buttonTint="@color/colorAccent"
+        android:buttonTint="@color/dialog_accent"
         android:paddingVertical="@dimen/lib_hdpi"
         android:paddingLeft="@dimen/lib_check_box_ico_padding"
         android:paddingRight="@dimen/lib_hdpi"

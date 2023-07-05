@@ -1,5 +1,6 @@
 package com.angcyo.item
 
+import android.view.View
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.data.LabelDesData
 import com.angcyo.library.annotation.DSL
@@ -42,7 +43,18 @@ open class DslTagGroupItem : DslAdapterItem() {
                 viewHolder.tv(R.id.lib_label_view)?.text = item.label
                 viewHolder.tv(R.id.lib_des_view)?.text = item.des
                 viewHolder.itemView.tooltipText(item.tooltipText)
+
+                onInitTagItemLayout(viewHolder, itemView, item, itemIndex)
             }
+    }
+
+    /**初始化tag item*/
+    open fun onInitTagItemLayout(
+        viewHolder: DslViewHolder,
+        itemView: View,
+        item: LabelDesData,
+        itemIndex: Int
+    ) {
     }
 
     /**初始化数据*/
