@@ -9,9 +9,12 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.util.SparseArray
+import androidx.core.util.isEmpty
+import androidx.core.util.valueIterator
 import androidx.lifecycle.LifecycleOwner
 import com.angcyo.library.app
 import java.lang.ref.WeakReference
+import kotlin.reflect.KClass
 
 
 /**
@@ -234,6 +237,32 @@ object RBackground {
             }
         }
         return false
+    }
+
+    fun isCreatedActivity(cls: KClass<out Activity>): Boolean {
+        return isCreatedActivity(cls.java)
+    }
+
+    /**指定的[Activity]是否创建过*/
+    fun isCreatedActivity(cls: Class<out Activity>): Boolean {
+        stack.valueIterator().forEach {
+            if (it.startsWith(cls.name)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    fun isLastActivity(cls: KClass<out Activity>): Boolean {
+        return isLastActivity(cls.java)
+    }
+
+    /**最后一个[Activity]是否是自定的*/
+    fun isLastActivity(cls: Class<out Activity>): Boolean {
+        if (stack.isEmpty()) {
+            return false
+        }
+        return stack.valueAt(stack.size() - 1).contains(cls.name)
     }
 
     //endregion ---静态方法---
