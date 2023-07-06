@@ -351,6 +351,12 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
         cameraItemConfig._cameraControl?.setZoomRatio(scaleFactor * currentZoomRatio)
     }
 
+    /**线性缩放, 默认可能在0.3左右
+     * [linearZoom] [0~1f]*/
+    fun setLinerZoomCamera(linearZoom: Float) {
+        cameraItemConfig._cameraControl?.setLinearZoom(linearZoom)
+    }
+
     /**切换摄像头*/
     fun switchCamera() {
         val itemHolder = cameraItemConfig._itemHolder ?: return

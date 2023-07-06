@@ -15,6 +15,7 @@ open class CameraXPreviewFragment : BaseTitleFragment() {
 
     val cameraItem = DslCameraXViewItem().apply {
         itemCameraPriorityUseController = true
+        cameraItemConfig.itemEnableCameraScaleTouch = true
     }
 
     init {
