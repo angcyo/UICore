@@ -29,7 +29,7 @@ class FlowManager {
 
     /**流程是否正在运行*/
     val isRunning: Boolean
-        get() = flowState == IFlow.FLOW_STATE_START
+        get() = flowState == IFlow.FLOW_STATE_START || flowState == IFlow.FLOW_STATE_RUNNING
 
     /**是否全部流程执行完毕*/
     val isFinish: Boolean
@@ -52,6 +52,9 @@ class FlowManager {
 
     /**总流程状态改变回调*/
     var flowStateChangedAction: (state: Int) -> Unit = { }
+
+    /**流程异常后, 是否拦截处理*/
+    var flowErrorAction: (error: Throwable) -> Boolean = { false }
 
     //---
 
@@ -77,6 +80,7 @@ class FlowManager {
     /**完成流程*/
     @WorkerThread
     fun finishFlow() {
+        _currentFlow?.interrupt(IllegalStateException("流程被中断"))
         changeFlowState(IFlow.FLOW_STATE_END)
     }
 
@@ -88,6 +92,9 @@ class FlowManager {
 
     @WorkerThread
     private fun nextFlow() {
+        if (!isRunning) {
+            return
+        }
         var flow: IFlow? = null
         if (_currentFlow == null) {
             flow = flowList.firstOrNull()
@@ -119,7 +126,11 @@ class FlowManager {
             } catch (e: Exception) {
                 e.printStackTrace()
                 errorFlowList.add(flow)
-                nextFlow()
+                if (flowErrorAction(e)) {
+                    //拦截后, 不再执行下一个流程
+                } else {
+                    nextFlow()
+                }
             }
         }
     }

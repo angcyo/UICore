@@ -16,6 +16,7 @@ interface IFlow {
         const val FLOW_STATE_START = 1
         const val FLOW_STATE_RUNNING = 2
         const val FLOW_STATE_END = 3
+        const val FLOW_STATE_ERROR = 4
     }
 
     /**流程的标题*/
@@ -34,6 +35,13 @@ interface IFlow {
     @CallPoint
     @WorkerThread
     fun flowRun()
+
+    /**流程被中断*/
+    fun interrupt(error: Throwable) {
+        if (flowState == FLOW_STATE_RUNNING) {
+            changeFlowState(FLOW_STATE_ERROR)
+        }
+    }
 
     /**改变流程状态, 并触发下一个*/
     @CallPoint
