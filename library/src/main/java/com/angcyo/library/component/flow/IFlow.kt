@@ -28,6 +28,9 @@ interface IFlow {
     /**当前流程的状态*/
     var flowState: Int
 
+    /**最后的错误*/
+    var flowLastError: Throwable?
+
     /**流程状态改变回调*/
     var flowStateChangedAction: (old: Int, new: Int) -> Unit
 
@@ -38,7 +41,8 @@ interface IFlow {
 
     /**流程被中断*/
     fun interrupt(error: Throwable) {
-        if (flowState == FLOW_STATE_RUNNING) {
+        if (isRunning) {
+            flowLastError = error
             changeFlowState(FLOW_STATE_ERROR)
         }
     }
@@ -51,3 +55,11 @@ interface IFlow {
         flowStateChangedAction(old, new)
     }
 }
+
+/**流程是否正在运行*/
+val IFlow.isRunning: Boolean
+    get() = flowState == IFlow.FLOW_STATE_START || flowState == IFlow.FLOW_STATE_RUNNING
+
+/**是否全部流程执行完毕*/
+val IFlow.isFinish: Boolean
+    get() = flowState == IFlow.FLOW_STATE_END

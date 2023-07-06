@@ -11,6 +11,7 @@ abstract class BaseFlow : IFlow {
     override var flowTitle: CharSequence? = null
     override var flowDes: CharSequence? = null
     override var flowState: Int = IFlow.FLOW_STATE_NONE
+    override var flowLastError: Throwable? = null
 
     override var flowStateChangedAction: (old: Int, new: Int) -> Unit = { _, _ -> }
 

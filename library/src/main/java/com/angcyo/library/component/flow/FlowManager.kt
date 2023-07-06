@@ -45,6 +45,9 @@ class FlowManager {
             return finish
         }
 
+    /**最后的错误*/
+    var lastError: Throwable? = null
+
     //---
 
     /**子流程状态改变回调*/
@@ -73,15 +76,26 @@ class FlowManager {
             L.w("没有需要执行的流程")
             return
         }
+        lastError = null
         changeFlowState(IFlow.FLOW_STATE_START)
         nextFlow()
     }
 
     /**完成流程*/
     @WorkerThread
-    fun finishFlow() {
-        _currentFlow?.interrupt(IllegalStateException("流程被中断"))
-        changeFlowState(IFlow.FLOW_STATE_END)
+    fun finishFlow(error: Throwable? = null) {
+        lastError = error
+        _currentFlow?.apply {
+            if (isRunning) {
+                changeFlowState(IFlow.FLOW_STATE_END)
+                interrupt(error ?: IllegalStateException("流程被中断"))
+            }
+        }
+        if (error == null) {
+            changeFlowState(IFlow.FLOW_STATE_END)
+        } else {
+            changeFlowState(IFlow.FLOW_STATE_ERROR)
+        }
     }
 
     private fun changeFlowState(new: Int) {
