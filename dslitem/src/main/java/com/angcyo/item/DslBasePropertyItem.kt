@@ -15,18 +15,18 @@ open class DslBasePropertyItem : DslAdapterItem(), ILabelItem, IDesItem {
 
     /**属性标签
      * [itemLabelText]*/
-    override var labelItemConfig: LabelItemConfig = LabelItemConfig()
+    override var labelItemConfig: LabelItemConfig = LabelItemConfig().apply {
+        itemLabelTextStyle.goneOnTextEmpty = true
+    }
 
     /**属性描述
      * [itemDes]*/
-    override var desItemConfig: DesItemConfig = DesItemConfig()
+    override var desItemConfig: DesItemConfig = DesItemConfig().apply {
+        itemDesStyle.goneOnTextEmpty = true
+    }
 
     init {
         itemLayoutId = R.layout.dsl_base_property_item
-
-        configDesStyle {
-            goneOnTextEmpty = true
-        }
     }
 
 }
