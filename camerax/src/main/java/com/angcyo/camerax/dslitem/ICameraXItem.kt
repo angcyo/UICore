@@ -3,8 +3,10 @@ package com.angcyo.camerax.dslitem
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.ImageFormat
 import android.graphics.Matrix
 import android.net.Uri
+import android.util.Size
 import android.util.TypedValue
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -621,6 +623,28 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
         }
     }
 
+    /**获取摄像头支持的输出分辨率
+     * ## ImageFormat.YUV_420_888
+     * ```
+     * ImageFormat.YUV_420_888:4096x3072, 4000x3000, 4096x2304, 3072x3072, 3840x2160, 3280x2464,
+     * 3264x2448, 4096x1834, 3840x1644, 3264x1836, 2448x2448, 2752x2064, 2592x1944,
+     * 3264x1472, 3216x1440, 2304x1728, 2560x1440, 2304x1296, 1728x1728, 1920x1440,
+     * 2520x1080, 2412x1080, 2304x1036, 2160x1080, 1920x1080, 1600x1200, 1440x1080,
+     * 1200x1200, 1600x800, 1280x960, 1080x1080, 1608x720, 1280x720, 1024x768, 1206x540,
+     * 864x480, 720x540, 720x480, 800x400, 640x480, 804x360, 640x360, 352x288, 320x240, 176x144
+     * ```
+     * ## ImageFormat.RGB_565
+     * ```
+     * null
+     * ```
+     * */
+    fun getCameraSupportOutputSizes(format: Int = ImageFormat.YUV_420_888): Array<Size>? {
+        return cameraItemConfig._cameraInfo?.run {
+            com.angcyo.camerax.core.Camera.getStreamConfigurationMap(this)
+                ?.getOutputSizes(format)
+        }
+    }
+
     //endregion ---操作---
 
     //region ---UseCase---
@@ -631,7 +655,8 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
         action: Preview.Builder.() -> Unit = {}
     ): Preview {
         return Preview.Builder()
-            .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+            //setTargetAspectRatio 和 setTargetResolution 不能同时使用
+            //.setTargetAspectRatio(AspectRatio.RATIO_4_3)
             .setTargetRotation(rotation)
             .apply(action)
             .build()
@@ -643,7 +668,8 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
         action: ImageCapture.Builder.() -> Unit = {},
     ): ImageCapture {
         return ImageCapture.Builder()
-            .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+            //setTargetAspectRatio 和 setTargetResolution 不能同时使用
+            //.setTargetAspectRatio(AspectRatio.RATIO_4_3)
             .setTargetRotation(rotation)
             //.setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY) //最大化质量
             .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY) //最小化延迟
@@ -658,7 +684,8 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
         action: VideoCapture.Builder.() -> Unit = {},
     ): VideoCapture {
         return VideoCapture.Builder()
-            .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+            //setTargetAspectRatio 和 setTargetResolution 不能同时使用
+            //.setTargetAspectRatio(AspectRatio.RATIO_4_3)
             .setTargetRotation(rotation)
             .setVideoFrameRate(30)
             .setBitRate(3 * 1024 * 1024)
@@ -673,7 +700,9 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
         action: ImageAnalysis.Builder.() -> Unit = {},
     ): ImageAnalysis {
         return ImageAnalysis.Builder()
-            .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+            //setTargetAspectRatio 和 setTargetResolution 不能同时使用
+            //.setTargetAspectRatio(AspectRatio.RATIO_4_3)
+            //.setTargetResolution()
             .setTargetRotation(rotation)
             //.setOutputImageRotationEnabled()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
