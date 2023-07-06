@@ -46,6 +46,19 @@
         app:srcCompat="@drawable/camerax_ic_camera_shutter"
         app:tint="@color/camerax_button_tint" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/lib_camera_torch_view"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="32dp"
+        android:background="@drawable/camerax_circle_background"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/lib_camera_shutter_view"
+        app:layout_constraintStart_toEndOf="@id/lib_camera_shutter_view"
+        app:layout_constraintTop_toTopOf="@id/lib_camera_shutter_view"
+        app:srcCompat="@drawable/camerax_ic_torch"
+        app:tint="@color/camerax_button_tint" />
+
     <!--preview-->
 
     <androidx.appcompat.widget.AppCompatImageView

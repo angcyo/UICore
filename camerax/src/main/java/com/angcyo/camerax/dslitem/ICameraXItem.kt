@@ -16,6 +16,7 @@ import androidx.annotation.WorkerThread
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraControl
+import androidx.camera.core.CameraInfo
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageAnalysis
@@ -24,6 +25,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.MeteringPoint
 import androidx.camera.core.Preview
+import androidx.camera.core.TorchState
 import androidx.camera.core.UseCase
 import androidx.camera.core.UseCaseGroup
 import androidx.camera.core.VideoCapture
@@ -115,6 +117,12 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
         itemHolder.click(R.id.lib_camera_switch_view) {
             it.isEnabled = hasCamera()
             switchCamera()
+        }
+
+        //闪光灯
+        itemHolder.click(R.id.lib_camera_torch_view) {
+            it.isEnabled = hasCamera()
+            enableCameraTorch(!isTorchEnable())
         }
 
         //拍照, 预览/显示
@@ -289,6 +297,35 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
 
     //region ---操作---
 
+    /**闪光灯是否已打开*/
+    fun isTorchEnable(): Boolean {
+        val cameraInfo = cameraItemConfig._cameraInfo
+        return cameraInfo?.torchState?.value == TorchState.ON
+    }
+
+    /**启用手电筒或禁用手电筒*/
+    fun enableCameraTorch(enable: Boolean = true): Boolean {
+        val cameraInfo = cameraItemConfig._cameraInfo
+        return if (cameraInfo?.hasFlashUnit() == true) {
+            if (isTorchEnable()) {
+                if (enable) {
+                    return true
+                }
+            } else {
+                if (!enable) {
+                    return true
+                }
+            }
+            cameraItemConfig._cameraControl?.let {
+                it.enableTorch(enable)
+            }
+            true
+        } else {
+            L.w("当前摄像头不支持手电筒")
+            false
+        }
+    }
+
     /**对焦*/
     fun focusCamera(x: Float, y: Float) {
         val cameraView = cameraItemConfig._previewView
@@ -310,15 +347,8 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
     /**缩放
      * [scaleFactor] 在现有基础上缩放的比例*/
     fun scaleCamera(scaleFactor: Float) {
-        if (cameraItemConfig.itemCameraPriorityUseController) {
-            val controller = cameraItemConfig._previewView?.controller ?: return
-            val currentZoomRatio = controller.cameraInfo?.zoomState?.value?.zoomRatio ?: 1f
-            cameraItemConfig._cameraControl?.setZoomRatio(scaleFactor * currentZoomRatio)
-        } else {
-            val currentZoomRatio =
-                cameraItemConfig._itemCamera?.cameraInfo?.zoomState?.value?.zoomRatio ?: 1f
-            cameraItemConfig._cameraControl?.setZoomRatio(scaleFactor * currentZoomRatio)
-        }
+        val currentZoomRatio = cameraItemConfig._cameraInfo?.zoomState?.value?.zoomRatio ?: 1f
+        cameraItemConfig._cameraControl?.setZoomRatio(scaleFactor * currentZoomRatio)
     }
 
     /**切换摄像头*/
@@ -828,6 +858,10 @@ class CameraItemConfig : IDslItemConfig {
     /**[CameraControl]*/
     val _cameraControl: CameraControl?
         get() = _previewView?.controller?.cameraControl ?: _itemCamera?.cameraControl
+
+    /**[CameraInfo]*/
+    val _cameraInfo: CameraInfo?
+        get() = _previewView?.controller?.cameraInfo ?: _itemCamera?.cameraInfo
 
     //region ---touch---
 
