@@ -39,6 +39,13 @@ interface IFlow {
     @WorkerThread
     fun flowRun()
 
+    /**流程重置*/
+    @CallPoint
+    fun flowReset() {
+        flowState = FLOW_STATE_NONE
+        flowLastError = null
+    }
+
     /**流程被中断*/
     fun interrupt(error: Throwable) {
         if (isRunning) {
@@ -63,3 +70,13 @@ val IFlow.isRunning: Boolean
 /**是否全部流程执行完毕*/
 val IFlow.isFinish: Boolean
     get() = flowState == IFlow.FLOW_STATE_END
+
+/**流程状态转换成字符串*/
+fun Int.toFlowStateStr() = when (this) {
+    IFlow.FLOW_STATE_NONE -> "未开始"
+    IFlow.FLOW_STATE_START -> "开始"
+    IFlow.FLOW_STATE_RUNNING -> "运行中"
+    IFlow.FLOW_STATE_END -> "结束"
+    IFlow.FLOW_STATE_ERROR -> "错误"
+    else -> "未知"
+}

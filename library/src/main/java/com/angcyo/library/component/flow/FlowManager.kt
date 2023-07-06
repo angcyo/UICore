@@ -98,6 +98,18 @@ class FlowManager {
         }
     }
 
+    /**重置流程管理*/
+    fun resetFlow() {
+        for (flow in flowList) {
+            flow.flowReset()
+        }
+        finishFlowList.clear()
+        errorFlowList.clear()
+        flowState = IFlow.FLOW_STATE_NONE
+        _currentFlow = null
+        lastError = null
+    }
+
     private fun changeFlowState(new: Int) {
         val old = flowState
         flowState = new
