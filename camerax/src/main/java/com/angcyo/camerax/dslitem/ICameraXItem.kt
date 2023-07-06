@@ -12,6 +12,7 @@ import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.View
 import androidx.annotation.MainThread
+import androidx.annotation.UiThread
 import androidx.annotation.WorkerThread
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.Camera
@@ -19,6 +20,7 @@ import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraInfo
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.FocusMeteringResult
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -298,12 +300,14 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
     //region ---操作---
 
     /**闪光灯是否已打开*/
+    @UiThread
     fun isTorchEnable(): Boolean {
         val cameraInfo = cameraItemConfig._cameraInfo
         return cameraInfo?.torchState?.value == TorchState.ON
     }
 
     /**启用手电筒或禁用手电筒*/
+    @UiThread
     fun enableCameraTorch(enable: Boolean = true): Boolean {
         val cameraInfo = cameraItemConfig._cameraInfo
         return if (cameraInfo?.hasFlashUnit() == true) {
@@ -327,18 +331,20 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
     }
 
     /**对焦*/
-    fun focusCamera(x: Float, y: Float) {
+    @UiThread
+    fun focusCamera(x: Float, y: Float): ListenableFuture<FocusMeteringResult>? {
         val cameraView = cameraItemConfig._previewView
-        cameraView?.let {
-            val meteringPointFactory = it.meteringPointFactory
+        return cameraView?.run {
+            val meteringPointFactory = meteringPointFactory
             val focusPoint = meteringPointFactory.createPoint(x, y)
             focusCamera(focusPoint)
         }
     }
 
     /**对焦*/
-    fun focusCamera(meteringPoint: MeteringPoint) {
-        cameraItemConfig._cameraControl?.apply {
+    @UiThread
+    fun focusCamera(meteringPoint: MeteringPoint): ListenableFuture<FocusMeteringResult>? {
+        return cameraItemConfig._cameraControl?.run {
             val meteringAction = FocusMeteringAction.Builder(meteringPoint).build()
             startFocusAndMetering(meteringAction)
         }
@@ -346,18 +352,21 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
 
     /**缩放
      * [scaleFactor] 在现有基础上缩放的比例*/
-    fun scaleCamera(scaleFactor: Float) {
+    @UiThread
+    fun scaleCamera(scaleFactor: Float): ListenableFuture<Void>? {
         val currentZoomRatio = cameraItemConfig._cameraInfo?.zoomState?.value?.zoomRatio ?: 1f
-        cameraItemConfig._cameraControl?.setZoomRatio(scaleFactor * currentZoomRatio)
+        return cameraItemConfig._cameraControl?.setZoomRatio(scaleFactor * currentZoomRatio)
     }
 
     /**线性缩放, 默认可能在0.3左右
      * [linearZoom] [0~1f]*/
-    fun setLinerZoomCamera(linearZoom: Float) {
-        cameraItemConfig._cameraControl?.setLinearZoom(linearZoom)
+    @UiThread
+    fun setLinerZoomCamera(linearZoom: Float): ListenableFuture<Void>? {
+        return cameraItemConfig._cameraControl?.setLinearZoom(linearZoom)
     }
 
     /**切换摄像头*/
+    @UiThread
     fun switchCamera() {
         val itemHolder = cameraItemConfig._itemHolder ?: return
         val cameraView = cameraItemConfig._previewView ?: return
@@ -381,8 +390,10 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
         }
     }
 
+    @UiThread
     fun hasCamera() = hasBackCamera() || hasFrontCamera()
 
+    @UiThread
     fun hasBackCamera(): Boolean {
         if (cameraItemConfig.itemCameraPriorityUseController) {
             val cameraView = cameraItemConfig._previewView ?: return false
@@ -393,6 +404,7 @@ interface ICameraXItem : IDslItem, ICameraTouchListener {
         }
     }
 
+    @UiThread
     fun hasFrontCamera(): Boolean {
         if (cameraItemConfig.itemCameraPriorityUseController) {
             val cameraView = cameraItemConfig._previewView ?: return false
