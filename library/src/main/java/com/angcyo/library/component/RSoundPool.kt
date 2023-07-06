@@ -140,6 +140,7 @@ class RSoundPool {
         }
     }
 
+    /**现在加载指定类型的资源, 之后才可以通过[play]播放播放对应类型的铃声*/
     fun loadDefaultRingtone(
         type: Int = RingtoneManager.TYPE_NOTIFICATION,
         play: Boolean = false,
@@ -173,7 +174,8 @@ class RSoundPool {
     }
 
     /**播放资源
-     * [R.raw.incoming]*/
+     * [R.raw.incoming]
+     * */
     fun play(res: Int, context: Context = app()) {
         loadRes(res, true, context)
     }
