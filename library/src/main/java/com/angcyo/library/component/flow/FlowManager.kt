@@ -87,7 +87,13 @@ class FlowManager {
         lastError = error
         _currentFlow?.apply {
             if (isRunning) {
-                changeFlowState(IFlow.FLOW_STATE_END)
+                if (error == null) {
+                    finishFlowList.add(this)
+                    changeFlowState(IFlow.FLOW_STATE_END)
+                } else {
+                    errorFlowList.add(this)
+                    changeFlowState(IFlow.FLOW_STATE_ERROR)
+                }
                 interrupt(error ?: IllegalStateException("流程被中断"))
             }
         }
