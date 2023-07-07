@@ -163,7 +163,11 @@ class RSoundPool {
                 context,
                 type
             )
-            val id = soundPool.load(uri.path, priority)
+            val id = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                soundPool.load(RingtoneManager.openDefaultRingtoneUri(context, uri), priority)
+            } else {
+                soundPool.load(uri.path, priority)
+            }
             item.soundId = id
             if (play) {
                 pendingPlayIdList.add(id)
