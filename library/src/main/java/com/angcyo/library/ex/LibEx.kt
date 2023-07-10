@@ -650,6 +650,44 @@ fun clamp(value: Float, min: Float, max: Float): Float = min(max(value, min), ma
 
 fun clamp(value: Int, min: Int, max: Int): Int = min(max(value, min), max)
 
+/**在同方向上取最大值
+ * [target] 参与比较的值
+ * [threshold] 阈值, 正值, 自动取反(负值)
+ * */
+fun maxOfDirection(target: Int, threshold: Int, defZero: Int = 0) = if (target == 0)
+    defZero
+else if (target > 0)
+    max(target, threshold)
+else
+    min(target, -threshold)
+
+/**[maxOfDirection]*/
+fun maxOfDirection(target: Float, threshold: Float, defZero: Float = 0f) = if (target == 0f)
+    defZero
+else if (target > 0)
+    max(target, threshold)
+else
+    min(target, -threshold)
+
+/**在同方向上取最小值
+ * [target] 参与比较的值
+ * [threshold] 阈值, 正值, 自动取反(负值)
+ * */
+fun minOfDirection(target: Int, threshold: Int, defZero: Int = 0) = if (target == 0)
+    defZero
+else if (target > 0)
+    min(target, threshold)
+else
+    max(target, -threshold)
+
+/**[minOfDirection]*/
+fun minOfDirection(target: Float, threshold: Float, defZero: Float = 0f) = if (target == 0f)
+    defZero
+else if (target > 0)
+    min(target, threshold)
+else
+    max(target, -threshold)
+
 /**都是正数, 或者都是负数*/
 fun isSameDirection(value1: Int, value2: Int) =
     value1 == 0 || value2 == 0 || (value1 > 0 && value2 > 0) || (value1 < 0 && value2 < 0)
