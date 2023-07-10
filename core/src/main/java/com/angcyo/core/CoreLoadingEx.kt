@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import androidx.activity.result.ActivityResultCaller
+import androidx.annotation.UiThread
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import com.angcyo.coroutine.launchLifecycle
@@ -134,6 +135,7 @@ fun ActivityResultCaller.tgStrokeLoadingCaller(
 
 /**扩展的对象不一样
  * [Context]*/
+@UiThread
 fun Context.tgStrokeLoading(
     cancel: Boolean = false,
     showErrorToast: Boolean = false,

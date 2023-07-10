@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultCaller
 import androidx.annotation.AnyThread
 import androidx.annotation.LayoutRes
+import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -110,6 +111,7 @@ fun hideLoading(text: CharSequence?) {
 }
 
 /**隐藏对话框*/
+@AnyThread
 fun hideLoading(
     dialog: Dialog?,
     transition: Boolean = false,
@@ -155,6 +157,7 @@ fun hideLoading(
 }
 
 /**更新加载进度*/
+@AnyThread
 fun updateLoadingProgress(progress: String?) {
     lastDialog()?.window?.decorView?.dslViewHolder()?.apply {
         post {
@@ -171,11 +174,13 @@ fun updateLoadingProgress(progress: String?) {
 /**[updateLoadingProgress]
  * [view] 要操作的视图
  * [progress] 进度文本*/
+@AnyThread
 fun updateLoadingProgress(view: View?, progress: String?) {
     view.updateProgress(progress)
 }
 
 /**[updateLoadingProgress]*/
+@AnyThread
 fun View?.updateProgress(progress: String?) {
     val view = this ?: return
     view.isVisible = progress != null
@@ -200,6 +205,7 @@ fun View?.updateProgress(progress: String?) {
 //<editor-fold desc="中间转菊花的对话框">
 
 /**显示在中间转菊花*/
+@UiThread
 fun ActivityResultCaller.loadingCaller(
     text: CharSequence? = null,
     @LayoutRes layoutId: Int = R.layout.lib_dialog_flow_loading_layout,
@@ -222,6 +228,7 @@ fun ActivityResultCaller.loadingCaller(
     }
 }
 
+@UiThread
 fun Context.loading(
     text: CharSequence? = null,
     @LayoutRes layoutId: Int = R.layout.lib_dialog_flow_loading_layout,
@@ -278,6 +285,7 @@ fun Context.loading(
 //<editor-fold desc="底部弹出显示的loading对话框">
 
 /**在底部显示的加载对话框*/
+@UiThread
 fun ActivityResultCaller.loadingBottomCaller(
     text: CharSequence? = "请稍等...",
     showCloseView: Boolean = true,
@@ -294,6 +302,7 @@ fun ActivityResultCaller.loadingBottomCaller(
 }
 
 /**快速在[Fragment]显示底部loading, 通常用于包裹一个网络请求*/
+@UiThread
 fun ActivityResultCaller.loadLoadingBottomCaller(
     tip: CharSequence? = "请稍等...",
     successTip: CharSequence? = "请求完成!",
@@ -327,6 +336,7 @@ fun ActivityResultCaller.loadLoadingBottomCaller(
 
 
 /**快速在[Fragment]显示loading, 通常用于包裹一个网络请求*/
+@UiThread
 fun ActivityResultCaller.loadLoadingCaller(
     tip: CharSequence? = null,
     action: (cancel: AtomicBoolean, loadEnd: (data: Any?, error: Throwable?) -> Unit) -> Unit
@@ -360,6 +370,7 @@ data class LoadingConfig(
 )
 
 /**快速显示[loadingCaller]对话框*/
+@UiThread
 fun ActivityResultCaller.dslLoading(
     bottom: Boolean = false, action: LoadingConfig.() -> Unit = {}
 ): Dialog? {
