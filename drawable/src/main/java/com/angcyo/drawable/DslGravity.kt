@@ -240,3 +240,11 @@ fun Int.isGravityBottom(): Boolean {
     val verticalGravity = this and Gravity.VERTICAL_GRAVITY_MASK
     return verticalGravity == Gravity.BOTTOM
 }
+
+/**获取垂直方向上的Gravity*/
+val Int._verticalGravity: Int
+    get() = this and Gravity.VERTICAL_GRAVITY_MASK
+
+/**获取水平方向上的Gravity*/
+val Int._horizontalGravity: Int
+    get() = this and Gravity.HORIZONTAL_GRAVITY_MASK
