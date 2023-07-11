@@ -257,7 +257,18 @@ fun Bitmap.save(
     quality: Int = 90, //PNG时,此属性无效.
     recycle: Boolean = false //保存完成之后, 是否自动回收图片
 ): File {
-    return path.file().apply {
+    return save(path.file(), format, quality, recycle)
+}
+
+/**保存图片
+ * [save]*/
+fun Bitmap.save(
+    file: File,
+    format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG, //JPEG才支持压缩
+    quality: Int = 90, //PNG时,此属性无效.
+    recycle: Boolean = false //保存完成之后, 是否自动回收图片
+): File {
+    return file.apply {
         outputStream().use {
             compress(format, quality, it)
         }
