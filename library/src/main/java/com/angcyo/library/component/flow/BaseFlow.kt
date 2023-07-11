@@ -26,4 +26,9 @@ abstract class BaseFlow : IFlow {
     fun finishFlow() {
         changeFlowState(IFlow.FLOW_STATE_END)
     }
+
+    /**流程运行中的状态通知*/
+    fun runningFlow() {
+        changeFlowState(IFlow.FLOW_STATE_RUNNING)
+    }
 }
