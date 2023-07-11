@@ -2,11 +2,13 @@ package com.angcyo.dialog.dslitem
 
 import android.graphics.drawable.Drawable
 import android.view.Gravity
+import androidx.annotation.Px
 import com.angcyo.dialog.R
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.setBoldText
 import com.angcyo.widget.base.setLeftIco
+import com.angcyo.widget.base.setTextSizePx
 
 /**
  * Dialog中的文本item
@@ -20,6 +22,10 @@ open class DslDialogTextItem : DslAdapterItem() {
 
     /**支持span*/
     var itemText: CharSequence? = null
+
+    /**文本文字大小*/
+    @Px
+    var itemTextSize: Float? = null
 
     /**是否是粗体*/
     var itemTextBold: Boolean = false
@@ -50,6 +56,7 @@ open class DslDialogTextItem : DslAdapterItem() {
             setLeftIco(itemLeftDrawable)
             gravity = itemTextGravity
             setBoldText(itemTextBold)
+            itemTextSize?.let { setTextSizePx(it) }
             text = itemText
         }
     }
