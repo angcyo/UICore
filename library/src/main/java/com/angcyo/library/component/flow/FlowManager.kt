@@ -31,8 +31,12 @@ class FlowManager {
     val isRunning: Boolean
         get() = flowState == IFlow.FLOW_STATE_START || flowState == IFlow.FLOW_STATE_RUNNING
 
-    /**是否全部流程执行完毕*/
+    /**流程状态是否完成*/
     val isFinish: Boolean
+        get() = flowState == IFlow.FLOW_STATE_END || flowState == IFlow.FLOW_STATE_ERROR
+
+    /**是否全部流程执行完毕*/
+    val isFlowFinish: Boolean
         get() {
             var finish = true
             for (f in flowList) {
