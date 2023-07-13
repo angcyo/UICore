@@ -94,7 +94,11 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     val itemUpdateDependObserver = mutableSetOf<ItemUpdateDependAction>()
 
-    //关联item type和item layout id
+    /**关联item type和item layout id
+     * itemType 和 itemLayoutId 的对应关系
+     * itemType 不指定的情况下等于 itemLayoutId
+     * 相同的itemLayoutId可以指定不同的itemType
+     * */
     val _itemLayoutHold = hashMapOf<Int, Int>()
 
     init {

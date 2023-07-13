@@ -239,7 +239,11 @@ open class DslAdapterItem : LifecycleOwner {
     //<editor-fold desc="标准属性">
 
     /**item的布局类型, 当[itemLayoutId]一样, 只是内部的内容不一样时, 阔以使用.
-     * 比如im聊天界面*/
+     * 比如im聊天界面
+     *
+     * itemType不指定的情况下会取itemLayoutId的值
+     * 相同的itemLayoutId可以指定不同的itemType
+     * */
     open var itemViewType: Int? = null
 
     /**布局的xml id, 必须设置.*/
