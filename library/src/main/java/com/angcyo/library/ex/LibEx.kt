@@ -576,6 +576,21 @@ fun <T> List<T>.isElementAfterWith(element: T, anchor: T, def: Boolean = true): 
     }
 }
 
+/**使用行列的方式, 获取指定数据
+ * [columnCount] 列数
+ * [row] 需要获取第几行的数据
+ * [column] 需要获取第几列的数据
+ * */
+fun <T> List<T>.getRowColumn(
+    columnCount: Int,
+    row: Int,
+    column: Int,
+    def: T? = null
+): T? {
+    val index = row * columnCount + column
+    return getOrNull(index) ?: def
+}
+
 /**将当前元素, 移动到列表末尾*/
 fun <T> MutableList<T>.moveToLast(element: T) {
     remove(element)
