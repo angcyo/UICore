@@ -27,12 +27,34 @@ buildscript {
     }
 }
 
-task _excelMaterial(group: 'angcyo', description: 'LaserPecker 从Excel中读取材质参数') {
+task _excelMaterialBlue(group: 'angcyo', description: '蓝光-LaserPecker 从Excel中读取材质参数') {
     //配置任务
 }
 
-//执行任务
-_excelMaterial.doLast {
+task _excelMaterialWhite(group: 'angcyo', description: '白光-LaserPecker 从Excel中读取材质参数') {
+    //配置任务
+}
+
+//#1:1064nm激光 (白光-雕) 0:450nm激光 (蓝光-烧)
+
+//执行蓝光任务
+_excelMaterialBlue.doLast {
+    def laserType = 0
+    def layerIndexList = [9, 11, 13, 15]
+    def layerIdList = ["layerFill", "layerPicture", "layerLine", "layerCut"]
+    exportExcelData(laserType, layerIndexList, layerIdList)
+}
+
+//执行白光任务
+_excelMaterialWhite.doLast {
+    //激光类型
+    def laserType = 1
+    def layerIndexList = [3, 5, 7]
+    def layerIdList = ["layerFill", "layerPicture", "layerLine"]
+    exportExcelData(laserType, layerIndexList, layerIdList)
+}
+
+def exportExcelData(laserType, layerIndexList, layerIdList) {
     //默认的excel文件路径
     def defExcelPath = 'material.xlsx'
     def excelPath = project.hasProperty("excel_path") ? project.ext.excel_path : defExcelPath
@@ -42,6 +64,10 @@ _excelMaterial.doLast {
     if (!excelFile.exists()) {
         throw new IllegalStateException("请在[gradle.properties]文件中配置excel文件路径:excel_path")
     }
+
+
+    //输出文件
+    def outputFile = file("material_${laserType}.json")
 
     //读取数据
     // 指定excel文件，创建缓存输入流
@@ -55,107 +81,121 @@ _excelMaterial.doLast {
     def jsonList = new ArrayList<Map<String, Object>>()
 
     def beforeMaterial = null //之前的材质
-    def beforeLayerName = null //之前的模式
     def beforeResIdStr = null //之前的本地资源key
 
-    for (line in 0..<sheet.getPhysicalNumberOfRows()) {
+    def line = 3 //从第3行开始才有读取数据
+    //println("总行数:${sheet.getPhysicalNumberOfRows()}")
+    //1 / 0
+    while (line < sheet.getPhysicalNumberOfRows()) {//一组一组读取(1K/2K/4K 一次性读取功率深度)
         def row = sheet.getRow(line)
-        //println row.getPhysicalNumberOfCells()
-        if (line == 0) {
-            //头:编号 材质 功率 深度 分辨率 模式
-            print row.getCell(0)
-            print " "
-            print row.getCell(1)
-            print " "
-            print row.getCell(2)
-            print " "
-            print row.getCell(3)
-            print " "
-            print row.getCell(4)
-            print " "
-            print row.getCell(5)
-            println()
+        //printLine(line, row)
+        //1 / 0
+        def material = row.getCell(0).toString() //材质名称 环保纸
+        def dpi = row.getCell(1).toString() //分辨率 1K 2K 4K
+        def dpiScale = dpi.toLowerCase().replace("k", "") //缩放比例
+
+        //
+        if (!material.isBlank()) {
+            beforeMaterial = material.split("/")[0]
+            beforeResIdStr = material.split("/")[1]
+        }
+
+        material = beforeMaterial
+        def resIdStr = beforeResIdStr
+
+        def map = new HashMap<String, Object>()
+        map.put("type", laserType)
+
+        if (dpiScale.isBlank()) {
+            //dpiScale 为空, 跳过处理
+            println("${material} -> dpiScale 为空, 跳过处理")
+            line = line + 2
+            continue
+        }
+
+        def dpiFloat = dpiScale.toFloat()
+        def dpiInt = dpiFloat.toInteger()
+        if (dpiFloat == dpiInt) {
+            map.put("dpiScale", dpiInt)
         } else {
-            def type = project.ext.excel_material_laser_type.toFloat().toInteger() //激光类型
-            def material = row.getCell(1).toString() //材质名称 环保纸
-            def power = row.getCell(2).toString() //功率
-            def depth = row.getCell(3).toString() //深度
-            def dpi = row.getCell(4).toString() //分辨率 1K 2K 4K
-            def layerName = row.getCell(5).toString() //模式 黑白or灰度
-
-            def resIdStr = row.getCell(6).toString() //国际化资源key
-
-            def dpiScale = dpi.toLowerCase().replace("k", "") //缩放比例
-            def code = "" // 唯一标识
-
-            //
-            if (material.isBlank()) {
-                material = beforeMaterial
+            map.put("dpiScale", dpiFloat)
+        }
+        if (!material.isBlank()) {
+            map.put("_name", material)
+        }
+        if (!resIdStr.isBlank()) {
+            map.put("resIdStr", resIdStr)
+            map.put("key", resIdStr)//key 等同于 resIdStr
+            def code = resIdStr // 唯一标识
+            if (laserType == 0) {
+                code += "_blue"
             } else {
-                beforeMaterial = material
+                code += "_white"
             }
-
+            code += "_bw"
+            code += "_${map.get("dpiScale")}"
             //
-            if (layerName.isBlank()) {
-                layerName = beforeLayerName
-            } else {
-                beforeLayerName = layerName
-            }
+            map.put("code", code)
+        }
 
-            //
-            if (resIdStr.isBlank()) {
-                resIdStr = beforeResIdStr
-            } else {
-                beforeResIdStr = resIdStr
-            }
+        //---
 
-            if (!power.isBlank() && !depth.isBlank() && !dpiScale.isBlank()) {
-                //功率,深度分辨率必须要值
-                def layerMode = layerName == "灰度" ? "5" : "1,6" //图层模式
-                def layerId = layerName == "灰度" ? "layerPicture" : "layerFill" //图层id
-                def map = new HashMap<String, Object>()
-                map.put("type", type.toFloat().toInteger())
-                map.put("layerModeStr", layerMode)
+        layerIndexList.eachWithIndex { value, index ->
+            //图层参数
+            def layerFill = row.getCell(value).toString()
+            if (layerFill.isBlank() || layerFill == "/") {
+                //填充图层参数为空, 跳过处理
+            } else {
+                def layerId = layerIdList[index]
+                def pd = getPowerDepth(sheet, line, value)
+
                 map.put("layerId", layerId)
-                map.put("power", power.toFloat().toInteger())
-                map.put("depth", depth.toFloat().toInteger())
-                def dpiFloat = dpiScale.toFloat()
-                def dpiInt = dpiFloat.toInteger()
-                if (dpiFloat == dpiInt) {
-                    map.put("dpiScale", dpiInt)
-                } else {
-                    map.put("dpiScale", dpiFloat)
-                }
-                if (!material.isBlank() && !layerName.isBlank()) {
-                    map.put("_name", "${material}-${layerName}".toString())
-                }
-                if (!resIdStr.isBlank()) {
-                    map.put("resIdStr", resIdStr)
-                    map.put("key", resIdStr)//key 等同于 resIdStr
-                    code += resIdStr
-                    if (type == 0) {
-                        code += "_blue"
-                    } else {
-                        code += "_white"
-                    }
-                    if (material == "灰度") {
-                        code += "_gray"
-                    } else {
-                        code += "_bw"
-                    }
-                    code += "_${map.get("dpiScale")}"
-                    //
-                    map.put("code", code)
-                }
-                jsonList.add(map)
+                map.put("power", pd[0].toFloat().toInteger())
+                map.put("depth", pd[1].toFloat().toInteger())
+
+                jsonList.add(map.clone())
             }
         }
+
+        //println jsonList
+        //1 / 0
+
+        //loop
+        line = line + 2 //每次跳过2行, 正好包含功率和深度
     }
-    //println jsonList
 
     def json = new com.google.gson.Gson().toJson(jsonList)
-    def output = file(project.ext.excel_output_path)
-    output.write(json)
+    outputFile.write(json)
 
-    println "输出->" + output.absolutePath
+    System.err.println "输出完成->" + outputFile.absolutePath
+}
+
+/**获取功率和深度
+ * [sheet] 表
+ * [lineIndex] 行索引, 0开始
+ * [colIndex] 列索引, 0开始, 数据所在的列*/
+def getPowerDepth(sheet, lineIndex, colIndex) {
+    def row = sheet.getRow(lineIndex)
+    def power = row.getCell(colIndex).toString()
+
+    row = sheet.getRow(lineIndex + 1)
+    def depth = row.getCell(colIndex).toString()
+
+    return [power, depth]
+}
+
+/**
+ * 输出一行的数据
+ * [lineIndex] 行的索引
+ * [row] 一行的数据
+ * */
+def printLine(lineIndex, row) {
+    def colLabelList = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ"]
+    def colCount = row.getPhysicalNumberOfCells()
+    def log = "${colCount}列->"
+    for (colIndex in 0..<colCount) {
+        def cell = row.getCell(colIndex)
+        log += "${colLabelList[colIndex]}${lineIndex + 1}:" + cell + " "
+    }
+    println log
 }
