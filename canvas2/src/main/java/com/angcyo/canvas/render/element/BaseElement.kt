@@ -48,7 +48,7 @@ abstract class BaseElement : IElement {
      * [onUpdateElementBefore]
      * [onUpdateElementAfter]*/
     @SupportUndo
-    override fun updateElement(
+    override fun updateElementAction(
         renderer: BaseRenderer?,
         delegate: CanvasRenderDelegate?,
         reason: Reason,
@@ -67,12 +67,12 @@ abstract class BaseElement : IElement {
         delegate?.addStateToStack(renderer, undoState, redoState, reason = reason)
     }
 
-    /**在更新[updateElement]之前调用*/
+    /**在更新[updateElementAction]之前调用*/
     open fun onUpdateElementBefore() {
 
     }
 
-    /**在更新[updateElement]之后调用*/
+    /**在更新[updateElementAction]之后调用*/
     open fun onUpdateElementAfter() {
 
     }

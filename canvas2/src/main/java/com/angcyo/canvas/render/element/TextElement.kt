@@ -253,7 +253,7 @@ open class TextElement : BaseElement() {
         val reason: Reason = Reason.user.apply {
             controlType = BaseControlPoint.CONTROL_TYPE_DATA
         }
-        updateElement(renderer, delegate, reason) {
+        updateElementAction(renderer, delegate, reason) {
             textProperty.block()//do
             updatePaint()
             updateOriginText(textProperty.text, keepVisibleSize)//重新计算宽高

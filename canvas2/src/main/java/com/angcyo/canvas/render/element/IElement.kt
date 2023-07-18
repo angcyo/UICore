@@ -28,7 +28,7 @@ interface IElement {
     fun createStateStack(): IStateStack
 
     /**更新元素, 并且支持回退*/
-    fun updateElement(
+    fun updateElementAction(
         renderer: BaseRenderer?,
         delegate: CanvasRenderDelegate?,
         reason: Reason = Reason.user.apply {
