@@ -65,7 +65,6 @@ def exportExcelData(laserType, layerIndexList, layerIdList) {
         throw new IllegalStateException("请在[gradle.properties]文件中配置excel文件路径:excel_path")
     }
 
-
     //输出文件
     def outputFile = file("material_${laserType}.json")
 
@@ -91,8 +90,9 @@ def exportExcelData(laserType, layerIndexList, layerIdList) {
         //printLine(line, row)
         //1 / 0
         def material = row.getCell(0).toString() //材质名称 环保纸
-        def dpi = row.getCell(1).toString() //分辨率 1K 2K 4K
-        def dpiScale = dpi.toLowerCase().replace("k", "") //缩放比例
+        def dpiCell = row.getCell(1).toString() //分辨率 1K 2K 4K
+        def dpiScaleStr = dpiCell.toLowerCase().replace("k", "") //缩放比例
+        def dpiStr = "" //具体的dpi
 
         //
         if (!material.isBlank()) {
@@ -106,19 +106,34 @@ def exportExcelData(laserType, layerIndexList, layerIdList) {
         def map = new HashMap<String, Object>()
         map.put("type", laserType)
 
-        if (dpiScale.isBlank()) {
+        if (dpiScaleStr.isBlank()) {
             //dpiScale 为空, 跳过处理
             println("${material} -> dpiScale 为空, 跳过处理")
             line = line + 2
             continue
+        } else if (dpiScaleStr.contains("/")) {
+            dpiStr = dpiScaleStr.split("/")[1]
+            dpiScaleStr = dpiScaleStr.split("/")[0]
         }
 
-        def dpiFloat = dpiScale.toFloat()
-        def dpiInt = dpiFloat.toInteger()
-        if (dpiFloat == dpiInt) {
-            map.put("dpiScale", dpiInt)
+        //dpi
+        if (!dpiStr.isBlank()) {
+            def dpiFloat = dpiStr.toFloat()
+            def dpiInt = dpiStr.toInteger()
+            if (dpiFloat == dpiInt) {
+                map.put("dpi", dpiInt)
+            } else {
+                map.put("dpi", dpiFloat)
+            }
+        }
+
+        //dpiScale
+        def dpiScaleFloat = dpiScaleStr.toFloat()
+        def dpiScaleInt = dpiScaleFloat.toInteger()
+        if (dpiScaleFloat == dpiScaleInt) {
+            map.put("dpiScale", dpiScaleInt)
         } else {
-            map.put("dpiScale", dpiFloat)
+            map.put("dpiScale", dpiScaleFloat)
         }
         if (!material.isBlank()) {
             map.put("_name", material)
