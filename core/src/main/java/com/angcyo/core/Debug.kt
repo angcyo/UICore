@@ -28,6 +28,10 @@ import com.angcyo.library.utils.logFileName
  * @date 2021/09/30
  * Copyright (c) 2020 ShenZhen Wayto Ltd. All rights reserved.
  */
+
+/**返回是否要拦截默认处理*/
+typealias DebugCommandAction = (Debug.DebugCommand) -> Boolean
+
 object Debug {
 
     /**开启调试模式*/
@@ -35,6 +39,9 @@ object Debug {
 
     /**显示界面回调*/
     var onShowFragmentAction: ((FragmentActivity, show: String) -> Unit)? = null
+
+    /**回调*/
+    var debugCommandActionList = mutableListOf<DebugCommandAction>()
 
     /**调试:文本输入框文本改变时
      * [com.angcyo.widget.edit.BaseEditDelegate.Companion.textChangedActionList]*/
@@ -127,7 +134,27 @@ object Debug {
                         val key = line.substring(keyIndex + 1, typeIndex)
                         val type = line.substring(typeIndex + 1, valueIndex)
                         val valueString = line.substring(valueIndex + 1, line.length)
-                        if (key.isNotBlank()) {
+
+                        var intercept = false
+                        try {
+                            for (action in debugCommandActionList) {
+                                intercept = intercept || action.invoke(
+                                    DebugCommand(
+                                        line,
+                                        key,
+                                        type,
+                                        valueString
+                                    )
+                                )
+                            }
+                            if (intercept) {
+                                match = true
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+
+                        if (!intercept && key.isNotBlank()) {
                             when (key.lowercase()) {
                                 "cmd" -> {
                                     when (type) {
@@ -234,4 +261,15 @@ object Debug {
         selectAll()
         longFeedback()
     }
+
+    /**调试指令信息
+     * ```
+     * @key#int=value
+     * ```*/
+    data class DebugCommand(
+        val command: String,
+        val key: String,
+        val type: String,
+        val value: String,
+    )
 }
