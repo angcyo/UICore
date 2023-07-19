@@ -216,3 +216,15 @@ fun String?.hawkGetFloat(def: Float = -1f): Float {
     }
     return result
 }
+
+fun String?.hawkGetString(def: String? = null): String? {
+    var result = def
+    this?.let {
+        try {
+            result = Hawk.get<String>(it, def)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    return result
+}
