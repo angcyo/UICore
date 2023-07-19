@@ -4,10 +4,10 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
-import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty.Companion.ANCHOR_X_RIGHT
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty.Companion.ANCHOR_Y_CENTER
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.release
@@ -212,14 +212,21 @@ data class CanvasRenderProperty(
     //region---方法---
 
     /**基础矩形*/
-    private fun getBaseRect(result: RectF = _baseRect): RectF {
+    fun getBaseRect(result: RectF = _baseRect): RectF {
         result.set(0f, 0f, width, height)
+        return result
+    }
+
+    /**基础矩形上, 加了一层锚点偏移*/
+    fun getBaseOffsetRect(result: RectF = _baseRect): RectF {
+        result.set(0f, 0f, width, height)
+        result.offset(getOffsetX(), getOffsetY())
         return result
     }
 
     /**基础矩阵, 无旋转
      * [includeFlip] 是否需要翻转*/
-    private fun getBaseMatrix(result: Matrix = _baseMatrix, includeFlip: Boolean): Matrix {
+    fun getBaseMatrix(result: Matrix = _baseMatrix, includeFlip: Boolean): Matrix {
         result.setSkew(tan(skewX.toRadians()), tan(skewY.toRadians()))
         if (includeFlip) {
             result.postScale(if (flipX) -scaleX else scaleX, if (flipY) -scaleY else scaleY)
