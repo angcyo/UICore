@@ -13,6 +13,10 @@ import com.angcyo.library.app
  *   <string name="KEY_COMPLIANCE_STATE_1">java.lang.String##0V@AQLf4+PnoAYmLEofEnsL5bXhT3D/UTk5WUYjVN17gWIAmg4P</string>
  * </map>
  * ```
+ *
+ * [com.orhanobut.hawk.DefaultHawkFacade.get]
+ * [com.orhanobut.hawk.DefaultHawkFacade.put]
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2022/12/31
