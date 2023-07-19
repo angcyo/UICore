@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import com.angcyo.gcode.GCodeWriteHandler
 import com.angcyo.library.component.hawk.LibHawkKeys
+import com.angcyo.library.ex.toListOf
 import com.angcyo.library.model.PointD
 import com.angcyo.library.unit.IValueUnit
 import com.angcyo.svg.SvgWriteHandler
@@ -265,13 +266,57 @@ fun List<Path>.toSVGStrokeContent(
         svgWriteHandler.pathStrokeToVector(
             this,
             false,
-            false,
+            true,
             offsetLeft,
             offsetTop,
             pathStep
         )
     }
     return output
+}
+
+fun Path.toSVGStrokeContent(
+    offsetLeft: Float = 0f,
+    offsetTop: Float = 0f,
+    pathStep: Float = LibHawkKeys.pathAcceptableError,
+    action: (SvgWriteHandler) -> Unit = {}
+): String {
+    return toListOf().toSVGStrokeContent(offsetLeft, offsetTop, pathStep, action)
+}
+
+fun List<Path>.toSVGStrokeContent(
+    offsetLeft: Float = 0f, //x偏移的像素
+    offsetTop: Float = 0f, //y偏移的像素
+    pathStep: Float = LibHawkKeys.pathAcceptableError,
+    action: (SvgWriteHandler) -> Unit = {}
+): String {
+    val writer = StringWriter()
+    toSVGStrokeContent(writer, offsetLeft, offsetTop, pathStep, action)
+    return writer.toString()
+}
+
+/**[toSVGStrokeContent]*/
+fun List<Path>.toSVGStrokeContent(
+    writer: Appendable,
+    offsetLeft: Float = 0f, //x偏移的像素
+    offsetTop: Float = 0f, //y偏移的像素
+    pathStep: Float = LibHawkKeys.pathAcceptableError, //Path路径的采样步进
+    action: (SvgWriteHandler) -> Unit = {}
+) {
+    //转换成Svg, 使用像素单位
+    val svgWriteHandler = SvgWriteHandler()
+    svgWriteHandler.writer = writer
+    svgWriteHandler.gapValue = 1f
+    svgWriteHandler.gapMaxValue = 1f
+    action(svgWriteHandler)
+    svgWriteHandler.pathStrokeToVector(
+        this,
+        false,
+        true,
+        offsetLeft,
+        offsetTop,
+        pathStep
+    )
 }
 
 /**只获取填充的数据*/
@@ -294,7 +339,7 @@ fun List<Path>.toSVGFillContent(
         svgWriteHandler.pathFillToVector(
             this,
             false,
-            false,
+            true,
             offsetLeft,
             offsetTop,
             pathStep,

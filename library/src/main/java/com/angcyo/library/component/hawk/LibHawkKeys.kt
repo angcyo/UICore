@@ -105,6 +105,7 @@ object LibHawkKeys {
 
     /**计算[Bounds]时, 容错率, 应该也是each path的采样率
      * [enablePathBoundsExact]
+     * [svgTolerance]
      * */
     @Pixel
     var pathAcceptableError: Float by HawkPropertyValue<Any, Float>(1f)
@@ -120,6 +121,11 @@ object LibHawkKeys {
     /**2个浮点比较, 误差小于此值视为相等
      * 0.0000000 //浮点小数点后面有7位*/
     var floatAcceptableError: Float by HawkPropertyValue<Any, Float>(0.00001f) //5位
+
+    /**SVG采样近似误差
+     * [pathAcceptableError]
+     * [androidx.graphics.path.PathIterator]*/
+    var svgTolerance: Float by HawkPropertyValue<Any, Float>(0.1f)
 
     /**2个双精度浮点比较, 误差小于此值视为相等
      * 0.0000000000000000 //双精度浮点小数点后面有16位*/

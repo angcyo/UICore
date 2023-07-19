@@ -126,6 +126,9 @@ abstract class VectorWriteHandler {
     /**保留小数点后几位*/
     var decimal = LibHawkKeys.vectorDecimal
 
+    /**是否是简单的路径, 如果是则全程使用G1连接, 否则智能通过Gap判断*/
+    var isSinglePath: Boolean = false
+
     //---
 
     /**是否关闭Gap, 则所有的点都直接用G1/L*/
@@ -349,8 +352,16 @@ abstract class VectorWriteHandler {
     }
 
     /**创建一个新的点*/
-    open fun generatePoint(x: Double, y: Double): VectorPoint =
-        VectorPoint(x, y, _valueChangedType(x, y))
+    open fun generatePoint(x: Double, y: Double): VectorPoint {
+        return if (isSinglePath) {
+            VectorPoint(
+                x, y,
+                if (_pointList.lastOrNull() == null) POINT_TYPE_NEW else POINT_TYPE_GAP
+            )
+        } else {
+            VectorPoint(x, y, _valueChangedType(x, y))
+        }
+    }
 
     /**
      * 追加一个点, 如果这个点和上一点属于相同类型的点, 则不追加,

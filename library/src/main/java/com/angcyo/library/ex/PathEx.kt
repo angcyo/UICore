@@ -3,6 +3,7 @@ package com.angcyo.library.ex
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Build
+import com.angcyo.library.L
 import com.angcyo.library.component.PictureRenderDrawable
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.pool.*
@@ -769,4 +770,24 @@ fun List<Path>?.toBitmap(overrideSize: Float? = null, paint: Paint = createPaint
     }
     bounds.release()
     return bitmap
+}
+
+/**[android.graphics.Path.op]*/
+fun List<Path>.op(op: Path.Op): Path {
+    val result = Path() //操作后的结果
+
+    //op 操作
+    for (path in this) {
+        if (result.isEmpty) {
+            result.set(path)
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if (!result.op(path, op)) {
+                    L.e("op error!")
+                }
+            }
+        }
+    }
+
+    return result
 }

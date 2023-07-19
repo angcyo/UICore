@@ -33,9 +33,9 @@ object RenderHelper {
     ): List<Path>? {
         val list = pathList ?: return null
         renderProperty ?: return pathList
-        val newPathList = list.translateToOrigin()
+        val newPathList = list.translateToOrigin() ?: return null
         val renderMatrix = renderProperty.getRenderMatrix()
-        for (path in newPathList!!) {
+        for (path in newPathList) {
             path.transform(renderMatrix)
         }
         return newPathList

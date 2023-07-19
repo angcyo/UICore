@@ -28,9 +28,6 @@ class GCodeWriteHandler : VectorWriteHandler() {
     /**是否激活GCode压缩指令*/
     var enableGCodeShrink: Boolean = LibLpHawkKeys.enableGCodeShrink
 
-    /**是否是简单的路径, 如果是则全程使用G1连接, 否则智能通过Gap判断*/
-    var isSinglePath: Boolean = false
-
     //上一次的信息
     private var lastInfo: GCodeLastInfo = GCodeLastInfo()
 
@@ -59,17 +56,6 @@ class GCodeWriteHandler : VectorWriteHandler() {
                 writer?.appendLine("G0 X0 Y0")
             }
             writer?.append("M2") //程序结束
-        }
-    }
-
-    override fun generatePoint(x: Double, y: Double): VectorPoint {
-        return if (isSinglePath) {
-            VectorPoint(
-                x, y,
-                if (_pointList.lastOrNull() == null) POINT_TYPE_NEW else POINT_TYPE_GAP
-            )
-        } else {
-            super.generatePoint(x, y)
         }
     }
 
