@@ -309,6 +309,9 @@ object VectorHelper {
         pathFillType: Int = VectorWriteHandler.PATH_FILL_TYPE_RECT
     ): List<Path>? {
         pathList ?: return null
+        if (fillPathStep <= 0) {
+            return null
+        }
         val result = mutableListOf<Path>()
         val targetPathList = mutableListOf<Path>()
 
