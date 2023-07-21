@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.element
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Matrix
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
@@ -26,6 +27,9 @@ open class BitmapElement : BaseElement() {
 
     override fun getDrawBitmap(): Bitmap? = renderBitmap ?: originBitmap
 
+    /**渲染图片时的额外矩阵*/
+    open fun getRenderBitmapMatrix(bitmap: Bitmap): Matrix? = null
+
     /**更新原始的[bitmap]对象, 并保持可视化的宽高一致
      * [updateOriginWidthHeight]*/
     open fun updateOriginBitmap(bitmap: Bitmap, keepVisibleSize: Boolean = true) {
@@ -43,12 +47,14 @@ open class BitmapElement : BaseElement() {
 
     override fun onRenderInside(renderer: BaseRenderer?, canvas: Canvas, params: RenderParams) {
         val bitmap = getDrawBitmap() ?: return
-        renderBitmap(
-            canvas,
-            paint,
-            bitmap,
-            params._renderMatrix
-        )
+        val bitmapMatrix = getRenderBitmapMatrix(bitmap)
+        var matrix = params._renderMatrix
+        if (bitmapMatrix != null) {
+            matrix = Matrix(bitmapMatrix).apply {
+                postConcat(matrix)
+            }
+        }
+        renderBitmap(canvas, paint, bitmap, matrix)
     }
 
 }
