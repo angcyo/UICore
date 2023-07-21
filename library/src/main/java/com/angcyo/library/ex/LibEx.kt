@@ -724,3 +724,10 @@ fun Type.toClass(): Class<*>? = if (this is Class<*>) {
 /**是否处于调试模式
  * [android.os.Debug.isDebuggerConnected]*/
 fun isDebuggerConnected() = Debug.isDebuggerConnected()
+
+/**不为空时, 追加一个字符*/
+fun StringBuilder.appendSpaceIfNotEmpty(space: String = " ") {
+    if (isNotEmpty()) {
+        append(space)
+    }
+}
