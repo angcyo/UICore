@@ -765,18 +765,25 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
      * [reason]
      * */
     @RenderFlag
-    fun dispatchAddAllRendererFlag(flag: Int, reason: Reason) {
+    fun dispatchAddAllRendererFlag(
+        flag: Int,
+        reason: Reason,
+        predicate: ((BaseRenderer) -> Boolean)? = null
+    ) {
         val allRendererList = renderManager.getAllElementRendererList(true, false)
-        for (renderer in allRendererList) {
+        allRendererList.filter { predicate == null || predicate(it) }.forEach { renderer ->
             renderer.addRenderFlag(flag, reason, this)
         }
     }
 
     /**为所有的简单渲染器触发一个数据改变的控制通知 */
     @RenderFlag
-    fun dispatchAllRendererDataChange(reason: Reason = Reason.user) {
+    fun dispatchAllRendererDataChange(
+        reason: Reason = Reason.user,
+        predicate: ((BaseRenderer) -> Boolean)? = null
+    ) {
         reason.controlType = reason.controlType ?: BaseControlPoint.CONTROL_TYPE_DATA
-        dispatchAddAllRendererFlag(BaseRenderer.RENDERER_FLAG_NORMAL, reason)
+        dispatchAddAllRendererFlag(BaseRenderer.RENDERER_FLAG_NORMAL, reason, predicate)
     }
 
     /**打印渲染器的日志*/

@@ -175,7 +175,7 @@ fun IValueUnit.convertPixelToValueUnit(pixel: Double?): String {
 }
 
 /**1毫米转换成像素*/
-fun Int?.toPixel() = this?.toFloat()?.toPixel()
+fun Int?.toPixel() = this?.toFloat().toPixel()
 
 /**1毫米转像素*/
 fun Float?.toPixel() = MM_UNIT.convertValueToPixel(this ?: 0f)
