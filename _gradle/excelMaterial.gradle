@@ -40,7 +40,7 @@ task _excelMaterialWhite(group: 'angcyo', description: '白光-LaserPecker 从Ex
 //执行蓝光任务
 _excelMaterialBlue.doLast {
     def laserType = 0
-    def layerIndexList = [9, 11, 13, 15]
+    def layerIndexList = [9, 11, 13, 15] //图层数据开始的列数
     def layerIdList = ["layerFill", "layerPicture", "layerLine", "layerCut"]
     exportExcelData(laserType, layerIndexList, layerIdList)
 }
@@ -49,7 +49,7 @@ _excelMaterialBlue.doLast {
 _excelMaterialWhite.doLast {
     //激光类型
     def laserType = 1
-    def layerIndexList = [3, 5, 7]
+    def layerIndexList = [3, 5, 7] //图层数据开始的列数
     def layerIdList = ["layerFill", "layerPicture", "layerLine"]
     exportExcelData(laserType, layerIndexList, layerIdList)
 }
@@ -157,11 +157,12 @@ def exportExcelData(laserType, layerIndexList, layerIdList) {
 
         layerIndexList.eachWithIndex { value, index ->
             //图层参数
-            def layerFill = row.getCell(value).toString()
-            if (layerFill.isBlank() || layerFill == "/") {
-                //填充图层参数为空, 跳过处理
+            def layerId = layerIdList[index]
+            def layer = row.getCell(value).toString()
+            if (layer.isBlank() || layer == "/") {
+                //图层参数为空, 跳过处理
+                //println("${layerId} -> 无推荐参数, 跳过处理")
             } else {
-                def layerId = layerIdList[index]
                 def pd = getPowerDepth(sheet, line, value)
 
                 map.put("layerId", layerId)
