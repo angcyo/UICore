@@ -39,6 +39,9 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
     @ColorInt
     var textColor: Int = undefined_color
 
+    /**是否是粗体*/
+    var textBold: Boolean = false
+
     /**文本绘制的重力*/
     var textGravity: Int = Gravity.LEFT or Gravity.BOTTOM
 
@@ -145,6 +148,7 @@ open class DslDrawableSpan : ReplacementSpan(), IWeightSpan, IClickableSpan, IDr
         if (textColor != undefined_color) {
             textPaint.color = textColor
         }
+        textPaint.isFakeBoldText = textBold
     }
 
     fun _targetText(
