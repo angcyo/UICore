@@ -27,34 +27,76 @@ buildscript {
     }
 }
 
-task _excelMaterialBlue(group: 'angcyo', description: '蓝光-LaserPecker 从Excel中读取材质参数') {
+task _excelMaterialLP4Blue(group: 'angcyo', description: 'LP4蓝光-LaserPecker 从Excel中读取材质参数') {
     //配置任务
 }
 
-task _excelMaterialWhite(group: 'angcyo', description: '白光-LaserPecker 从Excel中读取材质参数') {
+task _excelMaterialLP4White(group: 'angcyo', description: 'LP4白光-LaserPecker 从Excel中读取材质参数') {
+    //配置任务
+}
+
+task _excelMaterialLX1Blue10(group: 'angcyo', description: 'LX1 10W 蓝光') {
+    //配置任务
+}
+
+task _excelMaterialLX1Blue20(group: 'angcyo', description: 'LX1 20W 蓝光') {
+    //配置任务
+}
+
+task _excelMaterialLX1White2(group: 'angcyo', description: 'LX1 2W 白光') {
     //配置任务
 }
 
 //#1:1064nm激光 (白光-雕) 0:450nm激光 (蓝光-烧)
 
 //执行蓝光任务
-_excelMaterialBlue.doLast {
+_excelMaterialLP4Blue.doLast {
     def laserType = 0
     def layerIndexList = [9, 11, 13, 15] //图层数据开始的列数
     def layerIdList = ["layerFill", "layerPicture", "layerLine", "layerCut"]
-    exportExcelData(laserType, layerIndexList, layerIdList)
+    exportExcelData("lp4_450_10", laserType, layerIndexList, layerIdList)
 }
 
 //执行白光任务
-_excelMaterialWhite.doLast {
+_excelMaterialLP4White.doLast {
     //激光类型
     def laserType = 1
     def layerIndexList = [3, 5, 7] //图层数据开始的列数
     def layerIdList = ["layerFill", "layerPicture", "layerLine"]
-    exportExcelData(laserType, layerIndexList, layerIdList)
+    exportExcelData("lp4_1064_2", laserType, layerIndexList, layerIdList)
 }
 
-def exportExcelData(laserType, layerIndexList, layerIdList) {
+_excelMaterialLX1Blue10.doLast {
+    def laserType = 0
+    def layerIndexList = [3, 5, 7] //图层数据开始的列数
+    def layerIdList = ["layerFill", "layerPicture", "layerLine"]
+    exportExcelData("lx1_450_10", laserType, layerIndexList, layerIdList)
+}
+
+_excelMaterialLX1Blue20.doLast {
+    def laserType = 0
+    def layerIndexList = [17] //图层数据开始的列数
+    def layerIdList = ["layerCut"]
+    exportExcelData("lx1_450_20", laserType, layerIndexList, layerIdList)
+}
+
+_excelMaterialLX1White2.doLast {
+    def laserType = 0
+    def layerIndexList = [11, 13, 15] //图层数据开始的列数
+    def layerIdList = ["layerFill", "layerPicture", "layerLine"]
+    exportExcelData("lx1_1064_2", laserType, layerIndexList, layerIdList, [
+            "1": 254,
+            "2": 711,
+            "4": 889,
+    ])
+}
+
+/**
+ * [outputName] 输出的文件名, 不含扩展字段
+ * [laserType] 激光类型 0:450nm激光 (蓝光-烧) 1:1064nm激光 (白光-雕)
+ * [dpiMap] dpi映射, 比如识别到2.8K, 需要映射成多少dpi
+ * */
+def exportExcelData(outputName, laserType, layerIndexList, layerIdList, dpiMap) {
     //默认的excel文件路径
     def defExcelPath = 'material.xlsx'
     def excelPath = project.hasProperty("excel_path") ? project.ext.excel_path : defExcelPath
@@ -66,7 +108,7 @@ def exportExcelData(laserType, layerIndexList, layerIdList) {
     }
 
     //输出文件
-    def outputFile = file("material_${laserType}.json")
+    def outputFile = file("material_${outputName}.json")
 
     //读取数据
     // 指定excel文件，创建缓存输入流
@@ -96,8 +138,12 @@ def exportExcelData(laserType, layerIndexList, layerIdList) {
 
         //
         if (!material.isBlank()) {
-            beforeMaterial = material.split("/")[0]
-            beforeResIdStr = material.split("/")[1]
+            def i = material.lastIndexOf("/")
+            if (i != -1) {
+                def l = material.length()
+                beforeMaterial = material.substring(0, i)
+                beforeResIdStr = material.substring(i + 1, l)
+            }
         }
 
         material = beforeMaterial
@@ -138,6 +184,14 @@ def exportExcelData(laserType, layerIndexList, layerIdList) {
         if (!material.isBlank()) {
             map.put("_name", material)
         }
+
+        //dpi map
+        if (dpiMap != null) {
+            //如果有映射, 则使用映射
+            map.remove("dpiScale")
+            map.put("dpi", dpiMap.get(dpiScaleStr))
+        }
+
         if (!resIdStr.isBlank()) {
             map.put("resIdStr", resIdStr)
             map.put("key", resIdStr)//key 等同于 resIdStr
@@ -159,9 +213,12 @@ def exportExcelData(laserType, layerIndexList, layerIdList) {
             //图层参数
             def layerId = layerIdList[index]
             def layer = row.getCell(value).toString()
+
+            println("${material} ${dpiScaleFloat} -> ${layerId} -> ${layer}")
+
             if (layer.isBlank() || layer == "/") {
                 //图层参数为空, 跳过处理
-                //println("${layerId} -> 无推荐参数, 跳过处理")
+                println("::${material} ${dpiScaleFloat} -> ${layerId} -> 无推荐参数, 跳过处理")
             } else {
                 def pd = getPowerDepth(sheet, line, value)
 
