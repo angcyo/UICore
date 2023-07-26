@@ -7,9 +7,33 @@ task _replaceRes(group: 'angcyo', description: '替换xml文件中的字符串�
     //配置任务
 }
 
+task _replaceResTo(group: 'angcyo', description: '替换xml文件中的字符串资源并输出到指定文件') {
+    //配置任务
+}
+
 _replaceRes.doFirst {
     replaceResWithCsv()
     //replaceResWithExcel()
+}
+
+_replaceResTo.doFirst {
+    //将中文资源替换成其他语言的资源, 并输出
+
+    //资源输入文件路径
+    def inputResPath = file("./UICoreEx/lpDevice/src/main/res/values-zh/material_strings.xml").absolutePath
+    def lines = readExcelLines("翻译稿.xlsx")
+    def outputLanguage = ["en", "ja", "ko", "de", "es", "fr", "rHK", "rTW"]
+    outputLanguage.eachWithIndex { value, index ->
+        _replaceRes(inputResPath, "material_strings_${value}.xml", convertLinesToMap(lines, 0, index + 1))
+    }
+
+    //_replaceRes(inputResPath, "material_strings_en.xml", convertLinesToMap(lines, 0, 1))
+    //_replaceRes(inputResPath, "material_strings_ja.xml", convertLinesToMap(lines, 0, 2))
+    //_replaceRes(inputResPath, "material_strings_ko.xml", convertLinesToMap(lines, 0, 3))
+    //_replaceRes(inputResPath, "material_strings_de.xml", convertLinesToMap(lines, 0, 4))
+    //_replaceRes(inputResPath, "material_strings_es.xml", convertLinesToMap(lines, 0, 5))
+    //_replaceRes(inputResPath, "material_strings_fr.xml", convertLinesToMap(lines, 0, 6))
+    //_replaceRes(inputResPath, "material_strings_rHk.xml", convertLinesToMap(lines, 0, 7))
 }
 
 /**使用excel的数据结构替换res*/
@@ -86,16 +110,20 @@ def _replaceResList(pathList, outPathList, map) {
 def _replaceRes(path, outPath, map) {
     def pathFile = file(path)
     if (!pathFile.exists()) {
+        System.err.println "输入文件不存在:${pathFile.absolutePath}"
         return
     }
     def originText = pathFile.text //原始文件内容
     def count = 0
+    def replaceMap = [] //已替换的资源
     map.each { key, val ->
         if (key != null && !key.isEmpty()) {
             def resKey = ">${key}<"
             if (originText.contains(resKey)) {
                 originText = originText.replaceAll(resKey, ">${val}<")//替换资源
                 count++
+
+                replaceMap += key
             }
         }
     }
@@ -105,5 +133,7 @@ def _replaceRes(path, outPath, map) {
         outPathFile.createNewFile()
     }
     outPathFile.write(originText)//重写文件
+
+    println "已替换:${replaceMap}"
     System.err.println "替换完成:${pathFile.absolutePath}↓\n->${outPathFile.absolutePath} 共替换:${count}个"
 }
