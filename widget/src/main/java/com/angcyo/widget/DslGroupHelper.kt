@@ -11,7 +11,12 @@ import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.annotation.Px
 import androidx.core.view.ViewCompat
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.color
+import com.angcyo.library.ex.eachChild
+import com.angcyo.library.ex.getChildOrNull
+import com.angcyo.library.ex.gone
+import com.angcyo.library.ex.inflate
+import com.angcyo.library.ex.visible
 
 /**
  *
@@ -68,6 +73,7 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
                 TypedValue.COMPLEX_UNIT_PX,
                 textSize
             )
+
             is ViewGroup -> view.eachChild { _, child ->
                 setTextSize(child, textSize)
             }
@@ -111,6 +117,7 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
                     view.setTextColor(color)
                 }
             }
+
             is ViewGroup -> view.eachChild { _, child ->
                 setTextColor(child, color)
             }
@@ -151,9 +158,11 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
                     compoundDrawables[3]?.color(color)
                 )
             }
+
             is ImageView -> view.run {
                 setImageDrawable(drawable?.color(color))
             }
+
             is ViewGroup -> view.eachChild { _, child ->
                 setDrawableColor(child, color)
             }
@@ -189,12 +198,8 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
         }
     }
 
-    fun eachChild(recursively: Boolean = false, map: (index: Int, child: View) -> Unit) {
-        if (selectorView is ViewGroup) {
-            (selectorView as ViewGroup).eachChild(recursively, map)
-        } else {
-            selectorView?.apply { map(0, this) }
-        }
+    override fun eachChild(recursively: Boolean, map: (index: Int, child: View) -> Unit) {
+        eachChild(selectorView, recursively, map)
     }
 
     fun removeAllChild() {

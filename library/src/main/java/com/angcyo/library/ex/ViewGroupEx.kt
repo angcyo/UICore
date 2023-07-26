@@ -139,6 +139,17 @@ fun ViewGroup.each(recursively: Boolean = false, map: (child: View) -> Unit) {
     }
 }
 
+/**
+ * [index] 多少个child了, 从0开始, 并非一定是直系子child
+ *
+ * */
+fun ViewGroup.eachIndex(recursively: Boolean = false, map: (index: Int, child: View) -> Unit) {
+    var index = 0
+    eachChild(recursively) { _, child ->
+        map.invoke(index++, child)
+    }
+}
+
 /**获取指定位置[index]的[child], 如果有.
  * 支持负数*/
 fun ViewGroup.getChildOrNull(index: Int): View? {

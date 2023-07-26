@@ -11,7 +11,11 @@ import android.widget.TextView
 import com.angcyo.behavior.BaseDependsBehavior
 import com.angcyo.behavior.BaseScrollBehavior
 import com.angcyo.behavior.ITitleBarBehavior
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.clamp
+import com.angcyo.library.ex.color
+import com.angcyo.library.ex.each
+import com.angcyo.library.ex.loadColor
+import com.angcyo.library.ex.mH
 import com.angcyo.tablayout.evaluateColor
 import com.angcyo.widget.R
 import com.angcyo.widget.text.DslSpanTextView
@@ -207,16 +211,16 @@ open class LinkageGradientTitleBehavior(
 
             val iconColor = evaluateColor(fraction, iconColorFrom, iconColorTo)
 
-            (childView as ViewGroup).each(true) {
-                when (it) {
+            (childView as ViewGroup).each(true) { child ->
+                when (child) {
                     //文本
                     is TextView -> {
-                        if (it.id == titleTextId) {
+                        if (child.id == titleTextId) {
                             if (enableTitleGradient) {
-                                it.setTextColor(titleTextColor)
+                                child.setTextColor(titleTextColor)
                             }
                             if (enableTitleHide) {
-                                it.visibility = if (fraction >= 0.99) {
+                                child.visibility = if (fraction >= 0.99) {
                                     View.VISIBLE
                                 } else {
                                     View.INVISIBLE
@@ -224,26 +228,26 @@ open class LinkageGradientTitleBehavior(
                             }
                         }
 
-                        if (it is DslSpanTextView) {
-                            if (it.id == backViewId) {
+                        if (child is DslSpanTextView) {
+                            if (child.id == backViewId) {
                                 if (enableBackIconGradient) {
-                                    it.setDrawableColor(backIconColor)
+                                    child.setDrawableColor(backIconColor)
                                 }
                             } else {
                                 if (enableIconGradient) {
-                                    it.setDrawableColor(iconColor)
+                                    child.setDrawableColor(iconColor)
                                 }
                             }
                         }
                     }
                     //图片icon
-                    is ImageView -> if (it.id == backViewId) {
+                    is ImageView -> if (child.id == backViewId) {
                         if (enableBackIconGradient) {
-                            it.setImageDrawable(it.drawable?.color(backIconColor))
+                            child.setImageDrawable(child.drawable?.color(backIconColor))
                         }
                     } else {
                         if (enableIconGradient) {
-                            it.setImageDrawable(it.drawable?.color(iconColor))
+                            child.setImageDrawable(child.drawable?.color(iconColor))
                         }
                     }
                 }

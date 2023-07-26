@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.angcyo.library.L
 import com.angcyo.library.ex.each
+import com.angcyo.library.ex.eachIndex
 import com.angcyo.library.ex.motionEvent
 import com.angcyo.library.ex.replace
 import com.angcyo.library.utils.getMember
@@ -121,6 +122,29 @@ open class DslViewHolder(
         }
     }
 
+    /**枚举子元素
+     * [recursively] 是否递归*/
+    open fun eachChild(
+        recursively: Boolean = false,
+        action: (index: Int, childView: View) -> Unit
+    ) {
+        eachChild(itemView, recursively, action)
+    }
+
+    /**枚举子元素
+     * [recursively] 是否递归*/
+    open fun eachChild(
+        view: View?,
+        recursively: Boolean = false,
+        action: (index: Int, childView: View) -> Unit
+    ) {
+        if (view is ViewGroup) {
+            view.eachIndex(recursively, action)
+        } else if (view != null) {
+            action(0, view)
+        }
+    }
+
     /**依次点击child view
      * [recursively] 是否递归所有 ViewGroup */
     fun clickChild(
@@ -130,8 +154,8 @@ open class DslViewHolder(
     ) {
         val view = view(groupId)
         if (view is ViewGroup) {
-            view.each(recursively) {
-                click(it, action)
+            view.each(recursively) { childView ->
+                click(childView, action)
             }
         } else {
             click(view, action)
