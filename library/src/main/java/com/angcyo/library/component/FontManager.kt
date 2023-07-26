@@ -6,7 +6,6 @@ import android.os.Build
 import com.angcyo.library.L
 import com.angcyo.library.component.FontManager.FONT_LIST_EXT
 import com.angcyo.library.ex.copyFileTo
-import com.angcyo.library.ex.deleteFlag
 import com.angcyo.library.ex.eachFile
 import com.angcyo.library.ex.eachZipEntry
 import com.angcyo.library.ex.file
@@ -25,6 +24,9 @@ import java.io.File
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/09/17
  */
+
+typealias ImportFontAction = (TypefaceInfo) -> Unit
+
 object FontManager {
 
     /**字体列表zip文件, 用来存放字体文件的压缩包*/
@@ -38,6 +40,12 @@ object FontManager {
 
     /**自定义字体的其他加载文件夹路径*/
     val customFontFolderList = mutableListOf<String>()
+
+    /**导入自定义字体的回调*/
+    var importCustomFontActionList = mutableListOf<ImportFontAction>()
+
+    /**删除自定义字体的回调*/
+    var deleteCustomFontActionList = mutableListOf<ImportFontAction>()
 
     //
 
@@ -167,6 +175,13 @@ object FontManager {
         val find = fontList.find { it.name == typefaceInfo.name }
         if (find == null) {
             _customFontList.add(0, typefaceInfo)
+            for (action in importCustomFontActionList) {
+                try {
+                    action.invoke(typefaceInfo)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
         } else {
             //字体已存在
             typefaceInfo.isRepeat = true
@@ -280,8 +295,15 @@ object FontManager {
 
     /**删除自定义的字体, 从硬盘上删除*/
     fun deleteCustomFont(info: TypefaceInfo): Boolean {
+        for (action in deleteCustomFontActionList) {
+            try {
+                action.invoke(info)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
         //使用后缀的方式删除字体
-        val bool = info.filePath?.file().deleteFlag()
+        val bool = info.filePath?.file()?.delete() == true
         if (bool) {
             _customFontList.remove(info)
         }
