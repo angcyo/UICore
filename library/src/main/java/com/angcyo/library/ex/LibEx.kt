@@ -278,6 +278,8 @@ fun Collection<Any?>?.isListEmpty(): Boolean {
 }
 
 fun Collection<*>?.size() = this?.size ?: 0
+fun Collection<*>?.nullOrEmpty() = size() == 0
+fun Collection<*>?.notEmpty() = !nullOrEmpty()
 fun Array<*>?.size() = this?.size ?: 0
 fun ByteArray?.size() = this?.size ?: 0
 fun <T> T.toListOf() = listOf(this)
@@ -332,7 +334,7 @@ fun <T> Iterable<*>.toSingleList(): List<T> {
     return result
 }
 
-fun Stack<*>.popSafe() = if (isEmpty()) null else pop()
+fun <T> Stack<T>.popSafe() = if (isEmpty()) null else pop()
 
 fun <T> List<T?>?.randomGetOnce(): T? = randomGet(1).firstOrNull()
 

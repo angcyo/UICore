@@ -49,8 +49,23 @@ object FontManager {
 
     //
 
-    /**文件路径转字体对象*/
-    fun String.toTypeface() = Typeface.createFromFile(file())
+    /**文件路径转字体对象
+     * [android.graphics.Typeface]*/
+    fun String.toTypeface() = file().toTypeface()
+
+    fun File.toTypeface() = Typeface.createFromFile(this)
+
+    /**文件路径转字体对象
+     * [com.angcyo.library.model.TypefaceInfo]*/
+    fun String.toTypefaceInfo() = file().toTypefaceInfo()
+
+    fun File.toTypefaceInfo() = if (name.isFontType()) {
+        val typeface = Typeface.createFromFile(this)
+        val typefaceInfo = TypefaceInfo(this.name.noExtName(), typeface, this.absolutePath)
+        typefaceInfo
+    } else {
+        null
+    }
 
     /**默认的字体列表*/
     val DEFAULT_TYPEFACE_LIST = mutableListOf<TypefaceInfo>().apply {
@@ -71,9 +86,8 @@ object FontManager {
 
     fun _addFont(list: MutableList<TypefaceInfo>, file: File): TypefaceInfo? {
         return try {
-            if (file.name.isFontType()) {
-                val typeface = Typeface.createFromFile(file)
-                val typefaceInfo = TypefaceInfo(file.name.noExtName(), typeface, file.absolutePath)
+            val typefaceInfo = file.toTypefaceInfo()
+            if (typefaceInfo != null) {
                 if (!list.contains(typefaceInfo)) {
                     list.add(typefaceInfo)
                     typefaceInfo
@@ -244,6 +258,12 @@ object FontManager {
         folder.file().eachFile { file ->
             _addFont(_primaryFontList, file)
         }
+    }
+
+    /**重新加载主要字体列表*/
+    fun reloadPrimaryFontList() {
+        _primaryFontList.clear()
+        getPrimaryFontList()
     }
 
     //endregion ---在线/推荐字体---
