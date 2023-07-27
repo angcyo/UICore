@@ -14,6 +14,28 @@ import com.angcyo.library.utils.fileNameUUID
 /**简单的OkHttp下载文件, 覆盖原文件
  * 不支持断点下载, 不存数据库
  *
+ * ```
+ * bitmapUrl.download(fileNameUUID(".png")) { task, error2 ->
+ *     if (error2 == null) {
+ *         //下载成功
+ *         if (task.isFinish) {
+ *             val bitmapPath = task.savePath
+ *             action(bitmapPath)
+ *         }
+ *     } else {
+ *         toastQQ(error2.message)
+ *     }
+ * }
+ * ```
+ *
+ * ```
+ * entity.fileUrl!!.download(absolutePath) { task, error ->
+ *     if (task.isFinish || error != null) {
+ *         action(file, error)
+ *     }
+ * }
+ * ```
+ *
  * [savePath] 保存的路径, 如果以/开头, 就是路径, 否则就是文件名
  * */
 fun String.download(
