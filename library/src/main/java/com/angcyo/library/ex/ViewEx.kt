@@ -525,7 +525,7 @@ fun View.doAnimate(action: View.() -> Unit) {
 
 /**[androidx/core/view/View.kt:79]
  *
- * [androidx.core.view.ViewKt.doOnPreDraw]
+ * [androidx.core.view.doOnPreDraw]
  * */
 @Deprecated("比系统的要卡, 推荐使用系统的")
 fun View.doOnPreDraw(action: (View) -> Unit) {

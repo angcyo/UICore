@@ -5,7 +5,7 @@ import com.angcyo.widget.DslViewHolder
 /**
  * 直接获取[DslViewHolder]更新视图
  *
- * [com.angcyo.dsladapter.DslAdapterItemExKt.itemViewHolder]
+ * [com.angcyo.dsladapter.itemViewHolder]
  *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/08/05

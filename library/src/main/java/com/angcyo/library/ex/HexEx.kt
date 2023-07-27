@@ -132,7 +132,7 @@ fun Int.toHexString(length: Int = 2, padChar: Char = '0') =
 
 /**[ByteArray]
  * [length] 需要多少个字节, 1个字节8位. 不够前面补0
- * [com.angcyo.library.ex.HexExKt.toByteInt]
+ * [com.angcyo.library.ex.toByteInt]
  * https://stackoverflow.com/questions/2183240/java-integer-to-byte-array
  * */
 fun Int.toByteArray(length: Int): ByteArray {
@@ -145,7 +145,7 @@ fun Int.toByteArray(length: Int): ByteArray {
 }
 
 /**将字节数组,按照对应的位转成Int类型
- * [com.angcyo.library.ex.HexExKt.toByteArray]
+ * [com.angcyo.library.ex.toByteArray]
  * [kotlin.ByteArray.toHexInt]
  * [kotlin.ByteArray.toByteInt]
  * */

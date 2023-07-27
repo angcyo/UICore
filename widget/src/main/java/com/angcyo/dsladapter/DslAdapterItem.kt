@@ -229,7 +229,7 @@ open class DslAdapterItem : LifecycleOwner {
      * 在[StaggeredGridLayoutManager]中, 会使用[layoutParams.isFullSpan]的方式满屏
      *
      * [com.angcyo.dsladapter.DslAdapterItem.fullWidthItem]
-     * [com.angcyo.dsladapter.AdapterLibEx.fullSpan]
+     * [com.angcyo.dsladapter.fullSpan]
      *
      * */
     var itemSpanCount = 1

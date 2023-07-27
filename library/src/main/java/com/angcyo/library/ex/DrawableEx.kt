@@ -164,7 +164,7 @@ fun Drawable.getByBitmap(): Bitmap? {
     return toBitmap(-1, -1, Color.TRANSPARENT)
 }
 
-/**[androidx.core.graphics.drawable.DrawableKt.toBitmap]
+/**[androidx.core.graphics.drawable.toBitmap]
  * [outWidth] [outHeight] 缩放到的宽高, 大于0生效
  * [bgColor] 底色*/
 fun Drawable.toBitmap(

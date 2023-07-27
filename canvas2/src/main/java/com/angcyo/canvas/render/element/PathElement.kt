@@ -15,8 +15,8 @@ import kotlin.math.max
  * 路径元素
  *
  * [com.angcyo.canvas.render.util.RenderHelper]
- * [com.angcyo.canvas.render.util.RenderHelperKt.translateToOrigin(java.util.List<? extends android.graphics.Path>)]
- * [com.angcyo.canvas.render.util.RenderHelperKt.scaleToSize(java.util.List<? extends android.graphics.Path>, float, float)]
+ * [com.angcyo.library.ex.translateToOrigin]
+ * [com.angcyo.library.ex.scaleToSize]
  *
  * [Path.translateToOrigin]
  * [Path.scaleToSize]

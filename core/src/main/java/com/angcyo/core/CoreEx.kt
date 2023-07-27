@@ -95,7 +95,7 @@ fun Context.checkShowCrashDialog(clear: Boolean = true) {
 }
 
 /**
- * [com.angcyo.base.FragmentExKt.show]
+ * [com.angcyo.base.show]
  * */
 fun IView.showIn(fragment: AbsLifecycleFragment, group: ViewGroup? = null) {
     var parentView: ViewGroup? = group

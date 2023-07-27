@@ -86,7 +86,7 @@ fun Context.getRootHeight(): Int {
 }
 
 /**如果有权限, 则直接返回true. 否则返回false, 并请求权限, 但是权限回调无法拿到
- * [com.angcyo.base.ActivityEx.checkAndRequestPermission)]
+ * [com.angcyo.base.checkAndRequestPermission]
  * */
 fun Context.checkPermissions(vararg permissions: String): Boolean =
     if (havePermissions(*permissions)) {

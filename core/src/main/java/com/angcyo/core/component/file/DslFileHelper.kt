@@ -100,9 +100,9 @@ object DslFileHelper {
 }
 
 /**获取一个文件路径, 带Scheme的路径
- * [com.angcyo.library.utils.FileUtils.getRootFolder]
- * [com.angcyo.library.LibraryKt.libFilePath]
- * [com.angcyo.library.utils.FileUtilsKt.appFolderPath]
+ * [com.angcyo.library.utils.FileUtils.rootFolder]
+ * [com.angcyo.library.libFile]
+ * [com.angcyo.library.utils.appFolderPath]
  * */
 fun appFilePath(name: String, folder: String = ""): String {
     return FileUtils.appRootExternalFolderFile(folder, name).absolutePath

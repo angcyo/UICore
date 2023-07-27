@@ -132,7 +132,7 @@ open class BaseDslFragment : BaseTitleFragment() {
 
     /**重写此方法, 拉取数据
      * [com.angcyo.core.fragment.BaseTitleFragment.finishRefresh]
-     * [com.angcyo.dsladapter.DslAdapterExKt.toNone]*/
+     * [com.angcyo.dsladapter.toNone]*/
     @CallSuper
     open fun onLoadData() {
         //因为使用的behavior实现的刷新, 所以fling操作之后, scroll并不一定就会停止

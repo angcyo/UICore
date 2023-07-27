@@ -196,7 +196,7 @@ fun Context.httpConfigDialog(end: (url: String?, cancel: Boolean) -> Unit = { _,
 
 /**
  * 支持拼接[fileId] 和 [schema]
- * [com.angcyo.http.DslHttpKt.toApi]*/
+ * [com.angcyo.http.toApi]*/
 fun String?.toApiUrl(fileId: String?, schema: String? = null): String {
     if (this.isNullOrEmpty()) {
         return ""

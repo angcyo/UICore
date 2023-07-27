@@ -69,7 +69,7 @@ fun Layout.getMaxLineWidth(): Float {
 }
 
 /**等比限制最大的宽高
- * [com.angcyo.library.ex.RectExKt.adjustScaleSize]*/
+ * [com.angcyo.library.ex.adjustScaleSize]*/
 fun limitMaxWidthHeight(
     width: Float,
     height: Float,

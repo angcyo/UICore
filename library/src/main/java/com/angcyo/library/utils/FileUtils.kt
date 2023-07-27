@@ -245,7 +245,7 @@ fun String?.writeTo(filePath: String?, append: Boolean = true): String? {
 
 /**
  * 带Scheme的文件夹路径
- * [com.angcyo.library.LibraryKt.libFolderPath]
+ * [com.angcyo.library.libFolderPath]
  * */
 fun appFolderPath(folder: String = "", context: Context = app()): String {
     return FileUtils.appRootExternalFolder(folder, context).absolutePath

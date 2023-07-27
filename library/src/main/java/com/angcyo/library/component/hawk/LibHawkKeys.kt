@@ -21,7 +21,7 @@ object LibHawkKeys {
     const val KEY_COMPLIANCE_STATE = "KEY_COMPLIANCE_STATE"
 
     /**Hawk Key
-     * [com.angcyo.library.LibraryKt.getAppVersionCode]*/
+     * [com.angcyo.library.getAppVersionCode]*/
     var KEY_COMPLIANCE = "${KEY_COMPLIANCE_STATE}_${getAppString("versionCode")}"
 
     /**是否合规了, 持久化*/

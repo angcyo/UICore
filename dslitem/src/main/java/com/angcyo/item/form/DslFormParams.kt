@@ -108,7 +108,7 @@ fun DslFormParams.put(key: String, value: Any?) {
 }
 
 /**获取深度key, 对应的value
- * [com.angcyo.item.form.DslFormParamsKt.putDepth]*/
+ * [com.angcyo.item.form.putDepth]*/
 fun DslFormParams.get(key: String): Any? {
     return dataMap.getDepth(key)
 }
@@ -296,7 +296,7 @@ fun HashMap<String, Any?>.putDepth(key: String, value: Any?) {
 }
 
 /**获取深度key, 对应的value
- * [com.angcyo.item.form.DslFormParamsKt.putDepth]*/
+ * [com.angcyo.item.form.putDepth]*/
 fun HashMap<String, Any?>.getDepth(key: String): Any? {
     val arrayFlag = "\\[-?\\d*\\]"
     val arrayFlagRegex = arrayFlag.toRegex()

@@ -544,7 +544,7 @@ fun File.deleteRecursivelySafe(): Boolean {
 /**
  * 通过uri的方式,将文件保存至相册.
  * 返回是否成功和对应的Uri
- * [com.angcyo.library.ex.ContextExKt.saveToDCIM]*/
+ * [com.angcyo.library.ex.saveToDCIM]*/
 fun File.saveToDCIM(context: Context = app()) = context.saveToDCIM(this)
 
 /**分页获取文件列表

@@ -501,7 +501,7 @@ fun rectAnimatorFraction(
 }
 
 /**clip动画, 从左到右展开显示
- * [com.angcyo.library.ex.AnimEx.clipBoundsAnimator]
+ * [com.angcyo.library.ex.clipBoundsAnimator]
  * */
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun View.clipBoundsAnimatorFromLeft(
@@ -513,7 +513,7 @@ fun View.clipBoundsAnimatorFromLeft(
 ): ObjectAnimator = clipBoundsAnimator(start, end, duration, interpolator, onEndAction)
 
 /**clip动画, 从右到左隐藏
- * [com.angcyo.library.ex.AnimEx.clipBoundsAnimator]
+ * [com.angcyo.library.ex.clipBoundsAnimator]
  * */
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun View.clipBoundsAnimatorFromRightHide(

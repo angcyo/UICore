@@ -433,7 +433,7 @@ fun RectF.limitMinWidthHeight(
 }
 
 /**将一个矩形等比缩放到指定限制的宽高
- * [com.angcyo.canvas.utils.CanvasUtilsKt.limitMaxWidthHeight]
+ * [com.angcyo.library.ex.limitMaxWidthHeight]
  * [android.graphics.Matrix.setRectToRect]*/
 fun RectF.adjustScaleSize(
     maxWidth: Float,

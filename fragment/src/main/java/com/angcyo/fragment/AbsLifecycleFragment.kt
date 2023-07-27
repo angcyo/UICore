@@ -115,7 +115,7 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment, OnBackPressedDis
     }
 
     /**重写此方法, 回调[Fragment]的返回值.
-     * [com.angcyo.base.IFragmentResultKt.onFragmentResult]*/
+     * [com.angcyo.base.onFragmentResult]*/
     open fun onFragmentSetResult() {
         setFragmentResult(null)
     }

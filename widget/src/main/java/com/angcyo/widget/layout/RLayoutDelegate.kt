@@ -38,7 +38,7 @@ class RLayoutDelegate : ClipLayoutDelegate() {
             }
         }
 
-    /**支持最大高度[com.angcyo.library.ex.RKtxKt.calcSize]*/
+    /**支持最大高度[com.angcyo.library.ex.calcSize]*/
     var rMaxHeight: String? = null
         set(value) {
             field = value
