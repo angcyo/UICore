@@ -73,6 +73,15 @@ abstract class BaseSyncTask<Entity : ISyncEntity> : ISyncTask<Entity> {
         return serverDataVersion > dataVersion && localDataVersion > dataVersion
     }
 
+    /**判断远程和本地是否是一样的数据*/
+    open fun isSameData(
+        serverDataVersion: Long,
+        dataVersion: Long,
+        localDataVersion: Long
+    ): Boolean {
+        return serverDataVersion == dataVersion && dataVersion == localDataVersion
+    }
+
     /**本地数据是否需要更新
      * 需要先解决冲突, 才能进行此方法判断, 直接使用此方法会忽略冲突, 直接覆盖本地数据*/
     open fun needUpdateLocal(
@@ -80,7 +89,7 @@ abstract class BaseSyncTask<Entity : ISyncEntity> : ISyncTask<Entity> {
         dataVersion: Long,
         localDataVersion: Long
     ): Boolean {
-        return serverDataVersion > dataVersion
+        return serverDataVersion > dataVersion || dataVersion > localDataVersion /*兼容旧数据*/
     }
 
     /**远程数据是否需要更新*/
