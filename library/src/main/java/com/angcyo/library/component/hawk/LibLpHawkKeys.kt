@@ -100,7 +100,7 @@ object LibLpHawkKeys {
     var wifiBufferSize: Int by HawkPropertyValue<Any, Int>(4096)
 
     /**wifi发送延迟*/
-    var wifiSendDelay: Int by HawkPropertyValue<Any, Int>(20)
+    var wifiSendDelay: Int by HawkPropertyValue<Any, Int>(0)
 
     /**是否激活多选时元素边框的绘制*/
     var enableRenderElementBounds: Boolean by HawkPropertyValue<Any, Boolean>(true)
