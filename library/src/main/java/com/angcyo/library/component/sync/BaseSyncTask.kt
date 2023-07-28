@@ -57,4 +57,38 @@ abstract class BaseSyncTask<Entity : ISyncEntity> : ISyncTask<Entity> {
     /**将合适的数据拉下来, 比如附件需要下载等*/
     @ThreadSync
     abstract fun checkPull(entity: Entity)
+
+    //---
+
+    /**数据是否冲突
+     * [serverDataVersion] 服务器数据的版本
+     * [dataVersion] 本地数据的服务器版本
+     * [localDataVersion] 本地数据的版本
+     * */
+    open fun isSyncConflict(
+        serverDataVersion: Long,
+        dataVersion: Long,
+        localDataVersion: Long
+    ): Boolean {
+        return serverDataVersion > dataVersion && localDataVersion > dataVersion
+    }
+
+    /**本地数据是否需要更新
+     * 需要先解决冲突, 才能进行此方法判断, 直接使用此方法会忽略冲突, 直接覆盖本地数据*/
+    open fun needUpdateLocal(
+        serverDataVersion: Long,
+        dataVersion: Long,
+        localDataVersion: Long
+    ): Boolean {
+        return serverDataVersion > dataVersion
+    }
+
+    /**远程数据是否需要更新*/
+    open fun needUpdateRemote(
+        serverDataVersion: Long,
+        dataVersion: Long,
+        localDataVersion: Long
+    ): Boolean {
+        return localDataVersion > serverDataVersion
+    }
 }
