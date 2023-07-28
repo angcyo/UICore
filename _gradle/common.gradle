@@ -221,7 +221,7 @@ static def getLocalIp() {
             }
         }
     }
-    System.err.println("本机ip:" + ip)
+    System.err.println("[common.gradle]#getLocalIp 本机ip->" + ip)
     return ip
 }
 
