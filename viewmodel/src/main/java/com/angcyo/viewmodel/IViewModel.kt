@@ -14,12 +14,12 @@ interface IViewModel : ICancel {
 
     }
 
-    override fun cancel() {
-        
+    override fun cancel(data: Any?) {
+
     }
 
     /**释放资源*/
-    fun release() {
+    fun release(data: Any? = null) {
 
     }
 

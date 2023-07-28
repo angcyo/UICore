@@ -75,8 +75,8 @@ class StateModel : LifecycleViewModel() {
         }
     }
 
-    override fun release() {
-        super.release()
+    override fun release(data: Any?) {
+        super.release(data)
         actionList.forEach {
             it.action.invoke(StateData(it.type, it.value), CancelStateException("release"))
         }

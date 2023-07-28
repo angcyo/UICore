@@ -55,12 +55,12 @@ open class LifecycleViewModel : ViewModel(), IViewModel, LifecycleOwner {
     }
 
     /**取消所有Rx 和 协程*/
-    override fun cancel() {
+    override fun cancel(data: Any?) {
         cancelSchedule()
     }
 
     /**释放资源, 比如切换了登录的账号等*/
-    override fun release() {
+    override fun release(data: Any?) {
         cancel()
     }
 

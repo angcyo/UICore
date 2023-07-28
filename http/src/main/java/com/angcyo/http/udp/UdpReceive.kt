@@ -101,7 +101,7 @@ class UdpReceive : ICancel {
         }
     }
 
-    override fun cancel() {
+    override fun cancel(data: Any?) {
         isCancel.set(true)
     }
 }

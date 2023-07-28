@@ -9,6 +9,7 @@ package com.angcyo.library.component
  */
 interface ICancel {
 
-    fun cancel()
+    /**[data] 取消携带的数据*/
+    fun cancel(data: Any? = null)
 
 }

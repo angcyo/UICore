@@ -138,7 +138,7 @@ class TcpSend : ICancel {
     }
 
     /**主动取消*/
-    override fun cancel() {
+    override fun cancel(data: Any?) {
         isCancel.set(true)
         close()
     }

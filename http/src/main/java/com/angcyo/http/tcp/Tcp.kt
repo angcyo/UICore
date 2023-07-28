@@ -158,9 +158,9 @@ class Tcp : ICancel {
         }
     }
 
-    override fun cancel() {
+    override fun cancel(data: Any?) {
         socket ?: return
-        release(null)
+        release(data)
     }
 
     /**释放资源*/
