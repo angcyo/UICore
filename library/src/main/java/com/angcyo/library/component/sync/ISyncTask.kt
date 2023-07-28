@@ -26,7 +26,10 @@ interface ISyncTask<Entity : ISyncEntity> {
     @WorkerThread
     fun startSyncEntity()
 
-    /**获取下一个需要同步的记录, 如果有*/
+    /**获取下一个需要同步的记录, 如果有.
+     * 未同步的实体, 需要进行同步/和下载附件
+     * 已同步的实体, 检查是否需要下载附件
+     * */
     fun getNextSyncEntity(): Entity?
 
     /**开始同步实体*/
@@ -44,5 +47,16 @@ interface ISyncTask<Entity : ISyncEntity> {
         //const val STATE_PROGRESS = 2
         const val STATE_FINISH = 3
         const val STATE_ERROR = 4
+
+        fun Int.toSyncStateStr(): String {
+            return when (this) {
+                STATE_NONE -> "未开始"
+                STATE_START -> "开始"
+                //STATE_PROGRESS -> "进行中"
+                STATE_FINISH -> "完成"
+                STATE_ERROR -> "错误"
+                else -> "未知"
+            }
+        }
     }
 }
