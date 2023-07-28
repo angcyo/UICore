@@ -1,5 +1,6 @@
 package com.angcyo.library.component.hawk
 
+import com.angcyo.library.component.hawk.HawkProperty
 import com.angcyo.library.ex.hawkGetList
 import com.angcyo.library.ex.hawkPutList
 import com.orhanobut.hawk.Hawk
@@ -40,6 +41,9 @@ class HawkListProperty<T>(
             Hawk.put(key, "")
         } else if (value.isNotEmpty()) {
             key.hawkPutList(value, sort, allowEmpty)
+        }
+        HawkProperty.hawkPropertyChangeActionList.forEach {
+            it(property.name)
         }
     }
 }

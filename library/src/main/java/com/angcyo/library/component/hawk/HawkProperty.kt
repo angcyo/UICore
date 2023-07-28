@@ -1,4 +1,4 @@
-package com.angcyo.library.component
+package com.angcyo.library.component.hawk
 
 import androidx.annotation.Keep
 import com.angcyo.library.ex.hawkGet
@@ -16,6 +16,9 @@ import kotlin.reflect.KProperty
  * Copyright (c) 2020 angcyo. All rights reserved.
  */
 
+/**当有Hawk属性赋值时回调的方法*/
+typealias HawkPropertyChangeAction = (key: String) -> Unit
+
 /**自动同步保存至[Hawk]
  * [com.angcyo.library.component.hawk.HawkListProperty]*/
 @Keep
@@ -24,11 +27,19 @@ class HawkProperty<T>(
     val def: String? = null
 ) : ReadWriteProperty<T, String?> {
 
+    companion object {
+        /**全局的Hawk属性变化回调*/
+        val hawkPropertyChangeActionList = mutableListOf<HawkPropertyChangeAction>()
+    }
+
     override fun getValue(thisRef: T, property: KProperty<*>): String? =
         property.name.hawkGet(def)
 
     override fun setValue(thisRef: T, property: KProperty<*>, value: String?) {
         property.name.hawkPut(value)
+        hawkPropertyChangeActionList.forEach {
+            it(property.name)
+        }
     }
 }
 
@@ -48,6 +59,9 @@ class HawkPropertyValue<T, Value>(
     override fun setValue(thisRef: T, property: KProperty<*>, value: Value) {
         property.name.hawkPut(value)
         onSetValue(value)
+        HawkProperty.hawkPropertyChangeActionList.forEach {
+            it(property.name)
+        }
     }
 }
 
@@ -74,6 +88,9 @@ class HawkPropertySuffixValue<T, Value>(
         val key = property.hawkKey
         key.hawkPut(value)
         onSetValue(key, value)
+        HawkProperty.hawkPropertyChangeActionList.forEach {
+            it(property.name)
+        }
     }
 }
 
@@ -98,5 +115,8 @@ class HawkPropertyVersionValue<T, Value>(
         val key = property.hawkKey
         key.hawkPut(value)
         onSetValue(key, value)
+        HawkProperty.hawkPropertyChangeActionList.forEach {
+            it(property.name)
+        }
     }
 }

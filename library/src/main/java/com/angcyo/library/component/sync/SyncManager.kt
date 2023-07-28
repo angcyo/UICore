@@ -50,4 +50,12 @@ class SyncManager {
         return false
     }
 
+    /**取消所有任务*/
+    fun cancelSyncTask() {
+        syncState = ISyncTask.STATE_NONE
+        for (syncTask in syncTaskList) {
+            syncTask.syncState = ISyncTask.STATE_NONE
+        }
+    }
+
 }

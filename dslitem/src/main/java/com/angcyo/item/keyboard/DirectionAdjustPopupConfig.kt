@@ -6,7 +6,7 @@ import com.angcyo.dialog.TargetWindow
 import com.angcyo.dialog.popup.ShadowAnchorPopupConfig
 import com.angcyo.item.R
 import com.angcyo.library.annotation.DSL
-import com.angcyo.library.component.HawkPropertyValue
+import com.angcyo.library.component.hawk.HawkPropertyValue
 import com.angcyo.library.ex.indexOfChild
 import com.angcyo.tablayout.DslTabLayout
 import com.angcyo.widget.DslViewHolder

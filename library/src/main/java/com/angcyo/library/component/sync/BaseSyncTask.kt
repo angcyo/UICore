@@ -32,13 +32,15 @@ abstract class BaseSyncTask<Entity : ISyncEntity> : ISyncTask<Entity> {
 
     override fun syncEntity(entity: Entity) {
         if (syncState == ISyncTask.STATE_START) {
+            //任务属于开始状态
             if (entity.isSync()) {
-                //已经同步过了
+                //已经同步过的数据
             } else {
                 //开始同步
                 checkPush(entity)
-                checkPull(entity)
             }
+            //检查数据是否需要下载附件
+            checkPull(entity)
         }
     }
 

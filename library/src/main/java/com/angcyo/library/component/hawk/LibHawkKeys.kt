@@ -3,7 +3,6 @@ package com.angcyo.library.component.hawk
 import androidx.annotation.Keep
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
-import com.angcyo.library.component.HawkPropertyValue
 import com.angcyo.library.ex.hawkGet
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.getAppString

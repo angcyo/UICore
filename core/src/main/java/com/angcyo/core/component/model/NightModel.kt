@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModel
 import com.angcyo.core.R
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
-import com.angcyo.library.component.HawkPropertyValue
+import com.angcyo.library.component.hawk.HawkPropertyValue
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.isDarkMode

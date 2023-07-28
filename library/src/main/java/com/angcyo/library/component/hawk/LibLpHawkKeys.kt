@@ -2,7 +2,6 @@ package com.angcyo.library.component.hawk
 
 import androidx.annotation.Keep
 import com.angcyo.library.annotation.MM
-import com.angcyo.library.component.HawkPropertyValue
 
 /**
  * LaserPacker相关配置参数
