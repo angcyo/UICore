@@ -49,3 +49,34 @@ fun IElement.limitElementMaxSize(
     matrix.setScale(bounds2.width() / bounds.width(), bounds2.height() / bounds.height())
     renderProperty.applyScaleMatrixWithValue(matrix)
 }
+
+/**返回的是一个矩阵
+ * [limitElementMaxSize]*/
+fun RectF.limitElementMaxSizeMatrix(
+    width: Float,
+    height: Float,
+    adjustType: Int = ADJUST_TYPE_CENTER
+): Matrix {
+    val matrix = Matrix()
+
+    val temp = RectF(this)
+    temp.limitMaxWidthHeight(width, height, adjustType)
+
+    matrix.setScale(temp.width() / width(), temp.height() / height())
+    matrix.postTranslate(temp.left - left, temp.top - top)
+
+    return matrix
+}
+
+/*
+fun RectF.limitElementMaxRectMatrix(rect: RectF, adjustType: Int = ADJUST_TYPE_CENTER): Matrix {
+    val matrix = Matrix()
+
+    val temp = RectF(this)
+    temp.limitMaxWidthHeight(rect.width(), rect.height(), adjustType)
+
+    matrix.setScale(temp.width() / width(), temp.height() / height())
+    matrix.postTranslate(temp.left - left, temp.top - top)
+
+    return matrix
+}*/
