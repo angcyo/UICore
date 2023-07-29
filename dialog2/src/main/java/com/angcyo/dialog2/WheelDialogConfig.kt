@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import com.angcyo.dialog.BaseDialogConfig
 import com.angcyo.dialog.configBottomDialog
 import com.angcyo.dialog2.widget.ArrayWheelAdapter
@@ -15,6 +16,8 @@ import com.angcyo.library.extend.IToRightDrawable
 import com.angcyo.library.extend.IToText
 import com.angcyo.widget.DslViewHolder
 import com.contrarywind.view.WheelView
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * 3D滚轮选择对话框配置
@@ -112,33 +115,37 @@ open class WheelDialogConfig : BaseDialogConfig() {
                 ) {
                     if (!text.isNullOrBlank()) {
                         wheelItems?.get(index)?.let { item ->
+
+                            val textHeight = textBounds.height()
+
+                            //draw
+                            fun drawDrawable(drawable: Drawable, left: Float) {
+                                val height = min(textHeight, drawable.minimumHeight)
+                                val width = min(height, drawable.minimumWidth)
+                                drawable.setBounds(
+                                    left.toInt(),
+                                    textHeight / 2 - height / 2,
+                                    (left + width).toInt(),
+                                    textHeight / 2 + height / 2
+                                )
+                                drawable.draw(canvas)
+                            }
+
                             if (item is IToDrawable) {
                                 item.toDrawable()?.let { drawable ->
-                                    val size = textBounds.height()
+                                    val f = textHeight * 1f / drawable.minimumHeight
+                                    val width = max(textHeight, (drawable.minimumWidth * f).toInt())
                                     val offset = 4 * dp
-                                    val left = textDrawX - size - offset
-                                    drawable.setBounds(
-                                        left.toInt(),
-                                        0,
-                                        (left + size).toInt(),
-                                        size
-                                    )
-                                    drawable.draw(canvas)
+                                    val left = textDrawX - width - offset
+                                    drawDrawable(drawable, left)
                                 }
                             }
                             if (item is IToRightDrawable) {
                                 item.toRightDrawable()?.let { drawable ->
                                     val width = textBounds.width()
-                                    val height = textBounds.height()
                                     val offset = 4 * dp
                                     val left = textDrawX + width + offset
-                                    drawable.setBounds(
-                                        left.toInt(),
-                                        0,
-                                        (left + height).toInt(),
-                                        height
-                                    )
-                                    drawable.draw(canvas)
+                                    drawDrawable(drawable, left)
                                 }
                             }
                         }
