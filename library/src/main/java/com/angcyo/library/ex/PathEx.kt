@@ -791,3 +791,14 @@ fun List<Path>.op(op: Path.Op): Path {
 
     return result
 }
+
+/**
+ * [fillType] 路径填充类型, 默认是[android.graphics.Path.FillType.WINDING]
+ *
+ * https://www.zhangxinxu.com/wordpress/2018/10/nonzero-evenodd-fill-mode-rule/
+ * */
+fun List<Path>.updateFillType(fillType: Path.FillType = Path.FillType.EVEN_ODD) {
+    for (path in this) {
+        path.fillType = fillType
+    }
+}
