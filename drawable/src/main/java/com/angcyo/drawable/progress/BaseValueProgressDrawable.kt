@@ -6,7 +6,7 @@ import android.graphics.Shader
 import androidx.annotation.Px
 import androidx.core.math.MathUtils
 import com.angcyo.drawable.InvalidateDrawableProperty
-import com.angcyo.drawable.base.BaseDrawable
+import com.angcyo.drawable.base.BaseDrawDrawable
 import com.angcyo.library.ex.anim
 import kotlin.math.max
 import kotlin.math.min
@@ -15,7 +15,7 @@ import kotlin.math.min
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/08/03
  */
-abstract class BaseValueProgressDrawable : BaseDrawable() {
+abstract class BaseValueProgressDrawable : BaseDrawDrawable() {
 
     //region ---配置变量---
 

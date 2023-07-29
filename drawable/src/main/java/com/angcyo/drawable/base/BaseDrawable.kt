@@ -1,28 +1,17 @@
 package com.angcyo.drawable.base
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.ColorFilter
+import android.graphics.PixelFormat
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.text.TextPaint
 import android.view.View
-import com.angcyo.library.ex.dp
 
 /**
- * 基类
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
- * @since 2022/08/03
+ * @since 2023/07/29
  */
 abstract class BaseDrawable : Drawable() {
-
-    /**画笔*/
-    val textPaint: TextPaint by lazy {
-        TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            isFilterBitmap = true
-            style = Paint.Style.FILL
-            textSize = 12 * dp
-            strokeJoin = Paint.Join.ROUND
-            strokeCap = Paint.Cap.ROUND
-        }
-    }
 
     /**标识, 是否需要半透明*/
     var isTranslucent: Boolean? = null
@@ -49,23 +38,24 @@ abstract class BaseDrawable : Drawable() {
         super.setBounds(bounds)
     }
 
+    /**[setBounds] 最终走这个方法*/
+    override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
+        super.setBounds(left, top, right, bottom)
+    }
+
     override fun setAlpha(alpha: Int) {
-        if (textPaint.alpha != alpha) {
-            textPaint.alpha = alpha
-            invalidateSelf()
-        }
+        invalidateSelf()
     }
 
     override fun getAlpha(): Int {
-        return textPaint.alpha
+        return super.getAlpha()
     }
 
     override fun getColorFilter(): ColorFilter? {
-        return textPaint.colorFilter
+        return super.getColorFilter()
     }
 
     override fun setColorFilter(colorFilter: ColorFilter?) {
-        textPaint.colorFilter = colorFilter
         invalidateSelf()
     }
 
@@ -78,7 +68,6 @@ abstract class BaseDrawable : Drawable() {
             if (translucent) PixelFormat.TRANSLUCENT else PixelFormat.OPAQUE
         }
     }
-
 }
 
 /**附着的[View]*/
