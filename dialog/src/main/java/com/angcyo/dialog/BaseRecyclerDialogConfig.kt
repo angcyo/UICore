@@ -51,4 +51,13 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
         }
     }
 
+    /**重新渲染界面*/
+    fun refreshDslAdapter() {
+        _dialogViewHolder?.rv(R.id.lib_recycler_view)?.apply {
+            renderDslAdapter {
+                onRenderAdapterAction?.invoke(this)
+            }
+        }
+    }
+
 }
