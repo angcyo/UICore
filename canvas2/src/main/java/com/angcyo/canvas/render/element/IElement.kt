@@ -4,13 +4,13 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.library.canvas.core.Reason
 import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.core.component.ElementHitComponent
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.state.IStateStack
+import com.angcyo.library.canvas.core.Reason
 
 /**
  * 单个元素, 或者多个元素
@@ -37,7 +37,12 @@ interface IElement {
         block: IElement.() -> Unit
     )
 
-    /**请求获取元素渲染时, 相关的属性信息*/
+    /**当[elementBean]属性改变后, 请调用此方法更新
+     * 相当于重刷了元素属性和渲染属性*/
+    fun updateElementFromBean(renderer: BaseRenderer?) {}
+
+    /**请求获取元素渲染时, 相关的属性信息
+     * 调用之前需要先解析数据[com.angcyo.canvas.render.element.IElement.updateElementFromBean]*/
     fun requestElementRenderProperty(): CanvasRenderProperty
 
     /**请求获取用来渲染在其它界面的[Drawable]
