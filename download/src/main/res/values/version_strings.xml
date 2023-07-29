@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="version_history_title">Version History</string>
+    <string name="version_update_tip">Update content</string>
+    <string name="version_show_more">See More</string>
+</resources>

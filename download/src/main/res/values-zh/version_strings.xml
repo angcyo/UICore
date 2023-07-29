@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="version_history_title">更新记录</string>
+    <string name="version_update_tip">更新内容</string>
+    <string name="version_show_more">查看更多</string>
+</resources>

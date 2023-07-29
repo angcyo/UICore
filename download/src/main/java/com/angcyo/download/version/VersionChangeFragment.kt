@@ -1,7 +1,9 @@
 package com.angcyo.download.version
 
 import com.angcyo.core.fragment.BaseDslFragment
+import com.angcyo.download.R
 import com.angcyo.download.dslitem.DslVersionChangeItem
+import com.angcyo.library.ex._string
 
 /**
  * 版本更新记录界面
@@ -15,7 +17,7 @@ open class VersionChangeFragment : BaseDslFragment() {
     }
 
     init {
-        fragmentTitle = "更新记录"
+        fragmentTitle = _string(R.string.version_history_title)
         enableRefresh = true
     }
 
