@@ -123,6 +123,13 @@ fun isRelease(): Boolean = "release".equals(BuildConfig.BUILD_TYPE, true) && !is
 
 fun isDebugType() = Library.isDebugTypeVal || "debug".equals(BuildConfig.BUILD_TYPE, true)
 
+/**[BuildConfig.BUILD_TYPE]
+ * [isBuildDebug]*/
+fun String.isDebugType() = "debug".equals(this, true)
+
+/**[BuildConfig.BUILD_TYPE]*/
+fun String.isBuildDebug() = "debug".equals(this, true)
+
 fun isMac() = getAppString("os_name")?.toLowerCase()?.contains("mac") == true
 
 /** resValue "bool", "show_debug", "true" */
