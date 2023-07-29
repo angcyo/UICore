@@ -116,12 +116,16 @@ abstract class BaseElement : IElement {
 
     //region---方法---
 
-    /**更新原始数据的宽高, 并且保持看起来的宽高一直
-     * [keepVisibleSize] 是否要保持可见的大小一致*/
+    /**更新原始数据的宽高, 并且保持看起来的宽高一直.
+     * 直接更新渲染属性, 此时bean的数据可能还未更新
+     * [keepVisibleSize] 是否要保持可见的大小一致
+     * [newWidth] 新的渲染宽度
+     * [newHeight] 新的渲染高度
+     * */
     @Pixel
-    open fun updateOriginWidthHeight(
-        newWidth: Float,
-        newHeight: Float,
+    open fun updateRenderWidthHeight(
+        @Pixel newWidth: Float,
+        @Pixel newHeight: Float,
         keepVisibleSize: Boolean = true
     ) {
         if (newWidth == 0f || newHeight == 0f) {

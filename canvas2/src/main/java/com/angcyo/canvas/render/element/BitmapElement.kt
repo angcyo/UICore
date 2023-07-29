@@ -31,10 +31,10 @@ open class BitmapElement : BaseElement() {
     open fun getRenderBitmapMatrix(bitmap: Bitmap): Matrix? = null
 
     /**更新原始的[bitmap]对象, 并保持可视化的宽高一致
-     * [updateOriginWidthHeight]*/
+     * [updateRenderWidthHeight]*/
     open fun updateOriginBitmap(bitmap: Bitmap, keepVisibleSize: Boolean = true) {
         this.originBitmap = bitmap
-        updateOriginWidthHeight(bitmap.width.toFloat(), bitmap.height.toFloat(), keepVisibleSize)
+        updateRenderWidthHeight(bitmap.width.toFloat(), bitmap.height.toFloat(), keepVisibleSize)
     }
 
     override fun requestElementDrawable(

@@ -59,10 +59,10 @@ open class PathElement : BaseElement() {
     }
 
     /**更新原始的[pathList]对象, 并保持可视化的宽高一致
-     * [updateOriginWidthHeight]*/
+     * [updateRenderWidthHeight]*/
     fun updateOriginPathList(pathList: List<Path>?, keepVisibleSize: Boolean = true) {
         this.pathList = pathList
         val bounds = RenderHelper.computePathBounds(pathList)
-        updateOriginWidthHeight(bounds.width(), bounds.height(), keepVisibleSize)
+        updateRenderWidthHeight(bounds.width(), bounds.height(), keepVisibleSize)
     }
 }

@@ -195,7 +195,7 @@ open class TextElement : BaseElement() {
             newHeight = curveTextDraw.curveTextHeight
         }
 
-        updateOriginWidthHeight(newWidth, newHeight, keepVisibleSize)
+        updateRenderWidthHeight(newWidth, newHeight, keepVisibleSize)
     }
 
     /**更新曲率, 并且保持可视化的效果不突兀
