@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.TitleWrapLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_title_layout"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/big_action_bar_height"
+    app:r_force_fit_status_bar="true">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/action_bar_height">
+
+        <LinearLayout
+            android:id="@+id/lib_left_wrap_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:background="@drawable/lib_back"
+            tools:backgroundTint="@color/lib_icon_color"
+            tools:layout_height="@dimen/action_bar_height"
+            tools:layout_width="@dimen/action_bar_height" />
+
+        <LinearLayout
+            android:id="@+id/lib_right_wrap_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:background="@drawable/lib_close"
+            tools:backgroundTint="@color/lib_icon_color"
+            tools:layout_height="@dimen/action_bar_height"
+            tools:layout_width="@dimen/action_bar_height" />
+
+    </FrameLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_title_text_view"
+        style="@style/LibMainTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/lib_xhdpi"
+        android:paddingVertical="@dimen/lib_hdpi"
+        android:textSize="@dimen/text_primary_size"
+        android:textStyle="bold"
+        tools:text="标题栏文本" />
+
+</com.angcyo.widget.layout.TitleWrapLayout>

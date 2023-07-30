@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.*
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -268,10 +269,20 @@ object RNetwork {
         return connectState(context)[0] || connectState(context)[1]
     }
 
+    /**wifi是否激活*/
+    fun isWifiEnable(context: Context = app()): Boolean {
+        val manager =
+            context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        return try {
+            manager.isWifiEnabled
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     /**[android.Manifest.permission.ACCESS_NETWORK_STATE]*/
     fun isWifiConnect(context: Context = app()): Boolean {
-        val manager: ConnectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return try {
             manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)?.isConnected == true
         } catch (e: Exception) {

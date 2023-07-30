@@ -5,14 +5,19 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
-import androidx.annotation.DrawableRes
 import com.angcyo.base.back
 import com.angcyo.base.dslFHelper
 import com.angcyo.base.isInDetailContainer
 import com.angcyo.core.R
 import com.angcyo.core.component.model.NightModel
 import com.angcyo.core.vmApp
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex._color
+import com.angcyo.library.ex._string
+import com.angcyo.library.ex.colorDrawable
+import com.angcyo.library.ex.colorFilter
+import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.find
+import com.angcyo.library.ex.loadDrawable
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.span.span
 
@@ -34,14 +39,6 @@ object BaseUI {
 open class FragmentUI {
 
     //<editor-fold desc="成员区">
-
-    /**是否显示返回按钮的文本*/
-    var showBackText: Boolean = true
-
-    /**返回按钮的[Drawable]资源*/
-    @DrawableRes
-    var backIconDrawableId: Int = R.drawable.lib_back
-    var backTextSize: Float = _dimen(R.dimen.text_body_size).toFloat()
 
     /**[BaseTitleFragment.onCreate]中触发*/
     var fragmentCreateBefore: (fragment: BaseTitleFragment, fragmentConfig: FragmentConfig, savedInstanceState: Bundle?) -> Unit =
@@ -96,11 +93,12 @@ open class FragmentUI {
                 text = span {
                     drawable {
                         backgroundDrawable =
-                            loadDrawable(backIconDrawableId).colorFilter(fragment.fragmentConfig.titleItemIconColor)
+                            loadDrawable(fragment.fragmentConfig.backIconDrawableId)
+                                .colorFilter(fragment.fragmentConfig.titleItemIconColor)
                     }
-                    if (showBackText) {
+                    if (fragment.fragmentConfig.showBackText) {
                         drawable(_string(R.string.ui_back)) {
-                            textSize = backTextSize
+                            textSize = fragment.fragmentConfig.backTextSize
                             marginLeft = -8 * dpi
                             marginTop = 1 * dpi
                             textGravity = Gravity.CENTER

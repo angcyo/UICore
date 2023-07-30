@@ -6,7 +6,7 @@ import android.net.wifi.WifiManager
 import com.angcyo.library.app
 import java.net.NetworkInterface
 import java.net.SocketException
-import java.util.*
+import java.util.Locale
 
 /**
  *
@@ -32,6 +32,8 @@ fun <T> MutableList<T>.append(element: T, maxSize: Int = 10) {
 /**
  * 获取wifi ip地址
  * android.permission.ACCESS_WIFI_STATE
+ *
+ * [android.text.format.Formatter.formatIpAddress]
  */
 fun getWifiIP(): String? {
     return try {
@@ -42,6 +44,7 @@ fun getWifiIP(): String? {
             val ipAddress = wifiInfo.ipAddress
             //ipAddress 为0时, 有可能wifi被禁用, 或者未连接. 也有可能是正在连接
             //<unknown ssid>
+            //android.text.format.Formatter.formatIpAddress(ipAddress)
             String.format(
                 Locale.getDefault(), "%d.%d.%d.%d",
                 ipAddress and 0xff, ipAddress shr 8 and 0xff,

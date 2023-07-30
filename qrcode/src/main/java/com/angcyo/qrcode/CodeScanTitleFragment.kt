@@ -76,19 +76,19 @@ open class CodeScanTitleFragment : CodeScanFragment() {
     /**初始化布局, 此时的[View]还没有[attach]*/
     open fun initBaseView(savedInstanceState: Bundle?) {
         fragmentUI?.apply {
-            if (backIconDrawableId > 0) {
+            if (fragmentConfig.backIconDrawableId > 0) {
                 leftControl()?.inflate(R.layout.lib_text_layout, true) {
                     find<TextView>(R.id.lib_text_view)?.apply {
                         id = R.id.lib_title_back_view
                         setTextColor(fragmentConfig.titleItemTextColor)
                         text = span {
                             drawable {
-                                backgroundDrawable =
-                                    loadDrawable(backIconDrawableId).colorFilter(fragmentConfig.titleItemIconColor)
+                                backgroundDrawable = loadDrawable(fragmentConfig.backIconDrawableId)
+                                    .colorFilter(fragmentConfig.titleItemIconColor)
                             }
-                            if (showBackText) {
+                            if (fragmentConfig.showBackText) {
                                 drawable(_string(R.string.ui_back)) {
-                                    textSize = backTextSize
+                                    textSize = fragmentConfig.backTextSize
                                     marginLeft = -8 * dpi
                                     marginTop = 1 * dpi
                                     textGravity = Gravity.CENTER

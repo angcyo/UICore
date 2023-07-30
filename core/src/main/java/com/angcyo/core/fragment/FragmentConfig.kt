@@ -5,7 +5,9 @@ import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import androidx.annotation.DrawableRes
 import com.angcyo.core.R
+import com.angcyo.library.ex._dimen
 import com.angcyo.library.ex.getColor
 import com.angcyo.library.ex.getDimen
 
@@ -55,6 +57,16 @@ data class FragmentConfig(
     /**标题栏左右item的文本颜色
      * [com.angcyo.core.fragment.BaseTitleFragment.onInitFragment]*/
     var titleItemTextColor: Int = Color.WHITE,
+
+    /**是否显示返回按钮的文本*/
+    var showBackText: Boolean = true,
+
+    /**返回按钮的[Drawable]资源*/
+    @DrawableRes
+    var backIconDrawableId: Int = R.drawable.lib_back,
+
+    /**返回按钮的文本大小*/
+    var backTextSize: Float = _dimen(R.dimen.text_body_size).toFloat(),
 
     /**Fragment背景
      * [com.angcyo.core.fragment.BaseTitleFragment.onInitFragment]*/
