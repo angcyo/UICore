@@ -17,6 +17,7 @@ import com.angcyo.library.ex.colorDrawable
 import com.angcyo.library.ex.colorFilter
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.find
+import com.angcyo.library.ex.getDimen
 import com.angcyo.library.ex.loadDrawable
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.span.span
@@ -136,4 +137,13 @@ fun FragmentConfig.lightStyle() {
         isLightStyle = true //白色底标题栏
     }
     titleItemTextColor = titleItemIconColor
+}
+
+/**大标题布局*/
+fun BaseTitleFragment.bigTitleLayout() {
+    titleLayoutId = R.layout.lib_title_big_layout
+    fragmentConfig.showBackText = false
+    fragmentConfig.backIconDrawableId = R.drawable.lib_close
+    fragmentConfig.titleTextSize = getDimen(R.dimen.text_primary_size).toFloat()
+    //fragmentConfig.titleTextType = Typeface.BOLD
 }
