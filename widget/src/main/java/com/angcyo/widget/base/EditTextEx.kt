@@ -158,19 +158,34 @@ fun EditText.onAfterTextChanged(listener: (Editable) -> Unit) {
     })
 }
 
-/**自动初始化输入框文本和保存*/
+/**[clearListener] 是否清楚所有的观察者*/
 fun EditText.hawkTextChange(
     key: String,
     def: String?,
-    inRv: Boolean = true,
+    clearListener: Boolean = true,
     listener: (CharSequence) -> Unit = {}
 ) {
-    if (inRv) {
+    if (clearListener) {
         clearListeners()
     }
     setInputText(key.hawkGet(def))
     onTextChange {
         key.hawkPut(it)
+        listener(it)
+    }
+}
+
+/**[hawkTextChange]*/
+fun EditText.listenerTextChange(
+    def: CharSequence?,
+    clearListener: Boolean = true,
+    listener: (CharSequence) -> Unit = {}
+) {
+    if (clearListener) {
+        clearListeners()
+    }
+    setInputText(def)
+    onTextChange {
         listener(it)
     }
 }

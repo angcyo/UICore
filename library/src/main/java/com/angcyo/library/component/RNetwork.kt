@@ -269,7 +269,8 @@ object RNetwork {
         return connectState(context)[0] || connectState(context)[1]
     }
 
-    /**wifi是否激活*/
+    /**wifi是否激活
+     * [isWifiConnect]*/
     fun isWifiEnable(context: Context = app()): Boolean {
         val manager =
             context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
@@ -280,7 +281,8 @@ object RNetwork {
         }
     }
 
-    /**[android.Manifest.permission.ACCESS_NETWORK_STATE]*/
+    /**[android.Manifest.permission.ACCESS_NETWORK_STATE]
+     * [isWifiEnable]*/
     fun isWifiConnect(context: Context = app()): Boolean {
         val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return try {

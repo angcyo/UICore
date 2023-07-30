@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.net.wifi.WifiManager
 import com.angcyo.library.app
+import com.angcyo.library.component.isWifi
 import java.net.NetworkInterface
 import java.net.SocketException
 import java.util.Locale
@@ -31,8 +32,8 @@ fun <T> MutableList<T>.append(element: T, maxSize: Int = 10) {
 
 /**
  * 获取wifi ip地址
- * android.permission.ACCESS_WIFI_STATE
  *
+ * [android.Manifest.permission.ACCESS_WIFI_STATE]
  * [android.text.format.Formatter.formatIpAddress]
  */
 fun getWifiIP(): String? {
@@ -50,6 +51,33 @@ fun getWifiIP(): String? {
                 ipAddress and 0xff, ipAddress shr 8 and 0xff,
                 ipAddress shr 16 and 0xff, ipAddress shr 24 and 0xff
             )
+        } else {
+            null
+        }
+    } catch (ex: Exception) {
+        //Log.e(TAG, ex.getMessage());
+        null
+    }
+}
+
+/**
+ * 获取wifi ssid
+ * 未连接wifi时, 返回null
+ *
+ * ```
+ * SSID: acy_k3_25g, BSSID: 74:7d:**:**:a3:c2, Supplicant state: COMPLETED, RSSI: -45, Link speed: 433Mbps, Frequency: 5745MHz, Net ID: 1, Metered hint: false, score: 0
+ * SSID: <unknown ssid>, BSSID: <none>, Supplicant state: DISCONNECTED, RSSI: -127, Link speed: -1Mbps, Frequency: -1MHz, Net ID: -1, Metered hint: false, score: 0
+ * ```
+ *
+ * [android.Manifest.permission.ACCESS_WIFI_STATE]
+ */
+fun getWifiSSID(): String? {
+    return try {
+        val context = app().applicationContext
+        if (isWifi && context.havePermissions(Manifest.permission.ACCESS_WIFI_STATE)) {
+            val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            val wifiInfo = wifiManager.connectionInfo
+            wifiInfo.ssid.trimStart('"').trimEnd('"')
         } else {
             null
         }
