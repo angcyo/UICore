@@ -773,6 +773,18 @@ open class DslViewHolder(
 
     //<editor-fold desc="ViewGroup">
 
+    /**
+     * 获取指定索引的child
+     * DslViewHolder[0]
+     * */
+    operator fun get(index: Int): View? {
+        val view = itemView
+        if (view is ViewGroup) {
+            return view.getChildAt(index)
+        }
+        return null
+    }
+
     /**将[itemView]的所有内容替换成新的布局[layoutId]*/
     fun replace(@LayoutRes layoutId: Int, attachToRoot: Boolean = true) {
         replace(itemView, layoutId, attachToRoot)

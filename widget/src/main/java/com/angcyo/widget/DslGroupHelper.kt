@@ -51,6 +51,9 @@ class DslGroupHelper(val parentView: View) : DslViewHolder(parentView) {
         selectorView?.run { ViewCompat.setBackground(this, drawable) }
     }
 
+    /**获取选中控件的背景*/
+    fun getBackground(): Drawable? = selectorView?.background
+
     fun setText(text: CharSequence?) {
         selectorView?.let {
             when (it) {

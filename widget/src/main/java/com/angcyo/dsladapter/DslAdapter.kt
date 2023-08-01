@@ -1183,5 +1183,14 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         } as List<Item>
     }
 
+    /**
+     * ```
+     * this[DslAdapterItem]
+     * ```
+     * */
+    inline operator fun <reified Item : DslAdapterItem> get(useFilterList: Boolean = true): List<Item> {
+        return getDataList(useFilterList).filterIsInstance<Item>()
+    }
+
     //</editor-fold desc="操作符重载">
 }

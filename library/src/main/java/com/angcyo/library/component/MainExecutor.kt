@@ -69,7 +69,8 @@ fun onMainOnce(
     MainExecutor.delay(runnable, delayMillis)
 }
 
-fun _removeMainRunnable(runnable: Runnable) {
+fun _removeMainRunnable(runnable: Runnable?) {
+    runnable ?: return
     MainExecutor.remove(runnable)
 }
 

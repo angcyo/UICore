@@ -17,6 +17,9 @@ import com.angcyo.widget.R
 class ImageLoadingView(context: Context, attributeSet: AttributeSet? = null) :
     AppCompatImageView(context, attributeSet) {
 
+    /**是否激活动画*/
+    var enableRotateAnimation = true
+
     /**旋转步长*/
     var rotateStep = 5f
 
@@ -33,7 +36,7 @@ class ImageLoadingView(context: Context, attributeSet: AttributeSet? = null) :
         canvas.rotate(_rotateDegrees, width / 2.toFloat(), height / 2.toFloat())
         super.onDraw(canvas)
 
-        if (isEnabled && drawable != null && rotateStep != 0f) {
+        if (isEnabled && drawable != null && rotateStep != 0f && enableRotateAnimation) {
             //动画控制
             _rotateDegrees += rotateStep / _refreshRateRatio
             _rotateDegrees = if (_rotateDegrees < 360) _rotateDegrees else _rotateDegrees - 360
@@ -43,6 +46,7 @@ class ImageLoadingView(context: Context, attributeSet: AttributeSet? = null) :
 
     /**设置加载的资源*/
     fun setLoadingRes(resId: Int, loading: Boolean = true) {
+        enableRotateAnimation = loading
         isEnabled = loading
         setImageResource(resId)
     }

@@ -16,6 +16,7 @@ import com.angcyo.library.ex.*
 import com.angcyo.library.isMain
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.R
+import kotlin.reflect.KClass
 
 
 /**
@@ -52,6 +53,15 @@ fun <Item : DslAdapterItem> DslAdapter.findItem(
     } as? Item
 }
 
+fun <Item : DslAdapterItem> DslAdapter.findItem(
+    itemClass: KClass<Item>,
+    useFilterList: Boolean = true
+): Item? {
+    return findItem(useFilterList) {
+        it.className() == itemClass.java.className()
+    } as? Item
+}
+
 /**
  * 通过条件, 查找[DslAdapterItem]. 找到第一个就返回.
  *
@@ -69,6 +79,19 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.find(
     }
 ): Item? {
     return getDataList(useFilterList).find(predicate) as? Item
+}
+
+/**[find]*/
+inline fun <reified Item : DslAdapterItem> DslAdapter.findAllItem(
+    useFilterList: Boolean = true,
+    predicate: (DslAdapterItem) -> Boolean = {
+        when (it) {
+            is Item -> true
+            else -> false
+        }
+    }
+): List<Item>? {
+    return getDataList(useFilterList).filter(predicate) as? List<Item>
 }
 
 /**[findItemList]*/
@@ -171,6 +194,53 @@ fun DslAdapter.updateItem(
     }
 }
 
+@UpdateByNotify
+fun <Item : DslAdapterItem> DslAdapter.updateItemByClass(
+    itemClass: KClass<Item>,
+    payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART,
+    useFilterList: Boolean = true
+): Item? {
+    return findItem(itemClass, useFilterList)?.apply {
+        updateAdapterItem(payload, useFilterList)
+    }
+}
+
+/**[find]
+ * [updateAllItem]*/
+inline fun <reified Item : DslAdapterItem> DslAdapter.updateItemWith(
+    payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART,
+    useFilterList: Boolean = true,
+    predicate: (DslAdapterItem) -> Boolean = {
+        when (it) {
+            is Item -> true
+            else -> false
+        }
+    }
+): Item? {
+    return (getDataList(useFilterList).find(predicate) as? Item)?.apply {
+        updateAdapterItem(payload)
+    }
+}
+
+/**[find]
+ * [updateItemByClass]*/
+inline fun <reified Item : DslAdapterItem> DslAdapter.updateAllItem(
+    payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART,
+    useFilterList: Boolean = true,
+    predicate: (DslAdapterItem) -> Boolean = {
+        when (it) {
+            is Item -> true
+            else -> false
+        }
+    }
+): List<Item>? {
+    return (getDataList(useFilterList).filter(predicate) as? List<Item>)?.apply {
+        forEach {
+            it.updateAdapterItem(payload)
+        }
+    }
+}
+
 /**更新所有满足条件的item*/
 @UpdateByNotify
 fun DslAdapter.updateAllItemBy(
@@ -182,6 +252,23 @@ fun DslAdapter.updateAllItemBy(
     getDataList(useFilterList).forEach {
         if (predicate(it)) {
             result.add(it)
+            it.updateAdapterItem(payload, useFilterList)
+        }
+    }
+    return result
+}
+
+/**[updateAllItemBy]*/
+@UpdateByNotify
+fun <Item : DslAdapterItem> DslAdapter.updateAllItem(
+    itemClass: KClass<Item>,
+    payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART,
+    useFilterList: Boolean = true
+): List<Item> {
+    val result = mutableListOf<Item>()
+    getDataList(useFilterList).forEach {
+        if (it.className() == itemClass.java.className()) {
+            result.add(it as Item)
             it.updateAdapterItem(payload, useFilterList)
         }
     }
@@ -732,6 +819,22 @@ fun DslAdapter.selectItem(
             }
         }
     }
+}
+
+/**枚举所有Item*/
+fun DslAdapter.allSelectedItem(
+    useFilterList: Boolean = true,
+    predicate: (index: Int, dslAdapterItem: DslAdapterItem) -> Boolean = { _, item ->
+        item.itemIsSelected
+    }
+): List<DslAdapterItem> {
+    val result = mutableListOf<DslAdapterItem>()
+    eachItem(useFilterList) { index, dslAdapterItem ->
+        if (predicate(index, dslAdapterItem)) {
+            result.add(dslAdapterItem)
+        }
+    }
+    return result
 }
 
 //</editor-fold desc="操作扩展">

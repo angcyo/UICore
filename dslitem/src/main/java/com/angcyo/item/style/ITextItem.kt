@@ -48,13 +48,29 @@ interface ITextItem : IAutoInitItem {
     }
 }
 
+/**item的文本, 内容*/
 var ITextItem.itemText: CharSequence?
     get() = textItemConfig.itemText
     set(value) {
         textItemConfig.itemText = value
     }
 
+/**内容的颜色*/
+var ITextItem.itemTextColor: Int
+    get() = textItemConfig.itemTextStyle.textColor
+    set(value) {
+        textItemConfig.itemTextStyle.textColor = value
+    }
+
+
+/**hint内容*/
 var ITextItem.itemHint: CharSequence?
+    get() = itemTextHint
+    set(value) {
+        itemTextHint = value
+    }
+
+var ITextItem.itemTextHint: CharSequence?
     get() = textItemConfig.itemTextStyle.hint
     set(value) {
         textItemConfig.itemTextStyle.hint = value

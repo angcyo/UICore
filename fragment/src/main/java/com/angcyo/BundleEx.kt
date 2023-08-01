@@ -21,7 +21,9 @@ import java.io.Serializable
 
 const val BUNDLE_KEY_JSON = "BUNDLE_KEY_JSON"
 const val BUNDLE_KEY_SERIALIZABLE = "BUNDLE_KEY_SERIALIZABLE"
+const val BUNDLE_KEY_PARCELABLE = "BUNDLE_KEY_PARCELABLE"
 const val BUNDLE_KEY_SERIALIZABLE_LIST = "BUNDLE_KEY_SERIALIZABLE_LIST"
+const val BUNDLE_KEY_PARCELABLE_LIST = "BUNDLE_KEY_PARCELABLE_LIST"
 
 /**创建一个默认传输[json]数据的[Bundle]*/
 fun jsonBundle(data: Any?, key: String = BUNDLE_KEY_JSON): Bundle {
@@ -109,8 +111,11 @@ fun Fragment.putDataSerializable(
     return this
 }
 
+fun Fragment.putDataParcelable(data: Parcelable?, key: String = BUNDLE_KEY_PARCELABLE): Fragment =
+    putParcelable(data, key)
+
 /**[Parcelable]*/
-fun Fragment.putParcelable(data: Parcelable?, key: String = BUNDLE_KEY_SERIALIZABLE): Fragment {
+fun Fragment.putParcelable(data: Parcelable?, key: String = BUNDLE_KEY_PARCELABLE): Fragment {
     val bundle = Bundle()
     bundle.putParcelable(key, data)
 
@@ -123,10 +128,15 @@ fun Fragment.putParcelable(data: Parcelable?, key: String = BUNDLE_KEY_SERIALIZA
     return this
 }
 
+fun Fragment.putDataParcelableList(
+    data: ArrayList<out Parcelable>?,
+    key: String = BUNDLE_KEY_PARCELABLE_LIST
+) = putParcelableList(data, key)
+
 /**[Parcelable]*/
 fun Fragment.putParcelableList(
     data: ArrayList<out Parcelable>?,
-    key: String = BUNDLE_KEY_SERIALIZABLE_LIST
+    key: String = BUNDLE_KEY_PARCELABLE_LIST
 ): Fragment {
     val bundle = Bundle()
     bundle.putParcelableArrayList(key, data)
@@ -150,10 +160,16 @@ fun <DATA> Fragment.getDataList(cls: Class<DATA>, key: String = BUNDLE_KEY_JSON)
 inline fun <reified DATA> Fragment.getDataSerializable(key: String = BUNDLE_KEY_SERIALIZABLE): DATA? =
     arguments?.getSerializable(key) as? DATA?
 
-inline fun <reified DATA : Parcelable?> Fragment.getParcelable(key: String = BUNDLE_KEY_SERIALIZABLE): DATA? =
+inline fun <reified DATA : Parcelable?> Fragment.getDataParcelable(key: String = BUNDLE_KEY_PARCELABLE): DATA? =
+    getParcelable(key)
+
+inline fun <reified DATA : Parcelable?> Fragment.getParcelable(key: String = BUNDLE_KEY_PARCELABLE): DATA? =
     arguments?.getParcelable(key)
 
-inline fun <reified DATA : Parcelable?> Fragment.getParcelableList(key: String = BUNDLE_KEY_SERIALIZABLE_LIST): ArrayList<DATA>? =
+inline fun <reified DATA : Parcelable?> Fragment.getDataParcelableList(key: String = BUNDLE_KEY_PARCELABLE_LIST): ArrayList<DATA>? =
+    getParcelableList(key)
+
+inline fun <reified DATA : Parcelable?> Fragment.getParcelableList(key: String = BUNDLE_KEY_PARCELABLE_LIST): ArrayList<DATA>? =
     arguments?.getParcelableArrayList(key)
 
 //</editor-fold desc="Fragment put get">
