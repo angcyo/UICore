@@ -2,6 +2,7 @@ package com.angcyo.core.fragment
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -57,13 +58,17 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     //<editor-fold desc="成员配置">
 
-    /**自定义内容布局*/
+    /**自定义内容布局
+     * [R.id.lib_content_wrap_layout]
+     * */
     var contentLayoutId: Int = -1
 
-    /**自定义内容覆盖布局*/
+    /**自定义内容覆盖布局
+     * [R.id.lib_content_overlay_wrap_layout]*/
     var contentOverlayLayoutId: Int = -1
 
-    /**自定义的刷新头部*/
+    /**自定义的刷新头部
+     * [R.id.lib_refresh_wrap_layout]*/
     var refreshLayoutId: Int = -1
 
     /**自定义标题栏布局
@@ -128,6 +133,17 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
                 _vh.tv(R.id.lib_title_text_view)?.text = value
             }
         }
+
+    /**背景, 在界面未显示时, 设置会无效
+     * [com.angcyo.core.fragment.FragmentConfig.fragmentBackgroundDrawable]*/
+    open var fragmentBackground: Drawable? = null
+        set(value) {
+            field = value
+            if (isAdded && baseViewHolder != null) {
+                rootControl().setBackground(value)
+            }
+        }
+        get() = rootControl().getBackground()
 
     init {
         //Fragment根布局
