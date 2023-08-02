@@ -2,6 +2,9 @@ package com.angcyo.library.component
 
 import android.os.Handler
 import android.os.Looper
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import com.angcyo.library.ex.nowTime
 
 /**
@@ -16,6 +19,18 @@ import com.angcyo.library.ex.nowTime
 typealias OnCountDownTick = (millisecond: Long) -> Unit
 
 class CountDownHelper : Runnable {
+
+    /**自动绑定声明周期*/
+    var lifecycleOwner: LifecycleOwner? = null
+
+    private val lifecycleObserver = LifecycleEventObserver { source, event ->
+        if (event == Lifecycle.Event.ON_DESTROY) {
+            //销毁之后, 自动移除
+            stopCountDown()
+        }
+    }
+
+    //---
 
     val handler = Handler(Looper.getMainLooper())
 
@@ -43,6 +58,8 @@ class CountDownHelper : Runnable {
         if (_isStart) {
             return
         }
+        lifecycleOwner?.lifecycle?.addObserver(lifecycleObserver)
+
         _isStart = true
         _startTime = System.currentTimeMillis()
         _currentTime = _startTime
@@ -55,6 +72,7 @@ class CountDownHelper : Runnable {
 
     /**停止倒计时*/
     fun stopCountDown(notify: Boolean = false) {
+        lifecycleOwner?.lifecycle?.removeObserver(lifecycleObserver)
         if (_isStart) {
             handler.removeCallbacks(this)
             if (notify) {
@@ -83,9 +101,23 @@ class CountDownHelper : Runnable {
     }
 }
 
-/**开始一个倒计时*/
+/**开始一个倒计时
+ * [second] 多少秒倒计时, 秒
+ * [step] 步长毫秒*/
 fun startCountDown(second: Long, step: Long = 1000, tick: OnCountDownTick): CountDownHelper {
     val countDownHelper = CountDownHelper()
+    countDownHelper.startCountDown(second, step, tick)
+    return countDownHelper
+}
+
+/**[startCountDown]*/
+fun LifecycleOwner.startCountDown(
+    second: Long,
+    step: Long = 1000,
+    tick: OnCountDownTick
+): CountDownHelper {
+    val countDownHelper = CountDownHelper()
+    countDownHelper.lifecycleOwner = this
     countDownHelper.startCountDown(second, step, tick)
     return countDownHelper
 }

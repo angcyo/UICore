@@ -236,6 +236,12 @@ class DslFHelper(
         }
     }
 
+    fun remove(vararg kClass: KClass<out Fragment>) {
+        for (cls in kClass) {
+            remove(cls.java.name)
+        }
+    }
+
     fun remove(vararg tag: String?) {
         for (t in tag) {
             fm.findFragmentByTag(t)?.let { remove(it) }
@@ -490,6 +496,7 @@ class DslFHelper(
                     showFragmentList.contains(it) -> {
                         //需要显示的Fragment, 已经存在于结构中
                     }
+
                     it.view == null -> allNoViewFragment.add(it)
                     else -> allValidityFragment.add(it)
                 }
@@ -565,6 +572,7 @@ class DslFHelper(
                     fragment.isDetached -> attach(fragment)
                     fragment.isAdded -> {
                     }
+
                     else -> add(
                         containerViewId,
                         fragment,
