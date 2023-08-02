@@ -68,10 +68,10 @@ object LibLpHawkKeys {
 
     //
 
-    /**是否激活wifi传输*/
+    /**是否激活强制wifi传输*/
     var enableWifiConfig: Boolean by HawkPropertyValue<Any, Boolean>(false)
 
-    /**服务地址: ip:port*/
+    /**强制使用wifi连接的 服务地址: ip:port*/
     var wifiAddress: String? by HawkPropertyValue<Any, String?>(null)
 
     /**wifi发送缓存大小*/
