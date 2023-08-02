@@ -2,8 +2,10 @@ package com.angcyo.http.tcp
 
 import android.app.PendingIntent.CanceledException
 import com.angcyo.http.rx.doBack
+import com.angcyo.http.rx.doMain
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.annotation.Implementation
 import com.angcyo.library.annotation.ThreadDes
 import com.angcyo.library.component.ICancel
 import com.angcyo.library.ex.clamp
@@ -33,7 +35,10 @@ class TcpSend : ICancel {
     var sendBufferSize = 4096
 
     /**发送延迟*/
-    var sendDelay = 20
+    var sendDelay = 0
+
+    /**读流的超时时长, 同时也是超时时长*/
+    var soTimeout = 5000
 
     /**需要发送的数据*/
     var sendBytes: ByteArray? = null
@@ -44,7 +49,8 @@ class TcpSend : ICancel {
     /**发送的进度[0~1]*/
     var sendPercentage = 0f
 
-    /**接收的进度[0~1]*/
+    /**接收的进度[0~1], 需要知道总共有多少数据需要接收, 才能计算出来*/
+    @Implementation
     private var receivePercentage = 0f
 
     /**发送进度回调[0~100]*/
@@ -75,7 +81,7 @@ class TcpSend : ICancel {
             try {
                 val socket = Socket()
                 _socket = socket
-                socket.soTimeout = 5_000 //5s超时
+                socket.soTimeout = soTimeout //5s超时
                 socket.connect(InetSocketAddress(address, port), socket.soTimeout)
                 L.i("TCP连接成功:$address:$port")
 
@@ -175,6 +181,7 @@ class TcpSend : ICancel {
                     if (size > 0) {
                         output.write(receiveBytes, 0, size)
                         if (size < bufferSize) {
+                            //读流完成
                             if (autoClose.get()) {
                                 break
                             }
@@ -203,4 +210,25 @@ class TcpSend : ICancel {
             error(e)
         }
     }
+}
+
+/**使用tcp发送数据, 并接收. 自动关闭和销毁*/
+fun tcpSend(
+    address: String,
+    port: Int,
+    writeBytes: ByteArray,
+    @ThreadDes("主线程回调")
+    action: (receiveBytes: ByteArray?, error: Exception?) -> Unit
+): TcpSend {
+    val tcpSend = TcpSend()
+    tcpSend.address = address
+    tcpSend.port = port
+    tcpSend.sendBytes = writeBytes
+    tcpSend.onSendAction = { receiveBytes, error ->
+        doMain {
+            action(receiveBytes, error)
+        }
+    }
+    tcpSend.startSend()
+    return tcpSend
 }

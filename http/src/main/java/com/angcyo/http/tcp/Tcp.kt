@@ -55,12 +55,14 @@ class Tcp : ICancel {
         const val SEND_STATE_ERROR = -1
     }
 
-    /**需要发送的目标ip地址
-     * 可以是ip/也可以是域名使用域名时, 不要http, 直接www.xxx.com即可*/
-    var address: String? = null
+    /**当前连接的设备*/
+    var tcpDevice: TcpDevice? = null
 
-    /**发送的端口*/
-    var port = 80
+    val address: String?
+        get() = tcpDevice?.address
+
+    val port: Int?
+        get() = tcpDevice?.port
 
     /**读流的超时时长, 同时也是超时时长*/
     var soTimeout = 5000
@@ -78,7 +80,10 @@ class Tcp : ICancel {
 
     /**初始化*/
     @Synchronized
-    fun init() {
+    fun init(): Boolean {
+        if (tcpDevice == null) {
+            return false
+        }
         if (socket == null || socket?.isClosed == true) {
             try {
                 socket?.close()
@@ -89,11 +94,11 @@ class Tcp : ICancel {
             socket?.keepAlive = true
             socket?.soTimeout = soTimeout
         }
-
         //java.net.SocketException: Socket is not connected
         //val inputStream = socket?.getInputStream()
         //val outputStream = socket?.getOutputStream()
         //L.i("test")
+        return true
     }
 
     /**TCP是否已连上*/
@@ -103,23 +108,34 @@ class Tcp : ICancel {
 
     /**连接到服务器*/
     fun connect(data: Any?) {
-        init()
+        if (!init()) {
+            return
+        }
         if (socket?.isConnected == true) {
             for (listener in listeners) {
-                listener.onConnectStateChanged(this, TcpState(this, CONNECT_STATE_CONNECTED, data))
+                listener.onConnectStateChanged(
+                    this,
+                    TcpState(tcpDevice!!, CONNECT_STATE_CONNECTED, data)
+                )
             }
             return
         }
         for (listener in listeners) {
-            listener.onConnectStateChanged(this, TcpState(this, CONNECT_STATE_CONNECTING, data))
+            listener.onConnectStateChanged(
+                this,
+                TcpState(tcpDevice!!, CONNECT_STATE_CONNECTING, data)
+            )
         }
         doBack {
             try {
                 var tryCount = 0
                 while (this.socket?.isConnected == false) {
                     try {
-                        L.d("TCP准备连接:$address:$port /$tryCount")
-                        socket?.connect(InetSocketAddress(address, port), soTimeout)
+                        L.d("TCP准备连接:${tcpDevice!!.address}:${tcpDevice!!.port} /$tryCount")
+                        socket?.connect(
+                            InetSocketAddress(tcpDevice!!.address, tcpDevice!!.port),
+                            soTimeout
+                        )
                         onSocketConnectSuccess(data)
                     } catch (e: ConnectException) {
                         e.printStackTrace()
@@ -138,7 +154,10 @@ class Tcp : ICancel {
             } catch (e: Exception) {
                 e.printStackTrace()
                 for (listener in listeners) {
-                    listener.onConnectStateChanged(this, TcpState(this, CONNECT_STATE_ERROR, e))
+                    listener.onConnectStateChanged(
+                        this,
+                        TcpState(tcpDevice!!, CONNECT_STATE_ERROR, e)
+                    )
                 }
             }
         }
@@ -150,7 +169,7 @@ class Tcp : ICancel {
         while (!socket.isConnected) {
             sleep(1000)
             try {
-                socket.connect(InetSocketAddress(address, port), soTimeout)
+                socket.connect(InetSocketAddress(tcpDevice!!.address, tcpDevice!!.port), soTimeout)
                 onSocketConnectSuccess(data)
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -182,7 +201,7 @@ class Tcp : ICancel {
                 for (listener in listeners) {
                     listener.onConnectStateChanged(
                         this,
-                        TcpState(this, CONNECT_STATE_DISCONNECT, data)
+                        TcpState(tcpDevice!!, CONNECT_STATE_DISCONNECT, data)
                     )
                 }
             }
@@ -206,7 +225,7 @@ class Tcp : ICancel {
         for (listener in listeners) {
             listener.onConnectStateChanged(
                 this,
-                TcpState(this, CONNECT_STATE_CONNECT_SUCCESS, data)
+                TcpState(tcpDevice!!, CONNECT_STATE_CONNECT_SUCCESS, data)
             )
         }
     }
@@ -214,7 +233,10 @@ class Tcp : ICancel {
     /**socket被关闭后触发*/
     private fun onSocketClose(data: Any?) {
         for (listener in listeners) {
-            listener.onConnectStateChanged(this, TcpState(this, CONNECT_STATE_DISCONNECT, data))
+            listener.onConnectStateChanged(
+                this,
+                TcpState(tcpDevice!!, CONNECT_STATE_DISCONNECT, data)
+            )
         }
     }
 
@@ -232,7 +254,7 @@ class Tcp : ICancel {
                     try {
                         //L.d("TCP准备接收数据:$address:$port")
                         val read = inputStream.read(bytes) //阻塞
-                        L.d("TCP接收数据:$address:$port [${read}/${bufferSize}]")
+                        L.d("TCP接收数据:${tcpDevice!!.address}:${tcpDevice!!.port} [${read}/${bufferSize}]")
                         if (read > 0) {
                             val receiveBytes = bytes.copyOf(read)
                             for (listener in listeners) {
@@ -301,7 +323,7 @@ class Tcp : ICancel {
                                 //发送进度
                                 val progress = clamp(sendPercentage * 100, 0f, 100f)
                                 L.i(buildString {
-                                    append("TCP发送:$address:$port ")
+                                    append("TCP发送:${tcpDevice!!.address}:${tcpDevice!!.port} ")
                                     append("[${sendSize}/${allSize}] ")
                                     append("进度:${progress}% ")
                                     val duration = nowTime() - startSendTime
