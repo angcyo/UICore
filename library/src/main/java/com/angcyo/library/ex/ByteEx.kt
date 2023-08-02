@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import java.nio.charset.Charset
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import javax.crypto.Mac
@@ -97,3 +98,6 @@ fun Byte.high4Bit(): Byte = ((this.toInt() and 0xf0) shr 4).toByte()
 
 /**低4位*/
 fun Byte.low4Bit(): Byte = (this.toInt() and 0x0f).toByte()
+
+/**转换成UTF8文本*/
+inline fun ByteArray.toText(charset: Charset = Charset.defaultCharset()) = toString(charset)
