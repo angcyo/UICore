@@ -66,28 +66,6 @@ object LibLpHawkKeys {
     /**C1加长版的尺寸*/
     var c1LHeight: Int? by HawkPropertyValue<Any, Int?>(null)//800
 
-    //---
-
-    /**滚动轴(z轴)模式下, 最大的y值
-     * 2米, mm单位, Z轴最大的Y坐标
-     * 2m = 2000mm*/
-    @MM
-    var zMaxY: Int? by HawkPropertyValue<Any, Int?>(null)//2_00_0
-
-    /**旋转轴(r轴)模式下, 最大的y值
-     * 200 * 3.14 [Math.PI]*/
-    @MM
-    var rMaxY: Int? by HawkPropertyValue<Any, Int?>(null)//628
-
-    /**滑台模式(s轴)*/
-    @MM
-    var sMaxY: Int? by HawkPropertyValue<Any, Int?>(null)//300
-
-    /**C1移动平台/小车模式 (car模式)下, 最大的y值
-     * 2米*/
-    @MM
-    var carMaxY: Int? by HawkPropertyValue<Any, Int?>(null)//2_00_0
-
     //
 
     /**是否激活wifi传输*/
