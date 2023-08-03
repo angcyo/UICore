@@ -25,6 +25,8 @@ data class FragmentConfig(
 
     /**是否使用白色标题栏
      * [null] 不接管操作
+     *
+     * [com.angcyo.core.fragment.BaseTitleFragment.onCreate] 在此处生效
      * */
     var isLightStyle: Boolean? = null,
 
