@@ -3,6 +3,7 @@ package com.angcyo.library.component
 import com.angcyo.library.ex.copyTo
 import com.angcyo.library.ex.toByteInt
 import com.angcyo.library.ex.toHexInt
+import com.angcyo.library.ex.toText
 import java.nio.charset.Charset
 
 /**
@@ -76,6 +77,48 @@ class ByteArrayReader(val bytes: ByteArray) {
             return def
         }
         return String(array, charset)
+    }
+
+    /**循环读取连续的字符串
+     * [maxSize] 需要读取的最大字节数*/
+    fun readStringList(maxSize: Int, charset: Charset = Charsets.UTF_8): List<String> {
+        val result = mutableListOf<String>()
+        var count = 0
+        while (true) {
+            val bytes = readLoop { _, byte ->
+                byte.toUByte().toInt() == 0
+            }
+            if (bytes.isEmpty()) {
+                //超出范围
+                break
+            }
+            result.add(bytes.toText(charset))
+            count += bytes.size
+            if (count >= maxSize) {
+                //超出范围
+                break
+            }
+        }
+        return result
+    }
+
+    /**循环读取, 直到停止状态
+     * [predicate] 返回true, 停止读取
+     * */
+    fun readLoop(predicate: (byteList: List<Byte>, byte: Byte) -> Boolean): ByteArray {
+        val result = mutableListOf<Byte>()
+        while (true) {
+            val byte = readByte()
+            if (byte.toInt() == -1) {
+                //超出范围
+                break
+            }
+            if (predicate(result, byte)) {
+                break
+            }
+            result.add(byte)
+        }
+        return result.toByteArray()
     }
 }
 
