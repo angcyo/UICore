@@ -74,7 +74,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     /**自定义标题栏布局
      * [R.layout.lib_title_layout]
      * [R.layout.lib_search_title_layout] 带过滤的标题栏
-     * [com.angcyo.item.component.SearchAdapterFilter.initSearchAdapterFilter]
+     * [com.angcyo.item.component.initSearchAdapterFilter] 初始化过滤器
      *
      * [R.layout.lib_search_layout]
      * */
