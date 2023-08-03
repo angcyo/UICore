@@ -8,6 +8,6 @@ package com.angcyo.library.annotation
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/07/27
  */
-@Target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.SOURCE)
 annotation class ThreadSync

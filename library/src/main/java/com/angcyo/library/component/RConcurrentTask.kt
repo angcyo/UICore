@@ -1,11 +1,15 @@
 package com.angcyo.library.component
 
+import android.app.PendingIntent.CanceledException
+import com.angcyo.library.annotation.ThreadSync
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.SynchronousQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.Condition
 import java.util.concurrent.locks.ReentrantLock
+import kotlin.math.max
 
 /**
  * 多任务并发执行, 结束后回调
@@ -15,15 +19,17 @@ import java.util.concurrent.locks.ReentrantLock
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 class RConcurrentTask(
-    val taskQueue: ConcurrentLinkedQueue<Runnable> /*需要并发处理的任务队列*/,
-    val concurrentCount: Int = 5 /*并发数量*/,
-    val onFinish: () -> Unit /*任务处理完成*/
+    @ThreadSync
+    val taskQueue: ConcurrentLinkedQueue<out Runnable> /*需要并发处理的任务队列*/,
+    val concurrentCount: Int = max(2, Runtime.getRuntime().availableProcessors()) /*并发数量*/,
+    val onFinish: (error: Exception?) -> Unit /*任务处理完成*/
 ) {
     /**并发线程池*/
     private val executor: ThreadPoolExecutor
     private val runTaskQueue: ConcurrentLinkedQueue<Runnable>
     private val reentrantLock: ReentrantLock
     private val condition: Condition
+    val isCancel: AtomicBoolean = AtomicBoolean(false)
 
     init {
         val taskSize = taskQueue.size
@@ -40,6 +46,9 @@ class RConcurrentTask(
 
         executor.execute {
             while (taskQueue.isNotEmpty()) {
+                if (isCancel.get()) {
+                    break
+                }
                 if (runTaskQueue.size < concurrentCount) {
                     val task = taskQueue.poll()
                     runTaskQueue.add(task)
@@ -55,9 +64,11 @@ class RConcurrentTask(
 
                             runTaskQueue.remove(task)
 
-                            if (taskQueue.isEmpty() && runTaskQueue.isEmpty()) {
+                            if (isCancel.get()) {
+                                //任务取消
+                            } else if (taskQueue.isEmpty() && runTaskQueue.isEmpty()) {
                                 release()
-                                onFinish()
+                                onFinish(null)
                             }
                         } catch (e: Exception) {
                             e.printStackTrace()
@@ -86,6 +97,15 @@ class RConcurrentTask(
             executor.shutdownNow()
         }
         //L.d("释放资源.")
+    }
+
+    /**取消任务*/
+    fun cancel() {
+        if (!isCancel.get()) {
+            isCancel.set(true)
+            onFinish(CanceledException())
+            release()
+        }
     }
 
 }

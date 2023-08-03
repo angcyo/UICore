@@ -368,6 +368,7 @@ object Device {
             // }
 
             builder.appendLine()
+            //核心数 8/8 300000Hz/400000Hz/2802000Hz
             builder.append("${CpuUtils.cpuCoreNum}/${CpuUtils.numCpuCores} ${CpuUtils.cpuMinFreqInfo}Hz/${CpuUtils.cpuMinFreq}Hz/${CpuUtils.cpuMaxFreq}Hz")
         }
     }
