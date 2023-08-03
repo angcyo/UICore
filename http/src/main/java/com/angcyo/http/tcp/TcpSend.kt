@@ -2,7 +2,6 @@ package com.angcyo.http.tcp
 
 import android.app.PendingIntent.CanceledException
 import com.angcyo.http.rx.doBack
-import com.angcyo.http.rx.doMain
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.Implementation
@@ -13,8 +12,10 @@ import com.angcyo.library.ex.sleep
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
+import java.net.ConnectException
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.net.SocketTimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -37,7 +38,7 @@ class TcpSend : ICancel {
     /**发送延迟*/
     var sendDelay = 0
 
-    /**读流的超时时长, 同时也是超时时长*/
+    /**读流的超时时长, 同时也是连接超时时长*/
     var soTimeout = 5000
 
     /**需要发送的数据*/
@@ -74,6 +75,9 @@ class TcpSend : ICancel {
     /**读取数据完成后, 是否自动关闭socket*/
     var autoClose: AtomicBoolean = AtomicBoolean(true)
 
+    /**是否要输出log*/
+    var log: Boolean = L.debug
+
     /**开始发送数据*/
     @CallPoint
     fun startSend() {
@@ -88,7 +92,7 @@ class TcpSend : ICancel {
                 //在线程中, 读取数据
                 doBack {
                     readRunnable.run()
-                    close()
+                    close()//读取完成后, 关闭socket
                 }
 
                 //写入数据到网络
@@ -130,16 +134,25 @@ class TcpSend : ICancel {
                     socket.shutdownOutput() //close流之后, socket会自动关闭
                 }*/
 
-                L.d("TCP发送数据:$address:$port 字节:${allSize}")
+                L.d("TCP发送数据:$address:$port ${allSize}bytes")
             } catch (e: Exception) {
-                e.printStackTrace()
+                if (e is SocketTimeoutException) {
+                    //java.net.SocketTimeoutException: failed to connect to /192.168.31.16 (port 8080) from /192.168.31.57 (port 46400) after 5000ms
+                    logE("TCP连接超时[${soTimeout}ms]:$address:$port $e")
+                } else if (e is ConnectException) {
+                    //java.net.ConnectException: failed to connect to /192.168.31.5 (port 8080) from /192.168.31.57 (port 51032) after 5000ms: isConnected failed: EHOSTUNREACH (No route to host)
+                    logE("TCP连接异常[${soTimeout}ms]:$address:$port $e")
+                } else {
+                    logE("TCP发送数据异常:$address:$port $e")
+                    e.printStackTrace()
+                }
                 if (isCancel.get()) {
                     onSendAction(null, CanceledException())
                 } else {
                     onSendAction(null, e)
                 }
             }
-            L.i("TCP发送数据结束")
+            //L.i("TCP发送数据结束:$address:$port")
         }
     }
 
@@ -156,6 +169,12 @@ class TcpSend : ICancel {
             if (!it.isClosed) {
                 it.close()
             }
+        }
+    }
+
+    private fun logE(msg: String) {
+        if (log) {
+            L.e(msg)
         }
     }
 
@@ -195,7 +214,7 @@ class TcpSend : ICancel {
                 socket.shutdownInput()
                 output.flush()
                 this.receiveBytes = output.toByteArray()
-                L.d("TCP读取数据:$address:$port 字节:${this.receiveBytes?.size}")
+                L.d("TCP读取数据:$address:$port ${this.receiveBytes?.size}bytes")
 
                 output.close()
 
@@ -206,7 +225,13 @@ class TcpSend : ICancel {
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            if (e is SocketTimeoutException) {
+                //java.net.SocketTimeoutException: failed to connect to /
+                logE("TCP读取数据超时:$address:$port $e")
+            } else {
+                logE("TCP读取数据异常:$address:$port $e")
+                //e.printStackTrace()
+            }
             error(e)
         }
     }
@@ -217,18 +242,14 @@ fun tcpSend(
     address: String,
     port: Int,
     writeBytes: ByteArray,
-    @ThreadDes("主线程回调")
+    @ThreadDes("工作线程回调")
     action: (receiveBytes: ByteArray?, error: Exception?) -> Unit
 ): TcpSend {
     val tcpSend = TcpSend()
     tcpSend.address = address
     tcpSend.port = port
     tcpSend.sendBytes = writeBytes
-    tcpSend.onSendAction = { receiveBytes, error ->
-        doMain {
-            action(receiveBytes, error)
-        }
-    }
+    tcpSend.onSendAction = action
     tcpSend.startSend()
     return tcpSend
 }

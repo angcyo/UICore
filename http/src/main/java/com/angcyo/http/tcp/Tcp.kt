@@ -33,17 +33,19 @@ class Tcp : ICancel {
         /**连接中*/
         const val CONNECT_STATE_CONNECTING = 1
 
-        /**已连接, 重复触发连接的状态*/
-        const val CONNECT_STATE_CONNECTED = 2
-
         /**连接成功, 首次连接成功*/
-        const val CONNECT_STATE_CONNECT_SUCCESS = 3
+        const val CONNECT_STATE_CONNECT_SUCCESS = 2
 
-        /**断开连接*/
+        /**开始断开连接*/
+        const val CONNECT_STATE_DISCONNECTING = 3
+
+        /**已断开连接*/
         const val CONNECT_STATE_DISCONNECT = 4
 
         /**连接失败*/
         const val CONNECT_STATE_ERROR = -1
+
+        //---
 
         /**开始发送*/
         const val SEND_STATE_START = 0
@@ -101,7 +103,9 @@ class Tcp : ICancel {
         return true
     }
 
-    /**TCP是否已连上*/
+    /**TCP是否已连上
+     * 关闭套接字不会清除其连接状态，这意味着如果已关闭的套接字在关闭之前已成功连接，则此方法将返回 true 已关闭的套接字（请参阅 isClosed()）。
+     * */
     fun isConnected(): Boolean {
         return socket?.run { isConnected && !isClosed } ?: false
     }
@@ -112,18 +116,14 @@ class Tcp : ICancel {
             return
         }
         if (socket?.isConnected == true) {
-            for (listener in listeners) {
-                listener.onConnectStateChanged(
-                    this,
-                    TcpState(tcpDevice!!, CONNECT_STATE_CONNECTED, data)
-                )
-            }
             return
         }
         for (listener in listeners) {
             listener.onConnectStateChanged(
                 this,
-                TcpState(tcpDevice!!, CONNECT_STATE_CONNECTING, data)
+                TcpState(tcpDevice!!.apply {
+                    connectState = CONNECT_STATE_CONNECTING
+                }, CONNECT_STATE_CONNECTING, data)
             )
         }
         doBack {
@@ -156,7 +156,9 @@ class Tcp : ICancel {
                 for (listener in listeners) {
                     listener.onConnectStateChanged(
                         this,
-                        TcpState(tcpDevice!!, CONNECT_STATE_ERROR, e)
+                        TcpState(tcpDevice!!.apply {
+                            connectState = CONNECT_STATE_ERROR
+                        }, CONNECT_STATE_ERROR, e)
                     )
                 }
             }
@@ -184,25 +186,51 @@ class Tcp : ICancel {
 
     /**释放资源*/
     fun release(data: Any?) {
-        _inputThread?.interrupt()
-        _outputThread?.interrupt()
         try {
-            _socketInputStream?.close()
-            _socketOutputStream?.close()
+            val device = tcpDevice
+            _inputThread?.interrupt()
+            _outputThread?.interrupt()
+
             val socket = socket
-            socket?.shutdownInput()
-            socket?.shutdownOutput()
-            if (socket != null && socket.isConnected) {
-                try {
-                    socket.close()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+            val isClosed = socket?.isClosed == true
+            if (!isClosed && device != null) {
                 for (listener in listeners) {
                     listener.onConnectStateChanged(
                         this,
-                        TcpState(tcpDevice!!, CONNECT_STATE_DISCONNECT, data)
+                        TcpState(device.apply {
+                            connectState = CONNECT_STATE_DISCONNECTING
+                        }, CONNECT_STATE_DISCONNECTING, data)
                     )
+                }
+            }
+
+            try {
+                socket?.shutdownInput()
+                _socketInputStream?.close()
+            } catch (e: Exception) {
+            }
+            try {
+                socket?.shutdownOutput()
+                _socketOutputStream?.close()
+            } catch (e: Exception) {
+            }
+            if (!isClosed && socket != null && socket.isConnected) {
+                while (!socket.isClosed) {
+                    try {
+                        socket.close()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+                if (device != null) {
+                    for (listener in listeners) {
+                        listener.onConnectStateChanged(
+                            this,
+                            TcpState(device.apply {
+                                connectState = CONNECT_STATE_DISCONNECT
+                            }, CONNECT_STATE_DISCONNECT, data)
+                        )
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -225,7 +253,9 @@ class Tcp : ICancel {
         for (listener in listeners) {
             listener.onConnectStateChanged(
                 this,
-                TcpState(tcpDevice!!, CONNECT_STATE_CONNECT_SUCCESS, data)
+                TcpState(tcpDevice!!.apply {
+                    connectState = CONNECT_STATE_CONNECT_SUCCESS
+                }, CONNECT_STATE_CONNECT_SUCCESS, data)
             )
         }
     }
@@ -235,7 +265,9 @@ class Tcp : ICancel {
         for (listener in listeners) {
             listener.onConnectStateChanged(
                 this,
-                TcpState(tcpDevice!!, CONNECT_STATE_DISCONNECT, data)
+                TcpState(tcpDevice!!.apply {
+                    connectState = CONNECT_STATE_DISCONNECT
+                }, CONNECT_STATE_DISCONNECT, data)
             )
         }
     }
@@ -250,7 +282,7 @@ class Tcp : ICancel {
             try {
                 val inputStream = _socketInputStream ?: return@thread
                 val bytes = ByteArray(bufferSize)
-                while (socket.isConnected) {
+                while (socket.isConnected && !socket.isClosed) {
                     try {
                         //L.d("TCP准备接收数据:$address:$port")
                         val read = inputStream.read(bytes) //阻塞
@@ -265,6 +297,7 @@ class Tcp : ICancel {
                         e.printStackTrace()
                     } catch (e: SocketTimeoutException) {
                         //L.v("TCP接收数据超时:$address:$port [${e.message}] ...")
+                        val timeout = true
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -282,7 +315,7 @@ class Tcp : ICancel {
         var sendSize = 0
         var sendPercentage = 0f //发送百分比
 
-        if (socket == null) {
+        if (socket == null || socket.isClosed) {
             for (listener in listeners) {
                 listener.onSendStateChanged(this, SEND_STATE_ERROR, allSize, NullPointerException())
             }

@@ -12,7 +12,15 @@ data class TcpDevice(
     /**发送的端口*/
     var port: Int,
     /**设备名称*/
-    var deviceName: String? = null
+    var deviceName: String? = null,
+    /**设备当前的连接状态
+     * [com.angcyo.http.tcp.Tcp.CONNECT_STATE_CONNECTING]
+     * [com.angcyo.http.tcp.Tcp.CONNECT_STATE_CONNECTED]
+     * [com.angcyo.http.tcp.Tcp.CONNECT_STATE_CONNECT_SUCCESS]
+     * [com.angcyo.http.tcp.Tcp.CONNECT_STATE_DISCONNECT]
+     * [com.angcyo.http.tcp.Tcp.CONNECT_STATE_ERROR]
+     * */
+    var connectState: Int = 0
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
