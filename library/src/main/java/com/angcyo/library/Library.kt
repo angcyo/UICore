@@ -93,6 +93,14 @@ object Library {
 
     //region ---ccs---
 
+    /**是否是激光啄木鸟app*/
+    fun isLaserPeckerApp(): Boolean {
+        val context = lastContext
+        val packageName = context.packageName
+        return packageName.have("com.hingin.*.hiprint")
+    }
+
+    /**签名检查*/
     @Keep
     @JvmStatic
     @CallComplianceAfter
@@ -102,8 +110,7 @@ object Library {
         }
         val context = lastContext
         val md5 = context.getAppSignatureMD5()
-        val pn = context.packageName
-        if (pn.have("com.hingin.*.hiprint")) {
+        if (isLaserPeckerApp()) {
             if (md5 == c) {
                 return true
             }
