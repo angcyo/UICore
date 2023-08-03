@@ -1,5 +1,6 @@
 package com.angcyo.coroutine
 
+import androidx.annotation.MainThread
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -52,7 +53,12 @@ open class AndroidScope(
         onException(context, exception)
     }
 
-    /**需要取消协程*/
+    /**需要取消协程
+     * ```
+     * Method removeObserver must be called on the main thread
+     * ```
+     * */
+    @MainThread
     open fun onCancel() {
         lifecycleOwner?.lifecycle?.removeObserver(this)
         cancel()

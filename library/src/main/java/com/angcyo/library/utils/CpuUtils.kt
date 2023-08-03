@@ -1,8 +1,11 @@
 package com.angcyo.library.utils
 
 import android.util.Log
-import java.io.*
-import java.util.*
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileReader
+import java.io.IOException
 import java.util.regex.Pattern
 
 /**
@@ -16,7 +19,7 @@ object CpuUtils {
     private val TAG = CpuUtils::class.java.simpleName
 
     /**
-     * It's also good way to get cpu core number
+     * It's also good way to get cpu core number 8/8
      */
     val cpuCoreNum: Int get() = Runtime.getRuntime().availableProcessors()
 
