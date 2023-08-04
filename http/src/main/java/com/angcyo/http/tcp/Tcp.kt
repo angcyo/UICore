@@ -96,6 +96,7 @@ class Tcp : ICancel {
     /**最后一次发送数据时间, 如果发送数据后, 一定时间内未收到数据, 则判断为断开连接
      * [connectTimeout]*/
     private var _lastSendTime: Long = 0
+    private var _receiveTimeOut: Long? = null
 
     private var socket: Socket? = null
 
@@ -350,7 +351,8 @@ class Tcp : ICancel {
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }*/
-                        if (_lastSendTime > 0 && nowTime() - _lastSendTime > connectTimeout) {
+                        val timeout = _receiveTimeOut ?: connectTimeout.toLong()
+                        if (_lastSendTime > 0 && timeout > 0 && nowTime() - _lastSendTime > timeout) {
                             //断开了连接
                             release(null)
                         }
@@ -364,8 +366,9 @@ class Tcp : ICancel {
         }
     }
 
-    /**发送数据*/
-    fun send(packet: ByteArray) {
+    /**发送数据
+     * [receiveTimeOut] 数据接收超时, 多久未收到数据时视为断开了连接*/
+    fun send(packet: ByteArray, receiveTimeOut: Long? = null) {
         val socket = socket
         val allSize = packet.size
         var sendSize = 0
@@ -377,6 +380,8 @@ class Tcp : ICancel {
             }
             return
         }
+        _lastSendTime = 0
+        _receiveTimeOut = null
         _outputThread = thread {
             if (!socket.isConnected) {
                 for (listener in listeners) {
@@ -443,8 +448,8 @@ class Tcp : ICancel {
 
                         //发送完成
                         _lastSendTime = nowTime()
+                        _receiveTimeOut = receiveTimeOut
                     } catch (e: Exception) {
-                        _lastSendTime = 0
                         if (socket.isClosed) {
                             L.e("TCP已断开:${tcpDevice?.address}:${tcpDevice?.port} [${e}]")
                             release(null)
@@ -454,7 +459,6 @@ class Tcp : ICancel {
                     }
                 }
             } catch (e: Exception) {
-                _lastSendTime = 0
                 e.printStackTrace()
             }
         }

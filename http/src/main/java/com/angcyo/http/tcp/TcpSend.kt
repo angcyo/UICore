@@ -16,6 +16,7 @@ import java.net.ConnectException
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -87,6 +88,7 @@ class TcpSend : ICancel {
                 _socket = socket
                 socket.soTimeout = soTimeout //5s超时
                 socket.connect(InetSocketAddress(address, port), socket.soTimeout)
+                socket.tcpNoDelay = true
                 L.i("TCP连接成功:$address:$port")
 
                 //在线程中, 读取数据
@@ -139,7 +141,7 @@ class TcpSend : ICancel {
                 if (e is SocketTimeoutException) {
                     //java.net.SocketTimeoutException: failed to connect to /192.168.31.16 (port 8080) from /192.168.31.57 (port 46400) after 5000ms
                     logE("TCP连接超时[${soTimeout}ms]:$address:$port $e")
-                } else if (e is ConnectException) {
+                } else if (e is ConnectException || e is UnknownHostException) {
                     //java.net.ConnectException: failed to connect to /192.168.31.5 (port 8080) from /192.168.31.57 (port 51032) after 5000ms: isConnected failed: EHOSTUNREACH (No route to host)
                     logE("TCP连接异常[${soTimeout}ms]:$address:$port $e")
                 } else {
