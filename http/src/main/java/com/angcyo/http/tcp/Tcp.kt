@@ -361,7 +361,7 @@ class Tcp : ICancel {
                                     append("进度:${progress}% ")
                                     val duration = nowTime() - startSendTime
                                     val speedStr =
-                                        (sendSize * 1000 / max(1, duration)).fileSizeString()
+                                        (sendSize * 1000L / max(1, duration)).fileSizeString()
                                     append("${speedStr}/s")
                                 })
 
