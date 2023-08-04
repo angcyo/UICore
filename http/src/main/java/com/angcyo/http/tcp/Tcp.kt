@@ -403,7 +403,6 @@ class Tcp : ICancel {
                         while (true) {
                             val size = bytesInput.read(buffer)
                             if (size > 0) {
-                                _lastSendTime = nowTime()
                                 outputStream.write(buffer, 0, size)
                                 outputStream.flush()
 
@@ -441,7 +440,11 @@ class Tcp : ICancel {
                         for (listener in listeners) {
                             listener.onSendStateChanged(this, SEND_STATE_FINISH, allSize, null)
                         }
+
+                        //发送完成
+                        _lastSendTime = nowTime()
                     } catch (e: Exception) {
+                        _lastSendTime = 0
                         if (socket.isClosed) {
                             L.e("TCP已断开:${tcpDevice?.address}:${tcpDevice?.port} [${e}]")
                             release(null)
@@ -451,6 +454,7 @@ class Tcp : ICancel {
                     }
                 }
             } catch (e: Exception) {
+                _lastSendTime = 0
                 e.printStackTrace()
             }
         }
