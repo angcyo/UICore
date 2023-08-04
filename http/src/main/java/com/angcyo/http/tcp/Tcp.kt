@@ -339,7 +339,9 @@ class Tcp : ICancel {
                     } catch (e: SocketException) {
                         //java.net.SocketException: Connection reset
                         e.printStackTrace()
-                        reconnect(null) // 重连
+                        if (tcpDevice?.connectState == CONNECT_STATE_CONNECT_SUCCESS) {
+                            reconnect(null) // 重连
+                        }
                     } catch (e: SocketTimeoutException) {
                         //L.v("TCP接收数据超时:$address:$port [${e.message}] ...")
                         //val timeout = true
