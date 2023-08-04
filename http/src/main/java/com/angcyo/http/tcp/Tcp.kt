@@ -16,6 +16,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.net.ConnectException
 import java.net.InetSocketAddress
+import java.net.Proxy
 import java.net.Socket
 import java.net.SocketException
 import java.net.SocketTimeoutException
@@ -67,8 +68,15 @@ class Tcp : ICancel {
     val port: Int?
         get() = tcpDevice?.port
 
-    /**读流的超时时长, 同时也是超时时长*/
+    /**代理*/
+    var proxy: Proxy? = null
+
+    /**读流的超时时长, 同时也是超时时长
+     * [java.net.Socket.setSoTimeout]*/
     var soTimeout = 5000
+
+    /**[java.net.Socket.setKeepAlive]*/
+    var keepAlive = true
 
     /**数据缓存大小*/
     var bufferSize = 4096
@@ -93,8 +101,12 @@ class Tcp : ICancel {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            socket = Socket()
-            socket?.keepAlive = true
+            socket = if (proxy == null) {
+                Socket()
+            } else {
+                Socket(proxy)
+            }
+            socket?.keepAlive = keepAlive
             socket?.soTimeout = soTimeout
         }
         //java.net.SocketException: Socket is not connected
@@ -295,10 +307,16 @@ class Tcp : ICancel {
                             }
                         }
                     } catch (e: SocketException) {
+                        //java.net.SocketException: Connection reset
                         e.printStackTrace()
                     } catch (e: SocketTimeoutException) {
                         //L.v("TCP接收数据超时:$address:$port [${e.message}] ...")
-                        val timeout = true
+                        //val timeout = true
+                        /*try {
+                            socket.sendUrgentData(0xff)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }*/
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }

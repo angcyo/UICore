@@ -133,7 +133,7 @@ object LibHawkKeys {
     /**是否要激活ai绘图
      * https://scribblediffusion.com/
      * */
-    var enableAIDraw: Boolean by HawkPropertyValue<Any, Boolean>(isDebug())
+    var enableAIDraw: Boolean by HawkPropertyValue<Any, Boolean>(false)
 
     /**矢量存储的精度*/
     var vectorDecimal: Int by HawkPropertyValue<Any, Int>(6)
