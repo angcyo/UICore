@@ -16,10 +16,6 @@ object LibLpHawkKeys {
 
     //---
 
-    /**为滑台重复图片间距。单位mm,保留一位小数。*/
-    @MM
-    var lastSlipSpace: Float by HawkPropertyValue<Any, Float>(10.8f)
-
     /**
      * 支持的固件范围
      * resValue "string", "lp_support_firmware", '"650~699 6500~6599 700~799 7000~7999"'
