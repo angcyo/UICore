@@ -3,6 +3,7 @@ package com.angcyo.http.tcp
 import androidx.annotation.WorkerThread
 import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
+import com.angcyo.library.LTime
 import com.angcyo.library.component.ICancel
 import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.fileSizeString
@@ -356,10 +357,11 @@ class Tcp : ICancel {
                                 //发送进度
                                 val progress = clamp(sendPercentage * 100, 0f, 100f)
                                 L.i(buildString {
-                                    append("TCP发送:${tcpDevice!!.address}:${tcpDevice!!.port} ")
-                                    append("[${sendSize}/${allSize}] ")
-                                    append("进度:${progress}% ")
                                     val duration = nowTime() - startSendTime
+                                    append("TCP发送:${tcpDevice!!.address}:${tcpDevice!!.port} ")
+                                    append(LTime.time(startSendTime))
+                                    append(" [${sendSize}/${allSize}] ")
+                                    append("进度:${progress}% ")
                                     val speedStr =
                                         (sendSize * 1000L / max(1, duration)).fileSizeString()
                                     append("${speedStr}/s")
