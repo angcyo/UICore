@@ -14,6 +14,8 @@ data class TcpState(
      * [com.angcyo.http.tcp.Tcp.CONNECT_STATE_DISCONNECT]
      * */
     val state: Int,
-    /**附加数据*/
-    val data: Any? = null
+    /**连接信息*/
+    val connectInfo: TcpConnectInfo? = null,
+    /**连接失败的异常信息*/
+    val exception: Exception? = null
 )

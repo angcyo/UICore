@@ -75,8 +75,14 @@ class Tcp : ICancel {
      * [java.net.Socket.setSoTimeout]*/
     var soTimeout = 5000
 
+    /**多久之后未连接, 或者未收到数据则视为断开了连接*/
+    var connectTimeout = 5000
+
     /**[java.net.Socket.setKeepAlive]*/
     var keepAlive = true
+
+    /**[java.net.Socket.setTcpNoDelay]*/
+    var tcpNoDelay = true
 
     /**数据缓存大小*/
     var bufferSize = 4096
@@ -86,6 +92,10 @@ class Tcp : ICancel {
 
     /**事件观察者*/
     var listeners = CopyOnWriteArraySet<TcpListener>()
+
+    /**最后一次发送数据时间, 如果发送数据后, 一定时间内未收到数据, 则判断为断开连接
+     * [connectTimeout]*/
+    private var _lastSendTime: Long = 0
 
     private var socket: Socket? = null
 
@@ -124,7 +134,7 @@ class Tcp : ICancel {
     }
 
     /**连接到服务器*/
-    fun connect(data: Any?) {
+    fun connect(info: TcpConnectInfo?) {
         if (!init()) {
             return
         }
@@ -136,7 +146,8 @@ class Tcp : ICancel {
                 this,
                 TcpState(tcpDevice!!.apply {
                     connectState = CONNECT_STATE_CONNECTING
-                }, CONNECT_STATE_CONNECTING, data)
+                }, CONNECT_STATE_CONNECTING, info),
+                info
             )
         }
         doBack {
@@ -145,11 +156,11 @@ class Tcp : ICancel {
                 while (this.socket?.isConnected == false) {
                     try {
                         L.d("TCP准备连接:${tcpDevice!!.address}:${tcpDevice!!.port} /$tryCount")
-                        socket?.connect(
-                            InetSocketAddress(tcpDevice!!.address, tcpDevice!!.port),
-                            soTimeout
-                        )
-                        onSocketConnectSuccess(data)
+                        val socketAddress = InetSocketAddress(tcpDevice!!.address, tcpDevice!!.port)
+                        //socket?.bind(socketAddress)
+                        socket?.connect(socketAddress, connectTimeout)
+                        onSocketConnectSuccess(info)
+                        socket?.tcpNoDelay = tcpNoDelay
                     } catch (e: ConnectException) {
                         e.printStackTrace()
                         throw e
@@ -171,7 +182,8 @@ class Tcp : ICancel {
                         this,
                         TcpState(tcpDevice!!.apply {
                             connectState = CONNECT_STATE_ERROR
-                        }, CONNECT_STATE_ERROR, e)
+                        }, CONNECT_STATE_ERROR, info, e),
+                        info
                     )
                 }
             }
@@ -179,27 +191,40 @@ class Tcp : ICancel {
     }
 
     /**重连*/
-    private fun reconnect(data: Any?) {
-        val socket = socket ?: return
-        while (!socket.isConnected) {
-            sleep(1000)
+    private fun reconnect(info: TcpConnectInfo?) {
+        try {
+            socket?.close()
+        } catch (e: Exception) {
+        }
+        socket = null
+        if (!init()) {
+            return
+        }
+        while (!isConnected()) {
             try {
-                socket.connect(InetSocketAddress(tcpDevice!!.address, tcpDevice!!.port), soTimeout)
-                onSocketConnectSuccess(data)
+                val i = info ?: TcpConnectInfo()
+                i.isReConnect = true
+                connect(i)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+            sleep(1000)
         }
     }
 
     override fun cancel(data: Any?) {
         socket ?: return
-        release(data)
+        if (data is TcpConnectInfo) {
+            release(data)
+        } else {
+            release(TcpConnectInfo(data = data))
+        }
     }
 
     /**释放资源*/
-    fun release(data: Any?) {
+    fun release(info: TcpConnectInfo?) {
         try {
+            _lastSendTime = 0
             val device = tcpDevice
             _inputThread?.interrupt()
             _outputThread?.interrupt()
@@ -212,7 +237,8 @@ class Tcp : ICancel {
                         this,
                         TcpState(device.apply {
                             connectState = CONNECT_STATE_DISCONNECTING
-                        }, CONNECT_STATE_DISCONNECTING, data)
+                        }, CONNECT_STATE_DISCONNECTING, info),
+                        info
                     )
                 }
             }
@@ -241,7 +267,8 @@ class Tcp : ICancel {
                             this,
                             TcpState(device.apply {
                                 connectState = CONNECT_STATE_DISCONNECT
-                            }, CONNECT_STATE_DISCONNECT, data)
+                            }, CONNECT_STATE_DISCONNECT, info),
+                            info
                         )
                     }
                 }
@@ -258,7 +285,7 @@ class Tcp : ICancel {
     private var _socketOutputStream: OutputStream? = null
 
     /**连接成功后触发, 启动2个读写线程*/
-    private fun onSocketConnectSuccess(data: Any?) {
+    private fun onSocketConnectSuccess(info: TcpConnectInfo?) {
         val socket = socket ?: return
         _socketInputStream = socket.getInputStream()
         _socketOutputStream = socket.getOutputStream()
@@ -268,19 +295,21 @@ class Tcp : ICancel {
                 this,
                 TcpState(tcpDevice!!.apply {
                     connectState = CONNECT_STATE_CONNECT_SUCCESS
-                }, CONNECT_STATE_CONNECT_SUCCESS, data)
+                }, CONNECT_STATE_CONNECT_SUCCESS, info),
+                info
             )
         }
     }
 
     /**socket被关闭后触发*/
-    private fun onSocketClose(data: Any?) {
+    private fun onSocketClose(info: TcpConnectInfo?) {
         for (listener in listeners) {
             listener.onConnectStateChanged(
                 this,
                 TcpState(tcpDevice!!.apply {
                     connectState = CONNECT_STATE_DISCONNECT
-                }, CONNECT_STATE_DISCONNECT, data)
+                }, CONNECT_STATE_DISCONNECT, info),
+                info
             )
         }
     }
@@ -299,6 +328,7 @@ class Tcp : ICancel {
                     try {
                         //L.d("TCP准备接收数据:$address:$port")
                         val read = inputStream.read(bytes) //阻塞
+                        _lastSendTime = 0
                         L.d("TCP接收数据:${tcpDevice!!.address}:${tcpDevice!!.port} [${read}/${bufferSize}]")
                         if (read > 0) {
                             val receiveBytes = bytes.copyOf(read)
@@ -309,6 +339,7 @@ class Tcp : ICancel {
                     } catch (e: SocketException) {
                         //java.net.SocketException: Connection reset
                         e.printStackTrace()
+                        reconnect(null) // 重连
                     } catch (e: SocketTimeoutException) {
                         //L.v("TCP接收数据超时:$address:$port [${e.message}] ...")
                         //val timeout = true
@@ -317,6 +348,10 @@ class Tcp : ICancel {
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }*/
+                        if (_lastSendTime > 0 && nowTime() - _lastSendTime > connectTimeout) {
+                            //断开了连接
+                            release(null)
+                        }
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -366,6 +401,7 @@ class Tcp : ICancel {
                         while (true) {
                             val size = bytesInput.read(buffer)
                             if (size > 0) {
+                                _lastSendTime = nowTime()
                                 outputStream.write(buffer, 0, size)
                                 outputStream.flush()
 
@@ -404,7 +440,12 @@ class Tcp : ICancel {
                             listener.onSendStateChanged(this, SEND_STATE_FINISH, allSize, null)
                         }
                     } catch (e: Exception) {
-                        e.printStackTrace()
+                        if (socket.isClosed) {
+                            L.e("TCP已断开:${tcpDevice?.address}:${tcpDevice?.port} [${e}]")
+                            release(null)
+                        } else {
+                            e.printStackTrace()
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -438,7 +479,7 @@ class Tcp : ICancel {
     interface TcpListener {
 
         /**连接状态改变通知*/
-        fun onConnectStateChanged(tcp: Tcp, state: TcpState) {
+        fun onConnectStateChanged(tcp: Tcp, state: TcpState, info: TcpConnectInfo?) {
 
         }
 

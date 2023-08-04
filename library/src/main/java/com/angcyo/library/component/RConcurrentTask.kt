@@ -1,7 +1,9 @@
 package com.angcyo.library.component
 
 import android.app.PendingIntent.CanceledException
+import com.angcyo.library.L
 import com.angcyo.library.annotation.ThreadSync
+import com.angcyo.library.ex.simpleHash
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.SynchronousQueue
 import java.util.concurrent.ThreadPoolExecutor
@@ -56,7 +58,8 @@ class RConcurrentTask(
                         try {
                             task.run()
                         } catch (e: Exception) {
-                            e.printStackTrace()
+                            L.e("任务执行异常[${task.simpleHash()}]:${e}")
+                            //e.printStackTrace()
                         }
                         try {
                             reentrantLock.lock()
