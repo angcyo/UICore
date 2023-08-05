@@ -30,6 +30,11 @@ open class BitmapElement : BaseElement() {
     /**渲染图片时的额外矩阵*/
     open fun getRenderBitmapMatrix(bitmap: Bitmap): Matrix? = null
 
+    /**撤销操作时, 恢复原始图片*/
+    open fun restoreOriginBitmap(bitmap: Bitmap?) {
+        this.originBitmap = bitmap
+    }
+
     /**更新原始的[bitmap]对象, 并保持可视化的宽高一致
      * [updateRenderWidthHeight]*/
     open fun updateOriginBitmap(bitmap: Bitmap, keepVisibleSize: Boolean = true) {

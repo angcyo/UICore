@@ -2,10 +2,10 @@ package com.angcyo.canvas.render.state
 
 import android.graphics.Bitmap
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.library.canvas.core.Reason
 import com.angcyo.canvas.render.element.BitmapElement
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.util.element
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.component.Strategy
 
 /**
@@ -31,7 +31,7 @@ open class BitmapStateStack : PropertyStateStack() {
         strategy: Strategy,
         delegate: CanvasRenderDelegate?
     ) {
-        renderer.element<BitmapElement>()?.originBitmap = operateBitmap
+        renderer.element<BitmapElement>()?.restoreOriginBitmap(operateBitmap)
         renderer.element<BitmapElement>()?.renderBitmap = renderBitmap
         super.restoreState(renderer, reason, strategy, delegate)
         renderer.requestUpdatePropertyFlag(reason, delegate)
