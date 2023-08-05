@@ -49,6 +49,7 @@ typealias ClickAction = (View) -> Unit
 typealias ViewAction = ClickAction
 typealias TouchAction = (ev: MotionEvent) -> Boolean
 typealias BooleanAction = (Boolean) -> Unit
+typealias StringAction = (text: CharSequence?) -> Unit
 typealias MatrixAction = (Matrix?) -> Unit
 typealias UriAction = (uri: Uri?, exception: Exception?) -> Unit
 
