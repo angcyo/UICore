@@ -75,6 +75,9 @@ fun Lifecycle.onStateChanged(
     return observer
 }
 
+/**当前的声明周期是否销毁了*/
+fun Lifecycle.isDestroy() = currentState == Lifecycle.State.DESTROYED
+
 //</editor-fold desc="Lifecycle">
 
 //<editor-fold desc="LifecycleOwner">

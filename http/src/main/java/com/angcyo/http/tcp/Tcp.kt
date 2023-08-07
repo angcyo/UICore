@@ -139,7 +139,7 @@ class Tcp : ICancel {
         if (!init()) {
             return
         }
-        if (socket?.isConnected == true) {
+        if (isConnected()) {
             return
         }
         for (listener in listeners) {
