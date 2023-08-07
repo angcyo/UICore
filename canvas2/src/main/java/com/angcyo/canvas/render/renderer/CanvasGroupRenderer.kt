@@ -14,11 +14,11 @@ import androidx.core.graphics.withRotation
 import androidx.core.graphics.withSave
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.CanvasRenderViewBox
-import com.angcyo.library.canvas.core.Reason
 import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement
+import com.angcyo.canvas.render.element.PathElement
 import com.angcyo.canvas.render.state.GroupStateStack
 import com.angcyo.canvas.render.state.PropertyStateStack
 import com.angcyo.canvas.render.util.PictureRenderDrawable
@@ -31,6 +31,7 @@ import com.angcyo.drawable.isGravityLeft
 import com.angcyo.drawable.isGravityRight
 import com.angcyo.drawable.isGravityTop
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.component.Strategy
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -189,9 +190,16 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 if (ignoreVisible || renderer.isVisible) {
                     if (renderer is CanvasElementRenderer) {
                         val renderProperty = renderer.renderProperty ?: continue
-                        val drawable =
-                            renderer.renderElement?.requestElementDrawable(renderer, params)
-                                ?: continue
+                        val renderElement = renderer.renderElement
+                        if (renderElement is PathElement && renderElement.paint.style == Paint.Style.STROKE) {
+                            params.drawOffsetWidth = renderElement.paint.strokeWidth
+                            params.drawOffsetHeight = params.drawOffsetWidth
+                        } else {
+                            params.drawOffsetWidth = 0f
+                            params.drawOffsetHeight = 0f
+                        }
+                        val drawable = renderElement?.requestElementDrawable(renderer, params)
+                            ?: continue
                         renderer.renderDrawable(
                             canvas,
                             renderProperty.getRenderBounds(bounds),

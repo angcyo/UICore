@@ -37,6 +37,12 @@ data class RenderParams(
     @Pixel
     var drawMinHeight: Float = 1f,
 
+    /**绘制的宽高偏移*/
+    @Pixel
+    var drawOffsetWidth: Float = 0f,
+    @Pixel
+    var drawOffsetHeight: Float = 0f,
+
     /**[overrideSize]如果大于目标尺寸时, 是否需要阻止放大*/
     var overrideSizeNotZoomIn: Boolean = false,
 

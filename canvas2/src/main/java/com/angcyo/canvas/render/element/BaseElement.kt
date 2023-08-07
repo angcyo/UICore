@@ -162,20 +162,27 @@ abstract class BaseElement : IElement {
     }
 
     /**创建一个输出指定大小的[Canvas] [Picture]
-     * [overrideSize] 等比输出到这个大小*/
+     * [overrideSize] 等比输出到这个大小
+     *
+     * [offsetWidth] [offsetHeight] 宽高增益量
+     * */
     protected fun createPictureCanvas(
         overrideSize: Float?,
         @Pixel
         minWidth: Float = 1f,
         @Pixel
         minHeight: Float = 1f,
+        @Pixel
+        offsetWidth: Float = 0f,
+        @Pixel
+        offsetHeight: Float = 0f,
         block: Canvas.() -> Unit
     ): Picture {
         //原始目标需要绘制的大小
         val bounds = acquireTempRectF()
         renderProperty.getRenderBounds(bounds)
-        val originWidth = bounds.width()
-        val originHeight = bounds.height()
+        val originWidth = bounds.width() + offsetWidth
+        val originHeight = bounds.height() + offsetHeight
         bounds.release()
         return createOverridePictureCanvas(
             originWidth,
@@ -222,6 +229,10 @@ abstract class BaseElement : IElement {
         minWidth: Float = 1f, /*最小宽度*/
         @Pixel
         minHeight: Float = 1f,
+        @Pixel
+        offsetWidth: Float = 0f,
+        @Pixel
+        offsetHeight: Float = 0f,
         block: Canvas.() -> Unit
     ): Drawable {
         return PictureRenderDrawable(
@@ -229,6 +240,8 @@ abstract class BaseElement : IElement {
                 overrideSize,
                 minWidth,
                 minHeight,
+                offsetWidth,
+                offsetHeight,
                 block
             )
         )
@@ -254,13 +267,17 @@ abstract class BaseElement : IElement {
                 }
             }
         }
-
+        val params = renderParams ?: RenderParams()
         return createPictureDrawable(
             overrideSize,
-            (renderParams ?: RenderParams()).drawMinWidth,
-            (renderParams ?: RenderParams()).drawMinHeight,
-            block
-        )
+            params.drawMinWidth,
+            params.drawMinHeight,
+            params.drawOffsetWidth,
+            params.drawOffsetHeight
+        ) {
+            translate(params.drawOffsetWidth / 2, params.drawOffsetHeight / 2)
+            block()
+        }
     }
 
     /**[createPictureDrawable]*/
