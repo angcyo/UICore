@@ -111,9 +111,9 @@ class ByteArrayWriter(
     }
 
     /**写入00 00 数据*/
-    fun writeSpace(length: Int) {
+    fun writeSpace(length: Int, space: Byte = 0) {
         val padArray = ByteArray(length)
-        padArray.fill(0)
+        padArray.fill(space)
         write(padArray)
     }
 
@@ -125,6 +125,12 @@ class ByteArrayWriter(
             return
         }
         writeSpace(length - size)
+    }
+
+    /**填充长度
+     * [length] 填充多少个字节的长度*/
+    fun fillLength(length: Int, space: Byte = 0) {
+        writeSpace(length, space)
     }
 }
 
