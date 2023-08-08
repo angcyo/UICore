@@ -419,7 +419,6 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
         }
     }
 
-
     fun isTouchInClear(x: Float, y: Float): Boolean {
         return _clearRect.contains(x.toInt(), y.toInt())
     }
