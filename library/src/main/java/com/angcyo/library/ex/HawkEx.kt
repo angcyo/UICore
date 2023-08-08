@@ -98,7 +98,11 @@ fun String?.hawkPutList(
 
 fun String?.hawkPut(value: CharSequence?): Boolean {
     return this?.run {
-        Hawk.put(this, value)
+        if (value == null) {
+            Hawk.delete(this)
+        } else {
+            Hawk.put(this, value)
+        }
     } ?: false
 }
 
