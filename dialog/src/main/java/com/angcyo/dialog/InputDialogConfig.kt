@@ -15,7 +15,16 @@ import com.angcyo.library.ex.hawkGetList
 import com.angcyo.library.ex.hawkPutList
 import com.angcyo.library.ex.setWidthHeight
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.*
+import com.angcyo.widget.base.addFilter
+import com.angcyo.widget.base.appendInputText
+import com.angcyo.widget.base.dslViewHolder
+import com.angcyo.widget.base.onTextChange
+import com.angcyo.widget.base.resetChild
+import com.angcyo.widget.base.setInputHint
+import com.angcyo.widget.base.setInputText
+import com.angcyo.widget.base.setSingleLineMode
+import com.angcyo.widget.base.showSoftInput
+import com.angcyo.widget.base.string
 import com.angcyo.widget.edit.CharLengthFilter
 import com.angcyo.widget.flow
 import com.angcyo.widget.pager.TextIndicator

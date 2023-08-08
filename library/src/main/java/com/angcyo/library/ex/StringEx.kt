@@ -17,6 +17,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.UiThread
 import androidx.core.graphics.PathParser
 import androidx.core.net.toUri
+import androidx.core.text.BidiFormatter
 import androidx.core.text.getSpans
 import com.angcyo.library.L
 import com.angcyo.library.R
@@ -200,6 +201,7 @@ fun CharSequence?.orString(default: CharSequence = "--"): String =
 fun CharSequence?.toString(): String = orString("")
 
 fun Any.toStr(): String = when (this) {
+    is Char -> java.lang.String.valueOf(this)
     is String -> this
     else -> toString()
 }
@@ -1062,3 +1064,30 @@ fun getFileNameFromAttachment(attachment: String?): String? {
  * [M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402]
  * */
 fun String.toPath(): Path? = PathParser.createPathFromPathData(this)
+
+/**
+ * https://developer.android.com/training/basics/supporting-devices/languages?hl=zh-cn
+ *
+ * Unicode 字符“从右到左标记”（U+200F）
+ * */
+fun CharSequence.toUnicodeWrap(): CharSequence {
+    val formatter = BidiFormatter.getInstance()
+    return formatter.unicodeWrap(this)
+    //return "\u200F" + this
+}
+
+/**当前的字符编码方向
+ * https://www.unicode.org/reports/tr9/
+ * */
+fun CharSequence.isRTL(): Boolean {
+    val formatter = BidiFormatter.getInstance()
+    return formatter.isRtl(this)
+}
+
+/**如果字符方向是RTL, 则反序字符串*/
+fun CharSequence.reverseCharSequenceIfRtl(): CharSequence {
+    if (isRTL()) {
+        return reversed()
+    }
+    return this
+}

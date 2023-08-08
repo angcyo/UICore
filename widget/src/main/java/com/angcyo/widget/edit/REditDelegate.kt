@@ -8,13 +8,18 @@ import android.text.TextUtils
 import android.text.method.PasswordTransformationMethod
 import android.util.AttributeSet
 import android.util.StateSet
-import android.view.*
+import android.view.ActionMode
+import android.view.Menu
+import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.ViewConfiguration
 import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
 import com.angcyo.library.L
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.isDarkMode
+import com.angcyo.library.ex.isLayoutRtl
 import com.angcyo.widget.R
 import com.angcyo.widget.base.hidePassword
 import com.angcyo.widget.base.isPasswordType
@@ -230,12 +235,23 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
         super.onSizeChanged(w, h, oldw, oldh)
         if (showClearDrawable) {
             val offset = editText.compoundDrawablePadding
-            _clearRect.set(
-                w - editText.paddingRight - clearDrawable!!.intrinsicWidth - offset,
-                editText.paddingTop,
-                w - editText.paddingRight + offset,
-                min(w, h) - editText.paddingBottom
-            )
+            if (editText.isLayoutRtl()) {
+                val left = 0
+                _clearRect.set(
+                    left,
+                    editText.paddingTop,
+                    left + clearDrawable!!.intrinsicWidth + editText.paddingLeft + offset,
+                    min(w, h) - editText.paddingBottom
+                )
+            } else {
+                val right = w
+                _clearRect.set(
+                    right - clearDrawable!!.intrinsicWidth - editText.paddingRight - offset,
+                    editText.paddingTop,
+                    right,
+                    min(w, h) - editText.paddingBottom
+                )
+            }
         }
     }
 
@@ -381,7 +397,9 @@ class REditDelegate(editText: EditText) : InputTipEditDelegate(editText) {
 
     /**更新删除ico状态*/
     fun updateState(fromTouch: Boolean, isDownIn: Boolean) {
-        val clearDrawable = editText.compoundDrawables[2] ?: return
+        val clearDrawable = if (editText.isLayoutRtl()) editText.compoundDrawables[0]
+        else editText.compoundDrawables[2]
+        clearDrawable ?: return
 
         if (isPasswordDrawable) {
             if (fromTouch) {
