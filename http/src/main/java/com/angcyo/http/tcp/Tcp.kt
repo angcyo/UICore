@@ -7,6 +7,7 @@ import com.angcyo.library.LTime
 import com.angcyo.library.component.ICancel
 import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.fileSizeString
+import com.angcyo.library.ex.isDebuggerConnected
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.sleep
 import java.io.ByteArrayInputStream
@@ -352,7 +353,10 @@ class Tcp : ICancel {
                             e.printStackTrace()
                         }*/
                         val timeout = _receiveTimeOut ?: connectTimeout.toLong()
-                        if (_lastSendTime > 0 && timeout > 0 && nowTime() - _lastSendTime > timeout) {
+                        if (!isDebuggerConnected() &&
+                            _lastSendTime > 0 &&
+                            timeout > 0 && nowTime() - _lastSendTime > timeout
+                        ) {
                             //断开了连接
                             release(null)
                         }
