@@ -68,21 +68,21 @@ _excelMaterialLP4White.doLast {
 
 _excelMaterialLX1Blue10.doLast {
     def laserType = 0
-    def layerIndexList = [3, 5, 7] //图层数据开始的列数
-    def layerIdList = ["layerFill", "layerPicture", "layerLine"]
+    def layerIndexList = [3, 5, 7, 9] //图层数据开始的列数
+    def layerIdList = ["layerFill", "layerPicture", "layerLine", "layerCut"]
     exportExcelData("lx1_450_10", laserType, layerIndexList, layerIdList)
 }
 
 _excelMaterialLX1Blue20.doLast {
     def laserType = 0
-    def layerIndexList = [17] //图层数据开始的列数
-    def layerIdList = ["layerCut"]
+    def layerIndexList = [19, 21, 23, 25] //图层数据开始的列数
+    def layerIdList = ["layerFill", "layerPicture", "layerLine", "layerCut"]
     exportExcelData("lx1_450_20", laserType, layerIndexList, layerIdList)
 }
 
 _excelMaterialLX1White2.doLast {
     def laserType = 0
-    def layerIndexList = [11, 13, 15] //图层数据开始的列数
+    def layerIndexList = [13, 15, 17] //图层数据开始的列数
     def layerIdList = ["layerFill", "layerPicture", "layerLine"]
     exportExcelData("lx1_1064_2", laserType, layerIndexList, layerIdList, [
             "1": 254,
@@ -96,7 +96,7 @@ _excelMaterialLX1White2.doLast {
  * [laserType] 激光类型 0:450nm激光 (蓝光-烧) 1:1064nm激光 (白光-雕)
  * [dpiMap] dpi映射, 比如识别到2.8K, 需要映射成多少dpi
  * */
-def exportExcelData(outputName, laserType, layerIndexList, layerIdList, dpiMap) {
+def exportExcelData(outputName, laserType, layerIndexList, layerIdList, dpiMap = null) {
     //默认的excel文件路径
     def defExcelPath = 'material.xlsx'
     def excelPath = project.hasProperty("excel_path") ? project.ext.excel_path : defExcelPath
