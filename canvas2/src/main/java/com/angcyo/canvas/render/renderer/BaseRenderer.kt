@@ -4,12 +4,9 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import androidx.core.graphics.withSave
 import com.angcyo.canvas.render.R
-import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
-import com.angcyo.library.canvas.annotation.CanvasOutsideCoordinate
 import com.angcyo.canvas.render.annotation.RenderFlag
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.IRenderer
-import com.angcyo.library.canvas.core.Reason
 import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
@@ -19,6 +16,9 @@ import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRen
 import com.angcyo.drawable.loading.CircleScaleLoadingDrawable
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.annotation.CanvasOutsideCoordinate
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.component.Strategy
 import com.angcyo.library.ex.*
 import kotlin.math.max
@@ -396,10 +396,10 @@ abstract class BaseRenderer : IRenderer {
         overrideSize: Float? = null,
         backgroundColor: Int = Color.TRANSPARENT
     ): Bitmap? = createRenderBitmap(
-            getSingleRendererList(false),
-            overrideSize,
-            backgroundColor = backgroundColor
-        )
+        getSingleRendererList(false),
+        overrideSize,
+        backgroundColor = backgroundColor
+    )
 
     /**是否在当前的可视坐标范围内可见
      * [fullIn] 是否要全部可见, 否则露出一部分也视为可见*/
@@ -493,6 +493,9 @@ abstract class BaseRenderer : IRenderer {
     @RenderFlag
     open fun requestUpdatePropertyFlag(reason: Reason, delegate: CanvasRenderDelegate?) {
         addRenderFlag(RENDERER_FLAG_REQUEST_PROPERTY, reason, delegate)
+
+        //更新_renderBounds缓存, 以便在 com.angcyo.canvas.render.renderer.BaseRenderer.isVisibleInRender 中判断及时生效
+        getRendererBounds()
     }
 
     /**平移操作结束之后, 需要将矩阵[matrix]作用到[renderProperty]
