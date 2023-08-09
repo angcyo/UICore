@@ -1227,7 +1227,8 @@ open class DslTabLayout(
         if (layoutDirection != _layoutDirection) {
             _layoutDirection = layoutDirection
             if (orientation == LinearLayout.HORIZONTAL) {
-                requestLayout()
+                updateTabLayout() //更新样式
+                requestLayout() //重新布局
             }
         }
     }
