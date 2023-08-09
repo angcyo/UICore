@@ -248,7 +248,7 @@ fun Context.getIdentifier(name: String, type: String): Int {
 
 fun getAppString(name: String): String? {
     val id = getId(name, "string")
-    return if (id == 0) null else app().resources.getString(id)
+    return if (id == 0) null else _string(id)
 }
 
 fun getAppBoolean(name: String): Boolean? {
