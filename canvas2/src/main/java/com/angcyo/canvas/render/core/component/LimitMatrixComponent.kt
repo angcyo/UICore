@@ -4,9 +4,9 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import com.angcyo.canvas.render.core.BaseCanvasRenderListener
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.library.canvas.core.ICanvasComponent
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.canvas.core.ICanvasComponent
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex.abs
 import com.angcyo.library.ex.ensure
@@ -31,6 +31,7 @@ class LimitMatrixComponent : BaseCanvasRenderListener(), ICanvasComponent {
         private val _tempBoundsLimit = RectF()
 
         /**元素的范围限制, +-1000mm*/
+        @Pixel
         val BOUNDS_LIMIT: RectF?
             get() {
                 val limit = LibHawkKeys.canvasItemBoundsLimit
@@ -53,6 +54,7 @@ class LimitMatrixComponent : BaseCanvasRenderListener(), ICanvasComponent {
             }
 
         /**元素的宽高限制, +-1000mm*/
+        @Pixel
         val SIZE_LIMIT: RectF?
             get() {
                 val limit = LibHawkKeys.canvasItemSizeLimit
@@ -143,6 +145,26 @@ class LimitMatrixComponent : BaseCanvasRenderListener(), ICanvasComponent {
         val width = renderBounds?.width() ?: 0f
         val height = renderBounds?.height() ?: 0f
 
+        //更新sx
+        fun updateLimitScaleXTo(newSx: Float) {
+            val s = newSx / sx
+            if (renderer.isLockScaleRatio) {
+                val newSy = sy * s
+                sy = newSy
+            }
+            sx = newSx
+        }
+
+        //更新sy
+        fun updateLimitScaleYTo(newSy: Float) {
+            val s = newSy / sy
+            if (renderer.isLockScaleRatio) {
+                val newSx = sx * s
+                sx = newSx
+            }
+            sy = newSy
+        }
+
         if (renderBounds == null) {
             //必须是正值
             sx = sx.abs()
@@ -156,8 +178,11 @@ class LimitMatrixComponent : BaseCanvasRenderListener(), ICanvasComponent {
                 val minSx = 1 / width
                 val minSy = 1 / height
 
-                sx = max(minSx, sx)
-                sy = max(minSy, sy)
+                //sx = max(minSx, sx)
+                //sy = max(minSy, sy)
+
+                updateLimitScaleXTo(max(minSx, sx))
+                updateLimitScaleYTo(max(minSy, sy))
             }
         }
 
@@ -165,26 +190,26 @@ class LimitMatrixComponent : BaseCanvasRenderListener(), ICanvasComponent {
         limitMinWidth?.let {
             //需要限制最小宽度
             if (sx * width < it) {
-                sx = it / width
+                updateLimitScaleXTo(it / width)
             }
         }
         limitMinHeight?.let {
             //需要限制最小宽度
             if (sy * height < it) {
-                sy = it / height
+                updateLimitScaleYTo(it / height)
             }
         }
 
         limitMaxWidth?.let {
             //需要限制最大宽度
             if (sx * width > it) {
-                sx = it / width
+                updateLimitScaleXTo(it / width)
             }
         }
         limitMaxHeight?.let {
             //需要限制最大宽度
             if (sy * height > it) {
-                sy = it / height
+                updateLimitScaleYTo(it / height)
             }
         }
 
