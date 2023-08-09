@@ -8,7 +8,8 @@
     android:gravity="center"
     android:orientation="horizontal"
     android:paddingVertical="@dimen/lib_dpi"
-    android:paddingLeft="@dimen/lib_hdpi">
+    android:paddingStart="@dimen/lib_hdpi"
+    tools:layoutDirection="rtl">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/lib_text_view"
@@ -27,8 +28,8 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/lib_hdpi"
-        android:layout_marginRight="@dimen/lib_dpi"
+        android:layout_marginStart="@dimen/lib_sdpi"
+        android:layout_marginEnd="@dimen/lib_dpi"
         android:padding="2dp"
         android:scaleType="fitCenter"
         app:srcCompat="@drawable/lib_edit_delete" />
