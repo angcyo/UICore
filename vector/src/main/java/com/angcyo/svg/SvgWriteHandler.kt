@@ -76,11 +76,11 @@ class SvgWriteHandler : VectorWriteHandler() {
                         if (a3 > 180) 0 else 1
                     }
                     append(buildString {
-                        append("A${r.toLossyFloat().toValueString()},")
-                        append("${r.toLossyFloat().toValueString()},")
+                        append("A${r.toLossyFloat().toFloatValueString()},")
+                        append("${r.toLossyFloat().toFloatValueString()},")
                         append("0,$largeArcFlag,$sweepFlag,")
-                        append("${xValue.toLossyFloat().toValueString()},")
-                        append(yValue.toLossyFloat().toValueString())
+                        append("${xValue.toLossyFloat().toFloatValueString()},")
+                        append(yValue.toLossyFloat().toFloatValueString())
                     })
                 })
             }
@@ -91,7 +91,12 @@ class SvgWriteHandler : VectorWriteHandler() {
 
     override fun onLineToPoint(x: Double, y: Double) {
         //super.onLineToPoint(x, y)
-        writer?.append("L${x.toValueString()},${y.toValueString()}")
+        writer?.apply {
+            append("L")
+            append(x.toDoubleValueString())
+            append(",")
+            append(y.toDoubleValueString())
+        }
     }
 
     /**关闭路径*/

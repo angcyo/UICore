@@ -196,9 +196,9 @@ abstract class VectorWriteHandler {
 
     //region ---Core---
 
-    fun Double.toValueString() = this.decimal(decimal)
+    fun Double.toDoubleValueString() = decimal(decimal)
 
-    fun Float.toValueString() = this.decimal(decimal)
+    fun Float.toFloatValueString() = decimal(decimal)
 
     /**清理上一次最后的点, 通常在遇到新的点时调用*/
     fun clearLastPoint() {
