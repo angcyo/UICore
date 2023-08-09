@@ -14,6 +14,7 @@ import android.text.Spanned
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.util.Base64
+import android.view.View
 import android.webkit.MimeTypeMap
 import androidx.annotation.ColorInt
 import androidx.annotation.UiThread
@@ -24,6 +25,7 @@ import androidx.core.text.getSpans
 import com.angcyo.library.L
 import com.angcyo.library.R
 import com.angcyo.library.app
+import com.angcyo.library.component.lastContext
 import com.angcyo.library.component.pool.acquireTempRect
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.utils.PATTERN_EMAIL
@@ -1086,6 +1088,14 @@ fun CharSequence.toUnicodeWrap(): CharSequence {
 private val bidiFormatter: BidiFormatter by lazy {
     BidiFormatter.getInstance()
 }
+
+/**上下文环境是rtl*/
+val isRtlContext: Boolean
+    get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        lastContext.resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+    } else {
+        bidiFormatter.isRtlContext
+    }
 
 /**当前的字符编码方向, 大部分的字符方向
  * https://www.unicode.org/reports/tr9/

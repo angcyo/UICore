@@ -1,2 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.angcyo.item" />
+    package="com.angcyo.item">
+
+    <application android:supportsRtl="true" />
+
+</manifest>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical|right"
+    android:layout_gravity="center_vertical|end"
     tools:background="@color/transparent10">
 
     <com.angcyo.widget.text.DslTextView
@@ -12,15 +12,16 @@
         style="@style/LibSubTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|right"
+        android:layout_gravity="center_vertical|end"
         android:drawablePadding="@dimen/lib_drawable_padding"
         android:paddingTop="@dimen/lib_ldpi"
-        android:paddingRight="@dimen/lib_xhdpi"
+        android:paddingEnd="@dimen/lib_xhdpi"
         android:paddingBottom="@dimen/lib_ldpi"
         app:r_badge_circle_offset_x="5dp"
         app:r_badge_circle_offset_y="2dp"
         app:r_badge_offset_x="10dp"
         app:r_badge_radius="10dp"
+        tools:drawableEndCompat="@drawable/lib_next"
         tools:r_badge_text="99"
         tools:r_draw_badge="true"
         tools:text="发现新版本" />
