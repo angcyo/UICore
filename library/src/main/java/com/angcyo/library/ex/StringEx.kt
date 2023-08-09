@@ -5,7 +5,9 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.*
+import android.icu.text.Bidi
 import android.net.Uri
+import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -208,10 +210,12 @@ fun Any.toStr(): String = when (this) {
 
 fun CharSequence.wrapLog() = "\n${nowTimeString()} ${Thread.currentThread().name}\n${this}\n"
 
-/**将列表连成字符串*/
+/**将列表连成字符串
+ * [removeLast] 是否删除最后一个字符
+ * */
 fun <T> Iterable<T>.connect(
     divide: CharSequence = "," /*连接符*/,
-    removeLast: Boolean = true,
+    removeLast: Boolean = divide.isNotEmpty() /*是否删除最后一个字符*/,
     convert: (T) -> CharSequence? = { it.toString() }
 ): String {
     return buildString {
@@ -233,6 +237,7 @@ fun <T> Iterable<T>.connect(
 
 fun Array<*>.connect(
     divide: CharSequence = "," /*连接符*/,
+    removeLast: Boolean = divide.isNotEmpty() /*是否删除最后一个字符*/,
     convert: (Any) -> CharSequence? = { it.toString() }
 ): String {
     return buildString {
@@ -246,7 +251,9 @@ fun Array<*>.connect(
                 }
             }
         }
-        safe()
+        if (removeLast) {
+            safe()
+        }
     }
 }
 
@@ -292,6 +299,7 @@ fun CharSequence.safe(last: Char? = null): CharSequence {
     }
 }
 
+/**删除最后一个字符*/
 fun StringBuilder.safe(last: Char? = null): StringBuilder {
     return if (last == null || endsWith(last)) {
         delete(kotlin.math.max(0, lastIndex), kotlin.math.max(0, length))
@@ -1071,23 +1079,77 @@ fun String.toPath(): Path? = PathParser.createPathFromPathData(this)
  * Unicode 字符“从右到左标记”（U+200F）
  * */
 fun CharSequence.toUnicodeWrap(): CharSequence {
-    val formatter = BidiFormatter.getInstance()
-    return formatter.unicodeWrap(this)
+    return bidiFormatter.unicodeWrap(this)
     //return "\u200F" + this
 }
 
-/**当前的字符编码方向
+private val bidiFormatter: BidiFormatter by lazy {
+    BidiFormatter.getInstance()
+}
+
+/**当前的字符编码方向, 大部分的字符方向
  * https://www.unicode.org/reports/tr9/
  * */
 fun CharSequence.isRTL(): Boolean {
-    val formatter = BidiFormatter.getInstance()
-    return formatter.isRtl(this)
+    return bidiFormatter.isRtl(this)
 }
 
+/**全部都是rtl字符*/
+fun String.isFullRTL(): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        Bidi(this, Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT).isRightToLeft
+    } else {
+        java.text.Bidi(this, java.text.Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT).isRightToLeft
+    }
+}
+
+fun CharSequence.reverseCharSequenceIfRtl(): CharSequence = toStr().reverseStringIfRtl()
+
 /**如果字符方向是RTL, 则反序字符串*/
-fun CharSequence.reverseCharSequenceIfRtl(): CharSequence {
+fun String.reverseStringIfRtl(): String {
     if (isRTL()) {
-        return reversed()
+        val result = mutableListOf<String>()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val bidi = Bidi(
+                this,
+                if (bidiFormatter.isRtlContext) Bidi.DIRECTION_DEFAULT_RIGHT_TO_LEFT else Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT
+            )
+            val count = bidi.runCount
+
+            for (i in 0 until count) {
+                val start = bidi.getRunStart(i)
+                val end = bidi.getRunLimit(i)
+                val level = bidi.getRunLevel(i)
+                val run = substring(start, end)
+                //L.i("Run: $run, Level: $level")
+                if (run.isRTL()) {
+                    result.add(run.reversed())
+                } else {
+                    result.add(run)
+                }
+            }
+        } else {
+            val bidi = java.text.Bidi(
+                this,
+                if (bidiFormatter.isRtlContext) java.text.Bidi.DIRECTION_DEFAULT_RIGHT_TO_LEFT else java.text.Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT
+            )
+            val count = bidi.runCount
+
+            for (i in 0 until count) {
+                val start = bidi.getRunStart(i)
+                val end = bidi.getRunLimit(i)
+                val level = bidi.getRunLevel(i)
+                val run = substring(start, end)
+                //L.i("Run: $run, Level: $level")
+                if (run.isRTL()) {
+                    result.add(run.reversed())
+                } else {
+                    result.add(run)
+                }
+            }
+        }
+        result.reverse()
+        return result.connect("")
     }
     return this
 }
