@@ -5,5 +5,5 @@
     style="@style/LibItemStyle"
     android:background="@drawable/lib_theme_stroke_round_selector"
     android:gravity="center"
-    android:textColor="@color/lib_theme_text_selector"
+    android:textColor="@color/lib_theme_text_primary_selector"
     tools:text="angcyo" />
