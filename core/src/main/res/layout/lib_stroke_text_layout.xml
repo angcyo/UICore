@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.text.DslTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_text_view"
+    style="@style/LibItemStyle"
+    android:background="@drawable/lib_theme_stroke_round_selector"
+    android:gravity="center"
+    android:textColor="@color/lib_theme_text_selector"
+    tools:text="angcyo" />
