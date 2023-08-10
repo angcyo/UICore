@@ -266,6 +266,11 @@ class DslSpan : Appendable {
         return this
     }
 
+    fun append(number: Number): Appendable {
+        append(text = number.toString())
+        return this
+    }
+
     override fun append(c: Char): Appendable {
         append(text = c.toString())
         return this
