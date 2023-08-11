@@ -18,8 +18,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@drawable/lib_solid_tag_left_selector"
-            android:paddingHorizontal="@dimen/lib_hdpi"
-            android:paddingVertical="@dimen/lib_sdpi"
+            android:paddingHorizontal="@dimen/lib_ldpi"
+            android:paddingVertical="@dimen/lib_dpi"
             tools:text="作者" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -28,8 +28,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@drawable/lib_solid_tag_right_selector"
-            android:paddingHorizontal="@dimen/lib_hdpi"
-            android:paddingVertical="@dimen/lib_sdpi"
+            android:paddingHorizontal="@dimen/lib_ldpi"
+            android:paddingVertical="@dimen/lib_dpi"
             android:textColor="@color/colorAccentNight"
             tools:text="angcyo\nangcyo" />
 
