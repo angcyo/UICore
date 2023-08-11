@@ -5,13 +5,12 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
 import com.angcyo.canvas.render.R
-import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.canvas.render.core.CanvasControlManager
-import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.L
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.distance
-import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.getScaleX
 import com.angcyo.library.ex.getScaleY
 import com.angcyo.library.ex.mapPoint
@@ -59,7 +58,10 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
     private val tempMovePointInside = PointF()
 
     /**当元素过小时, 缩放倍数直接使用理想值*/
-    var minSizeThreshold = 10 * dp
+    var minSizeThreshold = 1f
+
+    /**是否激活反向缩放*/
+    var reverseScale = false
 
     init {
         controlPointType = CONTROL_TYPE_SCALE
@@ -203,6 +205,12 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
 
     /**在按下的基础上, 缩放了多少*/
     private fun scale(sx: Float, sy: Float) {
+        if (!reverseScale) {
+            if (sx <= 0 || sy <= 0) {
+                L.w("不支持反向缩放元素:sx:$sx sy:$sy")
+                return
+            }
+        }
         L.d("缩放元素:sx:$sx sy:$sy")
         controlRendererInfo?.let { controlInfo ->
             controlInfo.state.renderProperty?.let { property ->
