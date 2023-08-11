@@ -537,7 +537,7 @@ abstract class BaseWebFragment : BaseTitleFragment() {
                 try {
                     dslPicker({
                         singleImage()
-                        maxSelectorLimit = param.multiLimit
+                        maxSelectorLimit = param._selectorLimit
                     }) {
                         it?.let {
                             fileChooseResultList(it.mapTo(ArrayList()) { it.loadUri() })
@@ -553,7 +553,7 @@ abstract class BaseWebFragment : BaseTitleFragment() {
                 try {
                     dslPicker({
                         singleVideo()
-                        maxSelectorLimit = param.multiLimit
+                        maxSelectorLimit = param._selectorLimit
                     }) {
                         it?.let {
                             fileChooseResultList(it.mapTo(ArrayList()) { it.loadUri() })

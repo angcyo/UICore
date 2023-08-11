@@ -143,7 +143,12 @@ open class DslWebView(context: Context, attributeSet: AttributeSet? = null) :
                 fileChooserParams: WebChromeClient.FileChooserParams
             ): Boolean {
                 _filePathCallback = filePathCallback
-                fileChooseAction(FileChooserParam(1, fileChooserParams.acceptTypes.getOrNull(0)))
+                fileChooseAction(
+                    FileChooserParam(
+                        fileChooserParams.mode == WebChromeClient.FileChooserParams.MODE_OPEN_MULTIPLE,
+                        fileChooserParams.acceptTypes.getOrNull(0)
+                    )
+                )
                 //return super.onShowFileChooser(webView, filePathCallback, fileChooserParams)
                 return true
             }
