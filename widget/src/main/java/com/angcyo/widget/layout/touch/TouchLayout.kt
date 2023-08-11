@@ -10,9 +10,9 @@ import android.widget.OverScroller
 import androidx.annotation.CallSuper
 import androidx.core.view.GestureDetectorCompat
 import com.angcyo.library.L
-import com.angcyo.library.ex.simpleHash
 import com.angcyo.library.ex.isTouchDown
 import com.angcyo.library.ex.isTouchFinish
+import com.angcyo.library.ex.simpleHash
 import kotlin.math.abs
 
 /**
@@ -69,7 +69,7 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
         GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
 
             override fun onFling(
-                e1: MotionEvent,
+                e1: MotionEvent?,
                 e2: MotionEvent,
                 velocityX: Float,
                 velocityY: Float
@@ -108,7 +108,7 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
             }
 
             override fun onScroll(
-                e1: MotionEvent,
+                e1: MotionEvent?,
                 e2: MotionEvent,
                 distanceX: Float,
                 distanceY: Float

@@ -32,7 +32,7 @@ open class DslBlockSeekBar(context: Context, attributeSet: AttributeSet? = null)
             }
 
             override fun onScroll(
-                e1: MotionEvent,
+                e1: MotionEvent?,
                 e2: MotionEvent,
                 distanceX: Float,
                 distanceY: Float

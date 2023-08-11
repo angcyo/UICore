@@ -102,6 +102,7 @@ class SwipeMenuHelper(var swipeMenuCallback: SwipeMenuCallback) : ItemDecoration
                     _resetScrollValue()
                     gestureDetectorCompat?.onTouchEvent(e)
                 }
+
                 else -> {
                     if (_needHandleTouch) {
                         gestureDetectorCompat?.onTouchEvent(e)
@@ -288,7 +289,7 @@ class SwipeMenuHelper(var swipeMenuCallback: SwipeMenuCallback) : ItemDecoration
         }
 
         override fun onScroll(
-            e1: MotionEvent,
+            e1: MotionEvent?,
             e2: MotionEvent,
             distanceX: Float,
             distanceY: Float
@@ -414,7 +415,7 @@ class SwipeMenuHelper(var swipeMenuCallback: SwipeMenuCallback) : ItemDecoration
         }
 
         override fun onFling(
-            e1: MotionEvent,
+            e1: MotionEvent?,
             e2: MotionEvent,
             velocityX: Float,
             velocityY: Float
@@ -428,7 +429,7 @@ class SwipeMenuHelper(var swipeMenuCallback: SwipeMenuCallback) : ItemDecoration
 
     var _dragCallbackHelperTouchField: Field? = null
 
-    fun _cancelDragHelper(e1: MotionEvent) {
+    fun _cancelDragHelper(e1: MotionEvent?) {
         _dragCallbackHelper?._itemTouchHelper?.apply {
             if (_dragCallbackHelperTouchField == null) {
                 javaClass.declaredFields.forEach {

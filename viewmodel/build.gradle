@@ -8,7 +8,7 @@ dependencies {
     //https://mvnrepository.com/artifact/androidx.fragment
     //https://mvnrepository.com/artifact/androidx.fragment/fragment
     //implementation "androidx.fragment:fragment:1.5.7"
-    implementation "androidx.fragment:fragment-ktx:1.5.7"
+    implementation "androidx.fragment:fragment-ktx:1.6.1"
 
     def lifecycle = "2.6.1"
     //https://mvnrepository.com/artifact/androidx.lifecycle

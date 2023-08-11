@@ -18,7 +18,7 @@ ext.libVersionConfig = [
         "androidx.exifinterface:exifinterface": "1.3.6",
 ]
 
-def fragment = "1.5.7"
+def fragment = "1.6.1"
 ext.libVersionConfig << [
         //"org.jetbrains.kotlin:kotlin-stdlib"              : "1.3.61",
         //"org.jetbrains.kotlin:kotlin-stdlib-common"       : "1.3.61",
@@ -29,7 +29,7 @@ ext.libVersionConfig << [
         "androidx.fragment:fragment-ktx": fragment,
 ]
 
-def activity = "1.7.1"
+def activity = "1.7.2"
 ext.libVersionConfig << [
         //https://mvnrepository.com/artifact/androidx.activity/
         //https://mvnrepository.com/artifact/androidx.activity/activity

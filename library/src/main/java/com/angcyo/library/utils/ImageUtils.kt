@@ -55,7 +55,7 @@ fun fastBlur(
     val scaleWidth = (width * scale + 0.5f).toInt()
     val scaleHeight = (height * scale + 0.5f).toInt()
     if (scaleWidth == 0 || scaleHeight == 0) return null
-    var scaleBitmap = Bitmap.createScaledBitmap(src, scaleWidth, scaleHeight, true)
+    var scaleBitmap: Bitmap? = Bitmap.createScaledBitmap(src, scaleWidth, scaleHeight, true)
     val paint =
         Paint(Paint.FILTER_BITMAP_FLAG or Paint.ANTI_ALIAS_FLAG)
     val canvas = Canvas()
@@ -78,9 +78,9 @@ fun fastBlur(
             recycle
         )
     }
-    if (scale == 1f) return scaleBitmap
+    if (scale == 1f || scaleBitmap == null) return scaleBitmap
     val ret = Bitmap.createScaledBitmap(scaleBitmap, width, height, true)
-    if (scaleBitmap != null && !scaleBitmap.isRecycled) scaleBitmap.recycle()
+    if (!scaleBitmap.isRecycled) scaleBitmap.recycle()
     if (recycle && !src.isRecycled) src.recycle()
     return ret
 }

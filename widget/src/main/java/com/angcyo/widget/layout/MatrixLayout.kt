@@ -64,7 +64,7 @@ class MatrixLayout(context: Context, attrs: AttributeSet? = null) :
         gestureDetectorCompat = GestureDetectorCompat(context,
             object : SimpleOnGestureListener() {
                 override fun onScroll(
-                    e1: MotionEvent,
+                    e1: MotionEvent?,
                     e2: MotionEvent,
                     distanceX: Float,
                     distanceY: Float

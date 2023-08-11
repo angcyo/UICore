@@ -6,13 +6,21 @@ import android.content.Intent
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.nfc.Tag
-import android.nfc.tech.*
+import android.nfc.tech.IsoDep
+import android.nfc.tech.MifareClassic
+import android.nfc.tech.MifareUltralight
+import android.nfc.tech.Ndef
+import android.nfc.tech.NdefFormatable
+import android.nfc.tech.NfcA
+import android.nfc.tech.NfcB
+import android.nfc.tech.NfcF
+import android.nfc.tech.NfcV
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import com.angcyo.library.L
 import com.angcyo.library.app
-import java.util.*
+import java.util.Locale
 
 /**
  *
@@ -134,13 +142,15 @@ object RNfc {
 
     fun enableNfcForegroundNdefPush(activity: Activity, message: NdefMessage) {
         if (isNfcEnable()) {
-            nfcAdapter?.enableForegroundNdefPush(activity, message)
+            nfcAdapter?.enableForegroundDispatch(activity, null, null, null)
+            //nfcAdapter?.enableForegroundNdefPush(activity, message) //Api 34 废弃
         }
     }
 
     fun disableNfcForegroundNdefPush(activity: Activity) {
         if (isNfcEnable()) {
-            nfcAdapter?.disableForegroundNdefPush(activity)
+            nfcAdapter?.disableForegroundDispatch(activity)
+            //nfcAdapter?.disableForegroundNdefPush(activity) //Api 34 废弃
         }
     }
 
