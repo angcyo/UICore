@@ -81,7 +81,7 @@ _excelMaterialLX1Blue20.doLast {
 }
 
 _excelMaterialLX1White2.doLast {
-    def laserType = 0
+    def laserType = 1
     def layerIndexList = [13, 15, 17] //图层数据开始的列数
     def layerIdList = ["layerFill", "layerPicture", "layerLine"]
     exportExcelData("lx1_1064_2", laserType, layerIndexList, layerIdList, [
@@ -195,16 +195,6 @@ def exportExcelData(outputName, laserType, layerIndexList, layerIdList, dpiMap =
         if (!resIdStr.isBlank()) {
             map.put("resIdStr", resIdStr)
             map.put("key", resIdStr)//key 等同于 resIdStr
-            def code = resIdStr // 唯一标识
-            if (laserType == 0) {
-                code += "_blue"
-            } else {
-                code += "_white"
-            }
-            code += "_bw"
-            code += "_${map.get("dpiScale")}"
-            //
-            map.put("code", code)
         }
 
         //---
@@ -220,6 +210,22 @@ def exportExcelData(outputName, laserType, layerIndexList, layerIdList, dpiMap =
                 //图层参数为空, 跳过处理
                 println("::${material} ${dpiScaleFloat} -> ${layerId} -> 无推荐参数, 跳过处理")
             } else {
+                def code = resIdStr // 唯一标识
+                if (laserType == 0) {
+                    code += "_blue"
+                } else {
+                    code += "_white"
+                }
+                code += "_${layerId}"
+                def dpi = map.get("dpi")
+                if (dpi != null) {
+                    code += "_${dpi}"
+                } else {
+                    code += "_${map.get("dpiScale")}"
+                }
+                map.put("code", code)
+                //...end code
+
                 def pd = getPowerDepth(sheet, line, value)
 
                 map.put("layerId", layerId)
