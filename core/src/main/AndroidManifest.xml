@@ -24,6 +24,9 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
 
+    <!--Android 14前台服务权限-->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
     <uses-feature
         android:name="android.hardware.sensor.accelerometer"
         android:required="false" />
@@ -58,13 +61,15 @@
         <service
             android:name=".component.step.StepService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"
+            android:foregroundServiceType="dataSync" />
 
         <!--保活服务-->
         <service
             android:name=".component.AliveService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
     </application>
 
 </manifest>

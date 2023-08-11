@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.angcyo.acc">
 
+    <!--Android 14前台服务权限-->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
     <application>
 
         <!--请在主工程配置[tools:replace="android:enabled,android:exported"]-->
@@ -8,6 +11,7 @@
             android:name="com.angcyo.core.component.accessibility.RAccessibilityService"
             android:enabled="false"
             android:exported="false"
+            android:foregroundServiceType="dataSync"
             android:label="@string/lib_accessibility_label"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>

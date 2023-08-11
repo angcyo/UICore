@@ -833,12 +833,24 @@ fun openNotificationSetting() {
 //---
 
 /**
- * [PendingIntent.FLAG_MUTABLE] 可变
- *[PendingIntent.FLAG_IMMUTABLE] 不可变
+ * [PendingIntent.FLAG_MUTABLE]   33554432 可变
+ * [PendingIntent.FLAG_IMMUTABLE] 67108864 不可变
+ * [PendingIntent.FLAG_NO_CREATE] 536870912
+ * [PendingIntent.FLAG_ALLOW_UNSAFE_IMPLICIT_INTENT] 16777216
  * [mutableFlag]
+ *
+ * ```
+ * Targeting U+ (version 34 and above) disallows creating or retrieving a PendingIntent with FLAG_MUTABLE,
+ * an implicit Intent within and without FLAG_NO_CREATE and FLAG_ALLOW_UNSAFE_IMPLICIT_INTENT for security reasons.
+ * To retrieve an already existing PendingIntent, use FLAG_NO_CREATE, however,
+ * to create a new PendingIntent with an implicit Intent use FLAG_IMMUTABLE.
+ * ```
  * */
-fun Int.pendingIntentMutableFlag(mutableFlag: Int = 33554432): Int {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+fun Int.pendingIntentMutableFlag(
+    mutableFlag: Int = 33554432,
+    createFlag: Int = PendingIntent.FLAG_ALLOW_UNSAFE_IMPLICIT_INTENT
+): Int {
+    var flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         //android 12
         if (this.have(PendingIntent.FLAG_MUTABLE) || this.have(PendingIntent.FLAG_IMMUTABLE)) {
             this
@@ -848,6 +860,16 @@ fun Int.pendingIntentMutableFlag(mutableFlag: Int = 33554432): Int {
     } else {
         this
     }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        flag = if (flag.have(createFlag)) {
+            flag
+        } else {
+            flag or createFlag
+        }
+    }
+
+    return flag
 }
 
 //</editor-fold desc="通知扩展">
