@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import androidx.annotation.IntDef
+import com.angcyo.library.annotation.DSL
 import java.util.*
 
 /**
@@ -299,7 +300,7 @@ open class DslGradientDrawable : AbsDslDrawable() {
     GradientDrawable.LINE,
     GradientDrawable.RING
 )
-@kotlin.annotation.Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.SOURCE)
 annotation class Shape
 
 @IntDef(
@@ -307,7 +308,7 @@ annotation class Shape
     GradientDrawable.RADIAL_GRADIENT,
     GradientDrawable.SWEEP_GRADIENT
 )
-@kotlin.annotation.Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.SOURCE)
 annotation class GradientType
 
 /**使用[solidColor]颜色填充一个圆*/
@@ -317,6 +318,7 @@ fun DslGradientDrawable.solidCircle(solidColor: Int) {
 }
 
 /**快速创建[GradientDrawable]*/
+@DSL
 fun dslGradientDrawable(action: DslGradientDrawable.() -> Unit): GradientDrawable {
     return DslGradientDrawable().run {
         action()
