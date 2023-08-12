@@ -74,7 +74,7 @@ afterEvaluate {
                     version = versionName
 
                     //artifact javadocJar
-                    artifact sourcesJar
+                    //artifact sourcesJar //2023-8-12 Invalid publication 'release': multiple artifacts with the identical extension and classifier ('jar', 'sources').
                 }
             }
 
