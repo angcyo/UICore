@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.ViewGroup
 import android.webkit.WebView
+import com.angcyo.web.api.WebApi
 import com.angcyo.web.core.BaseWebFragment
 import com.angcyo.web.core.DslWebView
 
@@ -52,6 +53,9 @@ open class WebFragment : BaseWebFragment() {
             fileChooseAction = {
                 fileChoose(it)
             }
+
+            //api
+            WebApi.initJavascriptInterface(this@WebFragment, this)
 
             //加载url
             if (data.isNullOrEmpty()) {
