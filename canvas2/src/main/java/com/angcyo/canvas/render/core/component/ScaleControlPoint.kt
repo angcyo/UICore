@@ -108,7 +108,7 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
                 tempMovePointInside.set(touchMovePointInside)
                 var newSmartWidth: Float? = null
                 var newSmartHeight: Float? = null
-                if (smartAssistantComponent.isEnableComponent &&
+                if (needSmartAssistantVelocity() &&
                     controlRendererAngle == 0f && /*未旋转时才推荐宽高*/
                     (touchMovePointInside.x > anchorPoint.x && touchMovePointInside.y > anchorPoint.y) /*正向拖拽才有宽高提示*/
                 ) {
@@ -129,6 +129,8 @@ class ScaleControlPoint(controlManager: CanvasControlManager) : BaseControlPoint
                             newSmartHeight = it
                         }
                     }
+                } else {
+                    clearSmartAssistant()
                 }
 
                 if (isLockScaleRatio) {

@@ -2,8 +2,8 @@ package com.angcyo.canvas.render.core.component
 
 import android.view.MotionEvent
 import com.angcyo.canvas.render.core.CanvasControlManager
-import com.angcyo.library.canvas.core.Reason
 import com.angcyo.canvas.render.core.component.BaseControlPoint.Companion.CONTROL_TYPE_TRANSLATE
+import com.angcyo.library.canvas.core.Reason
 import kotlin.math.absoluteValue
 
 /**
@@ -19,7 +19,7 @@ class TranslateRendererControl(controlManager: CanvasControlManager) : BaseContr
             var tx = getTouchTranslateDxInside()
             var ty = getTouchTranslateDyInside()
 
-            if (smartAssistantComponent.isEnableComponent) {
+            if (needSmartAssistantVelocity()) {
                 smartAssistantComponent.findSmartDx(controlRendererBounds, tx, getTouchMoveDx())
                     ?.let {
                         tx = it
@@ -28,6 +28,8 @@ class TranslateRendererControl(controlManager: CanvasControlManager) : BaseContr
                     ?.let {
                         ty = it
                     }
+            } else {
+                clearSmartAssistant()
             }
 
             if (isControlHappen || tx.absoluteValue >= translateThreshold || ty.absoluteValue >= translateThreshold) {

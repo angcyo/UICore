@@ -4,6 +4,7 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.MotionEvent
+import android.view.VelocityTracker
 import com.angcyo.canvas.render.core.CanvasControlManager
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.data.ControlRendererInfo
@@ -15,7 +16,9 @@ import com.angcyo.library.canvas.core.ICanvasComponent
 import com.angcyo.library.canvas.core.ICanvasTouchListener
 import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.component.Strategy
+import com.angcyo.library.component.hawk.LibLpHawkKeys
 import com.angcyo.library.ex.dp
+import kotlin.math.absoluteValue
 
 /**
  * 控制编辑操作基类
@@ -40,6 +43,9 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
 
     /**手指移动多少距离后, 才算作移动了*/
     var translateThreshold = 5 * dp
+
+    /**智能推荐的最小速率*/
+    var minimumSmartAssistantVelocity: Float = LibLpHawkKeys.minimumSmartAssistantVelocity
 
     override var isEnableComponent: Boolean = true
 
@@ -67,6 +73,9 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
     /**上一次移动的点位, inside*/
     @CanvasInsideCoordinate
     protected var lastTouchMovePointInside = PointF()
+
+    /**速度检测*/
+    var velocityTracker: VelocityTracker? = null
 
     val delegate: CanvasRenderDelegate
         get() = controlManager.delegate
@@ -112,6 +121,13 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
         isEnableComponent && handleControl
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (isEnableComponent && smartAssistantComponent.isEnableComponent) {
+            if (velocityTracker == null) {
+                velocityTracker = VelocityTracker.obtain()
+            }
+            velocityTracker?.addMovement(event)
+        }
+
         when (event.actionMasked) {
             MotionEvent.ACTION_MOVE -> {
                 val firstIndex = event.findPointerIndex(firstTouchPointerId)
@@ -162,6 +178,21 @@ abstract class BaseControl(val controlManager: CanvasControlManager) : ICanvasTo
     /**控制是否产生了*/
     fun updateControlHappen(happen: Boolean) {
         isControlHappen = happen
+    }
+
+    /**当前的速率是否可以触发智能推荐
+     * x/y速率都小于[minimumSmartAssistantVelocity]时, 触发智能推荐
+     * */
+    fun needSmartAssistantVelocity() = velocityTracker?.let {
+        it.computeCurrentVelocity(1000)
+        L.i("速率:x:${it.xVelocity} y:${it.yVelocity}")
+        it.xVelocity.absoluteValue <= minimumSmartAssistantVelocity &&
+                it.yVelocity.absoluteValue <= minimumSmartAssistantVelocity
+    } ?: false
+
+    /**清除智能提示绘制信息*/
+    fun clearSmartAssistant() {
+        smartAssistantComponent.clearSmartAssistant()
     }
 
     //region---core---

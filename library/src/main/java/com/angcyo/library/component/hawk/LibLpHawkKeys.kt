@@ -32,6 +32,9 @@ object LibLpHawkKeys {
     /**是否激活GCode最后的G0输出*/
     var enableGCodeEndG0: Boolean by HawkPropertyValue<Any, Boolean>(false)
 
+    /**智能推荐的最小速率*/
+    var minimumSmartAssistantVelocity: Float by HawkPropertyValue<Any, Float>(100f)
+
     //---
 
     /**L1的物理尺寸配置*/
