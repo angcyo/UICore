@@ -7,13 +7,28 @@ android {
         disable 'GoogleAppIndexingWarning'
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        if (gradle.gradleVersion.charAt(0) >= '8') {
+            sourceCompatibility JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+        } else {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
     }
 
     // For Kotlin projects https://developer.android.com/studio/write/java8-support.html
     /*kotlinOptions { jvmTarget = "1.8" }*/
-    kotlinOptions { jvmTarget = JavaVersion.VERSION_1_8 }
+    kotlinOptions {
+        if (gradle.gradleVersion.charAt(0) >= '8') {
+            jvmTarget = JavaVersion.VERSION_17
+        } else {
+            jvmTarget = JavaVersion.VERSION_1_8
+        }
+        /*tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+            kotlinOptions.jvmTarget = "1.8"
+            kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
+        }*/
+    }
 
     /*
     DSL element 'dexOptions' is obsolete and should be removed.

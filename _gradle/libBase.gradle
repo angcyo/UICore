@@ -46,23 +46,43 @@ childProjects.each {
     def isLib = projectObj.plugins.hasPlugin(library)
 
     if (isApp) {
-        def applicationPlugin = projectObj.plugins.findPlugin(application)
+
         //自动获取 主工程的 sdk配置信息
-        //println applicationPlugin.extension.defaultConfig.applicationId
-        if (!haveLibMSdk) {
-            M_SDK = applicationPlugin.extension.defaultConfig.minSdkVersion.apiLevel
+        def defaultConfig
+        if (gradle.gradleVersion.charAt(0) >= '8') {
+            defaultConfig = projectObj.android.defaultConfig
+            C_SDK = projectObj.android.compileSdk
+            if (!haveLibMSdk) {
+                M_SDK = defaultConfig.minSdk
+            }
+            T_SDK = defaultConfig.targetSdk
+        } else {
+            def applicationPlugin = projectObj.plugins.findPlugin(application)
+            defaultConfig = applicationPlugin.extension.defaultConfig
+            C_SDK = applicationPlugin.extension.compileSdkVersion
+            if (!haveLibMSdk) {
+                M_SDK = defaultConfig.minSdkVersion.apiLevel
+            }
+            T_SDK = defaultConfig.targetSdkVersion.apiLevel
         }
-        T_SDK = applicationPlugin.extension.defaultConfig.targetSdkVersion.apiLevel
-        C_SDK = applicationPlugin.extension.compileSdkVersion
     }
 }
 
 android {
-    compileSdkVersion C_SDK
+    if (gradle.gradleVersion.charAt(0) >= '8') {
+        compileSdk C_SDK
+    } else {
+        compileSdkVersion C_SDK
+    }
 
     defaultConfig {
-        minSdkVersion M_SDK
-        targetSdkVersion T_SDK
+        if (gradle.gradleVersion.charAt(0) >= '8') {
+            minSdk 21
+            targetSdk T_SDK
+        } else {
+            minSdkVersion M_SDK
+            targetSdkVersion T_SDK
+        }
         versionCode V_CODE
         versionName V_NAME
 

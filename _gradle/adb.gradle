@@ -15,8 +15,14 @@ static def getApplicationIdList(rootProject) {
         def isApp = projectObj.plugins.hasPlugin(application)
 
         if (isApp) {
-            def applicationPlugin = projectObj.plugins.findPlugin(application)
-            appList += applicationPlugin.extension.defaultConfig.applicationId
+            def defaultConfig
+            if (gradle.gradleVersion.charAt(0) >= '8') {
+                defaultConfig = projectObj.android.defaultConfig
+            } else {
+                def applicationPlugin = projectObj.plugins.findPlugin(application)
+                defaultConfig = applicationPlugin.extension.defaultConfig
+            }
+            appList += defaultConfig.applicationId
         }
     }
     return appList

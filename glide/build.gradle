@@ -1,6 +1,11 @@
 apply from: allGradle.libBase
 apply plugin: 'kotlin-kapt'
 
+android {
+    //AGP 8.x 必须指定命名空间
+    namespace 'com.angcyo.glide'
+}
+
 dependencies {
     implementation project(allModule.library)
     implementation project(allModule.widget)

@@ -9,6 +9,7 @@
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+
 //apply plugin: 'com.getkeepsafe.dexcount'
 //apply from: 'build_time.gradle'
 
@@ -20,9 +21,9 @@ apply plugin: 'kotlin-android'
 
 apply from: allGradle.key
 
-def _C_SDK = project.hasProperty("C_SDK") ? project.ext.C_SDK : '33'
-def _M_SDK = project.hasProperty("M_SDK") ? project.ext.M_SDK : '21'
-def _T_SDK = project.hasProperty("T_SDK") ? project.ext.T_SDK : '33'
+def _C_SDK = project.hasProperty("C_SDK") ? project.ext.C_SDK : '34'
+def _M_SDK = project.hasProperty("M_SDK") ? project.ext.M_SDK : '24'
+def _T_SDK = project.hasProperty("T_SDK") ? project.ext.T_SDK : '34'
 def _V_CODE = project.hasProperty("V_CODE") ? project.ext.V_CODE : '1'
 def _V_NAME = project.hasProperty("V_NAME") ? project.ext.V_NAME : '1.0'
 def application_id = project.hasProperty("application_id") ? project.ext.application_id : 'com.angcyo.app'
@@ -45,15 +46,24 @@ println "........app.gradle........end"
 
 android {
     namespace "$_namespace" //gradle7.5+
-    compileSdkVersion Integer.parseInt(_C_SDK)
+    if (gradle.gradleVersion.charAt(0) >= '8') {
+        compileSdk Integer.parseInt(_C_SDK)
+    } else {
+        compileSdkVersion Integer.parseInt(_C_SDK)
+    }
     //buildToolsVersion rootProject.B_TOOLS
     defaultConfig {
         //vector xml支持 api < 21
         //vectorDrawables.useSupportLibrary = true
 
         applicationId "$application_id"
-        minSdkVersion Integer.parseInt(_M_SDK)
-        targetSdkVersion Integer.parseInt(_T_SDK)
+        if (gradle.gradleVersion.charAt(0) >= '8') {
+            minSdk Integer.parseInt(_M_SDK)
+            targetSdk Integer.parseInt(_T_SDK)
+        } else {
+            minSdkVersion Integer.parseInt(_M_SDK)
+            targetSdkVersion Integer.parseInt(_T_SDK)
+        }
         versionCode Integer.parseInt(_V_CODE)
         versionName "$_V_NAME"
 
@@ -183,6 +193,7 @@ android {
         //https://stackoverflow.com/questions/63072764/android-packagebuildconfig-false-is-deprecated
         buildFeatures {
             buildConfig = true
+            //aidl true gradle 8.x
         }
     }
 }
