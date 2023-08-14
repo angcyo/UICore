@@ -8,7 +8,6 @@ import android.graphics.RectF
 import android.graphics.Typeface
 import android.widget.LinearLayout
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.library.canvas.core.Reason
 import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.data.TextProperty
@@ -16,6 +15,7 @@ import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.canvas.render.state.TextStateStack
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.component.FontManager
 import com.angcyo.library.component.SupportUndo
 import com.angcyo.library.ex.have
@@ -425,7 +425,7 @@ open class TextElement : BaseElement() {
                         else -> -_textMeasureBounds.left.toFloat()
                     }
 
-                    canvas.drawText(text, lineOffsetX + x + offsetX, y - descent, paint)
+                    canvas.drawText(text, max(0f, lineOffsetX + x + offsetX), y - descent, paint)
                     x += charWidth + textProperty.charSpacing
                 }
 
@@ -504,6 +504,7 @@ open class TextElement : BaseElement() {
                     y += charHeight
                     canvas.drawText(text, x + offsetX, lineOffsetY + y - descent, paint)
                     y += textProperty.charSpacing
+                    y = max(y, 0f)
                 }
 
                 x += lineTextWidth + textProperty.lineSpacing
@@ -526,13 +527,16 @@ open class TextElement : BaseElement() {
         if (textProperty.orientation == LinearLayout.HORIZONTAL) {
             //横向排列
             lineTextList.forEach { lineText ->
-                var lineWidth = 0f
+                var lineWidth = 0f //一行的宽度
+                var maxCharWidth = 0f//一行中最大的字符宽度
                 lineText.forEach {
                     //一个字一个字的宽度
-                    lineWidth += measureTextWidth("$it", paint)
+                    val charWidth = measureTextWidth("$it", paint)
+                    lineWidth += charWidth
+                    maxCharWidth = max(maxCharWidth, charWidth)
                 }
                 lineWidth += textProperty.charSpacing * (lineText.length - 1)
-                result = max(result, lineWidth)
+                result = max(result, max(lineWidth, maxCharWidth))
             }
         } else {
             //纵向排列
@@ -565,13 +569,16 @@ open class TextElement : BaseElement() {
         } else {
             //纵向排列
             lineTextList.forEach { lineText ->
-                var lineHeight = 0f
+                var lineHeight = 0f //一行的高度
+                var maxLineHeight = 0f //一行中最大的字符高度
                 lineText.forEach {
                     //一个字一个字的高度
-                    lineHeight += measureTextHeight("$it", paint)
+                    val charHeight = measureTextHeight("$it", paint)
+                    lineHeight += charHeight
+                    maxLineHeight = max(maxLineHeight, charHeight)
                 }
                 lineHeight += textProperty.charSpacing * (lineText.length - 1)
-                result = max(result, lineHeight)
+                result = max(result, max(lineHeight, maxLineHeight))
             }
         }
         return result
