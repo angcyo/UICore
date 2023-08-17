@@ -19,6 +19,7 @@ import com.angcyo.drawable.text.DslTextDrawable
 import com.angcyo.library.ex.Anim
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.anim
+import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.getColor
@@ -288,14 +289,20 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
         progressMaxValue =
             typedArray.getFloat(R.styleable.DslProgressBar_progress_max_value, progressMaxValue)
+        progressMinValue =
+            typedArray.getFloat(R.styleable.DslProgressBar_progress_min_value, progressMinValue)
 
-        progressValue = typedArray.getFloat(
-            R.styleable.DslProgressBar_progress_value,
-            if (isInEditMode) 50f else progressValue
+        progressValue = clamp(
+            typedArray.getFloat(
+                R.styleable.DslProgressBar_progress_value,
+                if (isInEditMode) 50f else progressValue
+            ), progressMinValue, progressMaxValue
         )
-        progressSecondValue = typedArray.getFloat(
-            R.styleable.DslProgressBar_progress_second_value,
-            if (isInEditMode) 70f else progressSecondValue
+        progressSecondValue = clamp(
+            typedArray.getFloat(
+                R.styleable.DslProgressBar_progress_second_value,
+                if (isInEditMode) 70f else progressSecondValue
+            ), progressMinValue, progressMaxValue
         )
 
         enableShowHideProgress = typedArray.getBoolean(
