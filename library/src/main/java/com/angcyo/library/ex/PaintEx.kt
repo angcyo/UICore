@@ -8,6 +8,8 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import com.angcyo.library.R
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.pool.acquireTempRect
+import com.angcyo.library.component.pool.release
 import kotlin.math.max
 
 
@@ -48,6 +50,21 @@ fun Paint.textWidth(text: String?): Float {
         return 0f
     }
     return measureText(text)
+}
+
+/**
+ * [textHeight]
+ * [textBounds]
+ * */
+fun Paint?.textBoundsHeight(text: String?): Float {
+    if (text == null || this == null) {
+        return 0f
+    }
+    val rect = acquireTempRect()
+    textBounds(text, rect)
+    val result = rect.height()
+    rect.release()
+    return result.toFloat()
 }
 
 /**文本的高度
