@@ -84,6 +84,9 @@ object LibHawkKeys {
     @Pixel
     var canvasItemSizeLimit: String by HawkPropertyValue<Any, String>("1,1,9999,99999")
 
+    /**删除线/下划线的高度是文本高度的几分之一*/
+    var canvasLineHeight: Int by HawkPropertyValue<Any, Int>(10)
+
     /**[com.angcyo.canvas.CanvasDelegate]允许添加的最大渲染元素数据*/
     var canvasRenderMaxCount: Int by HawkPropertyValue<Any, Int>(30)
 

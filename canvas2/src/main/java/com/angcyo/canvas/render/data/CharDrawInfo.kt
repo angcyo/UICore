@@ -40,3 +40,17 @@ fun List<CharDrawInfo>.getOutlineRect(): RectF = map { it.bounds }.getOutlineRec
 /**返回对应的宽高*/
 fun List<CharDrawInfo>.getCharTextWidthHeight(): Pair<Float, Float> =
     map { it.bounds }.getOutlineWidthHeight()
+
+/**返回一行一行的结构*/
+fun List<CharDrawInfo>.toLineCharDrawInfoList(result: MutableList<List<CharDrawInfo>>): List<List<CharDrawInfo>> {
+    result.clear()
+    var lastLineIndex = -1
+    forEach {
+        if (it.lineIndex != lastLineIndex) {
+            lastLineIndex = it.lineIndex
+            result.add(mutableListOf())
+        }
+        (result.last() as MutableList<CharDrawInfo>).add(it)
+    }
+    return result
+}

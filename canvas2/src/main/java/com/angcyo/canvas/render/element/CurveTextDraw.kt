@@ -7,7 +7,6 @@ import android.graphics.Paint
 import android.graphics.RectF
 import androidx.core.graphics.withMatrix
 import androidx.core.graphics.withTranslation
-import com.angcyo.canvas.render.BuildConfig
 import com.angcyo.canvas.render.data.CharDrawInfo
 import com.angcyo.canvas.render.data.getOutlineRect
 import com.angcyo.library.annotation.CallPoint
@@ -16,7 +15,6 @@ import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.ensure
 import com.angcyo.library.ex.getOutlineRect
-import com.angcyo.library.ex.isDebugType
 import kotlin.math.absoluteValue
 
 /**
@@ -152,7 +150,7 @@ data class CurveTextDraw(
         }
 
     /**是否开启调试*/
-    private val isDebug = BuildConfig.BUILD_TYPE.isDebugType()
+    private val isDebug = false //BuildConfig.BUILD_TYPE.isDebugType()
 
     /**测量曲线文本的宽高大小*/
     @CallPoint
