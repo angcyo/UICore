@@ -274,13 +274,20 @@ fun Double.toDegrees(): Double = Math.toDegrees(this)
  * [cx] [cy] 圆心
  * [radius] 半径
  * [angleInDegrees] 角度, 非弧度*/
-fun getPointOnCircle(cx: Float, cy: Float, radius: Float, angleInDegrees: Float): PointF {
+fun getPointOnCircle(
+    cx: Float,
+    cy: Float,
+    radius: Float,
+    angleInDegrees: Float,
+    result: PointF = PointF()
+): PointF {
     // 将角度值转换为弧度值
     val angleInRadians = Math.toRadians(angleInDegrees.toDouble()).toFloat()
     // 计算坐标
     val x = cx + radius * cos(angleInRadians.toDouble()).toFloat()
     val y = cy + radius * sin(angleInRadians.toDouble()).toFloat()
-    return PointF(x, y)
+    result.set(x, y)
+    return result
 }
 
 /**[getRectOnCircle]*/

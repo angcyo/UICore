@@ -24,6 +24,8 @@ data class CharDrawInfo(
     val columnIndex: Int,
     /**所在的行索引*/
     val lineIndex: Int,
+    /**行的方向*/
+    val lineOrientation: Int,
     /**当前字符所在的整体行高/行宽*/
     val lineWidth: Float,
     val lineHeight: Float,
@@ -36,6 +38,9 @@ data class CharDrawInfo(
      * 映射之后的高度, 可以会小于文本原始的高度, 这样就会产生误差
      * */
     var _curveMapBounds: RectF? = null,
+
+    /**映射之后中心点距离曲线中心的半径*/
+    var _curveMapRadius: Float = 0f,
 )
 
 /**返回对应的矩形*/
@@ -78,6 +83,21 @@ fun List<CharDrawInfo>.toLineCharDrawInfoList(result: MutableList<List<CharDrawI
             result.add(mutableListOf())
         }
         (result.last() as MutableList<CharDrawInfo>).add(it)
+    }
+    return result
+}
+
+/**返回一列一列的结构*/
+fun List<CharDrawInfo>.toColumnCharDrawInfoList(result: MutableList<List<CharDrawInfo>>): List<List<CharDrawInfo>> {
+    result.clear()
+    val map = mutableMapOf<Int, MutableList<CharDrawInfo>>()
+    forEach {
+        map.getOrPut(it.columnIndex) {
+            mutableListOf()
+        }.add(it)
+    }
+    map.forEach { (_, u) ->
+        result.add(u)
     }
     return result
 }

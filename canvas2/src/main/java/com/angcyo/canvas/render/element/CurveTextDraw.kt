@@ -4,15 +4,22 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.RectF
+import android.widget.LinearLayout
 import androidx.core.graphics.withMatrix
 import androidx.core.graphics.withTranslation
 import com.angcyo.canvas.render.data.CharDrawInfo
 import com.angcyo.canvas.render.data.getOutlineRect
+import com.angcyo.canvas.render.data.toColumnCharDrawInfoList
+import com.angcyo.canvas.render.data.toLineCharDrawInfoList
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
+import com.angcyo.library.ex.addFillArc
+import com.angcyo.library.ex.c
 import com.angcyo.library.ex.ensure
 import com.angcyo.library.ex.getOutlineRect
 import kotlin.math.absoluteValue
@@ -159,9 +166,26 @@ data class CurveTextDraw(
     /**是否开启调试*/
     private val isDebug = false //BuildConfig.BUILD_TYPE.isDebugType()
 
+    //一行一行的结构
+    private val _lineCharDrawInfoList = mutableListOf<List<CharDrawInfo>>()
+
+    //一列一列的结构
+    private val _columnCharDrawInfoList = mutableListOf<List<CharDrawInfo>>()
+
+    private val _deleteLinePath = Path()
+    private val _underLinePath = Path()
+
+    /**是否是垂直绘制*/
+    private val isVertical: Boolean
+        get() = charList.firstOrNull()?.lineOrientation == LinearLayout.VERTICAL
+
     /**测量曲线文本的宽高大小*/
     @CallPoint
     fun measureCurveText() {
+        charList.toLineCharDrawInfoList(_lineCharDrawInfoList)//一行一行的结构
+        if (isVertical) {
+            charList.toColumnCharDrawInfoList(_columnCharDrawInfoList)//一列一列的结构
+        }
         updateCurveCenter(RectF(0f, 0f, textWidth, textHeight))
         innerMeasureCureText()
     }
@@ -193,6 +217,8 @@ data class CurveTextDraw(
             val textRect = RectF(charInfo.bounds)
             textMatrix.mapRect(textRect)
             charInfo._curveMapBounds = textRect
+            charInfo._curveMapRadius =
+                c(textRect.centerX(), textRect.centerY(), curveMatrixCx, curveMatrixCy)
             rectList.add(textRect)
         }
 
@@ -209,6 +235,15 @@ data class CurveTextDraw(
     fun draw(canvas: Canvas, paint: Paint) {
         val matrix = acquireTempMatrix()
         val textRect = acquireTempRectF()
+
+        //删除线和下划线的回执
+        val oldUnderLine = paint.isUnderlineText
+        val oldDeleteLine = paint.isStrikeThruText
+
+        //因为是自己一个一个绘制的, 所以删除线和下划线也需要手绘
+        paint.isUnderlineText = false
+        paint.isStrikeThruText = false
+
         charList.forEach { charInfo ->
             if (curvature == 0f) {
                 canvas.drawCharInfo(charInfo, paint)
@@ -234,6 +269,73 @@ data class CurveTextDraw(
                 }
             }
         }
+
+        //删除线和下划线的绘制
+        val cx = curveCx
+        val cy = curveCy
+        (if (isVertical) _columnCharDrawInfoList else _lineCharDrawInfoList).forEach { lineCharList ->
+            if (lineCharList.isNotEmpty()) {
+                val first = lineCharList.first()
+                val last = lineCharList.last()
+                val lineTextWidth = first.lineWidth
+                val lineTextHeight = first.lineHeight
+
+                val lineWidth = lineTextWidth / LibHawkKeys.canvasLineHeight //删除线的宽度
+                val lineHeight = lineTextHeight / LibHawkKeys.canvasLineHeight //删除线的高度
+                val lineSize = if (isVertical) lineWidth else lineHeight
+
+                val rect = first._curveMapBounds ?: first.bounds
+                val offsetRadius = lineSize / 2
+                val lineCenterRadius = first._curveMapRadius + offsetRadius
+                val lineBottomRadius = lineCenterRadius - rect.height() / 2 + offsetRadius
+
+                var startAngle = first._curveAngle
+                var endAngle = last._curveAngle
+
+                val factor = if (curvature.absoluteValue >= 360f) {
+                    1f / 2
+                } else if (isVertical) {
+                    0f
+                } else {
+                    1f / 4
+                }
+                if (curvature > 0) {
+                    startAngle -= first.charWidth * factor * pixelAngle
+                    endAngle += last.charWidth * factor * pixelAngle
+                } else {
+                    startAngle += first.charWidth * factor * pixelAngle
+                    endAngle -= last.charWidth * factor * pixelAngle
+                }
+                val sweepAngle = endAngle - startAngle
+
+                if (oldDeleteLine) {
+                    _deleteLinePath.addFillArc(
+                        lineSize,
+                        cx,
+                        cy,
+                        lineCenterRadius - lineSize / 2,
+                        startAngle,
+                        sweepAngle
+                    )
+                    canvas.drawPath(_deleteLinePath, paint)
+                }
+                if (oldUnderLine) {
+                    _underLinePath.addFillArc(
+                        lineSize,
+                        cx,
+                        cy,
+                        lineBottomRadius,
+                        startAngle,
+                        sweepAngle
+                    )
+                    canvas.drawPath(_underLinePath, paint)
+                }
+            }
+        }
+
+        paint.isUnderlineText = oldUnderLine
+        paint.isStrikeThruText = oldDeleteLine
+
         matrix.release()
         textRect.release()
     }

@@ -7,6 +7,7 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.Typeface
 import android.widget.LinearLayout
+import androidx.core.graphics.withClip
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.data.CharDrawInfo
@@ -343,7 +344,11 @@ open class TextElement : BaseElement() {
 
     /**绘制曲线文本*/
     protected fun drawCurveText(canvas: Canvas, paint: Paint = this.paint) {
-        curveTextDrawInfo?.draw(canvas, paint)
+        curveTextDrawInfo?.apply {
+            canvas.withClip(0f, 0f, curveTextWidth, curveTextHeight) {
+                draw(canvas, paint)
+            }
+        }
     }
 
     /**绘制普通文本*/
@@ -375,6 +380,7 @@ open class TextElement : BaseElement() {
             }
         }
 
+        //删除线和下划线的绘制
         _lineCharDrawInfoList.forEach { lineCharList ->
             if (lineCharList.isNotEmpty()) {
                 val first = lineCharList.first()
@@ -679,6 +685,7 @@ open class TextElement : BaseElement() {
                             0f,
                             columnIndex,
                             lineIndex,
+                            textProperty.orientation,
                             lineTextWidth,
                             lineTextHeight,
                             descent
@@ -741,6 +748,7 @@ open class TextElement : BaseElement() {
                             0f,
                             columnIndex,
                             lineIndex,
+                            textProperty.orientation,
                             lineTextWidth,
                             lineTextHeight,
                             descent

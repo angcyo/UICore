@@ -7,6 +7,7 @@ import com.angcyo.library.L
 import com.angcyo.library.component.PictureRenderDrawable
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.pool.*
+import kotlin.math.absoluteValue
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
@@ -801,4 +802,52 @@ fun List<Path>.updateFillType(fillType: Path.FillType = Path.FillType.EVEN_ODD) 
     for (path in this) {
         path.fillType = fillType
     }
+}
+
+/**添加一个描边扇形到路径中
+ * [size] 扇形的大小
+ * [cx] [cy] 圆心
+ * [r] 半径, 内圆半径, +size后, 是外圆半径
+ * [startAngle] 扇形开始的角度
+ * [sweepAngle] 扇形划过的角度*/
+fun Path.addFillArc(
+    size: Float,
+    cx: Float,
+    cy: Float,
+    r: Float,
+    startAngle: Float,
+    sweepAngle: Float
+): Path {
+    rewind()
+    if (sweepAngle.absoluteValue != 360f) {
+        //扇形左上角坐标
+        val ovalRect = acquireTempRectF()
+        val lt = acquireTempPointF()
+        val rt = acquireTempPointF()
+        val lb = acquireTempPointF()
+        val rb = acquireTempPointF()
+        getPointOnCircle(cx, cy, r + size, startAngle, lt)
+        getPointOnCircle(cx, cy, r + size, startAngle + sweepAngle, rt)
+        getPointOnCircle(cx, cy, r, startAngle, lb)
+        getPointOnCircle(cx, cy, r, startAngle + sweepAngle, rb)
+
+        moveTo(lt.x, lt.y)
+        ovalRect.set(cx - r - size, cy - r - size, cx + r + size, cy + r + size)
+        arcTo(ovalRect, startAngle, sweepAngle)
+
+        lineTo(rb.x, rb.y)
+        ovalRect.set(cx - r, cy - r, cx + r, cy + r)
+        arcTo(ovalRect, startAngle + sweepAngle, -sweepAngle)
+        lineTo(lt.x, lt.y)
+
+        lt.release()
+        rt.release()
+        lb.release()
+        rb.release()
+        ovalRect.release()
+    } else {
+        addCircle(cx, cy, r + size, Path.Direction.CW)
+        addCircle(cx, cy, r, Path.Direction.CCW)
+    }
+    return this
 }
