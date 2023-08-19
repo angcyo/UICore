@@ -158,4 +158,7 @@ object LibHawkKeys {
 
     /**是否激活App启动脚本执行*/
     var enableAppScript: Boolean by HawkPropertyValue<Any, Boolean>(true)
+
+    /**空格文本的宽度*/
+    var spaceTextWidth: Int? by HawkPropertyValue<Any, Int?>(null)
 }

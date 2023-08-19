@@ -848,7 +848,7 @@ open class TextElement : BaseElement() {
         if (textProperty.isCompactText) {
             if (text.isBlank()) {
                 //空格
-                val textWidth = paint.textWidth(text).toInt()
+                val textWidth = LibHawkKeys.spaceTextWidth ?: paint.textWidth(text).toInt()
                 _textMeasureBounds.set(0, 0, textWidth, textWidth)
             } else {
                 paint.textBounds(text, _textMeasureBounds)
