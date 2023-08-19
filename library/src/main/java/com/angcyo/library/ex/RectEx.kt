@@ -210,6 +210,29 @@ fun RectF.limitInRect(limitRect: Rect, result: RectF = this): RectF {
 /**矩形对角线的长度*/
 fun RectF.diagonalLine(): Float = c(left, top, right, bottom, true)
 
+/**获取轮廓的矩形*/
+fun List<RectF>.getOutlineRect(): RectF {
+    var minLeft = Float.MAX_VALUE
+    var minTop = Float.MAX_VALUE
+    var maxRight = -minLeft
+    var maxBottom = -minTop
+
+    forEach { rect ->
+        minLeft = minOf(minLeft, rect.left)
+        minTop = minOf(minTop, rect.top)
+        maxRight = maxOf(maxRight, rect.right)
+        maxBottom = maxOf(maxBottom, rect.bottom)
+    }
+
+    return RectF(minLeft, minTop, maxRight, maxBottom)
+}
+
+/**获取轮廓的宽高*/
+fun List<RectF>.getOutlineWidthHeight(): Pair<Float, Float> {
+    val rect = getOutlineRect()
+    return rect.width() to rect.height()
+}
+
 //</editor-fold desc="base">
 
 //<editor-fold desc="rect size">
