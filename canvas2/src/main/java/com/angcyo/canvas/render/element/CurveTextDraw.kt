@@ -36,14 +36,7 @@ data class CurveTextDraw(
 
     //---计算结果↓---
     /**曲线文本outline的边界*/
-    var curveOutlineBounds: RectF = RectF(),
-
-    /**在绘制中文的时候, 无法全部包裹住, 此时需要额外撑一点高度*/
-    var offsetWidth: Float = 0f,
-    var offsetHeight: Float = 0f,
-    /**中心点需要的偏移量*/
-    var offsetX: Float = 0f,
-    var offsetY: Float = 0f,
+    var curveOutlineBounds: RectF = RectF()
 ) {
 
     companion object {
@@ -121,24 +114,32 @@ data class CurveTextDraw(
 
     /**曲线文本的宽高*/
     val curveTextWidth: Float
-        get() = curveOutlineBounds.width() + offsetWidth
+        get() = curveOutlineBounds.width()
 
     val curveTextHeight: Float
-        get() = curveOutlineBounds.height() + offsetHeight
+        get() = curveOutlineBounds.height()
 
     /**曲线对外提示线绘制中心坐标*/
     val curveCx: Float
-        get() = curveDrawCx - curveOutlineBounds.left
+        get() = curveMatrixCx + drawOffsetX
 
     val curveCy: Float
-        get() = if (curvature >= 0) curveDrawCy else curveTextHeight - textHeight - innerRadius
+        get() = if (curvature == 0f) {
+            curveMatrixCy
+        } else if (curvature > 0) {
+            //下弧
+            curveMatrixCy + drawOffsetY
+        } else {
+            //上弧
+            curveMatrixCy + drawOffsetY
+        }
 
     /**计算outline bounds时的曲线中心点坐标
      * 这个坐标会影响outline的计算, 所以不能一直变
      * */
-    private val curveDrawCx: Float
+    private val curveMatrixCx: Float
         get() = textWidth / 2
-    private val curveDrawCy: Float
+    private val curveMatrixCy: Float
         get() = if (curvature == 0f) {
             textHeight / 2
         } else if (curvature > 0) {
@@ -148,6 +149,12 @@ data class CurveTextDraw(
             //上弧
             0 - innerRadius
         }
+
+    val drawOffsetX: Float
+        get() = -curveOutlineBounds.left
+
+    val drawOffsetY: Float
+        get() = -curveOutlineBounds.top
 
     /**是否开启调试*/
     private val isDebug = false //BuildConfig.BUILD_TYPE.isDebugType()
@@ -185,6 +192,7 @@ data class CurveTextDraw(
             charInfo.initDrawMatrix(textMatrix)
             val textRect = RectF(charInfo.bounds)
             textMatrix.mapRect(textRect)
+            charInfo._curveMapBounds = textRect
             rectList.add(textRect)
         }
 
@@ -212,8 +220,8 @@ data class CurveTextDraw(
                 textRect.set(charInfo.bounds)
                 charInfo.initDrawMatrix(matrix)
                 //偏移到0,0的位置
-                val offsetX = -curveOutlineBounds.left
-                val offsetY = if (curvature >= 0) -curveOutlineBounds.top else 0f
+                val offsetX = drawOffsetX
+                val offsetY = drawOffsetY
                 canvas.withTranslation(offsetX, offsetY) {
                     canvas.withMatrix(matrix) {
                         drawCharInfo(charInfo, paint)
@@ -231,13 +239,11 @@ data class CurveTextDraw(
     }
 
     private fun CharDrawInfo.initDrawMatrix(matrix: Matrix): Matrix {
-        matrix.setRotate(_curveAngle + offsetRotate, bounds.centerX(), curveDrawCy)
-        val ty = if (curvature > 0) {
-            0f
-        } else {
-            curveTextHeight - textHeight
-        }
-        matrix.postTranslate(curveDrawCx - bounds.centerX(), ty)
+        matrix.setRotate(_curveAngle + offsetRotate, bounds.centerX(), curveMatrixCy)
+        val tx = curveMatrixCx - bounds.centerX()
+        val ty = 0f
+        //移动到旋转中心点(曲线的x中心线上)
+        matrix.postTranslate(tx, ty)
         return matrix
     }
 

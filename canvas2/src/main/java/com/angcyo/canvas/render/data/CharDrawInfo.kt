@@ -32,6 +32,10 @@ data class CharDrawInfo(
     //---
     /**曲线文本时, 当前的字符应该旋转到的目标角度*/
     var _curveAngle: Float = 0f,
+    /**曲线映射后, 的矩形bounds,
+     * 映射之后的高度, 可以会小于文本原始的高度, 这样就会产生误差
+     * */
+    var _curveMapBounds: RectF? = null,
 )
 
 /**返回对应的矩形*/
@@ -40,6 +44,29 @@ fun List<CharDrawInfo>.getOutlineRect(): RectF = map { it.bounds }.getOutlineRec
 /**返回对应的宽高*/
 fun List<CharDrawInfo>.getCharTextWidthHeight(): Pair<Float, Float> =
     map { it.bounds }.getOutlineWidthHeight()
+
+/**曲线之后, 所有字中最小top的值*/
+fun List<CharDrawInfo>.getMinTop(): Float = filter { it._curveMapBounds != null }.minByOrNull {
+    it._curveMapBounds!!.top
+}?.let {
+    it._curveMapBounds!!.top
+} ?: 0f
+
+/**获取所有bottom小于[bottom]映射后的矩形的高度*/
+fun List<CharDrawInfo>.getMinBottomTextHeight(bottom: Float): Float? {
+    val rectList = mutableListOf<RectF>()
+    forEach { charInfo ->
+        charInfo._curveMapBounds?.let {
+            if (!it.isEmpty && it.bottom <= bottom) {
+                rectList.add(it)
+            }
+        }
+    }
+    if (rectList.isEmpty()) {
+        return null
+    }
+    return rectList.getOutlineRect().height()
+}
 
 /**返回一行一行的结构*/
 fun List<CharDrawInfo>.toLineCharDrawInfoList(result: MutableList<List<CharDrawInfo>>): List<List<CharDrawInfo>> {

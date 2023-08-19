@@ -212,17 +212,19 @@ open class TextElement : BaseElement() {
 
         renderProperty.anchorX = renderProperty.anchorX - (newWidth - oldWidth) / 2
         if (curvature < 0) {
+            //上弧, 保证顶部不变
             renderProperty.anchorY = if (oldCurvature >= 0) {
                 //从正曲线到负曲线
                 renderProperty.anchorY - (newHeight - (curveTextDrawInfo?.textHeight ?: 0f))
             } else {
                 //从负曲线到负曲线
-                renderProperty.anchorY - (newHeight - oldHeight)
+                renderProperty.anchorY
             }
         } else {
+            //下弧, 保证底部不变
             renderProperty.anchorY = if (oldCurvature >= 0) {
                 //从正曲线
-                renderProperty.anchorY
+                renderProperty.anchorY - (newHeight - oldHeight)
             } else {
                 //从负曲线到正曲线
                 renderProperty.anchorY + (oldHeight - (curveTextDrawInfo?.textHeight ?: 0f))
