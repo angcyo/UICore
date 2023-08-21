@@ -164,7 +164,7 @@ data class CurveTextDraw(
         get() = -curveOutlineBounds.top
 
     /**是否开启调试*/
-    private val isDebug = false //BuildConfig.BUILD_TYPE.isDebugType()
+    var isDebug = false //BuildConfig.BUILD_TYPE.isDebugType()
 
     //一行一行的结构
     private val _lineCharDrawInfoList = mutableListOf<List<CharDrawInfo>>()
