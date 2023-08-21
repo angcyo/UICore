@@ -10,6 +10,10 @@ import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.ex.isDebuggerConnected
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.sleep
+import com.angcyo.library.libAppFile
+import com.angcyo.library.utils.Constant
+import com.angcyo.library.utils.LogFile
+import com.angcyo.library.utils.writeTo
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 import java.io.IOException
@@ -157,7 +161,10 @@ class Tcp : ICancel {
                 var tryCount = 0
                 while (this.socket?.isConnected == false) {
                     try {
-                        L.d("TCP准备连接:${tcpDevice!!.address}:${tcpDevice!!.port} /$tryCount")
+                        "TCP准备连接:${tcpDevice!!.address}:${tcpDevice!!.port} /$tryCount".apply {
+                            L.d(this)
+                            writeTo(libAppFile(LogFile.log, Constant.LOG_FOLDER_NAME))
+                        }
                         val socketAddress = InetSocketAddress(tcpDevice!!.address, tcpDevice!!.port)
                         //socket?.bind(socketAddress)
                         socket?.connect(socketAddress, connectTimeout)
