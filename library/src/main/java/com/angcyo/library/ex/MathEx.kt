@@ -202,7 +202,7 @@ fun Double.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
     } else {
         (this * f).toInt() //取整
     } / f
-    return String.format(Locale.US, "%.${digit}f", value.toFloat())
+    return String.format(Locale.US, "%.${digit}f", value)
 }
 
 /**保留小数点后几位*/

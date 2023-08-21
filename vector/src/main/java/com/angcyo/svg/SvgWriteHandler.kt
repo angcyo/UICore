@@ -93,9 +93,9 @@ class SvgWriteHandler : VectorWriteHandler() {
         //super.onLineToPoint(x, y)
         writer?.apply {
             append("L")
-            append(x.toDoubleValueString())
+            append(x.toFloat().toString())
             append(",")
-            append(y.toDoubleValueString())
+            append(y.toFloat().toString())
         }
     }
 
