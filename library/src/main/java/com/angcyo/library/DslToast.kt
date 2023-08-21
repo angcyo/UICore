@@ -18,6 +18,7 @@ import androidx.annotation.StyleRes
 import com.angcyo.library.component.RBackground
 import com.angcyo.library.component.ThreadExecutor
 import com.angcyo.library.component.isNotificationsEnabled
+import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.*
 import java.lang.ref.WeakReference
 
@@ -175,6 +176,7 @@ object DslToast {
                         _lastViewTag.clear()
                         _viewRef = null
                     }
+
                     0 -> {
                         val lastTag = _lastViewTag.lastOrNull()
 
@@ -185,6 +187,7 @@ object DslToast {
                             _viewRef = null
                         }
                     }
+
                     else -> {
                         //no op
                     }
@@ -295,9 +298,11 @@ object DslToast {
             Toast.LENGTH_LONG -> {
                 view.postDelayed(runnable, LENGTH_LONG_TIME)
             }
+
             Toast.LENGTH_SHORT -> {
                 view.postDelayed(runnable, LENGTH_SHORT_TIME)
             }
+
             else -> {
                 view.postDelayed(runnable, duration.toLong())
             }

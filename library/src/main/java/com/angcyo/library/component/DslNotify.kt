@@ -805,7 +805,9 @@ fun DslNotify.clickActivity(
 
 //---
 
-/**应用程序的通知是否打开了, 通知的总开关*/
+/**应用程序的通知是否打开了, 通知的总开关
+ * App的通知是否打开了, 通知的总开关. Toast也受影响
+ * */
 fun isNotificationsEnabled() = NotificationManagerCompat.from(app()).areNotificationsEnabled()
 
 /**通知通道是否激活*/

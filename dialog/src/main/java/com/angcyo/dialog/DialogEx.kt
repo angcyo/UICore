@@ -6,12 +6,17 @@ import android.graphics.Color
 import android.text.InputType
 import android.view.Gravity
 import android.view.View
+import androidx.annotation.AnyThread
 import com.angcyo.base.enableLayoutFullScreen
 import com.angcyo.base.translucentStatusBar
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
+import com.angcyo.library.component.isNotificationsEnabled
+import com.angcyo.library.component.lastContext
+import com.angcyo.library.component.onMain
 import com.angcyo.library.component.pad.isInPadMode
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.toastQQ
 import kotlin.math.min
 
 /**
@@ -21,6 +26,19 @@ import kotlin.math.min
  * @date 2019/05/11
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
+
+@AnyThread
+fun toastQQOrMessage(text: CharSequence?) {
+    if (isNotificationsEnabled()) {
+        toastQQ(text)
+    } else {
+        onMain {
+            lastContext.messageDialog {
+                dialogMessage = text
+            }
+        }
+    }
+}
 
 //<editor-fold desc="对话框基础配置">
 
