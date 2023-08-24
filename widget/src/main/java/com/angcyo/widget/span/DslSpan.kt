@@ -2,6 +2,7 @@ package com.angcyo.widget.span
 
 import android.graphics.Color
 import android.graphics.MaskFilter
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.text.SpannableStringBuilder
 import android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -332,7 +333,25 @@ data class DslSpanConfig(
     /**[LeadingMarginSpan]*/
     var leadingMarginFirst: Int = undefined_int,
     var leadingMarginRest: Int = undefined_int
-)
+) {
+    var bold: Boolean
+        get() = style == Typeface.BOLD
+        set(value) {
+            style = if (value) Typeface.BOLD else Typeface.NORMAL
+        }
+
+    var italic: Boolean
+        get() = style == Typeface.ITALIC
+        set(value) {
+            style = if (value) Typeface.ITALIC else Typeface.NORMAL
+        }
+
+    var boldItalic: Boolean
+        get() = style == Typeface.BOLD_ITALIC
+        set(value) {
+            style = if (value) Typeface.BOLD_ITALIC else Typeface.NORMAL
+        }
+}
 
 /**快速绘制一个轻提示, 边框*/
 fun DslSpan.drawableTipBorder(
