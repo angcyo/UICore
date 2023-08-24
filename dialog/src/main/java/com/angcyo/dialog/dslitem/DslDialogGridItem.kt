@@ -10,6 +10,10 @@ import com.angcyo.widget.base.updateConstraintParams
 
 /**
  * 网格对话框中的item
+ *
+ * [com.angcyo.dialog.dslitem.DslDialogGridItem]
+ * [com.angcyo.item.DslGridItem]
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/05

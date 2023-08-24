@@ -5,6 +5,7 @@ import android.view.Gravity
 import androidx.annotation.Px
 import com.angcyo.dialog.R
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.library.ex.tooltipText
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.setBoldText
 import com.angcyo.widget.base.setLeftIco
@@ -22,6 +23,9 @@ open class DslDialogTextItem : DslAdapterItem() {
 
     /**支持span*/
     var itemText: CharSequence? = null
+
+    /**item的长按文件提示内容*/
+    var itemTooltipText: CharSequence? = null
 
     /**文本文字大小*/
     @Px
@@ -47,6 +51,9 @@ open class DslDialogTextItem : DslAdapterItem() {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+
+        //长按提示
+        itemHolder.itemView.tooltipText(itemTooltipText)
 
         itemHolder.itemView.isSelected = itemIsSelected
 
