@@ -665,7 +665,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
                 list.add(renderer)
             }
         }
-        renderManager.updateRendererVisible(list, !hide, reason, delegate)
+        renderManager.updateRendererVisible(list, !hide, reason, Strategy.normal, delegate)
     }
 
     /**将[rendererList]中的渲染器, 过滤筛选成对应的元素渲染器

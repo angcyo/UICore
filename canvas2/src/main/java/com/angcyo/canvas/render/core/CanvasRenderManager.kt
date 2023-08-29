@@ -380,15 +380,33 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         return result
     }
 
-    /**更新渲染器的可见性*/
+    /**更新渲染器的可见性
+     * [rendererList] 尽量使用single list
+     * */
     fun updateRendererVisible(
         rendererList: List<BaseRenderer>,
-        Visible: Boolean,
+        visible: Boolean,
         reason: Reason,
+        strategy: Strategy,
         delegate: CanvasRenderDelegate?
     ) {
-        for (renderer in rendererList) {
-            renderer.updateVisible(Visible, reason, delegate)
+        if (delegate == null) {
+            for (renderer in rendererList) {
+                renderer.updateVisible(visible, reason, null)
+            }
+        } else {
+            val from = !visible
+            val to = visible
+            val renderers = rendererList.toList()
+            delegate.undoManager.addAndRedo(strategy, true, {
+                for (renderer in renderers) {
+                    renderer.updateVisible(from, reason, delegate)
+                }
+            }) {
+                for (renderer in renderers) {
+                    renderer.updateVisible(to, reason, delegate)
+                }
+            }
         }
     }
 
