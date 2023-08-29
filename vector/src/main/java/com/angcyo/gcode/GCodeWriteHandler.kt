@@ -28,6 +28,19 @@ class GCodeWriteHandler : VectorWriteHandler() {
     /**是否激活GCode压缩指令*/
     var enableGCodeShrink: Boolean = LibLpHawkKeys.enableGCodeShrink
 
+    /**是否激活GCode切割数据算法
+     * ```
+     * A->B => A->B B->A A->B
+     * ```
+     * */
+    var enableGCodeCut: Boolean = false
+        set(value) {
+            field = value
+            if (value) {
+                isSinglePath = true
+            }
+        }
+
     //上一次的信息
     private var lastInfo: GCodeLastInfo = GCodeLastInfo()
 
@@ -101,12 +114,22 @@ class GCodeWriteHandler : VectorWriteHandler() {
     }
 
     override fun onLineToPoint(point: VectorPoint) {
+        if (enableGCodeCut) {
+            _lineToPoint(point)
+            _lineToPoint(VectorPoint(lastWriteX, lastWriteY, point.pointType)) // 重复一次
+            _lineToPoint(point)
+        } else {
+            _lineToPoint(point)
+        }
+    }
+
+    private fun _lineToPoint(point: VectorPoint) {
         if (point.pointType == POINT_TYPE_CIRCLE) {
             //原
             val first = _pointList.firstOrNull()
             val circle = first?.circle
             if (first == null || circle == null) {
-                super.onLineToPoint(point)
+                onLineToPoint(point.x, point.y)
             } else {
                 //G2支持
                 openCnc()
@@ -175,7 +198,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
                 }
             }
         } else {
-            super.onLineToPoint(point)
+            onLineToPoint(point.x, point.y)
         }
     }
 

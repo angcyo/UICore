@@ -138,6 +138,10 @@ abstract class VectorWriteHandler {
     /**记录*/
     val _pointList = mutableListOf<VectorPoint>()
 
+    /**最后一次写入的点*/
+    protected var lastWriteX: Double = 0.0
+    protected var lastWriteY: Double = 0.0
+
     //region ---Core回调---
 
     /**更新单位, 并且*/
@@ -377,6 +381,11 @@ abstract class VectorWriteHandler {
     @CallPoint
     open fun writePoint(x: Double, y: Double) {
         val point = generatePoint(x, y)
+
+        //last
+        val first = _pointList.firstOrNull()
+        lastWriteX = first?.x ?: 0.0
+        lastWriteY = first?.y ?: 0.0
 
         when (point.pointType) {
             POINT_TYPE_NEW_CIRCLE -> {
