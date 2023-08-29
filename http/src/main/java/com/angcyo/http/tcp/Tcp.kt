@@ -145,6 +145,7 @@ class Tcp : ICancel {
             return
         }
         if (isConnected()) {
+            onSocketConnectSuccess(info)
             return
         }
         for (listener in listeners) {
