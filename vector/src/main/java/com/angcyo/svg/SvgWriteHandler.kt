@@ -1,7 +1,6 @@
 package com.angcyo.svg
 
 import android.graphics.Path
-import com.angcyo.library.ex.toLossyFloat
 import com.angcyo.vector.VectorHelper
 import com.angcyo.vector.VectorWriteHandler
 import kotlin.math.absoluteValue
@@ -37,7 +36,7 @@ class SvgWriteHandler : VectorWriteHandler() {
     }
 
     override fun onNewPoint(x: Double, y: Double) {
-        writer?.append("M${x},$y")
+        writer?.append("M${x.toDoubleValueString()},${y.toDoubleValueString()}")
     }
 
     override fun onLineToPoint(point: VectorPoint) {
@@ -76,11 +75,11 @@ class SvgWriteHandler : VectorWriteHandler() {
                         if (a3 > 180) 0 else 1
                     }
                     append(buildString {
-                        append("A${r.toLossyFloat().toFloatValueString()},")
-                        append("${r.toLossyFloat().toFloatValueString()},")
+                        append("A${r.toDoubleValueString()},")
+                        append("${r.toDoubleValueString()},")
                         append("0,$largeArcFlag,$sweepFlag,")
-                        append("${xValue.toLossyFloat().toFloatValueString()},")
-                        append(yValue.toLossyFloat().toFloatValueString())
+                        append("${xValue.toDoubleValueString()},")
+                        append(yValue.toDoubleValueString())
                     })
                 })
             }
@@ -93,9 +92,9 @@ class SvgWriteHandler : VectorWriteHandler() {
         //super.onLineToPoint(x, y)
         writer?.apply {
             append("L")
-            append(x.toFloat().toString())
+            append(x.toDoubleValueString())
             append(",")
-            append(y.toFloat().toString())
+            append(y.toDoubleValueString())
         }
     }
 

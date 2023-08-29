@@ -215,8 +215,8 @@ class GCodeWriteHandler : VectorWriteHandler() {
         } else {
             writer?.appendLine(buildString {
                 append("G1")
-                append(" X${xValue.toLossyFloat().toFloatValueString()}")
-                append(" Y${yValue.toLossyFloat().toFloatValueString()}")
+                append(" X${xValue.toDoubleValueString()}")
+                append(" Y${yValue.toDoubleValueString()}")
             })
         }
     }

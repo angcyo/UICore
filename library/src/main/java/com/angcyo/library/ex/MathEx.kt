@@ -18,6 +18,7 @@ import kotlin.math.floor
 import kotlin.math.hypot
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 import kotlin.math.sin
 import kotlin.math.sqrt
 
@@ -198,9 +199,9 @@ fun Double.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
     val value = if (isNaN()) {
         0.0
     } else if (fadedUp) {
-        (this * f).roundToInt() //四舍五入
+        (this * f).roundToLong() //四舍五入
     } else {
-        (this * f).toInt() //取整
+        (this * f).toLong() //取整
     } / f
     return String.format(Locale.US, "%.${digit}f", value)
 }
@@ -211,9 +212,9 @@ fun Float.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
     val value = if (isNaN()) {
         0f
     } else if (fadedUp) {
-        (this * f).roundToInt()
+        (this * f).roundToLong()
     } else {
-        (this * f).toInt()
+        (this * f).toLong()
     } / f
     return String.format(Locale.US, "%.${digit}f", value)
 }

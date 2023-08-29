@@ -139,7 +139,7 @@ object LibHawkKeys {
     var enableAIDraw: Boolean by HawkPropertyValue<Any, Boolean>(false)
 
     /**矢量存储的精度*/
-    var vectorDecimal: Int by HawkPropertyValue<Any, Int>(6)
+    var vectorDecimal: Int by HawkPropertyValue<Any, Int>(3)
 
     /**最小吸附时间*/
     var minAdsorbTime: Long by HawkPropertyValue<Any, Long>(300)
