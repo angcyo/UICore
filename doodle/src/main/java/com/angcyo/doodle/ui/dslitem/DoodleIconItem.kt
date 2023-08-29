@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
-import androidx.core.graphics.toColor
 import com.angcyo.core.component.model.NightModel
 import com.angcyo.core.vmApp
 import com.angcyo.doodle.R
@@ -78,7 +77,6 @@ open class DoodleIconItem : DslAdapterItem(), INewItem {
             imageView?.setTintList(null)
             vmApp<NightModel>().tintImageViewNight(imageView)
         } else {
-            itemIcoDisableColor.toColor()
             imageView?.setTintList(ColorStateList.valueOf(itemIcoDisableColor))
         }
         imageView?.setImageResource(itemIco)

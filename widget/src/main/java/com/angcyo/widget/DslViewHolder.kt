@@ -444,10 +444,12 @@ open class DslViewHolder(
 
     //<editor-fold desc="可见性控制">
 
+    /**获取焦点*/
     fun focusView(@IdRes resId: Int) {
         focus<View>(resId)
     }
 
+    /**获取焦点*/
     fun focused(@IdRes resId: Int) {
         focusView(resId)
     }
@@ -459,6 +461,7 @@ open class DslViewHolder(
         view?.requestFocus()
     }
 
+    /**获取焦点*/
     fun <T : View?> focus(@IdRes resId: Int): T? {
         val v = v<View>(resId)
         if (v != null) {
