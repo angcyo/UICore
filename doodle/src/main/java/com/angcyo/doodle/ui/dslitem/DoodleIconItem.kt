@@ -16,6 +16,7 @@ import com.angcyo.item.style.NewItemConfig
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.setBgDrawable
 import com.angcyo.library.ex.setTintList
+import com.angcyo.library.ex.tooltipText
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.span.span
 
@@ -32,6 +33,9 @@ open class DoodleIconItem : DslAdapterItem(), INewItem {
 
     /**文本*/
     var itemText: CharSequence? = null
+
+    /**item的长按文件提示内容*/
+    var itemTooltipText: CharSequence? = null
 
     /**上角标*/
     var itemTextSuperscript: CharSequence? = null
@@ -59,6 +63,9 @@ open class DoodleIconItem : DslAdapterItem(), INewItem {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+
+        //长按提示
+        itemHolder.itemView.tooltipText(itemTooltipText)
 
         //check tip
         itemUpdateCheckColorAction?.let {
