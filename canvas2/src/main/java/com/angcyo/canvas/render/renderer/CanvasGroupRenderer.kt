@@ -30,6 +30,7 @@ import com.angcyo.drawable.isGravityCenterVertical
 import com.angcyo.drawable.isGravityLeft
 import com.angcyo.drawable.isGravityRight
 import com.angcyo.drawable.isGravityTop
+import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.component.Strategy
@@ -42,6 +43,7 @@ import com.angcyo.library.ex.createOverrideBitmapCanvas
 import com.angcyo.library.ex.createOverridePictureCanvas
 import com.angcyo.library.ex.getScaleX
 import com.angcyo.library.ex.getScaleY
+import com.angcyo.library.ex.have
 import com.angcyo.library.ex.isInvalid
 import com.angcyo.library.ex.mapPoint
 import com.angcyo.library.ex.resetAll
@@ -63,6 +65,21 @@ typealias RenderAction = (renderer: CanvasElementRenderer, canvas: Canvas, rende
 open class CanvasGroupRenderer : BaseRenderer() {
 
     companion object {
+
+        /**垂直分布*/
+        const val FLAT_TYPE_VERTICAL = LinearLayout.VERTICAL
+
+        /**水平分布*/
+        const val FLAT_TYPE_HORIZONTAL = LinearLayout.HORIZONTAL
+
+        /**等宽设置*/
+        const val SIZE_TYPE_WIDTH = 1
+
+        /**等高设置*/
+        const val SIZE_TYPE_HEIGHT = 2
+
+        /**等宽高设置*/
+        const val SIZE_TYPE_WIDTH_HEIGHT = SIZE_TYPE_WIDTH or SIZE_TYPE_HEIGHT
 
         /**群组*/
         const val GROUP_TYPE_GROUP = 1
@@ -824,7 +841,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
     /**水平分布/垂直分布*/
     fun updateRendererFlat(
-        flat: Int,
+        flatType: Int,
         reason: Reason,
         strategy: Strategy,
         delegate: CanvasRenderDelegate?
@@ -837,12 +854,12 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
         val sortList = list.toMutableList()
         //先排序
-        when (flat) {
-            LinearLayout.VERTICAL -> sortList.sortBy {
+        when (flatType) {
+            FLAT_TYPE_VERTICAL -> sortList.sortBy {
                 it.renderProperty?.getRenderBounds(_bounds)?.centerY()
             }
 
-            LinearLayout.HORIZONTAL -> sortList.sortBy {
+            FLAT_TYPE_HORIZONTAL -> sortList.sortBy {
                 it.renderProperty?.getRenderBounds(_bounds)?.centerX()
             }
 
@@ -860,7 +877,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
         val firstX = firstBounds.centerX()
         val firstY = firstBounds.centerY()
         //步长
-        val step = when (flat) {
+        val step = when (flatType) {
             LinearLayout.HORIZONTAL -> lastBounds.centerX() - firstX
             LinearLayout.VERTICAL -> lastBounds.centerY() - firstY
             else -> 0f
@@ -874,7 +891,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
             if (renderer != first && renderer != last) {
                 val rendererBounds = renderer.renderProperty?.getRenderBounds(_bounds)
                 if (rendererBounds != null) {
-                    when (flat) {
+                    when (flatType) {
                         LinearLayout.VERTICAL -> {
                             val dy = firstY + (step * index) - rendererBounds.centerY()
 
@@ -910,6 +927,59 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
         firstBounds.release()
         lastBounds.release()
+    }
+
+    /**将其他元素的大小设置成第一个元素大小*/
+    fun updateRendererSize(
+        sizeType: Int,
+        reason: Reason,
+        strategy: Strategy,
+        delegate: CanvasRenderDelegate?
+    ) {
+        if (rendererList.size() <= 1) {
+            L.d("2个元素才能执行设置大小操作")
+            return
+        }
+
+        //保存一个撤销状态
+        val undoState = PropertyStateStack()
+        undoState.saveState(this, delegate)
+
+        //执行操作
+        val first = rendererList.first()
+        val otherList = rendererList.subList(1, rendererList.size())
+        val targetBounds = acquireTempRectF()
+        first.getRendererBounds(targetBounds)
+
+        @Pixel
+        val targetWidth = targetBounds.width()
+        val targetHeight = targetBounds.height()
+
+        //核心操作
+        for (renderer in otherList) {
+            renderer.getRendererBounds(targetBounds)
+            val sx = if (sizeType.have(SIZE_TYPE_WIDTH)) {
+                targetWidth / targetBounds.width()
+            } else {
+                1f
+            }
+            val sy = if (sizeType.have(SIZE_TYPE_HEIGHT)) {
+                targetHeight / targetBounds.height()
+            } else {
+                1f
+            }
+            renderer.scale(sx, sy, reason.apply {
+                controlType = (controlType ?: 0) or BaseControlPoint.CONTROL_TYPE_SCALE
+            }, Strategy.preview, delegate)
+        }
+        targetBounds.release()
+
+        //保存一个恢复状态
+        val redoState = PropertyStateStack()
+        redoState.saveState(this, delegate)
+
+        //回退栈
+        delegate?.addStateToStack(this, undoState, redoState, false, reason, strategy)
     }
 
     /**创建组合
