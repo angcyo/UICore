@@ -41,6 +41,9 @@ class GCodeWriteHandler : VectorWriteHandler() {
             }
         }
 
+    /**GCode切割数据循环次数*/
+    var cutLoopCount: Int = 1
+
     //上一次的信息
     private var lastInfo: GCodeLastInfo = GCodeLastInfo()
 
@@ -116,8 +119,10 @@ class GCodeWriteHandler : VectorWriteHandler() {
     override fun onLineToPoint(point: VectorPoint) {
         if (enableGCodeCut) {
             _lineToPoint(point)
-            _lineToPoint(VectorPoint(lastWriteX, lastWriteY, point.pointType)) // 重复一次
-            _lineToPoint(point)
+            for (i in 0 until cutLoopCount) {
+                _lineToPoint(VectorPoint(lastWriteX, lastWriteY, point.pointType)) // 重复一次
+                _lineToPoint(point)
+            }
         } else {
             _lineToPoint(point)
         }
