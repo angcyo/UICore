@@ -91,6 +91,22 @@ fun spacing(x1: Float, y1: Float, x2: Float, y2: Float): Float {
     return sqrt(x * x + y * y)
 }
 
+/**计算2个点之间的角度, 度数单位
+ * 以第一个点为圆心, 计算第二个点的角度
+ * 3点钟方向为0度
+ *
+ * [0~180]
+ * [0~-180]
+ * */
+fun angle(x1: Float, y1: Float, x2: Float, y2: Float) =
+    Math.toDegrees(atan2((y2 - y1).toDouble(), (x2 - x1).toDouble())).toFloat()
+
+fun angle(x1: Double, y1: Double, x2: Double, y2: Double) =
+    Math.toDegrees(atan2((y2 - y1), (x2 - x1)))
+
+/**计算2个点之间的角度, 度数单位*/
+fun PointF.angle(p2: PointF) = angle(x, y, p2.x, p2.y)
+
 /**获取2个点的中点坐标*/
 fun midPoint(x1: Float, y1: Float, x2: Float, y2: Float, result: PointF) {
     result.x = (x1 + x2) / 2f

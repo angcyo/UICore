@@ -1,7 +1,14 @@
 package com.angcyo.library.ex
 
 import android.content.res.Resources
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.PixelFormat
+import android.graphics.Point
+import android.graphics.PorterDuff
+import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -101,8 +108,10 @@ fun Drawable.initBounds(width: Int = undefined_int, height: Int = undefined_int)
 }
 
 /**[setBounds]*/
-fun Drawable.setSize(width: Int = undefined_int, height: Int = undefined_int): Drawable =
-    setBounds(width, height)
+fun Drawable.setSize(size: Int = undefined_int): Drawable = setBounds(size, size)
+
+/**[setBounds]*/
+fun Drawable.setSize(width: Int, height: Int): Drawable = setBounds(width, height)
 
 fun Drawable.setBounds(width: Int = undefined_int, height: Int = undefined_int): Drawable {
     val w = if (width == undefined_int) minimumWidth else width

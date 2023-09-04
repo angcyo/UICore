@@ -88,7 +88,7 @@ object VectorHelper {
     }
 
     /**[angle]*/
-    fun angle(y1: Float, x1: Float, y2: Float, x2: Float): Float {
+    fun angle(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         //2个点求角度
         val angle = atan2((y2 - y1).toDouble(), (x2 - x1).toDouble()) * 180 / Math.PI
         return angle.toFloat()

@@ -1,10 +1,20 @@
 package com.angcyo.gcode
 
 import android.graphics.Path
+import android.graphics.PointF
+import android.graphics.RectF
 import com.angcyo.library.component.hawk.LibLpHawkKeys
+import com.angcyo.library.component.pool.acquireTempMatrix
+import com.angcyo.library.component.pool.acquireTempPointF
+import com.angcyo.library.component.pool.release
+import com.angcyo.library.ex.angle
+import com.angcyo.library.ex.mapPoint
+import com.angcyo.library.ex.rotate
 import com.angcyo.library.ex.toLossyFloat
 import com.angcyo.library.unit.InchValueUnit
 import com.angcyo.vector.VectorWriteHandler
+import kotlin.math.atan
+import kotlin.math.tan
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -43,6 +53,15 @@ class GCodeWriteHandler : VectorWriteHandler() {
 
     /**GCode切割数据循环次数*/
     var cutLoopCount: Int = 1
+
+    /**切割数据的宽度*/
+    var cutGCodeWidth = 0.1f
+
+    /**切割数据的高度*/
+    var cutGCodeHeight = 0.04f
+
+    /**切割数据限制范围*/
+    var cutLimitRect: RectF? = null
 
     //上一次的信息
     private var lastInfo: GCodeLastInfo = GCodeLastInfo()
@@ -118,10 +137,11 @@ class GCodeWriteHandler : VectorWriteHandler() {
 
     override fun onLineToPoint(point: VectorPoint) {
         if (enableGCodeCut) {
-            _lineToPoint(point)
             for (i in 0 until cutLoopCount) {
-                _lineToPoint(VectorPoint(lastWriteX, lastWriteY, point.pointType)) // 重复一次
-                _lineToPoint(point)
+                fillCutGCode(lastWriteX, lastWriteY, point.x, point.y)
+                if (i != cutLoopCount - 1) {
+                    onNewPoint(lastWriteX, lastWriteY)
+                }
             }
         } else {
             _lineToPoint(point)
@@ -280,5 +300,65 @@ class GCodeWriteHandler : VectorWriteHandler() {
     }
 
     //endregion
+
+    /**填充切割数据*/
+    fun fillCutGCode(x1: Double, y1: Double, x2: Double, y2: Double) {
+        //计算2个点之间的角度
+        val angle = angle(x1, y1, x2, y2)
+
+        val width = cutGCodeWidth
+        val stepHeight = cutGCodeHeight
+
+        val reverseMatrix = acquireTempMatrix()
+        val tempPointF = acquireTempPointF()
+
+        val rotateAngle = (90f - angle).toFloat()
+        reverseMatrix.setRotate(-rotateAngle, x1.toFloat(), y1.toFloat())
+
+        tempPointF.set(x2.toFloat(), y2.toFloat())
+        tempPointF.rotate(rotateAngle, x1.toFloat(), y1.toFloat())
+
+        val startX = x1 - width / 2
+        val startY = y1
+        val endX = tempPointF.x + width / 2 + 0.0
+        val endY = tempPointF.y + 0.0
+
+        //计算填充角度
+        val fillAngle = Math.toDegrees(atan(stepHeight / width).toDouble())
+
+        //使用指定角度的线填充矩形
+        var x = startX
+        var y = startY
+
+        while (y <= endY) {
+            tempPointF.set(x.toFloat(), y.toFloat())
+            reverseMatrix.mapPoint(tempPointF)
+            limitCutPoint(tempPointF)
+
+            if (x == startX && y == startY) {
+                //第一个点
+                onLineToPoint(tempPointF.x.toDouble(), tempPointF.y.toDouble())
+                x = endX
+                continue
+            }
+            onLineToPoint(tempPointF.x.toDouble(), tempPointF.y.toDouble())
+
+            if (x >= endX) {
+                x = startX
+            } else {
+                x = endX
+            }
+            y += tan(Math.toRadians(fillAngle)).toFloat() * width
+        }
+        tempPointF.release()
+        reverseMatrix.release()
+    }
+
+    private fun limitCutPoint(point: PointF) {
+        cutLimitRect?.let {
+            point.x = point.x.coerceIn(it.left, it.right)
+            point.y = point.y.coerceIn(it.top, it.bottom)
+        }
+    }
 
 }
