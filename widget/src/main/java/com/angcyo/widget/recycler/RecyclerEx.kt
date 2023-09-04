@@ -5,6 +5,8 @@ import android.view.View
 import androidx.recyclerview.widget.*
 import androidx.recyclerview.widget.RecyclerView.*
 import com.angcyo.dsladapter.*
+import com.angcyo.dsladapter.annotation.UpdateByDiff
+import com.angcyo.dsladapter.annotation.UpdateManual
 import com.angcyo.library.utils.getMember
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.getCurrVelocity
@@ -76,6 +78,7 @@ fun RecyclerView.initDsl() {
  * [initDslAdapter]
  * dsl在[com.angcyo.dsladapter.DslAdapter.render]方法中执行
  * */
+@UpdateByDiff
 fun RecyclerView.renderDslAdapter(
     append: Boolean = false, //当已经是adapter时, 是否追加item. 需要先关闭 new
     new: Boolean = true, //始终创建新的adapter, 为true时, 则append无效
@@ -92,6 +95,7 @@ fun RecyclerView.renderDslAdapter(
 /**快速初始化[DslAdapter]
  * [initDsl]
  * [dslAdapter]*/
+@UpdateManual
 fun RecyclerView.initDslAdapter(
     append: Boolean = false, //当已经是adapter时, 是否追加item. 需要先关闭 new
     new: Boolean = true, //始终创建新的adapter, 为true时, 则append无效

@@ -75,6 +75,16 @@ fun DslDialogConfig.configCenterDialog(
     }
 }
 
+/**快速配置一个全屏的[DslDialogConfig]*/
+fun DslDialogConfig.configFullScreenDialog(context: Context? = null): DslDialogConfig {
+    return this.apply {
+        configBottomDialog(context)
+        dialogWidth = -1
+        dialogHeight = -1
+        dialogThemeResId = R.style.LibDialogBaseFullTheme
+    }
+}
+
 //</editor-fold desc="对话框基础配置">
 
 //<editor-fold desc="常用对话框">

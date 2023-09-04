@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_title_wrap_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/dialog_item_height">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/dialog_negative_button"
+        style="@style/LibTitleIcoStyle"
+        app:srcCompat="@drawable/dialog_back_svg"
+        app:tint="@color/lib_night_icon_colors_selector" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/dialog_title_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:minHeight="@dimen/dialog_item_height"
+        android:textStyle="bold"
+        tools:text="标题" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/dialog_positive_button"
+        style="@style/LibTitleIcoStyle"
+        android:layout_gravity="right|center_vertical"
+        app:srcCompat="@drawable/dialog_confirm_svg"
+        app:tint="@color/lib_night_icon_colors_selector" />
+
+</FrameLayout>

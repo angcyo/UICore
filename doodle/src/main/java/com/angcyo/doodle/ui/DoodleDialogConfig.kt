@@ -6,7 +6,7 @@ import android.graphics.Bitmap
 import android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING
 import com.angcyo.core.loadingAsyncTg
 import com.angcyo.dialog.DslDialogConfig
-import com.angcyo.dialog.configBottomDialog
+import com.angcyo.dialog.configFullScreenDialog
 import com.angcyo.doodle.R
 import com.angcyo.doodle.core.IDoodleListener
 import com.angcyo.doodle.element.BaseElement
@@ -96,10 +96,7 @@ class DoodleDialogConfig(context: Context? = null) : DslDialogConfig(context) {
 /** 底部弹出涂鸦对话框 */
 fun Context.doodleDialog(config: DoodleDialogConfig.() -> Unit): Dialog {
     return DoodleDialogConfig().run {
-        configBottomDialog(this@doodleDialog)
-        dialogWidth = -1
-        dialogHeight = -1
-        dialogThemeResId = R.style.LibDialogBaseFullTheme
+        configFullScreenDialog(this@doodleDialog)
         config()
         show()
     }

@@ -11,5 +11,8 @@
     <string name="core_send_to_label">Send to...</string>
     <string name="ui_minimum">Minimum</string>
     <string name="ui_feature_development">Feature development...</string>
+    <string name="ui_add">Add</string>
+    <string name="ui_edit">Edit</string>
+    <string name="ui_confirm">Confirm</string>
 
 </resources>
