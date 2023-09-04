@@ -2,7 +2,9 @@ package com.angcyo.library.component.parser
 
 import com.angcyo.library.R
 import com.angcyo.library.ex._string
+import com.angcyo.library.ex.parseTime
 import java.util.Calendar
+import java.util.Date
 
 /**
  *
@@ -197,6 +199,12 @@ class DslDateTemplateParser : DslTemplateParser() {
         }
     }
 
+    /**指定日期时间
+     * [date] 日期或时间
+     * [pattern] 模板*/
+    fun setDate(date: String, pattern: String) {
+        calendar.time = Date(date.parseTime(pattern))
+    }
 }
 
 /**解析时间模板*/
