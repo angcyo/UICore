@@ -1,5 +1,7 @@
 package com.angcyo.library.component.parser
 
+import com.angcyo.library.R
+import com.angcyo.library.ex._string
 import java.util.Calendar
 
 /**
@@ -20,6 +22,25 @@ class DslDateTemplateParser : DslTemplateParser() {
     private val calendar = Calendar.getInstance()
 
     init {
+        templateList.add("weekday")
+        templateList.add("dayOfYear")
+        templateList.add("weekOfYear")
+
+        replaceVariableAction = { variable ->
+            when (variable) {
+                "year" -> _string(R.string.lib_year)
+                "month" -> _string(R.string.lib_month)
+                "day" -> _string(R.string.lib_day)
+                "hour" -> _string(R.string.lib_hour)
+                "minute" -> _string(R.string.lib_minute)
+                "second" -> _string(R.string.lib_second)
+                "millisecond" -> _string(R.string.lib_millisecond)
+                "am" -> _string(R.string.lib_am)
+                "pm" -> _string(R.string.lib_pm)
+                else -> null
+            }
+        }
+
         replaceTemplateAction = { template ->
             when (template) {
                 "YYYY" -> calendar.get(Calendar.YEAR).toString()
@@ -156,6 +177,21 @@ class DslDateTemplateParser : DslTemplateParser() {
                     }
                 }
 
+                "weekday" -> calendar.get(Calendar.DAY_OF_WEEK).run {
+                    when (this) {
+                        Calendar.SUNDAY -> _string(R.string.lib_weekday_7)
+                        Calendar.MONDAY -> _string(R.string.lib_weekday_1)
+                        Calendar.TUESDAY -> _string(R.string.lib_weekday_2)
+                        Calendar.WEDNESDAY -> _string(R.string.lib_weekday_3)
+                        Calendar.THURSDAY -> _string(R.string.lib_weekday_4)
+                        Calendar.FRIDAY -> _string(R.string.lib_weekday_5)
+                        Calendar.SATURDAY -> _string(R.string.lib_weekday_6)
+                        else -> this.toString()
+                    }
+                }
+
+                "dayOfYear" -> calendar.get(Calendar.DAY_OF_YEAR).toString()
+                "weekOfYear" -> calendar.get(Calendar.WEEK_OF_YEAR).toString()
                 else -> template
             }
         }

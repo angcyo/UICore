@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lib_time_ms">毫秒</string>
+    <string name="lib_time_s">秒</string>
+    <string name="lib_time_m">分</string>
+    <string name="lib_time_h">时</string>
+    <string name="lib_time_d">天</string>
+
+    <string name="lib_time_today">今天</string>
+    <string name="lib_time_yesterday">昨天</string>
+    <string name="lib_time_before_yesterday">前天</string>
+
+    <string name="lib_input_hint">请输入...</string>
+
+    <!--星期-->
+    <string name="lib_weekday_1">星期一</string>
+    <string name="lib_weekday_2">星期二</string>
+    <string name="lib_weekday_3">星期三</string>
+    <string name="lib_weekday_4">星期四</string>
+    <string name="lib_weekday_5">星期五</string>
+    <string name="lib_weekday_6">星期六</string>
+    <string name="lib_weekday_7">星期日</string>
+
+    <string name="lib_year">年</string>
+    <string name="lib_month">月</string>
+    <string name="lib_day">日</string>
+    <string name="lib_hour">时</string>
+    <string name="lib_minute">分</string>
+    <string name="lib_second">秒</string>
+    <string name="lib_millisecond">毫秒</string>
+    <string name="lib_week">周</string>
+    <string name="lib_am">上午</string>
+    <string name="lib_pm">下午</string>
+
+</resources>
