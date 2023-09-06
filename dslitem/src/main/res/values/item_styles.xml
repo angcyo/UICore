@@ -2,6 +2,7 @@
 <resources>
 
     <dimen name="lib_item_label_min_width">75dp</dimen>
+    <dimen name="lp_item_label_min_width">120dp</dimen>
     <dimen name="lib_check_box_size">18dp</dimen>
     <dimen name="lib_keyboard_size">50dp</dimen>
     <dimen name="lib_new_icon_size">18dp</dimen>
@@ -13,7 +14,10 @@
     <dimen name="lib_step_adjust_width">36dp</dimen>
     <dimen name="lib_step_adjust_value_width">50dp</dimen>
     <dimen name="lib_step_adjust_height">30dp</dimen>
+    <color name="lib_step_adjust_tint_disable_color">@color/bg_sub_color</color>
     <color name="lib_step_adjust_tint_color">@color/text_general_color</color>
+    <dimen name="lib_increment_height">38dp</dimen>
+    <dimen name="lib_increment_edit_width">110dp</dimen>
 
     <!--显示时, 标签的样式-->
     <style name="ItemLabelStyle" parent="LibSubTextStyle">
@@ -25,6 +29,12 @@
         <item name="android:paddingBottom">@dimen/lib_xhdpi</item>
         <item name="android:paddingRight">0dp</item>
         <item name="android:textSize">@dimen/text_body_size</item>
+    </style>
+
+    <!--LaserPecker显示时, 标签的样式-->
+    <style name="LPItemLabelStyle" parent="ItemLabelStyle">
+        <item name="android:textColor">@color/lib_text_color</item>
+        <item name="android:minWidth">@dimen/lp_item_label_min_width</item>
     </style>
 
     <style name="ItemEditStyle" parent="LibBodyTextStyle">

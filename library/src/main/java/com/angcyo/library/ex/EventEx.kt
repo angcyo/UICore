@@ -11,15 +11,18 @@ import android.view.View
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 
-fun MotionEvent.isTouchDown(): Boolean {
+fun MotionEvent?.isTouchDown(): Boolean {
+    this ?: return false
     return actionMasked == MotionEvent.ACTION_DOWN
 }
 
-fun MotionEvent.isTouchFinish(): Boolean {
+fun MotionEvent?.isTouchFinish(): Boolean {
+    this ?: return false
     return actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_CANCEL
 }
 
-fun MotionEvent.isTouchMove(): Boolean {
+fun MotionEvent?.isTouchMove(): Boolean {
+    this ?: return false
     return actionMasked == MotionEvent.ACTION_MOVE
 }
 

@@ -5,7 +5,6 @@ import android.os.Build
 import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.EditText
@@ -19,9 +18,9 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.angcyo.library.L
 import com.angcyo.library.ex.each
 import com.angcyo.library.ex.eachIndex
-import com.angcyo.library.ex.motionEvent
 import com.angcyo.library.ex.replace
 import com.angcyo.library.utils.getMember
+import com.angcyo.widget.base.LongTouchListener
 import com.angcyo.widget.base.ThrottleClickListener
 import com.angcyo.widget.base.ThrottleClickListener.Companion.DEFAULT_THROTTLE_INTERVAL
 import java.lang.ref.WeakReference
@@ -42,12 +41,6 @@ open class DslViewHolder(
 
     companion object {
         var DEFAULT_INITIAL_CAPACITY = 32
-
-        /**[MotionEvent] 事件类型, 点击*/
-        const val EVENT_TYPE_CLICK = 1
-
-        /**[MotionEvent] 事件类型, 长按*/
-        const val EVENT_TYPE_LONG_PRESS = 2
     }
 
     //<editor-fold desc="属性">
@@ -292,7 +285,7 @@ open class DslViewHolder(
     fun longTouch(
         @IdRes id: Int,
         loopLongPress: Boolean = false,
-        block: (view: View, event: MotionEvent, eventType: Int?) -> Boolean
+        block: (view: View, event: MotionEvent?, eventType: Int?) -> Boolean
     ) {
         longTouch(v<View>(id), loopLongPress, block)
     }
@@ -301,67 +294,14 @@ open class DslViewHolder(
     fun longTouch(
         view: View?,
         loopLongPress: Boolean = false,
-        block: (view: View, event: MotionEvent, eventType: Int?) -> Boolean
+        block: (view: View, event: MotionEvent?, eventType: Int?) -> Boolean
     ) {
 
         view?.let {
-            var eventType: Int? = null
-            var longRunnable: Runnable? = null
-            longRunnable = Runnable {
-                if (view.isPressed) {
-                    if (eventType == null || eventType == EVENT_TYPE_LONG_PRESS) {
-                        eventType = EVENT_TYPE_LONG_PRESS
-
-                        //发送长按事件
-                        val event = motionEvent(MotionEvent.ACTION_MOVE)
-                        block(view, event, eventType)
-                        event.recycle()
-
-                        if (loopLongPress) {
-                            view.postDelayed(
-                                longRunnable,
-                                ViewConfiguration.getLongPressTimeout().toLong()
-                            )
-                        }
-                    }
-                }
-            }
-
             //touch
-            view.setOnTouchListener { _, event ->
-                when (event.actionMasked) {
-                    MotionEvent.ACTION_DOWN -> {
-                        view.isPressed = true //按下的状态
-                        //长按检测
-                        view.postDelayed(
-                            longRunnable,
-                            ViewConfiguration.getLongPressTimeout().toLong()
-                        )
-                    }
-
-                    MotionEvent.ACTION_MOVE -> Unit
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                        view.isPressed = false
-                        if (eventType == null) {
-                            eventType = EVENT_TYPE_CLICK
-                        }
-                        view.removeCallbacks(longRunnable)
-                    }
-                }
-                if (eventType == EVENT_TYPE_CLICK) {
-                    //发送点击事件
-                    block(view, event, EVENT_TYPE_CLICK)
-                } else {
-                    //其它事件转发, 用于自定义处理
-                    block(view, event, null)
-                }
-                when (event.actionMasked) {
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                        eventType = null
-                    }
-                }
-                true
-            }
+            view.setOnTouchListener(LongTouchListener(block).apply {
+                this.loopLongPress = loopLongPress
+            })
         }
     }
 
