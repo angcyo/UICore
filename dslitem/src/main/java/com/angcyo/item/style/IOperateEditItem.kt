@@ -1,5 +1,6 @@
 package com.angcyo.item.style
 
+import android.text.InputFilter
 import android.text.method.DigitsKeyListener
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.annotation.ItemInitEntryPoint
@@ -10,11 +11,15 @@ import com.angcyo.item.form.IFormItem
 import com.angcyo.item.form.formItemConfig
 import com.angcyo.library.ex.elseNull
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.addFilter
 import com.angcyo.widget.base.clearListeners
 import com.angcyo.widget.base.onFocusChange
 import com.angcyo.widget.base.onTextChange
+import com.angcyo.widget.base.removeFilter
 import com.angcyo.widget.base.restoreSelection
 import com.angcyo.widget.base.setInputText
+import com.angcyo.widget.edit.CharLengthFilter
+import com.angcyo.widget.edit.DslEditText
 import com.angcyo.widget.edit.IEditDelegate
 
 /**
@@ -39,13 +44,26 @@ interface IOperateEditItem : IAutoInitItem {
         itemHolder.ev(operateEditItemConfig.itemEditTextViewId)?.apply {
             clearListeners()
 
-            setInputText(operateEditItemConfig.itemEditText, false)
-            hint = operateEditItemConfig.itemEditHint
+            //限制最大输入字符数
+            if (operateEditItemConfig.itemEditMaxInputLength > 0) {
+                if (this is DslEditText) {
+                    setMaxLength(operateEditItemConfig.itemEditMaxInputLength)
+                } else {
+                    addFilter(InputFilter.LengthFilter(operateEditItemConfig.itemEditMaxInputLength))
+                }
+            } else {
+                removeFilter {
+                    this is InputFilter.LengthFilter || this is CharLengthFilter
+                }
+            }
 
             //digits 放在[inputType]后面
             operateEditItemConfig.itemEditDigits?.let {
                 keyListener = DigitsKeyListener.getInstance(it)
             }
+
+            setInputText(operateEditItemConfig.itemEditText, false)
+            hint = operateEditItemConfig.itemEditHint
 
             if (this is IEditDelegate) {
                 val customEditDelegate = this.getCustomEditDelegate()
@@ -144,6 +162,12 @@ var IOperateEditItem.itemEditDigits: String?
         operateEditItemConfig.itemEditDigits = value
     }
 
+var IOperateEditItem.itemEditMaxInputLength
+    get() = operateEditItemConfig.itemEditMaxInputLength
+    set(value) {
+        operateEditItemConfig.itemEditMaxInputLength = value
+    }
+
 class OperateEditItemConfig : IDslItemConfig {
 
     /**[R.id.lib_edit_view]*/
@@ -163,6 +187,9 @@ class OperateEditItemConfig : IDslItemConfig {
      * [com.angcyo.item.style.EditStyleConfig.editDigits]
      * */
     var itemEditDigits: String? = null
+
+    /**最大输入字符数*/
+    var itemEditMaxInputLength = DslBaseEditItem.DEFAULT_MAX_INPUT_LENGTH
 
     /**是否可编辑*/
     var itemNoEditModel: Boolean? = null
