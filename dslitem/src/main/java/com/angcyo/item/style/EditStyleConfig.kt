@@ -11,7 +11,11 @@ import com.angcyo.dialog.R
 import com.angcyo.item.DslBaseEditItem
 import com.angcyo.library.ex.add
 import com.angcyo.library.ex.remove
-import com.angcyo.widget.base.*
+import com.angcyo.widget.base.addFilter
+import com.angcyo.widget.base.clearListeners
+import com.angcyo.widget.base.removeFilter
+import com.angcyo.widget.base.setInputText
+import com.angcyo.widget.base.setMaxLine
 import com.angcyo.widget.edit.CharLengthFilter
 import com.angcyo.widget.edit.DslEditText
 import com.angcyo.widget.edit.IEditDelegate
@@ -44,11 +48,13 @@ class EditStyleConfig : TextStyleConfig() {
     /**输入框不可编辑*/
     var noEditModel: Boolean = false
 
-    /**最大输入行数, <=1 单行*/
-    var editMaxLine: Int = 1
+    /**最大输入行数, <=1 单行
+     * default: 2147483647 [Int.MAX_VALUE]
+     * */
+    var editMaxLine: Int? = null
         set(value) {
             field = value
-            if (value <= 1) {
+            if (value == null || value <= 1) {
                 textGravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
                 editInputType = editInputType.remove(InputType.TYPE_TEXT_FLAG_MULTI_LINE)
             } else {
@@ -69,7 +75,10 @@ class EditStyleConfig : TextStyleConfig() {
                 filters = editInputFilterList.toTypedArray()
 
                 //单行 or 多行
-                setMaxLine(editMaxLine)
+                if (editMaxLine == null) {
+                    editMaxLine = maxLines
+                }
+                setMaxLine(editMaxLine!!)
 
                 inputType = editInputType
                 isEnabled = !noEditModel

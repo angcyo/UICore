@@ -9,14 +9,20 @@ import com.angcyo.item.DslBaseEditItem
 import com.angcyo.item.R
 import com.angcyo.item.form.IFormItem
 import com.angcyo.item.form.formItemConfig
+import com.angcyo.library.ex.elseNull
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clearListeners
+import com.angcyo.widget.base.onFocusChange
 import com.angcyo.widget.base.onTextChange
 import com.angcyo.widget.base.restoreSelection
 import com.angcyo.widget.edit.IEditDelegate
 
 /**
  * 输入框item
+ *
+ * [IOperateEditItem]
+ * [com.angcyo.item.style.IOperateEditItem]
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/06/28
@@ -57,6 +63,13 @@ interface IEditItem : IAutoInitItem {
                 }
             }
 
+            onFocusChange {
+                if (it) {
+                    editItemConfig._lastEditSelectionStart = selectionStart
+                    editItemConfig._lastEditSelectionEnd = selectionEnd
+                }
+            }
+
             onTextChange {
                 editItemConfig._lastEditSelectionStart = selectionStart
                 editItemConfig._lastEditSelectionEnd = selectionEnd
@@ -69,13 +82,27 @@ interface IEditItem : IAutoInitItem {
                 if (this@IEditItem is DslAdapterItem) {
                     itemChanging = true
                 }
-                onItemEditTextChange(itemHolder, it)
+                onSelfItemEditTextChange(itemHolder, it)
             }
 
-            restoreSelection(
-                editItemConfig._lastEditSelectionStart,
-                editItemConfig._lastEditSelectionEnd
-            )
+            //焦点
+            editItemConfig.itemHookFocused?.let {
+                if (it && !isFocused) {
+                    val selectionStart = editItemConfig._lastEditSelectionStart
+                    val selectionEnd = editItemConfig._lastEditSelectionEnd
+                    requestFocus()
+                    post {
+                        restoreSelection(selectionStart, selectionEnd)
+                        editItemConfig._lastEditSelectionStart = selectionStart
+                        editItemConfig._lastEditSelectionEnd = selectionEnd
+                    }
+                }
+            }.elseNull {
+                restoreSelection(
+                    editItemConfig._lastEditSelectionStart,
+                    editItemConfig._lastEditSelectionEnd
+                )
+            }
         }
     }
 
@@ -89,8 +116,15 @@ interface IEditItem : IAutoInitItem {
     }
 
     /**编辑的文本改变后*/
-    fun onItemEditTextChange(itemHolder: DslViewHolder, text: CharSequence) {
+    fun onSelfItemEditTextChange(itemHolder: DslViewHolder, text: CharSequence) {
         editItemConfig.itemTextChangeAction?.invoke(text)
+    }
+
+    /**焦点hook, 下次notify后恢复焦点*/
+    fun hookEditItemFocus(itemHolder: DslViewHolder?) {
+        itemHolder?.ev(editItemConfig.itemEditTextViewId)?.apply {
+            editItemConfig.itemHookFocused = isFocused
+        }
     }
 }
 
@@ -121,7 +155,6 @@ var IEditItem.itemEditInputType: Int
     set(value) {
         editItemConfig.itemEditTextStyle.editInputType = value
     }
-
 
 var IEditItem.itemMaxInputLength: Int
     get() = editItemConfig.itemEditTextStyle.editMaxInputLength
@@ -169,6 +202,9 @@ class EditItemConfig : IDslItemConfig {
                 itemEditTextStyle.hint = null
             }
         }
+
+    /**是否具有焦点*/
+    var itemHookFocused: Boolean? = null
 
     /**统一样式配置*/
     var itemEditTextStyle: EditStyleConfig = EditStyleConfig()

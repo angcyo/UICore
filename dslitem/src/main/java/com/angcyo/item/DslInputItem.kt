@@ -1,14 +1,16 @@
 package com.angcyo.item
 
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.itemViewHolder
 import com.angcyo.item.style.EditItemConfig
 import com.angcyo.item.style.IEditItem
 import com.angcyo.item.style.ILabelItem
 import com.angcyo.item.style.LabelItemConfig
+import com.angcyo.library.ex._string
 import com.angcyo.widget.DslViewHolder
 
 /**
- * 带有输入框的item
+ * 带有输入框的item, 默认是上下布局结构
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/06/28
@@ -28,7 +30,7 @@ open class DslInputItem : DslAdapterItem(), ILabelItem, IEditItem {
         labelItemConfig.itemLabelText = "请输入"
         labelItemConfig.itemLabelTextStyle.textBold = true
 
-        editItemConfig.itemEditTextStyle.hint = "请输入..."
+        editItemConfig.itemEditTextStyle.hint = _string(R.string.lib_input_hint)
         editItemConfig.itemEditTextStyle.editMaxInputLength = -1
     }
 
@@ -46,7 +48,7 @@ open class DslInputItem : DslAdapterItem(), ILabelItem, IEditItem {
     }
 
     override fun onItemChangeListener(item: DslAdapterItem) {
-        //super.onItemChangeListener(item)
-        updateItemOnHaveDepend()
+        hookEditItemFocus(itemViewHolder())
+        super.onItemChangeListener(item)
     }
 }

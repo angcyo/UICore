@@ -1,6 +1,7 @@
 package com.angcyo.item
 
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.itemViewHolder
 import com.angcyo.item.style.EditItemConfig
 import com.angcyo.item.style.IEditItem
 import com.angcyo.widget.DslViewHolder
@@ -49,8 +50,8 @@ open class DslBaseEditItem : DslBaseLabelItem(), IEditItem {
     }
 
     override fun onItemChangeListener(item: DslAdapterItem) {
-        //super.onItemChangeListener(item)
-        updateItemOnHaveDepend()
+        hookEditItemFocus(itemViewHolder())
+        super.onItemChangeListener(item)
     }
 
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_label_view"
+        style="@style/LPItemLabelStyle"
+        tools:text="Label" />
+
+    <com.angcyo.widget.edit.DslEditText
+        android:id="@+id/lib_edit_view"
+        style="@style/ItemEditStyle"
+        android:layout_width="0dp"
+        android:layout_marginRight="@dimen/lib_padding_left"
+        android:layout_weight="1"
+        android:background="@drawable/lib_increment_bg_selector"
+        android:gravity="left|center_vertical"
+        android:inputType="text"
+        android:maxLines="1"
+        android:paddingHorizontal="@dimen/lib_hdpi"
+        android:paddingVertical="@dimen/lib_hdpi"
+        android:singleLine="true"
+        android:textColor="@color/lib_step_adjust_text_color_selector"
+        app:r_hide_soft_input_on_lost_focus="true"
+        tools:hint="@string/lib_input_hint"
+        tools:text="文本文本文本文本" />
+
+</com.angcyo.widget.layout.RLinearLayout>

@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.TypedValue
-import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import com.angcyo.library.UndefinedDrawable
@@ -42,13 +41,15 @@ open class TextStyleConfig : ViewStyleConfig() {
 
     /**提示文本内容*/
     var hint: CharSequence? = null
-    var textBold: Boolean = false
+    var textBold: Boolean? = null
     var textColor: Int = undefined_color
     var textColors: ColorStateList? = null
 
     @Pixel
     var textSize: Float = undefined_float
-    var textGravity: Int = Gravity.LEFT or Gravity.CENTER_VERTICAL
+
+    /**文本重力*/
+    var textGravity: Int? = null
 
     /**四向图标, 需要指定bounds*/
     var leftDrawable: Drawable? = UndefinedDrawable()
@@ -95,9 +96,15 @@ open class TextStyleConfig : ViewStyleConfig() {
                 //兼容
                 view.setInputHint(this@TextStyleConfig.hint)
 
-                gravity = textGravity
+                if (textGravity == null) {
+                    textGravity = gravity
+                }
+                gravity = textGravity!!
 
-                setBoldText(textBold)
+                if (textBold == null) {
+                    textBold = view.paint.isFakeBoldText || view.typeface.isBold
+                }
+                setBoldText(textBold!!)
 
                 //颜色, 防止复用. 所以在未指定的情况下, 要获取默认的颜色.
                 val colors = when {
