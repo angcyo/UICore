@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.text.InputType
 import android.widget.EditText
+import com.angcyo.library.ex._string
 import com.angcyo.library.ex.append
 import com.angcyo.library.ex.eachChild
 import com.angcyo.library.ex.find
@@ -34,7 +35,10 @@ open class InputMultiDialogConfig(context: Context? = null) : BaseDialogConfig(c
     /**
      * 文本框hint文本
      */
-    var hintInputString = mutableListOf<CharSequence?>("请输入...", "请输入...")
+    var hintInputString = mutableListOf<CharSequence?>(
+        _string(R.string.lib_input_hint),
+        _string(R.string.lib_input_hint)
+    )
 
     /**
      * 缺省的文本框内容, 同时也决定输入框的个数
