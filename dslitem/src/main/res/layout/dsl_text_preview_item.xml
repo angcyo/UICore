@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/lib_preview_shadow"
+        android:gravity="center"
+        android:minHeight="@dimen/title_bar_height"
+        android:padding="@dimen/lib_xhdpi"
+        android:textStyle="bold"
+        tools:text="angcyo" />
+
+</FrameLayout>

@@ -3,6 +3,7 @@ package com.angcyo.item.keyboard
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.R
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.base.LongTouchListener
 
 /**
  * 画布数字自增/自减输入item
@@ -39,13 +40,13 @@ class KeyboardNumberIncrementItem : DslAdapterItem() {
         itemHolder.visible(R.id.plus_minus_view, itemShowPlusMinus)
         itemHolder.longTouch(R.id.minus_increment_view, true) { view, event, eventType ->
             eventType?.let {
-                itemIncrementAction(false, it == DslViewHolder.EVENT_TYPE_LONG_PRESS)
+                itemIncrementAction(false, it == LongTouchListener.EVENT_TYPE_LONG_PRESS)
             }
             true
         }
         itemHolder.longTouch(R.id.plus_increment_view, true) { view, event, eventType ->
             eventType?.let {
-                itemIncrementAction(true, it == DslViewHolder.EVENT_TYPE_LONG_PRESS)
+                itemIncrementAction(true, it == LongTouchListener.EVENT_TYPE_LONG_PRESS)
             }
             true
         }

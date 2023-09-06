@@ -19,7 +19,7 @@
             android:background="@drawable/lib_step_adjust_decrease_bg_selector"
             android:padding="@dimen/lib_step_adjust_padding"
             app:srcCompat="@drawable/ic_step_adjust_decrease_svg"
-            app:tint="@color/lib_step_adjust_tint_color" />
+            app:tint="@color/lib_step_adjust_tint_color_selector" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/lib_step_adjust_value_view"
@@ -32,7 +32,7 @@
             android:maxLines="1"
             android:paddingHorizontal="@dimen/lib_hdpi"
             android:singleLine="true"
-            android:textColor="@color/lib_step_adjust_tint_color"
+            android:textColor="@color/lib_step_adjust_text_color_selector"
             android:textStyle="bold"
             tools:text="9999999" />
 
@@ -43,7 +43,7 @@
             android:background="@drawable/lib_step_adjust_increase_bg_selector"
             android:padding="@dimen/lib_step_adjust_padding"
             app:srcCompat="@drawable/ic_step_adjust_increase_svg"
-            app:tint="@color/lib_step_adjust_tint_color" />
+            app:tint="@color/lib_step_adjust_tint_color_selector" />
 
     </LinearLayout>
 

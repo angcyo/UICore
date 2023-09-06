@@ -11,6 +11,7 @@ import com.angcyo.library.ex.string
 import com.angcyo.library.ex.toStr
 import com.angcyo.widget.DslViewHolder
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 /**
  * 步长调整item, 支持- + 按钮.
@@ -46,7 +47,7 @@ open class DslStepAdjustItem : DslAdapterItem(), IStepAdjustItem {
                 incrementStep =
                     stepAdjustItemConfig.itemStepAdjustStep.toString().toFloatOrNull() ?: 1f
                 longIncrementStep = incrementStep * 10
-                if (stepAdjustItemConfig.isIntValueType) {
+                if (stepAdjustItemConfig.isIntValueType || stepAdjustItemConfig.isLongValueType) {
                     removeKeyboardStyle(NumberKeyboardPopupConfig.STYLE_DECIMAL)
                 }
                 onNumberResultAction = { value ->
@@ -57,7 +58,13 @@ open class DslStepAdjustItem : DslAdapterItem(), IStepAdjustItem {
                     ) {
                         //被拦截
                     } else {
-                        if (stepAdjustItemConfig.isIntValueType) {
+                        if (stepAdjustItemConfig.isLongValueType) {
+                            updateStepAdjustValue(
+                                itemHolder,
+                                this@DslStepAdjustItem,
+                                value.roundToLong().toStr()
+                            )
+                        } else if (stepAdjustItemConfig.isIntValueType) {
                             updateStepAdjustValue(
                                 itemHolder,
                                 this@DslStepAdjustItem,

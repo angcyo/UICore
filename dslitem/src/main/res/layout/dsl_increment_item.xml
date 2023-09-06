@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_label_view"
+        style="@style/LPItemLabelStyle"
+        tools:text="Label" />
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:paddingRight="@dimen/lib_padding_left"
+        tools:background="@color/transparent20">
+
+        <!--自增/自减布局-->
+        <LinearLayout
+            android:id="@+id/lib_step_adjust_wrap_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/lib_increment_height"
+            android:layout_gravity="right"
+            android:background="@drawable/lib_increment_bg_selector"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/lib_step_adjust_decrease_view"
+                android:layout_width="@dimen/lib_step_adjust_width"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:background="@drawable/lib_increment_item_selector"
+                android:padding="@dimen/lib_step_adjust_padding"
+                app:srcCompat="@drawable/ic_step_adjust_decrease_svg"
+                app:tint="@color/lib_step_adjust_tint_color_selector" />
+
+            <com.angcyo.widget.edit.DslEditText
+                android:id="@+id/lib_step_adjust_value_view"
+                style="@style/ItemEditStyle"
+                android:layout_width="@dimen/lib_increment_edit_width"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLines="1"
+                android:paddingHorizontal="@dimen/lib_hdpi"
+                android:paddingVertical="@dimen/lib_hdpi"
+                android:singleLine="true"
+                android:textColor="@color/lib_step_adjust_text_color_selector"
+                app:r_hide_soft_input_on_lost_focus="true"
+                tools:hint="@string/lib_input_hint"
+                tools:text="文本文本文本文本" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/lib_step_adjust_increase_view"
+                android:layout_width="@dimen/lib_step_adjust_width"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:background="@drawable/lib_increment_item_selector"
+                android:padding="@dimen/lib_step_adjust_padding"
+                app:srcCompat="@drawable/ic_step_adjust_increase_svg"
+                app:tint="@color/lib_step_adjust_tint_color_selector" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</com.angcyo.widget.layout.RLinearLayout>
