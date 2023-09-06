@@ -1257,7 +1257,7 @@ open class DslAdapterItem : LifecycleOwner {
     //<editor-fold desc="定向更新">
 
     /**标识此[Item]是否发生过改变, 可用于实现退出界面提示是否保存内容.
-     * [itemChanging]*/
+     * 更高级的属性 [itemChanging]*/
     @UpdateByDiff
     @UpdateByNotify
     var itemChanged = false
