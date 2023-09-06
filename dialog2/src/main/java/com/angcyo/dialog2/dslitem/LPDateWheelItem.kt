@@ -12,6 +12,8 @@ open class LPDateWheelItem : DslLabelWheelDateItem() {
     init {
         itemLayoutId = R.layout.lp_date_wheel_item
         itemDateType = TYPE_DATE
+
+        itemDateEndTime = dateEndTime
     }
 
 }

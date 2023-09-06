@@ -12,12 +12,14 @@ import com.angcyo.item.style.TextItemConfig
 import com.angcyo.item.style.itemText
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.component.toCalendar
+import com.angcyo.library.ex.addYear
 import com.angcyo.library.ex.nowTime
 import com.angcyo.library.ex.toCalendar
 import com.angcyo.library.ex.toTime
 import com.angcyo.widget.DslViewHolder
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 
 /**
@@ -42,6 +44,10 @@ open class DslLabelWheelDateItem : DslBaseLabelItem(), ITextItem {
 
         /**时分*/
         const val TYPE_TIME_2 = 3
+
+        /**默认结束时间*/
+        val dateEndTime: Long
+            get() = Calendar.getInstance().addYear(10).timeInMillis
     }
 
     var itemDateTypeArray = booleanArrayOf(true, true, true, false, false, false)

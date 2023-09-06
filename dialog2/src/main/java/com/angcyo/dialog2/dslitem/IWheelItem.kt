@@ -37,29 +37,29 @@ interface IWheelItem : IAutoInitItem {
                 dialogTitle = itemText
             }
 
+            //赋值
             wheelItems = wheelItemConfig.itemWheelList
-
             wheelItemToStringAction = wheelItemConfig.itemWheelToTextAction
-
             wheelUnit = wheelItemConfig.itemWheelUnit
-
             wheelItemSelectorAction = { dialog, index, item ->
                 if (wheelItemConfig.itemWheelSelectorAction(dialog, index, item)) {
                     //拦截了
                     true
                 } else {
+                    onSelfWheelItemSelector(index, item)
                     if (this@IWheelItem is DslAdapterItem) {
                         val old = wheelItemConfig.itemSelectedIndex
                         wheelItemConfig.itemSelectedIndex = index
                         itemChanging = old != index
                     }
-                    onSelfWheelItemSelector(index, item)
                     false
                 }
             }
 
+            //默认选中
             wheelSelectedIndex = wheelItemConfig.itemSelectedIndex
 
+            //action
             wheelItemConfig.itemConfigDialogAction(this)
         }
     }
