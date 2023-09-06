@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/lib_bg_selector"
     android:minHeight="@dimen/lib_item_min_height"
-    app:r_background="@color/lib_white">
+    app:r_background="@color/lib_theme_white_color">
 
     <View
         android:id="@+id/lib_work_flow_head_line"

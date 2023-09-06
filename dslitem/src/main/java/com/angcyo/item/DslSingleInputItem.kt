@@ -14,7 +14,7 @@ import com.angcyo.widget.DslViewHolder
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/09/05
  */
-class DslSingleInputItem : DslAdapterItem(), ILabelItem, IOperateEditItem {
+open class DslSingleInputItem : DslAdapterItem(), ILabelItem, IOperateEditItem {
 
     override var labelItemConfig: LabelItemConfig = LabelItemConfig()
 

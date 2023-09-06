@@ -4,7 +4,7 @@
     android:id="@+id/lib_item_root_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/lib_white"
+    android:background="@color/lib_theme_white_color"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.AppCompatTextView

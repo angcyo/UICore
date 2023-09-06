@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/lib_hdpi"
     android:paddingRight="@dimen/lib_padding_left"
     android:paddingBottom="@dimen/lib_hdpi"
-    tools:background="@color/lib_white">
+    tools:background="@color/lib_theme_white_color">
 
     <com.angcyo.widget.DslButton
         android:id="@+id/save_button"

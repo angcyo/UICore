@@ -11,19 +11,29 @@
     <com.angcyo.widget.text.DslTextView
         android:id="@+id/lib_label_view"
         style="@style/ItemLabelStyle"
+        android:layout_gravity="center_vertical"
         android:textColor="@color/text_general_color"
         tools:text="Label" />
 
-    <com.angcyo.widget.layout.DslFlowLayout
-        android:id="@+id/lib_flow_layout"
+    <FrameLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:gravity="center_horizontal"
         android:paddingLeft="@dimen/lib_padding_left"
-        android:paddingRight="@dimen/lib_padding_left"
-        app:r_flow_item_horizontal_space="@dimen/lib_xxhdpi"
-        tools:layout_height="@dimen/lib_xhdpi" />
+        android:paddingRight="@dimen/lib_padding_left">
+
+        <com.angcyo.widget.layout.DslFlowLayout
+            android:id="@+id/lib_flow_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:gravity="center_horizontal"
+            app:r_flow_item_horizontal_space="@dimen/lib_xhdpi"
+            app:r_flow_item_vertical_space="@dimen/lib_xhdpi"
+            app:r_flow_preview_item_count="2"
+            app:r_flow_preview_item_layout_id="@layout/dsl_tag_item" />
+
+    </FrameLayout>
 
 </com.angcyo.widget.layout.RLinearLayout>

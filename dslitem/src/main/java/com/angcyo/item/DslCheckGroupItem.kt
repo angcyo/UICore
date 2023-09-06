@@ -7,6 +7,9 @@ import com.angcyo.item.style.CheckGroupItemConfig
 import com.angcyo.item.style.ICheckGroupItem
 import com.angcyo.item.style.ILabelItem
 import com.angcyo.item.style.LabelItemConfig
+import com.angcyo.item.style.itemCheckItems
+import com.angcyo.item.style.itemCheckedItems
+import com.angcyo.item.style.itemMultiMode
 import com.angcyo.library.ex.dpi
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.layout.DslFlowLayout
@@ -14,6 +17,8 @@ import com.angcyo.widget.layout.DslFlowLayout
 /**
  * 一组选项
  * 支持直接界面操作单选/多选的item
+ *
+ * [DslRadioGroupItem]
  *
  * Email:angcyo@126.com
  * @author angcyo
@@ -44,6 +49,11 @@ open class DslCheckGroupItem : DslAdapterItem(), ILabelItem, ICheckGroupItem {
 
     init {
         itemLayoutId = R.layout.dsl_check_group_item
+
+        itemCheckItems //选项
+        itemCheckedItems //已选中的选项
+
+        itemMultiMode //选择模式
     }
 
     override fun onItemBind(
@@ -78,32 +88,32 @@ open class DslCheckGroupItem : DslAdapterItem(), ILabelItem, ICheckGroupItem {
     }
 
     /**是否需要拦截选中*/
-    override fun onCheckInterceptSelectView(
+    override fun onSelfCheckInterceptSelectView(
         itemView: View,
         index: Int,
         select: Boolean,
         fromUser: Boolean
     ): Boolean {
-        return super.onCheckInterceptSelectView(itemView, index, select, fromUser)
+        return super.onSelfCheckInterceptSelectView(itemView, index, select, fromUser)
     }
 
     /**选中后的view改变的回调*/
-    override fun onCheckSelectViewChange(
+    override fun onSelfCheckSelectViewChange(
         fromView: View?,
         selectViewList: List<View>,
         reselect: Boolean,
         fromUser: Boolean
     ) {
-        super.onCheckSelectViewChange(fromView, selectViewList, reselect, fromUser)
+        super.onSelfCheckSelectViewChange(fromView, selectViewList, reselect, fromUser)
     }
 
     /**选中后的index改变的回调*/
-    override fun onCheckSelectIndexChange(
+    override fun onSelfCheckSelectIndexChange(
         fromIndex: Int,
         selectIndexList: List<Int>,
         reselect: Boolean,
         fromUser: Boolean
     ) {
-        super.onCheckSelectIndexChange(fromIndex, selectIndexList, reselect, fromUser)
+        super.onSelfCheckSelectIndexChange(fromIndex, selectIndexList, reselect, fromUser)
     }
 }

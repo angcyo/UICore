@@ -556,8 +556,27 @@ fun getTodayTimeBucket(date: Date): String {
 /**在日期上进行 加/减
  * [amount] 数量, -5表示减5天
  * */
-fun Calendar.addDay(amount: Int) {
+fun Calendar.addDay(amount: Int): Calendar {
     add(Calendar.DAY_OF_MONTH, amount)
+    return this
+}
+
+/**在日期上添加多少月*/
+fun Calendar.addMonth(amount: Int): Calendar {
+    add(Calendar.MONTH, amount)
+    return this
+}
+
+/**在日期上添加多少年*/
+fun Calendar.addYear(amount: Int): Calendar {
+    add(Calendar.YEAR, amount)
+    return this
+}
+
+/**在日期上添加多少分钟*/
+fun Calendar.addMinute(amount: Int): Calendar {
+    add(Calendar.MINUTE, amount)
+    return this
 }
 
 /**返回2个日期的间隔天数

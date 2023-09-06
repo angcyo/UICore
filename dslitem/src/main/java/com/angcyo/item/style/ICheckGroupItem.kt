@@ -52,10 +52,12 @@ interface ICheckGroupItem : IAutoInitItem {
                     dslMultiMode = checkGroupItemConfig.itemMultiMode
                     dslMinSelectLimit =
                         if (checkGroupItemConfig.itemMultiMode) checkGroupItemConfig.itemMinSelectLimit else 1
+                    dslMaxSelectLimit =
+                        if (checkGroupItemConfig.itemMultiMode) checkGroupItemConfig.itemMaxSelectLimit else 1
 
-                    onSelectItemView = this@ICheckGroupItem::onCheckInterceptSelectView
-                    onSelectViewChange = this@ICheckGroupItem::onCheckSelectViewChange
-                    onSelectIndexChange = this@ICheckGroupItem::onCheckSelectIndexChange
+                    onSelectItemView = this@ICheckGroupItem::onSelfCheckInterceptSelectView
+                    onSelectViewChange = this@ICheckGroupItem::onSelfCheckSelectViewChange
+                    onSelectIndexChange = this@ICheckGroupItem::onSelfCheckSelectIndexChange
                 }
 
                 val indexList = mutableListOf<Int>()
@@ -71,7 +73,7 @@ interface ICheckGroupItem : IAutoInitItem {
     }
 
     /**是否需要拦截选中*/
-    fun onCheckInterceptSelectView(
+    fun onSelfCheckInterceptSelectView(
         itemView: View,
         index: Int,
         select: Boolean,
@@ -81,7 +83,7 @@ interface ICheckGroupItem : IAutoInitItem {
     }
 
     /**选中后的view改变的回调*/
-    fun onCheckSelectViewChange(
+    fun onSelfCheckSelectViewChange(
         fromView: View?,
         selectViewList: List<View>,
         reselect: Boolean,
@@ -91,7 +93,7 @@ interface ICheckGroupItem : IAutoInitItem {
     }
 
     /**选中后的index改变的回调*/
-    fun onCheckSelectIndexChange(
+    fun onSelfCheckSelectIndexChange(
         fromIndex: Int,
         selectIndexList: List<Int>,
         reselect: Boolean,
@@ -127,6 +129,27 @@ interface ICheckGroupItem : IAutoInitItem {
         checkGroupItemConfig.block()
     }
 }
+
+/**单选/多选*/
+var ICheckGroupItem.itemMultiMode
+    get() = checkGroupItemConfig.itemMultiMode
+    set(value) {
+        checkGroupItemConfig.itemMultiMode = value
+    }
+
+/**多选时, 最小选中数量*/
+var ICheckGroupItem.itemMinSelectLimit
+    get() = checkGroupItemConfig.itemMinSelectLimit
+    set(value) {
+        checkGroupItemConfig.itemMinSelectLimit = value
+    }
+
+/**多选时, 最多选中数量*/
+var ICheckGroupItem.itemMaxSelectLimit
+    get() = checkGroupItemConfig.itemMaxSelectLimit
+    set(value) {
+        checkGroupItemConfig.itemMaxSelectLimit = value
+    }
 
 /**需要选择的项*/
 var ICheckGroupItem.itemCheckItems: List<Any>
@@ -179,6 +202,9 @@ class CheckGroupItemConfig : IDslItemConfig {
 
     /**多选时, 最小选中数量*/
     var itemMinSelectLimit = 0
+
+    /**多选时, 最多选中数量*/
+    var itemMaxSelectLimit = Int.MAX_VALUE
 
     /**将选项[item], 转成可以显示在界面的 文本类型*/
     var itemCheckItemToText: (item: Any) -> CharSequence? = { item ->

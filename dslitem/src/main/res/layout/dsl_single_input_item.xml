@@ -22,6 +22,7 @@
         android:gravity="left|center_vertical"
         android:inputType="text"
         android:maxLines="1"
+        android:minHeight="@dimen/lib_min_item_height"
         android:paddingHorizontal="@dimen/lib_hdpi"
         android:paddingVertical="@dimen/lib_hdpi"
         android:singleLine="true"

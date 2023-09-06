@@ -43,13 +43,13 @@ open class DslCheckFlowItem : DslAdapterItem(), ITextItem, ICheckGroupItem {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
     }
 
-    override fun onCheckSelectIndexChange(
+    override fun onSelfCheckSelectIndexChange(
         fromIndex: Int,
         selectIndexList: List<Int>,
         reselect: Boolean,
         fromUser: Boolean
     ) {
         itemCheckIndex = selectIndexList.firstOrNull() ?: -1
-        super.onCheckSelectIndexChange(fromIndex, selectIndexList, reselect, fromUser)
+        super.onSelfCheckSelectIndexChange(fromIndex, selectIndexList, reselect, fromUser)
     }
 }

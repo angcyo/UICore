@@ -45,8 +45,8 @@ class DslDateTemplateParser : DslTemplateParser() {
 
         replaceTemplateAction = { template ->
             when (template) {
-                "YYYY" -> calendar.get(Calendar.YEAR).toString()
-                "YY" -> calendar.get(Calendar.YEAR).toString().substring(2)
+                "yyyy", "YYYY" -> calendar.get(Calendar.YEAR).toString()
+                "yy", "YY" -> calendar.get(Calendar.YEAR).toString().substring(2)
                 "M" -> calendar.get(Calendar.MONTH).plus(1).toString()
                 "MM" -> calendar.get(Calendar.MONTH).plus(1).toString().padStart(2, '0')
                 //月份英文缩写
@@ -205,9 +205,22 @@ class DslDateTemplateParser : DslTemplateParser() {
     fun setDate(date: String, pattern: String) {
         calendar.time = Date(date.parseTime(pattern))
     }
+
+    /**[time] 13位毫秒时间戳*/
+    fun setDate(time: Long) {
+        calendar.time = Date(time)
+    }
+
+    fun setDate(cal: Calendar) {
+        setDate(cal.time)
+    }
+
+    fun setDate(date: Date) {
+        calendar.time = date
+    }
 }
 
 /**解析时间模板*/
-fun String.parseDateTemplate(): String {
-    return DslDateTemplateParser().parse(this)
+fun String.parseDateTemplate(config: DslDateTemplateParser.() -> Unit = {}): String {
+    return DslDateTemplateParser().apply(config).parse(this)
 }

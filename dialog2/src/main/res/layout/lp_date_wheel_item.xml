@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingRight="@dimen/lib_padding_left">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_label_view"
+        style="@style/LPItemLabelStyle"
+        tools:text="Label" />
+
+    <FrameLayout
+        android:id="@+id/lib_content_wrap_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:background="@drawable/lib_increment_bg_selector">
+
+        <com.angcyo.widget.text.DslTextView
+            android:id="@+id/lib_text_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="match_parent"
+            android:layout_gravity="left|center_vertical"
+            android:paddingHorizontal="@dimen/lib_xhdpi"
+            android:textStyle="bold"
+            tools:hint="请输入..."
+            tools:text="文本" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_right_ico_view"
+            style="@style/ItemRightIcoStyle"
+            android:layout_gravity="right|center_vertical"
+            android:background="@null"
+            android:visibility="visible"
+            app:srcCompat="@drawable/lib_next" />
+
+    </FrameLayout>
+
+
+</LinearLayout>
