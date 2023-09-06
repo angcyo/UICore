@@ -4,7 +4,7 @@ import com.angcyo.item.style.ISwitchItem
 import com.angcyo.item.style.SwitchItemConfig
 
 /**
- * 开关属性
+ * 开关属性控制item
  *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/06/08

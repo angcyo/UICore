@@ -4,6 +4,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.annotation.ItemInitEntryPoint
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -48,6 +49,14 @@ var ILabelItem.itemLabel: CharSequence?
     get() = labelItemConfig.itemLabelText
     set(value) {
         labelItemConfig.itemLabelText = value
+    }
+
+/**[itemLabelText] 字体大小*/
+@Pixel
+var ILabelItem.itemLabelTextSize: Float
+    get() = labelItemConfig.itemLabelTextStyle.textSize
+    set(value) {
+        labelItemConfig.itemLabelTextStyle.textSize = value
     }
 
 /**label视图的最小宽度*/
