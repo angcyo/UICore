@@ -1,18 +1,15 @@
 package com.angcyo.dialog2.dslitem
 
-import android.app.Dialog
 import android.content.Context
 import android.view.View
 import com.angcyo.dialog2.R
-import com.angcyo.dialog2.WheelDialogConfig
-import com.angcyo.dialog2.wheelDialog
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.DslBaseLabelItem
-import com.angcyo.item.style.*
+import com.angcyo.item.style.ILoadItem
+import com.angcyo.item.style.ITextItem
+import com.angcyo.item.style.LoadItemConfig
+import com.angcyo.item.style.TextItemConfig
 import com.angcyo.library.ex.ResultThrowable
-import com.angcyo.library.ex.size
-import com.angcyo.library.ex.string
-import com.angcyo.library.extend.IToText
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -22,36 +19,7 @@ import com.angcyo.widget.DslViewHolder
  * @date 2020/03/23
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
-open class DslLabelWheelItem : DslBaseLabelItem(), ITextItem, ILoadItem {
-
-    /**数据集合*/
-    var itemWheelList: List<Any>? = null
-
-    /**设置选中项, -1不设置*/
-    var itemSelectedIndex = -1
-
-    /**wheel dialog 单位设置*/
-    var itemWheelUnit: CharSequence? = null
-
-    /**选中回调*/
-    var itemWheelSelector: (dialog: Dialog, index: Int, item: Any) -> Boolean =
-        { dialog, index, item ->
-            false
-        }
-
-    /**上屏显示转换回调*/
-    var itemWheelToText: (item: Any) -> CharSequence? = {
-        if (it is IToText) {
-            it.toText()
-        } else {
-            it.string()
-        }
-    }
-
-    /**配置[WheelDialogConfig]*/
-    var itemConfigDialog: (WheelDialogConfig) -> Unit = {
-
-    }
+open class DslLabelWheelItem : DslBaseLabelItem(), ITextItem, ILoadItem, IWheelItem {
 
     /**点击item之前拦截处理, 返回true拦截默认处理*/
     var itemClickBefore: (clickView: View) -> Boolean = { false }
@@ -59,6 +27,8 @@ open class DslLabelWheelItem : DslBaseLabelItem(), ITextItem, ILoadItem {
     override var textItemConfig: TextItemConfig = TextItemConfig()
 
     override var loadItemConfig: LoadItemConfig = LoadItemConfig()
+
+    override var wheelItemConfig: WheelItemConfig = WheelItemConfig()
 
     init {
         itemLayoutId = R.layout.dsl_wheel_item
@@ -96,9 +66,9 @@ open class DslLabelWheelItem : DslBaseLabelItem(), ITextItem, ILoadItem {
         itemHolder.tv(textItemConfig.itemTextViewId)?.apply {
             text = itemWheelList?.getOrNull(itemSelectedIndex)?.run {
                 if (itemWheelUnit == null) {
-                    itemWheelToText(this)
+                    itemWheelToTextAction(this)
                 } else {
-                    "${itemWheelToText(this)}${itemWheelUnit}"
+                    "${itemWheelToTextAction(this)}${itemWheelUnit}"
                 }
             } ?: textItemConfig.itemText //默认文本
         }
@@ -107,31 +77,8 @@ open class DslLabelWheelItem : DslBaseLabelItem(), ITextItem, ILoadItem {
 
     /**显示dialog*/
     open fun showWheelDialog(context: Context) {
-        context.wheelDialog {
-            dialogTitle = labelItemConfig.itemLabelText
-
-            wheelItems = itemWheelList?.toMutableList()
-
-            wheelItemToStringAction = itemWheelToText
-
-            wheelUnit = itemWheelUnit
-
-            wheelItemSelectorAction = { dialog, index, item ->
-                if (itemWheelSelector(dialog, index, item)) {
-                    //拦截了
-                    true
-                } else {
-                    val old = itemSelectedIndex
-                    itemSelectedIndex = index
-                    itemChanging = old != index
-                    false
-                }
-            }
-
-            wheelSelectedIndex = itemSelectedIndex
-
-            itemConfigDialog(this)
-        }
+        wheelItemConfig.itemWheelDialogTitle = labelItemConfig.itemLabelText
+        showItemWheelDialog(context)
     }
 
     /**调用此方法, 通知item选中改变*/
@@ -147,71 +94,5 @@ open class DslLabelWheelItem : DslBaseLabelItem(), ITextItem, ILoadItem {
             itemWheelList = null
         }
         super.startItemLoading(loading, result)
-    }
-}
-
-/**快速获取对应Item的值*/
-fun DslAdapterItem.itemWheelValue(): Any? {
-    return if (this is DslLabelWheelItem) {
-        itemWheelList?.getOrNull(itemSelectedIndex)
-    } else {
-        null
-    }
-}
-
-fun <T> DslAdapterItem.itemWheelBean(): T? {
-    return if (this is DslLabelWheelItem) {
-        itemWheelList?.getOrNull(itemSelectedIndex) as T?
-    } else {
-        null
-    }
-}
-
-inline fun <reified DATA> DslAdapterItem.itemWheelData(): DATA? {
-    return if (this is DslLabelWheelItem) {
-        itemWheelList?.getOrNull(itemSelectedIndex) as DATA?
-    } else {
-        null
-    }
-}
-
-/**更新默认选中的项, 如果可行
- * [index] 想要选中的索引
- * [item] 想要选中的数据, 如果设置了, 则优先级高
- * [defText] 默认情况下需要显示的文本*/
-fun DslLabelWheelItem.updateWheelSelected(
-    index: Int,
-    item: Any? = null,
-    defText: CharSequence? = null
-) {
-    //默认显示的文本
-    val text = if (item == null) {
-        defText
-    } else {
-        itemWheelToText(item) ?: defText
-    }
-    itemText = text
-    itemSelectedIndex = -1
-
-    val list = itemWheelList
-    if (list != null) {
-        //查找对应的index
-
-        val _index = if (item == null) {
-            index
-        } else {
-            list.indexOfFirst {
-                itemWheelToText(it) == itemWheelToText(item)
-            }.run {
-                if (this == -1) index else this
-            }
-        }
-
-        val size = list.size()
-        if (_index in 0 until size) {
-            //在范围内
-            itemSelectedIndex = _index
-            return
-        }
     }
 }

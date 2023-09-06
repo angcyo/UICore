@@ -36,12 +36,14 @@ interface ILabelItem : IAutoInitItem {
     }
 }
 
+/**等同[itemLabel]*/
 var ILabelItem.itemLabelText: CharSequence?
     get() = labelItemConfig.itemLabelText
     set(value) {
         labelItemConfig.itemLabelText = value
     }
 
+/**等同[itemLabelText]*/
 var ILabelItem.itemLabel: CharSequence?
     get() = labelItemConfig.itemLabelText
     set(value) {

@@ -39,6 +39,10 @@ interface IAutoInitItem : IDslItem {
         if (this is ITextItem) {
             initTextItem(itemHolder, itemPosition, adapterItem, payloads)
         }
+        //2023-9-5
+        if (this is IOperateEditItem) {
+            initOperateEditItem(itemHolder, itemPosition, adapterItem, payloads)
+        }
         if (this is IEditItem) {
             initEditItem(itemHolder, itemPosition, adapterItem, payloads)
         }
