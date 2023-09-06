@@ -10,7 +10,7 @@ import com.angcyo.widget.DslViewHolder
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/09/05
  */
-class LPLabelWheelItem : DslAdapterItem(), ILabelItem, IWheelItem {
+open class LPLabelWheelItem : DslAdapterItem(), ILabelItem, IWheelItem {
 
     override var labelItemConfig: LabelItemConfig = LabelItemConfig()
 

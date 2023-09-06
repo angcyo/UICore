@@ -105,6 +105,9 @@ var IWheelItem.itemSelectedIndex
     get() = wheelItemConfig.itemSelectedIndex
     set(value) {
         wheelItemConfig.itemSelectedIndex = value
+        if (this is ITextItem) {
+            itemText = itemWheelText()
+        }
     }
 
 var IWheelItem.itemConfigDialogAction
