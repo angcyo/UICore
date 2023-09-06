@@ -22,7 +22,6 @@ open class PathElement : IRenderElement {
     /**是否可以被选中*/
     var canSelect = true
 
-
     /**画笔*/
     val paint = createPaint(Color.BLACK, Paint.Style.STROKE)
 

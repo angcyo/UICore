@@ -749,6 +749,9 @@ fun List<Path>?.toDrawable(
     return drawable
 }
 
+fun Path?.toBitmap(color: Int) =
+    this?.toListOf().toBitmap(null, createPaint(color))
+
 fun Path?.toBitmap(overrideSize: Float? = null, paint: Paint = createPaint()) =
     this?.toListOf().toBitmap(overrideSize, paint)
 

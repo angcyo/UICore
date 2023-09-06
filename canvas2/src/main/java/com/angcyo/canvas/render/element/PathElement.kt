@@ -26,6 +26,65 @@ import kotlin.math.max
  */
 open class PathElement : BaseElement() {
 
+    companion object {
+
+        /**圆角矩形pathData*/
+        fun roundRectPathData(
+            x: Float,
+            y: Float,
+            w: Float,
+            h: Float,
+            rx: Float = 0f,
+            ry: Float = rx,
+        ): String {
+            return if (rx > 0 && ry > 0) {
+                val r = x + w
+                val b = y + h
+                buildString {
+                    append("M${x + rx},${y}")
+                    append("h${w - rx * 2}")
+                    append("Q${r},${y} ${r},${y + ry}")
+                    append("v${h - ry * 2}")
+                    append("Q${r},${b} ${r - rx},${b}")
+                    append("h-${w - rx * 2}")
+                    append("Q${x},${b} ${x},${b - ry}")
+                    append("v-${h - ry * 2}")
+                    append("Q${x},${y} ${x + rx},${y}")
+                    append("z")
+                }
+            } else {
+                buildString {
+                    append("M${x},${y}")
+                    append("h${w}")
+                    append("v${h}")
+                    append("h-${w}")
+                }
+            }
+        }
+
+        /**椭圆/圆pathData
+         * ellipse oval
+         * [cx] [cy] 圆心坐标
+         * [rx] [ry] 椭圆的半径
+         * */
+        fun ovalPathData(cx: Float, cy: Float, rx: Float, ry: Float = rx): String = buildString {
+            val width = rx * 2
+            val height = ry * 2
+            val kappa = 0.5522848 // 4 * ((√(2) - 1) / 3)
+            val ox = (width / 2.0) * kappa // control point offset horizontal
+            val oy = (height / 2.0) * kappa // control point offset vertical
+            //val xe = cx + width / 2.0 // x-end
+            //val ye = cy + height / 2.0 // y-end
+
+            append("M${cx - width / 2},${cy}")
+            append("C${cx - width / 2},${cy - oy} ${cx - ox},${cy - height / 2} ${cx},${cy - height / 2}")
+            append("C${cx + ox},${cy - height / 2} ${cx + width / 2},${cy - oy} ${cx + width / 2},${cy}")
+            append("C${cx + width / 2},${cy + oy} ${cx + ox},${cy + height / 2} ${cx},${cy + height / 2}")
+            append("C${cx - ox},${cy + height / 2} ${cx - width / 2},${cy + oy} ${cx - width / 2},${cy}")
+            //append("Z")
+        }
+    }
+
     /**需要绘制的路径原始数据*/
     var pathList: List<Path>? = null
 
