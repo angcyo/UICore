@@ -8,6 +8,7 @@ import com.angcyo.item.style.ICheckGroupItem
 import com.angcyo.item.style.ILabelItem
 import com.angcyo.item.style.LabelItemConfig
 import com.angcyo.item.style.itemCheckItems
+import com.angcyo.item.style.itemCheckLayoutId
 import com.angcyo.item.style.itemCheckedItems
 import com.angcyo.item.style.itemMultiMode
 import com.angcyo.library.ex.dpi
@@ -54,6 +55,8 @@ open class DslCheckGroupItem : DslAdapterItem(), ILabelItem, ICheckGroupItem {
         itemCheckedItems //已选中的选项
 
         itemMultiMode //选择模式
+
+        itemCheckLayoutId //选项布局
     }
 
     override fun onItemBind(
