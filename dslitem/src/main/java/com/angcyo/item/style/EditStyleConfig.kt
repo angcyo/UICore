@@ -39,6 +39,11 @@ class EditStyleConfig : TextStyleConfig() {
     /**输入过滤器*/
     var editInputFilterList = mutableListOf<InputFilter>()
 
+    /**
+     * 需要[DslEditText]支持
+     * [com.angcyo.widget.edit.DslEditText.useCharLengthFilter]*/
+    var useCharLengthFilter = false
+
     /**输入限制, 此属性和[editInputFilterList]互斥
      * [R.string.lib_number_digits]
      * [R.string.lib_password_digits]
@@ -89,6 +94,7 @@ class EditStyleConfig : TextStyleConfig() {
 
                 if (editMaxInputLength > 0) {
                     if (this is DslEditText) {
+                        useCharLengthFilter = this@EditStyleConfig.useCharLengthFilter
                         setMaxLength(editMaxInputLength)
                     } else {
                         addFilter(InputFilter.LengthFilter(editMaxInputLength))
