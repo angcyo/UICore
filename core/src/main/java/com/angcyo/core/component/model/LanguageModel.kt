@@ -288,8 +288,15 @@ class LanguageModel : ViewModel() {
             return locale.displayName //中文 (简体中文,中国)
         }
 
+        /**[Locale]
+         * [com.angcyo.core.component.model.LanguageModel.Companion.getCurrentLanguageTag]*/
         fun createLanguageForTag(languageTag: String): Locale {
             return Locale.forLanguageTag(languageTag)
+        }
+
+        /**判断当前预览环境是否是中文*/
+        fun isChinese(): Boolean {
+            return getCurrentLanguage().lowercase().startsWith("zh")
         }
     }
 
@@ -300,35 +307,36 @@ class LanguageModel : ViewModel() {
     /**当前app的语言 */
     val localData: MutableLiveData<Locale?> = vmData(null)
 
-    private val languageActivityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
-        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-            changeAppLanguage(activity, localData.value, false)
+    private val languageActivityLifecycleCallbacks =
+        object : Application.ActivityLifecycleCallbacks {
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+                changeAppLanguage(activity, localData.value, false)
+            }
+
+            override fun onActivityStarted(activity: Activity) {
+
+            }
+
+            override fun onActivityResumed(activity: Activity) {
+                //L.i("onActivityResumed")
+            }
+
+            override fun onActivityPaused(activity: Activity) {
+
+            }
+
+            override fun onActivityStopped(activity: Activity) {
+
+            }
+
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+                //L.i("onActivitySaveInstanceState")
+            }
+
+            override fun onActivityDestroyed(activity: Activity) {
+
+            }
         }
-
-        override fun onActivityStarted(activity: Activity) {
-
-        }
-
-        override fun onActivityResumed(activity: Activity) {
-            //L.i("onActivityResumed")
-        }
-
-        override fun onActivityPaused(activity: Activity) {
-
-        }
-
-        override fun onActivityStopped(activity: Activity) {
-
-        }
-
-        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-            //L.i("onActivitySaveInstanceState")
-        }
-
-        override fun onActivityDestroyed(activity: Activity) {
-
-        }
-    }
 
     /**需要为每一个[Activity]都更新语言配置*/
     @CallPoint
