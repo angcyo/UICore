@@ -14,5 +14,6 @@
     <string name="ui_add">Add</string>
     <string name="ui_edit">Edit</string>
     <string name="ui_confirm">Confirm</string>
+    <string name="ui_choose">Please choose</string>
 
 </resources>

@@ -4,6 +4,7 @@ import com.angcyo.dialog2.R
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.ILabelItem
 import com.angcyo.item.style.LabelItemConfig
+import com.angcyo.library.ex._string
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -27,7 +28,9 @@ open class LPLabelWheelItem : DslAdapterItem(), ILabelItem, IWheelItem {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-        itemHolder.tv(R.id.lib_text_view)?.text = itemWheelText()
+        val wheelText = itemWheelText()
+        itemHolder.tv(R.id.lib_text_view)?.text =
+            if (wheelText.isNullOrEmpty()) _string(R.string.ui_choose) else wheelText
         itemHolder.click(R.id.lib_content_wrap_layout) {
             showItemWheelDialog(it.context)
         }
