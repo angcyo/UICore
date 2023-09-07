@@ -87,6 +87,9 @@ android {
         versionName V_NAME
 
         consumerProguardFiles 'consumer-rules.pro'
+
+        //Cannot fit requested classes in a single dex file (# methods: 74307 > 65536)
+        multiDexEnabled true
     }
 
     buildTypes {
