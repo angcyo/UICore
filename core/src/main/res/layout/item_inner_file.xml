@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/lib_xhdpi"
+    android:paddingVertical="@dimen/lib_hdpi"
+    tools:background="@color/transparent20">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lib_item_root_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/core_inner_file_bg_selector"
+        android:padding="@dimen/lib_xhdpi">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_image_view"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:srcCompat="@drawable/core_file_excel_svg" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lib_text_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:padding="@dimen/lib_hdpi"
+            app:layout_constraintBottom_toBottomOf="@id/lib_image_view"
+            app:layout_constraintLeft_toRightOf="@id/lib_image_view"
+            app:layout_constraintRight_toLeftOf="@id/lib_choose_view"
+            app:layout_constraintTop_toTopOf="@id/lib_image_view"
+            tools:text="Bread display h....lpb\nBread display h....lpb" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_choose_view"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/lib_bg2_selector"
+            android:padding="@dimen/lib_hdpi"
+            app:layout_constraintBottom_toBottomOf="@id/lib_image_view"
+            app:layout_constraintLeft_toRightOf="@id/lib_text_view"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/lib_image_view"
+            app:srcCompat="@drawable/core_circle_check_selector" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

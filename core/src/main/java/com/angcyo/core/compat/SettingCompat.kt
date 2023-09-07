@@ -9,6 +9,8 @@ import com.angcyo.library.ex.baseConfig
 import ezy.assist.compat.SettingsCompat
 
 /**
+ * 设置兼容
+ *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/05/26
  */

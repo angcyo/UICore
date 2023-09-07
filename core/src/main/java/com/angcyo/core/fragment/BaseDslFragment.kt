@@ -1,16 +1,24 @@
 package com.angcyo.core.fragment
 
 import android.os.Bundle
+import androidx.annotation.AnyThread
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.behavior.refresh.IRefreshContentBehavior
 import com.angcyo.core.R
-import com.angcyo.dsladapter.*
+import com.angcyo.dsladapter.DslAdapter
+import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.DslAdapterStatusItem
+import com.angcyo.dsladapter.DslItemDecoration
+import com.angcyo.dsladapter.HoverItemDecoration
+import com.angcyo.dsladapter.PlaceholderDslAdapter
 import com.angcyo.dsladapter.data.SingleDataUpdate
 import com.angcyo.dsladapter.data.loadDataEndIndex
 import com.angcyo.dsladapter.data.resetRender
 import com.angcyo.dsladapter.data.updateAdapter
 import com.angcyo.dsladapter.item.IFragmentItem
+import com.angcyo.dsladapter.loadingStatus
+import com.angcyo.dsladapter.onRefreshOrLoadMore
 import com.angcyo.library.model.Page
 import com.angcyo.widget.recycler.noItemChangeAnim
 import kotlin.reflect.KClass
@@ -142,6 +150,7 @@ open class BaseDslFragment : BaseTitleFragment() {
     }
 
     /**数据加载完成后, 调用此方法*/
+    @AnyThread
     fun <Item : DslAdapterItem, Bean> loadDataEnd(
         itemClass: Class<Item>,
         dataList: List<Bean>?,
@@ -153,6 +162,7 @@ open class BaseDslFragment : BaseTitleFragment() {
         }
     }
 
+    @AnyThread
     fun <Item : DslAdapterItem, Bean> loadDataEnd(
         itemClass: KClass<Item>,
         dataList: List<Bean>?,
@@ -162,6 +172,7 @@ open class BaseDslFragment : BaseTitleFragment() {
         loadDataEnd(itemClass.java, dataList, error, initItem)
     }
 
+    @AnyThread
     fun <Item : DslAdapterItem, Bean> loadDataEndIndex(
         itemClass: Class<Item>,
         dataList: List<Bean>?,
@@ -174,6 +185,7 @@ open class BaseDslFragment : BaseTitleFragment() {
         }
     }
 
+    @AnyThread
     fun <Item : DslAdapterItem, Bean> loadDataEndIndex(
         itemClass: KClass<Item>,
         dataList: List<Bean>?,
@@ -184,6 +196,7 @@ open class BaseDslFragment : BaseTitleFragment() {
     }
 
     /**简单的加载多类型的item*/
+    @AnyThread
     fun <T> resetRender(data: T?, error: Throwable? = null, render: DslAdapter.(data: T) -> Unit) {
         finishRefresh()
         _adapter.resetRender(data, error, page, render)

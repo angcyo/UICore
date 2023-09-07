@@ -5,6 +5,7 @@ import android.widget.ImageView
 import com.angcyo.core.R
 import com.angcyo.core.component.file.FileItem
 import com.angcyo.core.component.file.file
+import com.angcyo.core.component.manage.InnerFileManageModel
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex.alpha
@@ -20,7 +21,7 @@ import com.angcyo.widget.base.setRBgDrawable
 import com.angcyo.widget.span.span
 
 /**
- *
+ * 文件选择器, 文件列表item
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/04
@@ -30,9 +31,20 @@ class DslFileSelectorItem : DslAdapterItem() {
     companion object {
 
         /**获取文件类型图标
-         * [fileName] 文件名, 包含后缀*/
-        fun getFileIconRes(fileName: String?, def: Int = R.drawable.core_file_icon_unknown): Int {
+         * [fileName] 文件名, 包含后缀
+         * [def] 未知类型时的默认图标
+         * [extMap] 自定义扩展名对应的图标
+         * */
+        fun getFileIconRes(
+            fileName: String?,
+            extMap: Map<String, Int>? = InnerFileManageModel.innerFileIconMap,
+            def: Int = R.drawable.core_file_icon_unknown,
+        ): Int {
             val name = fileName?.lowercase() ?: return def
+            val extName = name.substringAfterLast(".")
+            extMap?.get(extName)?.let {
+                return it
+            }
             return when {
                 name.isImageType() -> R.drawable.core_file_icon_picture
                 name.isVideoType() -> R.drawable.core_file_icon_video

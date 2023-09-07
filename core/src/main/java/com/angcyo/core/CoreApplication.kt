@@ -32,6 +32,7 @@ import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.LogFile
 import com.angcyo.library.utils.toLogFilePath
 import com.angcyo.library.utils.writeTo
+import com.angcyo.viewmodel.vmDataNull
 import com.angcyo.widget.edit.BaseEditDelegate
 import me.jessyan.progressmanager.ProgressManager
 import org.lsposed.hiddenapibypass.HiddenApiBypass
@@ -45,7 +46,7 @@ import org.lsposed.hiddenapibypass.HiddenApiBypass
 open class CoreApplication : LibApplication(), ViewModelStoreOwner {
 
     companion object {
-
+        
         /**写入文件log的级别*/
         var LOG_FILE_LEVEl = L.INFO
 

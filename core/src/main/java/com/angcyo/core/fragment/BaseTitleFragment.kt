@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.AnyThread
 import androidx.annotation.DrawableRes
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
@@ -432,6 +433,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     }
 
     /**开始刷新*/
+    @AnyThread
     open fun startRefresh() {
         onMain(true) {
             _laidOut {
@@ -441,6 +443,7 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
     }
 
     /**结束刷新*/
+    @AnyThread
     open fun finishRefresh() {
         onMain(true) {
             _laidOut {
@@ -466,7 +469,10 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
 
     //<editor-fold desc="扩展方法">
 
-    /**颜色受到影响*/
+    /**颜色受到影响
+     * [com.angcyo.core.fragment.FragmentConfig.titleItemTextColor]
+     * [com.angcyo.core.fragment.FragmentConfig.titleItemIconColor]
+     * */
     fun appendLeftItem(
         text: CharSequence? = null,
         @DrawableRes ico: Int = undefined_res,
@@ -476,7 +482,10 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         return leftControl()?.appendItem(text, ico, action, onClick)
     }
 
-    /**颜色受到影响*/
+    /**颜色受到影响
+     * [com.angcyo.core.fragment.FragmentConfig.titleItemTextColor]
+     * [com.angcyo.core.fragment.FragmentConfig.titleItemIconColor]
+     * */
     fun appendRightItem(
         text: CharSequence? = null,
         @DrawableRes ico: Int = undefined_res,

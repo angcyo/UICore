@@ -82,6 +82,13 @@ open class Page {
         requestPageSize = Int.MAX_VALUE
     }
 
+    /**文件分页查询*/
+    open fun filePage() {
+        firstPageIndex = 0
+        _currentPageIndex = firstPageIndex
+        requestPageIndex = firstPageIndex
+    }
+
     /**需要降序排序字段(从大->小), 多个用;分割*/
     var desc: String? = null
 

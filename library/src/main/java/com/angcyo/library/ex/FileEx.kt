@@ -85,7 +85,11 @@ fun File.md5(algorithm: String = "MD5"): String? {
 
 fun File.copyTo(path: String, overwrite: Boolean = true) = copyTo(File(path), overwrite)
 
+/**创建一个文件对象*/
 fun String.file(): File = File(this)
+
+/**使用文件夹路径一个指定文件名的文件对象*/
+fun String.file(fileName: String): File = File(this, fileName)
 
 fun String?.fileName(): String? {
     return this?.file()?.name
