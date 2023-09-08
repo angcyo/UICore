@@ -22,5 +22,7 @@
     <string name="core_file_import">导入文件</string>
     <string name="core_import_success">导入成功</string>
     <string name="core_import_fail">导入失败</string>
+    <string name="core_trash_delete">拖动至此删除</string>
+    <string name="core_trash_delete_tip">松手即可删除</string>
 
 </resources>
