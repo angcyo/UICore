@@ -193,7 +193,7 @@ open class DslViewHolder(
         }
     }
 
-    fun clickItem(listener: View.OnClickListener?) {
+    fun clickItem(listener: View.OnClickListener? = null) {
         click(itemView, listener)
     }
 
@@ -222,6 +222,9 @@ open class DslViewHolder(
 
     fun click(view: View?, listener: View.OnClickListener?) {
         view?.setOnClickListener(listener)
+        if (listener == null) {
+            view?.isClickable = false
+        }
     }
 
     fun click(view: View?, listener: ClickAction? = null) {
