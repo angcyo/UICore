@@ -28,6 +28,7 @@ import com.angcyo.library.app
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.component.pool.acquireTempRect
 import com.angcyo.library.component.pool.release
+import com.angcyo.library.extend.IToText
 import com.angcyo.library.utils.PATTERN_EMAIL
 import com.angcyo.library.utils.PATTERN_MOBILE_SIMPLE
 import com.angcyo.library.utils.PATTERN_URL
@@ -206,6 +207,7 @@ fun CharSequence?.toString(): String = orString("")
 
 fun Any?.toStr(): String = when (this) {
     null -> ""
+    is IToText -> toText().toStr()
     is Char -> java.lang.String.valueOf(this)
     is String -> this
     else -> toString()
