@@ -90,6 +90,9 @@ class DragCallbackHelper : ItemTouchHelper.Callback() {
     /**是否触发过[ACTION_STATE_SWIPE]*/
     var _swipeHappened = false
 
+    /**是否开始了拖拽*/
+    var _isStartDrag = false
+
     /**拖拽排序后的回调, 数据源可以是[DslAdapter]中的[headerItems] [dataItems] [footerItems]其中之一
      * [fromList] [fromPosition]所在的数据源, 和对应的位置
      * [toList] [toPosition]所在的数据源, 和对应的位置
@@ -99,8 +102,7 @@ class DragCallbackHelper : ItemTouchHelper.Callback() {
 
     /**当[item]被滑动删除后的回调
      * [item] 被删除的item*/
-    var onItemSwipeDeleted: ((item: DslAdapterItem) -> Unit)? =
-        null
+    var onItemSwipeDeleted: ((item: DslAdapterItem) -> Unit)? = null
 
     /**
      * 返回[viewHolder] 能够支持的 [ACTION_STATE_DRAG] [ACTION_STATE_SWIPE] 方向.
@@ -127,6 +129,7 @@ class DragCallbackHelper : ItemTouchHelper.Callback() {
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
+        _isStartDrag = true
         val fromPosition = viewHolder.adapterPosition
         val toPosition = target.adapterPosition
 
@@ -226,22 +229,25 @@ class DragCallbackHelper : ItemTouchHelper.Callback() {
     }
 
     /**[clearView]的回调*/
-    var onClearView: (recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) -> Unit =
+    var onClearViewAction: (recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) -> Unit =
         { _, _ ->
 
         }
 
     /**
-     * 先会触发[onSelectedChanged]的[ACTION_STATE_IDLE]
+     * 先会触发[onSelectedChangedAction]的[ACTION_STATE_IDLE]
      * 手势释放后回调.
      * 如果是快速的侧滑删除, [clearView] 可能无法被执行*/
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         super.clearView(recyclerView, viewHolder)
-        onClearView.invoke(recyclerView, viewHolder)
+        onClearViewAction.invoke(recyclerView, viewHolder)
+        _isStartDrag = false
+        dragTagData = null
+        swipeTagData = null
     }
 
-    /**[onSelectedChanged]的回调*/
-    var onSelectedChanged: (viewHolder: RecyclerView.ViewHolder?, actionState: Int) -> Unit =
+    /**[onSelectedChangedAction]的回调*/
+    var onSelectedChangedAction: (viewHolder: RecyclerView.ViewHolder?, actionState: Int) -> Unit =
         { _, _ -> }
 
     /**手势选中[viewHolder]状态改变时触发
@@ -252,7 +258,7 @@ class DragCallbackHelper : ItemTouchHelper.Callback() {
      * */
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
         super.onSelectedChanged(viewHolder, actionState)
-        onSelectedChanged.invoke(viewHolder, actionState)
+        onSelectedChangedAction.invoke(viewHolder, actionState)
 
         if (viewHolder != null) {
             _dragHappened = false
@@ -264,7 +270,7 @@ class DragCallbackHelper : ItemTouchHelper.Callback() {
     var enableSwipeTip = true
 
     /**提示文本*/
-    var swipeTipText: CharSequence = "滑动可删除"
+    var swipeTipText: CharSequence = "继续滑动可删除"
         set(value) {
             val old = field
             field = value
@@ -363,15 +369,26 @@ class DragCallbackHelper : ItemTouchHelper.Callback() {
         _itemTouchHelper?.attachToRecyclerView(null)
     }
 
+    /**标签数据*/
+    var dragTagData: Any? = null
+
     /**主动开始拖拽*/
-    fun startDrag(viewHolder: RecyclerView.ViewHolder) {
+    fun startDrag(viewHolder: RecyclerView.ViewHolder, tag: Any? = null) {
+        dragTagData = tag
+        _isStartDrag = true
         _itemTouchHelper?.startDrag(viewHolder)
     }
 
+    /**标签数据*/
+    var swipeTagData: Any? = null
+
     /**主动开始侧滑*/
-    fun startSwipe(viewHolder: RecyclerView.ViewHolder) {
+    fun startSwipe(viewHolder: RecyclerView.ViewHolder, tag: Any? = null) {
+        swipeTagData = tag
+        _isStartDrag = false
         _itemTouchHelper?.startSwipe(viewHolder)
     }
 
     //</editor-fold desc="操作方法">
+
 }
