@@ -60,21 +60,29 @@ class InnerFileManageModel : ViewModel() {
     /**导入状态通知*/
     val importStateOnceData = vmDataOnce<Boolean>()
 
-    /**加载内部文件列表, 支持翻页*/
+    /**选择文件通知*/
+    val innerSelectedFileOnceData = vmDataOnce<List<File>>()
+
+    /**加载内部文件列表, 支持翻页
+     * [filterExtList] 需要过滤的扩展名列表, 不指定则不过滤. 扩展名不包含.
+     * */
     @CallPoint
-    fun loadInnerFile(page: Page): List<File> {
+    fun loadInnerFile(page: Page, filterExtList: List<String>? = null): List<File> {
         val result = mutableListOf<File>()
-        innerFilePath.file().listFiles()?.sortedByDescending { it.lastModified() }?.apply {
-            val startIndex = page.requestPageIndex * page.requestPageSize
-            for ((index, file) in this.withIndex()) {
-                if (index >= startIndex) {
-                    result.add(file)
-                }
-                if (result.size() >= page.requestPageSize) {
-                    break
+        innerFilePath.file().listFiles()
+            ?.filter { filterExtList.isNullOrEmpty() || filterExtList.contains(it.extension.lowercase()) }
+            ?.sortedByDescending { it.lastModified() }
+            ?.apply {
+                val startIndex = page.requestPageIndex * page.requestPageSize
+                for ((index, file) in this.withIndex()) {
+                    if (index >= startIndex) {
+                        result.add(file)
+                    }
+                    if (result.size() >= page.requestPageSize) {
+                        break
+                    }
                 }
             }
-        }
         return result
     }
 

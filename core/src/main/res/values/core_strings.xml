@@ -15,6 +15,9 @@
     <string name="ui_edit">Edit</string>
     <string name="ui_confirm">Confirm</string>
     <string name="ui_choose">Please choose</string>
+    <string name="ui_warn">Warning</string>
+    <string name="ui_delete">Delete</string>
+    <string name="ui_delete_tip">After deletion, it is not recoverable, do you want to continue?</string>
     <string name="core_file_list">FileList</string>
     <string name="core_file_import">Import File</string>
     <string name="core_import_success">Import Success</string>

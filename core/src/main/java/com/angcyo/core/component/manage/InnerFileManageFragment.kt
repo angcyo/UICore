@@ -1,16 +1,25 @@
 package com.angcyo.core.component.manage
 
+import android.content.Context
 import android.os.Bundle
+import com.angcyo.base.dslAHelper
+import com.angcyo.base.removeThis
 import com.angcyo.core.R
 import com.angcyo.core.component.model.LanguageModel
 import com.angcyo.core.fragment.BaseDslFragment
 import com.angcyo.core.vmApp
 import com.angcyo.dialog.itemsDialog
+import com.angcyo.dsladapter.allSelectedItem
+import com.angcyo.getData
 import com.angcyo.http.rx.doBack
+import com.angcyo.library.annotation.DSL
 import com.angcyo.library.component.appBean
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.openApp
 import com.angcyo.library.toastQQ
+import com.angcyo.putData
+import com.angcyo.viewmodel.updateValue
+import java.io.File
 
 /**
  * 内部的文件管理界面
@@ -21,6 +30,13 @@ open class InnerFileManageFragment : BaseDslFragment() {
 
     val innerFileManageModel = vmApp<InnerFileManageModel>()
 
+    /**选择模式下的参数*/
+    var innerFileSelectParam = InnerFileSelectParam()
+
+    /**是否是选择模式*/
+    val _isSelectModel: Boolean
+        get() = innerFileSelectParam.maxSelectFileCount > 0
+
     init {
         fragmentTitle = _string(R.string.core_file_list)
 
@@ -30,6 +46,13 @@ open class InnerFileManageFragment : BaseDslFragment() {
         enableAdapterRefresh = true
 
         page.filePage()
+
+        contentLayoutId = R.layout.layout_inner_file_manage
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        innerFileSelectParam = getData() ?: innerFileSelectParam
     }
 
     override fun initBaseView(savedInstanceState: Bundle?) {
@@ -48,6 +71,18 @@ open class InnerFileManageFragment : BaseDslFragment() {
                 startRefresh()
             }
         }
+
+        _vh.visible(R.id.lib_bottom_wrap_layout, _isSelectModel)
+        _vh.enable(R.id.lib_bottom_wrap_layout, false)
+        _vh.click(R.id.import_button) {
+            val selectList = _adapter.allSelectedItem()
+            if (selectList.isEmpty()) {
+                toastQQ("请选择文件")
+            } else {
+                innerFileManageModel.innerSelectedFileOnceData.updateValue(selectList.map { it.itemData as File })
+                removeThis()
+            }
+        }
     }
 
     override fun onLoadData() {
@@ -55,8 +90,18 @@ open class InnerFileManageFragment : BaseDslFragment() {
 
         doBack {
             //加载文件列表
-            val list = innerFileManageModel.loadInnerFile(page)
-            loadDataEnd(DslInnerFileItem::class, list)
+            val list =
+                innerFileManageModel.loadInnerFile(page, innerFileSelectParam.filterFileExtList)
+            loadDataEnd(DslInnerFileItem::class, list) {
+                itemMaxSelectCount = innerFileSelectParam.maxSelectFileCount
+
+                if (_isSelectModel) {
+                    observeItemChange {
+                        val selectList = itemDslAdapter?.allSelectedItem()
+                        _vh.enable(R.id.lib_bottom_wrap_layout, !selectList.isNullOrEmpty())
+                    }
+                }
+            }
         }
     }
 
@@ -80,7 +125,18 @@ open class InnerFileManageFragment : BaseDslFragment() {
                 }
             }
         }
-
     }
+}
 
+/**快速启动内部文件选择界面*/
+@DSL
+fun Context.innerFileSelectFragment(
+    maxSelectFileCount: Int = 0,
+    filterFileExtList: List<String>? = null
+) {
+    dslAHelper {
+        start(InnerFileManageFragment::class) {
+            putData(InnerFileSelectParam(maxSelectFileCount, filterFileExtList))
+        }
+    }
 }

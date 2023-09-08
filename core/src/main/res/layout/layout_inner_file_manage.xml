@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.angcyo.widget.recycler.DslRecyclerView
+        android:id="@+id/lib_recycler_view"
+        style="@style/LibRecyclerViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:r_layout_manager="V" />
+
+    <FrameLayout
+        android:id="@+id/lib_bottom_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.angcyo.widget.DslButton
+            android:id="@+id/import_button"
+            style="@style/LibButtonBlackSolidStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/lib_item_min_height"
+            android:layout_margin="@dimen/lib_xhdpi"
+            android:text="@string/core_file_import" />
+    </FrameLayout>
+
+</LinearLayout>

@@ -15,6 +15,9 @@
     <string name="ui_edit">编辑</string>
     <string name="ui_confirm">确定</string>
     <string name="ui_choose">请选择</string>
+    <string name="ui_warn">警告</string>
+    <string name="ui_delete">删除</string>
+    <string name="ui_delete_tip">删除后,不可恢复,是否继续?</string>
     <string name="core_file_list">文件列表</string>
     <string name="core_file_import">导入文件</string>
     <string name="core_import_success">导入成功</string>

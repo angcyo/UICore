@@ -371,7 +371,11 @@ fun File.shareVideo(context: Context = app(), content: String?) {
     )
 }
 
+/**是否是文件, 而非文件夹*/
 fun File?.isFile(): Boolean = this?.isFile == true
+
+/**文件是否存在*/
+fun File?.isFileExists(): Boolean = this?.exists() == true
 
 fun File?.isFolder(): Boolean = this?.isDirectory == true
 

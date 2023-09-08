@@ -204,7 +204,8 @@ fun CharSequence?.orString(default: CharSequence = "--"): String =
 
 fun CharSequence?.toString(): String = orString("")
 
-fun Any.toStr(): String = when (this) {
+fun Any?.toStr(): String = when (this) {
+    null -> ""
     is Char -> java.lang.String.valueOf(this)
     is String -> this
     else -> toString()
