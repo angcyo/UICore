@@ -55,8 +55,8 @@ class DslSendFileItem : DslAdapterItem() {
         }
     }
 
-    override fun onSetItemData(data: Any?) {
-        super.onSetItemData(data)
+    override fun onSelfSetItemData(data: Any?) {
+        super.onSelfSetItemData(data)
         itemSendSize = itemSendUri?.inputStream()?.available()
     }
 

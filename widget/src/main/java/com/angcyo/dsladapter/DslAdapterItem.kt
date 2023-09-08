@@ -265,11 +265,11 @@ open class DslAdapterItem : LifecycleOwner {
     var itemData: Any? = null
         set(value) {
             field = value
-            onSetItemData(value)
+            onSelfSetItemData(value)
         }
 
     /**[itemData]*/
-    open fun onSetItemData(data: Any?) {
+    open fun onSelfSetItemData(data: Any?) {
 
     }
 

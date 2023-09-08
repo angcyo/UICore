@@ -39,8 +39,8 @@ class DslPickerMiniImageItem : DslImageItem() {
         itemLayoutId = R.layout.dsl_picker_mini_image_layout
     }
 
-    override fun onSetItemData(data: Any?) {
-        super.onSetItemData(data)
+    override fun onSelfSetItemData(data: Any?) {
+        super.onSelfSetItemData(data)
         if (data is LoaderMedia) {
             //显示不下
             //itemMediaDuration = value.duration
