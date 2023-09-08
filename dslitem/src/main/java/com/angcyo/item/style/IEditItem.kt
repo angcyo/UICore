@@ -156,10 +156,18 @@ var IEditItem.itemEditInputType: Int
         editItemConfig.itemEditTextStyle.editInputType = value
     }
 
+/**最大输入字符长度*/
 var IEditItem.itemMaxInputLength: Int
     get() = editItemConfig.itemEditTextStyle.editMaxInputLength
     set(value) {
         editItemConfig.itemEditTextStyle.editMaxInputLength = value
+    }
+
+/**最大编辑行数*/
+var IEditItem.itemMaxEditLines: Int?
+    get() = editItemConfig.itemEditTextStyle.editMaxLine
+    set(value) {
+        editItemConfig.itemEditTextStyle.editMaxLine = value
     }
 
 /**输入过滤*/

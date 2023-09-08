@@ -221,7 +221,7 @@ fun CharSequence.wrapLog() = "\n${nowTimeString()} ${Thread.currentThread().name
 fun <T> Iterable<T>.connect(
     divide: CharSequence = "," /*连接符*/,
     removeLast: Boolean = divide.isNotEmpty() /*是否删除最后一个字符*/,
-    convert: (T) -> CharSequence? = { it.toString() }
+    convert: (T) -> CharSequence? = { it.toStr() }
 ): String {
     return buildString {
         this@connect.forEach {
@@ -1116,9 +1116,13 @@ fun String.isFullRTL(): Boolean {
     }
 }
 
+/**支持双向字符序列
+ * [android.icu.text.Bidi]*/
 fun CharSequence.reverseCharSequenceIfRtl(): CharSequence = toStr().reverseStringIfRtl()
 
-/**如果字符方向是RTL, 则反序字符串*/
+/**如果字符方向是RTL, 则反序字符串
+ * [android.icu.text.Bidi]
+ * */
 fun String.reverseStringIfRtl(): String {
     if (isRTL()) {
         val result = mutableListOf<String>()
