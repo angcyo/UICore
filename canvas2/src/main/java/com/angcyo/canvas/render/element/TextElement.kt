@@ -211,7 +211,7 @@ open class TextElement : BaseElement() {
         val newWidth = renderProperty.width
         val newHeight = renderProperty.height
 
-        renderProperty.anchorX = renderProperty.anchorX - (newWidth - oldWidth) / 2
+        renderProperty.anchorX -= (newWidth - oldWidth) / 2
         if (curvature < 0) {
             //上弧, 保证顶部不变
             renderProperty.anchorY = if (oldCurvature >= 0) {

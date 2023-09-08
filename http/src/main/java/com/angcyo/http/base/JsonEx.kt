@@ -388,9 +388,19 @@ inline fun <reified T> String?.fromJson2(): T? =
 
 //</editor-fold desc="Json 解析">
 
-/**使用json进行深拷贝*/
+/**使用json进行深拷贝
+ * [copyByJson]*/
 fun <T> T.copyByJson(classOfT: Class<T>): T {
     return toJson().fromJson<T>(classOfT)!!
+}
+
+/**
+ * ```
+ * copyByJson(listType(LPVariableBean::class.java))
+ * ```
+ * [copyByJson]*/
+fun <T> T.copyByJson(type: Type): T {
+    return toJson().fromJson<T>(type)!!
 }
 
 fun Any.toJsonElement() = (if (this is String) this else toJson()).fromJson(JsonElement::class.java)
