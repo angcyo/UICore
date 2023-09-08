@@ -5,6 +5,9 @@ import com.angcyo.widget.layout.touch.TouchListener
 
 /**
  * 手势代理
+ *
+ * [ITouchDelegate]
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/11/19

@@ -162,7 +162,13 @@ open class DslAdapterItem : LifecycleOwner {
         }
     }
 
-    /**更新选项*/
+    /**更新选项
+     * [updateItemSelect]
+     * [updateItemSelector]
+     * [com.angcyo.dsladapter.DslAdapterItem.updateItemSelected]
+     * */
+    @UpdateByDiff
+    @UpdateByNotify
     open fun updateItemSelector(select: Boolean, notifyUpdate: Boolean = false) {
         itemDslAdapter?.itemSelectorHelper?.selector(
             SelectorParams(
@@ -177,7 +183,13 @@ open class DslAdapterItem : LifecycleOwner {
         }
     }
 
-    /**更新选项*/
+    /**更新选项
+     * [updateItemSelect]
+     * [updateItemSelector]
+     * [com.angcyo.dsladapter.DslAdapterItem.updateItemSelected]
+     * */
+    @UpdateByDiff
+    @UpdateByNotify
     open fun updateItemSelect(
         select: Boolean,
         selectorParams: SelectorParams = SelectorParams(
@@ -278,6 +290,7 @@ open class DslAdapterItem : LifecycleOwner {
     var itemBackgroundDrawable: Drawable? = UndefinedDrawable()
 
     /**是否激活item, 目前只能控制click, longClick事件不被回调*/
+    @UpdateByLocal
     var itemEnable: Boolean = true
         set(value) {
             field = value
@@ -1408,6 +1421,8 @@ open class DslAdapterItem : LifecycleOwner {
         { from, to -> from != to }
 
     /**监听item select改变事件*/
+    @UpdateByDiff
+    @UpdateByNotify
     var onItemSelectorChange: ItemSelectAction = {
         if (it.updateItemDepend) {
             updateItemOnHaveDepend()

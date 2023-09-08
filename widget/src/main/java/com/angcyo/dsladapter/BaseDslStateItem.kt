@@ -100,6 +100,7 @@ abstract class BaseDslStateItem : DslAdapterItem() {
 
     open fun _onItemStateChange(old: Int, value: Int) {
         if (old != value) {
+            //itemChanging = true, 不能使用此变量
             onItemStateChange(old, value)
         }
     }

@@ -218,6 +218,10 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     //<editor-fold desc="其他方法">
 
+    /**
+     * 调度diff更新之前的通知事件
+     * [com.angcyo.dsladapter.DslDataFilter.UpdateTaskRunnable.onDiffResult]
+     * */
     override fun onDispatchUpdatesBefore(dslAdapter: DslAdapter) {
         dispatchUpdatesBeforeList.forEach {
             it.invoke(dslAdapter)
@@ -226,6 +230,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     /**
      * [Diff]操作结束之后的通知事件
+     * [com.angcyo.dsladapter.DslDataFilter.UpdateTaskRunnable.onDiffResult]
      * */
     override fun onDispatchUpdatesAfter(dslAdapter: DslAdapter) {
         onDispatchUpdatesAfterOnce?.invoke(dslAdapter)

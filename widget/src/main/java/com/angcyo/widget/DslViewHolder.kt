@@ -16,6 +16,7 @@ import androidx.annotation.MainThread
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.angcyo.library.L
+import com.angcyo.library.ex.ClickAction
 import com.angcyo.library.ex.each
 import com.angcyo.library.ex.eachIndex
 import com.angcyo.library.ex.replace
@@ -223,21 +224,41 @@ open class DslViewHolder(
         view?.setOnClickListener(listener)
     }
 
-    fun click(view: View?, listener: (View) -> Unit) {
-        view?.setOnClickListener { listener.invoke(it) }
-    }
-
-    fun longClickItem(listener: (View) -> Unit) {
-        itemView.setOnLongClickListener { v ->
-            listener(v)
-            true
+    fun click(view: View?, listener: ClickAction? = null) {
+        view?.apply {
+            if (listener == null) {
+                setOnClickListener(null)
+            } else {
+                setOnClickListener { v ->
+                    listener(v)
+                }
+            }
         }
     }
 
-    fun longClick(@IdRes id: Int, listener: (View) -> Unit) {
-        view(id)?.setOnLongClickListener { v ->
-            listener(v)
-            true
+    fun longClickItem(listener: ClickAction? = null) {
+        itemView.apply {
+            if (listener == null) {
+                setOnLongClickListener(null)
+            } else {
+                setOnLongClickListener { v ->
+                    listener(v)
+                    true
+                }
+            }
+        }
+    }
+
+    fun longClick(@IdRes id: Int, listener: ClickAction? = null) {
+        view(id)?.apply {
+            if (listener == null) {
+                setOnLongClickListener(null)
+            } else {
+                setOnLongClickListener { v ->
+                    listener(v)
+                    true
+                }
+            }
         }
     }
 

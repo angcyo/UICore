@@ -4,7 +4,7 @@ import android.view.MotionEvent
 import com.angcyo.widget.layout.touch.TouchListener
 
 /**
- *
+ * [TouchActionDelegate]
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2021/11/19

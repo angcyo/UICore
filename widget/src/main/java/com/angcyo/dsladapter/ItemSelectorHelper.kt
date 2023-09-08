@@ -8,6 +8,8 @@ import com.angcyo.dsladapter.ItemSelectorHelper.Companion.MODEL_SINGLE
 import com.angcyo.dsladapter.ItemSelectorHelper.Companion.OPTION_DESELECT
 import com.angcyo.dsladapter.ItemSelectorHelper.Companion.OPTION_MUTEX
 import com.angcyo.dsladapter.ItemSelectorHelper.Companion.OPTION_SELECT
+import com.angcyo.dsladapter.annotation.UpdateByDiff
+import com.angcyo.dsladapter.annotation.UpdateByNotify
 import com.angcyo.library.L
 import com.angcyo.library.ex.elseNull
 import java.util.concurrent.CopyOnWriteArrayList
@@ -92,6 +94,8 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
      * 选择/取消 单项
      * @param selectorParams 参数
      * */
+    @UpdateByDiff
+    @UpdateByNotify
     fun selector(selectorParams: SelectorParams) {
         _checkModel {
             val item = selectorParams.item
@@ -105,9 +109,11 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
                         selector = OPTION_SELECT
                     })
                 }
+
                 item.isItemCanSelected(item.itemIsSelected, isSelectorItem) -> {
                     _selector(selectorParams)
                 }
+
                 else -> {
                     //不允许被选择
                 }
@@ -215,6 +221,7 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
         } ?: false
     }
 
+    @UpdateByNotify
     fun _selector(selectorParams: SelectorParams) {
         val isSelectorItem = _isSelectItem(selectorParams)
         val item = selectorParams.item
@@ -286,6 +293,7 @@ class ItemSelectorHelper(val dslAdapter: DslAdapter) {
         }
     }
 
+    @UpdateByNotify
     fun _selectorInner(selectorParams: SelectorParams) {
         if (selectorParams.item == null) {
             return
@@ -441,6 +449,8 @@ data class SelectorParams(
      * 传递给
      * [com.angcyo.dsladapter.DslAdapterItem._itemSelectorChange]
      * */
+    @UpdateByDiff
+    @UpdateByNotify
     var updateItemDepend: Boolean = false,
 
     //额外自定义的扩展数据, 自定义传递使用
@@ -461,6 +471,7 @@ data class SelectorParams(
     var notifyWithListEmpty: Boolean = false,
 
     /**是否要调用[androidx.recyclerview.widget.RecyclerView.Adapter.notifyItemChanged(int, java.lang.Object)]*/
+    @UpdateByNotify
     var notifyItemChanged: Boolean = true,
 
     /**参考[androidx.recyclerview.widget.RecyclerView.Adapter.onBindViewHolder(VH, int, java.util.List<java.lang.Object>)]*/
