@@ -29,7 +29,7 @@ data class QrCodeConfig(
      * [com.google.zxing.qrcode.QRCodeWriter.QUIET_ZONE_SIZE]
      * [com.google.zxing.EncodeHintType.MARGIN]
      * */
-    val margin: Int = 4,
+    val margin: Int? = 4,
     /**指定是否应将数据编码为 GS1 标准
      * [com.google.zxing.EncodeHintType.GS1_FORMAT]
      * */
@@ -48,7 +48,7 @@ data class QrCodeConfig(
         character?.let { put(EncodeHintType.CHARACTER_SET, it) }
         //errorCorrection?.let { put(EncodeHintType.ERROR_CORRECTION, it) }
         errorLevel?.let { put(EncodeHintType.ERROR_CORRECTION, it) }
-        put(EncodeHintType.MARGIN, margin)
+        margin?.let { put(EncodeHintType.MARGIN, it) }
         put(EncodeHintType.GS1_FORMAT, gs1Format)
         qrVersion?.let { put(EncodeHintType.QR_VERSION, it) }
         qrMaskPattern?.let { put(EncodeHintType.QR_MASK_PATTERN, it) }

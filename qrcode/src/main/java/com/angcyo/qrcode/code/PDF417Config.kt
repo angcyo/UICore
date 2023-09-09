@@ -40,7 +40,7 @@ data class PDF417Config(
      * [com.google.zxing.pdf417.PDF417Writer.WHITE_SPACE]
      * [com.google.zxing.EncodeHintType.MARGIN]
      * */
-    val margin: Int = 30,
+    val margin: Int? = 30,
 
     /**错误级别, [0~8]
      * [com.google.zxing.pdf417.PDF417Writer.DEFAULT_ERROR_CORRECTION_LEVEL]
@@ -55,7 +55,7 @@ data class PDF417Config(
         put(EncodeHintType.PDF417_COMPACT, compact)
         put(EncodeHintType.PDF417_COMPACTION, compaction)
         dimensions?.let { put(EncodeHintType.PDF417_DIMENSIONS, it) }
-        put(EncodeHintType.MARGIN, margin)
+        margin?.let { put(EncodeHintType.MARGIN, it) }
         errorCorrection?.let { put(EncodeHintType.ERROR_CORRECTION, it) }
         character?.let { put(EncodeHintType.CHARACTER_SET, it) }
     }

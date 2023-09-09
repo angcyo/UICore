@@ -20,9 +20,9 @@ data class Ean13Config(
     /**指定生成条形码时要使用的边距（以像素为单位）。
      * [com.google.zxing.EncodeHintType.MARGIN]
      * [com.google.zxing.oned.UPCEANWriter.getDefaultMargin]*/
-    val margin: Int = 9,
+    val margin: Int? = 9,
 ) : BaseCodeConfig(BarcodeFormat.EAN_13, DslCode.DEFAULT_CODE_WIDTH, DslCode.DEFAULT_CODE_HEIGHT) {
     override fun getHints(): Map<EncodeHintType, Any> = mutableMapOf<EncodeHintType, Any>().apply {
-        put(EncodeHintType.MARGIN, margin)
+        margin?.let { put(EncodeHintType.MARGIN, it) }
     }
 }

@@ -17,9 +17,9 @@ data class ITFConfig(
     /**指定生成条形码时要使用的边距（以像素为单位）。
      * [com.google.zxing.EncodeHintType.MARGIN]
      * [com.google.zxing.oned.OneDimensionalCodeWriter.getDefaultMargin]*/
-    val margin: Int = 10,
+    val margin: Int? = 10,
 ) : BaseCodeConfig(BarcodeFormat.ITF, DslCode.DEFAULT_CODE_WIDTH, DslCode.DEFAULT_CODE_HEIGHT) {
     override fun getHints(): Map<EncodeHintType, Any> = mutableMapOf<EncodeHintType, Any>().apply {
-        put(EncodeHintType.MARGIN, margin)
+        margin?.let { put(EncodeHintType.MARGIN, it) }
     }
 }
