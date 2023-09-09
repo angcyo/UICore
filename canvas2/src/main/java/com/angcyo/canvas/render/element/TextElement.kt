@@ -245,11 +245,11 @@ open class TextElement : BaseElement() {
         renderer: BaseRenderer?,
         delegate: CanvasRenderDelegate?,
         keepVisibleSize: Boolean = false,
+        reason: Reason = Reason.user.apply {
+            controlType = BaseControlPoint.CONTROL_TYPE_DATA
+        },
         block: TextProperty.() -> Unit
     ) {
-        val reason: Reason = Reason.user.apply {
-            controlType = BaseControlPoint.CONTROL_TYPE_DATA
-        }
         updateElementAction(renderer, delegate, reason) {
             textProperty.block()//do
             updatePaint()
@@ -258,6 +258,7 @@ open class TextElement : BaseElement() {
     }
 
     /**更新字体*/
+    @SupportUndo
     fun updatePaintTypeface(
         typeface: Typeface?,
         renderer: BaseRenderer?,
@@ -274,6 +275,7 @@ open class TextElement : BaseElement() {
     }
 
     /**更新文本样式*/
+    @SupportUndo
     fun updateTextStyle(
         style: Int,
         enable: Boolean,

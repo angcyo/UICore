@@ -89,3 +89,13 @@ fun BarcodeFormat.is1DCodeType(): Boolean = when (this) {
 
     else -> false
 }
+
+/**当前的条形码格式, 是否有纠错等级设置*/
+fun BarcodeFormat.haveErrorCorrection(): Boolean = when (this) {
+    BarcodeFormat.QR_CODE,
+    BarcodeFormat.PDF_417,
+    BarcodeFormat.AZTEC,
+    -> true
+
+    else -> false
+}
