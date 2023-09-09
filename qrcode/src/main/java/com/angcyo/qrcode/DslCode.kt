@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
+import androidx.core.graphics.alpha
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.angcyo.fragment.dslBridge
@@ -13,6 +14,8 @@ import com.angcyo.rcode.RCode
 import com.angcyo.rcode.ScanActivity
 import com.angcyo.rcode.ScanFragment
 import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
+import com.google.zxing.MultiFormatWriter
 
 /**
  * 二维码扫码界面, 并获取扫码结果
@@ -22,6 +25,15 @@ import com.google.zxing.BarcodeFormat
  */
 
 class DslCode {
+
+    companion object {
+        /**二维码时, 生成的图片默认宽高, 正方形*/
+        val DEFAULT_CODE_SIZE = 100 * dpi
+
+        /**条码时, 生成的图片默认宽高, 长方形*/
+        val DEFAULT_CODE_WIDTH = 300 * dpi
+        val DEFAULT_CODE_HEIGHT = 100 * dpi
+    }
 
     /**承载[codeFragment]的[Activity]*/
     var codeActivity: Class<out ScanActivity>? = CodeScanActivity::class.java
@@ -106,3 +118,45 @@ fun CharSequence.createBarCode(
     logo,
     format
 )
+
+/**创建一个条形码, 二维码是条形码的一种
+ * [BarcodeFormat.MAXICODE] 不支持
+ * [BarcodeFormat.RSS_14] 不支持
+ * [BarcodeFormat.RSS_EXPANDED] 不支持
+ * [BarcodeFormat.UPC_EAN_EXTENSION] 不支持
+ * */
+fun createBarcode(
+    content: String?,
+    width: Int,
+    height: Int = width,
+    format: BarcodeFormat = BarcodeFormat.QR_CODE,
+    foregroundColor: Int = Color.BLACK,
+    backgroundColor: Int = Color.WHITE,
+    hints: Map<EncodeHintType, Any>? = RCode.HINTS
+): Bitmap? = try {
+    val matrix = MultiFormatWriter().encode(content, format, width, height, hints)
+    val w = matrix.width
+    val h = matrix.height
+    val pixels = IntArray(w * h)
+    for (y in 0 until h) {
+        for (x in 0 until w) {
+            val index = y * w + x
+            if (matrix[x, y]) {
+                pixels[index] = foregroundColor
+            } else {
+                pixels[index] = backgroundColor
+            }
+        }
+    }
+    val bitmap = Bitmap.createBitmap(
+        w,
+        h,
+        if (backgroundColor.alpha != 255) Bitmap.Config.ARGB_4444 else Bitmap.Config.RGB_565
+    )
+    bitmap.setPixels(pixels, 0, w, 0, 0, w, h)
+    bitmap
+} catch (e: Exception) {
+    e.printStackTrace()
+    null
+}
+
