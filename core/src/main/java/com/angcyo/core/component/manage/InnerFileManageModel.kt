@@ -36,15 +36,15 @@ class InnerFileManageModel : ViewModel() {
     }
 
     /**支持的扩展名列表*/
-    var supportExtList = mutableListOf(EXT_EXCEL, EXT_TXT)
+    var supportExtList = listOf(EXT_EXCEL, EXT_TXT)
 
     /**国内文件导入app包名列表*/
     var zhImportFilePackageNameList =
-        mutableListOf("com.tencent.mm", "com.tencent.mobileqq", "com.tencent.tim")
+        listOf("com.tencent.mm", "com.tencent.mobileqq", "com.tencent.tim")
 
     /**国外文件导入app包名列表*/
     var importFilePackageNameList =
-        mutableListOf("com.facebook.katana", "com.whatsapp", "com.twitter.android")
+        listOf("com.facebook.katana", "com.whatsapp", "com.twitter.android")
 
     /**文件所在的路径*/
     val innerFilePath: String
