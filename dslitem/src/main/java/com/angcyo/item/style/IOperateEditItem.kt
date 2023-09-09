@@ -25,6 +25,10 @@ import com.angcyo.widget.edit.IEditDelegate
 /**
  * 简单编辑框输入item, 不具备样式操作
  * [IEditItem]
+ * [EditStyleConfig]
+ *
+ * [IOperateEditItem]
+ * [OperateEditItemConfig]
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/09/05
  */

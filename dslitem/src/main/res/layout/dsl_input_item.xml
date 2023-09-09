@@ -15,7 +15,7 @@
         android:paddingLeft="@dimen/lib_padding_left"
         android:paddingRight="@dimen/lib_padding_left"
         android:paddingBottom="0dp"
-        android:text="请输入内容"
+        android:text="@string/dialog_input_hint"
         android:textColor="@color/text_general_color"
         tools:textStyle="bold" />
 
@@ -23,7 +23,7 @@
         android:id="@+id/lib_edit_view"
         style="@style/ItemEditStyle"
         android:layout_width="match_parent"
-        android:minHeight="@dimen/lib_min_item_height"
-        tools:hint="angcyo" />
+        android:hint="@string/dialog_input_hint"
+        android:minHeight="@dimen/lib_min_item_height" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

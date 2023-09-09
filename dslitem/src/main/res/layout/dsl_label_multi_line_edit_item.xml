@@ -22,7 +22,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="top|left"
-        android:minHeight="150dp"
+        android:minHeight="@dimen/lib_multi_line_edit_min_height"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lib_label_view"

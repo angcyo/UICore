@@ -27,10 +27,10 @@ open class DslInputItem : DslAdapterItem(), ILabelItem, IEditItem {
     init {
         itemLayoutId = R.layout.dsl_input_item
 
-        labelItemConfig.itemLabelText = "请输入"
+        labelItemConfig.itemLabelText = _string(R.string.dialog_input_hint)
         labelItemConfig.itemLabelTextStyle.textBold = true
 
-        editItemConfig.itemEditTextStyle.hint = _string(R.string.lib_input_hint)
+        editItemConfig.itemEditTextStyle.hint = _string(R.string.dialog_input_hint)
         editItemConfig.itemEditTextStyle.editMaxInputLength = -1
     }
 

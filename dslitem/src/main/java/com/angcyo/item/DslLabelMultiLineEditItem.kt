@@ -13,6 +13,7 @@ import com.angcyo.widget.pager.TextIndicator
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
  */
 open class DslLabelMultiLineEditItem : DslLabelEditItem() {
+
     init {
         itemLayoutId = R.layout.dsl_label_multi_line_edit_item
 

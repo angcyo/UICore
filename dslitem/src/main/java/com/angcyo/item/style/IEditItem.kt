@@ -9,6 +9,7 @@ import com.angcyo.item.DslBaseEditItem
 import com.angcyo.item.R
 import com.angcyo.item.form.IFormItem
 import com.angcyo.item.form.formItemConfig
+import com.angcyo.library.ex._dimen
 import com.angcyo.library.ex.elseNull
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clearListeners
@@ -22,6 +23,7 @@ import com.angcyo.widget.edit.IEditDelegate
  *
  * [IOperateEditItem]
  * [com.angcyo.item.style.IOperateEditItem]
+ * [OperateEditItemConfig]
  *
  * Email:angcyo@126.com
  * @author angcyo
@@ -189,6 +191,16 @@ var IEditItem.itemTextChangeAction: TextChangeAction?
     set(value) {
         editItemConfig.itemTextChangeAction = value
     }
+
+/**多行编辑模式*/
+fun IEditItem.multiLineEditMode(
+    maxLine: Int = Int.MAX_VALUE,
+    minHeight: Int = _dimen(R.dimen.lib_multi_line_edit_min_height)
+) {
+    val multiLine = maxLine > 1
+    itemMaxEditLines = maxLine
+    editItemConfig.itemEditTextStyle.viewMinHeight = if (multiLine) minHeight else 0
+}
 
 class EditItemConfig : IDslItemConfig {
 
