@@ -342,6 +342,14 @@ fun TaskBean.appendMap(key: String?, value: String?) {
     }
 }
 
+/**删除指定的[key]*/
+fun TaskBean.deleteMapKey(key: String?) {
+    if (key != null) {
+        textMap?.remove(key)
+        textListMap?.remove(key)
+    }
+}
+
 /**从[TaskBean]中获取指定[key]的文本*/
 fun TaskBean.getTextList(key: String?): List<String?>? {
     return textListMap?.get(key) ?: textMap?.get(key)?.run {
