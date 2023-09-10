@@ -226,8 +226,13 @@ def requestQrCodeUrl(app_id, app_secret, content, logoPath) {
     def map = new com.google.gson.Gson().fromJson(json, Map.class)
     println "接口返回:${json}"
 
-    def qrCodeUrl = map["data"]["qrCodeUrl"]
-    return qrCodeUrl
+    def data = map["data"]
+    if (data != null) {
+        def qrCodeUrl = data["qrCodeUrl"]
+        return qrCodeUrl
+    } else {
+        return null
+    }
 }
 
 /**创建一个生成二维码的请求*/
