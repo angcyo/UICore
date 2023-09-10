@@ -178,10 +178,12 @@ _pgyerUpload.doLast {
                         codeLogo = getLogoPath(fileKey)
                     }
 
-                    def qrCodeUrl = requestQrCodeUrl(app_id, app_secret, url, codeLogo)
+                    if (codeLogo != null) {
+                        def qrCodeUrl = requestQrCodeUrl(app_id, app_secret, url, codeLogo)
 
-                    System.err.println ''
-                    System.err.println "二维码地址->$qrCodeUrl"
+                        System.err.println ''
+                        System.err.println "二维码地址->$qrCodeUrl"
+                    }
                 }
             }
         }
