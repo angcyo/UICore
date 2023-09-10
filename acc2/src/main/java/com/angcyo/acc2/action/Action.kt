@@ -149,9 +149,11 @@ object Action {
 
     /**获取元素文本追加保存到
      * [com.angcyo.acc2.bean.TaskBean.textListMap]
+     * [appendText:key delay:xxx regex:xxx]
      * [appendText:key regex:xxx]
      * 默认key:appendText
-     * regex:\\d+ 文本需要使用正则过滤取值
+     * `regex:\\d+` 文本需要使用正则过滤取值
+     * `delay:xxx` 延迟设置文本, 单位毫秒
      * [ACTION_INPUT]
      */
     const val ACTION_APPEND_TEXT = "appendText"

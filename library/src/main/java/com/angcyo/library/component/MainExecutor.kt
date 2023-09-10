@@ -40,6 +40,10 @@ object MainExecutor : Executor {
         }
     }
 
+    fun delay(delayMillis: Long, command: Runnable) {
+        delay(command, delayMillis)
+    }
+
     /**移除执行[command]*/
     fun remove(command: Runnable) {
         handler.removeCallbacks(command)

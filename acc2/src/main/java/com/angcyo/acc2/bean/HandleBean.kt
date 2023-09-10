@@ -12,6 +12,9 @@ import com.angcyo.acc2.dynamic.IHandleDynamic
  */
 data class HandleBean(
 
+    /**描述信息, 方便调试*/
+    var des: String? = null,
+
     //<editor-fold desc="激活条件">
 
     /**是否激活当前的[HandleBean]*/

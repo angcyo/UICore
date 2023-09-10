@@ -83,6 +83,7 @@ class AccSchedule(val accControl: AccControl) {
         _endTime <= 0 -> {
             "已运行 ${(nowTime() - _startTime).toElapsedTime(pattern = intArrayOf(0, 1, 1))}"
         }
+
         else -> "共运行 ${duration().toElapsedTime(pattern = intArrayOf(0, 1, 1))}"
     }
 
@@ -544,7 +545,11 @@ class AccSchedule(val accControl: AccControl) {
         //激活条件判断
         if (!accParse.conditionParse.parse(actionBean.conditionList).success) {
             result.success = false
-            printActionLog("${actionBean.actionLog()}未满足激活条件,跳过调度.", actionBean, isPrimaryAction)
+            printActionLog(
+                "${actionBean.actionLog()}未满足激活条件,跳过调度.",
+                actionBean,
+                isPrimaryAction
+            )
             if (isPrimaryAction) {
                 next()
             }
@@ -559,7 +564,11 @@ class AccSchedule(val accControl: AccControl) {
             if (isPrimaryAction) {
                 val taskBeforeAction = taskBean?.before
                 if (taskBeforeAction != null) {
-                    printActionLog("任务前置执行:${taskBeforeAction}", taskBeforeAction, isPrimaryAction)
+                    printActionLog(
+                        "任务前置执行:${taskBeforeAction}",
+                        taskBeforeAction,
+                        isPrimaryAction
+                    )
                     beforeHandleResult = runAction(controlContext.copy {
                         action = taskBeforeAction
                     }, taskBeforeAction, null, false)
@@ -652,7 +661,11 @@ class AccSchedule(val accControl: AccControl) {
             if (isPrimaryAction) {
                 val taskAfterAction = taskBean?.after
                 if (taskAfterAction != null) {
-                    printActionLog("任务后置执行:${taskAfterAction}", taskAfterAction, isPrimaryAction)
+                    printActionLog(
+                        "任务后置执行:${taskAfterAction}",
+                        taskAfterAction,
+                        isPrimaryAction
+                    )
                     runAction(controlContext.copy {
                         action = taskAfterAction
                     }, taskAfterAction, null, false)
@@ -1123,20 +1136,24 @@ class AccSchedule(val accControl: AccControl) {
             handleActionResult.success = false
             runActionBeanStack.popSafe()
             _runActionBean = null
-            printActionLog("${actionBean.actionLog()}未满足激活条件,跳过执行.", actionBean, isPrimaryAction)
+            printActionLog(
+                "${actionBean.actionLog()}未满足激活条件,跳过执行.",
+                actionBean,
+                isPrimaryAction
+            )
             return false
         }
 
         //等待执行
-        val startText =
-            if (isDebugType()) actionBean.debugStart ?: actionBean.start else actionBean.start
-        val startTimeText = accParse.textParse.parse(startText).firstOrNull()
-
-        val delayTime = accParse.parseTime(startTimeText)
+        val delayTime = getActionStartTime(actionBean)
         if (isPrimaryAction) {
             accControl.next(actionBean, delayTime)
         }
-        printActionLog("${actionBean.actionLog()}等待[$delayTime]ms后运行.", actionBean, isPrimaryAction)
+        printActionLog(
+            "${actionBean.actionLog()}等待[$delayTime]ms后运行.",
+            actionBean,
+            isPrimaryAction
+        )
         sleep(delayTime)
 
         //停止了运行
@@ -1257,7 +1274,11 @@ class AccSchedule(val accControl: AccControl) {
                     logMinWindowInfo = true
                     logWindowNode = false
                     getAccessibilityWindowLog().apply {
-                        printActionLog("未匹配到窗口[$windowBean]↓\n$this", actionBean, isPrimaryAction)
+                        printActionLog(
+                            "未匹配到窗口[$windowBean]↓\n$this",
+                            actionBean,
+                            isPrimaryAction
+                        )
                     }
                 }
 
@@ -1528,6 +1549,17 @@ class AccSchedule(val accControl: AccControl) {
         accControl._taskBean?._listenerObjList?.forEach {
             it.onActionRunAfter(accControl, actionBean, isPrimaryAction, handleActionResult)
         }
+    }
+
+    /**获取[actionBean]启动延迟时长*/
+    fun getActionStartTime(actionBean: ActionBean?): Long {
+        actionBean ?: return 0L
+        val startText =
+            if (isDebugType()) actionBean.debugStart ?: actionBean.start else actionBean.start
+        val startTimeText = accParse.textParse.parse(startText).firstOrNull()
+
+        val delayTime = accParse.parseTime(startTimeText)
+        return delayTime
     }
 
     /**直接处理[HandleBean]*/
