@@ -105,6 +105,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
                 val handleResult = parse(controlContext, originList, handBean)
                 result.forceSuccess = handleResult.forceSuccess || result.forceSuccess
                 result.forceFail = handleResult.forceFail || result.forceFail
+                result.reason = handleResult.reason ?: result.reason
 
                 if (handleResult.success) {
                     if (!handleResult.forceFail) {
@@ -194,6 +195,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
                     accParse.findParse.parse(controlContext, rootNodeList, handleBean.findList)
                 findResult.nodeList
             }
+
             else -> originList
         }
 
@@ -478,6 +480,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
                 result.forceFail = handleResult.forceFail || result.forceFail
                 result.forceSuccess = handleResult.forceSuccess || result.forceSuccess
                 result.success = handleResult.success || result.success
+                result.reason = handleResult.reason ?: result.reason
 
                 if (handleResult.success) {
                     //把处理成功的元素收集起来
@@ -530,6 +533,7 @@ class HandleParse(val accParse: AccParse) : BaseParse() {
                         result.forceFail = forceFail || result.forceFail
                         result.forceSuccess = forceSuccess || result.forceSuccess
                         result.success = success || result.success
+                        result.reason = reason ?: result.reason
                         if (success) {
 
                             //this

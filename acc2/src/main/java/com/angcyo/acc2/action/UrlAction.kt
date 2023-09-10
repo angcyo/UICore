@@ -37,7 +37,13 @@ class UrlAction : BaseAction() {
 
         //启动对应的应用程序
         if (targetUrl.isNullOrEmpty()) {
-            control.log("无需要打开的Url[$action]:${success}")
+            success = false
+            reason = "未指定需要打开的Url[$action]"
+            control.log(reason)
+        } else if (packageNameList.isEmpty()) {
+            success = false
+            reason = "未指定打开url的包名[pkg:xxx]"
+            control.log(reason)
         } else {
             packageNameList.firstOrNull()?.let {
                 try {
@@ -46,7 +52,8 @@ class UrlAction : BaseAction() {
                         data = Uri.parse(targetUrl)
                     } != null
                 } catch (e: Exception) {
-                    control.log("打开[$targetUrl]失败:${e.stackTraceToString()}")
+                    reason = "打开[$targetUrl]失败:${e.stackTraceToString()}"
+                    control.log(reason)
                 }
 
                 control.log("使用:[$it]打开[$targetUrl]:$success")
