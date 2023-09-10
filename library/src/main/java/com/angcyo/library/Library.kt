@@ -22,6 +22,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.LifecycleOwner
 import com.angcyo.library.annotation.CallComplianceAfter
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.BackgroundThread
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.*
 import com.angcyo.library.utils.FileUtils.appRootExternalFolder
@@ -48,6 +49,9 @@ object Library {
         Library.debug = debug
 
         initHawk(context)
+
+        //双线程模式
+        BackgroundThread.instance
     }
 
     /**[Hawk]文件存储的路径*/

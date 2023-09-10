@@ -1,15 +1,13 @@
 package com.angcyo.core.component.file
 
 import android.content.Context
-import com.angcyo.coroutine.CoroutineErrorHandler
-import com.angcyo.coroutine.launchGlobal
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.component.runOnBackground
 import com.angcyo.library.ex.wrapLog
 import com.angcyo.library.isMain
 import com.angcyo.library.libCacheFile
 import com.angcyo.library.utils.*
-import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -43,7 +41,7 @@ object DslFileHelper {
         recycle: Boolean = false, /*图片数据保存时, 是否要回收图片*/
     ): String? {
         return if (async && isMain() /*只在主线程中才使用异步操作*/) {
-            launchGlobal(Dispatchers.IO + CoroutineErrorHandler()) {
+            runOnBackground {
                 FileUtils.writeExternal(folder, name, data, append, recycle)
             }
             //返回文件路径
