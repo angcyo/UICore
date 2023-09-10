@@ -292,7 +292,7 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
             if (result && !actionJumpList.isNullOrEmpty()) {
                 for (text in actionJumpList!!) {
                     //文本解析
-                    val expression = accParse.textParse.parse(text).firstOrNull()
+                    val expression = accParse.textParse.parse(text, true).firstOrNull()
                     if (expression.isNullOrEmpty()) {
                         //表达式为空, 则直接下一个
                         continue
@@ -369,10 +369,12 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
                             //约束浮窗全屏状态
                             true
                         }
+
                         con.startsWith("windowTouchable:") -> {
                             //约束浮窗全屏状态
                             true
                         }
+
                         con.startsWith("api") -> {
                             //约束系统api
                             accParse.expParse.parseAndCompute(
@@ -380,6 +382,7 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
                                 inputValue = Build.VERSION.SDK_INT.toFloat()
                             )
                         }
+
                         con.startsWith("code") -> {
                             //约束应用程序版本
                             accParse.expParse.parseAndCompute(
@@ -387,14 +390,17 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
                                 inputValue = getAppVersionCode().toFloat()
                             )
                         }
+
                         con.startsWith("brand") -> {
                             //约束手机品牌
                             Build.BRAND == con.drop(5)
                         }
+
                         con.startsWith("model") -> {
                             //约束手机型号
                             Build.MODEL == con.drop(5)
                         }
+
                         con.startsWith("cpu") -> {
                             //约束手机cpu最大频率
                             /*CpuUtils.cpuMaxFreq >= 2_800_000L*/
@@ -403,6 +409,7 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
                                 inputValue = CpuUtils.cpuMaxFreq.toFloat()
                             )
                         }
+
                         con.startsWith("mem") -> {
                             //约束手机cpu最大的内存大小
                             accParse.expParse.parseAndCompute(
@@ -418,6 +425,7 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
                                 inputValue = _screenWidth.toFloat()
                             )
                         }
+
                         con.startsWith("h") -> {
                             //约束手机屏幕高度
                             accParse.expParse.parseAndCompute(
@@ -425,6 +433,7 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
                                 inputValue = _screenHeight.toFloat()
                             )
                         }
+
                         else -> {
                             //无法识别的指令
                             def
@@ -474,6 +483,7 @@ class ConditionParse(val accParse: AccParse) : BaseParse() {
                                 inputValue = appBean.versionCode.toFloat()
                             )
                         }
+
                         else -> {
                             //无法识别的指令
                             def
