@@ -11,6 +11,8 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.getTag
+import com.angcyo.dsladapter.putTag
 import com.angcyo.library.ex.findView
 import com.angcyo.library.ex.forEach
 import com.angcyo.library.ex.inflate
@@ -268,6 +270,9 @@ fun ViewGroup.addDslItem(
     index: Int = -1,
     payloads: List<Any> = emptyList()
 ): DslViewHolder {
+    //2023-9-11 //将ViewGroup放在[itemTags]中
+    dslAdapterItem.putTag(dslAdapterItem.itemLayoutId, this)
+
     setOnHierarchyChangeListener(DslHierarchyChangeListenerWrap())
     val visible = !dslAdapterItem.itemHidden
 
@@ -372,6 +377,20 @@ fun DslAdapterItem.bindInRootView(
     return dslViewHolder
 }
 
+/**在ViewGroup中更新[DslAdapterItem]*/
+fun DslAdapterItem.updateInViewGroup(viewGroup: ViewGroup? = getTag(itemLayoutId) as? ViewGroup): DslViewHolder? {
+    var result: DslViewHolder? = null
+    viewGroup?.forEach { index, child ->
+        val dslItem = child.tagDslAdapterItem()
+        if (this == dslItem) {
+            val viewHolder = child.dslViewHolder()
+            itemBind(viewHolder, index, this, emptyList())
+            result = viewHolder
+        }
+    }
+    return result
+}
+
 fun ViewGroup.resetDslItem(item: DslAdapterItem) {
     resetDslItem(listOf(item))
 }
@@ -409,9 +428,11 @@ fun ViewGroup.resetDslItem(items: List<DslAdapterItem>) {
     }
 
     //移除多余的item
-    for (i in itemSize until childSize) {
-        if (childCount > i) {
-            removeViewAt(i)
+    if (childSize > itemSize) {
+        for (i in childSize - 1 downTo itemSize) {
+            if (childCount >= i) {
+                removeViewAt(i)
+            }
         }
     }
 
