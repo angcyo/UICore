@@ -161,7 +161,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
         }
 
         //history
-        dialogViewHolder.visible(R.id.lib_flow_layout, !inputHistoryList.isNullOrEmpty())
+        dialogViewHolder.invisible(R.id.lib_flow_layout, inputHistoryList.isNullOrEmpty())
         dialogViewHolder.flow(R.id.lib_flow_layout)?.apply {
             resetChild(
                 inputHistoryList,
