@@ -7,7 +7,8 @@ package com.angcyo.viewmodel
  */
 object ViewModelHelper {
 
-    /**共享的用户id*/
+    /**共享的用户id
+     * [com.angcyo.core.component.manage.InnerFileManageModel.innerFilePath]*/
     var coreUserId = vmDataNull<String>(null)
 
 }
