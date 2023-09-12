@@ -44,6 +44,7 @@
                 style="@style/ItemEditStyle"
                 android:layout_width="@dimen/lib_increment_edit_width"
                 android:gravity="center"
+                android:hint="@string/lib_input_hint"
                 android:inputType="number"
                 android:maxLines="1"
                 android:paddingHorizontal="@dimen/lib_hdpi"
@@ -51,7 +52,6 @@
                 android:singleLine="true"
                 android:textColor="@color/lib_step_adjust_text_color_selector"
                 app:r_hide_soft_input_on_lost_focus="true"
-                tools:hint="@string/lib_input_hint"
                 tools:text="文本文本文本文本" />
 
             <androidx.appcompat.widget.AppCompatImageView
