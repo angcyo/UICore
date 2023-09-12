@@ -69,7 +69,7 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
         GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
 
             override fun onFling(
-                e1: MotionEvent?,
+                e1: MotionEvent,
                 e2: MotionEvent,
                 velocityX: Float,
                 velocityY: Float
@@ -108,7 +108,7 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) :
             }
 
             override fun onScroll(
-                e1: MotionEvent?,
+                e1: MotionEvent,
                 e2: MotionEvent,
                 distanceX: Float,
                 distanceY: Float

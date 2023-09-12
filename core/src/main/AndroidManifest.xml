@@ -62,14 +62,14 @@
             android:name=".component.step.StepService"
             android:enabled="true"
             android:exported="true"
-            android:foregroundServiceType="dataSync" />
+            />
 
         <!--保活服务-->
         <service
             android:name=".component.AliveService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="dataSync" />
+            />
     </application>
 
 </manifest>

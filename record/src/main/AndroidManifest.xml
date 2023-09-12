@@ -25,6 +25,6 @@
             android:name=".audio.record.RecorderService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="camera" />
+            />
     </application>
 </manifest>

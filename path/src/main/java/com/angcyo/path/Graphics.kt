@@ -5,9 +5,6 @@ import android.graphics.PointF
 import android.os.Build
 import androidx.annotation.OptIn
 import androidx.core.os.BuildCompat
-import androidx.graphics.path.PathIterator
-import androidx.graphics.path.PathSegment
-import androidx.graphics.path.iterator
 import com.angcyo.gcode.GCodeWriteHandler
 import com.angcyo.library.L
 import com.angcyo.library.component.hawk.LibHawkKeys
@@ -38,7 +35,7 @@ fun List<Path>.toSvgPathContent(
 
 @OptIn(BuildCompat.PrereleaseSdkCheck::class)
 fun List<Path>.toSvgPathContent(writer: Appendable, tolerance: Float = LibHawkKeys.svgTolerance) {
-    val lastPoint = PointF(0f, 0f)
+    /*val lastPoint = PointF(0f, 0f)
     forEachIndexed { index, path ->
         lastPoint.set(0f, 0f)
         //转成对应的SVG path数据
@@ -109,7 +106,7 @@ fun List<Path>.toSvgPathContent(writer: Appendable, tolerance: Float = LibHawkKe
                 }
             }
         }
-    }
+    }*/
 }
 
 /**将[Path]转换成svg path数据
@@ -152,7 +149,7 @@ fun List<Path>.toGCodePathContent(
         if (writeFirst) {
             gCodeWriteHandler.onPathStart()
         }
-        val lastPoint = PointF(0f, 0f)
+        /*val lastPoint = PointF(0f, 0f)
         forEachIndexed { index, path ->
             lastPoint.set(0f, 0f)
 
@@ -196,7 +193,7 @@ fun List<Path>.toGCodePathContent(
                             temp.quadTo(p2.x, p2.y, p3.x, p3.y)
                         } else if (segment.type == PathSegment.Type.Conic) {
                             if (Build.VERSION.SDK_INT >= 34) {
-                                temp.conicTo(p2.x, p2.y, p3.x, p3.y, segment.weight)
+                                //temp.conicTo(p2.x, p2.y, p3.x, p3.y, segment.weight)
                             }
                         } else {
                             val p4 = segment.points[3]
@@ -216,7 +213,7 @@ fun List<Path>.toGCodePathContent(
                     }
                 }
             }
-        }
+        }*/
         if (writeLast) {
             gCodeWriteHandler.onPathEnd(true)
         }

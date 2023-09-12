@@ -13,7 +13,7 @@ dependencies {
 
     //http://mvnrepository.com/artifact/androidx.browser
     //http://mvnrepository.com/artifact/androidx.browser/browser
-    implementation("androidx.browser:browser:1.6.0") {
+    implementation("androidx.browser:browser:1.5.0") { //1.6.0 compileSdkVersion 34
         exclude group: 'androidx.annotation'
     }
 

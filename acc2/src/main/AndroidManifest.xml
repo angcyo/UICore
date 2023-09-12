@@ -10,7 +10,7 @@
             android:name="com.angcyo.core.component.accessibility.RAccessibilityService"
             android:enabled="false"
             android:exported="false"
-            android:foregroundServiceType="dataSync"
+            />
             android:label="@string/lib_accessibility_label"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
