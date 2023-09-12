@@ -1170,3 +1170,10 @@ fun String.reverseStringIfRtl(): String {
     }
     return this
 }
+
+/**使用正则替换字符串, 文件名中不能[\/:*?"<>|]这些字符
+ * [regex] 正则表达式
+ * [replacement] 需要替换的字符串
+ * @return 返回一个新字符串*/
+fun String.replace(regex: String?, replacement: String) =
+    if (regex.isNullOrEmpty()) this else replace(regex.toRegex(), replacement)
