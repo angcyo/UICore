@@ -850,7 +850,7 @@ fun openNotificationSetting() {
  * */
 fun Int.pendingIntentMutableFlag(
     mutableFlag: Int = 33554432,
-    createFlag: Int = PendingIntent.FLAG_ALLOW_UNSAFE_IMPLICIT_INTENT
+    createFlag: Int = 16777216
 ): Int {
     var flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         //android 12
@@ -863,7 +863,7 @@ fun Int.pendingIntentMutableFlag(
         this
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+    if (Build.VERSION.SDK_INT >= 34) {
         flag = if (flag.have(createFlag)) {
             flag
         } else {
