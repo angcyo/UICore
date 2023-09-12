@@ -38,16 +38,17 @@ object DslFileHelper {
         name: String = logFileName(), /*文件名, 默认当天日期*/
         data: FileTextData, /*需要写入的数据*/
         append: Boolean = true,
+        limitSize: Boolean = true,
         recycle: Boolean = false, /*图片数据保存时, 是否要回收图片*/
     ): String? {
         return if (async && isMain() /*只在主线程中才使用异步操作*/) {
             runOnBackground {
-                FileUtils.writeExternal(folder, name, data, append, recycle)
+                FileUtils.writeExternal(folder, name, data, append, limitSize, recycle)
             }
             //返回文件路径
             FileUtils.appRootExternalFolderFile(folder, name).absolutePath
         } else {
-            FileUtils.writeExternal(folder, name, data, append, recycle)
+            FileUtils.writeExternal(folder, name, data, append, limitSize, recycle)
         }
     }
 
@@ -115,12 +116,13 @@ fun FileTextData?.writeTo(
     folder: String = Constant.LOG_FOLDER_NAME,
     name: String = logFileName(),
     append: Boolean = true,
+    limitSize: Boolean = true,
     recycle: Boolean = false,
 ): String? {
     if (this == null) {
         return FileUtils.appRootExternalFolderFile(folder, name).absolutePath
     }
-    return DslFileHelper.write(folder, name, this, append, recycle)
+    return DslFileHelper.write(folder, name, this, append, limitSize, recycle)
 }
 
 /**写入到缓存目录*/
@@ -128,13 +130,14 @@ fun FileTextData?.writeToCache(
     folder: String = Constant.LOG_FOLDER_NAME,
     name: String = logFileName(),
     append: Boolean = true,
+    limitSize: Boolean = true,
     recycle: Boolean = false,
 ): String? {
     val libCacheFile = libCacheFile(name, folder)
     if (this == null) {
         return libCacheFile.absolutePath
     }
-    return FileUtils.writeExternal(libCacheFile, this, append, recycle)
+    return FileUtils.writeExternal(libCacheFile, this, append, limitSize, recycle)
 }
 
 /**将日志写入到指定的日志文件[log.log], 默认在[log]文件夹下

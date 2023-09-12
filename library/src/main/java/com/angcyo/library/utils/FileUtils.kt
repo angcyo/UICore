@@ -94,6 +94,7 @@ object FileUtils {
         name: String,
         data: FileTextData,
         append: Boolean = true, /*false 强制重新写入*/
+        limitSize: Boolean = true,
         recycle: Boolean = false,
     ): String {
         // /storage/emulated/0/Android/data/com.angcyo.uicore.demo/files/$type
@@ -101,7 +102,7 @@ object FileUtils {
 
         try {
             filePath = appRootExternalFolderFile(folder, name).apply {
-                filePath = writeExternal(this, data, append, recycle)
+                filePath = writeExternal(this, data, append, limitSize, recycle)
             }.absolutePath
         } catch (e: Exception) {
             L.e("写入文件失败:$e")
@@ -111,19 +112,20 @@ object FileUtils {
     }
 
     /**[append]=true 根据文件大小智能判断是否要重写
-     * [limitLength] 是否限制大小[com.angcyo.library.utils.FileUtils.fileMaxSize]
+     * [limitSize] 是否限制文件大小[com.angcyo.library.utils.FileUtils.fileMaxSize]
      * [recycle] 如果是图片数据时, 是否回收图片
      * @return 文件路径*/
     fun writeExternal(
         file: File,
         data: FileTextData,
         append: Boolean = true,
-        limitLength: Boolean = true,
+        limitSize: Boolean = true,
         recycle: Boolean = false,
     ): String {
         var filePath: String = file.absolutePath
 
         try {
+            val length = file.length() //文件长度, 单位字节
             file.parentFile?.mkdirs()
             file.apply {
                 filePath = absolutePath
@@ -145,7 +147,7 @@ object FileUtils {
                 } else {
                     when {
                         //重写文件的内容
-                        (limitLength && length() >= fileMaxSize) || !append -> when (data) {
+                        (limitSize && length >= fileMaxSize) || !append -> when (data) {
                             is ByteArray -> writeBytes(data)
                             is File -> writeBytes(data.readBytes())
                             //java.lang.OutOfMemoryError: Failed to allocate a 262193160 byte allocation with 74685304 free bytes and 71MB until OOM, target footprint 536870912, growth limit 536870912
@@ -161,7 +163,7 @@ object FileUtils {
                 }
             }
         } catch (e: Exception) {
-            L.e("写入文件失败:$e")
+            L.e("写入文件失败[writeExternal]:$e")
         }
 
         return filePath
@@ -182,8 +184,8 @@ object FileUtils {
 fun FileTextData.writeToFile(
     file: File,
     append: Boolean = false,
-    limitLength: Boolean = false
-): String = writeExternal(file, this, append, limitLength)
+    limitSize: Boolean = false
+): String = writeExternal(file, this, append, limitSize)
 
 /**[UUID]*/
 fun uuid() = UUID.randomUUID().toString()
