@@ -13,7 +13,7 @@
     <color name="lib_black">#000000</color>
     <color name="lib_theme_black">#000000</color>
     <color name="lib_line">#D5D5D5</color>
-    <color name="lib_line_dark">#E1E2E6</color>
+    <color name="lib_line_dark">#ECECEC</color>
     <color name="lib_disable_bg_color">#C9CACC</color>
 
     <!--伪造出来的状态栏颜色-->
