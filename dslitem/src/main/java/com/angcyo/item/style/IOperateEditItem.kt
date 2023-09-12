@@ -67,6 +67,11 @@ interface IOperateEditItem : IAutoInitItem {
             }
 
             setInputText(operateEditItemConfig.itemEditText, false)
+
+            //恢复xml中的值
+            if (operateEditItemConfig.itemEditHint == null) {
+                operateEditItemConfig.itemEditHint = hint
+            }
             hint = operateEditItemConfig.itemEditHint
 
             if (this is IEditDelegate) {
