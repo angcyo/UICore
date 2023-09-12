@@ -24,9 +24,9 @@
             style="@style/LibBodyTextStyle"
             android:layout_width="@dimen/lp_value_item_width"
             android:layout_gravity="right|center_vertical"
+            android:hint="@string/ui_choose"
             android:paddingHorizontal="@dimen/lib_xhdpi"
             android:textStyle="bold"
-            tools:hint="@string/ui_choose"
             tools:text="文本" />
 
         <androidx.appcompat.widget.AppCompatImageView
