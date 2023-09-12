@@ -1172,6 +1172,11 @@ fun String.reverseStringIfRtl(): String {
 }
 
 /**使用正则替换字符串, 文件名中不能[\/:*?"<>|]这些字符
+ *
+ * ```
+ * "grid[112:*234]\\:/:*\"?<>|[end]".replace("[\\/:*?\"<>|]", "")
+ * ```
+ *
  * [regex] 正则表达式
  * [replacement] 需要替换的字符串
  * @return 返回一个新字符串*/
