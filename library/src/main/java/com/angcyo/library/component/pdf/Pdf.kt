@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.ParcelFileDescriptor
 import com.angcyo.library.ex.file
 import com.angcyo.library.ex.pfd
+import java.io.File
 
 
 /**
@@ -68,7 +69,9 @@ object Pdf {
         }
     }
 
-    fun readPdfToBitmap(path: String?): List<Bitmap>? = readPdfToBitmap(path?.file()?.pfd())
+    fun readPdfToBitmap(path: String?): List<Bitmap>? = readPdfToBitmap(path?.file())
+
+    fun readPdfToBitmap(file: File?): List<Bitmap>? = readPdfToBitmap(file?.pfd())
 
     fun readPdfToBitmap(uri: Uri?): List<Bitmap>? = readPdfToBitmap(uri?.pfd())
 }

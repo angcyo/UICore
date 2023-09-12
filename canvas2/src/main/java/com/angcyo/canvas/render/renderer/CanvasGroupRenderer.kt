@@ -87,6 +87,11 @@ open class CanvasGroupRenderer : BaseRenderer() {
         /**解组*/
         const val GROUP_TYPE_DISSOLVE = 2
 
+        /**
+         * [com.angcyo.canvas.render.renderer.BaseRenderer.getRendererBounds]
+         * */
+        fun List<BaseRenderer>?.getRendererGroupBounds(): RectF? = computeBounds(this)
+
         /**计算[rendererList]的bounds范围
          * [bounds] 强制指定, 指定后不计算*/
         fun computeBounds(
