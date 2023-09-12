@@ -101,7 +101,7 @@ interface IImageItem : IAutoInitItem {
     }
 }
 
-/**[Uri]*/
+/**此方式仅支持[Uri], 请使用[itemLoadImage]*/
 var IImageItem.itemLoadUri: Uri?
     get() = imageItemConfig.itemLoadUri ?: if (itemLoadImage is String) {
         (itemLoadImage as String).toUri()
@@ -112,6 +112,7 @@ var IImageItem.itemLoadUri: Uri?
         imageItemConfig.itemLoadUri = value
     }
 
+/**支持[AnyImage]*/
 var IImageItem.itemLoadImage: AnyImage?
     get() = imageItemConfig.itemLoadImage
     set(value) {

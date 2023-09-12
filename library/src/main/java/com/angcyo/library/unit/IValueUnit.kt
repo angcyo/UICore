@@ -178,10 +178,10 @@ fun IValueUnit.convertPixelToValueUnit(pixel: Double?): String {
 fun Int?.toPixel() = this?.toFloat().toPixel()
 
 /**1毫米转像素*/
-fun Float?.toPixel() = MM_UNIT.convertValueToPixel(this ?: 0f)
+fun Float?.toPixel(unit: IValueUnit = MM_UNIT) = unit.convertValueToPixel(this ?: 0f)
 
 /**1毫米转像素*/
-fun Double?.toPixel() = MM_UNIT.convertValueToPixel(this ?: 0.0)
+fun Double?.toPixel(unit: IValueUnit = MM_UNIT) = unit.convertValueToPixel(this ?: 0.0)
 
 /**1像素转换成毫米
  * [com.angcyo.library.unit.MmValueUnit]
@@ -193,6 +193,8 @@ fun Float?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0f)
 
 /**1像素转毫米*/
 fun Double?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0.0)
+
+fun Float?.toPt() = PointValueUnit().convertPixelToValue(this ?: 0f)
 
 /**直接修改值*/
 fun PointF.toMm() = this.apply {

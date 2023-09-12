@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
@@ -16,6 +17,7 @@ import android.text.TextUtils
 import androidx.core.content.FileProvider
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.component.lastContext
 import com.angcyo.library.libCacheFile
 import com.angcyo.library.libCacheFolderPath
 import com.angcyo.library.model.MediaBean
@@ -130,11 +132,18 @@ fun <R> Uri.use(context: Context, block: (InputStream) -> R): R? {
     return inputStream(context)?.use(block)
 }
 
-fun Uri.fd(context: Context?): FileDescriptor? {
+/**[FileDescriptor]*/
+fun Uri.fd(context: Context? = lastContext): FileDescriptor? = pfd(context)?.fileDescriptor
+
+/**[ParcelFileDescriptor]*/
+fun Uri.pfd(context: Context? = lastContext): ParcelFileDescriptor? {
     val resolver = context?.contentResolver
-    val parcelFileDescriptor = resolver?.openFileDescriptor(this, "r")
-    return parcelFileDescriptor?.fileDescriptor
+    return resolver?.openFileDescriptor(this, "r")
 }
+
+/**[ParcelFileDescriptor]*/
+fun File.pfd(mode: Int = ParcelFileDescriptor.MODE_READ_ONLY): ParcelFileDescriptor? =
+    ParcelFileDescriptor.open(this, mode)
 
 /**是否是http的uri资源*/
 fun Uri?.isHttpScheme(): Boolean {

@@ -13,6 +13,7 @@ import kotlin.math.max
 
 /**
  * 简单的图片展示item
+ * [DslSingleImageItem]
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/02/19

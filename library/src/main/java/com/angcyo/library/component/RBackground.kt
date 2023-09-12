@@ -9,6 +9,8 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.util.SparseArray
+import android.view.View
+import android.view.Window
 import androidx.core.util.isEmpty
 import androidx.core.util.valueIterator
 import androidx.lifecycle.LifecycleOwner
@@ -296,6 +298,12 @@ val lastActivity: Activity?
 /**[Context]*/
 val lastContext: Context
     get() = lastActivity ?: app()
+
+val lastWindow: Window?
+    get() = lastActivity?.window
+
+val lastDecorView: View?
+    get() = lastWindow?.decorView
 
 /**[LifecycleOwner]*/
 val lastLifecycleOwner: LifecycleOwner?
