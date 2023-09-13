@@ -522,6 +522,12 @@ fun View.toBitmap(): Bitmap? = if (this is RecyclerView) {
  * 保存View的截图
  */
 fun View.saveView(): Bitmap? {
+    if (!isLaidOut) {
+        val measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        measure(measureSpec, measureSpec)
+        layout(0, 0, measuredWidth, measuredHeight)
+    }
+
     isDrawingCacheEnabled = true
     buildDrawingCache()
     val drawingCache = drawingCache

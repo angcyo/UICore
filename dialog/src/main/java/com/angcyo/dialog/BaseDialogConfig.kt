@@ -49,12 +49,6 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         super.initDialogView(dialog, dialogViewHolder)
 
-        //标题
-        dialogViewHolder.tv(R.id.dialog_title_view)?.apply {
-            visibility = if (dialogTitle == null) View.GONE else View.VISIBLE
-            text = dialogTitle
-        }
-
         //消息体
         dialogViewHolder.tv(R.id.dialog_message_view)?.apply {
             visibility = if (dialogMessage == null) View.GONE else View.VISIBLE

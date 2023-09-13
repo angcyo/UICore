@@ -602,6 +602,17 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
         if (dialogTitleLayoutId > 0) {
             dialogViewHolder.group(R.id.dialog_title_layout)?.replace(dialogTitleLayoutId)
         }
+        //---init---
+        //标题
+        dialogViewHolder.tv(R.id.dialog_title_view)?.apply {
+            visibility = if (dialogTitle == null) View.GONE else View.VISIBLE
+            text = dialogTitle
+        }
+        //消息体
+        dialogViewHolder.tv(R.id.dialog_message_view)?.apply {
+            visibility = if (dialogMessage == null) View.GONE else View.VISIBLE
+            text = dialogMessage
+        }
     }
 
     /** Dialog -> AppCompatDialog -> AlertDialog */

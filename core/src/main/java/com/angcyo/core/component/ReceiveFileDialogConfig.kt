@@ -39,8 +39,6 @@ class ReceiveFileDialogConfig(context: Context? = null) : DslDialogConfig(contex
 
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         super.initDialogView(dialog, dialogViewHolder)
-        //title
-        dialogViewHolder.tv(R.id.dialog_title_view)?.text = dialogTitle
 
         dialogViewHolder.img(R.id.lib_file_icon_view)?.setImageDrawable(
             _drawable(R.drawable.core_file_receive_icon).tintDrawableColor(
