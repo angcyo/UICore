@@ -1,5 +1,6 @@
 package com.angcyo.canvas.render.element
 
+import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.RectF
 import com.angcyo.library.ex.ADJUST_TYPE_CENTER
@@ -68,6 +69,8 @@ fun RectF.limitElementMaxSizeMatrix(
     return matrix
 }
 
+/**[com.angcyo.canvas.render.element.IElement.requestElementBitmap]*/
+fun IElement.rendererToBitmap(): Bitmap? = requestElementBitmap(null, null)
 /*
 fun RectF.limitElementMaxRectMatrix(rect: RectF, adjustType: Int = ADJUST_TYPE_CENTER): Matrix {
     val matrix = Matrix()

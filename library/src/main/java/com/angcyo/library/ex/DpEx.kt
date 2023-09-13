@@ -13,6 +13,8 @@ import android.content.res.Resources
 val density: Float get() = Resources.getSystem()?.displayMetrics?.density ?: 0f
 val dp: Float get() = Resources.getSystem()?.displayMetrics?.density ?: 0f
 val dpi: Int get() = Resources.getSystem()?.displayMetrics?.density?.toInt() ?: 0
+val _dp: Float get() = dp
+val _dpi: Int get() = dpi
 
 /**dp转px值*/
 fun Int.toDp(): Float {
