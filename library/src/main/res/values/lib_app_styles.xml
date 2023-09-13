@@ -36,7 +36,8 @@
     <color name="info">#4b7efe</color>
     <color name="success">#44CB5C</color>
     <color name="warning">#febf00</color>
-    <color name="error">#ff4d3f</color>
+    <color name="error">#FF443D</color>
+    <color name="error_light">#EB5757</color>
     <color name="fairly">#c3c9cf</color>
 
     <!--app文本颜色配置-->
