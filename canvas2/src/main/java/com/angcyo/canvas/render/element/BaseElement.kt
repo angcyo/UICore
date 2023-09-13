@@ -43,6 +43,11 @@ abstract class BaseElement : IElement {
 
     //region---core---
 
+    /**在更新[updateElementAction]之前调用*/
+    open fun onUpdateElementBefore() {
+
+    }
+
     /**
      * 更新元素, 并且支持回退
      * [onUpdateElementBefore]
@@ -65,11 +70,6 @@ abstract class BaseElement : IElement {
         redoState.saveState(renderer, delegate)
         renderer.requestUpdatePropertyFlag(reason, delegate)
         delegate?.addStateToStack(renderer, undoState, redoState, reason = reason)
-    }
-
-    /**在更新[updateElementAction]之前调用*/
-    open fun onUpdateElementBefore() {
-
     }
 
     /**在更新[updateElementAction]之后调用*/

@@ -140,7 +140,7 @@ open class TextElement : BaseElement() {
     }
 
     /**更新画笔样式*/
-    fun updatePaint() {
+    open fun updatePaint() {
         //字体加载
         val loadTypefaceInfo = FontManager.loadTypefaceInfo(textProperty.fontFamily)
         val typefaceInfo = loadTypefaceInfo ?: FontManager.getSystemFontList().firstOrNull()
@@ -252,9 +252,15 @@ open class TextElement : BaseElement() {
     ) {
         updateElementAction(renderer, delegate, reason) {
             textProperty.block()//do
+            onUpdateTextPropertyAfter(renderer)
             updatePaint()
             updateOriginText(textProperty.text, keepVisibleSize)//重新计算宽高
         }
+    }
+
+    /**当[updateTextProperty]更新文本之后*/
+    open fun onUpdateTextPropertyAfter(renderer: BaseRenderer?) {
+
     }
 
     /**更新字体*/
