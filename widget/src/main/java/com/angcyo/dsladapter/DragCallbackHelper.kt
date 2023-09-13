@@ -2,12 +2,15 @@ package com.angcyo.dsladapter
 
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.library.component.DrawText
+import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.textHeight
+import com.angcyo.widget.R
 import java.util.*
 
 /**
@@ -69,6 +72,9 @@ class DragCallbackHelper : ItemTouchHelper.Callback() {
             dragCallbackHelper?.detachFromRecyclerView()
         }
     }
+
+    /**拖拽时的item阴影配置*/
+    var dragBackgroundDrawable: Drawable? = _drawable(R.drawable.lib_drag_shadow)
 
     /**支持拖拽的方向, 0表示不开启拖拽*/
     var itemDragFlag = FLAG_ALL
@@ -240,6 +246,11 @@ class DragCallbackHelper : ItemTouchHelper.Callback() {
      * 如果是快速的侧滑删除, [clearView] 可能无法被执行*/
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         super.clearView(recyclerView, viewHolder)
+        if (dragBackgroundDrawable != null) {
+            val oldBackground = viewHolder.itemView.getTag(R.id.lib_tag_background) as? Drawable
+            viewHolder.itemView.background = oldBackground
+        }
+
         onClearViewAction.invoke(recyclerView, viewHolder)
         _isStartDrag = false
         dragTagData = null
@@ -258,6 +269,11 @@ class DragCallbackHelper : ItemTouchHelper.Callback() {
      * */
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
         super.onSelectedChanged(viewHolder, actionState)
+        if (dragBackgroundDrawable != null) {
+            val oldBackground = viewHolder?.itemView?.background
+            viewHolder?.itemView?.setTag(R.id.lib_tag_background, oldBackground)
+            viewHolder?.itemView?.background = dragBackgroundDrawable
+        }
         onSelectedChangedAction.invoke(viewHolder, actionState)
 
         if (viewHolder != null) {

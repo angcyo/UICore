@@ -33,4 +33,6 @@
     <item name="lib_tag_padding_bottom" type="id" />
     <!--保存paddingTop-->
     <item name="lib_tag_padding_top" type="id" />
+    <!--临时存储View的Background-->
+    <item name="lib_tag_background" type="id" />
 </resources>
