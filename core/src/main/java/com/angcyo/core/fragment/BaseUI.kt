@@ -29,12 +29,20 @@ import com.angcyo.widget.span.span
  * @date 2019/12/31
  */
 
+typealias BaseFragmentAction = (fragment: BaseFragment) -> Unit
+typealias BaseTitleFragmentAction = (fragment: BaseTitleFragment) -> Unit
+
+/**全局ui样式调整*/
 object BaseUI {
+
+    /**全局样式回调*/
     var fragmentUI = FragmentUI()
 
-    var onFragmentShow: ((fragment: BaseFragment) -> Unit)? = null
+    /**全局生命周期回调*/
+    var onFragmentShow: BaseFragmentAction? = null
 
-    var onFragmentHide: ((fragment: BaseFragment) -> Unit)? = null
+    /**全局生命周期回调*/
+    var onFragmentHide: BaseFragmentAction? = null
 }
 
 open class FragmentUI {

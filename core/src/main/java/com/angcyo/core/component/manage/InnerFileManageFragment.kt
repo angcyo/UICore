@@ -42,7 +42,6 @@ open class InnerFileManageFragment : BaseDslFragment() {
 
         fragmentConfig.isLightStyle = true
         fragmentConfig.showTitleLineView = true
-        fragmentConfig.showBackText = false
 
         enableAdapterRefresh = true
 
