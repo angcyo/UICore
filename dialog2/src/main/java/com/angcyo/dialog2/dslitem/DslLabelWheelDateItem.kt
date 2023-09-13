@@ -171,11 +171,26 @@ open class DslLabelWheelDateItem : DslBaseLabelItem(), ITextItem {
         }
     }
 
-    /**选中[Date]回调*/
-    fun onSelfItemSelectDate(date: Date) {
+    /**[updateSelectWheelDate]*/
+    fun updateSelectWheelDate(millis: String?) {
+        millis ?: return
+        updateSelectWheelDate(millis.toLongOrNull() ?: nowTime())
+    }
+
+    /**[millis] 13位毫秒时间*/
+    fun updateSelectWheelDate(millis: Long) {
+        updateSelectWheelDate(Date(millis))
+    }
+
+    fun updateSelectWheelDate(date: Date) {
         _itemDateSelectDate = date
         val dateFormat: DateFormat = SimpleDateFormat(itemShowTextPattern ?: itemPattern)
         itemText = dateFormat.format(date)
+    }
+
+    /**选中[Date]回调*/
+    open fun onSelfItemSelectDate(date: Date) {
+        updateSelectWheelDate(date)
         itemChanging = true
     }
 }
