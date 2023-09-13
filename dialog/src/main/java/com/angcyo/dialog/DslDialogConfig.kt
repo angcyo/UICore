@@ -453,6 +453,11 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
             val viewHolder = decorView.dslViewHolder()
             _dialogViewHolder = viewHolder
 
+            //key
+            dialog.setOnKeyListener { _, keyCode, event ->
+                onDialogKey(dialog, viewHolder, keyCode, event)
+            }
+
             //lifecycle
             dialog.setOnShowListener {
                 onDialogShow(dialog, viewHolder)
@@ -724,6 +729,19 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
             else -> showDialog()
         }
         return dialog
+    }
+
+    /**按键事件*/
+    open fun onDialogKey(
+        dialog: Dialog,
+        dialogViewHolder: DslViewHolder,
+        keyCode: Int,
+        event: KeyEvent
+    ): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.repeatCount == 0) {
+            //返回键
+        }
+        return false
     }
 
     //<editor-fold desc="Lifecycle支持">

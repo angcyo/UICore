@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 
@@ -99,3 +100,7 @@ fun View.sendCancelEvent() {
     dispatchTouchEvent(cancelEvent)
     cancelEvent.recycle()
 }
+
+fun KeyEvent.isKeyUp() = action == KeyEvent.ACTION_UP
+
+fun KeyEvent.isKeyDown() = action == KeyEvent.ACTION_DOWN
