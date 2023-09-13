@@ -90,7 +90,11 @@ object Debug {
 
             "@cmd#open=file", "@9.555555" -> {
                 //打开文件预览对话框
-                editText?.context?.apply {
+                if (editText?.context is FragmentActivity) {
+                    editText.context
+                } else {
+                    lastContext
+                }?.apply {
                     if (this is FragmentActivity) {
                         dslFHelper {
                             fileSelector({
@@ -102,7 +106,7 @@ object Debug {
                                 //no op
                             }
                         }
-                        editText._feedback()
+                        editText?._feedback()
                     }
                 }
             }
