@@ -309,7 +309,7 @@ open class DslViewHolder(
     fun longTouch(
         @IdRes id: Int,
         loopLongPress: Boolean = false,
-        block: (view: View, event: MotionEvent?, eventType: Int?) -> Boolean
+        block: (view: View, event: MotionEvent?, eventType: Int?, longPressHappened: Boolean) -> Boolean
     ) {
         longTouch(v<View>(id), loopLongPress, block)
     }
@@ -318,7 +318,7 @@ open class DslViewHolder(
     fun longTouch(
         view: View?,
         loopLongPress: Boolean = false,
-        block: (view: View, event: MotionEvent?, eventType: Int?) -> Boolean
+        block: (view: View, event: MotionEvent?, eventType: Int?, longPressHappened: Boolean) -> Boolean
     ) {
 
         view?.let {

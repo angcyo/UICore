@@ -38,13 +38,19 @@ class KeyboardNumberIncrementItem : DslAdapterItem() {
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
         itemHolder.visible(R.id.plus_minus_view, itemShowPlusMinus)
-        itemHolder.longTouch(R.id.minus_increment_view, true) { view, event, eventType ->
+        itemHolder.longTouch(
+            R.id.minus_increment_view,
+            true
+        ) { view, event, eventType, longPressHappened ->
             eventType?.let {
                 itemIncrementAction(false, it == LongTouchListener.EVENT_TYPE_LONG_PRESS)
             }
             true
         }
-        itemHolder.longTouch(R.id.plus_increment_view, true) { view, event, eventType ->
+        itemHolder.longTouch(
+            R.id.plus_increment_view,
+            true
+        ) { view, event, eventType, longPressHappened ->
             eventType?.let {
                 itemIncrementAction(true, it == LongTouchListener.EVENT_TYPE_LONG_PRESS)
             }

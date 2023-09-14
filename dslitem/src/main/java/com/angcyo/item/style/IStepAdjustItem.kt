@@ -36,7 +36,7 @@ interface IStepAdjustItem : IAutoInitItem {
         itemHolder.longTouch(
             stepAdjustItemConfig.itemStepAdjustDecreaseViewId,
             true
-        ) { view, event, eventType ->
+        ) { view, event, eventType, longPressHappened ->
             if (eventType == null && event.isTouchFinish()) {
                 //改变item
                 if (!stepAdjustItemConfig.itemRealTimeUpdate) {
@@ -96,7 +96,7 @@ interface IStepAdjustItem : IAutoInitItem {
         itemHolder.longTouch(
             stepAdjustItemConfig.itemStepAdjustIncreaseViewId,
             true
-        ) { view, event, eventType ->
+        ) { view, event, eventType, longPressHappened ->
             if (eventType == null && event.isTouchFinish()) {
                 //改变item
                 adapterItem.itemChanged = true

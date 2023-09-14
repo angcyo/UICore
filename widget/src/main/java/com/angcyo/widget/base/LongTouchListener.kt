@@ -9,7 +9,7 @@ import android.view.ViewConfiguration
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/09/05
  */
-class LongTouchListener(val block: (view: View, event: MotionEvent?, eventType: Int?) -> Boolean) :
+class LongTouchListener(val block: (view: View, event: MotionEvent?, eventType: Int?, longPressHappened: Boolean) -> Boolean) :
     View.OnTouchListener, Runnable {
 
     companion object {
@@ -57,10 +57,10 @@ class LongTouchListener(val block: (view: View, event: MotionEvent?, eventType: 
         }
         if (eventType == EVENT_TYPE_CLICK) {
             //发送点击事件
-            block(view, event, EVENT_TYPE_CLICK)
+            block(view, event, EVENT_TYPE_CLICK, longPressHappened)
         }
         //事件转发, 用于自定义处理
-        block(view, event, null)
+        block(view, event, null, longPressHappened)
         return true
     }
 
@@ -74,7 +74,7 @@ class LongTouchListener(val block: (view: View, event: MotionEvent?, eventType: 
                 longPressHappened = true
 
                 //发送长按事件
-                block(v, null, eventType)
+                block(v, null, eventType, true)
 
                 if (loopLongPress) {
                     v.postDelayed(this, longPressTimeout)
