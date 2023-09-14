@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/lib_item_min_height"
             android:layout_margin="@dimen/lib_xhdpi"
-            android:text="@string/core_file_import"
+            android:text="@string/core_import"
             android:textColor="@color/lib_theme_black" />
     </FrameLayout>
 

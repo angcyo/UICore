@@ -19,7 +19,10 @@
     <string name="ui_delete">Delete</string>
     <string name="ui_delete_tip">After deletion, it is not recoverable, do you want to continue?</string>
     <string name="core_file_list">FileList</string>
-    <string name="core_file_import">Import File</string>
+    <string name="core_file_import">AddThisFile</string>
+    <string name="core_add_file_success">Added</string>
+    <string name="core_add_file_fail">AddFailed</string>
+    <string name="core_import">Import</string>
     <string name="core_import_success">Import Success</string>
     <string name="core_import_fail">Import Fail</string>
     <string name="core_trash_delete">DragHereToDelete</string>
