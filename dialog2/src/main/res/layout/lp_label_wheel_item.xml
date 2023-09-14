@@ -5,7 +5,8 @@
     android:id="@+id/lib_item_root_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingRight="@dimen/lib_padding_left">
+    android:paddingRight="@dimen/lib_padding_left"
+    tools:background="@color/transparent20">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/lib_label_view"
@@ -35,7 +36,7 @@
             android:layout_gravity="right|center_vertical"
             android:background="@null"
             android:visibility="visible"
-            app:srcCompat="@drawable/lib_next" />
+            app:srcCompat="@drawable/lib_wheel_next" />
 
     </FrameLayout>
 

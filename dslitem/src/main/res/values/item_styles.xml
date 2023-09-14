@@ -16,6 +16,7 @@
     <dimen name="lib_step_adjust_height">30dp</dimen>
     <color name="lib_step_adjust_tint_disable_color">@color/bg_sub_color</color>
     <color name="lib_step_adjust_tint_color">@color/text_general_color</color>
+    <dimen name="lib_increment_padding">8dp</dimen>
     <dimen name="lib_increment_height">38dp</dimen>
     <dimen name="lib_increment_edit_width">110dp</dimen>
     <!--2023-9-12 lib_increment_edit_width lib_step_adjust_width-->

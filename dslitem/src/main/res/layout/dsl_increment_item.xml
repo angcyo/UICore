@@ -35,8 +35,8 @@
                 android:layout_height="match_parent"
                 android:layout_margin="4dp"
                 android:background="@drawable/lib_increment_item_selector"
-                android:padding="@dimen/lib_step_adjust_padding"
-                app:srcCompat="@drawable/ic_step_adjust_decrease_svg"
+                android:padding="@dimen/lib_increment_padding"
+                app:srcCompat="@drawable/ic_increment_decrease_svg"
                 app:tint="@color/lib_step_adjust_tint_color_selector" />
 
             <com.angcyo.widget.edit.DslEditText
@@ -60,8 +60,8 @@
                 android:layout_height="match_parent"
                 android:layout_margin="4dp"
                 android:background="@drawable/lib_increment_item_selector"
-                android:padding="@dimen/lib_step_adjust_padding"
-                app:srcCompat="@drawable/ic_step_adjust_increase_svg"
+                android:padding="@dimen/lib_increment_padding"
+                app:srcCompat="@drawable/ic_increment_increase_svg"
                 app:tint="@color/lib_step_adjust_tint_color_selector" />
 
         </LinearLayout>
