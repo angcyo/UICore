@@ -9,6 +9,8 @@ import com.angcyo.library.ex.hawkPut
 import com.angcyo.widget.DslViewHolder
 
 /**
+ * 使用控件可见性的方式控制new标记的显示
+ * [com.angcyo.dsladapter.item.INewFlagItem] 是绘制出来的
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/04/22
  */
