@@ -35,7 +35,7 @@
             android:layout_gravity="right|center_vertical"
             android:background="@null"
             android:visibility="visible"
-            app:srcCompat="@drawable/lib_next" />
+            app:srcCompat="@drawable/lib_wheel_next" />
 
     </FrameLayout>
 

@@ -10,7 +10,7 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/lib_label_view"
         style="@style/LPItemLabelStyle"
-        tools:text="Label" />
+        tools:text="请选择事件" />
 
     <FrameLayout
         android:id="@+id/lib_content_wrap_layout"
@@ -35,7 +35,7 @@
             android:layout_gravity="right|center_vertical"
             android:background="@null"
             android:visibility="visible"
-            app:srcCompat="@drawable/lib_next" />
+            app:srcCompat="@drawable/lib_wheel_next" />
 
     </FrameLayout>
 
