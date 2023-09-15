@@ -281,3 +281,11 @@ fun Double.ensureInt(): String {
 
 /**当前的值, 是否是旋转值, 就是有旋转角度*/
 fun Float.isRotated(): Boolean = this != 0f && this != 360f
+
+/**索引从一个值到另一个值计算出映射的value值
+ *  [index] 需要计算的索引值
+ *  [fromIndex] [fromValue] 索引和值的开始映射对应值
+ *  [valueStep] 值的增量步长
+ *  */
+fun calcIncrementValue(index: Int, fromIndex: Int, fromValue: Float, valueStep: Float): Float =
+    fromValue + (index - fromIndex) * valueStep

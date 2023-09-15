@@ -73,12 +73,22 @@ open class DslSegmentTabItem : DslAdapterItem(), ITabLayoutItem {
         payloads: List<Any>
     ) {
         //填充布局
+        onSelfItemInitTabSegmentLayout(itemHolder, itemPosition, adapterItem, payloads)
+        super._initItemConfig(itemHolder, itemPosition, adapterItem, payloads)
+    }
+
+    /**初始化Segment布局*/
+    open fun onSelfItemInitTabSegmentLayout(
+        itemHolder: DslViewHolder,
+        itemPosition: Int,
+        adapterItem: DslAdapterItem,
+        payloads: List<Any>
+    ) {
         itemHolder.v<DslTabLayout>(tabLayoutItemConfig.itemTabLayoutViewId)?.apply {
             resetChild(itemSegmentList, itemSegmentLayoutId) { itemView, item, itemIndex ->
                 itemView.find<TextView>(R.id.lib_text_view)?.text = itemSegmentToText(item)
             }
         }
-        super._initItemConfig(itemHolder, itemPosition, adapterItem, payloads)
     }
 
     override fun onItemChangeListener(item: DslAdapterItem) {
@@ -86,3 +96,12 @@ open class DslSegmentTabItem : DslAdapterItem(), ITabLayoutItem {
         itemCurrentIndex //当前选中的索引
     }
 }
+
+/**获取选中元素对应的数据*/
+fun <T> DslSegmentTabItem.getSelectedSegmentBean(index: Int = itemCurrentIndex) =
+    itemSegmentList.getOrNull(index) as? T
+
+/**获取选中元素对应的int数据*/
+fun DslSegmentTabItem.getSelectedSegmentIntData(index: Int = itemCurrentIndex, def: Int) =
+    itemSegmentList.getOrNull(index)?.toString()?.toIntOrNull() ?: def
+

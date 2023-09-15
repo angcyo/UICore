@@ -223,3 +223,7 @@ fun IWheelItem.updateWheelSelected(
     }
 }
 
+/**获取选中元素对应的int数据*/
+fun IWheelItem.getSelectedWheelIntData(index: Int = itemSelectedIndex, def: Int) =
+    itemWheelList?.getOrNull(index)?.toString()?.toIntOrNull() ?: def
+
