@@ -222,7 +222,10 @@ abstract class BaseElement : IElement {
         )
     }
 
-    /** [overrideWidth] [overrideHeight] 需要覆盖输出的宽度 */
+    /**
+     * [createPictureDrawable]
+     * [overrideSize] 需要覆盖输出的宽度
+     * [offsetWidth] [offsetHeight] 额外增加的宽高 */
     protected fun createPictureDrawable(
         overrideSize: Float?,
         @Pixel
@@ -247,7 +250,10 @@ abstract class BaseElement : IElement {
         )
     }
 
-    /**[createPictureDrawable]*/
+    /**[createPictureDrawable]
+     *
+     * [com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.renderRenderer]
+     * */
     protected fun createPictureDrawable(
         renderParams: RenderParams?,
         block: Canvas.() -> Unit
@@ -275,7 +281,7 @@ abstract class BaseElement : IElement {
             params.drawOffsetWidth,
             params.drawOffsetHeight
         ) {
-            translate(params.drawOffsetWidth / 2, params.drawOffsetHeight / 2)
+            //translate(params.drawOffsetWidth / 2, params.drawOffsetHeight / 2)
             block()
         }
     }

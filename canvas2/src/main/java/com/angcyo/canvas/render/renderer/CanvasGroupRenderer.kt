@@ -205,6 +205,8 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
         /**使用[canvas]绘制[rendererList]
          *
+         * [com.angcyo.canvas.render.element.BaseElement.createPictureDrawable]
+         *
          * [renderAfterAction] 元素渲染后的额外动作*/
         fun renderRenderer(
             canvas: Canvas,
@@ -220,6 +222,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                         val renderProperty = renderer.renderProperty ?: continue
                         val renderElement = renderer.renderElement
                         if (renderElement is PathElement && renderElement.paint.style == Paint.Style.STROKE) {
+                            //描边模式下, 矢量绘制增加宽度
                             params.drawOffsetWidth = renderElement.paint.strokeWidth
                             params.drawOffsetHeight = params.drawOffsetWidth
                         } else {
