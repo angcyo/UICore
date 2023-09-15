@@ -11,6 +11,7 @@ import com.angcyo.dialog.configBottomDialog
 import com.angcyo.dialog2.widget.ArrayWheelAdapter
 import com.angcyo.library.L
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.toStr
 import com.angcyo.library.extend.IToDrawable
 import com.angcyo.library.extend.IToRightDrawable
 import com.angcyo.library.extend.IToText
@@ -53,7 +54,7 @@ open class WheelDialogConfig : BaseDialogConfig() {
         when (it) {
             is CharSequence -> it
             is IToText -> it.toText()
-            else -> it.toString()
+            else -> it.toStr()
         }
     }
 
