@@ -4,6 +4,10 @@ import androidx.recyclerview.widget.RecyclerView
 
 /**
  * 记录[RecyclerView]的滚动位置状态
+ *
+ * [androidx.recyclerview.widget.RecyclerView.saveScrollPosition]
+ * [androidx.recyclerview.widget.RecyclerView.restoreScrollPosition]
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2020/03/19
@@ -11,10 +15,13 @@ import androidx.recyclerview.widget.RecyclerView
  */
 
 data class ScrollPositionConfig(
-    //位置
+
+    /**第一个可见item的位置*/
     var adapterPosition: Int = RecyclerView.NO_POSITION,
 
-    //上下距离
+    /**第一个可见item的left*/
     var left: Int = 0,
+
+    /**第一个可见item的top*/
     var top: Int = 0
 )

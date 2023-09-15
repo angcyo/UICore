@@ -483,7 +483,8 @@ fun RecyclerView.saveScrollPosition(): ScrollPositionConfig {
 }
 
 /**恢复滚动位置*/
-fun RecyclerView.restoreScrollPosition(config: ScrollPositionConfig) {
+fun RecyclerView.restoreScrollPosition(config: ScrollPositionConfig?) {
+    config ?: return
     if (config.adapterPosition >= 0) {
         val lm = layoutManager
         when (lm) {
