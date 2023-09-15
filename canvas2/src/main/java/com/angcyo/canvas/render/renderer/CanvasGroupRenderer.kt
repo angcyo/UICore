@@ -16,6 +16,7 @@ import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.CanvasRenderViewBox
 import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
+import com.angcyo.canvas.render.core.component.LimitMatrixComponent
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement
 import com.angcyo.canvas.render.element.PathElement
@@ -116,7 +117,12 @@ open class CanvasGroupRenderer : BaseRenderer() {
                                     min(it.left, rect.left),
                                     min(it.top, rect.top),
                                     max(it.right, rect.right),
-                                    max(it.bottom, rect.bottom)
+                                    max(
+                                        maxOf(
+                                            it.bottom,
+                                            it.top + (LimitMatrixComponent.SIZE_LIMIT?.left ?: 1f)
+                                        ), rect.bottom
+                                    )
                                 )
                             }
                         }
