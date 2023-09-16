@@ -605,11 +605,13 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
         //---init---
         //标题
         dialogViewHolder.tv(R.id.dialog_title_view)?.apply {
+            if (dialogTitle == null) dialogTitle = text
             visibility = if (dialogTitle == null) View.GONE else View.VISIBLE
             text = dialogTitle
         }
         //消息体
         dialogViewHolder.tv(R.id.dialog_message_view)?.apply {
+            if (dialogMessage == null) dialogMessage = text
             visibility = if (dialogMessage == null) View.GONE else View.VISIBLE
             text = dialogMessage
         }
