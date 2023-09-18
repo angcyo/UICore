@@ -10,5 +10,6 @@
 
     <string name="core_send_to_label">Envoyer à...</string>
     <string name="ui_minimum">minimiser</string>
+    <string name="ui_next">Suivant</string>
 
 </resources>

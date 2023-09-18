@@ -10,5 +10,6 @@
 
     <string name="core_send_to_label">に送る...</string>
     <string name="ui_minimum">最小化します</string>
+    <string name="ui_next">次へ</string>
 
 </resources>

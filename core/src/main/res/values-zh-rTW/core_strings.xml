@@ -10,5 +10,6 @@
 
     <string name="core_send_to_label">發送到...</string>
     <string name="ui_minimum">最小化</string>
+    <string name="ui_next">下一步</string>
 
 </resources>

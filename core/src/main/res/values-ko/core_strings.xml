@@ -10,5 +10,6 @@
 
     <string name="core_send_to_label">보내기...</string>
     <string name="ui_minimum">최소화</string>
+    <string name="ui_next">다음</string>
 
 </resources>
