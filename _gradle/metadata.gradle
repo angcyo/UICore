@@ -7,6 +7,9 @@
  * Unable to determine application id: com.android.tools.idea.run.ApkProvisionException:
  * Error loading build artifacts from: /Users/angcyo/project/android/AutoCalibrate/calibrate/build/intermediates/apk_ide_redirect_file/_devDebug/redirect.txt
  *
+ * 在app级别的build.gradle文件中加入
+ * apply from: "$gradleHost/master/metadata.gradle"
+ *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/08/02
  */
