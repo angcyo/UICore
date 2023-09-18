@@ -51,7 +51,10 @@ fun zipFileRead(zipFilePath: String?, readAction: ZipFile.() -> Unit) {
         return
     }
     try {
-        val zipFile = ZipFile(file) //java.util.zip.ZipException: error in opening zip file
+        val zipFile = ZipFile(file)
+        //java.util.zip.ZipException: error in opening zip file
+        //java.util.zip.ZipException: invalid CEN header (duplicate entry)
+
         //zipFile.readEntry() //使用这个方法, 读取zip文件中的数据
         zipFile.readAction()
         zipFile.close()
