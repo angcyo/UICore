@@ -101,3 +101,20 @@ fun Byte.low4Bit(): Byte = (this.toInt() and 0x0f).toByte()
 
 /**转换成UTF8文本*/
 inline fun ByteArray.toText(charset: Charset = Charset.defaultCharset()) = toString(charset)
+
+/**将[bytes]从[fromIndex]位置开始塞入*/
+fun ByteArray.update(fromIndex: Int, bytes: ByteArray) {
+    for (i in bytes.indices) {
+        if (i + fromIndex >= size) {
+            break
+        }
+        this[fromIndex + i] = bytes[i]
+    }
+}
+
+fun ByteArray.update(fromIndex: Int, byte: Int) {
+    if (fromIndex >= size) {
+        return
+    }
+    this[fromIndex] = byte.toByte()
+}
