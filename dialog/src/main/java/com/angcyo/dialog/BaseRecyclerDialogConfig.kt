@@ -47,8 +47,17 @@ abstract class BaseRecyclerDialogConfig(context: Context? = null) : BaseDialogCo
     ) {
         //recycler
         recyclerView?.renderDslAdapter {
-            onRenderAdapterAction?.invoke(this)
+            onSelfRenderAdapter(dialog, dialogViewHolder, recyclerView)
         }
+    }
+
+    /**[initRecyclerView]*/
+    open fun DslAdapter.onSelfRenderAdapter(
+        dialog: Dialog,
+        dialogViewHolder: DslViewHolder,
+        recyclerView: DslRecyclerView?
+    ) {
+        onRenderAdapterAction?.invoke(this)
     }
 
     /**重新渲染界面*/
