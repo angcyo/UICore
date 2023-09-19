@@ -675,6 +675,8 @@ fun clamp(value: Float, min: Float, max: Float): Float = min(max(value, min), ma
 
 fun clamp(value: Int, min: Int, max: Int): Int = min(max(value, min), max)
 
+fun clamp(value: Long, min: Long, max: Long): Long = min(max(value, min), max)
+
 /**在同方向上取最大值
  * [target] 参与比较的值
  * [threshold] 阈值, 正值, 自动取反(负值)
