@@ -42,7 +42,7 @@ interface IWheelItem : IAutoInitItem {
             wheelItemToStringAction = wheelItemConfig.itemWheelToTextAction
             wheelUnit = wheelItemConfig.itemWheelUnit
             wheelItemSelectorAction = { dialog, index, item ->
-                if (wheelItemConfig.itemWheelSelectorAction(dialog, index, item)) {
+                if (onSelfInterceptWheelItemSelector(dialog, index, item)) {
                     //拦截了
                     true
                 } else {
@@ -62,6 +62,12 @@ interface IWheelItem : IAutoInitItem {
             //action
             wheelItemConfig.itemConfigDialogAction(this)
         }
+    }
+
+    /**拦截选中*/
+    @CallPoint
+    fun onSelfInterceptWheelItemSelector(dialog: Dialog, index: Int, item: Any): Boolean {
+        return wheelItemConfig.itemWheelSelectorAction(dialog, index, item)
     }
 
     /**选中后的回调*/
