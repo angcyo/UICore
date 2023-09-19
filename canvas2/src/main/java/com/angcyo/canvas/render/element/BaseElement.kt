@@ -2,6 +2,9 @@ package com.angcyo.canvas.render.element
 
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import androidx.annotation.Keep
+import androidx.core.graphics.withTranslation
+import com.angcyo.canvas.render.R
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.core.component.ElementHitComponent
@@ -11,11 +14,17 @@ import com.angcyo.canvas.render.util.*
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.component.SupportUndo
+import com.angcyo.library.component.hawk.HawkPropertyValue
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
+import com.angcyo.library.ex._color
 import com.angcyo.library.ex.createOverrideBitmapCanvas
 import com.angcyo.library.ex.createOverrideMatrix
 import com.angcyo.library.ex.createOverridePictureCanvas
+import com.angcyo.library.ex.createTextPaint
+import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.textHeight
+import com.angcyo.library.ex.textWidth
 import com.angcyo.library.ex.translateToOrigin
 import com.angcyo.library.unit.toPixel
 
@@ -25,6 +34,11 @@ import com.angcyo.library.unit.toPixel
  * @since 2023/02/11
  */
 abstract class BaseElement : IElement {
+
+    @Keep
+    companion object {
+        var elementNoDataTip: String by HawkPropertyValue<Any, String>("No Data!")
+    }
 
     /**画笔*/
     var paint = createRenderTextPaint()
@@ -40,6 +54,11 @@ abstract class BaseElement : IElement {
         get() = renderMatrix ?: renderProperty.getDrawMatrix(includeRotate = true)
 
     override var elementHitComponent: ElementHitComponent = ElementHitComponent(this)
+
+    /**错误提示画笔*/
+    protected val tipPaint: Paint by lazy {
+        createTextPaint(_color(R.color.error))
+    }
 
     //region---core---
 
@@ -111,6 +130,45 @@ abstract class BaseElement : IElement {
      * [createPathDrawable]
      * */
     open fun getDrawPathList(): List<Path>? = null
+
+    /**无数据时, 渲染提示信息.
+     * 在元素0,0的位置绘制
+     * */
+    fun renderNoData(canvas: Canvas, params: RenderParams?) {
+        val property = renderProperty
+        val renderBounds = property.getRenderBounds()
+
+        canvas.withTranslation(-renderBounds.left, -renderBounds.top) {
+            val scale = params?.delegate?.renderViewBox?.getScale() ?: 1f
+            val width = 1 * dp
+            //绘制一根线, 从左上角到右下角
+            tipPaint.strokeWidth = width / scale
+            tipPaint.style = Paint.Style.STROKE
+            canvas.drawRect(renderBounds, tipPaint)
+            tipPaint.style = Paint.Style.FILL
+            canvas.drawLine(
+                renderBounds.left,
+                renderBounds.top,
+                renderBounds.right,
+                renderBounds.bottom,
+                tipPaint
+            )
+            //绘制一根线, 从右上角到左下角
+            canvas.drawLine(
+                renderBounds.right,
+                renderBounds.top,
+                renderBounds.left,
+                renderBounds.bottom,
+                tipPaint
+            )
+            tipPaint.strokeWidth = width
+            val text = elementNoDataTip
+            tipPaint.textSize = 12 * dp / scale
+            val x = renderBounds.centerX() - tipPaint.textWidth(text) / 2
+            val y = renderBounds.centerY() + tipPaint.textHeight() / 2
+            canvas.drawText(text, x, y, tipPaint)
+        }
+    }
 
     //endregion---core---
 

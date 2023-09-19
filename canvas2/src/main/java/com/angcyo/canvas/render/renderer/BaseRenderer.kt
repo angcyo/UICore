@@ -10,9 +10,11 @@ import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.core.component.BaseControlPoint
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
+import com.angcyo.canvas.render.element.BaseElement
 import com.angcyo.canvas.render.element.IElement
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRenderBitmap
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRenderDrawable
+import com.angcyo.canvas.render.util.renderElement
 import com.angcyo.drawable.loading.CircleScaleLoadingDrawable
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.Pixel
@@ -99,8 +101,6 @@ abstract class BaseRenderer : IRenderer {
      * [updateAsync]*/
     open val isAsync: Boolean
         get() = renderFlags.have(RENDERER_FLAG_ASYNC)
-
-    protected val tipPaint = createTextPaint(_color(R.color.error))
 
     //endregion---计算属性---
 
@@ -278,39 +278,12 @@ abstract class BaseRenderer : IRenderer {
 
     /**无数据时, 渲染提示信息*/
     protected fun renderNoDrawable(canvas: Canvas, params: RenderParams) {
-        val property = renderProperty ?: return
-        val renderBounds = property.getRenderBounds()
-
-        val scale = params.delegate?.renderViewBox?.getScale() ?: 1f
-        val width = 1 * dp
-        //绘制一根线, 从左上角到右下角
-        tipPaint.strokeWidth = width / scale
-        tipPaint.style = Paint.Style.STROKE
-        canvas.drawRect(renderBounds, tipPaint)
-        tipPaint.style = Paint.Style.FILL
-        canvas.drawLine(
-            renderBounds.left,
-            renderBounds.top,
-            renderBounds.right,
-            renderBounds.bottom,
-            tipPaint
-        )
-        //绘制一根线, 从右上角到左下角
-        canvas.drawLine(
-            renderBounds.right,
-            renderBounds.top,
-            renderBounds.left,
-            renderBounds.bottom,
-            tipPaint
-        )
-        tipPaint.strokeWidth = width
-        val text = "Element No Data!"
-        tipPaint.textSize = 12 * dp / scale
-        val x = renderBounds.centerX() - tipPaint.textWidth(text) / 2
-        val y = renderBounds.centerY() + tipPaint.textHeight() / 2
-        canvas.drawText(text, x, y, tipPaint)
+        renderElement?.let {
+            if (it is BaseElement) {
+                it.renderNoData(canvas, params)
+            }
+        }
     }
-
 
     /**移除一个渲染标识*/
     open fun removeRenderFlag(flag: Int, reason: Reason, delegate: CanvasRenderDelegate?) {
