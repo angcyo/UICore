@@ -1,8 +1,6 @@
 package com.angcyo.item
 
-import com.angcyo.item.style.itemCheckItems
 import com.angcyo.item.style.itemCheckLayoutId
-import com.angcyo.item.style.itemCheckedItems
 import com.angcyo.item.style.itemMultiMode
 import com.angcyo.library.ex._dimen
 
@@ -12,7 +10,7 @@ import com.angcyo.library.ex._dimen
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/09/06
  */
-class DslRadioGroupItem : DslCheckGroupItem() {
+open class DslRadioGroupItem : DslCheckGroupItem() {
 
     init {
         itemLayoutId = R.layout.dsl_radio_group_item
