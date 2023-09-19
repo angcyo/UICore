@@ -50,3 +50,12 @@ fun DslAdapter.renderAdapterLoadingStatus(
 ) {
     renderAdapterStatus(DslAdapterStatusItem.ADAPTER_STATUS_LOADING, layoutId, bindAction)
 }
+
+/**监听适配器的情感图状态切换, 状态切换回调会很快, 可能需要延迟操作
+ * [com.angcyo.dsladapter.DslAdapterStatusItem.ADAPTER_STATUS_EMPTY]
+ * [com.angcyo.dsladapter.DslAdapterStatusItem.ADAPTER_STATUS_LOADING]
+ * [com.angcyo.dsladapter.DslAdapterStatusItem.ADAPTER_STATUS_ERROR]
+ * */
+fun DslAdapter.observeAdapterStatusChange(action: (from: Int, to: Int) -> Unit) {
+    dslAdapterStatusItem.onItemStateChange = action
+}

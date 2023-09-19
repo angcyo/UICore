@@ -83,6 +83,10 @@ open class InnerFileManageFragment : BaseDslFragment() {
                 removeThis()
             }
         }
+
+        _adapter.onDispatchUpdatesAfter {
+            _vh.visible(R.id.lib_bottom_wrap_layout, !_adapter.isEmpty())
+        }
     }
 
     override fun onLoadData() {
