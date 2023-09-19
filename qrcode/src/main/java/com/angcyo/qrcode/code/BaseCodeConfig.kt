@@ -99,3 +99,39 @@ fun BarcodeFormat.haveErrorCorrection(): Boolean = when (this) {
 
     else -> false
 }
+
+/**类型转换[BarcodeFormat]*/
+fun String.toBarcodeFormat(): BarcodeFormat? {
+    return try {
+        BarcodeFormat.valueOf(this)
+    } catch (_: Exception) {
+        null
+    }
+}
+
+/**类型转换[BaseCodeConfig]
+ * [com.angcyo.qrcode.code.BaseCodeConfig.encode]
+ * */
+fun String.toBarcodeConfig(action: BaseCodeConfig.() -> Unit): BaseCodeConfig? {
+    val format = toBarcodeFormat()
+    return when (format) {
+        BarcodeFormat.AZTEC -> AztecConfig().apply(action)
+        BarcodeFormat.DATA_MATRIX -> DataMatrixConfig().apply(action)
+        BarcodeFormat.PDF_417 -> PDF417Config().apply(action)
+        BarcodeFormat.QR_CODE -> QrCodeConfig().apply(action)
+        BarcodeFormat.CODE_128 -> Code128Config().apply(action)
+        BarcodeFormat.CODE_39 -> Code39Config().apply(action)
+        BarcodeFormat.CODE_93 -> Code93Config().apply(action)
+        BarcodeFormat.CODABAR -> CodaBarConfig().apply(action)
+        BarcodeFormat.EAN_13 -> Ean13Config().apply(action)
+        BarcodeFormat.EAN_8 -> Ean8Config().apply(action)
+        BarcodeFormat.ITF -> ITFConfig().apply(action)
+        BarcodeFormat.UPC_A -> UPCAConfig().apply(action)
+        BarcodeFormat.UPC_E -> UPCEConfig().apply(action)
+        //BarcodeFormat.MAXICODE -> MaxiCodeConfig()
+        //BarcodeFormat.RSS_14 -> RSS14Config()
+        //BarcodeFormat.RSS_EXPANDED -> RSSExpandedConfig()
+        //BarcodeFormat.UPC_EAN_EXTENSION -> UPC_EANExtensionConfig()
+        else -> null
+    }
+}

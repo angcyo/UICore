@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentActivity
 import com.angcyo.fragment.dslBridge
 import com.angcyo.library.L
 import com.angcyo.library.ex.dpi
+import com.angcyo.qrcode.code.toBarcodeConfig
 import com.angcyo.rcode.RCode
 import com.angcyo.rcode.ScanActivity
 import com.angcyo.rcode.ScanFragment
@@ -159,4 +160,7 @@ fun createBarcode(
     e.printStackTrace()
     null
 }
+
+/**当前的内容是否可以生成指定的条码格式*/
+fun String.canCreateBarcode(content: String?) = toBarcodeConfig { }?.encode(content) != null
 
