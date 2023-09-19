@@ -466,10 +466,9 @@ fun RecyclerView.scrollToFirst(smooth: Boolean = false) {
 }
 
 /**保存当前的滚动位置*/
-fun RecyclerView.saveScrollPosition(): ScrollPositionConfig {
-    val result = ScrollPositionConfig()
-
+fun RecyclerView.saveScrollPosition(): ScrollPositionConfig? {
     if (childCount > 0) {
+        val result = ScrollPositionConfig()
         val childAt = getChildAt(0)
         val layoutParams = childAt.layoutParams as LayoutParams
 
@@ -477,9 +476,13 @@ fun RecyclerView.saveScrollPosition(): ScrollPositionConfig {
 
         result.left = layoutManager?.getDecoratedLeft(childAt) ?: 0
         result.top = layoutManager?.getDecoratedTop(childAt) ?: 0
-    }
 
-    return result
+        //result.left = childAt.left
+        //result.top = childAt.top
+
+        return result
+    }
+    return null
 }
 
 /**恢复滚动位置*/
