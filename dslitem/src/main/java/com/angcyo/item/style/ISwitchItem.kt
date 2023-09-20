@@ -37,16 +37,32 @@ interface ISwitchItem : IAutoInitItem {
 
             setOnCheckedChangeListener(object : SwitchButton.OnCheckedChangeListener {
                 override fun onCheckedChanged(view: SwitchButton, isChecked: Boolean) {
-                    val checked = itemSwitchChecked
-                    itemSwitchChecked = isChecked
-                    if (checked != itemSwitchChecked) {
-                        if (this@ISwitchItem is DslAdapterItem) {
-                            itemChanging = true
-                        }
-                        switchItemConfig.itemSwitchChangedAction(itemSwitchChecked)
+                    if (switchItemConfig.itemInterceptSwitchChangedAction(
+                            itemHolder,
+                            view,
+                            isChecked
+                        )
+                    ) {
+                        //拦截了
+                        view.post { view.setChecked(itemSwitchChecked, false) }
+                        return
+                    } else {
+                        onSelfItemSwitchChanged(isChecked)
                     }
                 }
             })
+        }
+    }
+
+    /**当自身的开关状态改变时通知*/
+    fun onSelfItemSwitchChanged(isChecked: Boolean) {
+        val checked = itemSwitchChecked
+        itemSwitchChecked = isChecked
+        if (checked != itemSwitchChecked) {
+            if (this@ISwitchItem is DslAdapterItem) {
+                itemChanging = true
+            }
+            switchItemConfig.itemSwitchChangedAction(itemSwitchChecked)
         }
     }
 
@@ -58,7 +74,7 @@ interface ISwitchItem : IAutoInitItem {
     /**更新开关的状态
      * [notify] 是否要通知回调
      * [force] 是否强制更新? 忽略相同的状态*/
-    fun updateSwitchChecked(checked: Boolean, notify: Boolean = false, force: Boolean = false) {
+    fun updateItemSwitchChecked(checked: Boolean, notify: Boolean = false, force: Boolean = false) {
         if (itemSwitchChecked != checked || force) {
             itemSwitchChecked = checked
             if (this is DslAdapterItem) {
@@ -72,16 +88,22 @@ interface ISwitchItem : IAutoInitItem {
     }
 }
 
-var ISwitchItem.itemSwitchChecked: Boolean
+var ISwitchItem.itemSwitchChecked
     get() = switchItemConfig.itemSwitchChecked
     set(value) {
         switchItemConfig.itemSwitchChecked = value
     }
 
-var ISwitchItem.itemSwitchChangedAction: (checked: Boolean) -> Unit
+var ISwitchItem.itemSwitchChangedAction
     get() = switchItemConfig.itemSwitchChangedAction
     set(value) {
         switchItemConfig.itemSwitchChangedAction = value
+    }
+
+var ISwitchItem.itemInterceptSwitchChangedAction
+    get() = switchItemConfig.itemInterceptSwitchChangedAction
+    set(value) {
+        switchItemConfig.itemInterceptSwitchChangedAction = value
     }
 
 class SwitchItemConfig : IDslItemConfig {
@@ -91,6 +113,12 @@ class SwitchItemConfig : IDslItemConfig {
 
     /**是否选中*/
     var itemSwitchChecked = false
+
+    /**是否要拦截开关的切换*/
+    var itemInterceptSwitchChangedAction: (itemHolder: DslViewHolder, view: SwitchButton, checked: Boolean) -> Boolean =
+        { itemHolder, view, checked ->
+            false
+        }
 
     /**状态回调, 提供一个可以完全覆盖的方法*/
     var itemSwitchChangedAction: (checked: Boolean) -> Unit = {
