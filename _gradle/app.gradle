@@ -45,7 +45,9 @@ println "........app.gradle........end"
 //println rootProject
 
 android {
-    namespace "$_namespace" //gradle7.5+
+    if (project.android.hasProperty("namespace")) {
+        namespace "$_namespace" //gradle7.5+
+    }
     if (gradle.gradleVersion.charAt(0) >= '8') {
         compileSdk Integer.parseInt(_C_SDK)
     } else {
