@@ -176,6 +176,10 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
     var onDialogInitListener: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit =
         { _, _ -> }
 
+    /**等同[onDialogInitListener]*/
+    var dialogInitOverride: (dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit =
+        { _, _ -> }
+
     /**作用在Windows上*/
     @Transient
     var dialogBgDrawable: Drawable? = UndefinedDrawable()
@@ -476,6 +480,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
 
             initDialogView(dialog, viewHolder)
             onDialogInitListener(dialog, viewHolder)
+            dialogInitOverride(dialog, viewHolder)
         }
 
         return dialog
