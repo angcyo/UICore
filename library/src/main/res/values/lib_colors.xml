@@ -15,6 +15,7 @@
     <color name="lib_line">#D5D5D5</color>
     <color name="lib_line_dark">#ECECEC</color>
     <color name="lib_disable_bg_color">#C9CACC</color>
+    <color name="lib_link">#0a84ff</color>
 
     <!--伪造出来的状态栏颜色-->
     <color name="lib_status_bar_dim">#20000000</color>
