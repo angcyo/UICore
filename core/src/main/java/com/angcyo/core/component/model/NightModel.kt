@@ -130,6 +130,14 @@ class NightModel : ViewModel() {
     }
 }
 
+/**是否是暗色模式/深色模式*/
+val _isNightMode: Boolean
+    get() = _isDarkMode
+
+/**是否是暗色模式/深色模式*/
+val _isDarkMode: Boolean
+    get() = vmApp<NightModel>().isDarkMode
+
 /**[com.angcyo.core.component.model.NightModel.tintImageViewNight]*/
 fun ImageView.tintImageViewNight(): ImageView? {
     return vmApp<NightModel>().tintImageViewNight(this)
