@@ -134,8 +134,7 @@ class ShareSendFragment : BaseDslFragment() {
                         filePart = body.toProgressBody { progressInfo, exception ->
                             itemSendProgress = progressInfo?.percent ?: 0
                             updateAdapterItem() //更新item进度
-                        }
-                            .toFilePart(uri.getShowName())
+                        }.toFilePart(uri.getShowName())
                     }.observe { data, error ->
                         itemSendState = if (error == null) {
                             itemDuration = nowTime() - nowTime

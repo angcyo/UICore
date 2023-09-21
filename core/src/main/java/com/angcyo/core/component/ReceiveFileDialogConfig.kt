@@ -15,12 +15,17 @@ import com.angcyo.library.ex._color
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.open
 import com.angcyo.library.ex.tintDrawableColor
+import com.angcyo.library.toastQQ
 import com.angcyo.widget.DslViewHolder
 import java.io.File
 import kotlin.math.min
 
 /**
  * 接收文件的对话框配置
+ *
+ * 接收到的文件, 通过共享通知
+ * [com.angcyo.core.component.model.DataShareModel.shareFileOnceData]
+ *
  * Email:angcyo@126.com
  * @author angcyo
  * @date 2023/04/13
@@ -55,8 +60,17 @@ class ReceiveFileDialogConfig(context: Context? = null) : DslDialogConfig(contex
             receiveFile?.open(it.context) //打开文件
         }
 
+        val dataShareModel = vmApp<DataShareModel>()
+
+        //通知消息
+        dataShareModel.shareMessageOnceData.observe(this) {
+            it?.let {
+                toastQQ("$it")
+            }
+        }
+
         //监听文件
-        vmApp<DataShareModel>().shareFileOnceData.observe(this) {
+        dataShareModel.shareFileOnceData.observe(this) {
             it?.let {
                 receiveFile = it
                 val name = it.name
@@ -68,7 +82,7 @@ class ReceiveFileDialogConfig(context: Context? = null) : DslDialogConfig(contex
         }
 
         //监听文本
-        vmApp<DataShareModel>().shareTextOnceData.observe(this) {
+        dataShareModel.shareTextOnceData.observe(this) {
             it?.let {
                 dialogViewHolder.visible(R.id.lib_body_wrap_view)
                 dialogViewHolder.tv(R.id.lib_body_view)?.text = it
