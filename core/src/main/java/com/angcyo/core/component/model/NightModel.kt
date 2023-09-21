@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import com.angcyo.core.R
+import com.angcyo.core.vmApp
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.component.hawk.HawkPropertyValue
@@ -45,6 +46,9 @@ class NightModel : ViewModel() {
     /**是否是暗色模式/深色模式*/
     val isDarkMode: Boolean
         get() = if (enableNightModel) isDarkMode(lastContext) else false  //isDarkMode()
+
+    /**暗黑模式下的图标tint颜色*/
+    var darkIcoTintColor: Int = _color(R.color.lib_theme_icon_color)
 
     private val _nightMode: Int
         get() = if (enableNightModel) {
@@ -112,7 +116,7 @@ class NightModel : ViewModel() {
     /**图标着色, 只在暗黑模式下, 不改变原来的颜色*/
     fun tintImageViewNight(imageView: ImageView?): ImageView? {
         if (isDarkMode) {
-            imageView?.setTintList(_color(R.color.lib_theme_icon_color))
+            imageView?.setTintList(darkIcoTintColor)
         }
         return imageView
     }
@@ -120,8 +124,19 @@ class NightModel : ViewModel() {
     /**Drawable着色, 只在暗黑模式下, 不改变原来的颜色*/
     fun tintDrawableNight(drawable: Drawable?): Drawable? {
         if (isDarkMode) {
-            return drawable?.tintDrawable(_color(R.color.lib_theme_icon_color))
+            return drawable?.tintDrawable(darkIcoTintColor)
         }
         return drawable
     }
 }
+
+/**[com.angcyo.core.component.model.NightModel.tintImageViewNight]*/
+fun ImageView.tintImageViewNight(): ImageView? {
+    return vmApp<NightModel>().tintImageViewNight(this)
+}
+
+/**[com.angcyo.core.component.model.NightModel.tintDrawableNight]*/
+fun Drawable.tintDrawableNight(): Drawable? {
+    return vmApp<NightModel>().tintDrawableNight(this)
+}
+
