@@ -151,15 +151,25 @@ data class CanvasRenderProperty(
         originY = ANCHOR_Y_TOP
         anchorX = 0f
         anchorY = anchorX
+
+        resetSize()
+    }
+
+    /**重置大小相关的属性*/
+    fun resetSize(resetFlip: Boolean = true) {
+        angle = 0f
+
         width = 0f
         height = width
-        angle = 0f
         scaleX = 1f
         scaleY = scaleX
-        flipX = false
-        flipY = false
         skewX = 0f
         skewY = skewX
+
+        if (resetFlip) {
+            flipX = false
+            flipY = false
+        }
     }
 
     /**复制属性到[target]对象*/
