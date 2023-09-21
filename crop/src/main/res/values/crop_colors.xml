@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="crop_item_layout">#f9f9f9</color>
+    <color name="crop_item_disable">@color/lib_theme_icon_disable_color</color>
 </resources>

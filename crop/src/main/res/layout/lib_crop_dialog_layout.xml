@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lib_white">
+    android:background="@color/lib_theme_white_color">
 
     <!--核心层-->
     <com.angcyo.crop.CropView
@@ -39,7 +39,8 @@
             android:layout_gravity="center_vertical"
             android:background="@drawable/lib_bg2_selector"
             android:padding="8dp"
-            app:srcCompat="@drawable/crop_cancel_icon" />
+            app:srcCompat="@drawable/crop_cancel_icon"
+            app:tint="@color/lib_theme_icon_color" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/lib_title_text_view"
@@ -57,7 +58,8 @@
             android:layout_gravity="center_vertical|right"
             android:background="@drawable/lib_bg2_selector"
             android:padding="8dp"
-            app:srcCompat="@drawable/crop_confirm_icon" />
+            app:srcCompat="@drawable/crop_confirm_icon"
+            app:tint="@color/lib_theme_icon_color" />
 
     </FrameLayout>
 
