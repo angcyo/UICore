@@ -37,12 +37,7 @@ interface ISwitchItem : IAutoInitItem {
 
             setOnCheckedChangeListener(object : SwitchButton.OnCheckedChangeListener {
                 override fun onCheckedChanged(view: SwitchButton, isChecked: Boolean) {
-                    if (switchItemConfig.itemInterceptSwitchChangedAction(
-                            itemHolder,
-                            view,
-                            isChecked
-                        )
-                    ) {
+                    if (onSelfItemInterceptSwitchChanged(itemHolder, view, isChecked)) {
                         //拦截了
                         view.post { view.setChecked(itemSwitchChecked, false) }
                         return
@@ -52,6 +47,15 @@ interface ISwitchItem : IAutoInitItem {
                 }
             })
         }
+    }
+
+    /**是否要拦截开关切换操作*/
+    fun onSelfItemInterceptSwitchChanged(
+        itemHolder: DslViewHolder,
+        view: SwitchButton,
+        checked: Boolean
+    ): Boolean {
+        return switchItemConfig.itemInterceptSwitchChangedAction(itemHolder, view, checked)
     }
 
     /**当自身的开关状态改变时通知*/
