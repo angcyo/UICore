@@ -31,14 +31,14 @@ interface ITabLayoutItem : IAutoInitItem {
             configTabLayoutConfig {
                 //拦截设置
                 onSelectItemView = { itemView, index, select, fromUser ->
-                    tabLayoutItemConfig.onSelectItemView(itemView, index, select, fromUser)
+                    tabLayoutItemConfig.onTabSelectItemView(itemView, index, select, fromUser)
                 }
                 //选中回调
                 onSelectIndexChange = { fromIndex, selectList, reselect, fromUser ->
                     val toIndex = selectList.firstOrNull() ?: -1
-                    val oldIndex = tabLayoutItemConfig.itemCurrentIndex
-                    tabLayoutItemConfig.itemCurrentIndex = toIndex
-                    tabLayoutItemConfig.onSelectIndexChange(
+                    val oldIndex = tabLayoutItemConfig.itemTabCurrentIndex
+                    tabLayoutItemConfig.itemTabCurrentIndex = toIndex
+                    tabLayoutItemConfig.onTabSelectIndexChange(
                         fromIndex,
                         selectList,
                         reselect,
@@ -49,7 +49,7 @@ interface ITabLayoutItem : IAutoInitItem {
                     }
                 }
             }
-            setCurrentItem(tabLayoutItemConfig.itemCurrentIndex, false, false)
+            setCurrentItem(tabLayoutItemConfig.itemTabCurrentIndex, false, false)
         }
     }
 
@@ -61,16 +61,16 @@ interface ITabLayoutItem : IAutoInitItem {
 
 /**当前的索引*/
 var ITabLayoutItem.itemCurrentIndex: Int
-    get() = tabLayoutItemConfig.itemCurrentIndex
+    get() = tabLayoutItemConfig.itemTabCurrentIndex
     set(value) {
-        tabLayoutItemConfig.itemCurrentIndex = value
+        tabLayoutItemConfig.itemTabCurrentIndex = value
     }
 
 /**选中回调*/
-var ITabLayoutItem.itemSelectIndexChangeAction: (fromIndex: Int, selectIndexList: List<Int>, reselect: Boolean, fromUser: Boolean) -> Unit
-    get() = tabLayoutItemConfig.onSelectIndexChange
+var ITabLayoutItem.itemTabSelectIndexChangeAction: (fromIndex: Int, selectIndexList: List<Int>, reselect: Boolean, fromUser: Boolean) -> Unit
+    get() = tabLayoutItemConfig.onTabSelectIndexChange
     set(value) {
-        tabLayoutItemConfig.onSelectIndexChange = value
+        tabLayoutItemConfig.onTabSelectIndexChange = value
     }
 
 class TabLayoutItemConfig : IDslItemConfig {
@@ -79,10 +79,10 @@ class TabLayoutItemConfig : IDslItemConfig {
     var itemTabLayoutViewId: Int = R.id.lib_tab_layout
 
     /**当前选中项*/
-    var itemCurrentIndex: Int = -1
+    var itemTabCurrentIndex: Int = -1
 
     /**[com.angcyo.tablayout.DslSelectorConfig.onSelectItemView]*/
-    var onSelectItemView: (itemView: View, index: Int, select: Boolean, fromUser: Boolean) -> Boolean =
+    var onTabSelectItemView: (itemView: View, index: Int, select: Boolean, fromUser: Boolean) -> Boolean =
         { _, _, _, _ ->
             false
         }
@@ -90,7 +90,7 @@ class TabLayoutItemConfig : IDslItemConfig {
     /**
      * [[com.angcyo.tablayout.DslSelectorConfig.onSelectIndexChange]]
      * */
-    var onSelectIndexChange: (fromIndex: Int, selectIndexList: List<Int>, reselect: Boolean, fromUser: Boolean) -> Unit =
+    var onTabSelectIndexChange: (fromIndex: Int, selectIndexList: List<Int>, reselect: Boolean, fromUser: Boolean) -> Unit =
         { fromIndex, selectList, reselect, fromUser ->
             "选择:[$fromIndex]->${selectList} reselect:$reselect fromUser:$fromUser".logi()
         }

@@ -1,6 +1,6 @@
 package com.angcyo.item
 
-import com.angcyo.item.style.itemSelectIndexChangeAction
+import com.angcyo.item.style.itemTabSelectIndexChangeAction
 
 /**
  * 块状颜色分段的[DslSegmentTabItem]
@@ -16,7 +16,7 @@ open class DslSegmentSolidTabItem : DslSegmentTabItem() {
         itemSegmentList
 
         //回调监听
-        itemSelectIndexChangeAction
+        itemTabSelectIndexChangeAction
     }
 
 }

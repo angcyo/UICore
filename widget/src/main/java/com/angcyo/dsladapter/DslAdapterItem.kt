@@ -24,6 +24,7 @@ import com.angcyo.dsladapter.annotation.*
 import com.angcyo.dsladapter.item.IDslItem
 import com.angcyo.library.L
 import com.angcyo.library.UndefinedDrawable
+import com.angcyo.library.annotation.ThreadDes
 import com.angcyo.library.ex.*
 import com.angcyo.library.isMain
 import com.angcyo.widget.DslViewHolder
@@ -63,6 +64,7 @@ typealias HolderBindAction = (
 open class DslAdapterItem : LifecycleOwner {
 
     companion object {
+
         /**负载,请求刷新部分界面*/
         const val PAYLOAD_UPDATE_PART = 0x0001
 
@@ -77,6 +79,9 @@ open class DslAdapterItem : LifecycleOwner {
 
         /**负载,请求更新[itemIsSelected]*/
         const val PAYLOAD_UPDATE_SELECT = 0x010
+
+        /**负载最后一个*/
+        const val PAYLOAD_UPDATE_LAST = PAYLOAD_UPDATE_SELECT shl 1
 
         /**占满宽度的item*/
         const val FULL_ITEM = -1
@@ -93,10 +98,17 @@ open class DslAdapterItem : LifecycleOwner {
 
     //<editor-fold desc="update操作">
 
+    /**在每次[updateAdapterItem] [updateItemDepend] [updateItemDependPayload]时, 触发的回调*/
+    @ThreadDes("AnyThread")
+    var itemUpdateAction: (payload: Any?) -> Unit = {
+
+    }
+
     /**[com.angcyo.dsladapter.DslAdapter.notifyItemChanged]*/
     @AnyThread
     @UpdateByNotify
     open fun updateAdapterItem(payload: Any? = PAYLOAD_UPDATE_PART, useFilterList: Boolean = true) {
+        itemUpdateAction(payload)
         if (itemDslAdapter?._recyclerView?.isComputingLayout == true || !isMain()) {
             //L.w("跳过操作! [RecyclerView]正在计算布局, 请不要在RecyclerView正在布局时, 更新Item. ")
             itemDslAdapter?._recyclerView?.post {
@@ -133,6 +145,7 @@ open class DslAdapterItem : LifecycleOwner {
     /**负载更新, 通常用于更新媒体item*/
     @UpdateByDiff
     open fun updateItemDependPayload(payload: Any? = mediaPayload()) {
+        itemUpdateAction(payload)
         updateItemDepend(
             FilterParams(
                 fromDslAdapterItem = this,
@@ -157,6 +170,7 @@ open class DslAdapterItem : LifecycleOwner {
             payload = PAYLOAD_UPDATE_PART
         )
     ) {
+        itemUpdateAction(filterParams.payload)
         itemDslAdapter?.updateItemDepend(filterParams).elseNull {
             L.w("跳过操作! updateItemDepend需要[itemDslAdapter],请赋值.")
         }

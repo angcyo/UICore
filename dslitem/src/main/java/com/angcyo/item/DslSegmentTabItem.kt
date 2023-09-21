@@ -6,7 +6,7 @@ import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.ITabLayoutItem
 import com.angcyo.item.style.TabLayoutItemConfig
 import com.angcyo.item.style.itemCurrentIndex
-import com.angcyo.item.style.itemSelectIndexChangeAction
+import com.angcyo.item.style.itemTabSelectIndexChangeAction
 import com.angcyo.library.ex.find
 import com.angcyo.library.ex.string
 import com.angcyo.library.ex.toStr
@@ -54,7 +54,7 @@ open class DslSegmentTabItem : DslAdapterItem(), ITabLayoutItem {
         itemLayoutId = R.layout.dsl_segment_tab_item
 
         //回调监听
-        itemSelectIndexChangeAction
+        itemTabSelectIndexChangeAction
     }
 
     override fun onItemBind(
