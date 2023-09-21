@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import com.angcyo.base.dslAHelper
 import com.angcyo.base.removeThis
+import com.angcyo.core.CoreApplication
 import com.angcyo.core.R
 import com.angcyo.core.component.model.LanguageModel
 import com.angcyo.core.fragment.BaseDslFragment
@@ -58,8 +59,11 @@ open class InnerFileManageFragment : BaseDslFragment() {
     override fun initBaseView(savedInstanceState: Bundle?) {
         super.initBaseView(savedInstanceState)
 
-        appendRightItem(ico = R.drawable.core_help_svg) {
-            toastQQ("导入文件帮助")
+        val helpUrl = innerFileManageModel.innerFileImportHelpUrl
+        if (!helpUrl.isNullOrBlank()) {
+            appendRightItem(ico = R.drawable.core_help_svg) {
+                CoreApplication.onOpenUrlAction?.invoke(helpUrl)
+            }
         }
         appendRightItem(ico = R.drawable.core_add_svg) {
             showAddFileDialog()

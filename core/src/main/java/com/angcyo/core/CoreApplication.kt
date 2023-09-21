@@ -78,6 +78,9 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
                     }
                 }
             }
+
+        /**打开url*/
+        var onOpenUrlAction: ((url: String) -> Unit)? = null
     }
 
     override fun onCreate() {

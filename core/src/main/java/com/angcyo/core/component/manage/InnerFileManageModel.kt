@@ -46,6 +46,9 @@ class InnerFileManageModel : ViewModel() {
     var importFilePackageNameList =
         listOf("com.facebook.katana", "com.whatsapp", "com.twitter.android")
 
+    /**内部导入文件帮助链接*/
+    var innerFileImportHelpUrl: String? = null
+
     /**文件所在的路径*/
     val innerFilePath: String
         get() {
