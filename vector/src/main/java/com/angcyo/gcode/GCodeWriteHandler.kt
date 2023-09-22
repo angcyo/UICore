@@ -8,6 +8,7 @@ import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.angle
+import com.angcyo.library.ex.eachPath
 import com.angcyo.library.ex.mapPoint
 import com.angcyo.library.ex.rotate
 import com.angcyo.library.ex.toLossyFloat
@@ -21,6 +22,11 @@ import kotlin.math.tan
  * @since 2022/06/13
  */
 class GCodeWriteHandler : VectorWriteHandler() {
+
+    companion object {
+        const val DEFAULT_CUT_WIDTH = 0.3f
+        const val DEFAULT_CUT_HEIGHT = 0.03f
+    }
 
     /**是否使用自动控制CNC, 即M03 M05使用M04*/
     var isAutoCnc = false
@@ -55,10 +61,10 @@ class GCodeWriteHandler : VectorWriteHandler() {
     var cutLoopCount: Int = 1
 
     /**切割数据的宽度*/
-    var cutGCodeWidth = 0.1f
+    var cutGCodeWidth = DEFAULT_CUT_WIDTH
 
     /**切割数据的高度*/
-    var cutGCodeHeight = 0.04f
+    var cutGCodeHeight = DEFAULT_CUT_HEIGHT
 
     /**切割数据限制范围*/
     var cutLimitRect: RectF? = null
@@ -138,8 +144,10 @@ class GCodeWriteHandler : VectorWriteHandler() {
     override fun onLineToPoint(point: VectorPoint) {
         if (enableGCodeCut) {
             for (i in 0 until cutLoopCount) {
-                fillCutGCode(lastWriteX, lastWriteY, point.x, point.y)
+                //fillCutGCodeByZ(lastWriteX, lastWriteY, point.x, point.y)
+                fillCutGCodeByCircle(lastWriteX, lastWriteY, point.x, point.y)
                 if (i != cutLoopCount - 1) {
+                    //多次循环数据的话, 需要移动到起点
                     onNewPoint(lastWriteX, lastWriteY)
                 }
             }
@@ -269,6 +277,41 @@ class GCodeWriteHandler : VectorWriteHandler() {
         }
     }
 
+    /**添加一个GCode圆
+     * [startX] [startY] 起始点坐标
+     * [cx] [cy] 圆心坐标
+     * [diameter] 圆的直径
+     * */
+    fun circleTo(cx: Double, cy: Double, diameter: Double) {
+        val radius = diameter / 2
+        val startX = cx - radius
+        val startY = cy - radius
+
+        var startXValue = startX
+        var startYValue = startY
+        var iValue = radius
+        var jValue = radius
+
+        if (isPixelValue && unit != null) {
+            startXValue = unit?.convertPixelToValue(startX) ?: startX
+            startYValue = unit?.convertPixelToValue(startY) ?: startY
+            iValue = unit?.convertPixelToValue(iValue) ?: iValue
+            jValue = unit?.convertPixelToValue(jValue) ?: jValue
+        }
+
+        val xStartStr = startXValue.toDoubleValueString()
+        val yStartStr = startYValue.toDoubleValueString()
+        val iValueStr = iValue.toDoubleValueString()
+        val jValueStr = jValue.toDoubleValueString()
+
+        writer?.apply {
+            closeCnc()
+            appendLine("G0 X$xStartStr Y$yStartStr")
+            openCnc()
+            appendLine("G2 X$xStartStr Y$yStartStr I${iValueStr} J${jValueStr}")
+        }
+    }
+
     //region ---core---
 
     /**关闭CNC
@@ -301,10 +344,28 @@ class GCodeWriteHandler : VectorWriteHandler() {
 
     //endregion
 
-    /**填充切割数据*/
-    fun fillCutGCode(x1: Double, y1: Double, x2: Double, y2: Double) {
+    /**填充切割数据
+     * 圆形填充算法*/
+    fun fillCutGCodeByCircle(startX: Double, startY: Double, endX: Double, endY: Double) {
+        //圆的直径
+        val diameter = cutGCodeWidth
+        //圆心移动步长
+        val step = cutGCodeHeight
+
+        val path = Path()
+        path.moveTo(startX.toFloat(), startY.toFloat())
+        path.lineTo(endX.toFloat(), endY.toFloat())
+
+        path.eachPath(step) { index, ratio, contourIndex, posArray ->
+            circleTo(posArray[0].toDouble(), posArray[1].toDouble(), diameter.toDouble())
+        }
+    }
+
+    /**填充切割数据
+     * Z字填充算法*/
+    fun fillCutGCodeByZ(startX: Double, startY: Double, endX: Double, endY: Double) {
         //计算2个点之间的角度
-        val angle = angle(x1, y1, x2, y2)
+        val angle = angle(startX, startY, endX, endY)
 
         val width = cutGCodeWidth
         val stepHeight = cutGCodeHeight
@@ -313,13 +374,13 @@ class GCodeWriteHandler : VectorWriteHandler() {
         val tempPointF = acquireTempPointF()
 
         val rotateAngle = (90f - angle).toFloat()
-        reverseMatrix.setRotate(-rotateAngle, x1.toFloat(), y1.toFloat())
+        reverseMatrix.setRotate(-rotateAngle, startX.toFloat(), startY.toFloat())
 
-        tempPointF.set(x2.toFloat(), y2.toFloat())
-        tempPointF.rotate(rotateAngle, x1.toFloat(), y1.toFloat())
+        tempPointF.set(endX.toFloat(), endY.toFloat())
+        tempPointF.rotate(rotateAngle, startX.toFloat(), startY.toFloat())
 
-        val startX = x1 - width / 2
-        val startY = y1
+        val startX = startX - width / 2
+        val startY = startY
         val endX = tempPointF.x + width / 2 + 0.0
         val endY = tempPointF.y + 0.0
 
