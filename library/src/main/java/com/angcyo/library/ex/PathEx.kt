@@ -614,7 +614,8 @@ fun List<Path>.transform(bounds: RectF, rotate: Float): List<Path> {
     return newPathList
 }
 
-/**所有[Path]都进行变换*/
+/**所有[Path]都进行变换
+ * @return 返回变换后的新[Path]*/
 fun List<Path>.transform(matrix: Matrix): List<Path> {
     val newPathList = mutableListOf<Path>()
     for (path in this) {
