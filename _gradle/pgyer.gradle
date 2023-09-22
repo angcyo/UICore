@@ -8,6 +8,9 @@
  * https://www.pgyer.com/doc/view/app_upload
  * https://www.pgyer.com/doc/view/api#uploadApp
  *
+ * 2023-9-22
+ * 蒲公英域名更改: https://www.xcxwo.com/
+ *
  * Email:angcyo@126.com
  * @author angcyo* @date 2019/08/09
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
@@ -32,10 +35,10 @@ ext.pgyerConfig = [
 
         //请求的api地址
         //https://www.pgyer.com/doc/view/api#uploadApp
-        "pgyerUrl"         : "https://www.pgyer.com/apiv2/app/upload",
+        "pgyerUrl"         : "https://www.xcxwo.com/apiv2/app/upload",
 
         //官网, 用于拼接短地址 必须/结尾.
-        "pgyer"            : "https://www.pgyer.com/",
+        "pgyer"            : "https://www.xcxwo.com/",
 
         "pgyer_api_key"    : "",
         "pgyer_user_key"   : "",
