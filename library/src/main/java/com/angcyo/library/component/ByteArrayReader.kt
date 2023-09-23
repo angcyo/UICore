@@ -20,8 +20,15 @@ class ByteArrayReader(val bytes: ByteArray) {
     val byteSize: Int
         get() = bytes.size - keepLastSize
 
+    /**偏移多少个字节*/
     fun offset(size: Int) {
         _index += size
+    }
+
+    /**偏移并且返回指定的值*/
+    fun <T> offset(size: Int, result: T): T {
+        offset(size)
+        return result
     }
 
     /**确保剩下的字节数大于指定的值*/
