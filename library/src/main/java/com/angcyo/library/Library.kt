@@ -444,12 +444,16 @@ fun View.attachInEditMode() {
  * [com.angcyo.core.component.file.appFilePath]
  * [com.angcyo.library.utils.appFolderPath]
  * */
-fun libFolderPath(folderName: String = "", context: Context = app()): String {
+fun libFileFolder(folderName: String = "", context: Context = app()): File {
     val folderFile = context.getExternalFilesDir(folderName) ?: File(context.filesDir, folderName)
     if (!folderFile.exists()) {
         folderFile.mkdirs()
     }
-    return folderFile.absolutePath
+    return folderFile
+}
+
+fun libFolderPath(folderName: String = "", context: Context = app()): String {
+    return libFileFolder(folderName, context).absolutePath
 }
 
 /**缓存目录, 可以在应用详情中, 通过清理缓存清除.*/

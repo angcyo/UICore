@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="0dp"
+        android:gravity="center"
         android:padding="@dimen/lib_hdpi"
         android:textStyle="bold"
         tools:text="标题" />

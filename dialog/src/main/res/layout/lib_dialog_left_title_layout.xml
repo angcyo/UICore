@@ -13,6 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left|center_vertical"
+        android:gravity="center"
         android:minHeight="@dimen/dialog_item_height"
         android:paddingLeft="@dimen/lib_xhdpi"
         android:paddingRight="@dimen/lib_xhdpi"
