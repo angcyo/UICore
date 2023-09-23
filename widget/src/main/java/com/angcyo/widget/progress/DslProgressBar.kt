@@ -120,7 +120,11 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
     //<editor-fold desc="最右边文本配置">
 
-    /**是否显示进度提示文本, 在右边显示进度文本*/
+    /**是否显示进度提示文本, 在右边显示进度文本
+     * [showProgressCenterText]
+     *
+     * [com.angcyo.widget.progress.DslProgressBar.drawProgressText]
+     * */
     var showProgressText = false
 
     /**进度文本格式*/
@@ -144,10 +148,31 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         progressCenterTextFormat.format("${(_progressFraction * 100).toInt()}")
     }
 
+    /**
+     * 右边进度文本的绘制区域
+     * [showProgressText]
+     * [_progressBound]*/
+    open val _progressTextBound = Rect()
+        get() {
+            val pBound = _progressBound
+            field.set(
+                pBound.right + progressTextOffset,
+                pBound.top,
+                measuredWidth - paddingRight,
+                pBound.bottom
+            )
+            return field
+        }
+
     //</editor-fold desc="最右边文本配置">
 
     //<editor-fold desc="居中文本配置">
 
+    /**
+     * 是否显示居中的进度文件
+     * [showProgressText]
+     * [com.angcyo.widget.progress.DslProgressBar.drawCenterProgressText]
+     * */
     var showProgressCenterText = false
     var progressCenterTextFormat = "%s%%"
     var progressCenterTextSize = 14.toDp()
@@ -521,13 +546,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     open fun drawProgressText(canvas: Canvas) {
         if (showProgressText) {
             with(_progressTextDrawable) {
-                val pBound = _progressBound
-                setBounds(
-                    pBound.right + progressTextOffset,
-                    pBound.top,
-                    measuredWidth - paddingRight,
-                    pBound.bottom
-                )
+                bounds = _progressTextBound
                 draw(canvas)
             }
         }

@@ -11,6 +11,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import com.angcyo.drawable.base.DslGradientDrawable
 import com.angcyo.drawable.text.DslTextDrawable
+import com.angcyo.library.component.RegionTouchDetector
 import com.angcyo.library.ex.*
 import com.angcyo.widget.R
 import com.angcyo.widget.base.*
@@ -365,6 +366,7 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (isEnabled) {
             super.onTouchEvent(event)
+            regionTouchDetector.onTouchEvent(this, event)
             if (event.isTouchDown()) {
                 _isTouchDownInThumb = _thumbBound.contains(event.x.toInt(), event.y.toInt())
                 _drawTouchThumbDrawable = true
@@ -384,18 +386,31 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 
                 onSeekBarConfig?.apply { onSeekTouchEnd(progressValue, _progressFraction) }
             }
-            _touchListener?.onTouch(this, event)
+            seekTouchListener?.onTouch(this, event)
             return true
         } else {
             return super.onTouchEvent(event)
         }
     }
 
+    /**进度文本区域点击探测*/
+    protected val regionTouchDetector = RegionTouchDetector({
+        _progressTextBound.run {
+            top = 0
+            bottom = measuredHeight
+            contains(it.x.toInt(), it.y.toInt())
+        }
+    }) {
+        progressValueTouchAction?.invoke(it)
+    }
+
+    var progressValueTouchAction: ((touchType: Int) -> Unit)? = null
+
     /**手势事件*/
-    var _touchListener: OnTouchListener? = null
+    var seekTouchListener: OnTouchListener? = null
     override fun setOnTouchListener(l: OnTouchListener?) {
         //super.setOnTouchListener(l) //不能调用super的否则[onTouchEvent]可能不会触发
-        _touchListener = l
+        seekTouchListener = l
     }
 
     /**手指移动*/
