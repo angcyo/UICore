@@ -188,17 +188,21 @@ open class FileSelectorFragment : BaseFragment() {
                             dialogBottomCancelItem = null
 
                             val nightModel = vmApp<NightModel>()
-                            addDialogItem {
-                                itemTextGravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
-                                itemText = span {
-                                    drawable {
-                                        backgroundDrawable = nightModel.tintDrawableNight(_drawable(R.drawable.ic_file_open))
+                            val itemIsFile = itemIsFile(itemFile?.file())
+                            if (itemIsFile) {
+                                addDialogItem {
+                                    itemTextGravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
+                                    itemText = span {
+                                        drawable {
+                                            backgroundDrawable =
+                                                nightModel.tintDrawableNight(_drawable(R.drawable.ic_file_open))
+                                        }
+                                        append(" ${_string(R.string.ui_open)}")
                                     }
-                                    append(" 打开")
-                                }
-                                itemClick = {
-                                    _dialog?.dismiss()
-                                    itemFile?.file()?.open()
+                                    itemClick = {
+                                        _dialog?.dismiss()
+                                        itemFile?.file()?.open()
+                                    }
                                 }
                             }
 
@@ -208,7 +212,7 @@ open class FileSelectorFragment : BaseFragment() {
                                     drawable {
                                         backgroundDrawable = _drawable(R.drawable.ic_file_delete)
                                     }
-                                    append(" 删除")
+                                    append(" ${_string(R.string.ui_delete)}")
                                 }
                                 itemClick = {
                                     _dialog?.dismiss()
@@ -229,7 +233,7 @@ open class FileSelectorFragment : BaseFragment() {
                                                 }
                                             } else {
                                                 toastWX(
-                                                    "删除失败",
+                                                    _string(R.string.ui_delete_fail),
                                                     fContext(),
                                                     R.drawable.lib_ic_error
                                                 )
@@ -239,17 +243,19 @@ open class FileSelectorFragment : BaseFragment() {
                                 }
                             }
 
-                            addDialogItem {
-                                itemTextGravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
-                                itemText = span {
-                                    drawable {
-                                        backgroundDrawable = _drawable(R.drawable.ic_file_share)
+                            if (itemIsFile) {
+                                addDialogItem {
+                                    itemTextGravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
+                                    itemText = span {
+                                        drawable {
+                                            backgroundDrawable = _drawable(R.drawable.ic_file_share)
+                                        }
+                                        append(" ${_string(R.string.ui_share)}")
                                     }
-                                    append(" 分享")
-                                }
-                                itemClick = {
-                                    _dialog?.dismiss()
-                                    itemFile?.file()?.shareFile(it.context)
+                                    itemClick = {
+                                        _dialog?.dismiss()
+                                        itemFile?.file()?.shareFile(it.context)
+                                    }
                                 }
                             }
                         }
