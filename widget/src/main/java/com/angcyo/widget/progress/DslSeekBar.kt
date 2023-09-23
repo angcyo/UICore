@@ -366,7 +366,10 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (isEnabled) {
             super.onTouchEvent(event)
-            regionTouchDetector.onTouchEvent(this, event)
+            if (showProgressText && regionTouchDetector.onTouchEvent(this, event)) {
+                //no op
+                return true
+            }
             if (event.isTouchDown()) {
                 _isTouchDownInThumb = _thumbBound.contains(event.x.toInt(), event.y.toInt())
                 _drawTouchThumbDrawable = true
