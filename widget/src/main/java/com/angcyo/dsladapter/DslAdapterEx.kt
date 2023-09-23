@@ -173,11 +173,11 @@ inline fun DslAdapter.enableItemBy(
  * [hideItemBy]*/
 @UpdateByLocal
 inline fun DslAdapter.enableItemTags(
-    hide: Boolean = true,
+    enable: Boolean = true,
     tags: List<String>,
     useFilterList: Boolean = true,
 ): List<DslAdapterItem> {
-    return enableItemBy(hide, useFilterList) {
+    return enableItemBy(enable, useFilterList) {
         tags.contains(it.itemTag)
     }
 }
