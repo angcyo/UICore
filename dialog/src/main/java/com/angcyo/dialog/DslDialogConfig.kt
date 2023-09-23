@@ -756,9 +756,14 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
         keyCode: Int,
         event: KeyEvent
     ): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.repeatCount == 0) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.isKeyUp() && event.repeatCount == 0) {
             //返回键
+            return onDialogBackPressed(dialog, dialogViewHolder)
         }
+        return false
+    }
+
+    open fun onDialogBackPressed(dialog: Dialog, dialogViewHolder: DslViewHolder): Boolean {
         return false
     }
 
