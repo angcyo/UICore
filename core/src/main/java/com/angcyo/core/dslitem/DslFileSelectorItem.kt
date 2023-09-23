@@ -15,10 +15,13 @@ import com.angcyo.library.ex.isFile
 import com.angcyo.library.ex.isFolder
 import com.angcyo.library.ex.isImageType
 import com.angcyo.library.ex.isVideoType
+import com.angcyo.library.ex.mimeType
+import com.angcyo.library.ex.toStr
 import com.angcyo.library.ex.toTime
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.setRBgDrawable
 import com.angcyo.widget.span.span
+import java.io.File
 
 /**
  * 文件选择器, 文件列表item
@@ -26,7 +29,7 @@ import com.angcyo.widget.span.span
  * @author angcyo
  * @date 2020/03/04
  */
-class DslFileSelectorItem : DslAdapterItem() {
+open class DslFileSelectorItem : DslAdapterItem() {
 
     companion object {
 
@@ -84,69 +87,85 @@ class DslFileSelectorItem : DslAdapterItem() {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-        itemFile?.also { fileItem ->
-            val file = fileItem.file()
-            itemHolder.tv(R.id.lib_text_view)?.text = file?.name
-            itemHolder.tv(R.id.lib_time_view)?.text = file?.lastModified()?.toTime()
 
-            //权限信息
-            itemHolder.tv(R.id.file_auth_view)?.text = span {
-                append(if (file.isFolder()) "d" else "-")
-                append(if (file?.canExecute() == true) "e" else "-")
-                append(if (file?.canRead() == true) "r" else "-")
-                append(if (file?.canWrite() == true) "w" else "-")
+        val file = itemFile?.file()
+        val itemFileName = getItemFileName(file)
+        itemHolder.tv(R.id.lib_text_view)?.text = itemFileName
+        itemHolder.tv(R.id.lib_time_view)?.text = getItemFileLastModified(file)?.toTime()
+
+        //权限信息
+        itemHolder.tv(R.id.file_auth_view)?.text = span {
+            append(if (itemIsFolder(file)) "d" else "-")
+            append(if (itemCanExecute(file)) "e" else "-")
+            append(if (itemCanRead(file)) "r" else "-")
+            append(if (itemCanWrite(file)) "w" else "-")
+        }
+
+        itemHolder.gone(R.id.file_md5_view)
+
+        //文件/文件夹 提示信息
+        when {
+            itemIsFolder(file) -> {
+                itemHolder.img(R.id.lib_image_view)?.apply {
+                    setImageResource(R.drawable.core_file_icon_folder)
+                }
+                if (itemCanRead(file)) {
+                    itemHolder.tv(R.id.lib_sub_text_view)?.text = "${getSubFileCount()} 项"
+                }
             }
 
-            itemHolder.gone(R.id.file_md5_view)
-
-            //文件/文件夹 提示信息
-            when {
-                file.isFolder() -> {
-                    itemHolder.img(R.id.lib_image_view)?.apply {
-                        setImageResource(R.drawable.core_file_icon_folder)
-                    }
-                    if (file?.canRead() == true) {
-                        itemHolder.tv(R.id.lib_sub_text_view)?.text = "${fileItem.fileCount} 项"
-                    }
+            itemIsFile(file) -> {
+                itemHolder.img(R.id.lib_image_view)?.apply {
+                    setImageResource(getFileIconRes(itemFileName?.toStr()))
+                    itemFile?.let { onLoadImageView(this, it) }
+                }
+                if (itemCanRead(file)) {
+                    itemHolder.tv(R.id.lib_sub_text_view)?.text =
+                        "${getItemFileLength(file)?.fileSizeString() ?: ""} ${
+                            getItemFileMimeType(file) ?: ""
+                        }"
                 }
 
-                file.isFile() -> {
-                    itemHolder.img(R.id.lib_image_view)?.apply {
-                        setImageResource(getFileIconRes(file?.name))
-                        onLoadImageView(this, fileItem)
-                    }
-                    if (file?.canRead() == true) {
-                        itemHolder.tv(R.id.lib_sub_text_view)?.text =
-                            "${fileItem.fileLength.fileSizeString()} ${fileItem.mimeType ?: ""}"
-                    }
+                //MD5值
+                val fileMd5 = getItemFileMd5(file)
+                itemHolder.visible(R.id.file_md5_view, itemShowFileMd5 && !fileMd5.isNullOrBlank())
+                itemHolder.tv(R.id.file_md5_view)?.text = fileMd5
+            }
 
-                    //MD5值
-                    itemHolder.visible(
-                        R.id.file_md5_view,
-                        itemShowFileMd5 && !fileItem.fileMd5.isNullOrBlank()
-                    )
-                    itemHolder.tv(R.id.file_md5_view)?.text = fileItem.fileMd5
+            else -> {
+                itemHolder.img(R.id.lib_image_view)?.apply {
+                    setImageDrawable(null)
                 }
-
-                else -> {
-                    itemHolder.img(R.id.lib_image_view)?.apply {
-                        setImageDrawable(null)
-                    }
-                    if (file?.canRead() == true) {
-                        itemHolder.tv(R.id.lib_sub_text_view)?.text = "unknown"
-                    }
+                if (itemCanRead(file)) {
+                    itemHolder.tv(R.id.lib_sub_text_view)?.text = "unknown"
                 }
             }
         }
 
         if (itemIsSelected) {
             itemHolder.itemView.setRBgDrawable(
-                ColorDrawable(
-                    _color(R.color.colorAccentNight).alpha(0x30)
-                )
+                ColorDrawable(_color(R.color.colorAccentNight).alpha(0x30))
             )
         } else {
             itemHolder.itemView.setRBgDrawable(null)
         }
     }
+
+    //---
+
+    open fun getItemFileName(file: File?): CharSequence? = file?.name
+
+    open fun getItemFileLastModified(file: File?): Long? = file?.lastModified()
+    open fun getSubFileCount(): Long = itemFile?.fileCount ?: 0L
+    open fun getItemFileLength(file: File?) = itemFile?.fileLength
+    open fun getItemFileMimeType(file: File?) =
+        itemFile?.mimeType ?: getItemFileName(file)?.toStr()?.mimeType()
+
+    open fun getItemFileMd5(file: File?) = itemFile?.fileMd5
+
+    open fun itemIsFolder(file: File?) = file.isFolder()
+    open fun itemIsFile(file: File?) = file.isFile()
+    open fun itemCanExecute(file: File?) = file?.canExecute() == true
+    open fun itemCanRead(file: File?) = file?.canRead() == true
+    open fun itemCanWrite(file: File?) = file?.canWrite() == true
 }
