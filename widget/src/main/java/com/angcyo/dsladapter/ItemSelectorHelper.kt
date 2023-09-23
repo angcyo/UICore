@@ -618,6 +618,8 @@ fun DslAdapter.selector(): ItemSelectorHelper {
 }
 
 /**快速选择/取消[ItemSelectorHelper]*/
+@UpdateByDiff
+@UpdateByNotify
 fun DslAdapter.select(
     selected: Boolean = true,
     predicate: (DslAdapterItem) -> Boolean
@@ -631,11 +633,15 @@ fun DslAdapter.select(
 }
 
 /**快速选择/取消[dslItem]*/
+@UpdateByDiff
+@UpdateByNotify
 fun DslAdapter.select(dslItem: DslAdapterItem, selected: Boolean = true) {
     selector().selector(SelectorParams(dslItem, selected.toSelectOption()))
 }
 
 /**互斥操作*/
+@UpdateByDiff
+@UpdateByNotify
 fun DslAdapter.selectMutex(dslItem: DslAdapterItem) {
     selector().selector(SelectorParams(dslItem, OPTION_MUTEX))
 }
