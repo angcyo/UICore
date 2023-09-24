@@ -200,6 +200,7 @@ object L {
                         }
                         append("]")
                     }
+
                     is Array<*> -> {
                         append("[")
                         msgAny.forEachIndexed { index, any ->
@@ -210,6 +211,7 @@ object L {
                         }
                         append("]")
                     }
+
                     is IntArray -> {
                         append("[")
                         msgAny.forEachIndexed { index, any ->
@@ -220,6 +222,7 @@ object L {
                         }
                         append("]")
                     }
+
                     is LongArray -> {
                         append("[")
                         msgAny.forEachIndexed { index, any ->
@@ -230,6 +233,7 @@ object L {
                         }
                         append("]")
                     }
+
                     is FloatArray -> {
                         append("[")
                         msgAny.forEachIndexed { index, any ->
@@ -240,6 +244,7 @@ object L {
                         }
                         append("]")
                     }
+
                     is DoubleArray -> {
                         append("[")
                         msgAny.forEachIndexed { index, any ->
@@ -250,6 +255,7 @@ object L {
                         }
                         append("]")
                     }
+
                     else -> append(msgAny.toString())
                 }
                 if (msgIndex != msg.count() - 1) {
@@ -321,3 +327,6 @@ fun getStackTrace(front: Int = 0, count: Int = -1): List<StackTraceElement> {
     val slice = stackTrace.slice(startIndex until endIndex)
     return slice
 }
+
+/**调用栈信息, 降序排序*/
+fun stackTraceString() = getStackTrace(1).joinToString("\n")

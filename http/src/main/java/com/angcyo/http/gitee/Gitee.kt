@@ -11,7 +11,11 @@ import com.angcyo.http.exception.HttpResponseException
 import com.angcyo.http.interceptor.LogInterceptor
 import com.angcyo.http.rx.doBack
 import com.angcyo.http.rx.observer
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.isHttpScheme
+import com.angcyo.library.ex.killCurrentProcess
+import com.angcyo.library.ex.nowTime
+import com.angcyo.library.ex.sleep
+import com.angcyo.library.ex.toUri
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import io.reactivex.disposables.Disposable
@@ -99,7 +103,7 @@ object Gitee {
     }
 
     /**初始化请求的配置*/
-    private fun BaseRequestConfig.configRequest(json: String) {
+    private fun BaseRequestConfig.configRequest(json: String, log: Boolean = true) {
         val url = if (json.isHttpScheme()) {
             json
         } else {
@@ -108,7 +112,7 @@ object Gitee {
         this.url = url
         query = hashMapOf("time" to nowTime()) //带上时间参数, 避免缓存
         header = hashMapOf(
-            LogInterceptor.closeLog(false),
+            LogInterceptor.closeLog(!log),
             "Host" to (url.toUri()?.host ?: "gitee.com"),
             "Referer" to (url.toUri()?.host ?: "gitee.com"),
             "Cache-Control" to "no-cache",
