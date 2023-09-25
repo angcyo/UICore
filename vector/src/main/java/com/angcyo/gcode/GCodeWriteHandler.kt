@@ -28,7 +28,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
         const val DEFAULT_CUT_HEIGHT = 0.03f
     }
 
-    /**是否使用自动控制CNC, 即M03 M05使用M04*/
+    /**是否使用自动控制CNC, 即M03/M05使用M04*/
     var isAutoCnc = false
 
     /**是否关闭了CNC, 如果关闭了CNC所有G操作都变成G0操作*/
