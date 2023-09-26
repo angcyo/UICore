@@ -69,6 +69,10 @@ childProjects.each {
 }
 
 android {
+    if (project.android.hasProperty("namespace")) {
+        //namespace "$namespace" //gradle7.5+
+    }
+
     if (gradle.gradleVersion.charAt(0) >= '8') {
         compileSdk C_SDK
     } else {
