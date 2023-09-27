@@ -477,6 +477,15 @@ class DslGlide {
     //</editor-fold desc="辅助扩展">
 }
 
+/**下载文件*/
+fun String.downloadOnlY(callback: (File) -> Unit = {}) {
+    DslGlide().apply {
+        download(this@downloadOnlY) {
+            callback(it)
+        }
+    }
+}
+
 fun dslGlide(imageView: ImageView?, uri: Uri?, action: DslGlide.() -> Unit = {}) {
     DslGlide().apply {
         targetView = imageView
