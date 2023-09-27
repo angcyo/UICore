@@ -750,16 +750,23 @@ fun List<Path>?.toDrawable(
     return drawable
 }
 
-fun Path?.toBitmap(color: Int) =
-    this?.toListOf().toBitmap(null, createPaint(color))
+fun Path?.toBitmap(color: Int, bgColor: Int = Color.TRANSPARENT) =
+    this?.toListOf().toBitmap(null, createPaint(color), bgColor)
 
-fun Path?.toBitmap(overrideSize: Float? = null, paint: Paint = createPaint()) =
-    this?.toListOf().toBitmap(overrideSize, paint)
+fun Path?.toBitmap(
+    overrideSize: Float? = null,
+    paint: Paint = createPaint(),
+    bgColor: Int = Color.TRANSPARENT
+) = this?.toListOf().toBitmap(overrideSize, paint, bgColor)
 
 /**将路径转成[Bitmap]
  *
  * [toDrawable]*/
-fun List<Path>?.toBitmap(overrideSize: Float? = null, paint: Paint = createPaint()): Bitmap? {
+fun List<Path>?.toBitmap(
+    overrideSize: Float? = null,
+    paint: Paint = createPaint(),
+    bgColor: Int = Color.TRANSPARENT
+): Bitmap? {
     this ?: return null
     val bounds = computePathBounds(acquireTempRectF())
     val originWidth = bounds.width()
@@ -772,6 +779,9 @@ fun List<Path>?.toBitmap(overrideSize: Float? = null, paint: Paint = createPaint
         max(1, width.ceilInt()), max(1, height.ceilInt()), Bitmap.Config.ARGB_8888
     )
     val canvas = Canvas(bitmap)
+    if (bgColor != Color.TRANSPARENT) {
+        canvas.drawColor(bgColor)
+    }
     canvas.translate(-bounds.left, -bounds.top)//平移到路径开始的原点
     canvas.concat(scaleMatrix)
     for (path in this@toBitmap) {//并没有改变原始数据, 直接绘制
