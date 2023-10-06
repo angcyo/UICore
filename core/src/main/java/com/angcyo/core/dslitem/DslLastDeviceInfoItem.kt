@@ -52,8 +52,14 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
         /**分隔符*/
         const val SPLIT = "/"
 
-        /**额外的设备信息*/
+        /**额外的设备信息获取回调*/
         var additionalInfoAction: (() -> String?)? = null
+
+        /**额外的设备信息获取回调2*/
+        var additionalInfoAction2: (() -> String?)? = null
+
+        /**额外的设备信息获取回调3*/
+        var additionalInfoAction3: (() -> String?)? = null
 
         /**保存设备信息到日志
          * [com.angcyo.library.utils.LogFile.device]*/
@@ -69,6 +75,8 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
 
                 //额外的信息
                 additionalInfoAction?.invoke()?.let { append(it) }
+                additionalInfoAction2?.invoke()?.let { append(it) }
+                additionalInfoAction3?.invoke()?.let { append(it) }
             }.toString().writeTo(LogFile.device.toLogFilePath(), false)
         }
 
