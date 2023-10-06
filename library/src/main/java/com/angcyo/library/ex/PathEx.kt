@@ -87,6 +87,10 @@ fun Path.getProgressPath(progress: Float, dst: Path = Path()): Path {
 }
 
 fun Path.contains(point: PointF, clipRect: RectF? = null): Boolean {
+    if (!point.x.isFinite() || !point.y.isFinite()) {
+        L.w("无效的点坐标:$point")
+        return false
+    }
     return contains(point.x.roundToInt(), point.y.roundToInt(), clipRect)
 }
 
