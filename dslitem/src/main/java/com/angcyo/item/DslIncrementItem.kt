@@ -43,13 +43,21 @@ open class DslIncrementItem : DslAdapterItem(), ILabelItem, IIncrementItem, IOpe
     protected var _isFromStepAdjust = false
 
     override fun onSelfOperateItemEditTextChange(itemHolder: DslViewHolder, text: CharSequence) {
-        if (_isFromStepAdjust) {
+        if (_isFromStepAdjust || text.isBlank()) {
             //no op
         } else if (itemEditText != itemIncrementValue) {
             updateStepAdjustValue(text)
             super.onSelfOperateItemEditTextChange(itemHolder, text)
         }
         _isFromStepAdjust = false
+    }
+
+    override fun onSelfOperateItemEditFocusChange(itemHolder: DslViewHolder, focus: Boolean) {
+        if (itemEditText.isNullOrBlank() && !itemIncrementValue.isNullOrBlank()) {
+            itemEditText = itemIncrementValue
+            updateStepAdjustValue(itemIncrementValue)
+            super.onSelfOperateItemEditTextChange(itemHolder, itemIncrementValue ?: "")
+        }
     }
 
     override fun updateStepAdjustValue(

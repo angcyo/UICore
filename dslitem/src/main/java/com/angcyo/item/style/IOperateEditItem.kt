@@ -34,6 +34,11 @@ import com.angcyo.widget.edit.IEditDelegate
  */
 interface IOperateEditItem : IAutoInitItem {
 
+    companion object {
+        /**最后一次主动获取焦点的[DslAdapterItem]*/
+        var lastActiveFocusItemHashCode: Int = 0
+    }
+
     /**配置项*/
     var operateEditItemConfig: OperateEditItemConfig
 
@@ -88,9 +93,11 @@ interface IOperateEditItem : IAutoInitItem {
 
             onFocusChange {
                 if (it) {
+                    lastActiveFocusItemHashCode = this@IOperateEditItem.hashCode()
                     operateEditItemConfig._lastEditSelectionStart = selectionStart
                     operateEditItemConfig._lastEditSelectionEnd = selectionEnd
                 }
+                onSelfOperateItemEditFocusChange(itemHolder, it)
             }
 
             onTextChange {
@@ -108,13 +115,15 @@ interface IOperateEditItem : IAutoInitItem {
             //焦点
             operateEditItemConfig.itemHookFocused?.let {
                 if (it && !isFocused) {
-                    val selectionStart = operateEditItemConfig._lastEditSelectionStart
-                    val selectionEnd = operateEditItemConfig._lastEditSelectionEnd
-                    requestFocus()
-                    post {
-                        restoreSelection(selectionStart, selectionEnd)
-                        operateEditItemConfig._lastEditSelectionStart = selectionStart
-                        operateEditItemConfig._lastEditSelectionEnd = selectionEnd
+                    if (lastActiveFocusItemHashCode != 0 && lastActiveFocusItemHashCode == this@IOperateEditItem.hashCode()) {
+                        val selectionStart = operateEditItemConfig._lastEditSelectionStart
+                        val selectionEnd = operateEditItemConfig._lastEditSelectionEnd
+                        requestFocus()
+                        post {
+                            restoreSelection(selectionStart, selectionEnd)
+                            operateEditItemConfig._lastEditSelectionStart = selectionStart
+                            operateEditItemConfig._lastEditSelectionEnd = selectionEnd
+                        }
                     }
                 }
             }.elseNull {
@@ -137,6 +146,10 @@ interface IOperateEditItem : IAutoInitItem {
             itemChanging = true
         }
         operateEditItemConfig.itemTextChangeAction?.invoke(text)
+    }
+
+    /**编辑框的焦点改变后*/
+    fun onSelfOperateItemEditFocusChange(itemHolder: DslViewHolder, focus: Boolean) {
     }
 
     /**焦点hook, 下次notify后恢复焦点*/
