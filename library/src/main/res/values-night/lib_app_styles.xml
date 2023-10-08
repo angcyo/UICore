@@ -10,6 +10,7 @@
 
     <color name="colorAccent">@color/purple_200</color>
     <color name="colorAccentNight">#dde3e7</color>
+
     <color name="purple_200">#42474d</color>
 
     <!--暗色主题颜色适配-->

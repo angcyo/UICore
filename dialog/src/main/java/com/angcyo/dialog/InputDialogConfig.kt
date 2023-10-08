@@ -123,6 +123,9 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
             }
         }
 
+    /**输入历史布局id*/
+    var inputHistoryLayoutId: Int = R.layout.lib_input_history_layout
+
     init {
         dialogLayoutId = R.layout.lib_dialog_input_layout
         positiveButtonListener = { dialog, dialogViewHolder ->
@@ -163,10 +166,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
         //history
         dialogViewHolder.invisible(R.id.lib_flow_layout, inputHistoryList.isNullOrEmpty())
         dialogViewHolder.flow(R.id.lib_flow_layout)?.apply {
-            resetChild(
-                inputHistoryList,
-                R.layout.lib_input_history_layout
-            ) { itemView, item, itemIndex ->
+            resetChild(inputHistoryList, inputHistoryLayoutId) { itemView, item, itemIndex ->
                 itemView.dslViewHolder().apply {
                     tv(R.id.lib_text_view)?.text = item
 

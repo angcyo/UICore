@@ -5,6 +5,7 @@
     <color name="colorPrimaryDark">@color/purple_700</color>
     <color name="colorAccent">@color/purple_200</color>
     <color name="colorAccentNight">@color/colorAccent</color>
+    <color name="colorAccentTran">#504467ff</color>
 
     <!--2023-4-11 兼容新的配色规则-->
     <color name="purple_200">#4467ff</color>
