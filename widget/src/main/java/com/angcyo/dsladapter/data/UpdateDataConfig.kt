@@ -292,10 +292,7 @@ fun DslAdapter.updateAdapterErrorState(error: Throwable?) {
     if (error != null) {
         //加载失败
         when {
-            adapterItems.isEmpty() -> {
-                dslAdapterStatusItem.itemErrorThrowable = error
-                toError()
-            }
+            adapterItems.isEmpty() -> toError(error)
             isAdapterStatusLoading() -> toNone()
             else -> toLoadMoreError()
         }
@@ -304,7 +301,11 @@ fun DslAdapter.updateAdapterErrorState(error: Throwable?) {
 
 /**更新[DslAdapter]情感图状态*/
 @UpdateByDiff
-fun DslAdapter.updateAdapterState(list: List<*>?, error: Throwable?, page: Page = singlePage()) {
+fun DslAdapter.updateAdapterState(
+    list: List<*>? = null,
+    error: Throwable? = null,
+    page: Page = singlePage()
+) {
     updateAdapterErrorState(error)
     if (error == null) {
         val isDataEmpty: Boolean = if (page.isFirstPage()) {
