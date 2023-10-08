@@ -2,6 +2,7 @@ package com.angcyo.item
 
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
+import com.angcyo.core.component.model.tintImageViewNight
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.isEdgeBottom
 import com.angcyo.dsladapter.isEdgeLeft
@@ -81,6 +82,8 @@ open class DslGridItem : DslAdapterItem() {
 
         //图标
         itemHolder._img(R.id.lib_image_view)?.apply {
+            tintImageViewNight()
+            
             padding(itemImagePadding)
 
             updateBadge {
