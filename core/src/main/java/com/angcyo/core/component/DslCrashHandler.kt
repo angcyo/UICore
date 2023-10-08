@@ -5,7 +5,7 @@ import android.content.Intent
 import com.angcyo.DslAHelper
 import com.angcyo.DslFHelper
 import com.angcyo.core.component.file.DslFileHelper
-import com.angcyo.library.L
+import com.angcyo.core.component.file.writeErrorLog
 import com.angcyo.library.component.work.Trackers
 import com.angcyo.library.ex.currentApplication
 import com.angcyo.library.ex.file
@@ -128,7 +128,7 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
     }
 
     override fun uncaughtException(t: Thread, e: Throwable) {
-        L.w("全局异常#${t.name}:$e")
+        "全局异常#${t.name}:$e".writeErrorLog()
         e.printStackTrace()
 
         //异常退出
