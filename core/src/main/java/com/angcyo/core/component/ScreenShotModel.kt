@@ -19,13 +19,25 @@ import android.text.TextUtils
 import androidx.annotation.MainThread
 import androidx.lifecycle.ViewModel
 import com.angcyo.base.requestSdCardPermission
+import com.angcyo.core.vmApp
+import com.angcyo.http.base.toJson
+import com.angcyo.http.rx.runRx
 import com.angcyo.library.*
+import com.angcyo.library.component.RBackground
 import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.lastName
+import com.angcyo.library.ex.nowTimeString
 import com.angcyo.library.ex.saveToFolder
+import com.angcyo.library.ex.shareFile
+import com.angcyo.library.ex.zip
+import com.angcyo.library.utils.Constant
+import com.angcyo.library.utils.fileNameTime
+import com.angcyo.library.utils.logFileName
+import com.angcyo.library.utils.logPath
 import com.angcyo.library.utils.storage.SD
 import com.angcyo.library.utils.storage.haveSdCardPermission
 import com.angcyo.viewmodel.vmDataOnce
+import com.orhanobut.hawk.HawkValueParserHelper
 import java.util.*
 
 
@@ -101,6 +113,59 @@ class ScreenShotModel : ViewModel() {
                     methodMsg = elements[3].toString()
                 }
                 throw IllegalStateException("Call the method must be in main thread: $methodMsg")
+            }
+        }
+
+        /**获取基础分享日志的路径集合*/
+        fun getBaseLogShareList(): List<String> {
+            val result = mutableListOf<String>()
+            result.add(logPath())
+
+            //http log
+            result.add(libAppFile(logFileName(), Constant.HTTP_FOLDER_NAME).absolutePath)
+            //crash log
+            result.add(
+                libAppFile(
+                    fileNameTime(suffix = ".log"),
+                    Constant.CRASH_FOLDER_NAME
+                ).absolutePath
+            )
+
+            Library.hawkPath?.let {
+                val map = HawkValueParserHelper.parseFromXml(it)
+                map.toJson()?.let {
+                    libCacheFile("Hawk2.json").apply {
+                        writeText(it)
+                        result.add(absolutePath)
+                    }
+                }
+            }
+            return result
+        }
+
+        /**截屏之后, 触发日志分享*/
+        fun startListenScreenShotShareLog(getLogListAction: () -> List<String> = { emptyList() }) {
+            vmApp<ScreenShotModel>().apply {
+                startListen()
+                screenShotPathData.observeForever { path ->
+                    if (!path.isNullOrBlank() && !RBackground.isBackground()) {
+                        toastQQ("请稍等...")
+                        runRx({
+                            val logList = mutableListOf<String>()
+                            logList.addAll(getBaseLogShareList())
+                            logList.addAll(getLogListAction())
+
+                            logList.zip(libCacheFile(buildString {
+                                append(getAppName())
+                                append("_${getAppVersionCode()}")
+                                append("_${Build.MODEL}")
+                                append("_")
+                                append(nowTimeString("yyyy-MM-dd_HH-mm-ss"))
+                                append(".zip")
+                            }).absolutePath)?.shareFile()
+                        })
+                    }
+                }
             }
         }
     }
