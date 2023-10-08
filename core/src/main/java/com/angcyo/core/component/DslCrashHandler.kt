@@ -15,6 +15,7 @@ import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.isRelease
 import com.angcyo.library.ex.nowTimeString
 import com.angcyo.library.ex.shareFile
+import com.angcyo.library.ex.toStr
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.fileNameTime
 import java.io.BufferedWriter
@@ -128,7 +129,7 @@ class DslCrashHandler : Thread.UncaughtExceptionHandler {
     }
 
     override fun uncaughtException(t: Thread, e: Throwable) {
-        "全局异常#${t.name}:$e".writeErrorLog()
+        "全局异常#${t.name}:${e.toStr()}".writeErrorLog()
         e.printStackTrace()
 
         //异常退出

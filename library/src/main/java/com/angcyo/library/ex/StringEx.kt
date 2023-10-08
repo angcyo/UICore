@@ -29,9 +29,13 @@ import com.angcyo.library.component.lastContext
 import com.angcyo.library.component.pool.acquireTempRect
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.extend.IToText
+import com.angcyo.library.libAppFile
+import com.angcyo.library.utils.Constant
+import com.angcyo.library.utils.LogFile
 import com.angcyo.library.utils.PATTERN_EMAIL
 import com.angcyo.library.utils.PATTERN_MOBILE_SIMPLE
 import com.angcyo.library.utils.PATTERN_URL
+import com.angcyo.library.utils.writeTo
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.*
@@ -210,10 +214,20 @@ fun Any?.toStr(): String = when (this) {
     is IToText -> toText().toStr()
     is Char -> java.lang.String.valueOf(this)
     is String -> this
+    is Throwable -> stackTraceToString()
     else -> toString()
 }
 
 fun CharSequence.wrapLog() = "\n${nowTimeString()} ${Thread.currentThread().name}\n${this}\n"
+
+/**写入日志*/
+fun Any.writeLogTo(name: String = LogFile.error) {
+    val str = toStr()
+    if (name == LogFile.error) {
+        L.e(str)
+    }
+    str.wrapLog().writeTo(libAppFile(name, Constant.LOG_FOLDER_NAME))
+}
 
 /**将列表连成字符串
  * [removeLast] 是否删除最后一个字符

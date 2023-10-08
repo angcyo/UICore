@@ -1,8 +1,8 @@
 package com.angcyo.http.rx
 
 import com.angcyo.http.rx.Rx.rxErrorHandlerOnceList
-import com.angcyo.library.L
 import com.angcyo.library.ex.size
+import com.angcyo.library.ex.writeLogTo
 import com.angcyo.library.isMain
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -48,7 +48,7 @@ object Rx {
     fun init(block: (Throwable) -> Unit = {}) {
         if (!RxJavaPlugins.isLockdown()) {
             RxJavaPlugins.setErrorHandler { error ->
-                L.e("Rx异常[${rxErrorHandlerOnceList.size()}]:$error")
+                "Rx异常[${rxErrorHandlerOnceList.size()}]:${error.stackTraceToString()}".writeLogTo()
                 error.printStackTrace()
                 if (rxErrorHandlerOnceList.isNotEmpty()) {
                     try {
@@ -76,12 +76,12 @@ fun Consumer<Throwable>.removeRxErrorHandleOnce() {
 }
 
 /**使用Rx调度后台线程, 主线程切换*/
-fun <T> runRx(backAction: () -> T, mainAction: (T?) -> Unit = {}): Disposable {
-    return Single.create<T> { emitter ->
+fun <T : Any> runRx(backAction: () -> T?, mainAction: (T?) -> Unit = {}): Disposable {
+    return Single.create<T?> { emitter ->
         try {
-            emitter.onSuccess(backAction())
+            emitter.onSuccess(backAction()!!)
         } catch (e: Exception) {
-            L.e("Rx run异常:${e}")
+            "Rx run异常:${e.stackTraceToString()}".writeLogTo()
             e.printStackTrace()
             emitter.onError(e)
         }
