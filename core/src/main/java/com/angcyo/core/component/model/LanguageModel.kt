@@ -298,6 +298,14 @@ class LanguageModel : ViewModel() {
         fun isChinese(): Boolean {
             return getCurrentLanguage().lowercase().startsWith("zh")
         }
+
+        /**获取主要的语言字符串, 优先匹配中文, 其次降级为主要的语言*/
+        fun getLanguagePriorityString(priority: String?, zh: String?): String? {
+            if (isChinese()) {
+                return zh ?: priority
+            }
+            return priority
+        }
     }
 
     /**设置的语言
