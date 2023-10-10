@@ -1,5 +1,6 @@
 package com.angcyo.library.component.hawk
 
+import android.graphics.Color
 import androidx.annotation.Keep
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
@@ -46,6 +47,9 @@ object LibHawkKeys {
     /**等同于[alphaThreshold], 只不过这个值在移除透明背景时使用
      * 或者在图片旋转后, 移除边上的透明颜色时使用*/
     var bgAlphaThreshold: Int by HawkPropertyValue<Any, Int>(250)
+
+    /**部分算法处理时, 如果背景是透明色, 则使用此颜色替换*/
+    var bgAlphaColor: Int by HawkPropertyValue<Any, Int>(Color.WHITE)
 
     /**灰度阈值, 大于这个值视为白色1不出光, 小于这个值视为黑色0出光
      * 白色传1, 1不出光.
