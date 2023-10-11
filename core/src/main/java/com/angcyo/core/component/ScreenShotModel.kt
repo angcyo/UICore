@@ -147,6 +147,7 @@ class ScreenShotModel : ViewModel() {
         /**截屏之后, 触发日志分享*/
         fun startListenScreenShotShareLog(getLogListAction: () -> List<String> = { emptyList() }) {
             vmApp<ScreenShotModel>().apply {
+                ignorePermission = true
                 startListen()
                 screenShotPathData.observeForever { path ->
                     if (!path.isNullOrBlank() && !RBackground.isBackground()) {
