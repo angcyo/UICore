@@ -19,6 +19,7 @@ import android.text.TextUtils
 import androidx.annotation.MainThread
 import androidx.lifecycle.ViewModel
 import com.angcyo.base.requestSdCardPermission
+import com.angcyo.core.component.file.writeToLog
 import com.angcyo.core.vmApp
 import com.angcyo.http.base.toJson
 import com.angcyo.http.rx.runRx
@@ -181,6 +182,9 @@ class ScreenShotModel : ViewModel() {
 
     /**路径监听*/
     var screenShotListener: OnScreenShotListener? = null
+
+    /**是否忽略权限请求, 只要回调*/
+    var ignorePermission = false
 
     /**开始监听
      * [context] 如果需要自动处理sd卡权限, 请使用[Activity]上下文*/
@@ -373,10 +377,10 @@ class ScreenShotModel : ViewModel() {
             super.onChange(selfChange)
             val permissions = SD.mediaPermissions(true)
             val haveSdCardPermission = haveSdCardPermission(permissions)
-            L.i("onChange[$haveSdCardPermission]:$selfChange $uri")
+            "onChange[$haveSdCardPermission]:$selfChange $uri".writeToLog(logLevel = L.INFO)
 
             val context = lastContext
-            if (haveSdCardPermission) {
+            if (haveSdCardPermission || ignorePermission) {
                 handleMediaContentChange(context, uri)
             } else {
                 context.requestSdCardPermission(permissions) {
