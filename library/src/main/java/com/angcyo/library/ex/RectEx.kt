@@ -1,5 +1,6 @@
 package com.angcyo.library.ex
 
+import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
@@ -273,6 +274,11 @@ fun RectF.scale(
 fun RectF.translate(dx: Float = 0f, dy: Float = 0f): RectF {
     offset(dx, dy)
     return this
+}
+
+fun RectF.translate(m: Matrix?, result: RectF = RectF()): RectF {
+    m?.mapRect(result, this) ?: result.set(this)
+    return result
 }
 
 /**转换成[Path]*/
