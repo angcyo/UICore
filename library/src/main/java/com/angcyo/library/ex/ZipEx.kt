@@ -82,7 +82,7 @@ fun eachZipEntry(zipFilePath: String?, eachAction: ZipFile.(zipEntry: ZipEntry) 
  * [zipFilePath] zip文件输出路径
  * @return 成功:返回对应的路径 or 失败:返回空
  * */
-fun List<File>.zipFile(zipFilePath: String = libCacheFile(fileNameUUID(".zip")).absolutePath): String? {
+fun Iterable<File>.zipFile(zipFilePath: String = libCacheFile(fileNameUUID(".zip")).absolutePath): String? {
     return try {
         val zip = ZipOutputStream(FileOutputStream(zipFilePath))
         forEach {
@@ -101,7 +101,7 @@ fun List<File>.zipFile(zipFilePath: String = libCacheFile(fileNameUUID(".zip")).
     }
 }
 
-fun List<String>.zip(zipFilePath: String = libCacheFile(fileNameUUID(".zip")).absolutePath): String? {
+fun Iterable<String>.zip(zipFilePath: String = libCacheFile(fileNameUUID(".zip")).absolutePath): String? {
     return mapTo(mutableListOf()) { it.file() }.zipFile(zipFilePath)
 }
 
