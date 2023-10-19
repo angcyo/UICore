@@ -35,7 +35,7 @@ fun List<Path>.toGCodeContent(
     writeLast: Boolean = true,
     offsetLeft: Float = 0f, //x偏移的像素
     offsetTop: Float = 0f, //y偏移的像素
-    pathStep: Float = LibHawkKeys.pathAcceptableError, //Path路径的采样步进
+    pathStep: Float = LibHawkKeys._pathAcceptableError, //Path路径的采样步进
     autoCnc: Boolean = false, //是否使用自动CNC
     fillPathStep: Float = 1f, //填充的线距
     fillAngle: Float = 0f, //填充线的角度
@@ -104,7 +104,7 @@ fun List<Path>.toGCodeStrokeContent(
     writeLast: Boolean = true,
     offsetLeft: Float = 0f, //x偏移的像素
     offsetTop: Float = 0f, //y偏移的像素
-    pathStep: Float = LibHawkKeys.pathAcceptableError, //Path路径的采样步进
+    pathStep: Float = LibHawkKeys._pathAcceptableError, //Path路径的采样步进
     autoCnc: Boolean = false, //是否使用自动CNC
     append: Boolean = false, //是否是追加写入文本
 ): File {
@@ -162,7 +162,7 @@ fun List<Path>.toGCodeFillContent(
     writeLast: Boolean = true,
     offsetLeft: Float = 0f, //x偏移的像素
     offsetTop: Float = 0f, //y偏移的像素
-    pathStep: Float = LibHawkKeys.pathAcceptableError, //Path路径的采样步进
+    pathStep: Float = LibHawkKeys._pathAcceptableError, //Path路径的采样步进
     autoCnc: Boolean = false, //是否使用自动CNC
     append: Boolean = false, //是否是追加写入文本
     fillPathStep: Float = 1f, //填充的线距
@@ -200,7 +200,7 @@ fun List<Path>.toSVGContent(
     style: Paint.Style = Paint.Style.FILL_AND_STROKE,
     offsetLeft: Float = 0f, //x偏移的像素
     offsetTop: Float = 0f, //y偏移的像素
-    pathStep: Float = LibHawkKeys.pathAcceptableError, //Path路径的采样步进
+    pathStep: Float = LibHawkKeys._pathAcceptableError, //Path路径的采样步进
     fillPathStep: Float = 1f, //填充的线距
     fillAngle: Float = 0f, //填充线的角度
 ): File {
@@ -254,7 +254,7 @@ fun List<Path>.toSVGStrokeContent(
     output: File,
     offsetLeft: Float = 0f, //x偏移的像素
     offsetTop: Float = 0f, //y偏移的像素
-    pathStep: Float = LibHawkKeys.pathAcceptableError, //Path路径的采样步进
+    pathStep: Float = LibHawkKeys._pathAcceptableError, //Path路径的采样步进
     append: Boolean = false, //是否是追加写入文本
 ): File {
     //转换成Svg, 使用像素单位
@@ -278,7 +278,7 @@ fun List<Path>.toSVGStrokeContent(
 fun Path.toSVGStrokeContent(
     offsetLeft: Float = 0f,
     offsetTop: Float = 0f,
-    pathStep: Float = LibHawkKeys.pathAcceptableError,
+    pathStep: Float = LibHawkKeys._pathAcceptableError,
     action: (SvgWriteHandler) -> Unit = {}
 ): String {
     return toListOf().toSVGStrokeContent(offsetLeft, offsetTop, pathStep, action)
@@ -287,7 +287,7 @@ fun Path.toSVGStrokeContent(
 fun List<Path>.toSVGStrokeContent(
     offsetLeft: Float = 0f, //x偏移的像素
     offsetTop: Float = 0f, //y偏移的像素
-    pathStep: Float = LibHawkKeys.pathAcceptableError,
+    pathStep: Float = LibHawkKeys._pathAcceptableError,
     action: (SvgWriteHandler) -> Unit = {}
 ): String {
     val writer = StringWriter()
@@ -300,7 +300,7 @@ fun List<Path>.toSVGStrokeContent(
     writer: Appendable,
     offsetLeft: Float = 0f, //x偏移的像素
     offsetTop: Float = 0f, //y偏移的像素
-    pathStep: Float = LibHawkKeys.pathAcceptableError, //Path路径的采样步进
+    pathStep: Float = LibHawkKeys._pathAcceptableError, //Path路径的采样步进
     action: (SvgWriteHandler) -> Unit = {}
 ) {
     //转换成Svg, 使用像素单位
@@ -324,7 +324,7 @@ fun List<Path>.toSVGFillContent(
     output: File,
     offsetLeft: Float = 0f, //x偏移的像素
     offsetTop: Float = 0f, //y偏移的像素
-    pathStep: Float = LibHawkKeys.pathAcceptableError, //Path路径的采样步进
+    pathStep: Float = LibHawkKeys._pathAcceptableError, //Path路径的采样步进
     append: Boolean = false, //是否是追加写入文本
     fillPathStep: Float = 1f, //填充的线距
     fillAngle: Float = 0f, //填充线的角度

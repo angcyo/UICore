@@ -220,7 +220,7 @@ fun Path.length(): Float {
 
 /**用一系列线段近似 Path 。这将返回包含点组件的数组的 float[]。每个点按顺序有三个组成部分。
  * [android.graphics.Path.approximate]*/
-fun Path.approximate2(acceptableError: Float = LibHawkKeys.pathAcceptableError): FloatArray {
+fun Path.approximate2(acceptableError: Float = LibHawkKeys._pathAcceptableError): FloatArray {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         //Android 8 support
         approximate(acceptableError)
@@ -244,7 +244,7 @@ fun Path.approximate2(acceptableError: Float = LibHawkKeys.pathAcceptableError):
  * [posArray] 路径坐标
  * */
 fun Path.eachPath(
-    step: Float = LibHawkKeys.pathAcceptableError,
+    step: Float = LibHawkKeys._pathAcceptableError,
     posArray: FloatArray = _tempPoints,
     block: (index: Int, ratio: Float, contourIndex: Int, posArray: FloatArray) -> Unit
 ) {
@@ -351,7 +351,7 @@ fun Path.computePathBounds(
 /** [acceptableError] 误差级别*/
 fun Path.computeExactBounds(
     bounds: RectF = RectF(),
-    acceptableError: Float = LibHawkKeys.pathAcceptableError
+    acceptableError: Float = LibHawkKeys._pathAcceptableError
 ): RectF {
     val pos: FloatArray = approximate2(acceptableError)
 

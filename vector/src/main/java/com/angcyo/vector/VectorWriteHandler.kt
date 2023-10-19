@@ -455,7 +455,7 @@ abstract class VectorWriteHandler {
         writeLast: Boolean = true,
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
-        pathStep: Float = LibHawkKeys.pathAcceptableError
+        pathStep: Float = LibHawkKeys._pathAcceptableError
     ) {
         path.eachPath(pathStep) { index, ratio, contourIndex, posArray ->
             val xPixel = posArray[0] + offsetLeft + 0.0
@@ -609,7 +609,7 @@ abstract class VectorWriteHandler {
         writeLast: Boolean = true,
         offsetLeft: Float = 0f, //偏移的像素
         offsetTop: Float = 0f,
-        pathStep: Float = LibHawkKeys.pathAcceptableError
+        pathStep: Float = LibHawkKeys._pathAcceptableError
     ) {
         var isFirst = true
         for (path in pathList) {

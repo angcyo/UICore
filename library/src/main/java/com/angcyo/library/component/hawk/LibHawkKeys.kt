@@ -118,7 +118,12 @@ object LibHawkKeys {
      * [svgTolerance]
      * */
     @Pixel
-    var pathAcceptableError: Float by HawkPropertyValue<Any, Float>(pathAcceptableErrorMM.toPixel())
+    var pathAcceptableError: Float? by HawkPropertyValue<Any, Float?>(null)
+
+    /**[pathAcceptableError]*/
+    @Pixel
+    val _pathAcceptableError: Float
+        get() = pathAcceptableError ?: pathAcceptableErrorMM.toPixel()
 
     /**图片转GCode时, [gapValue]采样间隙, mm单位
      * [com.angcyo.engrave2.transition.SimpleTransition.covertBitmapPixel2GCode]*/
