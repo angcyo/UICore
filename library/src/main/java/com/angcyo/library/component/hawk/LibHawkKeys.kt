@@ -7,6 +7,7 @@ import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.hawkGet
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.getAppString
+import com.angcyo.library.unit.toPixel
 
 /**
  * 内部库中的一些持久化数据
@@ -109,12 +110,15 @@ object LibHawkKeys {
     /**是否激活[Path]确切的bounds计算, 计算量会变大*/
     var enablePathBoundsExact: Boolean by HawkPropertyValue<Any, Boolean>(true)
 
+    @MM
+    var pathAcceptableErrorMM: Float by HawkPropertyValue<Any, Float>(0.1f)
+
     /**计算[Bounds]时, 容错率, 应该也是each path的采样率
      * [enablePathBoundsExact]
      * [svgTolerance]
      * */
     @Pixel
-    var pathAcceptableError: Float by HawkPropertyValue<Any, Float>(1f)
+    var pathAcceptableError: Float by HawkPropertyValue<Any, Float>(pathAcceptableErrorMM.toPixel())
 
     /**图片转GCode时, [gapValue]采样间隙, mm单位
      * [com.angcyo.engrave2.transition.SimpleTransition.covertBitmapPixel2GCode]*/

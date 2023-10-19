@@ -99,6 +99,11 @@ abstract class VectorWriteHandler {
      * [com.angcyo.gcode.GCodeWriteHandler.isPixelValue]*/
     var unit: IValueUnit? = null
 
+    /**路径枚举时的最小间隙
+     * [unit]*/
+    @MM
+    var pathStep: Float = 0.01f
+
     /**真实值, 可以是像素, 也可以是mm. 根据[writePoint]的值, 自行决定
      *
      * 间隔太长, 就会使用G0移动到过
@@ -138,9 +143,30 @@ abstract class VectorWriteHandler {
     /**记录*/
     val _pointList = mutableListOf<VectorPoint>()
 
+    val _refGapValue: Float
+        get() = pathStep + gapValue
+
+    val _refGapMaxValue: Float
+        get() = pathStep + gapMaxValue
+
     /**最后一次写入的点*/
     protected var lastWriteX: Double = 0.0
     protected var lastWriteY: Double = 0.0
+
+    //---
+
+    fun updatePathStepByPixel(pixel: Float) {
+        pathStep = unit?.convertPixelToValue(pixel) ?: pixel
+    }
+
+    fun updateGapValueByPixel(pixel: Float) {
+        gapValue = unit?.convertPixelToValue(pixel) ?: pixel
+        updateGapMaxValueByPixel(2 * pixel)
+    }
+
+    fun updateGapMaxValueByPixel(pixel: Float) {
+        gapMaxValue = unit?.convertPixelToValue(pixel) ?: pixel
+    }
 
     //region ---Core回调---
 
@@ -337,7 +363,9 @@ abstract class VectorWriteHandler {
 
     fun _valueChangedType(point: VectorPoint, x: Double, y: Double): Int {
         val c = c(point.x, point.y, x, y).toFloat()
-        if (((point.x - x).absoluteValue > gapMaxValue || (point.y - y).absoluteValue > gapMaxValue) && c > gapMaxValue) {
+        if (((point.x - x).absoluteValue > _refGapMaxValue || (point.y - y).absoluteValue > _refGapMaxValue)
+            && c > _refGapMaxValue
+        ) {
             //2点之间间隙太大, 则视为新的点
             return POINT_TYPE_NEW
         }
@@ -349,7 +377,7 @@ abstract class VectorWriteHandler {
             //关闭了gap, 则直接G1之前的点, 否则可能是一样的值, 直接忽略
             return POINT_TYPE_GAP
         }
-        if (c < gapValue) {
+        if (c < _refGapValue) {
             return POINT_TYPE_SAME
         }
         return POINT_TYPE_GAP
