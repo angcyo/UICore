@@ -123,7 +123,9 @@ fun Bitmap.toBytes(
     return bytes
 }
 
-/** 将图片转成base64字符串, 不包含 `data:image/` 开头*/
+/** 将图片转成base64字符串, 不包含 `data:image/` 开头
+ * [toBase64Data] 包含 `data:image/` 开头
+ * */
 fun Bitmap.toBase64(
     format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,
     quality: Int = 100
