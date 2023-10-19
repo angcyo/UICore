@@ -532,6 +532,13 @@ fun File.eachFile(recursively: Boolean = true, block: (File) -> Unit) {
     }
 }
 
+/**安全删除文件*/
+fun Iterable<String>.deleteFileSafe() {
+    forEach {
+        File(it).deleteSafe()
+    }
+}
+
 fun File.deleteSafe() {
     try {
         delete()
