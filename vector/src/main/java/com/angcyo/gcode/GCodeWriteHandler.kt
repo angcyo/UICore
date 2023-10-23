@@ -3,8 +3,10 @@ package com.angcyo.gcode
 import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
+import com.angcyo.library.annotation.MM
 import com.angcyo.library.component.hawk.LibLpHawkKeys
 import com.angcyo.library.component.pool.acquireTempMatrix
+import com.angcyo.library.component.pool.acquireTempPath
 import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.angle
@@ -24,9 +26,20 @@ import kotlin.math.tan
 class GCodeWriteHandler : VectorWriteHandler() {
 
     companion object {
+        @MM
         const val DEFAULT_CUT_WIDTH = 0.3f
+
+        @MM
         const val DEFAULT_CUT_HEIGHT = 0.03f
     }
+
+    /**是否要收集点位信息
+     * 0x30的数据类型时要的点位信息
+     * */
+    var isCollectPoint = false
+
+    /**返回收集到的所有点集合*/
+    var _collectPointList: MutableList<CollectPoint>? = null
 
     /**是否使用自动控制CNC, 即M03/M05使用M04*/
     var isAutoCnc = false
@@ -61,9 +74,11 @@ class GCodeWriteHandler : VectorWriteHandler() {
     var cutLoopCount: Int = 1
 
     /**切割数据的宽度*/
+    @MM
     var cutGCodeWidth = DEFAULT_CUT_WIDTH
 
     /**切割数据的高度*/
+    @MM
     var cutGCodeHeight = DEFAULT_CUT_HEIGHT
 
     /**切割数据限制范围*/
@@ -139,6 +154,9 @@ class GCodeWriteHandler : VectorWriteHandler() {
         lastInfo.lastCmd = cmd
         lastInfo.lastX = xFloat
         lastInfo.lastY = yFloat
+
+        //2023-10-23
+        collectPoint(true, x, y)
     }
 
     override fun onLineToPoint(point: VectorPoint) {
@@ -275,6 +293,9 @@ class GCodeWriteHandler : VectorWriteHandler() {
                 append(" Y${yValue.toDoubleValueString()}")
             })
         }
+
+        //2023-10-23
+        collectPoint(false, xValue, yValue)
     }
 
     /**添加一个GCode圆
@@ -282,7 +303,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
      * [cx] [cy] 圆心坐标
      * [diameter] 圆的直径
      * */
-    fun circleTo(cx: Double, cy: Double, diameter: Double) {
+    fun circleTo(@MM cx: Double, @MM cy: Double, @MM diameter: Double) {
         val radius = diameter / 2
         val startX = cx - radius
         val startY = cy - radius
@@ -309,6 +330,25 @@ class GCodeWriteHandler : VectorWriteHandler() {
             appendLine("G0 X$xStartStr Y$yStartStr")
             openCnc()
             appendLine("G2 X$xStartStr Y$yStartStr I${iValueStr} J${jValueStr}")
+            if (isCollectPoint) {
+                collectPoint(true, startXValue, startYValue)
+
+                val path = acquireTempPath()
+                path.addCircle(cx.toFloat(), cy.toFloat(), radius.toFloat(), Path.Direction.CW)
+
+                path.eachPath(pathStep) { _, _, _, posArray ->
+                    var x = posArray[0]
+                    var y = posArray[1]
+
+                    if (isPixelValue && unit != null) {
+                        x = unit?.convertPixelToValue(x) ?: x
+                        y = unit?.convertPixelToValue(y) ?: y
+                    }
+                    collectPoint(false, x.toDouble(), y.toDouble())
+                }
+
+                path.release()
+            }
         }
     }
 
@@ -346,7 +386,12 @@ class GCodeWriteHandler : VectorWriteHandler() {
 
     /**填充切割数据
      * 圆形填充算法*/
-    fun fillCutGCodeByCircle(startX: Double, startY: Double, endX: Double, endY: Double) {
+    fun fillCutGCodeByCircle(
+        @MM startX: Double,
+        @MM startY: Double,
+        @MM endX: Double,
+        @MM endY: Double
+    ) {
         //圆的直径
         val diameter = cutGCodeWidth
         //圆心移动步长
@@ -421,5 +466,23 @@ class GCodeWriteHandler : VectorWriteHandler() {
             point.y = point.y.coerceIn(it.top, it.bottom)
         }
     }
+
+    //region ---CollectPoint---
+
+    private fun collectPoint(newPoint: Boolean, x: Double, y: Double) {
+        if (isCollectPoint) {
+            if (_collectPointList == null) {
+                _collectPointList = mutableListOf()
+            }
+
+            if (newPoint) {
+                _collectPointList?.add(CollectPoint())
+            }
+
+            _collectPointList?.lastOrNull()?.pointList?.add(PointF(x.toFloat(), y.toFloat()))
+        }
+    }
+
+    //endregion ---CollectPoint---
 
 }

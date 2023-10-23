@@ -87,8 +87,14 @@ fun ByteArray.sha256() = encrypt("SHA-256")?.toHexString()
 
 //---
 
+/**取高16位的值,高位*/
+fun Int.high16Bit(): Int = (this shr 16) and 0xffff
+
+/**取低16位的值,低位*/
+fun Int.low16Bit(): Int = this and 0xffff
+
 /**取高8位的值,高位*/
-fun Int.high8Bit(): Int = this and 0xff00 shr 8
+fun Int.high8Bit(): Int = (this and 0xff00) shr 8
 
 /**取低8位的值,低位*/
 fun Int.low8Bit(): Int = this and 0x00ff

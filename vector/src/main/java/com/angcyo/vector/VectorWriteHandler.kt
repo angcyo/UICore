@@ -405,6 +405,8 @@ abstract class VectorWriteHandler {
      * 请主动调用[writeFirst] [writeFinish]
      *
      * [x] [y] 非像素值, 真实值
+     *
+     * 写入的点会根据[unit]进行转换
      * */
     @CallPoint
     open fun writePoint(x: Double, y: Double) {
