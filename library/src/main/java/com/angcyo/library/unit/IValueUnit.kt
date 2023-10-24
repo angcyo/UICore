@@ -180,6 +180,10 @@ fun Int?.toPixel() = this?.toFloat().toPixel()
 /**1毫米转像素*/
 fun Float?.toPixel(unit: IValueUnit = MM_UNIT) = unit.convertValueToPixel(this ?: 0f)
 
+/**1毫米转像素带单位*/
+fun Float?.toPixelUnit(unit: IValueUnit = MM_UNIT) =
+    unit.formattedValueUnit(unit.convertValueToPixel(this ?: 0f))
+
 /**1毫米转像素*/
 fun Double?.toPixel(unit: IValueUnit = MM_UNIT) = unit.convertValueToPixel(this ?: 0.0)
 
