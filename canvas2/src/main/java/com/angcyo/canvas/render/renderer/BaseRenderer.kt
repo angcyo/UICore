@@ -577,6 +577,10 @@ abstract class BaseRenderer : IRenderer {
         strategy: Strategy,
         delegate: CanvasRenderDelegate?
     ) {
+        if (sx == 0f || sy == 0f) {
+            return
+        }
+
         val px = renderProperty?.anchorX ?: 0f
         val py = renderProperty?.anchorY ?: 0f
         val matrix = Matrix()

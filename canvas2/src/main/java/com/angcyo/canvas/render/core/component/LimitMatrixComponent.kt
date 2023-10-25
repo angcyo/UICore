@@ -175,14 +175,14 @@ class LimitMatrixComponent : BaseCanvasRenderListener(), ICanvasComponent {
             if (width <= 0f || height <= 0) {
                 //no op
             } else {
-                val minSx = 1 / width
+                /*val minSx = 1 / width
                 val minSy = 1 / height
 
                 //sx = max(minSx, sx)
                 //sy = max(minSy, sy)
 
                 updateLimitScaleXTo(max(minSx, sx))
-                updateLimitScaleYTo(max(minSy, sy))
+                updateLimitScaleYTo(max(minSy, sy))*/
             }
         }
 

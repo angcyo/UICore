@@ -542,8 +542,8 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 renderer.updateGroupRenderProperty(reason, delegate)
             }
         } else {
-            //element
-            renderer.applyScaleMatrixWithCenter(elementMatrix, true, reason, delegate)
+            //element 2023-10-25使用一个新的矩阵, 避免影响到其他元素
+            renderer.applyScaleMatrixWithCenter(Matrix(elementMatrix), true, reason, delegate)
         }
     }
 
