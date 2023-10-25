@@ -284,6 +284,9 @@ fun Float.toRadians(): Float = Math.toRadians(this.toDouble()).toFloat()
 /**弧度转角度*/
 fun Float.toDegrees(): Float = Math.toDegrees(this.toDouble()).toFloat()
 
+/**调整角度的取值范围*/
+fun Float.adjustDegrees(): Float = (this + 360) % 360
+
 /**弧度转角度*/
 fun Double.toDegrees(): Double = Math.toDegrees(this)
 
@@ -344,6 +347,12 @@ val _tempValues = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
 
 /**临时对象, 用来存储坐标点位值*/
 val _tempPoints = floatArrayOf(0f, 0f)
+
+/**临时点坐标*/
+val _tempPos = floatArrayOf(0f, 0f)
+
+/**临时斜率存放*/
+val _tempTan = floatArrayOf(0f, 0f, 0f)
 
 /**临时对象*/
 val _tempPoint = PointF(0f, 0f)

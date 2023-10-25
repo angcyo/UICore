@@ -176,16 +176,15 @@ object Debug {
                                         "clear" -> {
                                             //删除hawk的键
                                             //@cmd#clear=key
-                                            val hawkKey = valueString.lowercase()
-                                            hawkKey.hawkDelete()
+                                            valueString.hawkDelete()
                                             match = true
                                         }
 
-                                        "hawk" -> {
+                                        "show", "hawk" -> {
                                             //显示hawk的值
                                             //@cmd#hawk=key
-                                            val hawkKey = valueString.lowercase()
-                                            toastQQ("${hawkKey.hawkGet<Any>()}")
+                                            //@cmd#show=key
+                                            toastQQ("${valueString.hawkGet<Any>()}")
                                             match = true
                                         }
                                     }

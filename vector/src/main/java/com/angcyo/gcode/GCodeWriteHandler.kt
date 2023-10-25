@@ -336,7 +336,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
                 val path = acquireTempPath()
                 path.addCircle(cx.toFloat(), cy.toFloat(), radius.toFloat(), Path.Direction.CW)
 
-                path.eachPath(pathStep) { _, _, _, posArray ->
+                path.eachPath(pathStep) { _, _, _, posArray, _ ->
                     var x = posArray[0]
                     var y = posArray[1]
 
@@ -401,7 +401,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
         path.moveTo(startX.toFloat(), startY.toFloat())
         path.lineTo(endX.toFloat(), endY.toFloat())
 
-        path.eachPath(step) { index, ratio, contourIndex, posArray ->
+        path.eachPath(step) { index, ratio, contourIndex, posArray, _ ->
             circleTo(posArray[0].toDouble(), posArray[1].toDouble(), diameter.toDouble())
         }
     }

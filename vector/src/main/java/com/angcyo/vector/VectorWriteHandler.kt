@@ -459,7 +459,7 @@ abstract class VectorWriteHandler {
         offsetTop: Float = 0f,
         pathStep: Float = LibHawkKeys._pathAcceptableError
     ) {
-        path.eachPath(pathStep) { index, ratio, contourIndex, posArray ->
+        path.eachPath(pathStep) { index, ratio, contourIndex, posArray, _ ->
             val xPixel = posArray[0] + offsetLeft + 0.0
             val yPixel = posArray[1] + offsetTop + 0.0
 

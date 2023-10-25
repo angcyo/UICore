@@ -226,7 +226,7 @@ fun Path.approximate2(acceptableError: Float = LibHawkKeys._pathAcceptableError)
         approximate(acceptableError)
     } else {
         val result = mutableListOf<Float>()
-        eachPath(acceptableError) { index, ratio, contourIndex, posArray ->
+        eachPath(acceptableError) { index, ratio, contourIndex, posArray, _ ->
             result.add(ratio)
             result.add(posArray[0])
             result.add(posArray[1])
@@ -245,8 +245,9 @@ fun Path.approximate2(acceptableError: Float = LibHawkKeys._pathAcceptableError)
  * */
 fun Path.eachPath(
     step: Float = LibHawkKeys._pathAcceptableError,
-    posArray: FloatArray = _tempPoints,
-    block: (index: Int, ratio: Float, contourIndex: Int, posArray: FloatArray) -> Unit
+    posArray: FloatArray = _tempPos,
+    tanArray: FloatArray = _tempTan,
+    block: (index: Int, ratio: Float, contourIndex: Int, posArray: FloatArray, tanArray: FloatArray) -> Unit
 ) {
     val pathMeasure = PathMeasure(this, false)
     var position = 0f //路径上的问题只
@@ -257,9 +258,13 @@ fun Path.eachPath(
     //func
     fun _each() {
         while (position <= length) {
-            pathMeasure.getPosTan(position, posArray, null)
+            pathMeasure.getPosTan(position, posArray, tanArray)
             val ratio = position / length
-            block(index++, ratio, contourIndex, posArray)
+            if (tanArray.size > 2) {
+                //计算角度,弧度单位
+                tanArray[2] = atan2(tanArray[1], tanArray[0])
+            }
+            block(index++, ratio, contourIndex, posArray, tanArray)
 
             if (position == length) {
                 break

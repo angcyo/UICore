@@ -130,6 +130,9 @@ object LibHawkKeys {
     @MM
     var pathPixelGapValue: Float by HawkPropertyValue<Any, Float>(0.3f)
 
+    /**枚举路径时, 当2个点之间的角度超过N度, 视为新的点使用G1, 否则使用G0*/
+    var pathAcceptableRadians: Float by HawkPropertyValue<Any, Float>(20f)
+
     /**是否强制使用高刷*/
     var enableHighRefresh: Boolean by HawkPropertyValue<Any, Boolean>(isDebug())
 
