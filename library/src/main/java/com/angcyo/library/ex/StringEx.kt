@@ -978,7 +978,10 @@ fun String.ensureName(end: String = ".json") = if (endsWith(end)) this else "$th
 
 /**确保扩展名是[this],
  * 如果是.开头, 则直接追加, 否则自动加上.*/
-fun String.ensureExtName() = if (startsWith(".")) this else ".$this"
+fun String.ensureExtName() = ensurePrefix(".")
+
+/**确保字符串前缀*/
+fun String.ensurePrefix(prefix: String) = if (startsWith(prefix)) this else "$prefix$this"
 
 /**字符串的长度*/
 fun String?.size() = this?.length ?: 0
