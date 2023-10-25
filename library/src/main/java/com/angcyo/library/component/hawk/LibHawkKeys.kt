@@ -113,6 +113,11 @@ object LibHawkKeys {
     @MM
     var pathAcceptableErrorMM: Float by HawkPropertyValue<Any, Float>(0.1f)
 
+    /**GCode矢量预览时, 单独的路径采样步长
+     * 默认就是[pathAcceptableErrorMM]*/
+    @MM
+    var pathPreviewAcceptableErrorMM: Float? by HawkPropertyValue<Any, Float?>(null)
+
     /**计算[Bounds]时, 容错率, 应该也是each path的采样率
      * [enablePathBoundsExact]
      * [svgTolerance]
