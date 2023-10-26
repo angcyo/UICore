@@ -800,14 +800,19 @@ fun List<Path>?.toBitmap(
     return bitmap
 }
 
-/**[android.graphics.Path.op]*/
-fun List<Path>.op(op: Path.Op): Path {
+/**
+ * [op] 如果为空, 则直接合并所有[Path]
+ *
+ * [android.graphics.Path.op]*/
+fun List<Path>.op(op: Path.Op?): Path {
     val result = Path() //操作后的结果
 
     //op 操作
     for (path in this) {
         if (result.isEmpty) {
             result.set(path)
+        } else if (op == null) {
+            result.addPath(path) //直接合并
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 if (!result.op(path, op)) {
