@@ -33,6 +33,7 @@ import com.angcyo.library.ex.disableParentInterceptTouchEvent
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.getScaleX
 import com.angcyo.library.ex.getScaleY
+import com.angcyo.library.ex.isNotEmpty
 import com.angcyo.library.ex.longFeedback
 import com.angcyo.library.ex.size
 import com.angcyo.library.unit.IRenderUnit
@@ -694,7 +695,8 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     fun getSingleElementRendererListIn(
         rendererList: List<BaseRenderer>?,
         dissolveGroup: Boolean = true,
-        includeGroup: Boolean = false
+        includeGroup: Boolean = false,
+        includeEmptySize: Boolean = true,
     ): List<BaseRenderer> {
         val result = mutableListOf<BaseRenderer>()
         rendererList ?: return result
@@ -714,7 +716,9 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
                 result.add(renderer)
             }
         }
-        return result
+        return if (includeEmptySize) result else result.filter {
+            it.getRendererBounds()?.isNotEmpty() == true
+        }
     }
 
     /**获取所有简单的渲染器*/

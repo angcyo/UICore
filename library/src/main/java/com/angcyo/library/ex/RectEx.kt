@@ -84,6 +84,10 @@ fun RectF.setWidthHeight(width: Float, height: Float, withCenter: Boolean = fals
 fun RectF.isNoSize() =
     isEmpty || !width().isFinite() || !height().isFinite() || width() == 0f || height() == 0f
 
+/**矩形不为空, 有大小, 线段~*/
+fun RectF.isNotEmpty() = width() != 0f || height() != 0f
+fun Rect.isNotEmpty() = width() != 0 || height() != 0
+
 fun Rect.isNoSize() = width() == 0 || height() == 0
 
 /**是否是无效的矩形*/
