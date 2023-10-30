@@ -116,6 +116,10 @@ var IWheelItem.itemSelectedIndex
         }
     }
 
+/**获取选中元素对应的数据*/
+fun <T> IWheelItem.getSelectedWheelBean(index: Int = itemSelectedIndex) =
+    itemWheelList?.getOrNull(index) as? T
+
 var IWheelItem.itemConfigDialogAction
     get() = wheelItemConfig.itemConfigDialogAction
     set(value) {
