@@ -361,7 +361,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
             if (isAutoCnc) {
                 //no op
             } else {
-                writer?.appendLine("M05 ")//S电压控制 M5关闭主轴
+                writer?.append("M05")//S电压控制 M05关闭主轴
             }
             writer?.appendLine("S0")
             isClosedCnc = true
@@ -375,7 +375,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
             if (isAutoCnc) {
                 //no op
             } else {
-                writer?.append("M03 ")
+                writer?.append("M03")
             }
             writer?.appendLine("S255")
             isClosedCnc = false
