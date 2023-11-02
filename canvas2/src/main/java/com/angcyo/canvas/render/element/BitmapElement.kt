@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.drawable.Drawable
+import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.state.BitmapStateStack
@@ -51,7 +52,13 @@ open class BitmapElement : BaseElement() {
     }
 
     override fun onRenderInside(renderer: BaseRenderer?, canvas: Canvas, params: RenderParams) {
-        val bitmap = getDrawBitmap() ?: return
+        val bitmap = getDrawBitmap()
+        if (bitmap == null) {
+            if (params.renderDst is CanvasRenderDelegate) {
+                renderNoData(canvas, params)
+            }
+            return
+        }
         val bitmapMatrix = getRenderBitmapMatrix(bitmap)
         var matrix = params._renderMatrix
         if (bitmapMatrix != null) {

@@ -137,7 +137,7 @@ fun Bitmap.toBase64(
     return result
 }
 
-/**
+/**带协议头的数据
  * data:image/png;base64,xxx
  * [String.toBitmapOfBase64]
  * */

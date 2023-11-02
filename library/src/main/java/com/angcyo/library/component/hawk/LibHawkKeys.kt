@@ -64,17 +64,6 @@ object LibHawkKeys {
      * 允许写入单个文件的最大大小10mb, 之后会重写*/
     var logFileMaxSize: Long by HawkPropertyValue<Any, Long>(2 * 1024 * 1024)
 
-    /**允许最大分配的图片大小,
-     * 10mb 10 * 1024 * 1024 => 10,485,760
-     * 64,000,000 61mb
-     *
-     * pixel 6 max:174 584 760 bytes
-     * */
-    var maxBitmapCanvasSize: Long by HawkPropertyValue<Any, Long>(60 * 1024 * 1024)
-
-    /**存储图片到zip包时, 32位手机最大支持的像素点数, 宽*高*/
-    var maxBitmapSaveSize: Long by HawkPropertyValue<Any, Long>(4000 * 4000)
-
     /**是否要激活Canvas的渲染数量限制
      * 激活后[canvasRenderMaxCount]才有效*/
     var enableCanvasRenderLimit: Boolean by HawkPropertyValue<Any, Boolean>(true)
