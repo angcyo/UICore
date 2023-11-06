@@ -8,6 +8,7 @@ import android.widget.PopupWindow
 import com.angcyo.dialog.PopupConfig
 import com.angcyo.dialog.R
 import com.angcyo.dialog.TargetWindow
+import com.angcyo.dialog.dismissWindow
 import com.angcyo.library.annotation.DSL
 import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.dpi
@@ -102,4 +103,30 @@ fun Context.popupTipWindow(
     popupConfig.anchor = anchor
     popupConfig.config()
     return popupConfig.show(this)
+}
+
+/**Dsl
+ * [delayDismiss] 多少毫秒后, 自动销毁*/
+@DSL
+fun View.popupTipWindow(
+    text: CharSequence? = null,
+    delayDismiss: Long = 3000,
+    layoutId: Int = R.layout.lib_popup_tip_layout,
+    config: PopupTipConfig.() -> Unit = {},
+    initLayout: (window: TargetWindow, viewHolder: DslViewHolder) -> Unit = { _, _ -> }
+): TargetWindow {
+    val popupConfig = PopupTipConfig()
+    popupConfig.autoOffsetCenterInAnchor = true //锚点控件居中显示
+    popupConfig.offsetY = -36 * dpi //偏移阴影的位置
+    popupConfig.anchor = this
+    popupConfig.popupLayoutId = layoutId
+    popupConfig.onInitLayout = { window, viewHolder ->
+        viewHolder.tv(R.id.lib_text_view)?.text = text
+        initLayout(window, viewHolder)
+    }
+    popupConfig.config()
+    postDelayed({
+        popupConfig._container?.dismissWindow()
+    }, delayDismiss)
+    return popupConfig.show(context)
 }

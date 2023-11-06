@@ -96,7 +96,7 @@ open class PopupConfig : ActivityResultCaller, LifecycleOwner, IActivityProvider
      * 为了兼容 [updatePopup]*/
     var offsetX: Int = 0
 
-    /**会根据锚点在屏幕的上下区域, 自动取反*/
+    /**额外的偏移量, 会根据锚点在屏幕的上下区域, 自动取反*/
     var offsetY: Int = 0
 
     /**左右最小边界距离*/
@@ -295,9 +295,9 @@ open class PopupConfig : ActivityResultCaller, LifecycleOwner, IActivityProvider
             _popupViewHolder = popupViewHolder
             view.setDslViewHolder(popupViewHolder)
             initPopupWindow(window, popupViewHolder)
-            initLayout(window, popupViewHolder)//init 配置位置
 
             onInitLayout(window, popupViewHolder)
+            initLayout(window, popupViewHolder)//init 配置位置
 
             contentView = view
 
@@ -591,6 +591,7 @@ open class PopupConfig : ActivityResultCaller, LifecycleOwner, IActivityProvider
         val viewHolder = DslViewHolder(contentLayout!!)
         _popupViewHolder = viewHolder
         initPopupActivity(activity, viewHolder)
+        onInitLayout(window, viewHolder)
         initLayout(window, viewHolder)
 
         //全屏覆盖层
@@ -648,9 +649,6 @@ open class PopupConfig : ActivityResultCaller, LifecycleOwner, IActivityProvider
         onAddRootLayout(activity, viewHolder)
 
         onPopupShow(window, viewHolder)
-
-        onInitLayout(window, viewHolder)
-
         return window
     }
 
