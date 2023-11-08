@@ -131,8 +131,24 @@ abstract class VectorWriteHandler {
     /**保留小数点后几位*/
     var decimal = LibHawkKeys.vectorDecimal
 
-    /**是否是简单的路径, 如果是则全程使用G1连接, 否则智能通过Gap判断*/
+    /**是否是简单的路径, 如果是则全程使用G1连接, 否则智能通过Gap判断
+     * 此属性会关闭弧度采样判断
+     * */
     var isSinglePath: Boolean = false
+
+    //---弧度采样---
+
+    /**[LibLpHawkKeys.enableVectorRadiansSample]
+     * [LibHawkKeys.pathSampleStepRadians]
+     * [LibHawkKeys.pathAcceptableDegrees]
+     * */
+    var enableVectorRadiansSample: Boolean = false
+
+    /**在弧度模式下, 采样的间隙*/
+    var pathSampleStepRadians: Float = LibHawkKeys.pathSampleStepRadians
+
+    /**弧度差多少视为新的点, 角度单位*/
+    var pathAcceptableDegrees: Float = LibHawkKeys.pathAcceptableDegrees
 
     //---
 
@@ -284,12 +300,12 @@ abstract class VectorWriteHandler {
     }
 
     /**计算当前的点, 和上一个点的类型*/
-    open fun _valueChangedType(x: Double, y: Double): Int {
+    open fun _valueChangedType(x: Double, y: Double, radians: Float?): Int {
         val last = _pointList.lastOrNull() ?: return POINT_TYPE_NEW //之前没有点, 那当前的点肯定是最新的
         //val first = _pointList.first()
-        val pointType = _valueChangedType(last, x, y) //当前点的类型
-        if (_pointList.size() == 1) {
-            //之前只有1个点
+        val pointType = _valueChangedType(last, x, y, radians) //当前点的类型
+        if (_pointList.size() == 1 || enableVectorRadiansSample) {
+            //之前只有1个点 //弧度采样情况下不支持G2/G3输出
             return pointType
         } else {
             //之前已经有多个点
@@ -324,7 +340,8 @@ abstract class VectorWriteHandler {
                         val circleType = _valueChangedType(
                             VectorPoint(circle.x, circle.y, POINT_TYPE_CIRCLE),
                             cPoint.x,
-                            cPoint.y
+                            cPoint.y,
+                            radians
                         )
                         return if (circleType == POINT_TYPE_SAME) {
                             //圆心一致, 则
@@ -361,15 +378,24 @@ abstract class VectorWriteHandler {
         }
     }
 
-    fun _valueChangedType(point: VectorPoint, x: Double, y: Double): Int {
-        val c = c(point.x, point.y, x, y).toFloat()
-        if (((point.x - x).absoluteValue > _refGapMaxValue || (point.y - y).absoluteValue > _refGapMaxValue)
+    fun _valueChangedType(prev: VectorPoint, x: Double, y: Double, radians: Float?): Int {
+        if (enableVectorRadiansSample && radians != null && prev.radians != null) {
+            //弧度采样
+            val radiansDiff = (radians - prev.radians!!).absoluteValue.toDegrees()
+            if (radiansDiff < pathAcceptableDegrees) {
+                return POINT_TYPE_SAME
+            } else {
+                return POINT_TYPE_GAP
+            }
+        }
+        val c = c(prev.x, prev.y, x, y).toFloat()
+        if (((prev.x - x).absoluteValue > _refGapMaxValue || (prev.y - y).absoluteValue > _refGapMaxValue)
             && c > _refGapMaxValue
         ) {
             //2点之间间隙太大, 则视为新的点
             return POINT_TYPE_NEW
         }
-        if (point.x == x || point.y == y) {
+        if (prev.x == x || prev.y == y) {
             //在一根线上
             return POINT_TYPE_SAME
         }
@@ -384,14 +410,15 @@ abstract class VectorWriteHandler {
     }
 
     /**创建一个新的点*/
-    open fun generatePoint(x: Double, y: Double): VectorPoint {
+    open fun generatePoint(x: Double, y: Double, radians: Float?): VectorPoint {
         return if (isSinglePath) {
             VectorPoint(
                 x, y,
-                if (_pointList.lastOrNull() == null) POINT_TYPE_NEW else POINT_TYPE_GAP
+                if (_pointList.lastOrNull() == null) POINT_TYPE_NEW else POINT_TYPE_GAP,
+                radians = radians
             )
         } else {
-            VectorPoint(x, y, _valueChangedType(x, y))
+            VectorPoint(x, y, _valueChangedType(x, y, radians), radians = radians)
         }
     }
 
@@ -405,12 +432,13 @@ abstract class VectorWriteHandler {
      * 请主动调用[writeFirst] [writeFinish]
      *
      * [x] [y] 非像素值, 真实值
+     * [radians] 当前点的弧度
      *
      * 写入的点会根据[unit]进行转换
      * */
     @CallPoint
-    open fun writePoint(x: Double, y: Double) {
-        val point = generatePoint(x, y)
+    open fun writePoint(x: Double, y: Double, radians: Float?) {
+        val point = generatePoint(x, y, radians)
 
         //last
         val first = _pointList.firstOrNull()
@@ -432,14 +460,20 @@ abstract class VectorWriteHandler {
             }
 
             POINT_TYPE_GAP -> lineLastPoint(point)
-            /*POINT_TYPE_SAME, else -> _resetLastPoint(point)*/
+            POINT_TYPE_SAME -> {
+                if (enableVectorRadiansSample) {
+                    //弧度采样
+                    val lastRadians = _pointList.lastOrNull()?.radians
+                    point.radians = lastRadians ?: point.radians
+                }
+            }
         }
 
         _resetLastPoint(point)
     }
 
     /**[writePoint]*/
-    fun appendPoint(x: Double, y: Double) = writePoint(x, y)
+    fun appendPoint(x: Double, y: Double, radians: Float?) = writePoint(x, y, radians)
 
     //endregion ---Core---
 
@@ -459,7 +493,8 @@ abstract class VectorWriteHandler {
         offsetTop: Float = 0f,
         pathStep: Float = LibHawkKeys._pathAcceptableError
     ) {
-        path.eachPath(pathStep) { index, ratio, contourIndex, posArray, _ ->
+        val step = if (enableVectorRadiansSample) pathSampleStepRadians else pathStep
+        path.eachPath(step) { index, ratio, contourIndex, posArray, tanArray ->
             val xPixel = posArray[0] + offsetLeft + 0.0
             val yPixel = posArray[1] + offsetTop + 0.0
 
@@ -478,7 +513,9 @@ abstract class VectorWriteHandler {
                 }
             }
 
-            writePoint(x, y)
+            //激活了弧度采样
+            val radians = if (LibLpHawkKeys.enableVectorRadiansSample) tanArray[2] else null
+            writePoint(x, y, radians)
         }
         clearLastPoint()
         if (writeLast) {
@@ -696,7 +733,13 @@ abstract class VectorWriteHandler {
          * `G2` 顺时针画弧 -> Path.Direction.CCW
          * `G3` 逆时针画弧 -> Path.Direction.CW
          * */
-        var circleDir: Path.Direction? = null
+        var circleDir: Path.Direction? = null,
+
+        /**当前点的弧度值*/
+        var radians: Float? = null,
+
+        /**当前点和上一个点的弧度差值, 用来识别G2/G3*/
+        //val dxRadians: Float? = null, //关闭G2/G3输出
     )
 
 }

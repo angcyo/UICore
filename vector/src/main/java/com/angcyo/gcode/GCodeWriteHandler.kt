@@ -33,7 +33,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
         const val DEFAULT_CUT_HEIGHT = 0.03f
     }
 
-    /**是否要收集点位信息
+    /**是否要收集点位信息, 开启后[_collectPointList]集合会有数据
      * 0x30的数据类型时要的点位信息
      * */
     var isCollectPoint = false

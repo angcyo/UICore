@@ -35,6 +35,14 @@ object LibLpHawkKeys {
     /**智能推荐的最小速率*/
     var minimumSmartAssistantVelocity: Float by HawkPropertyValue<Any, Float>(100f)
 
+    /**是否激活Path数据的弧度采样方式.
+     * 等距采样: 每隔相同的点采样一次, 并计算
+     * 弧度采样: 每隔相同的点采样一次, 但是相同的弧度才计算一次. 弧度采样模式下不会输出G2/G3数据
+     * [LibHawkKeys.pathSampleStepRadians]
+     * [LibHawkKeys.pathAcceptableDegrees]
+     * */
+    var enableVectorRadiansSample: Boolean by HawkPropertyValue<Any, Boolean>(false)
+
     //---
 
     /**L1的物理尺寸配置*/

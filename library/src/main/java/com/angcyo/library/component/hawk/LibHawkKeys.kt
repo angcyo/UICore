@@ -124,8 +124,19 @@ object LibHawkKeys {
     @MM
     var pathPixelGapValue: Float by HawkPropertyValue<Any, Float>(0.3f)
 
-    /**枚举路径时, 当2个点之间的角度超过N度, 视为新的点使用G1, 否则使用G0*/
-    var pathAcceptableRadians: Float by HawkPropertyValue<Any, Float>(20f)
+    /**[Path.eachPath]时的路径采样步长, 值越少影响枚举的性能, 但是不会影响精度
+     * 配合[pathAcceptableDegrees]一起使用, 不会影响输出的数据精度.
+     * 与之前的[_pathAcceptableError]等距离采样不同.
+     * [LibLpHawkKeys.enableVectorRadiansSample]
+     * */
+    @Pixel
+    var pathSampleStepRadians: Float by HawkPropertyValue<Any, Float>(1f)
+
+    /**枚举路径时, 当2个点之间的角度超过N度, 视为新的点使用G1, 否则使用G0
+     * 角度
+     * [LibLpHawkKeys.enableVectorRadiansSample]
+     * */
+    var pathAcceptableDegrees: Float by HawkPropertyValue<Any, Float>(10f)
 
     /**是否强制使用高刷*/
     var enableHighRefresh: Boolean by HawkPropertyValue<Any, Boolean>(isDebug())
