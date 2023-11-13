@@ -383,6 +383,13 @@ abstract class VectorWriteHandler {
             //弧度采样
             val radiansDiff = (radians - prev.radians!!).absoluteValue.toDegrees()
             if (radiansDiff < pathAcceptableDegrees) {
+                val first = _pointList.firstOrNull()
+                if (first != null) {
+                    val c = c(first.x, first.y, x, y).toFloat()
+                    if (c >= gapValue) {
+                        return POINT_TYPE_GAP
+                    }
+                }
                 return POINT_TYPE_SAME
             } else {
                 return POINT_TYPE_GAP
