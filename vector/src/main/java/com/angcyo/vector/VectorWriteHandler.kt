@@ -7,6 +7,7 @@ import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.Flag
 import com.angcyo.library.annotation.MM
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.annotation.Private
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.hawk.LibLpHawkKeys
@@ -19,6 +20,7 @@ import com.angcyo.library.unit.IValueUnit
 import com.angcyo.library.unit.MmValueUnit
 import com.angcyo.library.unit.PixelValueUnit
 import kotlin.math.absoluteValue
+import kotlin.math.tan
 
 /**
  * 矢量输出基类,
@@ -144,11 +146,12 @@ abstract class VectorWriteHandler {
      * */
     var enableVectorRadiansSample: Boolean = false
 
-    /**在弧度模式下, 采样的间隙*/
+    /**在弧度模式下, 采样的间隙, 只影响采样性能, 不影响数据精度*/
+    @Pixel
     var pathSampleStepRadians: Float = LibHawkKeys.pathSampleStepRadians
 
-    /**弧度差多少视为新的点, 角度单位*/
-    var pathAcceptableDegrees: Float = LibHawkKeys.pathAcceptableDegrees
+    /**公差 跟着[unit]单位*/
+    var pathTolerance: Float = LibHawkKeys.pathTolerance
 
     //---
 
@@ -182,6 +185,10 @@ abstract class VectorWriteHandler {
 
     fun updateGapMaxValueByPixel(pixel: Float) {
         gapMaxValue = unit?.convertPixelToValue(pixel) ?: pixel
+    }
+
+    fun updatePathToleranceByPixel(pixel: Float) {
+        pathTolerance = unit?.convertPixelToValue(pixel) ?: pixel
     }
 
     //region ---Core回调---
@@ -301,9 +308,9 @@ abstract class VectorWriteHandler {
 
     /**计算当前的点, 和上一个点的类型*/
     open fun _valueChangedType(x: Double, y: Double, radians: Float?): Int {
-        val last = _pointList.lastOrNull() ?: return POINT_TYPE_NEW //之前没有点, 那当前的点肯定是最新的
+        val first = _pointList.firstOrNull() ?: return POINT_TYPE_NEW //之前没有点, 那当前的点肯定是最新的
         //val first = _pointList.first()
-        val pointType = _valueChangedType(last, x, y, radians) //当前点的类型
+        val pointType = _valueChangedType(first, x, y, radians) //当前点的类型
         if (_pointList.size() == 1 || enableVectorRadiansSample) {
             //之前只有1个点 //弧度采样情况下不支持G2/G3输出
             return pointType
@@ -378,31 +385,25 @@ abstract class VectorWriteHandler {
         }
     }
 
-    fun _valueChangedType(prev: VectorPoint, x: Double, y: Double, radians: Float?): Int {
-        if (enableVectorRadiansSample && radians != null && prev.radians != null) {
-            //弧度采样
-            val radiansDiff = (radians - prev.radians!!).absoluteValue.toDegrees()
-            if (radiansDiff < pathAcceptableDegrees) {
-                val first = _pointList.firstOrNull()
-                if (first != null) {
-                    val c = c(first.x, first.y, x, y).toFloat()
-                    if (c >= gapValue) {
-                        return POINT_TYPE_GAP
-                    }
-                }
-                return POINT_TYPE_SAME
-            } else {
+    fun _valueChangedType(first: VectorPoint, x: Double, y: Double, radians: Float?): Int {
+        if (enableVectorRadiansSample && radians != null && first.radians != null) {
+            //公差采样
+            val c = c(first.x, first.y, x, y).toFloat()
+            val h = tan((radians - first.radians!!).absoluteValue / 4) * c / 2
+            if (h.absoluteValue >= pathTolerance) {
                 return POINT_TYPE_GAP
+            } else {
+                return POINT_TYPE_SAME
             }
         }
-        val c = c(prev.x, prev.y, x, y).toFloat()
-        if (((prev.x - x).absoluteValue > _refGapMaxValue || (prev.y - y).absoluteValue > _refGapMaxValue)
+        val c = c(first.x, first.y, x, y).toFloat()
+        if (((first.x - x).absoluteValue > _refGapMaxValue || (first.y - y).absoluteValue > _refGapMaxValue)
             && c > _refGapMaxValue
         ) {
             //2点之间间隙太大, 则视为新的点
             return POINT_TYPE_NEW
         }
-        if (prev.x == x || prev.y == y) {
+        if (first.x == x || first.y == y) {
             //在一根线上
             return POINT_TYPE_SAME
         }
@@ -467,13 +468,7 @@ abstract class VectorWriteHandler {
             }
 
             POINT_TYPE_GAP -> lineLastPoint(point)
-            POINT_TYPE_SAME -> {
-                if (enableVectorRadiansSample) {
-                    //弧度采样
-                    val lastRadians = _pointList.lastOrNull()?.radians
-                    point.radians = lastRadians ?: point.radians
-                }
-            }
+            POINT_TYPE_SAME -> Unit
         }
 
         _resetLastPoint(point)

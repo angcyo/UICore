@@ -132,11 +132,9 @@ object LibHawkKeys {
     @Pixel
     var pathSampleStepRadians: Float by HawkPropertyValue<Any, Float>(1f)
 
-    /**枚举路径时, 当2个点之间的角度超过N度, 视为新的点使用G1, 否则使用G0
-     * 角度
-     * [LibLpHawkKeys.enableVectorRadiansSample]
-     * */
-    var pathAcceptableDegrees: Float by HawkPropertyValue<Any, Float>(10f)
+    /**凸起公差, 公差范围内的点视为一条直线*/
+    @MM
+    var pathTolerance: Float by HawkPropertyValue<Any, Float>(0.05f)
 
     /**是否强制使用高刷*/
     var enableHighRefresh: Boolean by HawkPropertyValue<Any, Boolean>(isDebug())
