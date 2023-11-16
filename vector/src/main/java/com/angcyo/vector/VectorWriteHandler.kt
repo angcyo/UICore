@@ -308,80 +308,85 @@ abstract class VectorWriteHandler {
 
     /**计算当前的点, 和上一个点的类型*/
     open fun _valueChangedType(x: Double, y: Double, radians: Float?): Int {
-        val first = _pointList.firstOrNull() ?: return POINT_TYPE_NEW //之前没有点, 那当前的点肯定是最新的
-        //val first = _pointList.first()
-        val pointType = _valueChangedType(first, x, y, radians) //当前点的类型
-        if (_pointList.size() == 1 || enableVectorRadiansSample) {
-            //之前只有1个点 //弧度采样情况下不支持G2/G3输出
-            return pointType
+        if (enableVectorRadiansSample) {
+            val first = _pointList.firstOrNull() ?: return POINT_TYPE_NEW //之前没有点, 那当前的点肯定是最新的
+            //弧度采样情况下不支持G2/G3输出
+            return _valueChangedType(first, x, y, radians)
         } else {
-            //之前已经有多个点
-            if (LibLpHawkKeys.enableVectorArc && _pointList.size() == 2) {
-                //之前有2个点, 现在是第3个点, 则判断3个点是否是在圆上
-                val first = _pointList.first()
-                val x1 = first.x
-                val y1 = first.y
-                val x2 = _pointList[1].x
-                val y2 = _pointList[1].y
-                val cPoint = VectorHelper.centerOfCircle(x1, y1, x2, y2, x, y)
-                if (cPoint == null) {
-                    //不在圆上
-                } else {
-                    //在圆上, 则将圆心坐标写入第一个点的对象中
-                    val circle = first.circle
-                    if (circle == null) {
-                        first.circle = cPoint
-
-                        val a1 = VectorHelper.angle2(x2, y2, cPoint.x, cPoint.y)
-                        val a2 = VectorHelper.angle2(x, y, cPoint.x, cPoint.y)
-
-                        first.circleDir = if (a2 >= a1) {
-                            //角度在变大, 顺时针枚举点位
-                            Path.Direction.CW
-                        } else {
-                            //角度在变小, 逆时针枚举点位
-                            Path.Direction.CCW
-                        }
+            val last = _pointList.lastOrNull() ?: return POINT_TYPE_NEW //之前没有点, 那当前的点肯定是最新的
+            val pointType = _valueChangedType(last, x, y, radians) //当前点的类型
+            if (_pointList.size() == 1) {
+                //之前只有1个点
+                return pointType
+            } else {
+                //之前已经有多个点
+                if (LibLpHawkKeys.enableVectorArc && _pointList.size() == 2) {
+                    //之前有2个点, 现在是第3个点, 则判断3个点是否是在圆上
+                    val first = _pointList.first()
+                    val x1 = first.x
+                    val y1 = first.y
+                    val x2 = _pointList[1].x
+                    val y2 = _pointList[1].y
+                    val cPoint = VectorHelper.centerOfCircle(x1, y1, x2, y2, x, y)
+                    if (cPoint == null) {
+                        //不在圆上
                     } else {
-                        //判断和之前是否在同一个圆上
-                        val circleType = _valueChangedType(
-                            VectorPoint(circle.x, circle.y, POINT_TYPE_CIRCLE),
-                            cPoint.x,
-                            cPoint.y,
-                            radians
-                        )
-                        return if (circleType == POINT_TYPE_SAME) {
-                            //圆心一致, 则
-                            POINT_TYPE_CIRCLE
-                        } else {
-                            //圆心不一致, 则使用新的点
-                            if (pointType == POINT_TYPE_GAP || pointType == POINT_TYPE_SAME) {
-                                //圆心不一致, 但是采样点是在临界类, 则需要先LineTo, 并清理状态
-                                POINT_TYPE_NEW_CIRCLE
+                        //在圆上, 则将圆心坐标写入第一个点的对象中
+                        val circle = first.circle
+                        if (circle == null) {
+                            first.circle = cPoint
+
+                            val a1 = VectorHelper.angle2(x2, y2, cPoint.x, cPoint.y)
+                            val a2 = VectorHelper.angle2(x, y, cPoint.x, cPoint.y)
+
+                            first.circleDir = if (a2 >= a1) {
+                                //角度在变大, 顺时针枚举点位
+                                Path.Direction.CW
                             } else {
-                                POINT_TYPE_NEW
+                                //角度在变小, 逆时针枚举点位
+                                Path.Direction.CCW
+                            }
+                        } else {
+                            //判断和之前是否在同一个圆上
+                            val circleType = _valueChangedType(
+                                VectorPoint(circle.x, circle.y, POINT_TYPE_CIRCLE),
+                                cPoint.x,
+                                cPoint.y,
+                                radians
+                            )
+                            return if (circleType == POINT_TYPE_SAME) {
+                                //圆心一致, 则
+                                POINT_TYPE_CIRCLE
+                            } else {
+                                //圆心不一致, 则使用新的点
+                                if (pointType == POINT_TYPE_GAP || pointType == POINT_TYPE_SAME) {
+                                    //圆心不一致, 但是采样点是在临界类, 则需要先LineTo, 并清理状态
+                                    POINT_TYPE_NEW_CIRCLE
+                                } else {
+                                    POINT_TYPE_NEW
+                                }
                             }
                         }
+                        return POINT_TYPE_CIRCLE
                     }
-                    return POINT_TYPE_CIRCLE
                 }
-            }
 
-            //val firstType = _valueChangedType(first, x, y) //第一个点的类型
-            val lastType = pointType //最后一个点的类型
+                //val firstType = _valueChangedType(first, x, y) //第一个点的类型
+                val lastType = pointType //最后一个点的类型
 
-            if (lastType == POINT_TYPE_GAP) {
-                if (_isSameAngle(x, y)) {
-                    //如果角度一致, 那视为相同的点
-                    return POINT_TYPE_SAME
+                if (lastType == POINT_TYPE_GAP) {
+                    if (_isSameAngle(x, y)) {
+                        //如果角度一致, 那视为相同的点
+                        return POINT_TYPE_SAME
+                    }
+                } else if (lastType == POINT_TYPE_SAME) {
+                    if (!_isSameAngle(x, y)) {
+                        //如果视为相同的点,但是角度不一致, 则之前的点需要G1过去
+                        return POINT_TYPE_GAP
+                    }
                 }
-            } else if (lastType == POINT_TYPE_SAME) {
-                if (!_isSameAngle(x, y)) {
-                    //如果视为相同的点,但是角度不一致, 则之前的点需要G1过去
-                    return POINT_TYPE_GAP
-                }
+                return lastType
             }
-            return lastType
         }
     }
 
@@ -397,7 +402,8 @@ abstract class VectorWriteHandler {
             }
         }
         val c = c(first.x, first.y, x, y).toFloat()
-        if (((first.x - x).absoluteValue > _refGapMaxValue || (first.y - y).absoluteValue > _refGapMaxValue)
+        if (((first.x - x).absoluteValue > _refGapMaxValue ||
+                    (first.y - y).absoluteValue > _refGapMaxValue)
             && c > _refGapMaxValue
         ) {
             //2点之间间隙太大, 则视为新的点
