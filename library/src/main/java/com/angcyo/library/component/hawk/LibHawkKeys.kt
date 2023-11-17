@@ -99,6 +99,12 @@ object LibHawkKeys {
     /**是否激活[Path]确切的bounds计算, 计算量会变大*/
     var enablePathBoundsExact: Boolean by HawkPropertyValue<Any, Boolean>(true)
 
+    /**
+     * [com.angcyo.library.ex.PathExKt.approximate2]
+     * [android.graphics.Path.approximate]*/
+    @Pixel
+    var pathBoundsAcceptableError: Float by HawkPropertyValue<Any, Float>(0.5f)
+
     @MM
     var pathAcceptableErrorMM: Float by HawkPropertyValue<Any, Float>(0.1f)
 
