@@ -11,6 +11,7 @@ import android.view.View
 import android.view.Window
 import android.view.WindowInsetsController
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
@@ -185,6 +186,10 @@ fun Window.lightNavigationBar(light: Boolean = true) {
         }
     }
 }
+
+/**[Window.ID_ANDROID_CONTENT]*/
+fun Window.contentView(): FrameLayout =
+    findViewById(Window.ID_ANDROID_CONTENT)
 
 fun Activity.moveToBack(nonRoot: Boolean = true): Boolean {
     return moveTaskToBack(nonRoot)

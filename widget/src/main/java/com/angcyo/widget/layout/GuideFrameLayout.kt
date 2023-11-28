@@ -1,15 +1,28 @@
 package com.angcyo.widget.layout
 
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
+import android.graphics.RectF
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import android.widget.FrameLayout
 import com.angcyo.library.ex._drawable
+import com.angcyo.library.ex.createPaint
+import com.angcyo.library.ex.have
+import com.angcyo.library.ex.isTouchDown
+import com.angcyo.library.ex.setBgDrawable
+import com.angcyo.library.ex.toDp
+import com.angcyo.library.ex.toDpi
 import com.angcyo.widget.R
 import com.angcyo.widget.base.exactly
-import com.angcyo.library.ex.setBgDrawable
 
 
 /**
@@ -28,22 +41,46 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     companion object {
         val LEFT = 1
-        val TOP = 2
-        val RIGHT = 3
-        val BOTTOM = 4
-        val CENTER = 5
+        val HORIZONTAL_CENTER = 2
+        val RIGHT = 4
 
-        val LEFT_CENTER = 6
-        val TOP_CENTER = 7
-        val RIGHT_CENTER = 8
-        val BOTTOM_CENTER = 9
+        val TOP = 0x1000
+        val VERTICAL_CENTER = 0x2000
+        val BOTTOM = 0x4000
+
+        /**偏移自身*/
+        val OFFSET_SELF = 0x1000000
+        val OFFSET_SELF_WIDTH = 0x2000000
+        val OFFSET_SELF_HEIGHT = 0x4000000
     }
 
-    /*锚点坐标列表*/
+    /**锚点坐标列表*/
     private var anchorList = mutableListOf<Rect>()
+
+    var guideBackgroundDrawable: Drawable? = null
+    var clipAnchor = false
+    var clipAnchorRadius = 0f
+
+    /**矩形额外的扩展空间*/
+    var clipAnchorInset = 2.toDp()
+
+    /**在指定的锚点区域点击*/
+    var onAnchorClick: ((anchorIndex: Int) -> Unit)? = null
 
     init {
         val array = context.obtainStyledAttributes(attributeSet, R.styleable.GuideFrameLayout)
+        clipAnchor = array.getBoolean(R.styleable.GuideFrameLayout_r_clip_anchor, clipAnchor)
+        clipAnchorRadius =
+            array.getDimensionPixelOffset(
+                R.styleable.GuideFrameLayout_r_clip_anchor_radius,
+                4.toDpi()
+            ).toFloat()
+        clipAnchorInset =
+            array.getDimensionPixelOffset(
+                R.styleable.GuideFrameLayout_r_clip_anchor_inset,
+                clipAnchorInset.toInt()
+            ).toFloat()
+        guideBackgroundDrawable = array.getDrawable(R.styleable.GuideFrameLayout_r_guide_background)
         if (isInEditMode) {
             val anchors = array.getString(R.styleable.GuideFrameLayout_r_guide_anchors)
             anchors?.let {
@@ -62,6 +99,7 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
                 }
             }
         }
+        setWillNotDraw(false)
         array.recycle()
     }
 
@@ -108,125 +146,105 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
             val childAt = getChildAt(i)
             val layoutParams = childAt.layoutParams
             if (layoutParams is LayoutParams) {
+                val childWidth = childAt.measuredWidth
+                val childHeight = childAt.measuredHeight
+
+                var l = 0
+                var t = 0
+                var offsetX = layoutParams.offsetX
+                var offsetY = layoutParams.offsetY
+
                 if (layoutParams.anchorIndex >= 0 && layoutParams.anchorIndex < anchorList.size) {
                     //需要对齐锚点
                     val anchorRect = anchorList[layoutParams.anchorIndex]
-                    val offsetX = layoutParams.offsetX
-                    val offsetY = layoutParams.offsetY
-
                     if (layoutParams.isAnchor) {
                         //自动设置锚点View的背景为 蚂蚁线
                         if (childAt.background == null && !layoutParams.withAnchor) {
                             childAt.setBgDrawable(_drawable(R.drawable.base_guide_shape_line_dash))
                         }
-                        val l = anchorRect.centerX() - childAt.measuredWidth / 2
-                        val t = anchorRect.centerY() - childAt.measuredHeight / 2
-                        childAt.layout(
-                            l + offsetX,
-                            t + offsetY,
-                            l + childAt.measuredWidth + offsetX,
-                            t + childAt.measuredHeight + offsetY
-                        )
-                    } else {
-                        when (layoutParams.guideGravity) {
-                            LEFT -> {
-                                val l = anchorRect.left - offsetX - childAt.measuredWidth
-                                val t = anchorRect.top + offsetY
-                                childAt.layout(
-                                    l,
-                                    t,
-                                    l + childAt.measuredWidth,
-                                    t + childAt.measuredHeight
-                                )
-                            }
-                            TOP -> {
-                                val t = anchorRect.top - offsetY - childAt.measuredHeight
-                                val l = anchorRect.left + offsetX
-                                childAt.layout(
-                                    l,
-                                    t,
-                                    l + childAt.measuredWidth,
-                                    t + childAt.measuredHeight
-                                )
-                            }
-                            RIGHT -> {
-                                val l = anchorRect.right + offsetX
-                                val t = anchorRect.top + offsetY
-                                childAt.layout(
-                                    l,
-                                    t,
-                                    l + childAt.measuredWidth,
-                                    t + childAt.measuredHeight
-                                )
-                            }
-                            BOTTOM -> {
-                                val l = anchorRect.left + offsetX
-                                val t = anchorRect.bottom + offsetY
-                                childAt.layout(
-                                    l,
-                                    t,
-                                    l + childAt.measuredWidth,
-                                    t + childAt.measuredHeight
-                                )
-                            }
-                            CENTER -> {
-                                val l = anchorRect.centerX() - childAt.measuredWidth / 2 + offsetX
-                                val t = anchorRect.centerY() - childAt.measuredHeight / 2 + offsetY
-                                childAt.layout(
-                                    l,
-                                    t,
-                                    l + childAt.measuredWidth,
-                                    t + childAt.measuredHeight
-                                )
-                            }
-                            LEFT_CENTER -> {
-                                val l = anchorRect.left - offsetX - childAt.measuredWidth
-                                val t = anchorRect.centerY() - childAt.measuredHeight / 2 + offsetY
-                                childAt.layout(
-                                    l,
-                                    t,
-                                    l + childAt.measuredWidth,
-                                    t + childAt.measuredHeight
-                                )
-                            }
-                            TOP_CENTER -> {
-                                val t = anchorRect.top - offsetY - childAt.measuredHeight
-                                val l = anchorRect.centerX() - childAt.measuredWidth / 2 + offsetX
-                                childAt.layout(
-                                    l,
-                                    t,
-                                    l + childAt.measuredWidth,
-                                    t + childAt.measuredHeight
-                                )
-                            }
-                            RIGHT_CENTER -> {
-                                val l = anchorRect.right + offsetX
-                                val t = anchorRect.centerY() - childAt.measuredHeight / 2 + offsetY
-                                childAt.layout(
-                                    l,
-                                    t,
-                                    l + childAt.measuredWidth,
-                                    t + childAt.measuredHeight
-                                )
-                            }
-                            BOTTOM_CENTER -> {
-                                val t = anchorRect.bottom + offsetY
-                                val l = anchorRect.centerX() - childAt.measuredWidth / 2 + offsetX
-                                childAt.layout(
-                                    l,
-                                    t,
-                                    l + childAt.measuredWidth,
-                                    t + childAt.measuredHeight
-                                )
-                            }
-                            else -> {
 
-                            }
+                        l = anchorRect.centerX() - childWidth / 2
+                        t = anchorRect.centerY() - childHeight / 2
+                    } else {
+                        var offsetSelfWidth = 0
+                        var offsetSelfHeight = 0
+                        if (layoutParams.guideGravity.have(OFFSET_SELF)) {
+                            offsetSelfWidth = childWidth
+                            offsetSelfHeight = childHeight
+                        } else if (layoutParams.guideGravity.have(OFFSET_SELF_WIDTH)) {
+                            offsetSelfWidth = childWidth
+                        } else if (layoutParams.guideGravity.have(OFFSET_SELF_HEIGHT)) {
+                            offsetSelfHeight = childHeight
+                        }
+
+                        if (layoutParams.guideGravity.have(LEFT)) {
+                            l = anchorRect.left - offsetSelfWidth
+                            offsetX = -offsetX
+                        } else if (layoutParams.guideGravity.have(RIGHT)) {
+                            l = anchorRect.right - childWidth + offsetSelfWidth
+                        } else if (layoutParams.guideGravity.have(HORIZONTAL_CENTER)) {
+                            l = anchorRect.centerX() - childWidth / 2
+                        }
+
+                        if (layoutParams.guideGravity.have(TOP)) {
+                            t = anchorRect.top - offsetSelfHeight
+                            offsetY = -offsetY
+                        } else if (layoutParams.guideGravity.have(BOTTOM)) {
+                            t = anchorRect.bottom - childHeight + offsetSelfHeight
+                        } else if (layoutParams.guideGravity.have(VERTICAL_CENTER)) {
+                            t = anchorRect.centerY() - childHeight / 2
                         }
                     }
+
+                    childAt.layout(
+                        l + offsetX,
+                        t + offsetY,
+                        l + childWidth + offsetX,
+                        t + childHeight + offsetY
+                    )
                 }
             }
         }
+    }
+
+    var anchorPaint = createPaint(Color.WHITE, Paint.Style.FILL).apply {
+        xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+    }
+    private val tempRect = RectF()
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        guideBackgroundDrawable?.let {
+            val layoutId = canvas.saveLayer(null, null)
+            it.bounds.set(0, 0, right - left, bottom - top)
+            it.draw(canvas)
+            //绘制锚点区域
+            if (clipAnchor) {
+                for (i in 0 until anchorList.size) {
+                    val rect = anchorList[i]
+                    tempRect.set(rect)
+                    tempRect.inset(-clipAnchorInset, -clipAnchorInset)
+                    canvas.drawRoundRect(tempRect, clipAnchorRadius, clipAnchorRadius, anchorPaint)
+                }
+            }
+            canvas.restoreToCount(layoutId)
+        }
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (event.isTouchDown()) {
+            val x = event.x
+            val y = event.y
+            for (i in 0 until anchorList.size) {
+                val rect = anchorList[i]
+                if (rect.contains(x.toInt(), y.toInt())) {
+                    onAnchorClick?.invoke(i)
+                    super.onTouchEvent(event)
+                    return false
+                }
+            }
+        }
+        return true
     }
 
     fun addAnchorList(anchors: List<Rect>) {
@@ -251,6 +269,11 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
+    }
+
+    /**移除自己*/
+    fun removeIt() {
+        (parent as? ViewGroup)?.removeView(this)
     }
 
     class LayoutParams : FrameLayout.LayoutParams {

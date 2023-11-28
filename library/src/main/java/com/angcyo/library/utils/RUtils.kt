@@ -10,6 +10,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.GET_ACTIVITIES
 import android.content.res.Configuration
+import android.graphics.Point
 import android.media.AudioManager
 import android.net.Uri
 import android.net.wifi.WifiManager
@@ -17,7 +18,9 @@ import android.os.Build
 import android.os.Looper
 import android.os.Process.myUid
 import android.telephony.*
+import android.util.DisplayMetrics
 import android.view.Surface
+import android.view.WindowManager
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallComplianceAfter
 import com.angcyo.library.app
@@ -491,6 +494,37 @@ object RUtils {
             L.i("无wifi连接")
         }
         return rssi
+    }
+
+    /**获取手机设备的宽度*/
+    fun getDeviceWidth(): Int {
+        val wm = app().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            val point = Point()
+            wm.defaultDisplay.getRealSize(point)
+            return point.x
+        } else {
+            val dm = DisplayMetrics()
+            wm.defaultDisplay.getMetrics(dm)
+            val width = dm.widthPixels
+            val height = dm.heightPixels
+            return height
+        }
+    }
+
+    fun getDeviceHeight(): Int {
+        val wm = app().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            val point = Point()
+            wm.defaultDisplay.getRealSize(point)
+            return point.y
+        } else {
+            val dm = DisplayMetrics()
+            wm.defaultDisplay.getMetrics(dm)
+            val width = dm.widthPixels
+            val height = dm.heightPixels
+            return height
+        }
     }
 }
 

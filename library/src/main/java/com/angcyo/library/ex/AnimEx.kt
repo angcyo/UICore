@@ -712,6 +712,7 @@ fun ValueAnimator.infinite(mode: Int = ValueAnimator.RESTART) {
     repeatCount = ValueAnimator.INFINITE
 }
 
+/**无限循环*/
 fun Animation.infinite(mode: Int = ValueAnimator.RESTART) {
     //repeatMode = ValueAnimator.REVERSE
     repeatMode = mode

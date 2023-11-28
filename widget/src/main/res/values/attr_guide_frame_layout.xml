@@ -4,36 +4,44 @@
         <!--注意, 原有FrameLayout的xml属性依旧有效-->
 
         <!--用来在布局编辑器中预览 x,y,w,h:x,y,w,h 格式-->
-        <attr name="r_guide_anchors" format="string"/>
+        <attr name="r_guide_anchors" format="string" />
+        <!--是否要挖掉锚点区域的矩形-->
+        <attr name="r_clip_anchor" format="boolean" />
+        <!--矩形的圆角-->
+        <attr name="r_clip_anchor_radius" format="dimension" />
+        <!--插入间隙-->
+        <attr name="r_clip_anchor_inset" format="dimension" />
+        <!--此背景支持clip-->
+        <attr name="r_guide_background" format="reference" />
     </declare-styleable>
     <declare-styleable name="GuideFrameLayout_Layout">
         <!--注意, 原有FrameLayout的xml属性依旧有效-->
 
         <!--是否作为锚点显示-->
-        <attr name="r_guide_is_anchor" format="boolean"/>
+        <attr name="r_guide_is_anchor" format="boolean" />
         <!--将自身的坐标, 映射成锚点坐标-->
-        <attr name="r_guide_with_anchor" format="boolean"/>
+        <attr name="r_guide_with_anchor" format="boolean" />
         <!--需要和那个Anchor关联, -1不关联Anchor-->
-        <attr name="r_guide_show_in_anchor" format="integer"/>
+        <attr name="r_guide_show_in_anchor" format="integer" />
         <!--相对于Anchor的位置-->
-        <attr name="r_guide_gravity" format="enum">
-            <enum name="LEFT" value="1"/>
-            <enum name="RIGHT" value="3"/>
-            <enum name="TOP" value="2"/>
-            <enum name="BOTTOM" value="4"/>
-            <enum name="CENTER" value="5"/>
-            <enum name="LEFT_CENTER" value="6"/>
-            <enum name="TOP_CENTER" value="7"/>
-            <enum name="RIGHT_CENTER" value="8"/>
-            <enum name="BOTTOM_CENTER" value="9"/>
+        <attr name="r_guide_gravity" format="flags">
+            <flag name="LEFT" value="1" />
+            <flag name="HORIZONTAL_CENTER" value="2" />
+            <flag name="RIGHT" value="4" />
+            <flag name="TOP" value="0x1000" />
+            <flag name="VERTICAL_CENTER" value="0x2000" />
+            <flag name="BOTTOM" value="0x4000" />
+            <flag name="OFFSET_SELF" value="0x1000000" />
+            <flag name="OFFSET_SELF_WIDTH" value="0x2000000" />
+            <flag name="OFFSET_SELF_HEIGHT" value="0x4000000" />
         </attr>
 
         <!--会受到gravity的影响-->
-        <attr name="r_guide_offset_x" format="dimension"/>
-        <attr name="r_guide_offset_y" format="dimension"/>
+        <attr name="r_guide_offset_x" format="dimension" />
+        <attr name="r_guide_offset_y" format="dimension" />
 
         <!--补偿的宽度和高度, 只当 isAnchor=true 时有效-->
-        <attr name="r_guide_offset_width" format="dimension"/>
-        <attr name="r_guide_offset_height" format="dimension"/>
+        <attr name="r_guide_offset_width" format="dimension" />
+        <attr name="r_guide_offset_height" format="dimension" />
     </declare-styleable>
 </resources>
