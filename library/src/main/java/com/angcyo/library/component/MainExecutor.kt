@@ -35,6 +35,10 @@ object MainExecutor : Executor {
 
     /**延迟执行[command]*/
     fun delay(command: Runnable, delayMillis: Long) {
+        if (delayMillis <= 0) {
+            execute(command)
+            return
+        }
         if (!handler.postDelayed(command, delayMillis)) {
             throw RejectedExecutionException("$handler is shutting down")
         }
