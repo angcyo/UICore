@@ -140,7 +140,11 @@ object LibHawkKeys {
 
     /**凸起公差, 公差范围内的点视为一条直线*/
     @MM
-    var pathTolerance: Float by HawkPropertyValue<Any, Float>(0.05f)
+    var pathTolerance: Float? by HawkPropertyValue<Any, Float?>(null)
+
+    /**默认的公差*/
+    @MM
+    var defPathTolerance: Float by HawkPropertyValue<Any, Float>(0.02f)
 
     /**是否强制使用高刷*/
     var enableHighRefresh: Boolean by HawkPropertyValue<Any, Boolean>(isDebug())

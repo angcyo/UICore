@@ -151,7 +151,7 @@ abstract class VectorWriteHandler {
     var pathSampleStepRadians: Float = LibHawkKeys.pathSampleStepRadians
 
     /**公差 跟着[unit]单位*/
-    var pathTolerance: Float = LibHawkKeys.pathTolerance
+    var pathTolerance: Float = LibHawkKeys.defPathTolerance
 
     //---
 
