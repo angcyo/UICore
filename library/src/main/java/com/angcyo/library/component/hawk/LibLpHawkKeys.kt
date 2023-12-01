@@ -75,7 +75,7 @@ object LibLpHawkKeys {
 
     //
 
-    /**是否激活强制wifi传输*/
+    /**是否激活强制wifi传输, 调试界面*/
     var enableWifiConfig: Boolean by HawkPropertyValue<Any, Boolean>(false)
 
     /**强制使用wifi连接的 服务地址: ip:port*/
