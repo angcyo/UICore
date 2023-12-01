@@ -537,4 +537,4 @@ fun Path.pathStyle() = if (this is StylePath) {
 
 /**SVG 字符数据 转 Path
  * M250,150L150,350L350,350Z,*/
-fun String.toPath(): Path = Sharp.loadPath(this)
+fun String.toPathObj(): Path = Sharp.loadPath(this)
