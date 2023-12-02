@@ -32,7 +32,7 @@
     <dimen name="lib_radius_normal">6dp</dimen>
     <dimen name="lib_radius_normal2">8dp</dimen>
     <dimen name="lib_radius_common">12dp</dimen>
-    <dimen name="lib_radius_common2">15dp</dimen>
+    <dimen name="lib_radius_common2">16dp</dimen>
     <!--25dp就可以实现圆形-->
     <dimen name="lib_radius_big">24dp</dimen>
     <!--45dp在有些版本上会出现菱形, 而非圆形-->
