@@ -48,7 +48,7 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
      * [STYLE_DECIMAL] 小数
      * [STYLE_PLUS_MINUS] 正负号
      * */
-    var keyboardStyle: Int = 0xff/*.remove(STYLE_PLUS_MINUS)*/
+    var keyboardStyle: Int = 0xff.remove(STYLE_PLUS_MINUS)
 
     /**
      * 最大输入字符限制
