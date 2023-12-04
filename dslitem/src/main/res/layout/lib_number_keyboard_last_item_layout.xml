@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/lib_keyboard_height">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_text_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/lib_keyboard_height"
+        android:layout_weight="0.3333"
+        android:background="@drawable/lib_number_keyboard_selector"
+        android:gravity="center"
+        android:text="0"
+        android:textColor="@color/lib_text_color"
+        android:textSize="@dimen/lib_keyboard_text_size"
+        android:textStyle="bold" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_decimal_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/lib_keyboard_height"
+        android:layout_marginLeft="@dimen/lib_keyboard_gap"
+        android:layout_weight="0.3333"
+        android:background="@drawable/lib_number_keyboard_selector"
+        android:gravity="center"
+        android:text="•"
+        android:textColor="@color/lib_text_color"
+        android:textSize="@dimen/lib_keyboard_text_size"
+        android:textStyle="bold" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lib_plus_minus_view_view"
+        style="@style/LibBodyTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/lib_keyboard_height"
+        android:layout_marginLeft="@dimen/lib_keyboard_gap"
+        android:layout_weight="0.3333"
+        android:background="@drawable/lib_number_keyboard_selector"
+        android:gravity="center"
+        android:text="±"
+        android:textColor="@color/lib_text_color"
+        android:textSize="@dimen/lib_keyboard_text_size"
+        android:textStyle="bold"
+        tools:visibility="visible" />
+
+</LinearLayout>

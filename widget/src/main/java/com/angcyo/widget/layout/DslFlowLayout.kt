@@ -59,4 +59,8 @@ open class DslFlowLayout(context: Context, attrs: AttributeSet? = null) :
     override fun getCustomFlowLayoutDelegate(): FlowLayoutDelegate {
         return flowLayoutDelegate
     }
+
+    override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
+        return super.generateLayoutParams(attrs)
+    }
 }

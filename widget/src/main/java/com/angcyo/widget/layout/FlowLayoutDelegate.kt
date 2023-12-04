@@ -244,15 +244,18 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
                     measureChild(child, atMost(measureWidthSize), heightMeasureSpec)
                 }
             } else {
+                var childWidthMeasureSpec = widthMeasureSpec
+                var childHeightMeasureSpec = heightMeasureSpec
+
                 if (params.weight > 0) {
                     //支持[weight]属性
-                    child.measure(
-                        exactly(((measureWidthSize - params.leftMargin - params.rightMargin - paddingLeft - paddingRight) * params.weight).toInt()),
-                        heightMeasureSpec
-                    )
+                    var weightSize =
+                        measureWidthSize - params.leftMargin - params.rightMargin - paddingLeft - paddingRight
+                    if (maxCountOnLine > 0) {
+                        weightSize -= itemHorizontalSpace * (maxCountOnLine - 1)
+                    }
+                    childWidthMeasureSpec = exactly((weightSize * params.weight).toInt())
                 } else {
-                    var childWidthMeasureSpec = widthMeasureSpec
-                    var childHeightMeasureSpec = heightMeasureSpec
                     if (params.width == ViewGroup.LayoutParams.MATCH_PARENT) {
                         var childWidth = max(width, lineWidth)
                         if (childWidth <= 0) {
@@ -260,11 +263,15 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
                         }
                         childWidthMeasureSpec = exactly(childWidth + paddingLeft + paddingRight)
                     }
-                    if (params.height == ViewGroup.LayoutParams.MATCH_PARENT) {
-                        childHeightMeasureSpec = exactly(max(height, viewAvailableHeight))
-                    }
-                    measureChild(child, childWidthMeasureSpec, childHeightMeasureSpec)
                 }
+                if (params.height == ViewGroup.LayoutParams.MATCH_PARENT) {
+                    childHeightMeasureSpec = exactly(max(height, viewAvailableHeight))
+                } else if (params.height == ViewGroup.LayoutParams.WRAP_CONTENT) {
+                    childHeightMeasureSpec = atMost(viewAvailableHeight)
+                } else {
+                    childHeightMeasureSpec = exactly(params.height)
+                }
+                measureChild(child, childWidthMeasureSpec, childHeightMeasureSpec)
             }
             childWidth = child.measuredWidth + params.leftMargin + params.rightMargin
             childHeight = child.measuredHeight + params.topMargin + params.bottomMargin

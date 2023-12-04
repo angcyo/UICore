@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_dialog_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:background="@drawable/lib_bottom_tran_solid_gradient" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/dialog_title_view"
+        style="@style/LibTitleTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/lib_theme_white_color"
+        android:padding="@dimen/lib_xhdpi"
+        android:textStyle="bold"
+        tools:text="最高功率" />
+
+    <View
+        android:id="@+id/dialog_title_line_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lib_line_dark" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@color/lib_theme_white_color"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/dialog_message_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:padding="@dimen/lib_xhdpi"
+            android:textSize="@dimen/text_main_size"
+            android:textStyle="bold"
+            tools:hint="请输入..."
+            tools:text="80.99" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lib_hint_text_view"
+            style="@style/LibDesTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|right"
+            android:padding="@dimen/lib_xhdpi"
+            tools:text="有效范围1~100" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lib_line_dark" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/lib_theme_white_bg_color"
+        android:orientation="horizontal"
+        android:padding="@dimen/lib_keyboard_gap">
+
+        <com.angcyo.widget.layout.DslFlowLayout
+            android:id="@+id/lib_flow_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:r_flow_item_horizontal_space="@dimen/lib_keyboard_gap"
+            app:r_flow_item_vertical_space="@dimen/lib_keyboard_gap"
+            app:r_flow_max_line_child_count="3"
+            app:r_flow_preview_item_count="12"
+            app:r_flow_preview_item_layout_id="@layout/lib_number_keyboard_item_layout" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3333"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/lib_keyboard_gap">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/lib_keyboard_backspace_view"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/lib_keyboard_height"
+                android:background="@drawable/lib_number_keyboard_selector"
+                android:scaleType="center"
+                app:srcCompat="@drawable/keyboard_backspace"
+                app:tint="@color/lib_night_icon_colors_selector" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/dialog_positive_button"
+                style="@style/LibBodyTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/lib_keyboard_finish_height"
+                android:layout_marginTop="@dimen/lib_keyboard_gap"
+                android:background="@drawable/lib_number_keyboard_finish_selector"
+                android:gravity="center"
+                android:text="@string/ui_finish"
+                android:textColor="@color/lib_text_color"
+                android:textSize="@dimen/lib_keyboard_text_size"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

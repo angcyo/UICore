@@ -2,6 +2,7 @@
 <resources>
     <string name="permission_disabled">Permission disabled</string>
 
+    <string name="ui_finish">Finish</string>
     <string name="ui_back">Back</string>
     <string name="ui_enable_permission">Enable permission</string>
     <string name="core_screen_shot_text">Feedback</string>

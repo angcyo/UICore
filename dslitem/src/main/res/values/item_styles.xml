@@ -64,4 +64,13 @@
     <style name="FormItemLabelStyle" parent="ItemLabelStyle">
         <item name="android:textColor">@color/text_primary_color</item>
     </style>
+
+    <!--数字键盘之间的间隙-->
+    <dimen name="lib_keyboard_gap">8dp</dimen>
+    <!--键盘的高度-->
+    <dimen name="lib_keyboard_height">46dp</dimen>
+    <!--完成按键的高度-->
+    <dimen name="lib_keyboard_finish_height">154dp</dimen>
+    <!--键盘字体大小-->
+    <dimen name="lib_keyboard_text_size">20dp</dimen>
 </resources>

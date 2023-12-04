@@ -25,6 +25,8 @@ import com.angcyo.widget.span.span
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/05/14
  */
+
+
 class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
 
     companion object {
@@ -48,6 +50,9 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
 
         /**正负切花*/
         const val CONTROL_PLUS_MINUS = "±"
+
+        /**小数点*/
+        const val CONTROL_DECIMAL = "•"
 
         //---
 
@@ -135,12 +140,12 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                     }
                 }
 
-                "." -> {
+                CONTROL_DECIMAL -> {
                     val value = newValueBuild.toString()
                     if (value.contains(".")) {
                         //如果已经包含了点, 则忽略
                     } else {
-                        newValueBuild.append(op)
+                        newValueBuild.append(".")
                     }
                 }
 
@@ -255,7 +260,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
             list.add(createNumberItem(window, "$i"))
         }
         if (keyboardStyle.have(STYLE_DECIMAL)) {
-            list.add(createNumberItem(window, "."))
+            list.add(createNumberItem(window, CONTROL_DECIMAL))
         } else {
             list.add(DslAdapterItem().apply {
                 initKeyboardItem()

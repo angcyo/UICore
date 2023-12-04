@@ -29,6 +29,7 @@
 
     <!--圆角大小-->
     <dimen name="lib_radius_min">2dp</dimen>
+    <dimen name="lib_radius_def">4dp</dimen>
     <dimen name="lib_radius_normal">6dp</dimen>
     <dimen name="lib_radius_normal2">8dp</dimen>
     <dimen name="lib_radius_common">12dp</dimen>
