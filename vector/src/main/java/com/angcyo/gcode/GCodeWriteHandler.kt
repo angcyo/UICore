@@ -111,7 +111,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
             if (LibLpHawkKeys.enableGCodeEndG0) {
                 writer?.appendLine("G0 X0 Y0")
             }
-            writer?.append("M2") //程序结束
+            writer?.appendLine("M2") //程序结束
         }
     }
 
