@@ -21,8 +21,8 @@ _replaceResTo.doFirst {
 
     //资源输入文件路径
     def inputResPath = file("./UICoreEx/lpDevice/src/main/res/values-zh/material_strings.xml").absolutePath
-    def lines = readExcelLines("翻译稿.xlsx")
-    def outputLanguage = ["en", "ja", "ko", "de", "es", "fr", "rHK", "rTW"]
+    def lines = readExcelLines("翻译稿.xlsx", 1)
+    def outputLanguage = ["en", "ja", "ko", "es", "fr", "de"/*,  "rHK", "rTW"*/]
     outputLanguage.eachWithIndex { value, index ->
         _replaceRes(inputResPath, "material_strings_${value}.xml", convertLinesToMap(lines, 0, index + 1))
     }

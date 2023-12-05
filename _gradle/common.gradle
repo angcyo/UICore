@@ -325,8 +325,10 @@ def readXmlMap(path) {
 }
 
 /**2023-5-29
- * 读取excel文件, 一行一行读取*/
-def readExcelLines(path) {
+ * 读取excel文件, 一行一行读取
+ * [skipLine] 跳过多少行, 默认0, 从1开始跳过行数
+ * */
+def readExcelLines(path, skipLine = 0) {
     def lines = [] //每一行的数据, N列的数组
     def excelFile = file(path)
     if (excelFile.exists()) {
@@ -335,7 +337,13 @@ def readExcelLines(path) {
         try {
             def sheet = workbook.getSheetAt(0)
             def rowIterator = sheet.iterator()
+
+            def lineIndex = 0
             while (rowIterator.hasNext()) {
+                lineIndex++
+                if (lineIndex <= skipLine) {
+                    continue
+                }
                 def row = rowIterator.next()
                 def cellIterator = row.cellIterator()
                 def line = []
