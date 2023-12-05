@@ -282,9 +282,11 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
 
     //取消
     var negativeButtonListener: ((dialog: Dialog, dialogViewHolder: DslViewHolder) -> Unit)? =
-        { dialog, _ ->
-            dialog.hideSoftInput()
-            dialog.cancel()
+        { dialog, dialogViewHolder ->
+            if (!onDialogBack(dialog, dialogViewHolder)) {
+                dialog.hideSoftInput()
+                dialog.cancel()
+            }
         }
 
     //中立
@@ -763,7 +765,21 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
         return false
     }
 
+    /**@return 是否要拦截返回按键*/
     open fun onDialogBackPressed(dialog: Dialog, dialogViewHolder: DslViewHolder): Boolean {
+        return onDialogBack(dialog, dialogViewHolder)
+    }
+
+    /**是否要阻止对话框的关闭*/
+    open fun onDialogBack(dialog: Dialog, dialogViewHolder: DslViewHolder): Boolean {
+        /*dialog.context.normalIosDialog {
+            dialogTitle = _string(R.string.ui_warn)
+            dialogMessage = _string(R.string.variable_back_tip)
+            positiveButton { dialog2, dialogViewHolder ->
+                dialog2.dismiss()
+                dialog.dismiss()
+            }
+        }*/
         return false
     }
 

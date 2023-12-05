@@ -8,7 +8,6 @@ import com.angcyo.item.keyboard.keyboardNumberWindow
 import com.angcyo.item.style.IStepAdjustItem
 import com.angcyo.item.style.StepAdjustItemConfig
 import com.angcyo.library.ex.string
-import com.angcyo.library.ex.toStr
 import com.angcyo.widget.DslViewHolder
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
@@ -62,16 +61,16 @@ open class DslStepAdjustItem : DslAdapterItem(), IStepAdjustItem {
                             updateStepAdjustValue(
                                 itemHolder,
                                 this@DslStepAdjustItem,
-                                value.roundToLong().toStr()
+                                value.roundToLong()
                             )
                         } else if (stepAdjustItemConfig.isIntValueType) {
                             updateStepAdjustValue(
                                 itemHolder,
                                 this@DslStepAdjustItem,
-                                value.roundToInt().toStr()
+                                value.roundToInt()
                             )
                         } else {
-                            updateStepAdjustValue(itemHolder, this@DslStepAdjustItem, value.toStr())
+                            updateStepAdjustValue(itemHolder, this@DslStepAdjustItem, value)
                         }
                     }
                 }

@@ -677,6 +677,86 @@ fun clamp(value: Int, min: Int, max: Int): Int = min(max(value, min), max)
 
 fun clamp(value: Long, min: Long, max: Long): Long = min(max(value, min), max)
 
+fun getValueFrom(value: Any?, valueType: Any?): Any? {
+    if (value == null) {
+        return null
+    }
+    val valueStr = value.toString()
+    return if (valueType is Double) {
+        valueStr.toDoubleOrNull()
+    } else if (valueType is Float) {
+        valueStr.toFloatOrNull()
+    } else if (valueType is Long) {
+        valueStr.toLongOrNull()
+    } else if (valueType is Int) {
+        valueStr.toIntOrNull()
+    } else {
+        value
+    }
+}
+
+/**限制最小值/最大值
+ * [value] 需要限制的值
+ * [valueType] 值的类型判断
+ * */
+fun clampValue(
+    value: Any?,
+    valueType: Any?,
+    minValue: Any?,
+    maxValue: Any?
+): Any? {
+    val valueStr = value?.toString()
+    if (valueStr.isNullOrBlank()) {
+        return value
+    }
+    if (valueType is Long) {
+        val v = valueStr.toLongOrNull() ?: 0
+        if (minValue != null) {
+            val min = minValue.toString().toLongOrNull() ?: 0
+            if (v < min) {
+                return min
+            }
+        }
+        if (maxValue != null) {
+            val max = maxValue.toString().toLongOrNull() ?: 0
+            if (v > max) {
+                return max
+            }
+        }
+        return value
+    } else if (valueType is Int) {
+        val v = valueStr.toIntOrNull() ?: 0
+        if (minValue != null) {
+            val min = minValue.toString().toIntOrNull() ?: 0
+            if (v < min) {
+                return min
+            }
+        }
+        if (maxValue != null) {
+            val max = maxValue.toString().toIntOrNull() ?: 0
+            if (v > max) {
+                return max
+            }
+        }
+        return value
+    } else {
+        val v = valueStr.toFloatOrNull() ?: 0f
+        if (minValue != null) {
+            val min = minValue.toString().toFloatOrNull() ?: 0f
+            if (v < min) {
+                return min
+            }
+        }
+        if (maxValue != null) {
+            val max = maxValue.toString().toFloatOrNull() ?: 0f
+            if (v > max) {
+                return max
+            }
+        }
+        return value
+    }
+}
+
 /**在同方向上取最大值
  * [target] 参与比较的值
  * [threshold] 阈值, 正值, 自动取反(负值)

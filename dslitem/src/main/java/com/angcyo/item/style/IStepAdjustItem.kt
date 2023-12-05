@@ -7,8 +7,8 @@ import com.angcyo.dsladapter.annotation.UpdateByNotify
 import com.angcyo.dsladapter.item.IDslItemConfig
 import com.angcyo.item.R
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.ex.clampValue
 import com.angcyo.library.ex.isTouchFinish
-import com.angcyo.library.ex.toStr
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.LongTouchListener
 import com.angcyo.widget.base.string
@@ -30,7 +30,7 @@ interface IStepAdjustItem : IAutoInitItem {
         payloads: List<Any>
     ) {
         val itemStepAdjustValueView = itemHolder.tv(stepAdjustItemConfig.itemStepAdjustValueViewId)
-        itemStepAdjustValueView?.text = stepAdjustItemConfig.itemStepAdjustValue
+        itemStepAdjustValueView?.text = stepAdjustItemConfig.itemStepAdjustValue?.toString()
 
         //减
         itemHolder.longTouch(
@@ -51,39 +51,39 @@ interface IStepAdjustItem : IAutoInitItem {
                 if (stepAdjustItemConfig.isLongValueType) {
                     val value = itemStepAdjustValueView?.string()?.toLongOrNull() ?: 0
                     val step = stepAdjustStep.toString().toLongOrNull() ?: 1
-                    if (stepAdjustItemConfig.itemStepAdjustAction(value.toString(), -step)) {
+                    if (stepAdjustItemConfig.itemStepAdjustAction(value, -step)) {
                         //被拦截
                     } else {
                         updateStepAdjustValue(
                             itemHolder,
                             adapterItem,
-                            (value - step).toStr(),
+                            value - step,
                             stepAdjustItemConfig.itemRealTimeUpdate
                         )
                     }
                 } else if (stepAdjustItemConfig.isIntValueType) {
                     val value = itemStepAdjustValueView?.string()?.toIntOrNull() ?: 0
                     val step = stepAdjustStep.toString().toIntOrNull() ?: 1
-                    if (stepAdjustItemConfig.itemStepAdjustAction(value.toString(), -step)) {
+                    if (stepAdjustItemConfig.itemStepAdjustAction(value, -step)) {
                         //被拦截
                     } else {
                         updateStepAdjustValue(
                             itemHolder,
                             adapterItem,
-                            (value - step).toStr(),
+                            value - step,
                             stepAdjustItemConfig.itemRealTimeUpdate
                         )
                     }
                 } else {
                     val value = itemStepAdjustValueView?.string()?.toFloatOrNull() ?: 0f
                     val step = stepAdjustStep.toString().toFloatOrNull() ?: 1f
-                    if (stepAdjustItemConfig.itemStepAdjustAction(value.toString(), -step)) {
+                    if (stepAdjustItemConfig.itemStepAdjustAction(value, -step)) {
                         //被拦截
                     } else {
                         updateStepAdjustValue(
                             itemHolder,
                             adapterItem,
-                            (value - step).toStr(),
+                            value - step,
                             stepAdjustItemConfig.itemRealTimeUpdate
                         )
                     }
@@ -109,39 +109,39 @@ interface IStepAdjustItem : IAutoInitItem {
                 if (stepAdjustItemConfig.isLongValueType) {
                     val value = itemStepAdjustValueView?.string()?.toLongOrNull() ?: 0
                     val step = stepAdjustStep.toString().toLongOrNull() ?: 1
-                    if (stepAdjustItemConfig.itemStepAdjustAction(value.toString(), +step)) {
+                    if (stepAdjustItemConfig.itemStepAdjustAction(value, +step)) {
                         //被拦截
                     } else {
                         updateStepAdjustValue(
                             itemHolder,
                             adapterItem,
-                            (value + step).toStr(),
+                            value + step,
                             stepAdjustItemConfig.itemRealTimeUpdate
                         )
                     }
                 } else if (stepAdjustItemConfig.isIntValueType) {
                     val value = itemStepAdjustValueView?.string()?.toIntOrNull() ?: 0
                     val step = stepAdjustStep.toString().toIntOrNull() ?: 1
-                    if (stepAdjustItemConfig.itemStepAdjustAction(value.toString(), +step)) {
+                    if (stepAdjustItemConfig.itemStepAdjustAction(value, +step)) {
                         //被拦截
                     } else {
                         updateStepAdjustValue(
                             itemHolder,
                             adapterItem,
-                            (value + step).toStr(),
+                            value + step,
                             stepAdjustItemConfig.itemRealTimeUpdate
                         )
                     }
                 } else {
                     val value = itemStepAdjustValueView?.string()?.toFloatOrNull() ?: 0f
                     val step = stepAdjustStep.toString().toFloatOrNull() ?: 1f
-                    if (stepAdjustItemConfig.itemStepAdjustAction(value.toString(), +step)) {
+                    if (stepAdjustItemConfig.itemStepAdjustAction(value, +step)) {
                         //被拦截
                     } else {
                         updateStepAdjustValue(
                             itemHolder,
                             adapterItem,
-                            (value + step).toStr(),
+                            value + step,
                             stepAdjustItemConfig.itemRealTimeUpdate
                         )
                     }
@@ -158,12 +158,12 @@ interface IStepAdjustItem : IAutoInitItem {
     fun updateStepAdjustValue(
         itemHolder: DslViewHolder,
         adapterItem: DslAdapterItem,
-        value: CharSequence?,
+        value: Any?,
         notifyItemChanged: Boolean = true
     ) {
         val itemStepAdjustValueView = itemHolder.tv(stepAdjustItemConfig.itemStepAdjustValueViewId)
         updateStepAdjustValue(value)
-        itemStepAdjustValueView?.text = stepAdjustItemConfig.itemStepAdjustValue
+        itemStepAdjustValueView?.text = stepAdjustItemConfig.itemStepAdjustValue?.toString()
 
         if (notifyItemChanged) {
             adapterItem.itemChanged = true //diff 刷新界面
@@ -171,70 +171,28 @@ interface IStepAdjustItem : IAutoInitItem {
     }
 
     /**仅更新值*/
-    fun updateStepAdjustValue(value: CharSequence?) {
+    fun updateStepAdjustValue(value: Any?) {
+        //值改变之前的回调
         val newValue =
-            clampAdjustValue(stepAdjustItemConfig.itemStepAdjustChangedAction(value?.toStr()))
+            clampAdjustValue(stepAdjustItemConfig.itemAdjustChangedBeforeAction(value))
         stepAdjustItemConfig.itemStepAdjustValue = newValue
+
+        //改变值之后的回调
+        stepAdjustItemConfig.itemAdjustChangedAfterAction(newValue)
     }
 
     /**限制最小值/最大值*/
-    fun clampAdjustValue(value: CharSequence?): CharSequence? {
+    fun clampAdjustValue(value: Any?): Any? {
         value ?: return null
         val minValue = stepAdjustItemConfig.itemAdjustMinValue
         val maxValue = stepAdjustItemConfig.itemAdjustMaxValue
 
-        if (stepAdjustItemConfig.isLongValueType) {
-            val v = value.toString().toLongOrNull() ?: 0
-            if (minValue != null) {
-                val min = minValue.toString().toLongOrNull() ?: 0
-                if (v < min) {
-                    return min.toStr()
-                }
-            }
-            if (maxValue != null) {
-                val max = maxValue.toString().toLongOrNull() ?: 0
-                if (v > max) {
-                    return max.toStr()
-                }
-            }
-            return value
-        } else if (stepAdjustItemConfig.isIntValueType) {
-            val v = value.toString().toIntOrNull() ?: 0
-            if (minValue != null) {
-                val min = minValue.toString().toIntOrNull() ?: 0
-                if (v < min) {
-                    return min.toStr()
-                }
-            }
-            if (maxValue != null) {
-                val max = maxValue.toString().toIntOrNull() ?: 0
-                if (v > max) {
-                    return max.toStr()
-                }
-            }
-            return value
-        } else {
-            val v = value.toString().toFloatOrNull() ?: 0f
-            if (minValue != null) {
-                val min = minValue.toString().toFloatOrNull() ?: 0f
-                if (v < min) {
-                    return min.toStr()
-                }
-            }
-            if (maxValue != null) {
-                val max = maxValue.toString().toFloatOrNull() ?: 0f
-                if (v > max) {
-                    return max.toStr()
-                }
-            }
-            return value
-        }
+        return clampValue(value, stepAdjustItemConfig.itemStepAdjustStep, minValue, maxValue)
     }
-
 }
 
 /**当前的值*/
-var IStepAdjustItem.itemStepAdjustValue: CharSequence?
+var IStepAdjustItem.itemStepAdjustValue: Any?
     get() = stepAdjustItemConfig.itemStepAdjustValue
     set(value) {
         stepAdjustItemConfig.itemStepAdjustValue = clampAdjustValue(value)
@@ -268,6 +226,13 @@ var IStepAdjustItem.itemStepAdjustLongStep: Any
         stepAdjustItemConfig.itemStepAdjustLongStep = value
     }
 
+/**值改变后的回调*/
+var IStepAdjustItem.itemAdjustChangedAfterAction: (value: Any?) -> Unit
+    get() = stepAdjustItemConfig.itemAdjustChangedAfterAction
+    set(value) {
+        stepAdjustItemConfig.itemAdjustChangedAfterAction = value
+    }
+
 class StepAdjustItemConfig : IDslItemConfig {
 
     /**关键控件id: 减*/
@@ -280,7 +245,7 @@ class StepAdjustItemConfig : IDslItemConfig {
     var itemStepAdjustValueViewId: Int = R.id.lib_step_adjust_value_view
 
     /**当前的值*/
-    var itemStepAdjustValue: CharSequence? = "0"
+    var itemStepAdjustValue: Any? = 0
 
     /**当点击/长按+-按钮时, 是否要实时更新item*/
     var itemRealTimeUpdate: Boolean = false
@@ -304,13 +269,18 @@ class StepAdjustItemConfig : IDslItemConfig {
     val isIntValueType: Boolean
         get() = itemStepAdjustStep is Int
 
-    /**调整拦截回调, 不拦截则默认处理*/
-    var itemStepAdjustAction: (value: CharSequence?, step: Any) -> Boolean = { value, step ->
+    /**点击调整按钮拦截回调, 不拦截则默认处理*/
+    var itemStepAdjustAction: (value: Any?, step: Any) -> Boolean = { value, step ->
         false
     }
 
     /**改变后的回调, 返回值会被显示在界面上*/
-    var itemStepAdjustChangedAction: (value: CharSequence?) -> CharSequence? = {
+    var itemAdjustChangedAfterAction: (value: Any?) -> Unit = {
+
+    }
+
+    /**值改变之后的回调*/
+    var itemAdjustChangedBeforeAction: (value: Any?) -> Any? = {
         it
     }
 }

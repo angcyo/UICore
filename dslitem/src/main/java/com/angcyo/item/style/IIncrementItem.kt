@@ -10,7 +10,7 @@ interface IIncrementItem : IStepAdjustItem
 
 /**当前的值
  * [com.angcyo.item.style.IStepAdjustItem.itemStepAdjustValue]*/
-var IIncrementItem.itemIncrementValue: CharSequence?
+var IIncrementItem.itemIncrementValue: Any?
     get() = itemStepAdjustValue
     set(value) {
         itemStepAdjustValue = value

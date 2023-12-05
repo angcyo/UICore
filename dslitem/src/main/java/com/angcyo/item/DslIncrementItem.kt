@@ -17,6 +17,9 @@ import com.angcyo.widget.DslViewHolder
  * 支持手动输入
  * 支持label
  *
+ * [DslIncrementItem]
+ * [DslIncrementNumberItem]
+ *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/09/05
  */
@@ -53,27 +56,28 @@ open class DslIncrementItem : DslAdapterItem(), ILabelItem, IIncrementItem, IOpe
     }
 
     override fun onSelfOperateItemEditFocusChange(itemHolder: DslViewHolder, focus: Boolean) {
-        if (itemEditText.isNullOrBlank() && !itemIncrementValue.isNullOrBlank()) {
-            itemEditText = itemIncrementValue
-            updateStepAdjustValue(itemIncrementValue)
-            super.onSelfOperateItemEditTextChange(itemHolder, itemIncrementValue ?: "")
+        val value = itemIncrementValue?.toString()
+        if (itemEditText.isNullOrBlank() && !value.isNullOrBlank()) {
+            itemEditText = value
+            updateStepAdjustValue(value)
+            super.onSelfOperateItemEditTextChange(itemHolder, itemIncrementValue?.toString() ?: "")
         }
     }
 
     override fun updateStepAdjustValue(
         itemHolder: DslViewHolder,
         adapterItem: DslAdapterItem,
-        value: CharSequence?,
+        value: Any?,
         notifyItemChanged: Boolean
     ) {
         //hookOperateEditItemFocus(itemViewHolder())
         //直接更新到最后
-        val selectionStart = value?.length ?: 0
+        val selectionStart = value?.toString()?.length ?: 0
         val selectionEnd = selectionStart
         _isFromStepAdjust = true
         super.updateStepAdjustValue(itemHolder, adapterItem, value, notifyItemChanged)
         operateEditItemConfig._lastEditSelectionStart = selectionStart
         operateEditItemConfig._lastEditSelectionEnd = selectionEnd
-        itemEditText = itemIncrementValue
+        itemEditText = itemIncrementValue?.toString()
     }
 }

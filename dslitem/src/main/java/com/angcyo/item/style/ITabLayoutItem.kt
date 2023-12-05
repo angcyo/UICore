@@ -28,6 +28,15 @@ interface ITabLayoutItem : IAutoInitItem {
         payloads: List<Any>
     ) {
         itemHolder.v<DslTabLayout>(tabLayoutItemConfig.itemTabLayoutViewId)?.apply {
+            if (tabLayoutItemConfig.itemTabEquWidthCountRange == null) {
+                tabLayoutItemConfig.itemTabEquWidthCountRange = itemEquWidthCountRange?.run {
+                    "$first~$last"
+                }
+            }
+            tabLayoutItemConfig.itemTabEquWidthCountRange?.let {
+                updateItemEquWidthCountRange(it)
+            }
+
             configTabLayoutConfig {
                 //拦截设置
                 onSelectItemView = { itemView, index, select, fromUser ->
@@ -66,6 +75,13 @@ var ITabLayoutItem.itemCurrentIndex: Int
         tabLayoutItemConfig.itemTabCurrentIndex = value
     }
 
+/**等宽范围设置*/
+var ITabLayoutItem.itemTabEquWidthCountRange: String?
+    get() = tabLayoutItemConfig.itemTabEquWidthCountRange
+    set(value) {
+        tabLayoutItemConfig.itemTabEquWidthCountRange = value
+    }
+
 /**选中回调*/
 var ITabLayoutItem.itemTabSelectIndexChangeAction: (fromIndex: Int, selectIndexList: List<Int>, reselect: Boolean, fromUser: Boolean) -> Unit
     get() = tabLayoutItemConfig.onTabSelectIndexChange
@@ -80,6 +96,9 @@ class TabLayoutItemConfig : IDslItemConfig {
 
     /**当前选中项*/
     var itemTabCurrentIndex: Int = -1
+
+    /**等宽范围*/
+    var itemTabEquWidthCountRange: String? = null
 
     /**[com.angcyo.tablayout.DslSelectorConfig.onSelectItemView]*/
     var onTabSelectItemView: (itemView: View, index: Int, select: Boolean, fromUser: Boolean) -> Boolean =

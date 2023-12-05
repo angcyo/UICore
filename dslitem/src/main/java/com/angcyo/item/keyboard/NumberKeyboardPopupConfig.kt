@@ -36,6 +36,9 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         /**退格*/
         const val CONTROL_BACKSPACE = "-0"
 
+        /**清除*/
+        const val CONTROL_CLEAR = "+0"
+
         /**自增*/
         const val CONTROL_INCREMENT = "+1"
 
@@ -92,6 +95,11 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                     } else {
                         newValueBuild.append(oldValue.substring(0, oldValue.lastIndex))
                     }
+                }
+
+                CONTROL_CLEAR -> {
+                    //清除操作
+                    newValueBuild.clear()
                 }
 
                 CONTROL_DECREMENT -> {

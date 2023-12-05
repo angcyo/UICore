@@ -12,6 +12,7 @@ import com.angcyo.dialog.hideSoftInput
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.R
 import com.angcyo.item.keyboard.NumberKeyboardPopupConfig.Companion.CONTROL_BACKSPACE
+import com.angcyo.item.keyboard.NumberKeyboardPopupConfig.Companion.CONTROL_CLEAR
 import com.angcyo.item.keyboard.NumberKeyboardPopupConfig.Companion.CONTROL_DECIMAL
 import com.angcyo.item.keyboard.NumberKeyboardPopupConfig.Companion.CONTROL_PLUS_MINUS
 import com.angcyo.item.keyboard.NumberKeyboardPopupConfig.Companion.STYLE_DECIMAL
@@ -21,7 +22,9 @@ import com.angcyo.item.style.itemText
 import com.angcyo.library.annotation.DSL
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.add
+import com.angcyo.library.ex.clampValue
 import com.angcyo.library.ex.find
+import com.angcyo.library.ex.getValueFrom
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.inflate
 import com.angcyo.library.ex.remove
@@ -40,6 +43,17 @@ import com.angcyo.widget.base.clickIt
  * @since 2023/12/04
  */
 class NumberKeyboardDialogConfig : BaseDialogConfig() {
+
+    /**当前的数值*/
+    var numberValue: Any? = null
+        set(value) {
+            field = value
+            dialogMessage = value?.toString()
+        }
+
+    /**限制输入的最小/最大值*/
+    var numberMinValue: Any? = null
+    var numberMaxValue: Any? = null
 
     /**输入提示*/
     var numberInputHint: CharSequence? = null
@@ -64,7 +78,7 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
      * 输入完成的回调
      * @return true 表示拦截默认处理
      * */
-    var onNumberResultAction: (number: String) -> Boolean = { onInputValue(it) }
+    var onNumberResultAction: (number: Any?) -> Boolean = { false }
 
     /**编辑的值放这里*/
     private val resultBuilder = StringBuilder()
@@ -75,7 +89,8 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
         dimAmount = 0f//不需要背景变暗
 
         positiveButtonListener = { dialog, _ ->
-            if (!onNumberResultAction(resultBuilder.toString())) {
+            val valueStr = resultBuilder.toString()
+            if (!onNumberResultAction(getValueFrom(valueStr, numberValue))) {
                 dialog.hideSoftInput()
                 dialog.dismiss()
             }
@@ -84,9 +99,16 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
 
     override fun initControlLayout(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         super.initControlLayout(dialog, dialogViewHolder)
+
+        if (numberValue is Long || numberValue is Int) {
+            //移除小数输入
+            removeDecimal()
+        }
+
         dialogViewHolder.tv(R.id.lib_hint_text_view)?.apply {
-            text = numberInputHint
-            visible(numberInputHint != null)
+            val hint = numberInputHint ?: defNumberHint()
+            text = hint
+            visible(hint != null)
         }
         dialogViewHolder.tv(R.id.dialog_message_view)?.apply {
             //输入限制
@@ -159,16 +181,37 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
             }
         }
 
+        //back 回退/删除键
         dialogViewHolder.click(R.id.lib_keyboard_backspace_view) {
             onClickNumberAction(CONTROL_BACKSPACE)
+        }
+        dialogViewHolder.longClick(R.id.lib_keyboard_backspace_view) {
+            onClickNumberAction(CONTROL_CLEAR)
         }
 
         updateDialogMessage()
     }
 
+    private fun defNumberHint(): CharSequence? {
+        return if (numberMinValue != null && numberMaxValue != null) {
+            "[${numberMinValue}~${numberMaxValue}]"
+        } else if (numberMinValue != null) {
+            "[${numberMinValue}~"
+        } else if (numberMaxValue != null) {
+            "~${numberMaxValue}]"
+        } else {
+            null
+        }
+    }
+
     private fun updateDialogMessage() {
         _dialogViewHolder?.tv(R.id.dialog_message_view)?.apply {
-            text = resultBuilder.toString()
+            text = clampValue(
+                resultBuilder.toString(),
+                numberValue,
+                numberMinValue,
+                numberMaxValue
+            ).toString()
 
             //输入限制
             resultBuilder.clear()
