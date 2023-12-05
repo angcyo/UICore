@@ -7,6 +7,8 @@ import com.angcyo.dialog.popup.PopupTipConfig
 import com.angcyo.dialog.popup.popupTipWindow
 import com.angcyo.drawable.BubbleDrawable
 import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.annotation.UpdateByDiff
+import com.angcyo.dsladapter.annotation.UpdateByNotify
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.interceptParentTouchEvent
 import com.angcyo.widget.DslViewHolder
@@ -81,6 +83,8 @@ open class DslSeekBarInfoItem : DslBaseInfoItem() {
     }
 
     /**滑块改变后触发*/
+    @UpdateByDiff
+    @UpdateByNotify
     open fun onItemSeekChanged(value: Float, fraction: Float, fromUser: Boolean) {
         if (fromUser) {
             itemChanging = true

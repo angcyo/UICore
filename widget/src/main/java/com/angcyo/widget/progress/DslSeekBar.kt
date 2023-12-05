@@ -407,6 +407,9 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
         progressValueTouchAction?.invoke(it)
     }
 
+    /**[RegionTouchDetector.TOUCH_TYPE_CLICK]
+     * [RegionTouchDetector.TOUCH_TYPE_LONG_PRESS]
+     * */
     var progressValueTouchAction: ((touchType: Int) -> Unit)? = null
 
     /**手势事件*/

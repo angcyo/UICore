@@ -33,7 +33,9 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
 
         //---
 
-        /**退格*/
+        /**退格
+         * [isControlInputNumber]
+         * */
         const val CONTROL_BACKSPACE = "-0"
 
         /**清除*/
@@ -79,6 +81,7 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
             op: String,
             step: Float,
             longStep: Float,
+            decimalCount: Int = 8
         ): String {
             val oldValue: String? = if (shakeInput) {
                 firstValue
@@ -158,7 +161,21 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
                 }
 
                 else -> {
-                    newValueBuild.append(op)
+                    //限制小数点后面的位数
+                    var ignoreInput = false
+                    val value = newValueBuild.toString()
+                    if (value.contains(".")) {
+                        val split = value.split(".")
+                        if (split.size >= 2) {
+                            val decimal = split.last()
+                            if (decimal.length >= decimalCount) {
+                                ignoreInput = true
+                            }
+                        }
+                    }
+                    if (!ignoreInput) {
+                        newValueBuild.append(op)
+                    }
                 }
             }
             val result = newValueBuild.toString()
@@ -169,12 +186,13 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
         /**是否是控制输入[number]*/
         fun isControlInputNumber(number: String): Boolean =
             number == CONTROL_BACKSPACE ||
+                    number == CONTROL_CLEAR ||
                     number == CONTROL_DECREMENT ||
                     number == CONTROL_FAST_DECREMENT ||
                     number == CONTROL_INCREMENT ||
                     number == CONTROL_FAST_INCREMENT ||
                     number == CONTROL_PLUS_MINUS ||
-                    number == "."
+                    number == CONTROL_DECIMAL
     }
 
     /**按键的大小*/

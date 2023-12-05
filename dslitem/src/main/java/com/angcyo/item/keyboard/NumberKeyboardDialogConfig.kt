@@ -33,6 +33,8 @@ import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.addFilter
 import com.angcyo.widget.base.appendDslItem
 import com.angcyo.widget.base.clickIt
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 /**
  * 自定义的数字键盘
@@ -47,9 +49,15 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     /**当前的数值*/
     var numberValue: Any? = null
         set(value) {
-            field = value
-            dialogMessage = value?.toString()
+            if (value !is Unit) {
+                field = value
+                dialogMessage = value?.toString()
+            }
         }
+
+    /**用来判断当前值的类型*/
+    var numberValueType: Any? = null
+        get() = field ?: numberValue
 
     /**限制输入的最小/最大值*/
     var numberMinValue: Any? = null
@@ -69,6 +77,9 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
      * */
     var maxInputLength = 20
 
+    /**如果是小数, 则顶多能输入到小数点后几位*/
+    var decimalCount = 2
+
     /**
      * @return true 表示自动销毁window
      * */
@@ -83,14 +94,21 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     /**编辑的值放这里*/
     private val resultBuilder = StringBuilder()
 
+    /**当前输入后的值*/
+    private val _numberValue: Any?
+        get() {
+            updateDialogMessage(true)//clamp
+            val valueStr = resultBuilder.toString()
+            return getValueFrom(valueStr, numberValueType)
+        }
+
     init {
         dialogLayoutId = R.layout.dialog_number_keyboard_layout
         positiveButtonText = _string(R.string.ui_finish)
         dimAmount = 0f//不需要背景变暗
 
         positiveButtonListener = { dialog, _ ->
-            val valueStr = resultBuilder.toString()
-            if (!onNumberResultAction(getValueFrom(valueStr, numberValue))) {
+            if (!onNumberResultAction(_numberValue)) {
                 dialog.hideSoftInput()
                 dialog.dismiss()
             }
@@ -100,7 +118,7 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     override fun initControlLayout(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         super.initControlLayout(dialog, dialogViewHolder)
 
-        if (numberValue is Long || numberValue is Int) {
+        if (numberValueType is Long || numberValueType is Int) {
             //移除小数输入
             removeDecimal()
         }
@@ -204,14 +222,14 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
         }
     }
 
-    private fun updateDialogMessage() {
+    private fun updateDialogMessage(clamp: Boolean = true) {
         _dialogViewHolder?.tv(R.id.dialog_message_view)?.apply {
-            text = clampValue(
+            text = if (clamp) clampValue(
                 resultBuilder.toString(),
-                numberValue,
+                numberValueType,
                 numberMinValue,
                 numberMaxValue
-            ).toString()
+            ).toString() else resultBuilder.toString()
 
             //输入限制
             resultBuilder.clear()
@@ -232,10 +250,54 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
 
     /**自动绑定
      * [onClickNumberAction]*/
-    fun onInputValue(value: String): Boolean {
-        keyboardInputValueParse(resultBuilder, null, false, value, 1f, 10f)
-        updateDialogMessage()
+    private fun onInputValue(value: String): Boolean {
+        keyboardInputValueParse(resultBuilder, null, false, value, 1f, 10f, decimalCount)
+        updateDialogMessage(!NumberKeyboardPopupConfig.isControlInputNumber(value))
         return false
+    }
+
+    /**用最小值, 最大值和对应的比例, 更新[numberValue]
+     * [progress] 进度[0~100]*/
+    fun updateProgressValue(progress: Float) {
+        val min = numberMinValue
+        val max = numberMaxValue
+        val fraction = progress / 100f
+        if (min != null && max != null) {
+            if (numberValueType is Double) {
+                val maxD = max as Double
+                val minD = min as Double
+                numberValue = minD + (maxD - minD) * fraction
+            } else if (numberValueType is Float) {
+                val maxF = max as Float
+                val minF = min as Float
+                numberValue = minF + (maxF - minF) * fraction
+            } else if (numberValueType is Long) {
+                val maxL = max as Long
+                val minL = min as Long
+                numberValue = (minL + (maxL - minL) * fraction).roundToLong()
+            } else if (numberValueType is Int) {
+                val maxI = max as Int
+                val minI = min as Int
+                numberValue = (minI + (maxI - minI) * fraction).roundToInt()
+            } else {
+                numberValue = progress
+            }
+        } else {
+            numberValue = progress
+        }
+    }
+
+    /**获取当前输入的值, 对应的进度
+     * [0~100]*/
+    fun getProgressValue(): Float? {
+        val min = numberMinValue
+        val max = numberMaxValue
+        if (min != null && max != null) {
+            val value = _numberValue ?: return null
+            return (value.toString().toFloat() - min.toString().toFloat()) / (max.toString()
+                .toFloat() - min.toString().toFloat()) * 100f
+        }
+        return null
     }
 
     /**移除键盘样式
