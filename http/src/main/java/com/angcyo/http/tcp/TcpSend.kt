@@ -36,8 +36,11 @@ class TcpSend : ICancel {
     /**发送数据缓存大小*/
     var sendBufferSize = 4096
 
-    /**发送延迟*/
+    /**发送延迟, 毫秒*/
     var sendDelay = 0
+
+    /**发送超过此字节数据之后, 延迟[sendDelay]*/
+    var sendDelayByteCount = 0
 
     /**读流的超时时长, 同时也是连接超时时长*/
     var soTimeout = 5000
@@ -104,6 +107,7 @@ class TcpSend : ICancel {
 
                 val allSize = sendBytes?.size ?: 0
                 var sendSize = 0L
+                var delaySendSize = 0L
                 DataInputStream(ByteArrayInputStream(sendBytes)).use { bytesInput ->
                     while (true) {
                         val size = bytesInput.read(buffer)
@@ -112,6 +116,7 @@ class TcpSend : ICancel {
                             outputStream.flush()
 
                             sendSize += size
+                            delaySendSize += size
                             sendPercentage = sendSize * 1f / allSize
 
                             //发送进度
@@ -125,7 +130,10 @@ class TcpSend : ICancel {
                         } else {
                             break
                         }
-                        sleep(sendDelay.toLong())
+                        if (sendDelay > 0 && sendDelayByteCount in 1..delaySendSize) {
+                            delaySendSize = 0
+                            sleep(sendDelay.toLong())
+                        }
                     }
                 }
 

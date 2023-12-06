@@ -4,6 +4,8 @@ import android.widget.TextView
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.keyboard.NumberKeyboardPopupConfig
 import com.angcyo.item.keyboard.keyboardNumberWindow
+import com.angcyo.item.keyboard.numberKeyboardDialog
+import com.angcyo.item.style.itemLabelText
 import com.angcyo.library.utils.isChildClassOf
 import com.angcyo.widget.DslViewHolder
 
@@ -47,6 +49,10 @@ open class DslPropertyNumberItem : DslBasePropertyItem() {
     /**属性数值*/
     var itemPropertyNumber: Number? = null
 
+    /**是否使用新的数字键盘输入
+     * [NumberKeyboardDialogConfig]*/
+    var itemUseNewNumberKeyboardDialog: Boolean = false
+
     init {
         itemLayoutId = R.layout.dsl_property_number_item
     }
@@ -62,25 +68,60 @@ open class DslPropertyNumberItem : DslBasePropertyItem() {
 
         //
         itemHolder.click(R.id.lib_text_view) {
-            it.context.keyboardNumberWindow(it) {
-                keyboardBindTextView = it as? TextView
-                bindPendingDelay = -1 //关闭限流输入
-                if (itemPropertyNumber is Float || itemPropertyNumber is Double) {
-                    //小数
-                } else {
-                    //整数
-                    removeKeyboardStyle(NumberKeyboardPopupConfig.STYLE_DECIMAL)
-                }
-                onNumberResultAction = { number ->
-                    itemPropertyNumber = when (itemPropertyNumber) {
-                        is Short -> number.toInt().toShort()
-                        is Byte -> number.toInt().toByte()
-                        is Int -> number.toInt()
-                        is Long -> number.toLong()
-                        is Float -> number.toFloat()
-                        else -> number
+            if (itemUseNewNumberKeyboardDialog) {
+                it.context.numberKeyboardDialog {
+                    showNumberDialogTitle = true
+                    dialogTitle = itemLabelText
+                    numberValue = itemPropertyNumber
+                    if (itemPropertyNumber is Float || itemPropertyNumber is Double) {
+                        //小数
+                        numberValueType = 0f
+                    } else {
+                        //整数
+                        removeKeyboardStyle(NumberKeyboardPopupConfig.STYLE_DECIMAL)
+                        if (itemPropertyNumber is Long) {
+                            numberValueType = 0L
+                        } else {
+                            numberValueType = 0
+                        }
                     }
-                    itemChanging = true
+                    onNumberResultAction = { number ->
+                        number?.let {
+                            val value = it.toString()
+                            itemPropertyNumber = when (itemPropertyNumber) {
+                                is Short -> value.toInt().toShort()
+                                is Byte -> value.toInt().toByte()
+                                is Int -> value.toInt()
+                                is Long -> value.toLong()
+                                is Float -> value.toFloat()
+                                else -> value.toLong()
+                            }
+                            itemChanging = true
+                        }
+                        false
+                    }
+                }
+            } else {
+                it.context.keyboardNumberWindow(it) {
+                    keyboardBindTextView = it as? TextView
+                    bindPendingDelay = -1 //关闭限流输入
+                    if (itemPropertyNumber is Float || itemPropertyNumber is Double) {
+                        //小数
+                    } else {
+                        //整数
+                        removeKeyboardStyle(NumberKeyboardPopupConfig.STYLE_DECIMAL)
+                    }
+                    onNumberResultAction = { number ->
+                        itemPropertyNumber = when (itemPropertyNumber) {
+                            is Short -> number.toInt().toShort()
+                            is Byte -> number.toInt().toByte()
+                            is Int -> number.toInt()
+                            is Long -> number.toLong()
+                            is Float -> number.toFloat()
+                            else -> number
+                        }
+                        itemChanging = true
+                    }
                 }
             }
         }

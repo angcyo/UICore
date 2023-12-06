@@ -92,8 +92,11 @@ class Tcp : ICancel {
     /**数据缓存大小*/
     var bufferSize = 4096
 
-    /**发送延迟*/
-    var sendDelay = 0
+    /**发送延迟, 毫秒*/
+    var sendDelay = 0L
+
+    /**发送超过此字节数据之后, 延迟[sendDelay]*/
+    var sendDelayByteCount = 0L
 
     /**事件观察者*/
     var listeners = CopyOnWriteArraySet<TcpListener>()
@@ -382,8 +385,8 @@ class Tcp : ICancel {
      * [receiveTimeOut] 数据接收超时, 多久未收到数据时视为断开了连接*/
     fun send(packet: ByteArray, receiveTimeOut: Long? = null) {
         val socket = socket
-        val allSize = packet.size
-        var sendSize = 0
+        val allSize = packet.size.toLong()
+        var sendSize = 0L
         var sendPercentage = 0f //发送百分比
 
         if (socket == null || socket.isClosed) {
@@ -417,6 +420,7 @@ class Tcp : ICancel {
 
                     try {
                         val startSendTime = nowTime()
+                        var delaySendSize = 0L
                         while (true) {
                             val size = bytesInput.read(buffer)
                             if (size > 0) {
@@ -424,6 +428,7 @@ class Tcp : ICancel {
                                 outputStream.flush()
 
                                 sendSize += size
+                                delaySendSize += size
                                 sendPercentage = sendSize * 1f / allSize
 
                                 //发送进度
@@ -449,7 +454,9 @@ class Tcp : ICancel {
                             } else {
                                 break
                             }
-                            if (sendDelay > 0) {
+
+                            if (sendDelay > 0 && sendDelayByteCount in 1..delaySendSize) {
+                                delaySendSize = 0
                                 sleep(sendDelay.toLong())
                             }
                         }
@@ -512,14 +519,14 @@ class Tcp : ICancel {
 
         /**发送状态改变通知
          * [sendAllSize] 需要发送的总字节数*/
-        fun onSendStateChanged(tcp: Tcp, state: Int, sendAllSize: Int, error: Exception?) {
+        fun onSendStateChanged(tcp: Tcp, state: Int, sendAllSize: Long, error: Exception?) {
 
         }
 
         /**发送数据进度
          * [error] 发送是否有异常
          * [progress] 发送进度[0~100]*/
-        fun onSendProgress(tcp: Tcp, allSize: Int, sendSize: Int, progress: Float) {
+        fun onSendProgress(tcp: Tcp, allSize: Long, sendSize: Long, progress: Float) {
 
         }
     }

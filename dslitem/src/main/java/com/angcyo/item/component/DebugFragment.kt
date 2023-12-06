@@ -195,6 +195,7 @@ open class DebugFragment : BaseDslFragment() {
                 DslPropertyNumberItem()() {
                     itemLabel = debugAction.label
                     itemDes = debugAction.des
+                    itemUseNewNumberKeyboardDialog = debugAction.useNewNumberKeyboardDialog
                     initItem()
 
                     itemPropertyNumber = when {

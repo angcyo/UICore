@@ -267,7 +267,8 @@ class FlowLayoutDelegate : ClipLayoutDelegate() {
                 if (params.height == ViewGroup.LayoutParams.MATCH_PARENT) {
                     childHeightMeasureSpec = exactly(max(height, viewAvailableHeight))
                 } else if (params.height == ViewGroup.LayoutParams.WRAP_CONTENT) {
-                    childHeightMeasureSpec = atMost(viewAvailableHeight)
+                    childHeightMeasureSpec =
+                        atMost(if (viewAvailableHeight == 0) measureWidthSize else viewAvailableHeight)
                 } else {
                     childHeightMeasureSpec = exactly(params.height)
                 }

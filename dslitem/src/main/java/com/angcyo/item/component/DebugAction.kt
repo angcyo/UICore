@@ -25,6 +25,9 @@ data class DebugAction(
     /**存储的key, 有这个值时, 才会激活属性item*/
     var key: String? = null,
     /**[key]对应的默认值*/
-    var defValue: Any? = null
+    var defValue: Any? = null,
 
-)
+    /**使用新的数字键盘输入*/
+    var useNewNumberKeyboardDialog: Boolean = false,
+
+    )
