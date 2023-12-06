@@ -3,6 +3,7 @@ package com.angcyo.item.keyboard
 import android.app.Dialog
 import android.content.Context
 import android.text.InputFilter
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.updateLayoutParams
@@ -45,6 +46,9 @@ import kotlin.math.roundToLong
  * @since 2023/12/04
  */
 class NumberKeyboardDialogConfig : BaseDialogConfig() {
+
+    /**是否要显示标题*/
+    var showNumberDialogTitle: Boolean = false
 
     /**当前的数值*/
     var numberValue: Any? = null
@@ -115,6 +119,14 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
         }
     }
 
+    override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+        if (!showNumberDialogTitle) {
+            //不显示则清空标题
+            dialogTitle = null
+        }
+        super.initDialogView(dialog, dialogViewHolder)
+    }
+
     override fun initControlLayout(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         super.initControlLayout(dialog, dialogViewHolder)
 
@@ -141,11 +153,7 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
             list.add(createNumberItem(dialog, "$i"))
         }
 
-        val weight0Num =
-            if (keyboardStyle.have(STYLE_DECIMAL) && keyboardStyle.have(STYLE_PLUS_MINUS)) 0.3333f
-            else if (keyboardStyle.have(STYLE_DECIMAL) || keyboardStyle.have(STYLE_PLUS_MINUS)) {
-                0.6666f
-            } else 1f
+        val weight0Num = if (keyboardStyle.have(STYLE_DECIMAL)) 0.3333f else 0.6666f
         /*list.add(
             createNumberItem(
                 dialog,
@@ -197,6 +205,12 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
                     onClickNumberAction(CONTROL_PLUS_MINUS)
                 }
             }
+            rootView.find<View>(R.id.lib_keyboard_packup_view)?.apply {
+                visible(!keyboardStyle.have(STYLE_PLUS_MINUS))
+                clickIt {
+                    dialog.dismiss()
+                }
+            }
         }
 
         //back 回退/删除键
@@ -211,12 +225,13 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     }
 
     private fun defNumberHint(): CharSequence? {
+        val tip = _string(R.string.ui_valid_range_tip)
         return if (numberMinValue != null && numberMaxValue != null) {
-            "[${numberMinValue}~${numberMaxValue}]"
+            "$tip${numberMinValue}-${numberMaxValue}"
         } else if (numberMinValue != null) {
-            "[${numberMinValue}~"
+            "$tip${numberMinValue}~"
         } else if (numberMaxValue != null) {
-            "~${numberMaxValue}]"
+            "$tip~${numberMaxValue}"
         } else {
             null
         }
