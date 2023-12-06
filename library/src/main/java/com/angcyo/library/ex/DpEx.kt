@@ -44,6 +44,11 @@ fun Int.toDpFromPixel(): Float {
 }
 
 /**dp转px值*/
+fun Float.toPixelFromDp(): Float {
+    return this * dp
+}
+
+/**dp转px值*/
 fun Float.toDpFromPixel(): Float {
     return this / dp
 }
