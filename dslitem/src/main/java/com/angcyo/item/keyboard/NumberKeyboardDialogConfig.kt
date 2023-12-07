@@ -28,6 +28,7 @@ import com.angcyo.library.ex.find
 import com.angcyo.library.ex.getValueFrom
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.inflate
+import com.angcyo.library.ex.isFloatMinAdjustValue
 import com.angcyo.library.ex.remove
 import com.angcyo.library.ex.visible
 import com.angcyo.widget.DslViewHolder
@@ -267,7 +268,14 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
      * [onClickNumberAction]*/
     private fun onInputValue(value: String): Boolean {
         keyboardInputValueParse(resultBuilder, null, false, value, 1f, 10f, decimalCount)
-        updateDialogMessage(!NumberKeyboardPopupConfig.isControlInputNumber(value))
+
+        var clamp = !NumberKeyboardPopupConfig.isControlInputNumber(value)
+        if (numberValueType is Float) {
+            if (isFloatMinAdjustValue(resultBuilder.toString(), numberMinValue)) {
+                clamp = false
+            }
+        }
+        updateDialogMessage(clamp)
         return false
     }
 

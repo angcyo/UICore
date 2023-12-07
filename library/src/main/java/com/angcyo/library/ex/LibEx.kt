@@ -744,12 +744,7 @@ fun clampValue(
         if (minValue != null) {
             val min = minValue.toString().toFloatOrNull() ?: 0f
             if (v < min) {
-                if (!valueStr.contains(".") || valueStr.endsWith(".")) {
-                    //小数输入时, 特殊处理一下
-                    return value
-                } else {
-                    return min
-                }
+                return min
             }
         }
         if (maxValue != null) {
@@ -760,6 +755,25 @@ fun clampValue(
         }
         return value
     }
+}
+
+/**是否是在输入最小的浮点值*/
+fun isFloatMinAdjustValue(value: Any?, minValue: Any?): Boolean {
+    val valueStr = value?.toString()
+    if (valueStr.isNullOrBlank()) {
+        return true
+    }
+    val v = valueStr.toFloatOrNull() ?: 0f
+    if (minValue != null) {
+        val min = minValue.toString().toFloatOrNull() ?: 0f
+        if (v < min) {
+            if (!valueStr.contains(".") || valueStr.endsWith(".")) {
+                //小数输入时, 特殊处理一下
+                return true
+            }
+        }
+    }
+    return false
 }
 
 /**在同方向上取最大值
