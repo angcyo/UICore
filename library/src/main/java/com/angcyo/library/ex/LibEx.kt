@@ -739,12 +739,17 @@ fun clampValue(
             }
         }
         return value
-    } else {
+    } else { //float
         val v = valueStr.toFloatOrNull() ?: 0f
         if (minValue != null) {
             val min = minValue.toString().toFloatOrNull() ?: 0f
             if (v < min) {
-                return min
+                if (!valueStr.contains(".") || valueStr.endsWith(".")) {
+                    //小数输入时, 特殊处理一下
+                    return value
+                } else {
+                    return min
+                }
             }
         }
         if (maxValue != null) {
