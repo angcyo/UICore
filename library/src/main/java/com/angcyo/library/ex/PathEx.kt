@@ -257,7 +257,7 @@ fun Path.eachPath(
 
     //func
     fun _each() {
-        while (position <= length) {
+        while (length > 0 && position <= length) {
             pathMeasure.getPosTan(position, posArray, tanArray)
             val ratio = position / length
             if (tanArray.size > 2) {
