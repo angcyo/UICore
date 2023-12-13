@@ -37,6 +37,9 @@ fun Int.remove(value: Int): Int = this and value.inv()
 /**and 逻辑或, + */
 fun Int.add(value: Int): Int = this or value
 
+/**限制当前的值范围*/
+fun Int.clamp(min: Int = Int.MIN_VALUE, max: Int = Int.MAX_VALUE) = clamp(this, min, max)
+
 /**第4位的最高字节  0x8000 = 32,768, 未定义的资源. 0默认资源*/
 val undefined_res = -32_768
 
