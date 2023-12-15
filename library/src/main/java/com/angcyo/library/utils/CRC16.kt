@@ -62,8 +62,7 @@ object CRC16 {
         return getTableCRC(data).toHexString()
     }
 
-    fun ByteArray.crc16() = getTableCRC(this);
+    fun ByteArray.crc16() = getTableCRC(this)
 
-    fun ByteArray.crc16Hex() = getTableCRCHex(this);
-
+    fun ByteArray.crc16Hex() = getTableCRCHex(this)
 }
