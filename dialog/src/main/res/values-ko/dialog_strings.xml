@@ -9,5 +9,5 @@
     <string name="dialog_color_picker">색상을 선택하십시오...</string>
     <string name="dialog_width_picker">굵기를 선택하십시오...</string>
 
-    <string name="not_prompt_label">더 이상 나타나지 않기</string>
+    <string name="not_prompt_label">다시 알림 받지 않기</string>
 </resources>

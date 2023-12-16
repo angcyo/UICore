@@ -9,5 +9,5 @@
     <string name="dialog_color_picker">Bitte wählen Sie eine Farbe...</string>
     <string name="dialog_width_picker">Bitte wählen Sie eine Dicke...</string>
 
-    <string name="not_prompt_label">Keine Eingabeaufforderungen mehr</string>
+    <string name="not_prompt_label">Nicht mehr anzeigen</string>
 </resources>
