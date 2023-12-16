@@ -29,8 +29,8 @@
     <color name="lib_tab_select_color">@color/colorPrimary</color>
     <color name="lib_tab_deselect_color">@color/text_general_color</color>
     <color name="lib_tab_segment_border_item_background_solid_color">@color/colorAccent</color>
-    <color name="lib_tab_segment_border_solid_color">@color/bg_primary_color</color>
-    <color name="lib_tab_segment_border_stroke_color">@color/bg_primary_color</color>
+    <color name="lib_tab_segment_border_solid_color">@color/lib_segment_tab_bg_color</color>
+    <color name="lib_tab_segment_border_stroke_color">@color/lib_segment_tab_bg_color</color>
     <color name="lib_tab_segment_solid_deselect_color">@color/text_primary_color</color>
     <color name="lib_tab_segment_solid_select_color">@color/text_primary_color</color>
 
@@ -62,7 +62,7 @@
     <color name="bg_primary_color">#f6f6f6</color>
     <color name="bg_primary_color_night">@color/bg_primary_color</color>
     <color name="bg_sub_color">#d8d8d8</color>
-    <color name="lib_segment_tab_bg_color">#f6f6f6</color>
+    <color name="lib_segment_tab_bg_color">#f3f3f3</color>
 
     <!--图标强调颜色-->
     <color name="lib_icon_color_accent">@color/colorAccent</color>
