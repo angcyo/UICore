@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
+        android:paddingLeft="@dimen/lib_hdpi"
         android:paddingRight="@dimen/lib_padding_left"
         tools:background="@color/transparent20">
 

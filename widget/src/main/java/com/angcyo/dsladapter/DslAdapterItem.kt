@@ -654,7 +654,8 @@ open class DslAdapterItem : LifecycleOwner {
     @UpdateByDiff
     var itemGroupExtend: Boolean by UpdateDependProperty(
         true,
-        listOf(PAYLOAD_UPDATE_PART, PAYLOAD_UPDATE_EXTEND)
+        listOf(PAYLOAD_UPDATE_PART, PAYLOAD_UPDATE_EXTEND),
+        this::onSelfItemGroupExtendChanged
     )
 
     /**是否需要隐藏item*/
@@ -663,6 +664,23 @@ open class DslAdapterItem : LifecycleOwner {
         false,
         listOf(PAYLOAD_UPDATE_PART, PAYLOAD_UPDATE_HIDDEN)
     )
+
+    /**[onSelfItemGroupExtendChanged]*/
+    val itemGroupExtendChangeListenerList = mutableSetOf<ItemAction>()
+
+    fun observeItemGroupExtendChange(action: ItemAction): ItemAction {
+        itemGroupExtendChangeListenerList.add(action)
+        return action
+    }
+
+    fun removeItemGroupExtendChangeObserver(action: ItemAction): Boolean {
+        return itemGroupExtendChangeListenerList.remove(action)
+    }
+
+    /**[itemGroupExtend]改变之后回调*/
+    open fun onSelfItemGroupExtendChanged(from: Boolean, to: Boolean) {
+        itemGroupExtendChangeListenerList.forEach { it(this) }
+    }
 
     /**查找与[dslAdapterItem]相同分组的所有[DslAdapterItem]
      * [dslAdapterItem] 查询的目标
@@ -1623,6 +1641,7 @@ open class DslAdapterItem : LifecycleOwner {
      *
      * 子项列表
      * [com.angcyo.dsladapter.internal.SubItemFilterInterceptor.loadSubItemList]
+     * [renderSubItem]
      * */
     var itemSubList: MutableList<DslAdapterItem> = mutableListOf()
 
@@ -1680,7 +1699,8 @@ open class DslAdapterItem : LifecycleOwner {
 @UpdateByDiff
 class UpdateDependProperty<T>(
     var value: T,
-    val payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART
+    val payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART,
+    val onValueChanged: (from: T, to: T) -> Unit = { _, _ -> }
 ) : ReadWriteProperty<DslAdapterItem, T> {
     override fun getValue(thisRef: DslAdapterItem, property: KProperty<*>): T = value
 
@@ -1688,6 +1708,7 @@ class UpdateDependProperty<T>(
         val old = this.value
         this.value = value
         if (old != value) {
+            onValueChanged(old, value)
             thisRef.itemUpdateFlag = true
             thisRef.updateItemDepend(
                 FilterParams(thisRef, updateDependItemWithEmpty = true, payload = payload)

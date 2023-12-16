@@ -546,6 +546,15 @@ fun DslAdapterItem.updateItemSelected(select: Boolean = true, update: Boolean = 
     }
 }
 
+/**使用dsl的方式, 将数据添加到 [DslAdapterItem.itemSubList]中
+ * [DslAdapterItem.itemLoadSubList]
+ * */
+fun DslAdapterItem.renderSubItem(action: DslAdapter.() -> Unit) {
+    val dslAdapter = DslAdapter()
+    dslAdapter.action()
+    itemSubList.addAll(dslAdapter.adapterItems)
+}
+
 //</editor-fold desc="操作扩展">
 
 //<editor-fold desc="更新指定的Item">
@@ -669,7 +678,7 @@ inline fun <reified Item : DslAdapterItem> DslAdapter._updateOrInsertItem(
     }
 }
 
-/**[itemSubList]*/
+/**用来更新[DslAdapterItem.itemSubList]*/
 fun DslAdapterItem.updateSubItem(action: UpdateDataConfig.() -> Unit) {
     val config = UpdateDataConfig()
     config.updatePage = Page.FIRST_PAGE_INDEX
