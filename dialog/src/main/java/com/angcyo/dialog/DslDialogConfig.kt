@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.view.*
 import android.view.WindowManager.LayoutParams.*
@@ -34,6 +35,7 @@ import com.angcyo.library.ex.*
 import com.angcyo.lifecycle.onDestroy
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
+import com.angcyo.widget.span.SpanClickMethod
 import java.io.Serializable
 
 /**
@@ -621,6 +623,9 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
             if (dialogMessage == null && !text.isNullOrEmpty()) dialogMessage = text
             visibility = if (dialogMessage == null) View.GONE else View.VISIBLE
             text = dialogMessage
+            if (dialogMessage is SpannableStringBuilder) {
+                SpanClickMethod.install(this)
+            }
         }
     }
 
