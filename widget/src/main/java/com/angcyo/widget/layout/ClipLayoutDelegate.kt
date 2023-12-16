@@ -5,6 +5,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroup
 import com.angcyo.library.ex.dp
 import com.angcyo.widget.R
 import kotlin.math.min
@@ -74,7 +75,9 @@ open class ClipLayoutDelegate : LayoutDelegate() {
             R.styleable.ClipLayoutDelegate_r_clip_radius,
             defaultClipRadius.toInt()
         ).toFloat()
-
+        if (view is ViewGroup && clipType != CLIP_TYPE_NONE) {
+            view.setWillNotDraw(false)
+        }
         typedArray.recycle()
     }
 
@@ -85,6 +88,7 @@ open class ClipLayoutDelegate : LayoutDelegate() {
             CLIP_TYPE_NONE -> {
                 //no clip
             }
+
             CLIP_TYPE_ROUND -> {
                 clipPath.addRoundRect(
                     roundRectF, floatArrayOf(
@@ -94,10 +98,12 @@ open class ClipLayoutDelegate : LayoutDelegate() {
                 )
                 canvas.clipPath(clipPath)
             }
+
             CLIP_TYPE_CIRCLE -> {
                 clipPath.addCircle(cx, cy, clipRadius, Path.Direction.CW)
                 canvas.clipPath(clipPath)
             }
+
             CLIP_TYPE_DEFAULT -> {
                 clipPath.addRoundRect(
                     roundRectF, floatArrayOf(
@@ -113,6 +119,7 @@ open class ClipLayoutDelegate : LayoutDelegate() {
                 )
                 canvas.clipPath(clipPath)
             }
+
             CLIP_TYPE_RECT -> {
                 clipPath.addRect(roundRectF, Path.Direction.CW)
                 canvas.clipPath(clipPath)
