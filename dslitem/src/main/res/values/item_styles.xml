@@ -2,7 +2,7 @@
 <resources>
 
     <dimen name="lib_item_label_min_width">75dp</dimen>
-    <dimen name="lp_item_label_min_width">75dp</dimen>
+    <dimen name="lp_item_label_min_width">120dp</dimen>
     <dimen name="lib_check_box_size">18dp</dimen>
     <dimen name="lib_keyboard_size">50dp</dimen>
     <dimen name="lib_new_icon_size">18dp</dimen>
