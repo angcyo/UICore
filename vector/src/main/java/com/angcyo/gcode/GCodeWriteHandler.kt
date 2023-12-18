@@ -84,6 +84,12 @@ class GCodeWriteHandler : VectorWriteHandler() {
     /**切割数据限制范围*/
     var cutLimitRect: RectF? = null
 
+    /**是否需要使用M2关闭gcode文件*/
+    var needCloseGcodeFile = true
+
+    /**GCode结束是否需要使用G0移动到原点*/
+    var needMoveToOrigin = false
+
     //上一次的信息
     private var lastInfo: GCodeLastInfo = GCodeLastInfo()
 
@@ -108,10 +114,12 @@ class GCodeWriteHandler : VectorWriteHandler() {
         closeCnc()
         if (isPathFinish) {
             //整个路径结束
-            if (LibLpHawkKeys.enableGCodeEndG0) {
+            if (needMoveToOrigin) {
                 writer?.appendLine("G0 X0 Y0")
             }
-            writer?.appendLine("M2") //程序结束
+            if (needCloseGcodeFile) {
+                writer?.appendLine("M2") //程序结束
+            }
         }
     }
 
