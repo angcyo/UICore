@@ -245,6 +245,23 @@ fun DslAdapterItem.drawLeftRightOnBottom(
     itemDecorationColor = color
 }
 
+/**在顶部绘制分割线*/
+fun DslAdapterItem.drawTop(
+    insertTop: Int = _dimen(R.dimen.lib_line_px),
+    offsetLeft: Int = _dimen(R.dimen.lib_padding_left),
+    offsetRight: Int = _dimen(R.dimen.lib_padding_left),
+    color: Int = _color(R.color.lib_line_dark)
+) {
+    itemLeftOffset = offsetLeft
+    itemRightOffset = offsetRight
+
+    itemTopInsert = insertTop
+    itemBottomInsert = 0
+
+    onlyDrawOffsetArea = false
+    itemDecorationColor = color
+}
+
 /**在底部绘制分割线*/
 fun DslAdapterItem.drawBottom(
     insertBottom: Int = _dimen(R.dimen.lib_line_px),

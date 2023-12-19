@@ -133,7 +133,10 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
     @LayoutRes
     var dialogLayoutId = -1
 
-    /**自定义的对话框标题*/
+    /**自定义的对话框标题
+     * [R.layout.lib_dialog_base_title_layout]
+     * [R.layout.lib_dialog_base_ico_title_layout]
+     * */
     @LayoutRes
     var dialogTitleLayoutId = -1
 
