@@ -399,6 +399,23 @@ fun String?.toUri(): Uri? {
     }
 }
 
+/**
+ * [keyType] 0:原样 >0:大写 <0:小写
+ * */
+fun Uri.queryParameterMap(keyType: Int = 0): Map<String, String?> {
+    val map = hashMapOf<String, String?>()
+    queryParameterNames?.forEach { key ->
+        val value = getQueryParameter(key)
+        map[when {
+            keyType > 0 -> key.uppercase()
+            keyType < 0 -> key.lowercase()
+            else -> key
+        }] = value
+    }
+    return map
+}
+
+
 /**将文本转换成[Path], 获取文本轮廓的[Path]*/
 fun String.toTextPath(paint: Paint, result: Path = Path()): Path {
     val textBounds = acquireTempRect()
