@@ -90,7 +90,9 @@ fun FragmentManager.getFiles(
 ) {
     //val action = if (type.isImageMimeType()) Intent.ACTION_PICK else Intent.ACTION_GET_CONTENT
     val intent = Intent(Intent.ACTION_GET_CONTENT)
-    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+    if (maxCount > 1) {
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+    }
     intent.addCategory(Intent.CATEGORY_OPENABLE)
     intent.type = type
 
