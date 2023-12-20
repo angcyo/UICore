@@ -1,6 +1,10 @@
 package com.angcyo.library.ex
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
 import android.widget.LinearLayout
 import androidx.annotation.ColorInt
 import com.angcyo.library.component.hawk.LibHawkKeys
@@ -399,7 +403,7 @@ fun Bitmap.trimEdgeColor(
 
 //---
 
-/**枚举图片上的每个像素点
+/**枚举图片上的每个像素点, x, y 宽高的坐标
  *
  * [orientation] 枚举的方向
  *     [LinearLayout.HORIZONTAL] 横向枚举, 从上往下, 从左到右
