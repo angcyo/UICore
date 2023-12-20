@@ -292,3 +292,33 @@ fun Float.isRotated(): Boolean = this != 0f && this != 360f
  *  */
 fun calcIncrementValue(index: Int, fromIndex: Int, fromValue: Float, valueStep: Float): Float =
     fromValue + (index - fromIndex) * valueStep
+
+/** 2116779516 -> 7E2B7DFC
+ * 将一个int用ascii字符表示出来
+ * [this] 输入的值
+ * [length] 需要输出多少个ascii字符, 4位一个ascii字符
+ * */
+fun Int.toAsciiString(length: Int = 32 / 4): String {
+    val list = mutableListOf<Char>()
+    for (b in 0 until length) {
+        //每4位取一次值
+        val char = (this shr (b * 4)) and 0xF
+        //再转成十六进制, 这样就可以限定值为[0~F]
+        val hex = char.toHexString(1)
+        list.add(hex.first())
+    }
+    return list.reversed().connect("")
+}
+
+/**将ascii对应的int值解析出来*/
+fun String.toAsciiInt(): Int {
+    var result = 0
+    val length = length * 4
+    forEachIndexed { index, char ->
+        //7e2b7dfc
+        val hex = char.toString()
+        val int = hex.toHexInt()
+        result = result or (int shl (length - (index + 1) * 4))
+    }
+    return result
+}
