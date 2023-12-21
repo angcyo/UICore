@@ -391,7 +391,7 @@ class Tcp : ICancel {
 
         if (socket == null || socket.isClosed) {
             for (listener in listeners) {
-                listener.onSendStateChanged(this, SEND_STATE_ERROR, allSize, NullPointerException())
+                listener.onSendStateChanged(this, SEND_STATE_ERROR, allSize, TcpClosedException())
             }
             return
         }
@@ -404,7 +404,7 @@ class Tcp : ICancel {
                         this,
                         SEND_STATE_ERROR,
                         allSize,
-                        IllegalStateException()
+                        TcpClosedException()
                     )
                 }
                 return@thread

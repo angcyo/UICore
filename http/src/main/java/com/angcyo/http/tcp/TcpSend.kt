@@ -252,12 +252,14 @@ fun tcpSend(
     address: String,
     port: Int,
     writeBytes: ByteArray,
+    timeout: Int = 5000,
     @ThreadDes("工作线程回调")
     action: (receiveBytes: ByteArray?, error: Exception?) -> Unit
 ): TcpSend {
     val tcpSend = TcpSend()
     tcpSend.address = address
     tcpSend.port = port
+    tcpSend.soTimeout = timeout
     tcpSend.sendBytes = writeBytes
     tcpSend.onSendAction = action
     tcpSend.startSend()
