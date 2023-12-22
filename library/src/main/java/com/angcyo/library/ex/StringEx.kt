@@ -924,6 +924,16 @@ fun String.getSafe(index: Int): Char? {
 /**转换成对错字符显示
  * 对错字符
  * https://manual.toulan.fun/posts/macos-type-right-wrong-symbol/
+ *
+ * ✅
+ * ❎
+ * ❌
+ * ✖
+ * 红色
+ * ✘
+ * ✔︎
+ * ✓
+ * ✗
  * */
 fun Boolean?.toDC() = if (this == true) "✔︎" else "✘" //if (this == true) "√" else "×"
 
