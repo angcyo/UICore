@@ -44,6 +44,9 @@ class GCodeWriteHandler : VectorWriteHandler() {
     /**是否使用自动控制CNC, 即M03/M05使用M04*/
     var isAutoCnc = false
 
+    /**自动激光下, 是否设置了功率参数*/
+    var isSetPower = false
+
     /**是否关闭了CNC, 如果关闭了CNC所有G操作都变成G0操作*/
     var isClosedCnc = false
 
@@ -103,9 +106,11 @@ class GCodeWriteHandler : VectorWriteHandler() {
             writer?.appendLine("G21")
         }
         writer?.appendLine("M8") //开启水冷系统
-        writer?.appendLine("G1 F12000") //F进料速度
         if (isAutoCnc) {
-            writer?.appendLine("M04 S255")
+            //自动激光 S255F12000 需要放在第一个G1指令后面
+            writer?.appendLine("M04")
+        } else {
+            writer?.appendLine("G1F12000") //F进料速度
         }
     }
 
@@ -239,10 +244,18 @@ class GCodeWriteHandler : VectorWriteHandler() {
                         if (isFirst || lastInfo.lastJ != j) {
                             append("J${j.toFloatValueString()}")
                         }
+                        if (!isSetPower) {
+                            append("S255F12000")
+                            isSetPower = true
+                        }
                     } else {
                         append("$cmd ")
                         append("X${x.toFloatValueString()} Y${y.toFloatValueString()} ")
                         append("I${i.toFloatValueString()} J${j.toFloatValueString()}")
+                        if (!isSetPower) {
+                            append(" S255F 12000")
+                            isSetPower = true
+                        }
                     }
 
                     lastInfo.lastCmd = cmd
@@ -287,6 +300,10 @@ class GCodeWriteHandler : VectorWriteHandler() {
                 if (isFirst || lastInfo.lastY != yFloat) {
                     append("Y${yFloat.toFloatValueString()}")
                 }
+                if (!isSetPower) {
+                    append("S255F12000")
+                    isSetPower = true
+                }
             }
             if (gcode.isNotBlank()) {
                 writer?.appendLine(gcode)
@@ -299,6 +316,10 @@ class GCodeWriteHandler : VectorWriteHandler() {
                 append("G1")
                 append(" X${xValue.toDoubleValueString()}")
                 append(" Y${yValue.toDoubleValueString()}")
+                if (!isSetPower) {
+                    append(" S255 F12000")
+                    isSetPower = true
+                }
             })
         }
 
@@ -338,6 +359,10 @@ class GCodeWriteHandler : VectorWriteHandler() {
             appendLine("G0 X$xStartStr Y$yStartStr")
             openCnc()
             appendLine("G2 X$xStartStr Y$yStartStr I${iValueStr} J${jValueStr}")
+            if (!isSetPower) {
+                append(" S255F 12000")
+                isSetPower = true
+            }
             if (isCollectPoint) {
                 collectPoint(true, startXValue, startYValue)
 
@@ -365,6 +390,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
     /**关闭CNC
      * M05指令:主轴关闭, M03:主轴打开*/
     fun closeCnc() {
+        isSetPower = false
         if (!isClosedCnc) {
             if (isAutoCnc) {
                 //no op
@@ -383,9 +409,8 @@ class GCodeWriteHandler : VectorWriteHandler() {
             if (isAutoCnc) {
                 //no op
             } else {
-                writer?.append("M03")
+                writer?.appendLine("M03S255")
             }
-            writer?.appendLine("S255")
             isClosedCnc = false
         }
     }
