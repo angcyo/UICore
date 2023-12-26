@@ -22,11 +22,13 @@ import com.angcyo.widget.span.span
 
 /**
  * 数字键盘弹窗window, 支持小数/支持+-自增
+ *
+ * [NumberKeyboardPopupConfig]
+ * [NumberKeyboardDialogConfig]
+ *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/05/14
  */
-
-
 class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
 
     companion object {
@@ -313,12 +315,14 @@ class NumberKeyboardPopupConfig : ShadowAnchorPopupConfig() {
     }
 
     /**提示当前的输入会清空已存在的内容*/
-    fun _tipClearInput() {
+    fun _tipClearInput(tip: Boolean = true) {
         keyboardBindTextView?.apply {
             //采用背景颜色提醒
             text = span {
                 append(text) {
-                    backgroundColor = _color(R.color.colorAccent).alphaRatio(0.5f)
+                    if (tip) {
+                        backgroundColor = _color(R.color.colorAccent).alphaRatio(0.5f)
+                    }
                 }
             }
         }

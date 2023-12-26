@@ -21,8 +21,10 @@ import com.angcyo.item.keyboard.NumberKeyboardPopupConfig.Companion.STYLE_PLUS_M
 import com.angcyo.item.keyboard.NumberKeyboardPopupConfig.Companion.keyboardInputValueParse
 import com.angcyo.item.style.itemText
 import com.angcyo.library.annotation.DSL
+import com.angcyo.library.ex._color
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.add
+import com.angcyo.library.ex.alphaRatio
 import com.angcyo.library.ex.clampValue
 import com.angcyo.library.ex.find
 import com.angcyo.library.ex.getValueFrom
@@ -30,11 +32,13 @@ import com.angcyo.library.ex.have
 import com.angcyo.library.ex.inflate
 import com.angcyo.library.ex.isFloatMinAdjustValue
 import com.angcyo.library.ex.remove
+import com.angcyo.library.ex.toStr
 import com.angcyo.library.ex.visible
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.addFilter
 import com.angcyo.widget.base.appendDslItem
 import com.angcyo.widget.base.clickIt
+import com.angcyo.widget.span.span
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
@@ -42,6 +46,7 @@ import kotlin.math.roundToLong
  * 自定义的数字键盘
  *
  * [NumberKeyboardPopupConfig]
+ * [NumberKeyboardDialogConfig]
  *
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/12/04
@@ -96,6 +101,17 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
      * */
     var onNumberResultAction: (number: Any?) -> Boolean = { false }
 
+    /**首次输入时, 覆盖输入.
+     * 比如:默认值是888, 那么首次输入多少就是多少
+     * */
+    var firstOverrideInput: Boolean = true
+
+    /**是否是首次输入*/
+    private var _isFirstInput: Boolean = true
+
+    /**是否选中了文本*/
+    private var _isSelectInput: Boolean = false
+
     /**编辑的值放这里*/
     private val resultBuilder = StringBuilder()
 
@@ -145,6 +161,9 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
             //输入限制
             if (maxInputLength >= 0) {
                 addFilter(InputFilter.LengthFilter(maxInputLength))
+            }
+            clickIt {
+                _tipClearInput(!_isSelectInput)
             }
         }
         resultBuilder.clear()
@@ -223,6 +242,10 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
         }
 
         updateDialogMessage()
+
+        if (firstOverrideInput) {
+            _tipClearInput()
+        }
     }
 
     private fun defNumberHint(): CharSequence? {
@@ -253,6 +276,23 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
         }
     }
 
+    /**提示当前的输入会清空已存在的内容*/
+    fun _tipClearInput(tip: Boolean = true) {
+        _isSelectInput = false
+        _isFirstInput = false
+        _dialogViewHolder?.tv(R.id.dialog_message_view)?.apply {
+            text = span {
+                append(text.toStr()) {
+                    if (tip) {
+                        backgroundColor = _color(R.color.colorAccent).alphaRatio(0.5f)
+                        _isSelectInput = true
+                        _isFirstInput = true
+                    }
+                }
+            }
+        }
+    }
+
     /**数字键和.号*/
     fun createNumberItem(dialog: Dialog, number: String, weight: Float? = null): DslAdapterItem =
         KeyboardNumberItem().apply {
@@ -267,6 +307,10 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     /**自动绑定
      * [onClickNumberAction]*/
     private fun onInputValue(value: String): Boolean {
+        if (firstOverrideInput && _isFirstInput) {
+            resultBuilder.clear()
+        }
+        _isFirstInput = false
         keyboardInputValueParse(resultBuilder, null, false, value, 1f, 10f, decimalCount)
 
         var clamp = !NumberKeyboardPopupConfig.isControlInputNumber(value)
