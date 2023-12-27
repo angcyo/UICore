@@ -259,7 +259,8 @@ open class CanvasGroupRenderer : BaseRenderer() {
         fun getRendererListRenderProperty(
             rendererList: List<BaseRenderer>,
             keepSingle: Boolean = true,
-            result: CanvasRenderProperty = CanvasRenderProperty()
+            result: CanvasRenderProperty = CanvasRenderProperty(),
+            resultBoundsList: MutableList<RectF>? = null,
         ): CanvasRenderProperty {
             result.reset()
             if (rendererList.size() == 1 && keepSingle) {
@@ -273,21 +274,22 @@ open class CanvasGroupRenderer : BaseRenderer() {
             } else {
                 //多个元素
                 val rect = acquireTempRectF()
-                val bounds = acquireTempRectF()
                 rect.set(Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE)
                 for (renderer in rendererList) {
                     renderer.renderProperty?.let {
+                        val bounds = RectF()
                         it.getRenderBounds(bounds)
                         //val bounds = it.getRenderBounds(afterRotate = true)
                         rect.left = min(rect.left, bounds.left)
                         rect.top = min(rect.top, bounds.top)
                         rect.right = max(rect.right, bounds.right)
                         rect.bottom = max(rect.bottom, bounds.bottom)
+
+                        resultBoundsList?.add(bounds)
                     }
                 }
                 result.initWithRect(rect, 0f)
                 rect.release()
-                bounds.release()
             }
             return result
         }
