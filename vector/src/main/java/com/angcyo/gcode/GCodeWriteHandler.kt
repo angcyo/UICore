@@ -60,7 +60,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
     /**是否激活GCode压缩指令*/
     var enableGCodeShrink: Boolean = LibLpHawkKeys.enableGCodeShrink
 
-    /**是否激活GCode切割数据算法
+    /**是否激活GCode切割数据算法, 螺旋数据
      * ```
      * A->B => A->B B->A A->B
      * ```
