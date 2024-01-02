@@ -4,20 +4,16 @@ import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
 import com.angcyo.library.annotation.MM
+import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.annotation.Unit
 import com.angcyo.library.component.hawk.LibLpHawkKeys
-import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempPath
 import com.angcyo.library.component.pool.acquireTempPointF
 import com.angcyo.library.component.pool.release
-import com.angcyo.library.ex.angle
 import com.angcyo.library.ex.eachPath
-import com.angcyo.library.ex.mapPoint
-import com.angcyo.library.ex.rotate
 import com.angcyo.library.ex.toLossyFloat
 import com.angcyo.library.unit.InchValueUnit
 import com.angcyo.vector.VectorWriteHandler
-import kotlin.math.atan
-import kotlin.math.tan
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -85,6 +81,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
     var cutGCodeHeight = DEFAULT_CUT_HEIGHT
 
     /**切割数据限制范围*/
+    @Pixel
     var cutLimitRect: RectF? = null
 
     /**是否需要使用M2关闭gcode文件*/
@@ -349,20 +346,36 @@ class GCodeWriteHandler : VectorWriteHandler() {
             jValue = unit?.convertPixelToValue(jValue) ?: jValue
         }
 
+        @Unit
         val xStartStr = startXValue.toDoubleValueString()
         val yStartStr = startYValue.toDoubleValueString()
         val iValueStr = iValue.toDoubleValueString()
         val jValueStr = jValue.toDoubleValueString()
 
+        val tempPointF = acquireTempPointF()
+
         writer?.apply {
             closeCnc()
-            appendLine("G0 X$xStartStr Y$yStartStr")
+            if (enableGCodeShrink) {
+                appendLine("G0X${xStartStr}Y$yStartStr")
+            } else {
+                appendLine("G0 X$xStartStr Y$yStartStr")
+            }
             openCnc()
-            appendLine("G2 X$xStartStr Y$yStartStr I${iValueStr} J${jValueStr}")
+            if (enableGCodeShrink) {
+                append("G2X${xStartStr}Y${yStartStr}I${iValueStr}J${jValueStr}")
+            } else {
+                append("G2 X$xStartStr Y$yStartStr I${iValueStr} J${jValueStr}")
+            }
             if (!isSetPower) {
-                append(" S255F 12000")
+                if (enableGCodeShrink) {
+                    append("S255F12000")
+                } else {
+                    append(" S255 F12000")
+                }
                 isSetPower = true
             }
+            appendLine()
             if (isCollectPoint) {
                 collectPoint(true, startXValue, startYValue)
 
@@ -370,6 +383,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
                 path.addCircle(cx.toFloat(), cy.toFloat(), radius.toFloat(), Path.Direction.CW)
 
                 path.eachPath(pathStep) { _, _, _, posArray, _ ->
+                    @Unit
                     var x = posArray[0]
                     var y = posArray[1]
 
@@ -377,12 +391,16 @@ class GCodeWriteHandler : VectorWriteHandler() {
                         x = unit?.convertPixelToValue(x) ?: x
                         y = unit?.convertPixelToValue(y) ?: y
                     }
-                    collectPoint(false, x.toDouble(), y.toDouble())
+                    tempPointF.set(x, y)
+                    limitCutPoint(tempPointF)
+                    collectPoint(false, tempPointF.x.toDouble(), tempPointF.y.toDouble())
                 }
 
                 path.release()
             }
         }
+
+        tempPointF.release()
     }
 
     //region ---core---
@@ -441,7 +459,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
 
     /**填充切割数据
      * Z字填充算法*/
-    fun fillCutGCodeByZ(startX: Double, startY: Double, endX: Double, endY: Double) {
+    /*fun fillCutGCodeByZ(startX: Double, startY: Double, endX: Double, endY: Double) {
         //计算2个点之间的角度
         val angle = angle(startX, startY, endX, endY)
 
@@ -491,12 +509,23 @@ class GCodeWriteHandler : VectorWriteHandler() {
         }
         tempPointF.release()
         reverseMatrix.release()
-    }
+    }*/
 
-    private fun limitCutPoint(point: PointF) {
+    private fun limitCutPoint(@Unit point: PointF) {
         cutLimitRect?.let {
-            point.x = point.x.coerceIn(it.left, it.right)
-            point.y = point.y.coerceIn(it.top, it.bottom)
+            var left = it.left
+            var top = it.top
+            var right = it.right
+            var bottom = it.bottom
+            if (isPixelValue && unit != null) {
+                left = unit?.convertPixelToValue(left) ?: left
+                top = unit?.convertPixelToValue(top) ?: top
+                right = unit?.convertPixelToValue(right) ?: right
+                bottom = unit?.convertPixelToValue(bottom) ?: bottom
+            }
+
+            point.x = point.x.coerceIn(left, right)
+            point.y = point.y.coerceIn(top, bottom)
         }
     }
 
