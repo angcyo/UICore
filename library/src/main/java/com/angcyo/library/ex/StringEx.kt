@@ -1010,6 +1010,9 @@ fun String.ensureExtName() = ensurePrefix(".")
 /**确保字符串前缀*/
 fun String.ensurePrefix(prefix: String) = if (startsWith(prefix)) this else "$prefix$this"
 
+/**确保字符串后缀*/
+fun String.ensureSuffix(suffix: String) = if (endsWith(suffix)) this else "$this$suffix"
+
 /**字符串的长度*/
 fun String?.size() = this?.length ?: 0
 

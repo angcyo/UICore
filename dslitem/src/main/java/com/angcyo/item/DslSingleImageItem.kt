@@ -10,7 +10,7 @@ import com.angcyo.item.style.ImageItemConfig
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/09/12
  */
-class DslSingleImageItem : DslAdapterItem(), IImageItem {
+open class DslSingleImageItem : DslAdapterItem(), IImageItem {
 
     override var imageItemConfig: ImageItemConfig = ImageItemConfig()
 

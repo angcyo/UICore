@@ -53,6 +53,11 @@ import kotlin.math.roundToLong
  */
 class NumberKeyboardDialogConfig : BaseDialogConfig() {
 
+    companion object {
+        /**默认小数点后几位*/
+        var numberDecimalCount = 2
+    }
+
     /**是否要显示标题*/
     var showNumberDialogTitle: Boolean = false
 
@@ -88,7 +93,7 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     var maxInputLength = 20
 
     /**如果是小数, 则顶多能输入到小数点后几位*/
-    var decimalCount = 2
+    var decimalCount = numberDecimalCount
 
     /**
      * @return true 表示自动销毁window
