@@ -161,10 +161,20 @@ fun ViewGroup.getChildOrNull(index: Int): View? {
     }
 }
 
-/**获取child在group中的位置*/
-fun ViewGroup.indexOfChild(action: View.() -> Boolean): Int? {
-    for (index in 0 until childCount) {
-        val childAt = getChildAt(index)
+/**获取child在group中的位置
+ * [visible] 是否只枚举可见的child*/
+fun ViewGroup.indexOfChild(visible: Boolean = false, action: View.() -> Boolean): Int? {
+    var index: Int? = null
+    for (i in 0 until childCount) {
+        val childAt = getChildAt(i)
+        if (visible && childAt.visibility != View.VISIBLE) {
+            continue
+        }
+        if (index == null) {
+            index = 0
+        } else {
+            index++
+        }
         if (childAt.action()) {
             return index
         }
