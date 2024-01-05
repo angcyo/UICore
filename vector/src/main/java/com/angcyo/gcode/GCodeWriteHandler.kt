@@ -114,6 +114,9 @@ class GCodeWriteHandler : VectorWriteHandler() {
     override fun onPathEnd(isPathFinish: Boolean) {
         super.onPathEnd(isPathFinish)
         closeCnc()
+        if (isAutoCnc) {
+            writer?.appendLine("S0")
+        }
         if (isPathFinish) {
             //整个路径结束
             if (needMoveToOrigin) {
@@ -406,16 +409,18 @@ class GCodeWriteHandler : VectorWriteHandler() {
     //region ---core---
 
     /**关闭CNC
-     * M05指令:主轴关闭, M03:主轴打开*/
+     * M05指令:主轴关闭, M03:主轴打开
+     * [onPathEnd]
+     * */
     fun closeCnc() {
         isSetPower = false
         if (!isClosedCnc) {
             if (isAutoCnc) {
                 //no op
+                //writer?.appendLine("S0") 在一段路径结束之后, 才关闭激光
             } else {
-                writer?.append("M05")//S电压控制 M05关闭主轴
+                writer?.append("M05S0")//S电压控制 M05关闭主轴
             }
-            writer?.appendLine("S0")
             isClosedCnc = true
         }
     }
