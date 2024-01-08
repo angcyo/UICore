@@ -20,12 +20,12 @@ _replaceResTo.doFirst {
     //将中文资源替换成其他语言的资源, 并输出
 
     //资源输入文件路径
-    def inputResPath = file("./UICoreEx/lpDevice/src/main/res/values-zh/material_strings.xml").absolutePath
+    /*def inputResPath = file("./UICoreEx/lpDevice/src/main/res/values-zh/material_strings.xml").absolutePath
     def lines = readExcelLines("翻译稿.xlsx", 1)
-    def outputLanguage = ["en", "ja", "ko", "es", "fr", "de"/*,  "rHK", "rTW"*/]
+    def outputLanguage = ["en", "ja", "ko", "es", "fr", "de"*//*,  "rHK", "rTW"*//*]
     outputLanguage.eachWithIndex { value, index ->
         _replaceRes(inputResPath, "material_strings_${value}.xml", convertLinesToMap(lines, 0, index + 1))
-    }
+    }*/
 
     //_replaceRes(inputResPath, "material_strings_en.xml", convertLinesToMap(lines, 0, 1))
     //_replaceRes(inputResPath, "material_strings_ja.xml", convertLinesToMap(lines, 0, 2))
@@ -34,6 +34,17 @@ _replaceResTo.doFirst {
     //_replaceRes(inputResPath, "material_strings_es.xml", convertLinesToMap(lines, 0, 5))
     //_replaceRes(inputResPath, "material_strings_fr.xml", convertLinesToMap(lines, 0, 6))
     //_replaceRes(inputResPath, "material_strings_rHk.xml", convertLinesToMap(lines, 0, 7))
+
+    def inputResPath = file("./UICoreEx/canvas2_lp/src/main/res/values-zh/canvas2_string.xml").absolutePath
+    def lines = readExcelLines("canvas4.xlsx", 1)
+    def outputLanguage = ["en", "ja", "de", "fr", "ko", "es",]
+    outputLanguage.eachWithIndex { value, index ->
+        def outPath = "./UICoreEx/canvas2_lp/src/main/res/values-${value}/canvas2_string.xml"
+        if (value == "en") {
+            outPath = "./UICoreEx/canvas2_lp/src/main/res/values/canvas2_string.xml"
+        }
+        _replaceRes(inputResPath, outPath, convertLinesToMap(lines, 0, index + 1))
+    }
 }
 
 /**使用excel的数据结构替换res*/
@@ -102,7 +113,7 @@ def _replaceResList(pathList, outPathList, map) {
     }
 }
 
-/**替换资源
+/**将原始文件内容替换成新的资源内容, 并输出到指定文件
  * [path] 需要替换的文件路径
  * [outPath] 替换后的输出文件路径
  * [map] 需要替换的键值对映射表
