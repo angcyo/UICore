@@ -131,7 +131,7 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     init {
         dialogLayoutId = R.layout.dialog_number_keyboard_layout
         positiveButtonText = _string(R.string.ui_finish)
-        dimAmount = 0f//不需要背景变暗
+        dimAmount = 0.2f//不需要背景变暗
 
         positiveButtonListener = { dialog, _ ->
             if (!onNumberResultAction(_numberValue)) {
