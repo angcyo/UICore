@@ -593,6 +593,19 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         removeFooterItem(list)
     }
 
+    /**根据条件, 移除所有符合条件的item*/
+    @UpdateFlag
+    fun removeAllItemBy(predicate: (DslAdapterItem) -> Boolean) {
+        removeItem(dataItems.filter(predicate))
+        removeHeaderItem(headerItems.filter(predicate))
+        removeFooterItem(footerItems.filter(predicate))
+    }
+
+    /**当前数据集中是否有指定的item*/
+    fun haveItemBy(useFilterList: Boolean = true, predicate: (DslAdapterItem) -> Boolean): Boolean {
+        return getDataList(useFilterList).any(predicate)
+    }
+
     /**在指定的item[with], 后面插入新的item[newItem]
      * 调用 [updateItemDepend] 更新数据*/
     @UpdateFlag
