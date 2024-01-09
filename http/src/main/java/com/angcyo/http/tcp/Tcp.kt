@@ -139,7 +139,12 @@ class Tcp : ICancel {
      * 关闭套接字不会清除其连接状态，这意味着如果已关闭的套接字在关闭之前已成功连接，则此方法将返回 true 已关闭的套接字（请参阅 isClosed()）。
      * */
     fun isConnected(): Boolean {
-        return socket?.run { isConnected && !isClosed } ?: false
+        return try {
+            socket?.run { isConnected && !isClosed } ?: false
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
     }
 
     /**连接到服务器*/
