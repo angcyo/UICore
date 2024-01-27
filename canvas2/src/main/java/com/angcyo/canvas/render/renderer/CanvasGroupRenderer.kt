@@ -270,6 +270,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                     it.copyTo(result)
                     /*val rect = it.getRenderRect()
                     result.initWithRect(rect, it.angle)*/
+                    resultBoundsList?.add(it.getRenderBounds(RectF()))
                 }
             } else {
                 //多个元素
