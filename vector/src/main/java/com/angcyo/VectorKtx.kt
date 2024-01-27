@@ -3,7 +3,9 @@ package com.angcyo
 import android.graphics.Paint
 import android.graphics.Path
 import com.angcyo.gcode.GCodeWriteHandler
+import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.hawk.LibHawkKeys
+import com.angcyo.library.ex.computePathBounds
 import com.angcyo.library.ex.toListOf
 import com.angcyo.library.model.PointD
 import com.angcyo.library.unit.IValueUnit
@@ -254,8 +256,9 @@ fun List<Path>.toSVGStrokeContentStr(
     output: File,
     offsetLeft: Float = 0f, //x偏移的像素
     offsetTop: Float = 0f, //y偏移的像素
-    pathStep: Float = LibHawkKeys._pathAcceptableError, //Path路径的采样步进
+    pathStep: Float = LibHawkKeys.svgTolerance, //Path路径的采样步进
     append: Boolean = false, //是否是追加写入文本
+    wrapSvgXml: Boolean = false, //是否使用svg xml文档格式包裹
 ): File {
     //转换成Svg, 使用像素单位
     val svgWriteHandler = SvgWriteHandler()
@@ -263,6 +266,13 @@ fun List<Path>.toSVGStrokeContentStr(
         svgWriteHandler.writer = writer
         svgWriteHandler.gapValue = 1f
         svgWriteHandler.gapMaxValue = 1f
+
+        if (wrapSvgXml) {
+            @Pixel val bounds = computePathBounds()
+            writer.write("""<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="${bounds.left} ${bounds.top} ${bounds.right} ${bounds.bottom}">""")
+            writer.write("""<path stroke="black" fill="none" d="""")
+        }
+
         svgWriteHandler.pathStrokeToVector(
             this,
             false,
@@ -271,6 +281,10 @@ fun List<Path>.toSVGStrokeContentStr(
             offsetTop,
             pathStep
         )
+
+        if (wrapSvgXml) {
+            writer.write(""""/></svg>""")
+        }
     }
     return output
 }
