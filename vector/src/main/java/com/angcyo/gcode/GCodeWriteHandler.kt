@@ -401,6 +401,9 @@ class GCodeWriteHandler : VectorWriteHandler() {
         }
 
         tempPointF.release()
+
+        //清空上一次指令信息
+        lastInfo.clear()
     }
 
     //region ---core---
@@ -416,7 +419,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
                 //no op
                 //writer?.appendLine("S0") 在一段路径结束之后, 才关闭激光
             } else {
-                writer?.append("M05S0")//S电压控制 M05关闭主轴
+                writer?.appendLine("M05S0")//S电压控制 M05关闭主轴
             }
             isClosedCnc = true
         }

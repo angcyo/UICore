@@ -12,4 +12,12 @@ data class GCodeLastInfo(
     var lastY: Float? = null,  //上一次的Y
     var lastI: Float? = null,  //上一次的I
     var lastJ: Float? = null,  //上一次的J
-)
+) {
+    fun clear() {
+        lastCmd = null
+        lastX = null
+        lastY = null
+        lastI = null
+        lastJ = null
+    }
+}
