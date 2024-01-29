@@ -13,6 +13,7 @@ import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.eachPath
 import com.angcyo.library.ex.toLossyFloat
 import com.angcyo.library.unit.InchValueUnit
+import com.angcyo.library.unit.toMm
 import com.angcyo.vector.VectorWriteHandler
 
 /**
@@ -382,18 +383,14 @@ class GCodeWriteHandler : VectorWriteHandler() {
             if (isCollectPoint) {
                 collectPoint(true, startXValue, startYValue)
 
+                @MM
                 val path = acquireTempPath()
                 path.addCircle(cx.toFloat(), cy.toFloat(), radius.toFloat(), Path.Direction.CW)
 
                 path.eachPath(pathStep) { _, _, _, posArray, _ ->
-                    @Unit
-                    var x = posArray[0]
-                    var y = posArray[1]
-
-                    if (isPixelValue && unit != null) {
-                        x = unit?.convertPixelToValue(x) ?: x
-                        y = unit?.convertPixelToValue(y) ?: y
-                    }
+                    @MM
+                    val x = posArray[0]
+                    val y = posArray[1]
                     tempPointF.set(x, y)
                     limitCutPoint(tempPointF)
                     collectPoint(false, tempPointF.x.toDouble(), tempPointF.y.toDouble())
@@ -516,7 +513,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
         reverseMatrix.release()
     }*/
 
-    private fun limitCutPoint(@Unit point: PointF) {
+    private fun limitCutPoint(@MM point: PointF) {
         cutLimitRect?.let {
             var left = it.left
             var top = it.top
@@ -527,6 +524,11 @@ class GCodeWriteHandler : VectorWriteHandler() {
                 top = unit?.convertPixelToValue(top) ?: top
                 right = unit?.convertPixelToValue(right) ?: right
                 bottom = unit?.convertPixelToValue(bottom) ?: bottom
+            } else {
+                left = left.toMm()
+                top = top.toMm()
+                right = right.toMm()
+                bottom = bottom.toMm()
             }
 
             point.x = point.x.coerceIn(left, right)
