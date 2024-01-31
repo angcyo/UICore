@@ -5,4 +5,4 @@ package com.angcyo.http.tcp
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/10/25
  */
-class TcpClosedException(message: String? = null) : Exception(message)
+class TcpClosedException(message: String? = "Tcp Closed") : Exception(message)
