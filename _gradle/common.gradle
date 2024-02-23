@@ -340,11 +340,11 @@ def readExcelLines(path, skipLine = 0) {
 
             def lineIndex = 0
             while (rowIterator.hasNext()) {
+                def row = rowIterator.next()
                 lineIndex++
                 if (lineIndex <= skipLine) {
                     continue
                 }
-                def row = rowIterator.next()
                 def cellIterator = row.cellIterator()
                 def line = []
                 def isNullLine = true
@@ -373,6 +373,47 @@ def readExcelLines(path, skipLine = 0) {
         }
     }
     return lines
+}
+
+/** 2024-2-23
+ * 读取excel文件中的指定行, 指定列的值
+ * [rowIndex] 行列索引,从1开始
+ * [columnIndex] 列索引,从1开始
+ * */
+def readExcelValue(path, rowIndex, columnIndex) {
+    def excelFile = file(path)
+    if (excelFile.exists()) {
+        def inputStream = new BufferedInputStream(new FileInputStream(excelFile))
+        def workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook(inputStream)
+        try {
+            def sheet = workbook.getSheetAt(0)
+            def rowIterator = sheet.iterator()
+
+            def line = 0
+            while (rowIterator.hasNext()) {
+                def row = rowIterator.next()
+                line++
+                if (line < rowIndex) {
+                    continue
+                }
+                def cellIterator = row.cellIterator()
+                def column = 0
+                while (cellIterator.hasNext()) {
+                    def cell = cellIterator.next()
+                    column++
+                    if (column < columnIndex) {
+                        continue
+                    }
+                    return cell.toString()
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace()
+            System.err.println("读取excel文件失败:${excelFile}")
+            throw e
+        }
+    }
+    return null
 }
 
 /**2023-5-29
@@ -429,6 +470,7 @@ ext {
     getLanguageResPath = this.&getLanguageResPath
     readXmlMap = this.&readXmlMap
     readExcelLines = this.&readExcelLines
+    readExcelValue = this.&readExcelValue
     readCsvLines = this.&readCsvLines
     convertLinesToMap = this.&convertLinesToMap
 }

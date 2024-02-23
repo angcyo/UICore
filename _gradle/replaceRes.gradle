@@ -11,6 +11,10 @@ task _replaceResTo(group: 'angcyo', description: '替换xml文件中的字符串
     //配置任务
 }
 
+task _writeRes(group: 'angcyo', description: '将指定的内容写入到资源文件') {
+    //配置任务
+}
+
 _replaceRes.doFirst {
     replaceResWithCsv()
     //replaceResWithExcel()
@@ -41,9 +45,33 @@ _replaceResTo.doFirst {
     outputLanguage.eachWithIndex { value, index ->
         def outPath = "./UICoreEx/canvas2_lp/src/main/res/values-${value}/canvas2_string.xml"
         if (value == "en") {
-            outPath = "./UICoreEx/canvas2_lp/src/main/res/values/canvas2_string.xml"
+            outPath = outPath.replaceAll("-en", "")
         }
         _replaceRes(inputResPath, outPath, convertLinesToMap(lines, 0, index + 1))
+    }
+}
+
+_writeRes.doFirst {
+    def excelPath = "excel.xlsx"
+    def language = ["zh", "en", "ja", "ko", "de", "es", "fr", "zh-rHK", "zh-rTW"]
+    def row1 = [2]
+    def row2 = [3]
+    def column = [1, 2, 3, 4, 5, 6, 7, 8, 8]
+    language.eachWithIndex { value, index ->
+        def resPath = "./UICoreEx/lpDevice/src/main/res/values-${value}/device_strings.xml"
+        if (value == "en") {
+            resPath = resPath.replaceAll("-en", "")
+        }
+        def file = file(resPath)
+        //在文件倒数第1行插入
+        file.text = file.text.replaceAll("</resources>", "")
+
+        file.append("    <string name=\"path_opt_label\">${readExcelValue(excelPath, row1[index] ?: row1[0], column[index])}</string>")
+        file.append("\n")
+        file.append("    <string name=\"path_opt_des\">${readExcelValue(excelPath, row2[index] ?: row2[0], column[index])}</string>")
+        file.append("\n")
+
+        file.append("</resources>")
     }
 }
 
