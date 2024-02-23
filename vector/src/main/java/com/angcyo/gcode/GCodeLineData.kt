@@ -16,7 +16,8 @@ data class GCodeLineData(
     val lineCode: String,
     /**这一行的命令字符*/
     val cmdString: String,
-    /**这一行的注释*/
+    /**这一行的注释
+     * GCode注释;xxx*/
     val comment: String? = null,
 
     //---

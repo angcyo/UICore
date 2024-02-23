@@ -89,12 +89,20 @@ class GCodeWriteHandler : VectorWriteHandler() {
     var needCloseGcodeFile = true
 
     /**GCode结束是否需要使用G0移动到原点*/
-    var needMoveToOrigin = false
+    var needMoveToOrigin = LibLpHawkKeys.enableGCodeEndG0
+
+    /**强制指定gcode头/尾字符串, 不为null生效*/
+    var gcodeHeader: String? = null
+    var gcodeFooter: String? = null
+
+    /**强制指定开关激光字符串,不为null生效*/
+    var turnOn: String? = null
+    var turnOff: String? = null
 
     //上一次的信息
     private var lastInfo: GCodeLastInfo = GCodeLastInfo()
 
-    override fun onPathStart() {
+    fun writeGCodeHeader(writer: Appendable?) {
         //[G20]英寸单位 [G21]毫米单位
         //[G90]绝对位置 [G91]相对位置
         writer?.appendLine("G90")
@@ -110,21 +118,48 @@ class GCodeWriteHandler : VectorWriteHandler() {
         } else {
             writer?.appendLine("G1F12000") //F进料速度
         }
+        //文件头
+        writer?.appendLine(";gcode_header")
+    }
+
+    override fun onPathStart() {
+        if (gcodeHeader != null) {
+            if (gcodeHeader!!.isNotEmpty()) {
+                writer?.appendLine(gcodeHeader!!)
+            }
+        } else {
+            writeGCodeHeader(writer)
+        }
+    }
+
+    fun writeGCodeFooter(writer: Appendable?) {
+        if (isAutoCnc) {
+            writer?.appendLine("S0")
+        }
+        //文件头
+        writer?.appendLine(";gcode_footer")
+        //整个路径结束
+        if (needMoveToOrigin) {
+            writer?.appendLine("G0 X0 Y0")
+        }
+        if (needCloseGcodeFile) {
+            writer?.appendLine("M2") //程序结束
+        }
     }
 
     override fun onPathEnd(isPathFinish: Boolean) {
         super.onPathEnd(isPathFinish)
         closeCnc()
-        if (isAutoCnc) {
-            writer?.appendLine("S0")
-        }
-        if (isPathFinish) {
-            //整个路径结束
-            if (needMoveToOrigin) {
-                writer?.appendLine("G0 X0 Y0")
+        if (gcodeFooter != null) {
+            if (gcodeFooter!!.isNotEmpty()) {
+                writer?.appendLine(gcodeFooter!!)
             }
-            if (needCloseGcodeFile) {
-                writer?.appendLine("M2") //程序结束
+        } else {
+            if (isAutoCnc) {
+                writer?.appendLine("S0")
+            }
+            if (isPathFinish) {
+                writeGCodeFooter(writer)
             }
         }
     }
@@ -408,6 +443,12 @@ class GCodeWriteHandler : VectorWriteHandler() {
 
     //region ---core---
 
+    fun writeTurnOff(writer: Appendable?) {
+        if (!isAutoCnc) {
+            writer?.appendLine("M05S0")
+        }
+    }
+
     /**关闭CNC
      * M05指令:主轴关闭, M03:主轴打开
      * [onPathEnd]
@@ -419,9 +460,22 @@ class GCodeWriteHandler : VectorWriteHandler() {
                 //no op
                 //writer?.appendLine("S0") 在一段路径结束之后, 才关闭激光
             } else {
-                writer?.appendLine("M05S0")//S电压控制 M05关闭主轴
+                if (turnOff != null) {
+                    if (turnOff!!.isNotEmpty()) {
+                        writer?.appendLine(turnOff!!)
+                    }
+                } else {
+                    //writer?.appendLine("M05S0")//S电压控制 M05关闭主轴
+                    writeTurnOff(writer)
+                }
             }
             isClosedCnc = true
+        }
+    }
+
+    fun writeTurnOn(writer: Appendable?) {
+        if (!isAutoCnc) {
+            writer?.appendLine("M03S255")
         }
     }
 
@@ -432,7 +486,13 @@ class GCodeWriteHandler : VectorWriteHandler() {
             if (isAutoCnc) {
                 //no op
             } else {
-                writer?.appendLine("M03S255")
+                if (turnOn != null) {
+                    if (turnOn!!.isNotEmpty()) {
+                        writer?.appendLine(turnOn!!)
+                    }
+                } else {
+                    writeTurnOn(writer)
+                }
             }
             isClosedCnc = false
         }
