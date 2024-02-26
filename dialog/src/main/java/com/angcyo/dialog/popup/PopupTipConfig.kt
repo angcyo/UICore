@@ -12,6 +12,7 @@ import com.angcyo.dialog.dismissWindow
 import com.angcyo.library.annotation.DSL
 import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.isVisible
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -112,13 +113,21 @@ fun View.popupTipWindow(
     text: CharSequence? = null,
     delayDismiss: Long = 3000,
     layoutId: Int = R.layout.lib_popup_tip_layout,
+    gravity: Int? = null,
     config: PopupTipConfig.() -> Unit = {},
     initLayout: (window: TargetWindow, viewHolder: DslViewHolder) -> Unit = { _, _ -> }
 ): TargetWindow {
+    if (!isVisible() || parent == null) {
+        return "View not visible or parent is null."
+    }
     val popupConfig = PopupTipConfig()
     popupConfig.autoOffsetCenterInAnchor = true //锚点控件居中显示
     popupConfig.offsetY = -36 * dpi //偏移阴影的位置
     popupConfig.anchor = this
+    if (gravity != null) {
+        popupConfig.autoAdjustGravity = false
+        popupConfig.gravity = gravity
+    }
     popupConfig.popupLayoutId = layoutId
     popupConfig.onInitLayout = { window, viewHolder ->
         viewHolder.tv(R.id.lib_text_view)?.text = text
