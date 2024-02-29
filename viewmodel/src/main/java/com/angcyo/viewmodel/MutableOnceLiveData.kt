@@ -19,6 +19,7 @@ class MutableOnceLiveData<T>(value: T? = null) : MutableErrorLiveData<T>(value) 
     /**存储最后一次不为空的值*/
     var lastValue: T? = null
 
+    /**一帧时间内, 多次调用此方法, 只有最后一个值会回调*/
     override fun postValue(value: T?) {
         super.postValue(value)
     }

@@ -6,8 +6,11 @@ import android.net.nsd.NsdServiceInfo
 import androidx.lifecycle.ViewModel
 import com.angcyo.library.L
 import com.angcyo.library.app
+import com.angcyo.library.component.runOnMainThread
+import com.angcyo.viewmodel.updateThis
 import com.angcyo.viewmodel.updateValue
 import com.angcyo.viewmodel.vmData
+import com.angcyo.viewmodel.vmDataNull
 import com.angcyo.viewmodel.vmDataOnce
 
 /** 网络服务发现
@@ -25,7 +28,7 @@ class NsdModel : ViewModel() {
     val registerStateData = vmData(false)
 
     /**是否正在发现服务*/
-    val discoveryStateData = vmData(false)
+    val discoveryInfoData = vmDataNull<DiscoverServicesInfo>(null)
 
     /**发送服务通知*/
     val serviceFoundOnceData = vmDataOnce<NsdServiceInfo>()
@@ -98,9 +101,15 @@ class NsdModel : ViewModel() {
         override fun onServiceFound(service: NsdServiceInfo) {
             // A service was found! Do something with it.
             L.d("发现服务:$service")
-            serviceFoundOnceData.updateValue(service)
-            //nsdManager.registerServiceInfoCallback(service, ThreadExecutor, serviceInfoCallback)
+            runOnMainThread {
+                serviceFoundOnceData.updateValue(service)
+            }
+
+            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                nsdManager.registerServiceInfoCallback(service, ThreadExecutor, serviceInfoCallback)
+            }*/
             //nsdManager.resolveService(service, resolveListener)
+
             /*when {
                 service.serviceType != SERVICE_TYPE -> // Service type is the string containing the protocol and
                     // transport layer for this service.
@@ -115,6 +124,7 @@ class NsdModel : ViewModel() {
                     resolveListener
                 )
             }*/
+
         }
 
         override fun onServiceLost(service: NsdServiceInfo) {
@@ -125,12 +135,16 @@ class NsdModel : ViewModel() {
 
         override fun onDiscoveryStopped(serviceType: String) {
             L.i("发现服务停止:$serviceType")
-            discoveryStateData.updateValue(false)
+            discoveryInfoData.value?.start = false
+            discoveryInfoData.value?.errorCode = null
+            discoveryInfoData.updateThis()
         }
 
         override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
             L.e("发现服务失败:$serviceType :$errorCode")
-            discoveryStateData.updateValue(false)
+            discoveryInfoData.value?.start = false
+            discoveryInfoData.value?.errorCode = errorCode
+            discoveryInfoData.updateThis()
             nsdManager.stopServiceDiscovery(this)
         }
 
@@ -146,17 +160,17 @@ class NsdModel : ViewModel() {
      * ```
      * */
     fun startDiscovery(serviceType: String, protocolType: Int = NsdManager.PROTOCOL_DNS_SD) {
-        if (discoveryStateData.value == true) {
+        if (discoveryInfoData.value?.start == true) {
             L.w("正在发现服务")
             return
         }
+        discoveryInfoData.updateValue(DiscoverServicesInfo(serviceType, protocolType, true))
         nsdManager.discoverServices(serviceType, protocolType, discoveryListener)
-        discoveryStateData.updateValue(true)
     }
 
     /**停止探测*/
     fun stopDiscovery() {
-        if (discoveryStateData.value == true) {
+        if (discoveryInfoData.value?.start == true) {
             nsdManager.stopServiceDiscovery(discoveryListener)
         }
     }
@@ -187,3 +201,13 @@ class NsdModel : ViewModel() {
     }
 
 }
+
+/**正在发现服务的信息*/
+data class DiscoverServicesInfo(
+    val serviceType: String,
+    val protocolType: Int,
+    /**是否开始了*/
+    var start: Boolean,
+    /**错误代码*/
+    var errorCode: Int? = null,
+)
