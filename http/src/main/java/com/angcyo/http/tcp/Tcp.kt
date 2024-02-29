@@ -20,6 +20,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.net.ConnectException
+import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.Socket
@@ -176,6 +177,9 @@ class Tcp : ICancel {
                         }
                         val socketAddress = InetSocketAddress(tcpDevice!!.address, tcpDevice!!.port)
                         //socket?.bind(socketAddress)
+
+                        //Socket(InetAddress.getByName(tcpDevice!!.address), tcpDevice!!.port)
+
                         socket?.connect(socketAddress, connectTimeout)
                         onSocketConnectSuccess(info)
                         socket?.tcpNoDelay = tcpNoDelay

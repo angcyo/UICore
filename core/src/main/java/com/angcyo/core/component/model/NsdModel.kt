@@ -164,14 +164,24 @@ class NsdModel : ViewModel() {
             L.w("正在发现服务")
             return
         }
-        discoveryInfoData.updateValue(DiscoverServicesInfo(serviceType, protocolType, true))
-        nsdManager.discoverServices(serviceType, protocolType, discoveryListener)
+        try {
+            nsdManager.discoverServices(serviceType, protocolType, discoveryListener)
+            discoveryInfoData.updateValue(DiscoverServicesInfo(serviceType, protocolType, true))
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
-    /**停止探测*/
+    /**停止探测
+     * `java.lang.IllegalArgumentException: listener not registered`
+     * */
     fun stopDiscovery() {
         if (discoveryInfoData.value?.start == true) {
-            nsdManager.stopServiceDiscovery(discoveryListener)
+            try {
+                nsdManager.stopServiceDiscovery(discoveryListener)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

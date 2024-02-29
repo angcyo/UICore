@@ -7,7 +7,10 @@ package com.angcyo.http.tcp
  */
 data class TcpDevice(
     /**需要发送的目标ip地址
-     * 可以是ip/也可以是域名使用域名时, 不要http, 直接www.xxx.com即可*/
+     * 可以是ip/也可以是域名使用域名时, 不要http, 直接www.xxx.com即可
+     * LX2-411EEA.local
+     * LP5-42C17A.local
+     * */
     var address: String,
     /**发送的端口*/
     var port: Int,
