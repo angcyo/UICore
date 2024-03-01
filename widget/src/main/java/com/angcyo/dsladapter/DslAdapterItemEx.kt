@@ -551,6 +551,7 @@ fun DslAdapterItem.replaceIt(newItem: DslAdapterItem?, adapter: DslAdapter? = nu
 /**更新[DslAdapterItem]的选中状态, 并且刷新界面
  * [DslAdapterItem.updateItemSelect]
  * [DslAdapterItem.updateItemSelector]
+ * [DslAdapter.getSelectorItemList]
  * */
 @UpdateByNotify
 fun DslAdapterItem.updateItemSelected(select: Boolean = true, update: Boolean = true) {
@@ -561,6 +562,11 @@ fun DslAdapterItem.updateItemSelected(select: Boolean = true, update: Boolean = 
     if (update) {
         updateAdapterItem()
     }
+}
+
+/**获取所有选中了的[DslAdapterItem]*/
+fun DslAdapter.getAllItemSelectedList(useFilterList: Boolean = true): List<DslAdapterItem> {
+    return getDataList(useFilterList).filter { it.itemIsSelected }
 }
 
 /**使用dsl的方式, 将数据添加到 [DslAdapterItem.itemSubList]中

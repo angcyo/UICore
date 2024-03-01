@@ -1419,6 +1419,18 @@ open class DslAdapterItem : LifecycleOwner {
             }
         }
 
+    /**[itemIsSelected]*/
+    val itemSelectedListenerList = mutableSetOf<ItemAction>()
+
+    fun observeItemSelectedChange(action: ItemAction): ItemAction {
+        itemSelectedListenerList.add(action)
+        return action
+    }
+
+    fun removeItemSelectedChange(action: ItemAction): Boolean {
+        return itemSelectedListenerList.remove(action)
+    }
+
     /**简单的互斥操作支持
      * [onSetItemSelected]*/
     var itemSingleSelectMutex: Boolean = false
@@ -1448,6 +1460,7 @@ open class DslAdapterItem : LifecycleOwner {
                 }
             }
         }
+        itemSelectedListenerList.forEach { it(this) }
     }
 
     /**是否 允许改变选中状态*/
