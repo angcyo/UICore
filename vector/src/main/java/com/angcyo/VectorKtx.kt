@@ -208,7 +208,7 @@ fun List<Path>.toSVGContent(
 ): File {
     when (style) {
         Paint.Style.STROKE -> {
-            toSVGStrokeContentStr(
+            toSVGStrokeContentVectorStr(
                 output,
                 offsetLeft,
                 offsetTop,
@@ -230,7 +230,7 @@ fun List<Path>.toSVGContent(
         }
 
         else -> {
-            toSVGStrokeContentStr(
+            toSVGStrokeContentVectorStr(
                 output,
                 offsetLeft,
                 offsetTop,
@@ -252,7 +252,7 @@ fun List<Path>.toSVGContent(
 }
 
 /**只获取描边的数据*/
-fun List<Path>.toSVGStrokeContentStr(
+fun List<Path>.toSVGStrokeContentVectorStr(
     output: File,
     offsetLeft: Float = 0f, //x偏移的像素
     offsetTop: Float = 0f, //y偏移的像素
@@ -289,28 +289,28 @@ fun List<Path>.toSVGStrokeContentStr(
     return output
 }
 
-fun Path.toSVGStrokeContentStr(
+fun Path.toSVGStrokeContentVectorStr(
     offsetLeft: Float = 0f,
     offsetTop: Float = 0f,
     pathStep: Float = LibHawkKeys._pathAcceptableError,
     action: (SvgWriteHandler) -> Unit = {}
 ): String {
-    return toListOf().toSVGStrokeContentStr(offsetLeft, offsetTop, pathStep, action)
+    return toListOf().toSVGStrokeContentVectorStr(offsetLeft, offsetTop, pathStep, action)
 }
 
-fun List<Path>.toSVGStrokeContentStr(
+fun List<Path>.toSVGStrokeContentVectorStr(
     offsetLeft: Float = 0f, //x偏移的像素
     offsetTop: Float = 0f, //y偏移的像素
     pathStep: Float = LibHawkKeys._pathAcceptableError,
     action: (SvgWriteHandler) -> Unit = {}
 ): String {
     val writer = StringWriter()
-    toSVGStrokeContentStr(writer, offsetLeft, offsetTop, pathStep, action)
+    toSVGStrokeContentVectorStr(writer, offsetLeft, offsetTop, pathStep, action)
     return writer.toString()
 }
 
-/**[toSVGStrokeContentStr]*/
-fun List<Path>.toSVGStrokeContentStr(
+/**[toSVGStrokeContentVectorStr]*/
+fun List<Path>.toSVGStrokeContentVectorStr(
     writer: Appendable,
     offsetLeft: Float = 0f, //x偏移的像素
     offsetTop: Float = 0f, //y偏移的像素
