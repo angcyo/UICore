@@ -57,6 +57,7 @@ fun Any.covertToStr(): String? {
 inline fun <reified DATA> String.covertFromStr(): DATA? {
     val cls = DATA::class.java
     return when {
+        cls.isAssignableFrom(Boolean::class.java) -> this.toBoolean() as? DATA
         cls.isAssignableFrom(String::class.java) -> this as? DATA
         cls.isAssignableFrom(Int::class.java) -> this.toInt() as? DATA
         cls.isAssignableFrom(Long::class.java) -> this.toLong() as? DATA
