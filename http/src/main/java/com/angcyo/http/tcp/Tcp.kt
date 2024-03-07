@@ -20,12 +20,12 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.net.ConnectException
-import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.Socket
 import java.net.SocketException
 import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.util.concurrent.CopyOnWriteArraySet
 import kotlin.concurrent.thread
 import kotlin.math.max
@@ -184,6 +184,9 @@ class Tcp : ICancel {
                         onSocketConnectSuccess(info)
                         socket?.tcpNoDelay = tcpNoDelay
                     } catch (e: ConnectException) {
+                        e.printStackTrace()
+                        throw e
+                    } catch (e: UnknownHostException) {
                         e.printStackTrace()
                         throw e
                     } catch (e: IOException) {
