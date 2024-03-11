@@ -66,10 +66,17 @@ _writeRes.doFirst {
         //在文件倒数第1行插入
         file.text = file.text.replaceAll("</resources>", "")
 
-        file.append("    <string name=\"path_opt_label\">${readExcelValue(excelPath, row1[index] ?: row1[0], column[index])}</string>")
-        file.append("\n")
-        file.append("    <string name=\"path_opt_des\">${readExcelValue(excelPath, row2[index] ?: row2[0], column[index])}</string>")
-        file.append("\n")
+        def value1 = readExcelValue(excelPath, row1[index] ?: row1[0], column[index])
+        if (value1 != null && !value1.isEmpty()) {
+            file.append("    <string name=\"firmware_update_state_tip\">${readExcelValue(excelPath, row1[index] ?: row1[0], column[index])}</string>")
+            file.append("\n")
+        }
+
+        def value2 = readExcelValue(excelPath, row2[index] ?: row2[0], column[index])
+        if (value2 != null && !value2.isEmpty()) {
+            file.append("    <string name=\"firmware_update_state_des\">${readExcelValue(excelPath, row2[index] ?: row2[0], column[index])}</string>")
+            file.append("\n")
+        }
 
         file.append("</resources>")
     }
