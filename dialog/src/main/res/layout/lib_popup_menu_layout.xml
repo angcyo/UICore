@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.angcyo.widget.layout.RFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.angcyo.widget.layout.RLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/lib_dialog_root_layout"
@@ -15,10 +15,24 @@
     app:r_max_height="0.5sh"
     tools:layout_margin="40dp">
 
+    <com.angcyo.widget.text.DslTextView
+        android:id="@+id/lib_title_text_view"
+        style="@style/LibTitleTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/lib_xhdpi"
+        android:paddingVertical="@dimen/lib_hdpi"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:text="标题"
+        tools:visibility="visible" />
+
     <com.angcyo.widget.recycler.DslRecyclerView
         android:id="@+id/lib_recycler_view"
         style="@style/LibInnerRecyclerViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-</com.angcyo.widget.layout.RFrameLayout>
+</com.angcyo.widget.layout.RLinearLayout>

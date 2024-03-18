@@ -30,6 +30,9 @@ open class MenuPopupConfig : PopupConfig() {
         const val FLAG_ITEM_DISMISS = 0x0001
     }
 
+    /**标题, 如果有*/
+    var popupTitle: CharSequence? = null
+
     /**列表*/
     var _recyclerView: DslRecyclerView? = null
 
@@ -43,12 +46,14 @@ open class MenuPopupConfig : PopupConfig() {
         autoOffsetCenterInAnchor = true
 
         minHorizontalOffset = 40 * dpi
-
         //onDismiss
     }
 
     override fun initLayout(window: TargetWindow, viewHolder: DslViewHolder) {
         //init
+        viewHolder.visible(R.id.lib_title_text_view, popupTitle != null)
+        viewHolder.tv(R.id.lib_title_text_view)?.text = popupTitle
+
         viewHolder._rv(R.id.lib_recycler_view)?.apply {
             _recyclerView = this
             renderDslAdapter {
