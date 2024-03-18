@@ -2,14 +2,25 @@
 <resources>
     <string name="permission_disabled">Berechtigungen sind gesperrt</string>
 
-    <string name="ui_back">Rückgabe</string>
-    <string name="ui_enable_permission">Aktivieren von Berechtigungen</string>
+    <string name="ui_finish">Fertiggestellt</string>
+    <string name="ui_back">Zurück</string>
+    <string name="ui_enable_permission">Erlaubnis erteilen</string>
     <string name="core_screen_shot_text">Problem melden</string>
 
-    <string name="core_thread_error_tip">Bin auf ein kleines Problem gestoßen</string>
+    <string name="core_thread_error_tip">Ich bin auf ein kleines Problem gestoßen</string>
 
     <string name="core_send_to_label">Senden an...</string>
-    <string name="ui_minimum">minimieren</string>
-    <string name="ui_next">Nächster Schritt</string>
+    <string name="ui_minimum">Minimieren</string>
 
+    <string name="ui_add">Hinzufügen</string>
+    <string name="ui_edit">Bearbeiten</string>
+    <string name="ui_confirm">Bestätigen</string>
+    <string name="ui_choose">Bitte auswählen</string>
+    <string name="ui_warn">Warnung</string>
+    <string name="ui_delete">Löschen</string>
+    <string name="core_import">Importieren</string>
+    <string name="ui_next">Nächster Schritt</string>
+    <string name="ui_open">Öffnen</string>
+    <string name="ui_delete_fail">Löschen fehlgeschlagen</string>
+    <string name="ui_share">Teilen</string>
 </resources>

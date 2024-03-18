@@ -2,12 +2,12 @@
 <resources>
     <string name="dialog_positive">Bestätigen</string>
     <string name="dialog_negative">Abbrechen</string>
-    <string name="dialog_neutral">Neutralität</string>
+    <string name="dialog_neutral">Neutrality</string>
     <string name="dialog_continue">Weiter</string>
-    <string name="dialog_input_hint">Bitte geben Sie ein...</string>
+    <string name="dialog_input_hint">Bitte eingeben...</string>
 
-    <string name="dialog_color_picker">Bitte wählen Sie eine Farbe...</string>
-    <string name="dialog_width_picker">Bitte wählen Sie eine Dicke...</string>
+    <string name="dialog_color_picker">Farbe auswählen...</string>
+    <string name="dialog_width_picker">Wählen Sie Gewicht...</string>
 
-    <string name="not_prompt_label">Nicht mehr anzeigen</string>
+    <string name="not_prompt_label">Nicht auffordern</string>
 </resources>

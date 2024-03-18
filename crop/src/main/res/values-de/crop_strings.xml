@@ -5,8 +5,8 @@
     <string name="crop_horizontal_flip">Horizontal spiegeln</string>
     <string name="crop_vertical_flip">Vertikal drehen</string>
     <string name="crop_ratio_free">Freie Skalierung</string>
-    <string name="crop_type_circle">Rund</string>
-    <string name="crop_auto_side">Automatisches Kantenschneiden</string>
+    <string name="crop_type_circle">Kreis</string>
+    <string name="crop_auto_side">Automatisches Zuschneiden</string>
 
     <string name="crop_horizontal">Horizontal</string>
     <string name="crop_vertical">Vertikal</string>
