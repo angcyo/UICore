@@ -15,6 +15,10 @@ task _writeRes(group: 'angcyo', description: '将指定的内容写入到资源�
     //配置任务
 }
 
+task _replaceZhResTo(group: 'angcyo', description: '替换中文资源到其他资源') {
+    //配置任务
+}
+
 _replaceRes.doFirst {
     replaceResWithCsv()
     //replaceResWithExcel()
@@ -79,6 +83,18 @@ _writeRes.doFirst {
         }
 
         file.append("</resources>")
+    }
+}
+
+_replaceZhResTo.doFirst {
+    //将中文资源替换成其他语言的资源, 并输出
+    //./UICoreEx/lpDevice/src/main/res/values-zh/material_strings.xml
+    def zhPathArray = getLanguageResPath("-zh")
+    def dePathArray = getLanguageResPath("-de")
+
+    def lines = readExcelLines("res.xlsx", 1, 2)
+    zhPathArray.eachWithIndex { zhPath, index ->
+        _replaceRes(zhPath, dePathArray[index], lines)
     }
 }
 
@@ -154,12 +170,40 @@ def _replaceResList(pathList, outPathList, map) {
  * [map] 需要替换的键值对映射表
  * */
 def _replaceRes(path, outPath, map) {
+
+    //input
     def pathFile = file(path)
     if (!pathFile.exists()) {
         System.err.println "输入文件不存在:${pathFile.absolutePath}"
         return
     }
     def originText = pathFile.text //原始文件内容
+
+    //output
+    def outPathFile = file(outPath)
+    if (!outPathFile.exists()) {
+        outPathFile.parentFile.mkdirs()
+        outPathFile.createNewFile()
+    }
+
+    //保留output中不需要替换的内容
+    def outOriginText = outPathFile.text
+    //逐行比对是否需要替换
+    def originLines = originText.lines().toList()
+    def outLines = outOriginText.lines().toList()
+    originLines.eachWithIndex { line, index ->
+        if (line != null && !line.isEmpty()) {
+            if (!_isContainsResKey(line, map)) {
+                //当前的行, 不包含需要替换的资源, 则保留output中的内容
+                if (index < outLines.size()) {
+                    originLines[index] = outLines[index]
+                }
+            }
+        }
+    }
+    originText = originLines.join("\n")
+
+    //开始替换内容
     def count = 0
     def replaceMap = [] //已替换的资源
     map.each { key, val ->
@@ -173,13 +217,25 @@ def _replaceRes(path, outPath, map) {
             }
         }
     }
-    def outPathFile = file(outPath)
-    if (!outPathFile.exists()) {
-        outPathFile.parentFile.mkdirs()
-        outPathFile.createNewFile()
-    }
+
     outPathFile.write(originText)//重写文件
 
     println "已替换:${replaceMap}"
     System.err.println "替换完成:${pathFile.absolutePath}↓\n->${outPathFile.absolutePath} 共替换:${count}个"
+}
+
+/// 指定的文本中是否包含需要替换的资源
+static def _isContainsResKey(text, map) {
+    def contains = false
+    map.each { key, value ->
+        if (key != null && !key.isEmpty()) {
+            def resKey = ">${key}<"
+            //println("text:$text resKey:${resKey}")
+            if (text.contains(resKey)) {
+                contains = true
+                return
+            }
+        }
+    }
+    return contains
 }
