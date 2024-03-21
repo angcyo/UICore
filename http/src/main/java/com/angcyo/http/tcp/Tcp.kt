@@ -405,6 +405,7 @@ class Tcp : ICancel {
             for (listener in listeners) {
                 listener.onSendStateChanged(this, SEND_STATE_ERROR, allSize, TcpClosedException())
             }
+            release(null)
             return
         }
         _lastSendTime = 0
@@ -419,6 +420,7 @@ class Tcp : ICancel {
                         TcpClosedException()
                     )
                 }
+                release(null)
                 return@thread
             }
 
