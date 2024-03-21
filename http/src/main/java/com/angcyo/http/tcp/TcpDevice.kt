@@ -36,10 +36,10 @@ data class TcpDevice(
 
         other as TcpDevice
 
-        if (address != other.address) return false
-        if (port != other.port) return false
+        /*if (address != other.address) return false
+        if (port != other.port) return false*/
 
-        return true
+        return deviceName == other.deviceName
     }
 
     override fun hashCode(): Int {
