@@ -6,7 +6,7 @@ package com.angcyo.http.tcp
  * @since 2023/08/02
  */
 data class TcpDevice(
-    /**需要发送的目标ip地址
+    /**需要发送的目标ip地址, 192.168.2.136
      * 可以是ip/也可以是域名使用域名时, 不要http, 直接www.xxx.com即可
      * LX2-411EEA.local
      * LP5-42C17A.local
