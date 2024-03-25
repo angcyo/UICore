@@ -29,7 +29,7 @@ class SvgWriteHandler : VectorWriteHandler() {
 
     override fun onPathEnd(isPathFinish: Boolean) {
         super.onPathEnd(isPathFinish)
-        if (isPathFinish || needClosePath) {
+        if (needClosePath && isPathFinish) {
             //一段路径结束, 或者整个路径完成
             closeSvg() //need?
         }
