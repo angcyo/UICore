@@ -702,6 +702,22 @@ abstract class BaseRenderer : IRenderer {
         }
     }
 
+    /**将元素的左上移动至指定位置*/
+    @Pixel
+    fun translateLeftTo(
+        x: Float,
+        y: Float,
+        reason: Reason,
+        strategy: Strategy,
+        delegate: CanvasRenderDelegate?
+    ) {
+        val bounds = getRendererBounds()
+        val dx = x - (bounds?.left ?: 0f)
+        val dy = y - (bounds?.top ?: 0f)
+        translate(dx, dy, reason, strategy, delegate)
+        updateRenderProperty()
+    }
+
     /**将元素的中点移动至指定位置*/
     @Pixel
     fun translateCenterTo(
