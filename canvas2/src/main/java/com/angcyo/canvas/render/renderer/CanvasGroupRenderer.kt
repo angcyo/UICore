@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
@@ -95,6 +96,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
         /**计算[rendererList]的bounds范围
          * [bounds] 强制指定, 指定后不计算*/
+        @Pixel
         fun computeBounds(
             rendererList: List<BaseRenderer>?,
             @Pixel bounds: RectF? = null,
@@ -1096,6 +1098,29 @@ open class CanvasGroupRenderer : BaseRenderer() {
         delegate.selectorManager.resetSelectorRenderer(subRendererList, Reason.user)
 
         return subRendererList
+    }
+
+    override fun findRendererByUuid(uuid: String?): BaseRenderer? {
+        if (uuid != null && uuid == this.uuid) {
+            return this
+        }
+        for (renderer in rendererList) {
+            val find = renderer.findRendererByUuid(uuid)
+            if (find != null) {
+                return find
+            }
+        }
+        return super.findRendererByUuid(uuid)
+    }
+
+    override fun getRendererOutputPath(): List<Path>? {
+        val result = mutableListOf<Path>()
+        for (renderer in rendererList) {
+            renderer.getRendererOutputPath()?.let {
+                result.addAll(it)
+            }
+        }
+        return result
     }
 
     //endregion---操作---

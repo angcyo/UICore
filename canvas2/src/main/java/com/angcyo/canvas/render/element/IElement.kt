@@ -2,6 +2,7 @@ package com.angcyo.canvas.render.element
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Path
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
 import com.angcyo.canvas.render.core.component.BaseControlPoint
@@ -63,6 +64,9 @@ interface IElement {
      * [renderer] 所在的渲染器, 如果有
      * [params] 一些参数*/
     fun onRenderInside(renderer: BaseRenderer?, canvas: Canvas, params: RenderParams)
+
+    /**[BaseRenderer.getRendererOutputPath]*/
+    fun getRendererOutputPath(): List<Path>? = null
 
     //endregion---core---
 

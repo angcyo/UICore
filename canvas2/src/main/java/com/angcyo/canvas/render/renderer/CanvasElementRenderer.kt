@@ -1,15 +1,17 @@
 package com.angcyo.canvas.render.renderer
 
 import android.graphics.Canvas
+import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import androidx.core.graphics.withSave
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.library.canvas.core.Reason
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.element.IElement
+import com.angcyo.canvas.render.util.RenderHelper
+import com.angcyo.library.canvas.core.Reason
 
 /**用来绘制具体元素的类
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -95,6 +97,11 @@ class CanvasElementRenderer : BaseRenderer() {
     /**更新元素的渲染属性*/
     fun updateElementRenderProperty() {
         renderProperty?.let { renderElement?.updateElementRenderProperty(it) }
+    }
+
+    override fun getRendererOutputPath(): List<Path>? {
+        val result = renderElement?.getRendererOutputPath()
+        return RenderHelper.translateToRender(result, renderProperty)
     }
 
     //endregion---core---

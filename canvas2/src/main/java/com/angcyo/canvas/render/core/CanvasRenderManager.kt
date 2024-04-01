@@ -326,6 +326,18 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     fun findElementRenderer(uuid: String?): BaseRenderer? =
         elementRendererList.find { it.uuid == uuid }
 
+    /**通过[uuid]查询对应的渲染器
+     * [findElementRenderer]*/
+    fun findElementRendererList(uuidList: List<String>?): List<BaseRenderer>? {
+        val result = mutableListOf<BaseRenderer>()
+        for (uuid in uuidList ?: emptyList()) {
+            for (renderer in elementRendererList) {
+                renderer.findRendererByUuid(uuid)?.let { result.add(it) }
+            }
+        }
+        return result
+    }
+
     /**[com.angcyo.canvas.render.core.CanvasSelectorManager.findRendererList]*/
     override fun findRendererList(point: PointF): List<IRenderElement> = mutableListOf()
 

@@ -334,6 +334,19 @@ abstract class BaseRenderer : IRenderer {
         return result
     }
 
+    /**获取元素用来输出的路径, 用来实现矢量预览
+     * 非矢量元素, 应高再次获取[getRendererBoundsPath]路径
+     * */
+    open fun getRendererOutputPath(): List<Path>? = null
+
+    /**查找元素*/
+    open fun findRendererByUuid(uuid: String?): BaseRenderer? {
+        if (uuid != null && this.uuid == uuid) {
+            return this
+        }
+        return null
+    }
+
     /**获取渲染器对应的元素列表*/
     open fun getSingleElementList(): List<IElement> = emptyList()
 
