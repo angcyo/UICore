@@ -651,7 +651,11 @@ open class CanvasGroupRenderer : BaseRenderer() {
         updateRenderPropertyTo(target, reason, delegate)
     }
 
-    /**重置所有的元素*/
+    /**重置所有的元素
+     * [updateGroupRenderProperty]
+     * [updateRenderPropertyTo]
+     * [CanvasRenderProperty]
+     * */
     open fun resetGroupRendererList(
         list: List<BaseRenderer>,
         reason: Reason,
