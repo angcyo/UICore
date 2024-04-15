@@ -5,6 +5,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.view.animation.AccelerateInterpolator
+import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex._integer
 import com.angcyo.library.ex.animatorOf
@@ -72,9 +73,20 @@ object FragmentAnimator {
         DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_scale_remove_exit_holder
     }
 
+    /**显示/隐藏 只有顶层Y平移动画, 顶层单独使用属性动画, 可以提高部分动画性能
+     * [translationY]*/
+    fun onlyTopYAnim() {
+        DEFAULT_SHOW_ENTER_ANIMATOR = R.anim.lib_y_show_enter_holder
+        DEFAULT_SHOW_EXIT_ANIMATOR = 0
+
+        DEFAULT_REMOVE_ENTER_ANIMATOR = 0
+        DEFAULT_REMOVE_EXIT_ANIMATOR = R.anim.lib_y_remove_exit_holder
+    }
+
     /**加载动画对象*/
     var loadAnimator: (context: Context, anim: Int) -> Animator? = { context, anim ->
         val sw = _screenWidth.toFloat()
+        val sh = _screenHeight.toFloat()
         val duration = _integer(R.integer.lib_animation_duration).toLong()
 
         val animator = ObjectAnimator()
@@ -82,12 +94,27 @@ object FragmentAnimator {
 
         /*将占位的动画, 翻译成属性动画*/
         when (anim) {
+            R.anim.lib_y_show_enter_holder -> {
+                animator.interpolator = AccelerateInterpolator()
+                animator.setPropertyName("translationY")
+                animator.setFloatValues(sh, 0f)
+                animator
+            }
+
+            R.anim.lib_y_remove_exit_holder -> {
+                animator.interpolator = AccelerateInterpolator()
+                animator.setPropertyName("translationY")
+                animator.setFloatValues(0f, sh)
+                animator
+            }
+
             R.anim.lib_x_show_enter_holder -> {
                 animator.interpolator = AccelerateInterpolator()
                 animator.setPropertyName("translationX")
                 animator.setFloatValues(sw, 0f)
                 animator
             }
+
             R.anim.lib_x_show_enter_holder2 -> {
                 val set = AnimatorSet()
                 set.duration = duration
@@ -103,36 +130,42 @@ object FragmentAnimator {
                 set.playTogether(animator, alpha)
                 set
             }
+
             R.anim.lib_x_show_exit_holder -> {
                 animator.setPropertyName("translationX")
                 animator.setFloatValues(0f, -sw * 0.8f)
                 animator.interpolator = AccelerateInterpolator()
                 animator
             }
+
             R.anim.lib_x_show_exit_holder2 -> {
                 animator.setPropertyName("translationX")
                 animator.setFloatValues(0f, -sw * 0.1f)
                 animator.interpolator = AccelerateInterpolator()
                 animator
             }
+
             R.anim.lib_x_remove_enter_holder -> {
                 animator.interpolator = AccelerateInterpolator()
                 animator.setPropertyName("translationX")
                 animator.setFloatValues(-sw, 0f)
                 animator
             }
+
             R.anim.lib_x_remove_enter_holder2 -> {
                 animator.interpolator = AccelerateInterpolator()
                 animator.setPropertyName("translationX")
                 animator.setFloatValues(-sw * 0.1f, 0f)
                 animator
             }
+
             R.anim.lib_x_remove_exit_holder -> {
                 animator.interpolator = AccelerateInterpolator()
                 animator.setPropertyName("translationX")
                 animator.setFloatValues(0f, sw)
                 animator
             }
+
             R.anim.lib_x_remove_exit_holder2 -> {
                 val set = AnimatorSet()
                 set.duration = duration
@@ -169,6 +202,7 @@ object FragmentAnimator {
                 set.playTogether(scaleX, scaleY, alpha)
                 set
             }
+
             R.anim.lib_scale_show_exit_holder -> {
                 val set = AnimatorSet()
                 set.duration = duration
@@ -188,6 +222,7 @@ object FragmentAnimator {
                 set.playTogether(scaleX, scaleY, alpha)
                 set
             }
+
             R.anim.lib_scale_remove_exit_holder -> {
                 val set = AnimatorSet()
                 set.duration = duration
@@ -207,6 +242,7 @@ object FragmentAnimator {
                 set.playTogether(scaleX, scaleY, alpha)
                 set
             }
+
             R.anim.lib_scale_remove_enter_holder -> {
                 val set = AnimatorSet()
                 set.duration = duration

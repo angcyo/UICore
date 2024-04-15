@@ -75,18 +75,22 @@ class DslFHelper(
 
     var finishToActivity: Class<out Activity>? = DslAHelper.mainActivityClass
 
+    /** 显示一个界面, 进入界面的动画 */
     @AnimatorRes
     @AnimRes
     var showEnterAnimRes: Int = FragmentAnimator.DEFAULT_SHOW_ENTER_ANIMATOR
 
+    /** 显示一个界面, 下面界面的动画 */
     @AnimatorRes
     @AnimRes
     var showExitAnimRes: Int = FragmentAnimator.DEFAULT_SHOW_EXIT_ANIMATOR
 
+    /** 移除一个界面, 下面界面的动画 */
     @AnimatorRes
     @AnimRes
     var removeEnterAnimRes: Int = FragmentAnimator.DEFAULT_REMOVE_ENTER_ANIMATOR
 
+    /** 移除一个界面, 移除界面的动画 */
     @AnimatorRes
     @AnimRes
     var removeExitAnimRes: Int = FragmentAnimator.DEFAULT_REMOVE_EXIT_ANIMATOR
@@ -417,6 +421,7 @@ class DslFHelper(
 
         if (lastFragment != null) {
             if (lastFragment is IFragment) {
+                lastFragment.initFHelperOnBack(this)
                 if (!lastFragment.onBackPressed()) {
                     result = false
                 }

@@ -777,4 +777,17 @@ open class DslViewHolder(
 
     //</editor-fold desc="ViewGroup">
 
+    //<editor-fold desc="View">
+
+    /**更新文本控件的文本内容, 并控制可见性*/
+    fun updateText(@IdRes resId: Int, text: CharSequence?): TextView? {
+        return tv(resId)?.apply {
+            visible(resId, text != null)
+            this.text = text
+        }
+    }
+
+    //</editor-fold desc="View">
+
+
 }
