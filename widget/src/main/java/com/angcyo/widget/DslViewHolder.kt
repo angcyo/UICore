@@ -480,27 +480,31 @@ open class DslViewHolder(
         }
     }
 
-    fun selected(@IdRes resId: Int, selected: Boolean = true): DslViewHolder {
+    fun selected(
+        @IdRes resId: Int,
+        selected: Boolean = true,
+        recursion: Boolean = true,
+    ): DslViewHolder {
         val view = v<View>(resId)
-        selected(view, selected)
+        selected(view, selected, recursion)
         return this
     }
 
-    fun selected(selected: Boolean = true) {
-        selected(itemView, selected)
+    fun selected(selected: Boolean = true, recursion: Boolean = true) {
+        selected(itemView, selected, recursion)
     }
 
     /**选中当前的view, 以及其所有的子view*/
-    fun selected(view: View?, selected: Boolean = true) {
+    fun selected(view: View?, selected: Boolean = true, recursion: Boolean = true) {
         if (view == null) {
             return
         }
         if (view.isSelected != selected) {
             view.isSelected = selected
         }
-        if (view is ViewGroup) {
+        if (recursion && view is ViewGroup) {
             for (i in 0 until view.childCount) {
-                selected(view.getChildAt(i), selected)
+                selected(view.getChildAt(i), selected, recursion)
             }
         }
     }

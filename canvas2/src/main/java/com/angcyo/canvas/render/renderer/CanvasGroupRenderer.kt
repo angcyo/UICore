@@ -339,7 +339,9 @@ open class CanvasGroupRenderer : BaseRenderer() {
     override fun renderOnInside(canvas: Canvas, params: RenderParams) {
         super.renderOnInside(canvas, params)
         for (renderer in rendererList) {
-            renderer.renderOnInside(canvas, params)
+            if (renderer.isVisible) {
+                renderer.renderOnInside(canvas, params)
+            }
         }
     }
 

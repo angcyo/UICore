@@ -1407,7 +1407,8 @@ open class DslAdapterItem : LifecycleOwner {
 
     //<editor-fold desc="单选/多选相关">
 
-    /**是否选中, 需要 [ItemSelectorHelper.selectorModel] 的支持. */
+    /**是否选中, 需要 [ItemSelectorHelper.selectorModel] 的支持.
+     * [observeItemSelectedChange]*/
     var itemIsSelected = false
         set(value) {
             val old = field
@@ -1467,7 +1468,8 @@ open class DslAdapterItem : LifecycleOwner {
     var isItemCanSelected: (fromSelector: Boolean, toSelector: Boolean) -> Boolean =
         { from, to -> from != to }
 
-    /**监听item select改变事件*/
+    /**监听item select改变事件
+     * [observeItemSelect]*/
     @UpdateByDiff
     @UpdateByNotify
     var onItemSelectorChange: ItemSelectAction = {

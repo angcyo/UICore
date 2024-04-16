@@ -17,6 +17,7 @@ import com.angcyo.canvas.render.renderer.CanvasGroupRenderer.Companion.createRen
 import com.angcyo.canvas.render.util.renderElement
 import com.angcyo.drawable.loading.CircleScaleLoadingDrawable
 import com.angcyo.library.annotation.CallPoint
+import com.angcyo.library.annotation.Flag
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.library.canvas.annotation.CanvasOutsideCoordinate
@@ -101,6 +102,14 @@ abstract class BaseRenderer : IRenderer {
      * [updateAsync]*/
     open val isAsync: Boolean
         get() = renderFlags.have(RENDERER_FLAG_ASYNC)
+
+    /**选中状态标识*/
+    @Flag
+    var isSelected = false
+
+    /**分组展开状态标识*/
+    @Flag
+    var isExpand: Boolean? = null
 
     //endregion---计算属性---
 

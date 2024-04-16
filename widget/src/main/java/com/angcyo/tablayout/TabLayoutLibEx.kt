@@ -3,6 +3,7 @@ package com.angcyo.tablayout
 import android.content.Context
 import android.graphics.Paint
 import android.graphics.PorterDuff
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.TextUtils
@@ -37,6 +38,14 @@ val View.viewDrawWidth: Int
 
 val View.viewDrawHeight: Int
     get() = measuredHeight - paddingTop - paddingBottom
+
+val View.viewDrawRect: Rect
+    get() = Rect(
+        paddingLeft,
+        paddingTop,
+        measuredWidth - paddingRight,
+        measuredHeight - paddingBottom
+    )
 
 /**Match_Parent*/
 fun exactlyMeasure(size: Int): Int =
@@ -103,6 +112,7 @@ fun View?.tintDrawableColor(color: Int) {
             }
             setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3])
         }
+
         is ImageView -> {
             setImageDrawable(drawable?.tintDrawableColor(color))
         }
