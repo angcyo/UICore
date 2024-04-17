@@ -4,6 +4,7 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
+import com.angcyo.canvas.render.data.RenderParams.Companion.RASTERIZE_HOST
 import com.angcyo.library.annotation.Pixel
 
 /**
@@ -15,6 +16,10 @@ data class RenderParams(
 
     /**代理, 用来获取*/
     var delegate: CanvasRenderDelegate? = null,
+
+    /**渲染宿主, 比如在画布上渲染/在栅格化上渲染等
+     * [RASTERIZE_HOST]*/
+    var renderHost: Any? = null,
 
     /**需要在什么地方渲染, 标识对象
      * 比如
@@ -50,13 +55,14 @@ data class RenderParams(
     var renderMatrix: Matrix? = null
 ) {
 
-    /*companion object {
-        fun overrideSize(overrideSize: Float): RenderParams {
+    companion object {
+        const val RASTERIZE_HOST = "rasterize_host"
+        /*fun overrideSize(overrideSize: Float): RenderParams {
             val params = RenderParams()
             params.renderDst = overrideSize / rect.width()
             return params
-        }
-    }*/
+        }*/
+    }
 
     /**绘制[android.graphics.Path]需要控制的画笔宽度*/
     fun updateDrawPathPaintStrokeWidth(paint: Paint) {
@@ -69,5 +75,5 @@ data class RenderParams(
             paint.strokeWidth /= renderDst
         }
     }
-
 }
+

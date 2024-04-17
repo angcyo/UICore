@@ -129,7 +129,7 @@ open class TextElement : BaseElement() {
     override fun createStateStack(): IStateStack = TextStateStack()
 
     override fun onRenderInside(renderer: BaseRenderer?, canvas: Canvas, params: RenderParams) {
-        updatePaint()
+        updatePaint(params)
         val renderMatrix = params._renderMatrix
         canvas.concat(renderMatrix)
         if (textProperty.curvature == 0f) {
@@ -140,7 +140,7 @@ open class TextElement : BaseElement() {
     }
 
     /**更新画笔样式*/
-    open fun updatePaint() {
+    open fun updatePaint(params: RenderParams?) {
         //字体加载
         val loadTypefaceInfo = FontManager.loadTypefaceInfo(textProperty.fontFamily)
         val typefaceInfo = loadTypefaceInfo ?: FontManager.getSystemFontList().firstOrNull()
@@ -253,7 +253,7 @@ open class TextElement : BaseElement() {
         updateElementAction(renderer, delegate, reason) {
             textProperty.block()//do
             onUpdateTextPropertyAfter(renderer)
-            updatePaint()
+            updatePaint(null)
             updateOriginText(textProperty.text, keepVisibleSize)//重新计算宽高
         }
     }

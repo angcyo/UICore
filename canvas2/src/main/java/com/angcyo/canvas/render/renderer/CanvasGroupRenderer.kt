@@ -160,6 +160,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 translate(-rect.left, -rect.top)
                 val params = RenderParams()
                 params.apply {
+                    params.renderHost = RenderParams.RASTERIZE_HOST
                     if (overrideSize != null) {
                         renderDst = overrideSize / rect.width()
                     }
@@ -198,6 +199,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
                 translate(-rect.left, -rect.top)
                 val params = RenderParams()
                 params.apply {
+                    params.renderHost = RenderParams.RASTERIZE_HOST
                     if (overrideSize != null) {
                         renderDst = overrideSize / rect.width()
                     }
