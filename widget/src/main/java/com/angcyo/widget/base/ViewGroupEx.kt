@@ -132,7 +132,7 @@ fun <T> ViewGroup.resetChild(
     init: (itemView: View, item: T, itemIndex: Int) -> Unit = { _, _, _ -> }
 ) {
     resetChild(list.size(), layoutId) { itemView, itemIndex ->
-        val item = list!!.get(itemIndex)
+        val item = list!![itemIndex]
         init(itemView, item, itemIndex)
     }
 }

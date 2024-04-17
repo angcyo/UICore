@@ -34,8 +34,13 @@ data class Reason(
      * [com.angcyo.canvas.render.core.component.BaseControlPoint.CONTROL_TYPE_DATA]
      * */
     var controlType: Int? = null,
+
+    /**额外附加的数据*/
+    var data: Any? = null,
 ) {
     companion object {
+
+        const val DATA_ONLY_SELF = "DATA_ONLY_SELF"
 
         //---reason
 

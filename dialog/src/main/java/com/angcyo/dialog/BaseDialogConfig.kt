@@ -120,4 +120,9 @@ abstract class BaseDialogConfig(context: Context? = null) : DslDialogConfig(cont
             dialogViewHolder.view(R.id.dialog_control_layout)?.visibility = View.GONE
         }
     }
+
+    /**更新确认按钮的激活状态*/
+    open fun updatePositiveButtonEnable(enable: Boolean = true) {
+        _dialogViewHolder?.tv(R.id.dialog_positive_button)?.isEnabled = enable
+    }
 }

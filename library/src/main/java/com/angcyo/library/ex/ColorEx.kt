@@ -164,13 +164,18 @@ fun Int.alphaRatio(alpha: Float): Int {
     return alpha(alpha * 255)
 }
 
-/**0xFFFF8000*/
-fun Int.toHexColorString(prefix: String = "#"): String {
+/**0xFFFF8000
+ * [alpha] 是否包含透明通道*/
+fun Int.toHexColorString(prefix: String = "#", alpha: Boolean = true): String {
     val a = Color.alpha(this)
     val r = Color.red(this)
     val g = Color.green(this)
     val b = Color.blue(this)
-    return String.format(Locale.US, "${prefix}%02X%02X%02X%02X", a, r, g, b)
+    if (alpha) {
+        return String.format(Locale.US, "${prefix}${"%02X".repeat(4)}", a, r, g, b)
+    } else {
+        return String.format(Locale.US, "${prefix}${"%02X".repeat(3)}", r, g, b)
+    }
 }
 
 @ColorInt

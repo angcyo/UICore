@@ -104,6 +104,12 @@ open class DslAdapterItem : LifecycleOwner {
 
     }
 
+    /**设置[itemUpdateAction], 并立即出发*/
+    fun itemUpdateAction(action: (payload: Any?) -> Unit) {
+        itemUpdateAction = action
+        action(null)
+    }
+
     /**[com.angcyo.dsladapter.DslAdapter.notifyItemChanged]*/
     @AnyThread
     @UpdateByNotify

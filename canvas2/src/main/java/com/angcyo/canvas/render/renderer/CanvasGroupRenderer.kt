@@ -35,6 +35,7 @@ import com.angcyo.drawable.isGravityTop
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.canvas.core.Reason
+import com.angcyo.library.canvas.core.Reason.Companion.DATA_ONLY_SELF
 import com.angcyo.library.component.Strategy
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.pool.acquireTempRectF
@@ -590,8 +591,12 @@ open class CanvasGroupRenderer : BaseRenderer() {
 
     override fun updateVisible(visible: Boolean, reason: Reason, delegate: CanvasRenderDelegate?) {
         super.updateVisible(visible, reason, delegate)
-        for (renderer in rendererList) {
-            renderer.updateVisible(visible, reason, delegate)
+        if (reason.data == DATA_ONLY_SELF) {
+            //仅更新自己
+        } else {
+            for (renderer in rendererList) {
+                renderer.updateVisible(visible, reason, delegate)
+            }
         }
     }
 
