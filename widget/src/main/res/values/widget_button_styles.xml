@@ -57,6 +57,12 @@
         <item name="android:textColor">@color/lib_white</item>
     </style>
 
+    <!--圆角黑色底填充的样式-->
+    <style name="LibButtonDesSolidStyle" parent="LibButtonBlackSolidStyle">
+        <item name="button_gradient_colors">@color/bg_primary_color</item>
+        <item name="android:textColor">@color/lib_black</item>
+    </style>
+
     <!--圆角边框的样式-->
     <style name="LibButtonBorderStyle" parent="LibButtonStyle">
         <item name="android:paddingStart">@dimen/lib_hdpi</item>

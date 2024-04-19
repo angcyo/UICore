@@ -212,6 +212,12 @@ abstract class AbsLifecycleFragment : AbsFragment(), IFragment, OnBackPressedDis
         action: (data: T?) -> Unit
     ): Observer<T?> = watch(this@AbsLifecycleFragment, autoClear, allowBackward, action)
 
+    fun <T> LiveData<T>.observeIt(
+        autoClear: Boolean = false,
+        allowBackward: Boolean = true,
+        action: (data: T?) -> Unit
+    ): Observer<T?> = watch(this@AbsLifecycleFragment, autoClear, allowBackward, action)
+
     /**快速观察[LiveData]一次, 确保不收到null数据
      * [action] 返回值表示是否处理了数据, 如果没有处理, 则不会remove
      * [allowBackward] 是否允许数据倒灌, 接收到旧数据

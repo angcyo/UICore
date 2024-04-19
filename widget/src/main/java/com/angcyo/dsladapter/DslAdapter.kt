@@ -966,6 +966,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
         val indexOf = list.indexOf(item)
 
         if (indexOf in list.indices) {
+            item.itemUpdateAction(payload)
             item.diffResult(null, null)
             notifyItemChangedPayload(indexOf, payload)
         }
@@ -973,13 +974,14 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
 
     /**[notifyDataSetChanged]*/
     @UpdateByNotify
-    fun notifyDataChanged() {
+    fun notifyDataChanged(payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART) {
         _updateAdapterItems()
         dslDataFilter?.clearTask()
         dslDataFilter?.filterDataList?.clear()
         dslDataFilter?.filterDataList?.addAll(adapterItems)
-        adapterItems.forEach {
-            it.diffResult(null, null)
+        adapterItems.forEach { item ->
+            item.itemUpdateAction(payload)
+            item.diffResult(null, null)
         }
         notifyDataSetChanged()
     }
@@ -987,8 +989,9 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     /**更新界面上所有[DslAdapterItem]*/
     @UpdateByNotify
     fun updateAllItem(payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART) {
-        adapterItems.forEach {
-            it.diffResult(null, null)
+        adapterItems.forEach { item ->
+            item.itemUpdateAction(payload)
+            item.diffResult(null, null)
         }
         notifyItemRangeChanged(0, itemCount, payload)
     }
@@ -996,8 +999,9 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     /**更新界面上所有[DslAdapterItem]*/
     @UpdateByNotify
     fun updateAllDataItem(payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART) {
-        dataItems.forEach {
-            it.diffResult(null, null)
+        dataItems.forEach { item ->
+            item.itemUpdateAction(payload)
+            item.diffResult(null, null)
         }
         notifyItemRangeChanged(0, dataItems.size, payload)
     }
@@ -1006,8 +1010,9 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     /**更新界面上所有[DslAdapterItem]*/
     @UpdateByNotify
     fun updateAllHeaderItem(payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART) {
-        headerItems.forEach {
-            it.diffResult(null, null)
+        headerItems.forEach { item ->
+            item.itemUpdateAction(payload)
+            item.diffResult(null, null)
         }
         notifyItemRangeChanged(dataItems.size, headerItems.size, payload)
     }
@@ -1015,8 +1020,9 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
     /**更新界面上所有[DslAdapterItem]*/
     @UpdateByNotify
     fun updateAllFooterItem(payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART) {
-        footerItems.forEach {
-            it.diffResult(null, null)
+        footerItems.forEach { item ->
+            item.itemUpdateAction(payload)
+            item.diffResult(null, null)
         }
         notifyItemRangeChanged(dataItems.size + headerItems.size, footerItems.size, payload)
     }
@@ -1033,6 +1039,7 @@ open class DslAdapter(dataItems: List<DslAdapterItem>? = null) :
                 val indexOf = indexOf(item)
 
                 if (indexOf in this.indices) {
+                    item.itemUpdateAction(payload)
                     item.diffResult(null, null)
                     notifyItemChangedPayload(indexOf, payload)
                 }
