@@ -148,6 +148,14 @@ class DslSpan : Appendable {
         return this
     }
 
+    /**[appendln]*/
+    fun appendLineIfNotEmpty(): DslSpan {
+        if (_builder.isNotEmpty()) {
+            _builder.appendLine()
+        }
+        return this
+    }
+
     /**追加指定[span]*/
     fun append(text: CharSequence?, vararg spans: Any): DslSpan {
         _ignore(text) {

@@ -842,3 +842,10 @@ fun StringBuilder.appendSpaceIfNotEmpty(space: String = " ") {
         append(space)
     }
 }
+
+/**不为空时, 追加一个换行*/
+fun StringBuilder.appendLineIfNotEmpty() {
+    if (isNotEmpty()) {
+        appendLine()
+    }
+}
