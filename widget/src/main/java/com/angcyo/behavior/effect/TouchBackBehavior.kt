@@ -12,6 +12,7 @@ import com.angcyo.behavior.BaseGestureBehavior
 import com.angcyo.library.ex.*
 import com.angcyo.widget.R
 import com.angcyo.widget.layout.isEnableCoordinator
+import kotlin.math.roundToInt
 
 /**
  * 支持下拉返回的[Behavior], 通过[addScrollListener]方法, 添加滚动监听, 实现自定义的功能.
@@ -31,10 +32,20 @@ open class TouchBackBehavior(
     /**首次布局时, 需要滚动的偏移距离. 实现半屏效果*/
     var defaultScrollOffsetY: String = "0dp"
 
+    /**重置滚动阈值比例
+     * 当滚动的位置>=child的高度*radio时, 就会触发关闭
+     * */
+    var closeScrollRadio: Float = 5f
+
+    /**重置滚动到最大child height的比例,
+     * 设置了这个属性, 那就不会立马触发关闭了*/
+    var resetToMaxRadio: Float? = null
+
     //实际的滚动偏移, 参与计算
     var _scrollOffsetY = 0
 
     var _scaledTouchSlop: Int = 0
+    var _scaledMinimumFlingVelocity: Int = 0
 
     init {
 
@@ -51,6 +62,7 @@ open class TouchBackBehavior(
         array.recycle()
 
         _scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
+        _scaledMinimumFlingVelocity = ViewConfiguration.get(context).scaledMinimumFlingVelocity
     }
 
     override fun onMeasureAfter(parent: CoordinatorLayout, child: View) {
@@ -178,22 +190,30 @@ open class TouchBackBehavior(
         super.onTouchFinish(parent, child, ev)
         if (!isTouchHold && _nestedScrollView == null && ViewCompat.isLaidOut(child)) {
             //在非nested scroll 视图上滚动过
-            resetScroll()
+            if (lastVelocityY < -3000) {
+                //以超过3000的速度向上滚动, 则滚动到正常
+                scrollToTop()
+            } else {
+                resetScroll()
+            }
         }
     }
 
     /**重置滚动状态*/
     fun resetScroll() {
         //滚动距离大于这个值时, 就要关闭界面
-        val minSlop =
-            touchBackSlop.toRSize(childView.mW(), childView.mH(), def = childView.mH() / 5)
+        val minSlop = touchBackSlop.toRSize(
+            childView.mW(),
+            childView.mH(),
+            def = childView.mH() / closeScrollRadio.roundToInt()
+        )
         val scrollDy = behaviorScrollY - _scrollOffsetY
         val offsetY =
             defaultScrollOffsetY.toRSize(childView.mW(), childView.mH(), def = 0)
 
         if (scrollDy > minSlop) {
             //滑动大于child的5分之一
-            scrollToClose()
+            scrollToMaxRatioOrNot()
         } else {
             _scrollOffsetY = if (_scrollOffsetY <= 0) {
                 0
@@ -213,6 +233,12 @@ open class TouchBackBehavior(
         }
     }
 
+    /**滚动至顶部*/
+    fun scrollToTop() {
+        _scrollOffsetY = 0 //重置偏移
+        startScrollTo(0, _scrollOffsetY)
+    }
+
     /**滚动至正常*/
     fun scrollToNormal() {
         startScrollTo(0, _scrollOffsetY)
@@ -221,5 +247,10 @@ open class TouchBackBehavior(
     /**滚动至关闭*/
     fun scrollToClose() {
         startScrollTo(0, childView.mH())
+    }
+
+    /**滚动至最大比例*/
+    fun scrollToMaxRatioOrNot() {
+        startScrollTo(0, (childView.mH() * (resetToMaxRadio ?: 1f)).roundToInt())
     }
 }

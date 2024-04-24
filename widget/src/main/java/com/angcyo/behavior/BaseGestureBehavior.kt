@@ -110,10 +110,7 @@ abstract class BaseGestureBehavior<T : View>(
     /**统一手势处理*/
     open fun handleTouchEvent(parent: CoordinatorLayout, child: T, ev: MotionEvent): Boolean {
         var result = false
-        if (ev.isTouchFinish()) {
-            //parent.requestDisallowInterceptTouchEvent(false)//2021-11-25
-            onTouchFinish(parent, child, ev)
-        } else if (ev.isTouchDown()) {
+        if (ev.isTouchDown()) {
             _needHandleTouch = true
             _isFirstScroll = true
             lastVelocityX = 0f
@@ -128,6 +125,10 @@ abstract class BaseGestureBehavior<T : View>(
             } else {
                 result = _gestureDetector.onTouchEvent(ev)
             }
+        }
+        if (ev.isTouchFinish()) {
+            //parent.requestDisallowInterceptTouchEvent(false)//2021-11-25
+            onTouchFinish(parent, child, ev)
         }
         return result
     }
