@@ -56,33 +56,48 @@ _replaceResTo.doFirst {
 }
 
 _writeRes.doFirst {
+    //需要读取的excel文件路径
     def excelPath = "excel.xlsx"
+    //对应的国际化资源名称
     def language = ["zh", "en", "ja", "ko", "de", "es", "fr", "zh-rHK", "zh-rTW"]
-    def row1 = [2]
-    def row2 = [3]
-    def column = [1, 2, 3, 4, 5, 6, 7, 8, 8]
-    language.eachWithIndex { value, index ->
-        def resPath = "./UICoreEx/lpDevice/src/main/res/values-${value}/device_strings.xml"
-        if (value == "en") {
-            resPath = resPath.replaceAll("-en", "")
-        }
-        def file = file(resPath)
-        //在文件倒数第1行插入
-        file.text = file.text.replaceAll("</resources>", "")
+    //language对应的列, 从1开始
+    def languageColumn = [1, 2, 3, 4, 5, 6, 7, 8, 8]
 
-        def value1 = readExcelValue(excelPath, row1[index] ?: row1[0], column[index])
-        if (value1 != null && !value1.isEmpty()) {
-            file.append("    <string name=\"firmware_update_state_tip\">${readExcelValue(excelPath, row1[index] ?: row1[0], column[index])}</string>")
-            file.append("\n")
-        }
+    //需要写入的资源key
+    def resKeyList = [
+            "select_all"
+    ]
 
-        def value2 = readExcelValue(excelPath, row2[index] ?: row2[0], column[index])
-        if (value2 != null && !value2.isEmpty()) {
-            file.append("    <string name=\"firmware_update_state_des\">${readExcelValue(excelPath, row2[index] ?: row2[0], column[index])}</string>")
-            file.append("\n")
-        }
+    //res翻译资源从第几行开始
+    def resStartRowIndex = 2
+    resKeyList.eachWithIndex { resKey, resKeyIndex ->
+        def row = resStartRowIndex + resKeyIndex
 
-        file.append("</resources>")
+        //开始写入res key对应的各个翻译
+        language.eachWithIndex { lan, index ->
+            //def resPath = "./UICoreEx/lpDevice/src/main/res/values-${lan}/device_strings.xml"
+            def resPath = "./UICoreEx/canvas2_lp/src/main/res/values-${lan}/canvas2_string.xml"
+            if (lan == "en") {
+                resPath = resPath.replaceAll("-en", "")
+            }
+            def file = file(resPath)
+            if (file.exists()) {
+                //在文件倒数第1行插入
+                file.text = file.text.replaceAll("</resources>", "")
+
+                def value = readExcelValue(excelPath, row, languageColumn[index])
+                if (value != null && !value.isEmpty()) {
+                    file.append("    <string name=\"${resKey}\">${value}</string>")
+                    file.append("\n")
+
+                    println("${resPath} 写入 ${resKey} -> ${value}")
+                }
+
+                file.append("</resources>")
+            } else {
+                System.err.println("文件不存在,跳过处理:${file.absolutePath}")
+            }
+        }
     }
 }
 
