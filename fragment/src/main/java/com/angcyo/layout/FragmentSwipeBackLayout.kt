@@ -319,7 +319,7 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
         } else {
             if (showDebugInfo) {
                 LTime.tick()
-                L.v("${hash()} ↓开始测量,Child共:$fragmentsCount")
+                //L.v("${hash()} ↓开始测量,Child共:$fragmentsCount")
             }
             //super.onMeasure(widthMeasureSpec, heightMeasureSpec)
             //只测量最后2个View
@@ -330,7 +330,7 @@ class FragmentSwipeBackLayout(context: Context, attrs: AttributeSet? = null) :
             }
             setMeasuredDimension(widthSize, heightSize)
             if (showDebugInfo) {
-                L.v("${hash()} ↑测量结束:${LTime.time()} ${widthSize}x$heightSize")
+                //L.v("${hash()} ↑测量结束:${LTime.time()} ${widthSize}x$heightSize")
             }
         }
     }
