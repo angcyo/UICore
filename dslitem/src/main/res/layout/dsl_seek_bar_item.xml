@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/lib_bg_selector"
+    android:minHeight="@dimen/lib_item_height"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/lib_hdpi"
+    android:paddingBottom="@dimen/lib_hdpi"
+    tools:r_background="@color/transparent20">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.angcyo.widget.text.DslTextView
+            android:id="@+id/lib_text_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="@dimen/lib_drawable_padding"
+            android:paddingStart="@dimen/lib_padding_left"
+            android:paddingEnd="@dimen/lib_padding_right"
+            tools:drawableLeft="@drawable/lib_ic_info"
+            tools:text="关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们" />
+
+        <com.angcyo.widget.text.DslTextView
+            android:id="@+id/lib_value_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/lib_padding_left"
+            android:background="@drawable/lib_keyboard_number_increment_selector"
+            android:minHeight="30dp"
+            android:paddingStart="@dimen/lib_padding_left"
+            android:paddingEnd="@dimen/lib_padding_right"
+            tools:text="80" />
+
+    </LinearLayout>
+
+    <com.angcyo.widget.progress.DslSeekBar
+        android:id="@+id/lib_seek_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|right"
+        android:paddingHorizontal="@dimen/lib_hdpi"
+        app:sb_checked_color="@color/colorPrimary"
+        tools:progress_show_text="true"
+        tools:progress_value="0"
+        tools:seek_show_thumb_text="true" />
+
+</LinearLayout>

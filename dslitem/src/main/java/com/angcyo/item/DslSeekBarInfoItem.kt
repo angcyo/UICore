@@ -22,7 +22,7 @@ import com.angcyo.widget.progress.DslSeekBar
  */
 open class DslSeekBarInfoItem : DslBaseInfoItem() {
 
-    /**[0-100]*/
+    /**[min-max] 非比例值*/
     var itemSeekProgress: Float = 0f
 
     /**是否显示进度文本*/
@@ -41,7 +41,7 @@ open class DslSeekBarInfoItem : DslBaseInfoItem() {
     }
 
     /**进度改变回调,
-     * [value] 进度值
+     * [value] 进度值[min]~[max]
      * [fraction] 进度比例
      * [fromUser] 是否是用户触发*/
     var itemSeekChanged: (value: Float, fraction: Float, fromUser: Boolean) -> Unit = { _, _, _ -> }
@@ -82,7 +82,9 @@ open class DslSeekBarInfoItem : DslBaseInfoItem() {
         }
     }
 
-    /**滑块改变后触发*/
+    /**滑块改变后触发
+     * [value] 进度值 [min~max]
+     * [fraction] 比例值 [0~1f]*/
     @UpdateByDiff
     @UpdateByNotify
     open fun onItemSeekChanged(value: Float, fraction: Float, fromUser: Boolean) {

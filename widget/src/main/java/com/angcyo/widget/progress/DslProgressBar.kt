@@ -23,6 +23,7 @@ import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.getColor
+import com.angcyo.library.ex.progressValueFraction
 import com.angcyo.library.ex.toDp
 import com.angcyo.library.ex.toDpi
 import com.angcyo.widget.R
@@ -58,7 +59,6 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         get() = progressMaxValue - progressMinValue
 
     /**当前的进度
-     * [0~100]
      * [progressMinValue]~[progressMaxValue]*/
     var progressValue: Float = 0f
         set(value) {
@@ -66,6 +66,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             field = validProgress(value)
 
             if (enableShowHideProgress) {
+                //自动显示隐藏动画
                 if (old <= 0 && field > 0) {
                     animate().translationY(0f).setDuration(Anim.ANIM_DURATION).start()
                 } else if (field >= progressMaxValue) {
@@ -75,6 +76,19 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             }
             postInvalidate()
         }
+
+    /**
+     * [0~1]的比例
+     * [progressValue]
+     * [_progressFraction]
+     * [_progressSecondFraction]
+     * */
+    val progressFraction: Float
+        get() = progressValueFraction(
+            progressValue,
+            progressMinValue,
+            progressMaxValue
+        )!!
 
     /**第二进度*/
     var progressSecondValue: Float = 0f
@@ -585,7 +599,8 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         }
     }
 
-    /**设置背景渐变的颜色*/
+    /**设置背景渐变的颜色
+     * [color] 支持多个颜色的int值和hex值*/
     fun setBgGradientColors(color: String?) {
         DslGradientDrawable().apply {
             if (color?.contains(",") == true) {
@@ -642,7 +657,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
     var _animtor: Animator? = null
 
-    /**限制设置的非法进度值*/
+    /**限制设置的非法进度值, [progress]非[0~1]*/
     fun validProgress(progress: Float): Float {
         return MathUtils.clamp(progress, progressMinValue, progressMaxValue)
     }

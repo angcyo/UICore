@@ -695,7 +695,7 @@ fun getValueFrom(value: Any?, valueType: Any?): Any? {
     }
 }
 
-/**限制最小值/最大值
+/**限制[value] 在最小值/最大值之间
  * [value] 需要限制的值
  * [valueType] 值的类型判断
  * */
@@ -755,6 +755,23 @@ fun clampValue(
         }
         return value
     }
+}
+
+/**进度[value]在[minValue]~[maxValue]中的比例
+ * 返回[0~1]之间的比例*/
+fun progressValueFraction(
+    value: Any?,
+    minValue: Any?,
+    maxValue: Any?
+): Float? {
+    val valueStr = value?.toString()
+    if (valueStr.isNullOrBlank()) {
+        return null
+    }
+    val min = minValue?.toString()?.toFloatOrNull() ?: 0f
+    val max = maxValue?.toString()?.toFloatOrNull() ?: 100f
+    val fraction = value.toString().toFloatOrNull() ?: min
+    return (fraction - min) / (max - min)
 }
 
 /**是否是在输入最小的浮点值*/

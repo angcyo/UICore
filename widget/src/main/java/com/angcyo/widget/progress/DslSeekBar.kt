@@ -431,11 +431,16 @@ open class DslSeekBar(context: Context, attributeSet: AttributeSet? = null) :
 
     //</editor-fold desc="Touch事件">
 
+    /**[progress] [fromProgress] 非[0~1]*/
     override fun setProgress(progress: Float, fromProgress: Float, animDuration: Long) {
         super.setProgress(progress, fromProgress, animDuration)
         val validProgress = validProgress(progress)
         onSeekBarConfig?.apply {
-            onSeekChanged(validProgress, validProgress / progressValidMaxValue, false)
+            onSeekChanged(
+                validProgress,
+                (validProgress - progressMinValue) / progressValidMaxValue,
+                false
+            )
         }
     }
 

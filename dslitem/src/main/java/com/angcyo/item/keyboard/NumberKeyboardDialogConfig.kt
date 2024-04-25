@@ -70,7 +70,7 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
             }
         }
 
-    /**用来判断当前值的类型*/
+    /**用来判断当前值的类型, 具有类型的数值*/
     var numberValueType: Any? = null
         get() = field ?: numberValue
 
@@ -329,28 +329,29 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     }
 
     /**用最小值, 最大值和对应的比例, 更新[numberValue]
-     * [progress] 进度[0~100]*/
-    fun updateProgressValue(progress: Float) {
+     * [progress] 进度[0~100] [min~max]值
+     * [fraction] [0~1f]比例*/
+    fun updateProgressValue(progress: Float, fraction: Float? = null) {
         val min = numberMinValue
         val max = numberMaxValue
-        val fraction = progress / 100f
+        val f = fraction ?: (progress / 100f)
         if (min != null && max != null) {
             if (numberValueType is Double) {
                 val maxD = max as Double
                 val minD = min as Double
-                numberValue = minD + (maxD - minD) * fraction
+                numberValue = minD + (maxD - minD) * f
             } else if (numberValueType is Float) {
                 val maxF = max as Float
                 val minF = min as Float
-                numberValue = minF + (maxF - minF) * fraction
+                numberValue = minF + (maxF - minF) * f
             } else if (numberValueType is Long) {
                 val maxL = max as Long
                 val minL = min as Long
-                numberValue = (minL + (maxL - minL) * fraction).roundToLong()
+                numberValue = (minL + (maxL - minL) * f).roundToLong()
             } else if (numberValueType is Int) {
                 val maxI = max as Int
                 val minI = min as Int
-                numberValue = (minI + (maxI - minI) * fraction).roundToInt()
+                numberValue = (minI + (maxI - minI) * f).roundToInt()
             } else {
                 numberValue = progress
             }
@@ -360,8 +361,8 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     }
 
     /**获取当前输入的值, 对应的进度
-     * [0~100]*/
-    fun getProgressValue(): Float? {
+     * [0~100]比例值*/
+    fun getProgressValueFraction(): Float? {
         val min = numberMinValue
         val max = numberMaxValue
         if (min != null && max != null) {
