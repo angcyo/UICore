@@ -7,6 +7,7 @@ import androidx.annotation.LayoutRes
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.item.style.ITextInfoItem
 import com.angcyo.item.style.TextInfoItemConfig
+import com.angcyo.library.ex.ClickAction
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex._drawable
 import com.angcyo.library.ex.color
@@ -33,6 +34,9 @@ open class DslBaseInfoItem : DslAdapterItem(), ITextInfoItem {
             }
         }
 
+    /**文本的点击事件*/
+    var itemTextClickAction: ClickAction? = null
+
     var itemInfoIconColor: Int = undefined_res
 
     /**扩展布局信息*/
@@ -55,6 +59,8 @@ open class DslBaseInfoItem : DslAdapterItem(), ITextInfoItem {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+
+        itemHolder.click(textInfoItemConfig.itemInfoTextViewId, itemTextClickAction)
 
         itemHolder.itemView.setRBgDrawable(itemRBackgroundDrawable)
     }

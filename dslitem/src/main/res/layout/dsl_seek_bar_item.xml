@@ -37,9 +37,11 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/lib_padding_left"
             android:background="@drawable/lib_keyboard_number_increment_selector"
+            android:gravity="center"
+            android:minWidth="50dp"
             android:minHeight="30dp"
-            android:paddingStart="@dimen/lib_padding_left"
-            android:paddingEnd="@dimen/lib_padding_right"
+            android:paddingStart="@dimen/lib_hdpi"
+            android:paddingEnd="@dimen/lib_hdpi"
             tools:text="80" />
 
     </LinearLayout>

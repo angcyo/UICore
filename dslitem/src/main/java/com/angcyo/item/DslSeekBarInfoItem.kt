@@ -60,7 +60,16 @@ open class DslSeekBarInfoItem : DslBaseInfoItem() {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+        initSeekBarView(itemHolder, itemPosition, adapterItem, payloads)
+    }
 
+    /**初始化滑块*/
+    open fun initSeekBarView(
+        itemHolder: DslViewHolder,
+        itemPosition: Int,
+        adapterItem: DslAdapterItem,
+        payloads: List<Any>
+    ) {
         itemHolder.v<DslSeekBar>(R.id.lib_seek_view)?.apply {
             showProgressText = itemShowProgressText
             progressTextFormatAction = itemProgressTextFormatAction
@@ -73,7 +82,6 @@ open class DslSeekBarInfoItem : DslBaseInfoItem() {
                 onSeekTouchEnd = itemSeekTouchEnd
             }
         }
-
         if (itemEnableSeekPopupTip) {
             itemHolder.touch(R.id.lib_seek_view) { view, event ->
                 showBubblePopupTip(view, event)

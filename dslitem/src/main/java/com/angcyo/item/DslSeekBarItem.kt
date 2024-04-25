@@ -48,14 +48,26 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
     /**seek bar 的背景渐变颜色*/
     var itemSeekBgColors: String? = null
 
+    /**[itemNumberValue]转换成对应类型的数值*/
+    val _itemTypeValue: Any?
+        get() {
+            if (itemSeekProgressType is Float || itemSeekProgressType is Double) {
+                return itemNumberValue?.toString()?.toFloatOrNull()
+            }
+            if (itemSeekProgressType is Int || itemSeekProgressType is Long) {
+                return itemNumberValue?.toString()?.toFloatOrNull()?.toInt()
+            }
+            return itemNumberValue
+        }
+
     /**[itemNumberValue]对应显示的字符串*/
     val _itemValueString: String?
         get() {
             if (itemSeekProgressType is Float || itemSeekProgressType is Double) {
-                return itemNumberValue?.toString()?.toFloatOrNull()?.decimal(itemDecimalCount)
+                return (_itemTypeValue as? Float)?.decimal(itemDecimalCount)
             }
             if (itemSeekProgressType is Int || itemSeekProgressType is Long) {
-                return itemNumberValue?.toString()?.toFloatOrNull()?.toInt()?.toString()
+                return (_itemTypeValue as? Int)?.toString()
             }
             return itemNumberValue?.toString()
         }
@@ -104,7 +116,6 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-        initSeekBarView(itemHolder, itemPosition, adapterItem, payloads)
 
         itemHolder.tv(R.id.lib_value_view)?.apply {
             isEnabled = itemEnable
@@ -115,8 +126,7 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
         }
     }
 
-    /**初始化滑块*/
-    open fun initSeekBarView(
+    override fun initSeekBarView(
         itemHolder: DslViewHolder,
         itemPosition: Int,
         adapterItem: DslAdapterItem,
@@ -144,6 +154,7 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
                 }
             }
         }
+        super.initSeekBarView(itemHolder, itemPosition, adapterItem, payloads)
     }
 
     /**显示键盘输入对话框*/
