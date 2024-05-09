@@ -268,6 +268,19 @@ class Tcp : ICancel {
                 }
             }
 
+            //2024-5-9 强行直接断开成功
+            if (device != null) {
+                for (listener in listeners) {
+                    listener.onConnectStateChanged(
+                        this,
+                        TcpState(device.apply {
+                            connectState = CONNECT_STATE_DISCONNECT
+                        }, CONNECT_STATE_DISCONNECT, info),
+                        info
+                    )
+                }
+            }
+
             try {
                 socket?.shutdownInput()
                 _socketInputStream?.close()
@@ -284,17 +297,6 @@ class Tcp : ICancel {
                         socket.close()
                     } catch (e: Exception) {
                         e.printStackTrace()
-                    }
-                }
-                if (device != null) {
-                    for (listener in listeners) {
-                        listener.onConnectStateChanged(
-                            this,
-                            TcpState(device.apply {
-                                connectState = CONNECT_STATE_DISCONNECT
-                            }, CONNECT_STATE_DISCONNECT, info),
-                            info
-                        )
                     }
                 }
             }
@@ -381,7 +383,8 @@ class Tcp : ICancel {
                             timeout > 0 && nowTime() - _lastSendTime > timeout
                         ) {
                             //断开了连接
-                            release(null)
+                            //2024-5-9 不主动断开
+                            //release(null)
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -471,7 +474,7 @@ class Tcp : ICancel {
 
                             if (sendDelay > 0 && sendDelayByteCount in 1..delaySendSize) {
                                 delaySendSize = 0
-                                sleep(sendDelay.toLong())
+                                sleep(sendDelay)
                             }
                         }
 
