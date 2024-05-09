@@ -65,7 +65,7 @@ _writeRes.doFirst {
 
     //需要写入的资源key
     def resKeyList = [
-            "engrave"
+            "engrave_type"
     ]
 
     //res翻译资源从第几行开始
