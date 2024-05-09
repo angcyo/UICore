@@ -7,7 +7,11 @@ import com.angcyo.coroutine.launchLifecycle
 import com.angcyo.coroutine.withBlock
 import com.angcyo.dialog.BaseDialogConfig
 import com.angcyo.dialog.configBottomDialog
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.file
+import com.angcyo.library.ex.fileSizeString
+import com.angcyo.library.ex.open
+import com.angcyo.library.ex.readTextLines
+import com.angcyo.library.ex.shareFile
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -21,7 +25,7 @@ class FileViewDialogConfig(context: Context? = null) : BaseDialogConfig(context)
     var filePath: String? = null
 
     /**读取文件的行数*/
-    var readFileLines: Int = 500
+    var readFileLines: Int = 100
 
     /**反向读取文件, 倒序读取文件内容*/
     var readReversed: Boolean = false
