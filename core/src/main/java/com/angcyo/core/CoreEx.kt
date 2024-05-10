@@ -186,6 +186,7 @@ fun DslGroupHelper.appendIconItem(
 ): View? {
     return inflate(R.layout.lib_icon_layout, attachToRoot) {
         find<DslImageView>(R.id.lib_icon_view)?.apply {
+            showTouchMask = false
             this.action()
         }
     }
