@@ -28,7 +28,10 @@ data class TcpDevice(
      * [com.angcyo.http.tcp.Tcp.CONNECT_STATE_DISCONNECT]
      * [com.angcyo.http.tcp.Tcp.CONNECT_STATE_ERROR]
      * */
-    var connectState: Int = 0
+    var connectState: Int = 0,
+
+    /**解析出来的host主机地址, 有可能是ip*/
+    var resolveHost: String? = null,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

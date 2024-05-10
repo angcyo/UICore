@@ -93,4 +93,7 @@ object LibLpHawkKeys {
 
     /**是否激活多选时元素边框的绘制*/
     var enableRenderElementBounds: Boolean by HawkPropertyValue<Any, Boolean>(true)
+
+    /**是否优先使用ip连接设备*/
+    var enableUseIpConnect: Boolean by HawkPropertyValue<Any, Boolean>(true)
 }

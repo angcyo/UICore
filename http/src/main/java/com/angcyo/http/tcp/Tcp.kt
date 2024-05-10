@@ -5,6 +5,7 @@ import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
 import com.angcyo.library.LTime
 import com.angcyo.library.component.ICancel
+import com.angcyo.library.component.hawk.LibLpHawkKeys
 import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.ex.isDebuggerConnected
@@ -171,11 +172,14 @@ class Tcp : ICancel {
                 var tryCount = 0
                 while (this.socket?.isConnected == false) {
                     try {
-                        "TCP准备连接:${tcpDevice!!.address}:${tcpDevice!!.port} /$tryCount".apply {
+                        val host = if (LibLpHawkKeys.enableUseIpConnect) tcpDevice!!.resolveHost
+                            ?: tcpDevice!!.address else tcpDevice!!.address
+                        val port = tcpDevice!!.port
+                        "TCP准备连接:$host:${port} /$tryCount".apply {
                             L.d(this)
                             writeTo(libAppFile(LogFile.log, Constant.LOG_FOLDER_NAME))
                         }
-                        val socketAddress = InetSocketAddress(tcpDevice!!.address, tcpDevice!!.port)
+                        val socketAddress = InetSocketAddress(host, port)
                         //socket?.bind(socketAddress)
 
                         //Socket(InetAddress.getByName(tcpDevice!!.address), tcpDevice!!.port)
