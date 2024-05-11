@@ -3,6 +3,7 @@ package com.angcyo.vector
 import android.graphics.Path
 import android.graphics.PointF
 import android.os.Build
+import com.angcyo.gcode.GCodeWriteHandler
 import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.annotation.Flag
@@ -660,6 +661,10 @@ abstract class VectorWriteHandler {
     ) {
         var isFirst = true
         for (path in pathList) {
+            if (this is GCodeWriteHandler) {
+                isSetPower = false
+            }
+
             if (isDebuggerConnected()) {
                 val bitmap = path.toBitmap()
                 L.i(bitmap?.byteCount)

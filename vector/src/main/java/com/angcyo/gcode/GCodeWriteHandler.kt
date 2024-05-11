@@ -123,6 +123,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
     }
 
     override fun onPathStart() {
+        isSetPower = false
         if (gcodeHeader != null) {
             if (gcodeHeader!!.isNotEmpty()) {
                 writer?.appendLine(gcodeHeader!!)
