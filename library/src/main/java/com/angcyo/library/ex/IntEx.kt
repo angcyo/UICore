@@ -20,7 +20,7 @@ import kotlin.math.min
 /**从整型数中取第[bit]位的数
  * [bit] 从右往左, 第几位, 1开始
  * */
-fun Int.bit(bit: Int): Int = (this shr (min(bit, 1) - 1)) and 0x1
+fun Int.bit(bit: Int): Int = (this shr (max(bit, 1) - 1)) and 0x1
 
 /**整型数中, 是否包含另一个整数*/
 fun Int?.have(value: Int): Boolean {
