@@ -6,6 +6,7 @@ import com.angcyo.item.keyboard.numberKeyboardDialog
 import com.angcyo.item.style.itemInfoText
 import com.angcyo.library.component.RegionTouchDetector
 import com.angcyo.library.ex.decimal
+import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.progressValueFraction
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
@@ -45,8 +46,14 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
     /**seek bar 的颜色*/
     var itemSeekBarColor: Int? = null
 
+    /**[itemSeekBarColor]渐变色, 优先使用*/
+    var itemSeekBarColors: String? = null
+
     /**seek bar 的背景渐变颜色*/
     var itemSeekBgColors: String? = null
+
+    /**seek bar的高度*/
+    var itemSeekProgressHeight: Int = 8 * dpi
 
     /**[itemNumberValue]转换成对应类型的数值*/
     val _itemTypeValue: Any?
@@ -136,14 +143,28 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
             if (itemSeekBgColors != null) {
                 setBgGradientColors(itemSeekBgColors)
             }
-            val color = itemSeekBarColor
-            if (color != null) {
-                setTrackGradientColors("$color")
-                updateThumbColor(color)
+
+            if (itemSeekBarColors != null) {
+                val last = setTrackGradientColors(itemSeekBarColors)?.lastOrNull()
+                if (last != null) {
+                    updateThumbColor(last)
+                } else {
+                    val color = itemSeekBarColor
+                    if (color != null) {
+                        updateThumbColor(color)
+                    }
+                }
+            } else {
+                val color = itemSeekBarColor
+                if (color != null) {
+                    setTrackGradientColors("$color")
+                    updateThumbColor(color)
+                }
             }
 
             progressMinValue = itemNumberMinValue?.toString()?.toFloatOrNull() ?: 0f
             progressMaxValue = itemNumberMaxValue?.toString()?.toFloatOrNull() ?: 100f
+            progressHeight = itemSeekProgressHeight
 
             if (itemSeekProgressType != null) {
                 progressValueTouchAction = { touchType ->

@@ -620,8 +620,8 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     }
 
     /**设置进度条渐变的颜色*/
-    fun setTrackGradientColors(color: String?) {
-        DslGradientDrawable().apply {
+    fun setTrackGradientColors(color: String?): IntArray? {
+        val drawable = DslGradientDrawable().apply {
             if (color?.contains(",") == true) {
                 gradientColors = _fillColor(color)
             } else if (!color.isNullOrEmpty()) {
@@ -635,6 +635,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             updateOriginDrawable()
             progressTrackDrawable = originDrawable
         }
+        return drawable.gradientColors
     }
 
     /**设置第二进度渐变的颜色*/
