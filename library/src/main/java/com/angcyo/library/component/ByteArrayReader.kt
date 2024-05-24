@@ -86,6 +86,17 @@ class ByteArrayReader(val bytes: ByteArray) {
         return String(array, charset)
     }
 
+    /**读取字符串直到0x00结束*/
+    fun readStringEnd(def: String? = null, charset: Charset = Charsets.UTF_8): String? {
+        val bytes = readLoop { _, byte ->
+            byte.toUByte().toInt() == 0
+        }
+        if (bytes.isEmpty()) {
+            return def
+        }
+        return String(bytes, charset)
+    }
+
     /**循环读取连续的字符串
      * [maxSize] 需要读取的最大字节数*/
     fun readStringList(maxSize: Int, charset: Charset = Charsets.UTF_8): List<String> {
