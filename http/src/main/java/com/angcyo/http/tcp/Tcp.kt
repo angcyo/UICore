@@ -80,7 +80,7 @@ class Tcp : ICancel {
 
     /**读流的超时时长, 同时也是超时时长
      * [java.net.Socket.setSoTimeout]*/
-    var soTimeout = 5000
+    var soTimeout = 10000
 
     /**多久之后未连接, 或者未收到数据则视为断开了连接*/
     var connectTimeout = 5000
