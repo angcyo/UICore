@@ -155,7 +155,12 @@ class Tcp : ICancel {
             return
         }
         if (isConnected()) {
-            onSocketConnectSuccess(info)
+            try {
+                onSocketConnectSuccess(info)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                release(null)
+            }
             return
         }
         for (listener in listeners) {
