@@ -30,7 +30,6 @@ import com.angcyo.library.ex.find
 import com.angcyo.library.ex.getValueFrom
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.inflate
-import com.angcyo.library.ex.isFloatMinAdjustValue
 import com.angcyo.library.ex.remove
 import com.angcyo.library.ex.toStr
 import com.angcyo.library.ex.visible
@@ -318,13 +317,13 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
         _isFirstInput = false
         keyboardInputValueParse(resultBuilder, null, false, value, 1f, 10f, decimalCount)
 
-        var clamp = !NumberKeyboardPopupConfig.isControlInputNumber(value)
+        /*var clamp = !NumberKeyboardPopupConfig.isControlInputNumber(value)
         if (numberValueType is Float) {
             if (isFloatMinAdjustValue(resultBuilder.toString(), numberMinValue)) {
                 clamp = false
             }
-        }
-        updateDialogMessage(clamp)
+        }*/
+        updateDialogMessage(false)
         return false
     }
 
