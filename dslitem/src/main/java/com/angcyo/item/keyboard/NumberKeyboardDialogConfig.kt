@@ -89,7 +89,7 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     /**
      * 最大输入字符限制
      * */
-    var maxInputLength = 20
+    var maxInputLength = 6
 
     /**如果是小数, 则顶多能输入到小数点后几位*/
     var decimalCount = numberDecimalCount

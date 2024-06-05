@@ -11,6 +11,7 @@ import com.angcyo.library.ex.progressValueFraction
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.progress.DslSeekBar
+import kotlin.math.roundToInt
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -58,10 +59,28 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
     /**[itemNumberValue]转换成对应类型的数值*/
     val _itemTypeValue: Any?
         get() {
-            if (itemSeekProgressType is Float || itemSeekProgressType is Double) {
+            if (itemSeekProgressType is Float) {
+                if (itemNumberValue is Float) {
+                    return itemNumberValue
+                }
                 return itemNumberValue?.toString()?.toFloatOrNull()
             }
-            if (itemSeekProgressType is Int || itemSeekProgressType is Long) {
+            if (itemSeekProgressType is Double) {
+                if (itemNumberValue is Double) {
+                    return itemNumberValue
+                }
+                return itemNumberValue?.toString()?.toFloatOrNull()
+            }
+            if (itemSeekProgressType is Int) {
+                if (itemNumberValue is Int) {
+                    return itemNumberValue
+                }
+                return itemNumberValue?.toString()?.toFloatOrNull()?.toInt()
+            }
+            if (itemSeekProgressType is Long) {
+                if (itemNumberValue is Long) {
+                    return itemNumberValue
+                }
                 return itemNumberValue?.toString()?.toFloatOrNull()?.toInt()
             }
             return itemNumberValue
@@ -82,9 +101,7 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
     /**比例 0~1 的值*/
     val _itemProgressFraction: Float
         get() = progressValueFraction(
-            itemNumberValue,
-            itemNumberMinValue,
-            itemNumberMaxValue
+            itemNumberValue, itemNumberMinValue, itemNumberMaxValue
         )!!
 
     init {
@@ -111,7 +128,12 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
 
     /**仅更新[itemNumberValue]的同时, 更新[itemSeekProgress]*/
     fun updateItemNumberValue(number: Any?) {
-        itemNumberValue = number
+        if (itemNumberValue is Int || itemNumberValue is Long) {
+            itemNumberValue = number?.toString()?.toFloatOrNull()?.roundToInt() ?: itemNumberValue
+        } else {
+            itemNumberValue = number
+        }
+
         val num = number?.toString()?.toFloatOrNull() ?: 0f
         itemSeekProgress = num
     }
