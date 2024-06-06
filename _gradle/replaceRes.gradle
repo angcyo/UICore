@@ -65,7 +65,11 @@ _writeRes.doFirst {
 
     //需要写入的资源key
     def resKeyList = [
-            "engrave_type"
+            "flame_warning_tip",
+            "head_cover_tip",
+            "front_gate_tip",
+            "back_gate_tip",
+            "put_warning_tip",
     ]
 
     //res翻译资源从第几行开始
@@ -76,7 +80,8 @@ _writeRes.doFirst {
         //开始写入res key对应的各个翻译
         language.eachWithIndex { lan, index ->
             //def resPath = "./UICoreEx/lpDevice/src/main/res/values-${lan}/device_strings.xml"
-            def resPath = "./UICoreEx/canvas2_lp/src/main/res/values-${lan}/canvas2_string.xml"
+            //def resPath = "./UICoreEx/canvas2_lp/src/main/res/values-${lan}/canvas2_string.xml"
+            def resPath = "./UICoreEx/fsc/src/main/res/values-${lan}/fsc_strings.xml"
             if (lan == "en") {
                 resPath = resPath.replaceAll("-en", "")
             }
