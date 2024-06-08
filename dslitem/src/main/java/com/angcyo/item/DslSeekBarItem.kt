@@ -24,7 +24,7 @@ import kotlin.math.roundToInt
 open class DslSeekBarItem : DslSeekBarInfoItem() {
 
     /**当前的值*/
-    var itemNumberValue: Any? = 0
+    var itemNumberValue: Any? = null
 
     //---
 
@@ -90,7 +90,7 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
     val _itemValueString: String?
         get() {
             if (itemSeekProgressType is Float || itemSeekProgressType is Double) {
-                return (_itemTypeValue as? Float)?.decimal(itemDecimalCount)
+                return (_itemTypeValue as? Float)?.decimal(itemDecimalCount, fadedUp = true)
             }
             if (itemSeekProgressType is Int || itemSeekProgressType is Long) {
                 return (_itemTypeValue as? Int)?.toString()
@@ -119,6 +119,9 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
             itemSeekProgressType = 0f
         } else {
             itemSeekProgressType = 0
+        }
+        if (itemNumberValue == null) {
+            itemNumberValue = itemSeekProgressType
         }
         itemNumberMinValue = minValue
         itemNumberMaxValue = maxValue

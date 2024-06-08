@@ -32,11 +32,7 @@ import kotlin.math.sqrt
 /**计算两点之间的距离*/
 fun distance(point1: PointF, point2: PointF, abs: Boolean = true): Double {
     return c(
-        point1.x.toDouble(),
-        point1.y.toDouble(),
-        point2.x.toDouble(),
-        point2.y.toDouble(),
-        abs
+        point1.x.toDouble(), point1.y.toDouble(), point2.x.toDouble(), point2.y.toDouble(), abs
     )
 }
 
@@ -123,11 +119,7 @@ fun midPoint(p1: PointF, p2: PointF, result: PointF) {
  * [pivotX] [pivotY] 圆心坐标
  * [dotRadians]*/
 fun dotDegrees(
-    radius: Double,
-    degrees: Double,
-    pivotX: Double,
-    pivotY: Double,
-    result: PointD = PointD()
+    radius: Double, degrees: Double, pivotX: Double, pivotY: Double, result: PointD = PointD()
 ): PointD {
     val x = pivotX + radius * cos(degrees * Math.PI / 180)
     val y = pivotY + radius * sin(degrees * Math.PI / 180)
@@ -136,11 +128,7 @@ fun dotDegrees(
 }
 
 fun dotDegrees(
-    radius: Float,
-    degrees: Float,
-    pivotX: Float,
-    pivotY: Float,
-    result: PointF = PointF()
+    radius: Float, degrees: Float, pivotX: Float, pivotY: Float, result: PointF = PointF()
 ): PointF {
     val x = pivotX + radius * cos(degrees * Math.PI / 180)
     val y = pivotY + radius * sin(degrees * Math.PI / 180)
@@ -222,7 +210,8 @@ fun Double.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
     return String.format(Locale.US, "%.${digit}f", value)
 }
 
-/**保留小数点后几位*/
+/**保留小数点后几位
+ * [fadedUp] 是否四舍五入*/
 fun Float.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
     val f = 10f.pow(digit)
     val value = if (isNaN()) {
@@ -295,11 +284,7 @@ fun Double.toDegrees(): Double = Math.toDegrees(this)
  * [radius] 半径
  * [angleInDegrees] 角度, 非弧度*/
 fun getPointOnCircle(
-    cx: Float,
-    cy: Float,
-    radius: Float,
-    angleInDegrees: Float,
-    result: PointF = PointF()
+    cx: Float, cy: Float, radius: Float, angleInDegrees: Float, result: PointF = PointF()
 ): PointF {
     // 将角度值转换为弧度值
     val angleInRadians = Math.toRadians(angleInDegrees.toDouble()).toFloat()
@@ -312,11 +297,7 @@ fun getPointOnCircle(
 
 /**[getRectOnCircle]*/
 fun getRectOnCircle(
-    height: Float,
-    cx: Float,
-    cy: Float,
-    radius: Float,
-    angleInDegrees: Float
+    height: Float, cx: Float, cy: Float, radius: Float, angleInDegrees: Float
 ): RectF = getRectOnCircle(1f, height, cx, cy, radius, angleInDegrees)
 
 /**获取圆上指定角度的矩形坐标
@@ -324,12 +305,7 @@ fun getRectOnCircle(
  * [radius] 半径
  * [angleInDegrees] 角度, 非弧度*/
 fun getRectOnCircle(
-    width: Float,
-    height: Float,
-    cx: Float,
-    cy: Float,
-    radius: Float,
-    angleInDegrees: Float
+    width: Float, height: Float, cx: Float, cy: Float, radius: Float, angleInDegrees: Float
 ): RectF {
     val result = RectF()
     result.set(cx + radius, cy - height / 2, cx + radius + width, cy + height / 2)
@@ -411,8 +387,7 @@ fun Matrix.getScaleY(): Float {
 fun Matrix.getScale(): Float {
     getValues(_tempValues)
     return sqrt(
-        _tempValues[Matrix.MSCALE_X].pow(2) +
-                _tempValues[Matrix.MSKEW_Y].pow(2)
+        _tempValues[Matrix.MSCALE_X].pow(2) + _tempValues[Matrix.MSKEW_Y].pow(2)
     )
 }
 
@@ -434,8 +409,7 @@ fun Matrix.getRotate(): Float = (360 + getRotateDegrees()) % 360
  * [-180°~0]
  * */
 fun Matrix.getRotateDegrees(): Float {
-    getValues(_tempValues)
-    /*//    // translation is simple
+    getValues(_tempValues)/*//    // translation is simple
      * [0~-180°]
      * [180°~0]
     //    val tx = _tempValues[Matrix.MTRANS_X]
@@ -456,8 +430,7 @@ fun Matrix.getRotateDegrees(): Float {
         return rAngle*/
 
     val degrees = atan2(
-        _tempValues[Matrix.MSKEW_X],
-        _tempValues[Matrix.MSCALE_X]
+        _tempValues[Matrix.MSKEW_X], _tempValues[Matrix.MSCALE_X]
     ) * (180 / Math.PI)
 
     return (-degrees).toFloat()
@@ -467,8 +440,7 @@ fun Matrix.getRotateDegrees(): Float {
 fun Matrix.getRotateDegreesY(): Float {
     getValues(_tempValues)
     val degrees = atan2(
-        _tempValues[Matrix.MSKEW_Y],
-        _tempValues[Matrix.MSCALE_Y]
+        _tempValues[Matrix.MSKEW_Y], _tempValues[Matrix.MSCALE_Y]
     )
     return (-degrees).toDegrees()
 }
@@ -567,11 +539,7 @@ fun PointF.rotate(rotate: Float, pivotX: Float, pivotY: Float, result: PointF = 
 
 /**缩放一个点*/
 fun PointF.scale(
-    scaleX: Float,
-    scaleY: Float,
-    pivotX: Float,
-    pivotY: Float,
-    result: PointF = this
+    scaleX: Float, scaleY: Float, pivotX: Float, pivotY: Float, result: PointF = this
 ): PointF {
     val matrix = acquireTempMatrix()
     matrix.reset()
@@ -583,10 +551,7 @@ fun PointF.scale(
 
 /**反向旋转一个点坐标*/
 fun PointF.invertRotate(
-    rotate: Float,
-    pivotX: Float,
-    pivotY: Float,
-    result: PointF = this
+    rotate: Float, pivotX: Float, pivotY: Float, result: PointF = this
 ): PointF {
     val matrix = acquireTempMatrix()
     matrix.reset()
