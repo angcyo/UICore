@@ -10,6 +10,7 @@ import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.progressValueFraction
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
+import com.angcyo.widget.progress.DslProgressBar
 import com.angcyo.widget.progress.DslSeekBar
 import kotlin.math.roundToInt
 
@@ -171,14 +172,19 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
         payloads: List<Any>
     ) {
         itemHolder.v<DslSeekBar>(R.id.lib_seek_view)?.apply {
+
             if (itemSeekBgColors != null) {
                 setBgGradientColors(itemSeekBgColors)
             }
 
             if (itemSeekBarColors != null) {
-                val last = setTrackGradientColors(itemSeekBarColors)?.lastOrNull()
-                if (last != null) {
-                    updateThumbColor(last)
+                val colors = setTrackGradientColors(itemSeekBarColors)
+                if (colors != null) {
+                    updateThumbColor(
+                        DslProgressBar.getGradientColor(
+                            _itemProgressFraction, colors.toList()
+                        )
+                    )
                 } else {
                     val color = itemSeekBarColor
                     if (color != null) {

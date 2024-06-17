@@ -22,14 +22,17 @@ import com.angcyo.library.ex.anim
 import com.angcyo.library.ex.clamp
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.evaluateColor
 import com.angcyo.library.ex.getColor
 import com.angcyo.library.ex.progressValueFraction
+import com.angcyo.library.ex.size
 import com.angcyo.library.ex.toDp
 import com.angcyo.library.ex.toDpi
 import com.angcyo.widget.R
 import com.angcyo.widget.base.atMost
 import com.angcyo.widget.base.getMode
 import kotlin.math.max
+import kotlin.math.min
 
 /**
  * 提供一个高度可定义的标准进度条
@@ -41,6 +44,53 @@ import kotlin.math.max
 
 open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) :
     View(context, attributeSet) {
+
+    companion object {
+
+        /**
+         * 获取渐变颜色指定进度对应的颜色值
+         * [progress] 进度[0~1]
+         * [colors] 颜色渐变的值
+         * [colorStops] 渐变颜色分段比例, 不指定默认平分
+         *
+         */
+        fun getGradientColor(
+            progress: Float, colors: List<Int>, colorStops: List<Float>? = null
+        ): Int {
+            //debugger();
+
+            val stops = mutableListOf<Float>()
+            if (colorStops == null) {
+                val size = colors.size()
+                for (i in 0 until size) {
+                    stops.add(i * (1f / (size - 1)))
+                }
+            } else {
+                stops.addAll(colorStops)
+            }
+
+            //计算输出的颜色
+            var color = colors.first()
+            for (i in 0 until stops.size()) {
+                if (progress <= stops[i]) {
+                    val index = max(0, i - 1)
+                    val startColor = colors[index]
+                    val endColor = colors[min(index + 1, colors.size())]
+                    val startProgress = stops[index]
+                    val endProgress = stops[min(index + 1, stops.size())]
+
+                    val t = (progress - startProgress) / (endProgress - startProgress)
+
+                    color = evaluateColor(t, startColor, endColor)
+                    break
+                }
+            }
+
+
+            return color
+        }
+    }
+
 
     /**进度条背景*/
     var progressBgDrawable: Drawable? = null
@@ -85,9 +135,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
      * */
     val progressFraction: Float
         get() = progressValueFraction(
-            progressValue,
-            progressMinValue,
-            progressMaxValue
+            progressValue, progressMinValue, progressMaxValue
         )!!
 
     /**第二进度*/
@@ -237,17 +285,16 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             typedArray.getDrawable(R.styleable.DslProgressBar_progress_track_disable_drawable)
 
         progressRadius = typedArray.getDimensionPixelOffset(
-            R.styleable.DslProgressBar_progress_radius,
-            progressRadius.toInt()
+            R.styleable.DslProgressBar_progress_radius, progressRadius.toInt()
         ).toFloat()
         progressTextOffset = typedArray.getDimensionPixelOffset(
-            R.styleable.DslProgressBar_progress_text_offset,
-            progressTextOffset
+            R.styleable.DslProgressBar_progress_text_offset, progressTextOffset
         )
 
         //检测是否需要渐变, 渐变至少需要2个色值
-        if ((progressBgDrawable is ColorDrawable || progressBgDrawable == null) &&
-            typedArray.hasValue(R.styleable.DslProgressBar_progress_bg_gradient_colors)
+        if ((progressBgDrawable is ColorDrawable || progressBgDrawable == null) && typedArray.hasValue(
+                R.styleable.DslProgressBar_progress_bg_gradient_colors
+            )
         ) {
             var colors =
                 typedArray.getString(R.styleable.DslProgressBar_progress_bg_gradient_colors)
@@ -267,8 +314,9 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         }
 
         //第二进度Drawable
-        if ((progressSecondDrawable is ColorDrawable || progressSecondDrawable == null) &&
-            typedArray.hasValue(R.styleable.DslProgressBar_progress_second_gradient_colors)
+        if ((progressSecondDrawable is ColorDrawable || progressSecondDrawable == null) && typedArray.hasValue(
+                R.styleable.DslProgressBar_progress_second_gradient_colors
+            )
         ) {
             var colors =
                 typedArray.getString(R.styleable.DslProgressBar_progress_second_gradient_colors)
@@ -286,8 +334,9 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         }
 
         //进度条轨道Drawable
-        if ((progressTrackDrawable is ColorDrawable || progressTrackDrawable == null) &&
-            typedArray.hasValue(R.styleable.DslProgressBar_progress_track_gradient_colors)
+        if ((progressTrackDrawable is ColorDrawable || progressTrackDrawable == null) && typedArray.hasValue(
+                R.styleable.DslProgressBar_progress_track_gradient_colors
+            )
         ) {
             var colors =
                 typedArray.getString(R.styleable.DslProgressBar_progress_track_gradient_colors)
@@ -313,12 +362,10 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         showProgressText =
             typedArray.getBoolean(R.styleable.DslProgressBar_progress_show_text, showProgressText)
         progressTextSize = typedArray.getDimensionPixelOffset(
-            R.styleable.DslProgressBar_progress_text_size,
-            progressTextSize.toInt()
+            R.styleable.DslProgressBar_progress_text_size, progressTextSize.toInt()
         ).toFloat()
         progressTextMinWidth = typedArray.getDimensionPixelOffset(
-            R.styleable.DslProgressBar_progress_text_min_width,
-            progressTextMinWidth.toInt()
+            R.styleable.DslProgressBar_progress_text_min_width, progressTextMinWidth.toInt()
         ).toFloat()
         progressTextColor =
             typedArray.getColor(R.styleable.DslProgressBar_progress_text_color, progressTextColor)
@@ -333,8 +380,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
         progressValue = clamp(
             typedArray.getFloat(
-                R.styleable.DslProgressBar_progress_value,
-                if (isInEditMode) 50f else progressValue
+                R.styleable.DslProgressBar_progress_value, if (isInEditMode) 50f else progressValue
             ), progressMinValue, progressMaxValue
         )
         progressSecondValue = clamp(
@@ -345,15 +391,13 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
         )
 
         enableShowHideProgress = typedArray.getBoolean(
-            R.styleable.DslProgressBar_progress_enable_show_hide_progress,
-            enableShowHideProgress
+            R.styleable.DslProgressBar_progress_enable_show_hide_progress, enableShowHideProgress
         )
 
         progressClipMode =
             typedArray.getBoolean(R.styleable.DslProgressBar_progress_clip_mode, progressClipMode)
         enableProgressFlowMode = typedArray.getBoolean(
-            R.styleable.DslProgressBar_enable_progress_flow_mode,
-            enableProgressFlowMode
+            R.styleable.DslProgressBar_enable_progress_flow_mode, enableProgressFlowMode
         )
         if (enableProgressFlowMode && isInEditMode) {
             _progressFlowValue = 50
@@ -361,16 +405,13 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
         //居中提示文本
         showProgressCenterText = typedArray.getBoolean(
-            R.styleable.DslProgressBar_progress_show_center_text,
-            showProgressCenterText
+            R.styleable.DslProgressBar_progress_show_center_text, showProgressCenterText
         )
         progressCenterTextSize = typedArray.getDimensionPixelOffset(
-            R.styleable.DslProgressBar_progress_center_text_size,
-            progressCenterTextSize.toInt()
+            R.styleable.DslProgressBar_progress_center_text_size, progressCenterTextSize.toInt()
         ).toFloat()
         progressCenterTextColor = typedArray.getColor(
-            R.styleable.DslProgressBar_progress_center_text_color,
-            progressCenterTextColor
+            R.styleable.DslProgressBar_progress_center_text_color, progressCenterTextColor
         )
         progressCenterTextFormat =
             typedArray.getString(R.styleable.DslProgressBar_progress_center_text_format)
@@ -383,8 +424,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         if (heightMeasureSpec.getMode() != MeasureSpec.EXACTLY) {
             super.onMeasure(
-                widthMeasureSpec,
-                atMost(progressMinHeight + paddingTop + paddingBottom)
+                widthMeasureSpec, atMost(progressMinHeight + paddingTop + paddingBottom)
             )
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -504,19 +544,13 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             }
 
             setBounds(
-                pBound.left,
-                pBound.top,
-                right,
-                pBound.bottom
+                pBound.left, pBound.top, right, pBound.bottom
             )
 
             if (progressClipMode) {
                 canvas.withSave {
                     clipRect(
-                        pBound.left,
-                        pBound.top,
-                        progressRight,
-                        pBound.bottom
+                        pBound.left, pBound.top, progressRight, pBound.bottom
                     )
                     draw(canvas)
                 }
@@ -528,19 +562,13 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             if (enableProgressFlowMode) {
                 val progressFlowRatio = _progressFlowValue / 100f
                 setBounds(
-                    pBound.left,
-                    pBound.top,
-                    (right * progressFlowRatio).toInt(),
-                    pBound.bottom
+                    pBound.left, pBound.top, (right * progressFlowRatio).toInt(), pBound.bottom
                 )
                 progressRight = (progressRight * progressFlowRatio).toInt()
                 if (progressClipMode) {
                     canvas.withSave {
                         clipRect(
-                            pBound.left,
-                            pBound.top,
-                            progressRight,
-                            pBound.bottom
+                            pBound.left, pBound.top, progressRight, pBound.bottom
                         )
                         draw(canvas)
                     }
@@ -577,10 +605,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
                 canvas.withSave {
                     textColor = progressCenterTextClipColor
                     clipRect(
-                        pBound.left,
-                        pBound.top,
-                        progressRight,
-                        pBound.bottom
+                        pBound.left, pBound.top, progressRight, pBound.bottom
                     )
                     draw(canvas)
                 }
@@ -588,10 +613,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
                 canvas.withSave {
                     textColor = progressCenterTextColor
                     clipRect(
-                        progressRight,
-                        pBound.top,
-                        pBound.right,
-                        pBound.bottom
+                        progressRight, pBound.top, pBound.right, pBound.bottom
                     )
                     draw(canvas)
                 }
