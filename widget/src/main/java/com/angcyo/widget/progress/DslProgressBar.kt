@@ -623,8 +623,8 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
     /**设置背景渐变的颜色
      * [color] 支持多个颜色的int值和hex值*/
-    fun setBgGradientColors(color: String?) {
-        DslGradientDrawable().apply {
+    fun setBgGradientColors(color: String?): IntArray? {
+        val drawable = DslGradientDrawable().apply {
             if (color?.contains(",") == true) {
                 gradientColors = _fillColor(color)
             } else if (!color.isNullOrEmpty()) {
@@ -639,6 +639,7 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
             progressBgDrawable = originDrawable
         }
         postInvalidate()
+        return drawable.gradientColors
     }
 
     /**设置进度条渐变的颜色*/

@@ -172,11 +172,6 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
         payloads: List<Any>
     ) {
         itemHolder.v<DslSeekBar>(R.id.lib_seek_view)?.apply {
-
-            if (itemSeekBgColors != null) {
-                setBgGradientColors(itemSeekBgColors)
-            }
-
             if (itemSeekBarColors != null) {
                 val colors = setTrackGradientColors(itemSeekBarColors)
                 if (colors != null) {
@@ -196,6 +191,17 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
                 if (color != null) {
                     setTrackGradientColors("$color")
                     updateThumbColor(color)
+                }
+            }
+
+            if (itemSeekBgColors != null) {
+                val colors = setBgGradientColors(itemSeekBgColors)
+                if (colors != null) {
+                    updateThumbColor(
+                        DslProgressBar.getGradientColor(
+                            _itemProgressFraction, colors.toList()
+                        )
+                    )
                 }
             }
 
