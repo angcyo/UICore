@@ -179,6 +179,7 @@ static def formatApkName(format, an, vn, t, fn, bn, sn, ka, d) {
             .replace("#bn", bn)
             .replace("#sn", sn)
             .replace("#ka", ka)
+            .replace("__", "_")
 }
 
 //https://www.jianshu.com/p/e7a40a592f15/
