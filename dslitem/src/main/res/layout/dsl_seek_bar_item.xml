@@ -31,11 +31,21 @@
             tools:text="关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们关于我们" />
 
         <com.angcyo.widget.text.DslTextView
+            android:id="@+id/value_leading_view"
+            style="@style/LibBodyTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/lib_drawable_padding"
+            tools:drawableLeft="@drawable/lib_ic_info"
+            tools:text="999mm/s" />
+
+        <com.angcyo.widget.text.DslTextView
             android:id="@+id/lib_value_view"
             style="@style/LibBodyTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/lib_padding_left"
+            android:layout_marginLeft="@dimen/lib_hdpi"
+            android:layout_marginRight="@dimen/lib_padding_left"
             android:background="@drawable/lib_keyboard_number_increment_selector"
             android:gravity="center"
             android:minWidth="50dp"

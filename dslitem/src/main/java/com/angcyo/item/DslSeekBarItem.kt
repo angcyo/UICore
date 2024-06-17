@@ -26,6 +26,9 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
     /**当前的值*/
     var itemNumberValue: Any? = null
 
+    /**[itemNumberValue]前面的文本*/
+    var itemNumberLeading: CharSequence? = null
+
     //---
 
     /**键盘输入相关属性*/
@@ -148,6 +151,9 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
+
+        itemHolder.gone(R.id.value_leading_view, itemNumberLeading == null)
+        itemHolder.tv(R.id.value_leading_view)?.text = itemNumberLeading
 
         itemHolder.tv(R.id.lib_value_view)?.apply {
             isEnabled = itemEnable
