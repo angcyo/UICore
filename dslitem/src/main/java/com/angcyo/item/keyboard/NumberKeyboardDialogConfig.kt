@@ -26,6 +26,7 @@ import com.angcyo.library.ex._string
 import com.angcyo.library.ex.add
 import com.angcyo.library.ex.alphaRatio
 import com.angcyo.library.ex.clampValue
+import com.angcyo.library.ex.decimal
 import com.angcyo.library.ex.find
 import com.angcyo.library.ex.getValueFrom
 import com.angcyo.library.ex.have
@@ -65,7 +66,11 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
         set(value) {
             if (value !is Unit) {
                 field = value
-                dialogMessage = value?.toString()
+                dialogMessage = if (numberValueType is Long || numberValueType is Int) {
+                    value?.toString()?.toFloatOrNull()?.roundToInt()?.toString()
+                } else {
+                    value?.toString()?.toFloatOrNull()?.decimal(decimalCount)
+                }
             }
         }
 
@@ -177,8 +182,7 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
             list.add(createNumberItem(dialog, "$i"))
         }
 
-        val weight0Num = if (keyboardStyle.have(STYLE_DECIMAL)) 0.3333f else 0.6666f
-        /*list.add(
+        val weight0Num = if (keyboardStyle.have(STYLE_DECIMAL)) 0.3333f else 0.6666f/*list.add(
             createNumberItem(
                 dialog,
                 "0",
@@ -268,10 +272,7 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     private fun updateDialogMessage(clamp: Boolean = true) {
         _dialogViewHolder?.tv(R.id.dialog_message_view)?.apply {
             text = if (clamp) clampValue(
-                resultBuilder.toString(),
-                numberValueType,
-                numberMinValue,
-                numberMaxValue
+                resultBuilder.toString(), numberValueType, numberMinValue, numberMaxValue
             ).toString() else resultBuilder.toString()
 
             //输入限制
@@ -333,7 +334,10 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     fun updateProgressValue(progress: Float, fraction: Float? = null) {
         val min = numberMinValue
         val max = numberMaxValue
-        val f = fraction ?: (progress / 100f)
+
+        val minFloat = min?.toString()?.toFloatOrNull() ?: 0f
+        val maxFloat = max?.toString()?.toFloatOrNull() ?: 100f
+        val f = fraction ?: ((progress - minFloat) / (maxFloat - minFloat))
         if (min != null && max != null) {
             if (numberValueType is Double) {
                 val maxD = max as Double
@@ -360,16 +364,19 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     }
 
     /**获取当前输入的值, 对应的进度
-     * [0~100]比例值*/
+     * [0~100].[min~max]比例值*/
     fun getProgressValueFraction(): Float? {
-        val min = numberMinValue
+        return _numberValue?.toString()?.toFloatOrNull()
+        /*val min = numberMinValue
         val max = numberMaxValue
         if (min != null && max != null) {
             val value = _numberValue ?: return null
-            return (value.toString().toFloat() - min.toString().toFloat()) / (max.toString()
-                .toFloat() - min.toString().toFloat()) * 100f
+            val minFloat = min.toString().toFloat()
+            val maxFloat = max.toString().toFloat()
+            return (value.toString()
+                .toFloat() - minFloat) / (maxFloat - minFloat) * (maxFloat - minFloat)
         }
-        return null
+        return null*/
     }
 
     /**移除键盘样式
