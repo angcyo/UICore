@@ -10,6 +10,7 @@ import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempPointF
+import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
 import com.angcyo.library.ex.getRotateDegrees
 import com.angcyo.library.ex.getScaleX
@@ -358,9 +359,11 @@ data class CanvasRenderProperty(
     /**获取在[0,0]位置可以直接渲染的矩阵
      * [getRenderMatrix]*/
     fun getDrawMatrix(result: Matrix = _drawMatrix, includeRotate: Boolean = true): Matrix {
-        getRenderBounds(_boundsRect, false)
+        val rect = acquireTempRectF()
+        getRenderBounds(rect, false)
         getRenderMatrix(result, includeRotate)
-        result.postTranslate(-_boundsRect.left, -_boundsRect.top)
+        result.postTranslate(-rect.left, -rect.top)
+        rect.release()
         return result
     }
 

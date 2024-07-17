@@ -53,6 +53,10 @@ abstract class BaseElement : IElement {
     protected val RenderParams._renderMatrix
         get() = renderMatrix ?: renderProperty.getDrawMatrix(includeRotate = true)
 
+    /**[Matrix]*/
+    protected val RenderParams._renderMatrix2
+        get() = renderMatrix ?: renderProperty.getDrawMatrix(Matrix(), includeRotate = true)
+
     override var elementHitComponent: ElementHitComponent = ElementHitComponent(this)
 
     /**错误提示画笔*/
