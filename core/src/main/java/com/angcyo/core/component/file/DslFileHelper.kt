@@ -111,7 +111,8 @@ fun CharSequence.wrapData() = DslFileHelper._wrapData2(this)
 
 /**写入数据到文件
  * [folder] 文件夹的名字, 会自动追加Scheme
- * [name] 文件的名字*/
+ * [name] 文件的名字
+ * @return 返回文件路径*/
 fun FileTextData?.writeTo(
     folder: String = Constant.LOG_FOLDER_NAME,
     name: String = logFileName(),
