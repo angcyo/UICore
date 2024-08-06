@@ -6,6 +6,8 @@
  * 5: libMacRepo = '/Users/angcyo'
  * 6: gradlew publish
  * */
+//https://docs.gradle.org/current/userguide/publishing_maven.html
+//默认输出路径<user>\.m2\repository
 apply plugin: 'maven-publish'
 
 /// 构建源码jar包
