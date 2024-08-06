@@ -7,7 +7,7 @@ import com.angcyo.acc2.control.AccSchedule
 import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.control.log
 import com.angcyo.library.ex.size
-import com.angcyo.selenium.auto.Count
+import com.angcyo.acc2.control.Count
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random.Default.nextInt
