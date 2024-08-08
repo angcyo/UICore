@@ -2,6 +2,10 @@
 
 //apply plugin: 'com.android.application'
 
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
 println("key.gradle↓\n项目根路径:" + rootDir.absolutePath)
 println("脚本的路径:" + file(".").absolutePath)
 
