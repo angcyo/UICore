@@ -146,7 +146,7 @@ if (jksFile.exists()) {
     if (jksFile.exists()) {
         key_file = jksFile.getAbsolutePath()
     } else {
-        println("jks文件不存在, 签名将无法进行.")
+        println("jks文件不存在, 签名将无法进行->${jksFile.path}")
     }
 }
 
