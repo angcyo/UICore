@@ -1,0 +1,412 @@
+/**
+ * 2024-08-11 产物收集
+ * - 收集apk产物, 并重命名复制到指定目录
+ * - 收集aab产物, 并重命名复制到指定目录
+ * - mapping.txt
+ * - usage.txt
+ * - seeds.txt
+ * - R.txt
+ * - configuration.txt
+ * */
+
+println "当前Gradle版本->" + gradle.gradleVersion + " 用户目录:" + gradle.gradleUserHomeDir + " 主目录:" + gradle.gradleHomeDir
+
+def output = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
+
+//APK输出文件名配置:(不包含扩展名)
+//可用参数: #an:app名字; #vn:版本名APP_NAME; #d:当天日期yyyy-MM-dd; #t:当天时间yyyy-MM-dd_HH-mm; #fn:风味名; #bn:编译类型名;
+//         #sn:使用的签名名称; #ka:使用的签名别名;
+
+def apkFormatName = project.hasProperty("apkName") ? project.ext.apkName : "#an-#vn_#d_#fn_#bn_#ka"
+
+def _app_name = project.hasProperty("APP_NAME") ? project.ext.APP_NAME : ((project.name != "app") ? project.name : rootProject.name)
+def apk_time = apkTime()
+def release_time = releaseTime()
+
+def keyAlias = project.hasProperty("signConfig") ? signConfig.key_alias : ''
+
+android {
+    applicationVariants.all { variant ->
+        def outputName = formatApkName(apkFormatName,
+                _app_name,
+                variant.versionName,
+                apk_time,
+                variant.flavorName,
+                variant.buildType.name,
+                variant.signingConfig?.name ?: '',
+                keyAlias,
+                release_time)
+        //println "collectProduct->输出文件名[${outputName}]"
+        setProductOutputNameProperty(variant.flavorName, variant.buildType.name, outputName)
+    }
+
+    tasks.whenTaskAdded { task ->
+        final taskName = task.name
+
+        // 跳过一些多余的任务
+        if ((taskName.startsWith("assemble") || taskName.startsWith("bundle"))
+                && !taskName.contains("Classes")
+                && !taskName.contains("Resources")
+                && taskName != "assemble"
+                && taskName != "bundle") {
+
+            //任务名中的风味信息, 如果有
+            final flavor = getFlavor(taskName)
+            //任务名中的buildType信息, 如果有
+            def buildType = getBuildType(taskName)
+            //合并风味和buildType
+            final mergeFlavorBuildType = flavor == null ? buildType : "${flavor}${buildType?.capitalize() ?: ''}"
+
+            //bundle开头的任务是aab的产物
+            final isAab = taskName.startsWith("bundle")
+
+            //收集产物的任务名
+            final collectProductTaskName = "_collectProduct_${taskName}"
+
+            //println "匹配到任务:${taskName} flavor:${flavor} buildType:${buildType} ->$mergeFlavorBuildType ->$collectProductTaskName"
+
+            //创建收集产物的任务
+            tasks.create(collectProductTaskName) {
+                //原产物的文件名
+                def originName = getProperty('archivesBaseName')
+                //原产物的文件夹名
+                def originFolder = ""
+
+                if (flavor != null) {
+                    originName = "${originName}-${flavor}"
+                }
+                if (buildType != null) {
+                    originName = "${originName}-${buildType}"
+                }
+
+                if (flavor != null) {
+                    originFolder = "$originFolder${flavor}"
+                }
+                if (isAab) {
+                    if (buildType != null) {
+                        //有风味时, buildType首字母需要大写
+                        if (flavor != null) {
+                            originFolder = "$originFolder${buildType.capitalize()}"
+                        } else {
+                            originFolder = "$originFolder${buildType}"
+                        }
+                    }
+                } else {
+                    if (buildType != null) {
+                        if (originFolder.isEmpty()) {
+                            originFolder = "${buildType}"
+                        } else {
+                            originFolder = "$originFolder/${buildType}"
+                        }
+                    }
+                }
+
+                //
+                def folder = ""
+                if (isAab) {
+                    originName = "${originName}.aab"
+                    folder = "bundle"
+                } else {
+                    originName = "${originName}.apk"
+                    folder = "apk"
+                }
+
+                //原产物的构建输出目录
+                def buildDir = project.buildDir
+                def buildDirPath = buildDir.getAbsolutePath()
+
+                //原产物的输出全路径
+                def originFilePath = new File(buildDir, "outputs/$folder/${originFolder}/${originName}").absolutePath
+                description = "收集任务[$taskName]的产物文件:" + "\n${originFilePath}"
+
+                //println description
+                //println "test->" + originFolder + " :" + originName
+
+                doLast {
+                    //产物输出路径
+                    def outputFolder = new File(project.rootDir.absolutePath + "/" + output + "/" + mergeFlavorBuildType)
+                    outputFolder.mkdirs()
+
+                    //收集核心产物apk/aab
+                    def outputFileNameKey = getProductOutputNamePropertyKey(flavor, buildType)
+                    if (rootProject.hasProperty(outputFileNameKey)) {
+                        def outputFileName = rootProject.getProperty(outputFileNameKey)
+                        if (isAab) {
+                            outputFileName = "${outputFileName}.aab"
+                        } else {
+                            outputFileName = "${outputFileName}.apk"
+                        }
+
+                        if (!isAab && !file(originFilePath).exists()) {
+                            //apk 文件不存在, 则尝试使用未签名的路径试一次
+                            //aab 不会出现此情况
+                            originFilePath = originFilePath.replace(".apk", "-unsigned.apk")
+                            System.err.println "[collectProduct.gradle] 尝试收集未签名的apk产物->${originFilePath}"
+                        }
+
+                        if (file(originFilePath).exists()) {
+                            def targetPath = new File(outputFolder, outputFileName).absolutePath
+                            System.err.println "[collectProduct.gradle] 复制产物↓\n${originFilePath}\n-> ${targetPath}"
+                            //ant.move
+                            //ant.copy
+                            ant.copy file: originFilePath,
+                                    tofile: targetPath
+                        } else {
+                            System.err.println "[collectProduct.gradle] 未找到产物文件:${originFilePath}"
+                        }
+                    } else {
+                        System.err.println "未找到匹配的输出文件名属性:[${outputFileNameKey}]"
+                    }
+
+                    // app/build/outputs/mapping/release/mapping.txt
+                    // app/build/outputs/mapping/productFlavors2Release/mapping.txt
+
+                    //mapping.txt文件路径
+                    def mappingName = "mapping.txt"
+                    def mappingPath = "${buildDirPath}/outputs/mapping/${flavor}/${buildType}/${mappingName}"
+                    def mappingPath36 = "${buildDirPath}/outputs/mapping/${mergeFlavorBuildType}/${mappingName}"
+                    //def mappingFile = new File(mappingPath)
+
+                    //mapping.txt文件路径
+                    def usageName = "usage.txt"
+                    def usagePath = "${buildDirPath}/outputs/mapping/${flavor}/${buildType}/${usageName}"
+                    def usagePath36 = "${buildDirPath}/outputs/mapping/${mergeFlavorBuildType}/${usageName}"
+
+                    //mapping.txt文件路径
+                    def seedsName = "seeds.txt"
+                    def seedsPath = "${buildDirPath}/outputs/mapping/${flavor}/${buildType}/${seedsName}"
+                    def seedsPath36 = "${buildDirPath}/outputs/mapping/${mergeFlavorBuildType}/${seedsName}"
+
+                    //R.txt文件路径
+                    def rName = "R.txt"
+                    def rPath = "${buildDirPath}/intermediates/symbols/${flavor}/${buildType}/${rName}"
+                    def rPath36 = "${buildDirPath}/intermediates/runtime_symbol_list/${mergeFlavorBuildType}/${rName}"
+                    def rPath80 = "${buildDirPath}/intermediates/runtime_symbol_list/${mergeFlavorBuildType}/process${originFolder.capitalize()}Resources/${rName}"
+                    //def rFile = new File(rPath)
+
+                    //configuration.txt文件路径
+                    def cfgName = "configuration.txt"
+                    def cfgPath80 = "${buildDirPath}/outputs/mapping/${mergeFlavorBuildType}/${cfgName}"
+
+                    final outputFolderPath = outputFolder.absolutePath + "/"
+                    copyFile(mappingPath, outputFolderPath + mappingName)
+                    copyFile(mappingPath36, outputFolderPath + mappingName)
+
+                    copyFile(usagePath, outputFolderPath + usageName)
+                    copyFile(usagePath36, outputFolderPath + usageName)
+
+                    copyFile(seedsPath, outputFolderPath + seedsName)
+                    copyFile(seedsPath36, outputFolderPath + seedsName)
+
+                    copyFile(rPath, outputFolderPath + rName)
+                    copyFile(rPath36, outputFolderPath + rName)
+                    copyFile(rPath80, outputFolderPath + rName)
+
+                    copyFile(cfgPath80, outputFolderPath + cfgName)
+
+                    //删除空文件夹
+                    if (outputFolder.list().length <= 0) {
+                        outputFolder.deleteDir()
+                    }
+                }
+            }
+
+            task.finalizedBy(collectProductTaskName)
+        }
+    }
+}
+
+/**
+ * 收集完成后, 将文件夹(./.apk)子目录中的apk文件, 复制到上一级
+ * */
+gradle.buildFinished { buildResult -> /*BuildResult*/
+    copyProductFile()
+    println "[collectProduct.gradle] 收集完毕->${buildResult.action}"
+}
+
+//--
+
+/**
+ * 复制apk文件
+ * */
+def copyProductFile() {
+    def output = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
+    def apkFolder = new File(project.rootDir.absolutePath + "/" + output)
+    def fileList = apkFolder.listFiles()
+    for (file in fileList) {
+        if (file.isDirectory()) {
+            def subFileList = file.listFiles()
+
+            def isCopyFile = new File(file, ".copy") //文件是否已经复制过
+            if (!isCopyFile.exists()) {
+                isCopyFile.createNewFile()
+            }
+            def copyFileList = []
+            copyFileList = isCopyFile.readLines('UTF8')
+
+            for (subFile in subFileList) {
+                def fileName = subFile.name
+                if (subFile.isFile() && (fileName.endsWith(".apk") || fileName.endsWith(".aab"))) {
+                    def ignoreFile = false
+
+                    def haveCopyFile = false
+
+                    //是否要忽略此文件名
+                    copyFileList.each {
+                        haveCopyFile = haveCopyFile || it == fileName
+                    }
+
+                    ignoreFile = haveCopyFile
+
+                    def targetFile = new File(apkFolder, fileName)
+                    if (targetFile.exists() && subFile.lastModified() != targetFile.lastModified()) {
+                        //如果目标文件存在, 但是和源文件时间不一样, 则强制需要复制
+                        ignoreFile = false
+                    }
+
+                    if (!ignoreFile) {
+                        //apk文件, 开始复制. 文件不一样的时候才复制
+                        copyFile(subFile.absolutePath, targetFile.absolutePath)
+
+                        if (!haveCopyFile) {
+                            isCopyFile.append("${fileName}\n") //添加已经复制过的文件名
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 复制文件
+ * */
+static def copyFile(String from, String toPath) {
+    InputStream input = null
+    OutputStream output = null
+    try {
+        File source = new File(from)
+        if (!source.exists()) {
+            return
+        }
+        File dest = new File(toPath)
+        System.err.println "[collectProduct.gradle] 复制文件↓\n${source.getAbsolutePath()}\n-> ${dest.getAbsolutePath()}"
+
+        input = new FileInputStream(source)
+        output = new FileOutputStream(dest)
+        byte[] buf = new byte[1024]
+        int bytesRead
+        while ((bytesRead = input.read(buf)) != -1) {
+            output.write(buf, 0, bytesRead)
+        }
+        dest.setLastModified(source.lastModified())
+    } finally {
+        if (input != null) {
+            input.close()
+        }
+        if (output != null) {
+            output.close()
+        }
+    }
+}
+
+//--
+
+/**
+ * 格式化产物文件名
+ * */
+static def formatApkName(format, an, vn, t, fn, bn, sn, ka, d) {
+    return format.replace("#an", an)
+            .replace("#vn", vn)
+            .replace("#t", t)
+            .replace("#d", d)
+            .replace("#fn", fn)
+            .replace("#bn", bn)
+            .replace("#sn", sn)
+            .replace("#ka", ka)
+            .replace("__", "_")
+}
+
+static def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("Asia/Shanghai"))
+}
+
+static def apkTime() {
+    return new Date().format("yyyy-MM-dd_HH-mm", TimeZone.getTimeZone("Asia/Shanghai"))
+}
+
+/**
+ * 获取产物输出的文件名的属性key名
+ * */
+static def getProductOutputNamePropertyKey(flavor, buildType) {
+    def key = ""
+    if (flavor != null) {
+        key = "$key${flavor}"
+    }
+    if (buildType != null) {
+        key = "$key${buildType}"
+    }
+    final outputKey = "${key}ProductOutputName"
+    return outputKey
+}
+
+/**
+ * 设置产物输出的文件名
+ * */
+def setProductOutputNameProperty(flavor, buildType, outputName) {
+    //属性key由`flavor`+`buildType`+`ProductOutputName`组成
+    final outputKey = getProductOutputNamePropertyKey(flavor, buildType)
+    rootProject.ext.setProperty(outputKey, outputName)
+    System.err.println "产物重命名匹配->${flavor ?: ''}${buildType ?: ''} -> ${getProperty(outputKey)}"
+}
+
+//--
+
+/**
+ * 匹配[getFlavor]和[getBuildType]
+ * */
+static String firstMatchingSubstring(String taskName, String[] keys) {
+    def lcName = taskName.toLowerCase()
+
+    for (String key : keys) {
+        if (lcName.contains(key.toLowerCase())) return key
+    }
+
+    return null
+}
+
+/**
+ * 在任务名`assembleProductFlavorBuildType`中获取编译类型`BuildType`
+ * */
+String getBuildType(String taskName) {
+    return firstMatchingSubstring(taskName, getBuildTypeNames())
+}
+
+/**
+ * 在任务名`assembleProductFlavorBuildType`中获取风味名`ProductFlavor`
+ * */
+String getFlavor(String taskName) {
+    return firstMatchingSubstring(taskName, getProductFlavorNames())
+}
+
+/**
+ * 获取`android.buildTypes { }`内声明的所有编译类型
+ * 需要在`afterEvaluate`之后获取.
+ * 获取到的字符首字符不会自动转大写.
+ * */
+String[] getBuildTypeNames() {
+    def types = []
+    android.buildTypes.all { type -> types.add(type.name) }
+    return types
+}
+
+/**
+ * 获取`android.productFlavors { }`内声明的所有风味
+ * 需要在`afterEvaluate`之后获取.
+ * 获取到的字符首字符不会自动转大写.
+ * */
+String[] getProductFlavorNames() {
+    def flavors = []
+    android.productFlavors.all { flavor -> flavors.add(flavor.name) }
+    return flavors
+}
