@@ -25,6 +25,9 @@ def release_time = releaseTime()
 
 def keyAlias = project.hasProperty("signConfig") ? signConfig.key_alias : ''
 
+//是否收集debug产物, 默认false
+def collectDebugProduct = project.hasProperty("collectDebugProduct") ? project.ext.collectDebugProduct == "true" : false
+
 android {
     applicationVariants.all { variant ->
         def outputName = formatApkName(apkFormatName,
@@ -43,17 +46,20 @@ android {
     tasks.whenTaskAdded { task ->
         final taskName = task.name
 
+        //任务名中的buildType信息, 如果有
+        def buildType = getBuildType(taskName)
+        final isDebugBuildType = buildType?.toLowerCase() == "debug"
+
         // 跳过一些多余的任务
         if ((taskName.startsWith("assemble") || taskName.startsWith("bundle"))
                 && !taskName.contains("Classes")
                 && !taskName.contains("Resources")
                 && taskName != "assemble"
-                && taskName != "bundle") {
+                && taskName != "bundle" && (collectDebugProduct || (!collectDebugProduct && !isDebugBuildType))) {
 
             //任务名中的风味信息, 如果有
             final flavor = getFlavor(taskName)
-            //任务名中的buildType信息, 如果有
-            def buildType = getBuildType(taskName)
+
             //合并风味和buildType
             final mergeFlavorBuildType = flavor == null ? buildType : "${flavor}${buildType?.capitalize() ?: ''}"
 
