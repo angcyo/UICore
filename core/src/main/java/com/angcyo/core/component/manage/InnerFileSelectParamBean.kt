@@ -5,7 +5,7 @@ package com.angcyo.core.component.manage
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/09/07
  */
-data class InnerFileSelectParam(
+data class InnerFileSelectParamBean(
     /**最多允许选择多少个文件
      * 0: 不开启选择模式
      * 1: 单选模式

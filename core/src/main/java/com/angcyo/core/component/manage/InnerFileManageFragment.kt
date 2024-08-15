@@ -32,11 +32,11 @@ open class InnerFileManageFragment : BaseDslFragment() {
     val innerFileManageModel = vmApp<InnerFileManageModel>()
 
     /**选择模式下的参数*/
-    var innerFileSelectParam = InnerFileSelectParam()
+    var innerFileSelectParamBean = InnerFileSelectParamBean()
 
     /**是否是选择模式*/
     val _isSelectModel: Boolean
-        get() = innerFileSelectParam.maxSelectFileCount > 0
+        get() = innerFileSelectParamBean.maxSelectFileCount > 0
 
     init {
         fragmentTitle = _string(R.string.core_file_list)
@@ -53,7 +53,7 @@ open class InnerFileManageFragment : BaseDslFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        innerFileSelectParam = getData() ?: innerFileSelectParam
+        innerFileSelectParamBean = getData() ?: innerFileSelectParamBean
     }
 
     override fun initBaseView(savedInstanceState: Bundle?) {
@@ -99,9 +99,9 @@ open class InnerFileManageFragment : BaseDslFragment() {
         doBack {
             //加载文件列表
             val list =
-                innerFileManageModel.loadInnerFile(page, innerFileSelectParam.filterFileExtList)
+                innerFileManageModel.loadInnerFile(page, innerFileSelectParamBean.filterFileExtList)
             loadDataEnd(DslInnerFileItem::class, list) {
-                itemMaxSelectCount = innerFileSelectParam.maxSelectFileCount
+                itemMaxSelectCount = innerFileSelectParamBean.maxSelectFileCount
 
                 if (_isSelectModel) {
                     observeItemChange {
@@ -144,7 +144,7 @@ fun Context.innerFileSelectFragment(
 ) {
     dslAHelper {
         start(InnerFileManageFragment::class) {
-            putData(InnerFileSelectParam(maxSelectFileCount, filterFileExtList))
+            putData(InnerFileSelectParamBean(maxSelectFileCount, filterFileExtList))
         }
     }
 }

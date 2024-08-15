@@ -3,6 +3,7 @@ package com.angcyo.library.model
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Parcelable
+import androidx.annotation.Keep
 import com.angcyo.library.ex.*
 import kotlinx.parcelize.Parcelize
 import java.io.File
@@ -13,7 +14,7 @@ import java.io.File
  * @author angcyo
  * @date 2020/01/22
  */
-
+@Keep
 @Parcelize
 data class LoaderMedia(
 
