@@ -25,6 +25,10 @@ object LogFile {
     /**雕刻日志*/
     const val engrave = "engrave.log"
 
+    /**配置日志
+     * 比如雕刻参数的配置*/
+    const val config = "config.log"
+
     /**蓝牙日志*/
     const val ble = "ble.log"
 
