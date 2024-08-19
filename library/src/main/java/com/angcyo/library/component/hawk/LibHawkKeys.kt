@@ -130,6 +130,10 @@ object LibHawkKeys {
     @MM
     var pathPixelGapValue: Float by HawkPropertyValue<Any, Float>(0.3f)
 
+    /**[TransitionParam.pixelGCodeGapValue]*/
+    @Pixel
+    var pixelGCodeGapValue: Float by HawkPropertyValue<Any, Float>(1f)
+
     /**[Path.eachPath]时的路径采样步长, 值越少影响枚举的性能, 但是不会影响精度
      * 配合[pathAcceptableDegrees]一起使用, 不会影响输出的数据精度.
      * 与之前的[_pathAcceptableError]等距离采样不同.
