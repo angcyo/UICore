@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.view.View
+import com.angcyo.library.ex.hawkPut
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -35,6 +36,11 @@ open class MessageDialogConfig(context: Context? = null) : BaseDialogConfig(cont
         //消息弹窗, 默认只显示[positiveButtonText]按钮
         negativeButtonText = null //cancel
         neutralButtonText = null
+    }
+
+    override fun onDialogDestroy(dialog: Dialog, dialogViewHolder: DslViewHolder) {
+        super.onDialogDestroy(dialog, dialogViewHolder)
+        dialogNotPromptKey?.hawkPut(_dialogIsNotPrompt)
     }
 
     override fun initControlLayout(dialog: Dialog, dialogViewHolder: DslViewHolder) {
