@@ -1,3 +1,6 @@
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
+
 /**
  * 2023-2-7
  * 将多个路径的文件内容合并到一个文件
@@ -5,6 +8,29 @@
 
 task _mergeXmlFile(group: 'angcyo', description: '将多个路径的xml文件内容合并到一个xml文件') {
     //配置任务
+}
+
+task _mergeXmlFileToZip(group: 'angcyo', description: '将多个路径的xml文件压缩到zip文件中') {
+    //配置任务
+}
+
+_mergeXmlFileToZip.doFirst {
+    def release_time = releaseTime()
+    def resList = ["", "-zh", "-ja", "-ko", "-de", "-es", "-fr", "-zh-rTW"]
+    def outputList = [".apk/Android_LDS_英文资源_${release_time}.zip",
+                      ".apk/Android_LDS_中文资源_${release_time}.zip",
+                      ".apk/Android_LDS_日语资源_${release_time}.zip",
+                      ".apk/Android_LDS_韩语资源_${release_time}.zip",
+                      ".apk/Android_LDS_德语资源_${release_time}.zip",
+                      ".apk/Android_LDS_西班牙资源_${release_time}.zip",
+                      ".apk/Android_LDS_法语资源_${release_time}.zip",
+                      ".apk/Android_LDS_繁体资源_${release_time}.zip",]
+
+    for (int i = 0; i < resList.size(); i++) {
+        _zipXmlFile(getLanguageResPath(resList[i]), outputList[i])
+    }
+
+    _zipXmlFile(outputList, ".apk/Android_LDS_${outputList.size()}种资源_${release_time}.zip")
 }
 
 _mergeXmlFile.doFirst {
@@ -60,5 +86,42 @@ def _mergeXmlFile(pathList, outputPath) {
             }
         }
         System.err.println "合并完成:${pathList}↓\n${outputPath}"
+    }
+}
+
+/**压缩文件到zip文件中*/
+def _zipXmlFile(pathList, outputPath) {
+    // 创建输出流
+    ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(outputPath))
+    try {
+        pathList.each { filePath ->
+            File file = new File(filePath)
+
+            // 如果文件存在, 添加到 ZIP
+            if (file.exists() && file.isFile()) {
+                // 创建 ZIP 条目 (entry)
+                ZipEntry zipEntry = new ZipEntry(file.name)
+                zipOutputStream.putNextEntry(zipEntry)
+
+                // 读取文件内容并写入 ZIP 输出流
+                FileInputStream fileInputStream = new FileInputStream(file)
+                while (true) {
+                    int bytesRead = fileInputStream.read()
+                    if (bytesRead == -1) {
+                        break
+                    }
+                    zipOutputStream.write(bytesRead)
+                }
+
+                // 完成当前条目
+                zipOutputStream.closeEntry()
+            } else {
+                println "File not found: $filePath"
+            }
+        }
+        System.err.println "压缩完成:${pathList}↓\n${outputPath}"
+    } finally {
+        // 关闭 ZIP 输出流
+        zipOutputStream.close()
     }
 }
