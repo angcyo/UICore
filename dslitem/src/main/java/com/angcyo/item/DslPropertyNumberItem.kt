@@ -49,7 +49,16 @@ open class DslPropertyNumberItem : DslBasePropertyItem() {
     /**属性数值*/
     var itemPropertyNumber: Number? = null
 
+    /**键盘输入最小值*/
+    var itemNumberMinValue: Number? = null
+
+    /**键盘输入最大值*/
+    var itemNumberMaxValue: Number? = null
+
+
     /**是否使用新的数字键盘输入
+     * 旧的样式是popup弹窗
+     * 新的样式是dialog弹窗
      * [NumberKeyboardDialogConfig]*/
     var itemUseNewNumberKeyboardDialog: Boolean = false
 
@@ -85,6 +94,8 @@ open class DslPropertyNumberItem : DslBasePropertyItem() {
                             numberValueType = 0
                         }
                     }
+                    numberMinValue = itemNumberMinValue
+                    numberMaxValue = itemNumberMaxValue
                     onNumberResultAction = { number ->
                         number?.let {
                             val value = it.toString()
