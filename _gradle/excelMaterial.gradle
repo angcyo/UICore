@@ -47,9 +47,17 @@ task _excelMaterialLX1White2(group: 'angcyo', description: 'LX1 2W 白光') {
     //配置任务
 }
 
+task _excelMaterialLP5Blue(group: 'angcyo', description: 'LP5蓝光-LaserPecker 从Excel中读取材质参数') {
+    //配置任务
+}
+
+task _excelMaterialLP5White(group: 'angcyo', description: 'LP5白光-LaserPecker 从Excel中读取材质参数') {
+    //配置任务
+}
+
 //#1:1064nm激光 (白光-雕) 0:450nm激光 (蓝光-烧)
 
-//执行蓝光任务
+//执行LP4蓝光任务
 _excelMaterialLP4Blue.doLast {
     def laserType = 0
     def layerIndexList = [9, 11, 13, 15] //图层数据开始的列数
@@ -57,7 +65,7 @@ _excelMaterialLP4Blue.doLast {
     exportExcelData('material_lp.xlsx', "LP4_450_10", laserType, layerIndexList, layerIdList)
 }
 
-//执行白光任务
+//执行LP4白光任务
 _excelMaterialLP4White.doLast {
     //激光类型
     def laserType = 1
@@ -89,6 +97,21 @@ _excelMaterialLX1White2.doLast {
             "2": 711,
             "4": 889,
     ])
+}
+
+//执行LP5蓝光任务
+_excelMaterialLP5Blue.doLast {
+    def laserFilter = "蓝光"
+    def laserType = 0
+    exportExcelLp5Data('material_lp5.xlsx', "LP5_450_20", laserFilter, laserType)
+}
+
+//执行LP5白光任务
+_excelMaterialLP5White.doLast {
+    //激光类型
+    def laserFilter = "白光"
+    def laserType = 1
+    exportExcelLp5Data('material_lp5.xlsx', "LP5_1064_20", laserFilter, laserType)
 }
 
 /**
@@ -271,10 +294,141 @@ def getPowerDepth(sheet, lineIndex, colIndex) {
 def printLine(lineIndex, row) {
     def colLabelList = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ"]
     def colCount = row.getPhysicalNumberOfCells()
-    def log = "${colCount}列->"
+    def log = "共${colCount}列->"
     for (colIndex in 0..<colCount) {
         def cell = row.getCell(colIndex)
         log += "${colLabelList[colIndex]}${lineIndex + 1}:" + cell + " "
     }
     println log
+}
+
+/**2024-8-29
+ * [defExcelPath] excel文件路径
+ * [outputName] 输出文件名
+ * [laser] 需要过滤的激光光源
+ * */
+def exportExcelLp5Data(defExcelPath, outputName, laserFilter, laserType) {
+    //默认的excel文件路径
+    //def defExcelPath = 'material.xlsx'
+    def excelPath = project.hasProperty("excel_path") ? project.ext.excel_path : defExcelPath
+    def excelFile = file(excelPath)
+    //println excelFile.absolutePath
+
+    if (!excelFile.exists()) {
+        throw new IllegalStateException("请在[gradle.properties]文件中配置excel文件路径:excel_path")
+    }
+
+    //输出文件
+    def outputFile = file("material_${outputName}.json")
+
+    //读取数据
+    // 指定excel文件，创建缓存输入流
+    def inputStream = new BufferedInputStream(new FileInputStream(excelFile))
+    // 直接传入输入流即可，此时excel就已经解析了
+    def workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook(inputStream)
+    //println workbook
+    def sheet = workbook.getSheetAt(0)
+
+    //集合
+    def jsonList = new ArrayList<Map<String, Object>>()
+
+    def line = 1 //从第1行开始才有读取数据
+
+    while (line < sheet.getPhysicalNumberOfRows()) {
+        def row = sheet.getRow(line)
+        //printLine(line, row)
+
+        def laserTypeCell = row.getCell(3).toString()
+
+        if (laserTypeCell == laserFilter) {
+            //println "...$laserTypeCell"
+
+            def map = new HashMap<String, Object>()
+            map["type"] = laserType
+
+            //图层
+            def layerCell = row.getCell(4).toString()
+            if (layerCell == "填充") {
+                map["layerId"] = "layerFill"
+            } else if (layerCell == "线条") {
+                map["layerId"] = "layerLine"
+            } else if (layerCell == "切割") {
+                map["layerId"] = "layerCut"
+            } else if (layerCell == "抖动") {
+                map["layerId"] = "layerPicture"
+            }
+
+            //分辨率
+            def dpiCell = row.getCell(5).toString()
+            if (dpiCell.contains("k")) {
+                map["dpi"] = dpiCell.replaceAll("k", "").toInteger() * 254
+            } else {
+                map["dpi"] = dpiCell.toFloat()
+            }
+
+            //出光频率
+            def laserFrequencyCell = row.getCell(6).toString()
+            if (laserFrequencyCell != "无") {
+                //println "...$laserFrequencyCell"
+                try {
+                    def laserFrequency = laserFrequencyCell.toFloat().toInteger()
+                    map["laserFrequency"] = laserFrequency
+                } catch (e) {
+                }
+            }
+
+            //功率深度
+            def powerDepthCell = row.getCell(7).toString()
+            if (!powerDepthCell.isBlank()) {
+                def i = powerDepthCell.lastIndexOf(",")
+                if (i != -1) {
+                    def l = powerDepthCell.length()
+                    map["power"] = powerDepthCell.substring(0, i).toInteger()
+                    map["depth"] = powerDepthCell.substring(i + 1, l).toInteger()
+                }
+            }
+
+            //材质名称 环保纸/resKey
+            def material = row.getCell(2).toString()
+
+            //
+            if (!material.isBlank()) {
+                def i = material.lastIndexOf("/")
+                if (i != -1) {
+                    def l = material.length()
+                    def resIdStr = material.substring(i + 1, l)
+                    material = material.substring(0, i)
+
+                    map["_name"] = material
+                    map["resIdStr"] = resIdStr
+                    map["key"] = resIdStr
+                }
+            }
+
+            def code = map["resIdStr"] // 唯一标识
+            if (laserType == 0) {
+                code += "_blue"
+            } else {
+                code += "_white"
+            }
+            code += "_${map["layerId"]}"
+            def dpi = map.get("dpi")
+            if (dpi != null) {
+                code += "_${dpi}"
+            } else {
+                code += "_${map.get("dpiScale")}"
+            }
+            map["code"] = code
+
+            jsonList.add(map)
+        }
+
+        //loop
+        line++
+    }
+
+    def json = new com.google.gson.Gson().toJson(jsonList)
+    outputFile.write(json)
+
+    System.err.println "输出完成->" + outputFile.absolutePath
 }
