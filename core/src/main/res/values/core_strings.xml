@@ -29,7 +29,7 @@
     <string name="core_trash_delete">DragHereToDelete</string>
     <string name="core_trash_delete_tip">LetGoToDelete</string>
     <string name="ui_next">Next</string>
-    <string name="ui_prev">Prev</string>
+    <string name="ui_prev">Previous step</string>
     <string name="ui_open">Open</string>
     <string name="ui_delete_fail">Delete Fail</string>
     <string name="ui_share">Share</string>

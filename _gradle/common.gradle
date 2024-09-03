@@ -301,11 +301,13 @@ static def getLanguageResPath(language) {
 
     //pathList += "./UICoreEx/canvas_lp/src/main/res/values${language}/canvas_strings.xml"
     pathList += "./UICoreEx/canvas2_lp/src/main/res/values${language}/canvas_strings.xml"
+    pathList += "./UICoreEx/canvas2_lp/src/main/res/values${language}/canvas2_string.xml"
     //pathList += "./UICoreEx/engrave/src/main/res/values${language}/engrave_strings.xml"
     pathList += "./UICoreEx/engrave2/src/main/res/values${language}/engrave_strings.xml"
     pathList += "./UICoreEx/fsc/src/main/res/values${language}/fsc_strings.xml"
     pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/device_strings.xml"
     pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/material_strings.xml"
+    pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/func_strings.xml"
 
     return pathList
 }

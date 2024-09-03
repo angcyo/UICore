@@ -19,6 +19,10 @@ task _replaceZhResTo(group: 'angcyo', description: '替换中文资源到其他�
     //配置任务
 }
 
+task _replaceXmlResFromHttp(group: 'angcyo', description: '替换xml文件中的字符串资源,从网络上获取') {
+    //配置任务
+}
+
 _replaceRes.doFirst {
     replaceResWithCsv()
     //replaceResWithExcel()
@@ -32,16 +36,16 @@ _replaceResTo.doFirst {
     def lines = readExcelLines("翻译稿.xlsx", 1)
     def outputLanguage = ["en", "ja", "ko", "es", "fr", "de"*//*,  "rHK", "rTW"*//*]
     outputLanguage.eachWithIndex { value, index ->
-        _replaceRes(inputResPath, "material_strings_${value}.xml", convertLinesToMap(lines, 0, index + 1))
+        _replaceFileRes(inputResPath, "material_strings_${value}.xml", convertLinesToMap(lines, 0, index + 1))
     }*/
 
-    //_replaceRes(inputResPath, "material_strings_en.xml", convertLinesToMap(lines, 0, 1))
-    //_replaceRes(inputResPath, "material_strings_ja.xml", convertLinesToMap(lines, 0, 2))
-    //_replaceRes(inputResPath, "material_strings_ko.xml", convertLinesToMap(lines, 0, 3))
-    //_replaceRes(inputResPath, "material_strings_de.xml", convertLinesToMap(lines, 0, 4))
-    //_replaceRes(inputResPath, "material_strings_es.xml", convertLinesToMap(lines, 0, 5))
-    //_replaceRes(inputResPath, "material_strings_fr.xml", convertLinesToMap(lines, 0, 6))
-    //_replaceRes(inputResPath, "material_strings_rHk.xml", convertLinesToMap(lines, 0, 7))
+    //_replaceFileRes(inputResPath, "material_strings_en.xml", convertLinesToMap(lines, 0, 1))
+    //_replaceFileRes(inputResPath, "material_strings_ja.xml", convertLinesToMap(lines, 0, 2))
+    //_replaceFileRes(inputResPath, "material_strings_ko.xml", convertLinesToMap(lines, 0, 3))
+    //_replaceFileRes(inputResPath, "material_strings_de.xml", convertLinesToMap(lines, 0, 4))
+    //_replaceFileRes(inputResPath, "material_strings_es.xml", convertLinesToMap(lines, 0, 5))
+    //_replaceFileRes(inputResPath, "material_strings_fr.xml", convertLinesToMap(lines, 0, 6))
+    //_replaceFileRes(inputResPath, "material_strings_rHk.xml", convertLinesToMap(lines, 0, 7))
 
     def inputResPath = file("./UICoreEx/canvas2_lp/src/main/res/values-zh/canvas2_string.xml").absolutePath
     def lines = readExcelLines("canvas4.xlsx", 1)
@@ -51,7 +55,7 @@ _replaceResTo.doFirst {
         if (value == "en") {
             outPath = outPath.replaceAll("-en", "")
         }
-        _replaceRes(inputResPath, outPath, convertLinesToMap(lines, 0, index + 1))
+        _replaceFileRes(inputResPath, outPath, convertLinesToMap(lines, 0, index + 1))
     }
 }
 
@@ -64,13 +68,11 @@ _writeRes.doFirst {
     def languageColumn = [1, 2, 3, 4, 5, 6, 7, 8, 8]
 
     //需要写入的资源key
-    def resKeyList = [
-            "flame_warning_tip",
-            "head_cover_tip",
-            "front_gate_tip",
-            "back_gate_tip",
-            "put_warning_tip",
-    ]
+    def resKeyList = ["flame_warning_tip",
+                      "head_cover_tip",
+                      "front_gate_tip",
+                      "back_gate_tip",
+                      "put_warning_tip",]
 
     //res翻译资源从第几行开始
     def resStartRowIndex = 2
@@ -113,8 +115,29 @@ _replaceZhResTo.doFirst {
     def dePathArray = getLanguageResPath("-de")
 
     def lines = readExcelLines("res.xlsx", 1, 2)
-    zhPathArray.eachWithIndex { zhPath, index ->
-        _replaceRes(zhPath, dePathArray[index], lines)
+    zhPathArray.eachWithIndex { zhPath, index -> _replaceFileRes(zhPath, dePathArray[index], lines)
+    }
+}
+
+_replaceXmlResFromHttp.doFirst {
+    def api = "https://api.localazy.com"
+    def projectId = "_a7250363283110773173"
+    def fileId = "_e1305350101800"
+
+    //需要请求的资源语种列表
+    def langList = ["en", "es_ES", "fr_FR", "de_DE", "ja_JP", "ko", "zh_TW", "zh_TW"]
+    //对应本地资源的语种列表
+    def resLocalList = ["", "-es", "-fr", "-de", "-ja", "-ko", "-zh-rHK", "-zh-rTW"]
+
+    langList.eachWithIndex { lang, index ->
+        def resultMap = _httpGet("${api}/projects/${projectId}/files/${fileId}/keys/${lang}", [
+                Authorization: "Bearer 172437306204145752195285e30fd1481c62ec225e6f7a38ea5ab72735bf98eeea4338cf7b17dc3eab61"
+        ])
+        def resMap = [:] //存储成 key:value 形式
+        resultMap["keys"].forEach { item ->
+            resMap.put(item["key"][0], item["value"])
+        }
+        _replaceLanguageFile("-zh", resLocalList[index], resMap)
     }
 }
 
@@ -161,7 +184,7 @@ def replaceResWithCsv() {
  * [inLanguage] 原来的语言数据
  * [outLanguage] 需要在原来的语言上替换成什么语言的数据*/
 def _replaceLanguageFile(inLanguage, outLanguage, map) {
-    _replaceResList(getLanguageResPath(inLanguage), getLanguageResPath(outLanguage), map)
+    _replaceFileResList(getLanguageResPath(inLanguage), getLanguageResPath(outLanguage), map)
 }
 
 /**读取csv文件, 返回对应的map*/
@@ -178,10 +201,8 @@ def _readCsvMap(path) {
     return result
 }
 
-def _replaceResList(pathList, outPathList, map) {
-    pathList.eachWithIndex { path, index ->
-        _replaceRes(path, outPathList[index], map)
-    }
+def _replaceFileResList(pathList, outPathList, map) {
+    pathList.eachWithIndex { path, index -> _replaceFileRes(path, outPathList[index], map) }
 }
 
 /**将原始文件内容替换成新的资源内容, 并输出到指定文件
@@ -189,7 +210,7 @@ def _replaceResList(pathList, outPathList, map) {
  * [outPath] 替换后的输出文件路径
  * [map] 需要替换的键值对映射表
  * */
-def _replaceRes(path, outPath, map) {
+def _replaceFileRes(path, outPath, map) {
 
     //input
     def pathFile = file(path)
@@ -240,7 +261,7 @@ def _replaceRes(path, outPath, map) {
 
     outPathFile.write(originText)//重写文件
 
-    println "已替换:${replaceMap}"
+    println "已替换${path}->${replaceMap}"
     System.err.println "替换完成:${pathFile.absolutePath}↓\n->${outPathFile.absolutePath} 共替换:${count}个"
 }
 
@@ -258,4 +279,30 @@ static def _isContainsResKey(text, map) {
         }
     }
     return contains
+}
+
+/// http get请求
+/// [url] 请求的地址
+/// [headers] 请求头
+/// @return 请求结果map
+static def _httpGet(url, headers) {
+    def uri = new URL(url)
+    def connection = (HttpURLConnection) uri.openConnection()
+    connection.setRequestMethod("GET")
+
+    if (headers != null) {
+        headers.each { key, value -> connection.setRequestProperty(key, value) }
+    }
+
+    if (connection.responseCode == 200) {
+        def inputStream = connection.inputStream
+        def responseText = inputStream.text
+        //org.apache.groovy.json.internal.LazyMap
+        def jsonMap = new groovy.json.JsonSlurper().parseText(responseText)
+        connection.disconnect()
+        return jsonMap
+    } else {
+        connection.disconnect()
+        System.err.println "请求失败${connection.responseMessage}(${connection.responseCode})"
+    }
 }
