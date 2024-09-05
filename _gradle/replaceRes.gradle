@@ -23,6 +23,10 @@ task _replaceXmlResFromHttp(group: 'angcyo', description: '替换xml文件中的
     //配置任务
 }
 
+task _copyResFile(group: 'angcyo', description: '从磁盘上复制资源文件到指定目录') {
+    //配置任务
+}
+
 _replaceRes.doFirst {
     replaceResWithCsv()
     //replaceResWithExcel()
@@ -139,6 +143,18 @@ _replaceXmlResFromHttp.doFirst {
         }
         _replaceLanguageFile("-zh", resLocalList[index], resMap)
     }
+}
+
+_copyResFile.doFirst {
+    //_writeFile("G:/资源/func_strings8种语言翻译/zh-Hans-CN/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-zh/func_strings.xml")
+    _writeFile("G:/资源/func_strings8种语言翻译/de-DE/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-de/func_strings.xml")
+    _writeFile("G:/资源/func_strings8种语言翻译/en/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values/func_strings.xml")
+    _writeFile("G:/资源/func_strings8种语言翻译/es-ES/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-es/func_strings.xml")
+    _writeFile("G:/资源/func_strings8种语言翻译/fr-FR/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-fr/func_strings.xml")
+    _writeFile("G:/资源/func_strings8种语言翻译/ja-JP/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-ja/func_strings.xml")
+    _writeFile("G:/资源/func_strings8种语言翻译/ko/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-ko/func_strings.xml")
+    _writeFile("G:/资源/func_strings8种语言翻译/zh-Hant-TW/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-zh-rHK/func_strings.xml")
+    _writeFile("G:/资源/func_strings8种语言翻译/zh-Hant-TW/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-zh-rTW/func_strings.xml")
 }
 
 /**使用excel的数据结构替换res*/
@@ -305,4 +321,19 @@ static def _httpGet(url, headers) {
         connection.disconnect()
         System.err.println "请求失败${connection.responseMessage}(${connection.responseCode})"
     }
+}
+
+/// 将一个文件的内容写入到另一个文件
+def _writeFile(inPath, outPath) {
+    def inPathFile = file(inPath)
+    if (!inPathFile.exists()) {
+        System.err.println "输入文件不存在:${inPathFile.absolutePath}"
+        return
+    }
+    def outPathFile = file(outPath)
+    if (!outPathFile.exists()) {
+        outPathFile.parentFile.mkdirs()
+        outPathFile.createNewFile()
+    }
+    outPathFile.write(inPathFile.text)
 }
