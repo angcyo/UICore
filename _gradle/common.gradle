@@ -308,6 +308,7 @@ static def getLanguageResPath(language) {
     pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/device_strings.xml"
     pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/material_strings.xml"
     pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/func_strings.xml"
+    pathList += "./UICoreEx/lpDevice/src/main/res/values${language}/camera_strings.xml"
 
     return pathList
 }

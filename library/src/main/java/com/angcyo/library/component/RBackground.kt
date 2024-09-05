@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.util.SparseArray
 import android.view.View
 import android.view.Window
+import androidx.activity.result.ActivityResultCaller
 import androidx.core.util.isEmpty
 import androidx.core.util.valueIterator
 import androidx.lifecycle.LifecycleOwner
@@ -294,6 +295,14 @@ abstract class OnBackgroundObserver {
 /**[Activity]*/
 val lastActivity: Activity?
     get() = RBackground.lastActivityRef?.get()
+
+/**[ActivityResultCaller]*/
+val lastActivityCaller: ActivityResultCaller?
+    get() = if (lastActivity is ActivityResultCaller) {
+        lastActivity as ActivityResultCaller
+    } else {
+        null
+    }
 
 /**[Context]*/
 val lastContext: Context
