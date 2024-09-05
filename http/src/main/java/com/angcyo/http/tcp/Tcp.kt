@@ -165,11 +165,9 @@ class Tcp : ICancel {
         }
         for (listener in listeners) {
             listener.onConnectStateChanged(
-                this,
-                TcpState(tcpDevice!!.apply {
+                this, TcpState(tcpDevice!!.apply {
                     connectState = CONNECT_STATE_CONNECTING
-                }, CONNECT_STATE_CONNECTING, info),
-                info
+                }, CONNECT_STATE_CONNECTING, info), info
             )
         }
         doBack {
@@ -203,7 +201,9 @@ class Tcp : ICancel {
                         this.socket = null
                         init()
                         tryCount++
-                        if (tryCount > 5) {
+                        if (tryCount > 3) {
+                            //重连失败后, 断开连接
+                            release(info)
                             throw e
                         }
                         sleep(1000)
@@ -213,11 +213,9 @@ class Tcp : ICancel {
                 e.printStackTrace()
                 for (listener in listeners) {
                     listener.onConnectStateChanged(
-                        this,
-                        TcpState(tcpDevice!!.apply {
+                        this, TcpState(tcpDevice!!.apply {
                             connectState = CONNECT_STATE_ERROR
-                        }, CONNECT_STATE_ERROR, info, e),
-                        info
+                        }, CONNECT_STATE_ERROR, info, e), info
                     )
                 }
             }
@@ -268,11 +266,9 @@ class Tcp : ICancel {
             if (!isClosed && device != null) {
                 for (listener in listeners) {
                     listener.onConnectStateChanged(
-                        this,
-                        TcpState(device.apply {
+                        this, TcpState(device.apply {
                             connectState = CONNECT_STATE_DISCONNECTING
-                        }, CONNECT_STATE_DISCONNECTING, info),
-                        info
+                        }, CONNECT_STATE_DISCONNECTING, info), info
                     )
                 }
             }
@@ -281,11 +277,9 @@ class Tcp : ICancel {
             if (device != null) {
                 for (listener in listeners) {
                     listener.onConnectStateChanged(
-                        this,
-                        TcpState(device.apply {
+                        this, TcpState(device.apply {
                             connectState = CONNECT_STATE_DISCONNECT
-                        }, CONNECT_STATE_DISCONNECT, info),
-                        info
+                        }, CONNECT_STATE_DISCONNECT, info), info
                     )
                 }
             }
@@ -328,11 +322,9 @@ class Tcp : ICancel {
         startInputThread()
         for (listener in listeners) {
             listener.onConnectStateChanged(
-                this,
-                TcpState(tcpDevice!!.apply {
+                this, TcpState(tcpDevice!!.apply {
                     connectState = CONNECT_STATE_CONNECT_SUCCESS
-                }, CONNECT_STATE_CONNECT_SUCCESS, info),
-                info
+                }, CONNECT_STATE_CONNECT_SUCCESS, info), info
             )
         }
     }
@@ -341,11 +333,9 @@ class Tcp : ICancel {
     private fun onSocketClose(info: TcpConnectInfo?) {
         for (listener in listeners) {
             listener.onConnectStateChanged(
-                this,
-                TcpState(tcpDevice!!.apply {
+                this, TcpState(tcpDevice!!.apply {
                     connectState = CONNECT_STATE_DISCONNECT
-                }, CONNECT_STATE_DISCONNECT, info),
-                info
+                }, CONNECT_STATE_DISCONNECT, info), info
             )
         }
     }
@@ -387,10 +377,7 @@ class Tcp : ICancel {
                             e.printStackTrace()
                         }*/
                         val timeout = _receiveTimeOut ?: connectTimeout.toLong()
-                        if (!isDebuggerConnected() &&
-                            _lastSendTime > 0 &&
-                            timeout > 0 && nowTime() - _lastSendTime > timeout
-                        ) {
+                        if (!isDebuggerConnected() && _lastSendTime > 0 && timeout > 0 && nowTime() - _lastSendTime > timeout) {
                             //断开了连接
                             //2024-5-9 不主动断开
                             //release(null)
@@ -426,10 +413,7 @@ class Tcp : ICancel {
             if (!socket.isConnected) {
                 for (listener in listeners) {
                     listener.onSendStateChanged(
-                        this,
-                        SEND_STATE_ERROR,
-                        allSize,
-                        TcpClosedException()
+                        this, SEND_STATE_ERROR, allSize, TcpClosedException()
                     )
                 }
                 release(null)
