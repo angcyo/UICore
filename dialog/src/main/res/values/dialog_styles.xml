@@ -130,6 +130,13 @@
 
     </style>
 
+    <!--对话框标题下的线条样式-->
+    <style name="LibDialogTitleLineStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/lib_line_px</item>
+        <item name="android:background">@color/lib_line</item>
+    </style>
+
     <!--对话框标题下的阴影样式-->
     <style name="LibDialogTitleShadowStyle">
         <item name="android:layout_width">match_parent</item>
