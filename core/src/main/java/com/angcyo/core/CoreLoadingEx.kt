@@ -97,7 +97,11 @@ fun <T> LifecycleOwner.loadingAsyncTimeout(
     val runnable = Runnable {
         dialog = timeoutAction(context) /*超时执行*/
     }
-    MainExecutor.handler.postDelayed(runnable, timeout)//延迟显示loading
+    if (timeout > 0) {
+        MainExecutor.handler.postDelayed(runnable, timeout)//延迟显示loading
+    } else {
+        runnable.run()
+    }
     context.launchLifecycle {
         val result = withBlock { block() /*后台执行*/ }
         MainExecutor.handler.removeCallbacks(runnable)

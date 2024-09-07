@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.widget.layout.RLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_dialog_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/lib_xhdpi"
+    app:r_max_height="0.5sh"
+    tools:background="@color/transparent20">
+
+    <com.angcyo.widget.layout.RFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_white_round_bg_shape"
+        app:r_layout_mask_drawable="@drawable/dialog_white_round_bg_shape">
+
+        <com.angcyo.widget.recycler.DslRecyclerView
+            android:id="@+id/lib_recycler_view"
+            style="@style/LibRecyclerViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.angcyo.widget.layout.RFrameLayout>
+
+    <FrameLayout
+        android:id="@+id/lib_bottom_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_xhdpi"
+        android:background="@drawable/dialog_white_round_bg_shape"
+        app:r_layout_mask_drawable="@drawable/dialog_white_round_bg_shape">
+
+        <!--<include layout="@layout/lib_dialog_base_title_layout" />-->
+
+    </FrameLayout>
+
+</com.angcyo.widget.layout.RLinearLayout>

@@ -19,6 +19,7 @@
         android:paddingRight="@dimen/lib_xhdpi"
         android:textColor="@color/lib_body_text_color_selector"
         tools:drawableLeft="@drawable/lib_ic_info"
+        tools:gravity="center"
         tools:text="标题" />
 
     <androidx.appcompat.widget.AppCompatImageView

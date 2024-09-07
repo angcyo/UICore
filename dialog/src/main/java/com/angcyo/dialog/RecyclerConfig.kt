@@ -2,10 +2,19 @@ package com.angcyo.dialog
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.angcyo.dialog.dslitem.DslDialogIconTextItem
 import com.angcyo.dialog.dslitem.DslDialogTextItem
 import com.angcyo.dialog.popup.MenuPopupConfig
-import com.angcyo.dsladapter.*
+import com.angcyo.dsladapter.DslAdapter
+import com.angcyo.dsladapter.DslAdapterItem
+import com.angcyo.dsladapter.ItemSelectorHelper
+import com.angcyo.dsladapter.OnItemSelectorListener
 import com.angcyo.dsladapter.filter.RemoveItemDecorationFilterAfterInterceptor
+import com.angcyo.dsladapter.select
+import com.angcyo.dsladapter.selectMutex
+import com.angcyo.dsladapter.selector
+import com.angcyo.dsladapter.toEmpty
+import com.angcyo.dsladapter.updateNow
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex._dimen
 import com.angcyo.library.ex.have
@@ -118,6 +127,15 @@ open class RecyclerConfig {
         })
     }
 
+    /**添加[DslDialogIconTextItem]*/
+    open fun addDialogIconTextItem(action: DslDialogIconTextItem.() -> Unit) {
+        addItem(DslDialogIconTextItem().apply {
+            itemTopInsert = _dimen(R.dimen.lib_line_px)
+            itemDecorationColor = _color(R.color.dialog_line)
+            action()
+        })
+    }
+
     /**Item点击事件*/
     open fun onItemClick(dslItem: DslAdapterItem, view: View) {
         when (adapterSelectorModel) {
@@ -128,8 +146,7 @@ open class RecyclerConfig {
     }
 
     /**获取选中项列表*/
-    fun getSelectorItemList(): List<DslAdapterItem> =
-        _adapter.selector().getSelectorItemList()
+    fun getSelectorItemList(): List<DslAdapterItem> = _adapter.selector().getSelectorItemList()
 
     /**获取选中项的索引列表*/
     fun getSelectorIndexList(): List<Int> = _adapter.selector().getSelectorIndexList()

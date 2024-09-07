@@ -17,8 +17,9 @@ import com.angcyo.widget.base.setTextSizePx
  * @author angcyo
  * @date 2020/03/05
  * Copyright (c) 2019 ShenZhen O&M Cloud Co., Ltd. All rights reserved.
+ * [DslDialogTextItem]
+ * [DslDialogIconTextItem]
  */
-
 open class DslDialogTextItem : DslAdapterItem() {
 
     /**支持span*/

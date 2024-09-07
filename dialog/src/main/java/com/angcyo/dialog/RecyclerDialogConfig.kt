@@ -3,6 +3,7 @@ package com.angcyo.dialog
 import android.app.Dialog
 import android.content.Context
 import com.angcyo.dialog.dslitem.DslDialogGridItem
+import com.angcyo.dialog.dslitem.DslDialogIconTextItem
 import com.angcyo.dialog.dslitem.DslDialogTextItem
 import com.angcyo.dialog.popup.MenuPopupConfig
 import com.angcyo.dsladapter.DslAdapter
@@ -53,14 +54,21 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
     var dialogResult: (dialog: Dialog, itemList: List<DslAdapterItem>, indexList: List<Int>) -> Boolean =
         { _, _, _ -> false }
 
+    /**是否使用样式2
+     * 2024-9-6*/
+    var useStyle2 = false
+        set(value) {
+            field = value
+            dialogLayoutId = R.layout.lib_dialog_recycler_layout2
+            _cancelItemWrapLayoutId = R.id.lib_bottom_wrap_layout
+        }
+
     init {
         dialogLayoutId = R.layout.lib_dialog_recycler_layout
 
         positiveButtonListener = { dialog, _ ->
             var dismiss = true
-            if (dialogSelectorModel == ItemSelectorHelper.MODEL_SINGLE ||
-                dialogSelectorModel == ItemSelectorHelper.MODEL_MULTI
-            ) {
+            if (dialogSelectorModel == ItemSelectorHelper.MODEL_SINGLE || dialogSelectorModel == ItemSelectorHelper.MODEL_MULTI) {
                 if (dialogResult(
                         dialog,
                         _recyclerConfig.getSelectorItemList(),
@@ -86,9 +94,7 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
             rMaxHeight = dialogMaxHeight
         }
 
-        if (dialogSelectorModel == ItemSelectorHelper.MODEL_SINGLE ||
-            dialogSelectorModel == ItemSelectorHelper.MODEL_MULTI
-        ) {
+        if (dialogSelectorModel == ItemSelectorHelper.MODEL_SINGLE || dialogSelectorModel == ItemSelectorHelper.MODEL_MULTI) {
             //选择模式
             dialogViewHolder.enable(R.id.dialog_positive_button, false)
         } else {
@@ -119,8 +125,7 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
         _recyclerConfig.adapterSelectorModel = dialogSelectorModel
         _recyclerConfig.initRecycler(dialog, dialogViewHolder)
         _recyclerConfig.adapterItemClick = { dslItem, view ->
-            if (dialogResult(_dialog!!, listOf(dslItem), listOf(dslItem.itemIndexPosition()))
-            ) {
+            if (dialogResult(_dialog!!, listOf(dslItem), listOf(dslItem.itemIndexPosition()))) {
                 //拦截
             } else if (dslItem.itemFlag.have(FLAG_ITEM_DISMISS)) {
                 _dialog?.dismiss()
@@ -182,6 +187,13 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
      * */
     open fun addDialogItem(action: DslDialogTextItem.() -> Unit) {
         _recyclerConfig.addDialogTextItem {
+            itemFlag = FLAG_ITEM_DISMISS
+            action()
+        }
+    }
+
+    open fun addDialogIconItem(action: DslDialogIconTextItem.() -> Unit) {
+        _recyclerConfig.addDialogIconTextItem {
             itemFlag = FLAG_ITEM_DISMISS
             action()
         }

@@ -257,7 +257,7 @@ fun Any?.canChildScroll(direction: Int, depth: Int = 5): Boolean {
 //<editor-fold desc="事件扩展">
 
 /**点击事件*/
-fun View?.clickIt(action: (View) -> Unit) {
+fun View?.clickIt(action: ((View) -> Unit)?) {
     this?.setOnClickListener(action)
 }
 
