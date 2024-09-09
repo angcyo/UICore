@@ -90,6 +90,16 @@ open class CanvasGroupRenderer : BaseRenderer() {
         /**解组*/
         const val GROUP_TYPE_DISSOLVE = 2
 
+        /**将一组元素, 合并成为一个渲染器*/
+        fun fromIfNeed(subRendererList: List<BaseRenderer>): BaseRenderer? {
+            if (subRendererList.size <= 1) {
+                return subRendererList.firstOrNull()
+            }
+            val groupRenderer = CanvasGroupRenderer()
+            groupRenderer.resetGroupRendererList(subRendererList, Reason.init, null)
+            return groupRenderer
+        }
+
         /**
          * [com.angcyo.canvas.render.renderer.BaseRenderer.getRendererBounds]
          * */
