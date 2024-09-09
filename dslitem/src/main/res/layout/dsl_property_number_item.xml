@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/lib_bottom_line_selector"
         android:gravity="center"
-        android:paddingVertical="@dimen/lib_sdpi"
+        android:paddingVertical="@dimen/lib_hdpi"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"

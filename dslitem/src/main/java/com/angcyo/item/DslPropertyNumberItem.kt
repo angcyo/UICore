@@ -62,6 +62,9 @@ open class DslPropertyNumberItem : DslBasePropertyItem() {
      * [NumberKeyboardDialogConfig]*/
     var itemUseNewNumberKeyboardDialog: Boolean = false
 
+    /**数字背景样式*/
+    var itemUseNumberSolidBgStyle: Boolean = false
+
     init {
         itemLayoutId = R.layout.dsl_property_number_item
     }
@@ -73,7 +76,14 @@ open class DslPropertyNumberItem : DslBasePropertyItem() {
         payloads: List<Any>
     ) {
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
-        itemHolder.tv(R.id.lib_text_view)?.text = "${itemPropertyNumber ?: ""}"
+        itemHolder.tv(R.id.lib_text_view)?.apply {
+            text = "${itemPropertyNumber ?: ""}"
+            if (itemUseNumberSolidBgStyle) {
+                setBackgroundResource(R.drawable.lib_solid_bg_selector)
+            } else {
+                setBackgroundResource(R.drawable.lib_bottom_line_selector)
+            }
+        }
 
         //
         itemHolder.click(R.id.lib_text_view) {
