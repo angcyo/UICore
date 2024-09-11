@@ -156,18 +156,20 @@ open class DslViewHolder(
     fun selectorChild(
         @IdRes groupViewId: Int,
         selected: Boolean = true,
+        recursively: Boolean = false,
         ignore: (view: View?) -> Boolean = { false /*是否忽略处理指定的view*/ }
     ) {
-        selectorChild(view(groupViewId), selected, ignore)
+        selectorChild(view(groupViewId), selected, recursively, ignore)
     }
 
     fun selectorChild(
         view: View?,
         selected: Boolean = true,
+        recursively: Boolean = false,
         ignore: (view: View?) -> Boolean = { false /*是否忽略处理指定的view*/ }
     ) {
         if (view is ViewGroup) {
-            view.each(false) { childView ->
+            view.each(recursively) { childView ->
                 if (ignore(childView)) {
                     //no op
                 } else {
@@ -557,7 +559,7 @@ open class DslViewHolder(
         }
         if (recursion && view is ViewGroup) {
             for (i in 0 until view.childCount) {
-                selected(view.getChildAt(i), selected, recursion)
+                selected(view.getChildAt(i), selected, true)
             }
         }
     }
@@ -566,18 +568,20 @@ open class DslViewHolder(
     fun boldChild(
         @IdRes groupViewId: Int,
         bold: Boolean = true,
+        recursively: Boolean = false,
         ignore: (view: View?) -> Boolean = { false /*是否忽略处理指定的view*/ }
     ) {
-        boldChild(view(groupViewId), bold, ignore)
+        boldChild(view(groupViewId), bold, recursively, ignore)
     }
 
     fun boldChild(
         view: View?,
         bold: Boolean = true,
+        recursively: Boolean = false,
         ignore: (view: View?) -> Boolean = { false /*是否忽略处理指定的view*/ }
     ) {
         if (view is ViewGroup) {
-            view.each(false) { childView ->
+            view.each(recursively) { childView ->
                 if (ignore(childView)) {
                     //no op
                 } else if (childView is TextView) {
