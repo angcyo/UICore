@@ -3,6 +3,7 @@ package com.angcyo.core.fragment
 import android.os.Bundle
 import androidx.annotation.AnyThread
 import androidx.annotation.CallSuper
+import androidx.annotation.UiThread
 import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.behavior.refresh.IRefreshContentBehavior
 import com.angcyo.core.R
@@ -152,6 +153,7 @@ open class BaseDslFragment : BaseTitleFragment() {
      * [com.angcyo.core.fragment.BaseTitleFragment.finishRefresh]
      * [com.angcyo.dsladapter.toNone]*/
     @CallSuper
+    @UiThread
     open fun onLoadData() {
         //因为使用的behavior实现的刷新, 所以fling操作之后, scroll并不一定就会停止
         _recycler.stopScroll()
