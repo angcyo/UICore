@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.angcyo.library.L
 import com.angcyo.library.ex.ClickAction
+import com.angcyo.library.ex.ViewAction
 import com.angcyo.library.ex.each
 import com.angcyo.library.ex.eachIndex
 import com.angcyo.library.ex.replace
@@ -24,6 +25,7 @@ import com.angcyo.library.utils.getMember
 import com.angcyo.widget.base.LongTouchListener
 import com.angcyo.widget.base.ThrottleClickListener
 import com.angcyo.widget.base.ThrottleClickListener.Companion.DEFAULT_THROTTLE_INTERVAL
+import com.angcyo.widget.base.setBoldText
 import java.lang.ref.WeakReference
 
 /**
@@ -36,8 +38,7 @@ import java.lang.ref.WeakReference
 
 @MainThread
 open class DslViewHolder(
-    itemView: View,
-    initialCapacity: Int = DEFAULT_INITIAL_CAPACITY
+    itemView: View, initialCapacity: Int = DEFAULT_INITIAL_CAPACITY
 ) : ViewHolder(itemView) {
 
     companion object {
@@ -119,8 +120,7 @@ open class DslViewHolder(
     /**枚举子元素
      * [recursively] 是否递归*/
     open fun eachChild(
-        recursively: Boolean = false,
-        action: (index: Int, childView: View) -> Unit
+        recursively: Boolean = false, action: (index: Int, childView: View) -> Unit
     ) {
         eachChild(itemView, recursively, action)
     }
@@ -128,9 +128,7 @@ open class DslViewHolder(
     /**枚举子元素
      * [recursively] 是否递归*/
     open fun eachChild(
-        view: View?,
-        recursively: Boolean = false,
-        action: (index: Int, childView: View) -> Unit
+        view: View?, recursively: Boolean = false, action: (index: Int, childView: View) -> Unit
     ) {
         if (view is ViewGroup) {
             view.eachIndex(recursively, action)
@@ -142,9 +140,7 @@ open class DslViewHolder(
     /**依次点击child view
      * [recursively] 是否递归所有 ViewGroup */
     fun clickChild(
-        @IdRes groupId: Int,
-        recursively: Boolean = false,
-        action: (childView: View) -> Unit
+        @IdRes groupId: Int, recursively: Boolean = false, action: (childView: View) -> Unit
     ) {
         val view = view(groupId)
         if (view is ViewGroup) {
@@ -156,27 +152,87 @@ open class DslViewHolder(
         }
     }
 
-    /**点击元素, 顺便设置选中状态*/
-    fun selectorClick(
-        @IdRes id: Int,
-        listener: (selected: Boolean) -> Boolean = { false /*不拦截默认处理*/ }
+    /**是否将所有child的状态设置为选中?*/
+    fun selectorChild(
+        @IdRes groupViewId: Int,
+        selected: Boolean = true,
+        ignore: (view: View?) -> Boolean = { false /*是否忽略处理指定的view*/ }
     ) {
-        click(id) {
-            val old = it.isSelected
-            val new = !old
-            if (listener(new)) {
+        selectorChild(view(groupViewId), selected, ignore)
+    }
+
+    fun selectorChild(
+        view: View?,
+        selected: Boolean = true,
+        ignore: (view: View?) -> Boolean = { false /*是否忽略处理指定的view*/ }
+    ) {
+        if (view is ViewGroup) {
+            view.each(false) { childView ->
+                if (ignore(childView)) {
+                    //no op
+                } else {
+                    childView.isSelected = selected
+                }
+            }
+        } else {
+            if (ignore(view)) {
                 //no op
             } else {
-                it.isSelected = new
+                view?.isSelected = selected
+            }
+        }
+    }
+
+    /**点击元素, 顺便设置选中状态
+     * [def] 默认状态
+     * [mutex] 是否互斥, 如果为false, 那么选中之后, 就无法触发取消选中
+     * [cancelOtherView] 是否要取消视图的选中状态
+     * [selectedAction] 选中后, 需要执行的操作
+     * */
+    fun selectorClick(
+        @IdRes id: Int,
+        def: Boolean? = null,
+        mutex: Boolean = true,
+        cancelOtherView: Boolean = false,
+        listener: (selected: Boolean) -> Boolean = { false /*不拦截默认处理*/ },
+        selectedAction: ViewAction? = null,
+    ) {
+        if (def != null) {
+            view(id)?.isSelected = def
+        }
+        click(id) { child ->
+            val old = child.isSelected
+            if (old && !mutex) {
+                // no op
+            } else {
+                val new = !old
+
+                if (new) {
+                    //需要选中view
+                    if (cancelOtherView) {
+                        if (child.parent is ViewGroup) {
+                            selectorChild(child.parent as ViewGroup, false) {
+                                it == child
+                            }
+                        }
+                    }
+                }
+
+                if (listener(new)) {
+                    //no op
+                } else {
+                    child.isSelected = new
+                    if (new) {
+                        selectedAction?.invoke(child)
+                    }
+                }
             }
         }
     }
 
     /**节流点击事件*/
     fun throttleClick(
-        @IdRes id: Int,
-        throttleInterval: Long = DEFAULT_THROTTLE_INTERVAL,
-        action: (View) -> Unit
+        @IdRes id: Int, throttleInterval: Long = DEFAULT_THROTTLE_INTERVAL, action: (View) -> Unit
     ) {
         click(id, ThrottleClickListener(throttleInterval = throttleInterval, action = action))
     }
@@ -206,8 +262,7 @@ open class DslViewHolder(
     }
 
     fun throttleClickItem(
-        throttleInterval: Long = DEFAULT_THROTTLE_INTERVAL,
-        action: (View) -> Unit
+        throttleInterval: Long = DEFAULT_THROTTLE_INTERVAL, action: (View) -> Unit
     ) {
         click(itemView, ThrottleClickListener(throttleInterval, action = action))
     }
@@ -436,9 +491,7 @@ open class DslViewHolder(
     }
 
     fun enable(
-        @IdRes resId: Int,
-        enable: Boolean? = true,
-        recursive: Boolean = true
+        @IdRes resId: Int, enable: Boolean? = true, recursive: Boolean = true
     ): DslViewHolder {
         val view = v<View>(resId)
         enable(view, enable, recursive)
@@ -505,6 +558,37 @@ open class DslViewHolder(
         if (recursion && view is ViewGroup) {
             for (i in 0 until view.childCount) {
                 selected(view.getChildAt(i), selected, recursion)
+            }
+        }
+    }
+
+    /**是否将所有TextView child的文本设置为粗体*/
+    fun boldChild(
+        @IdRes groupViewId: Int,
+        bold: Boolean = true,
+        ignore: (view: View?) -> Boolean = { false /*是否忽略处理指定的view*/ }
+    ) {
+        boldChild(view(groupViewId), bold, ignore)
+    }
+
+    fun boldChild(
+        view: View?,
+        bold: Boolean = true,
+        ignore: (view: View?) -> Boolean = { false /*是否忽略处理指定的view*/ }
+    ) {
+        if (view is ViewGroup) {
+            view.each(false) { childView ->
+                if (ignore(childView)) {
+                    //no op
+                } else if (childView is TextView) {
+                    childView.setBoldText(bold)
+                }
+            }
+        } else {
+            if (ignore(view)) {
+                //no op
+            } else if (view is TextView) {
+                view.setBoldText(bold)
             }
         }
     }
@@ -764,9 +848,7 @@ open class DslViewHolder(
     /**将[itemView]的所有内容替换成新的布局[layoutId]
      * [groupViewId] group的布局id*/
     fun replace(
-        @IdRes groupViewId: Int,
-        @LayoutRes layoutId: Int,
-        attachToRoot: Boolean = true
+        @IdRes groupViewId: Int, @LayoutRes layoutId: Int, attachToRoot: Boolean = true
     ) {
         replace(view(groupViewId), layoutId, attachToRoot)
     }

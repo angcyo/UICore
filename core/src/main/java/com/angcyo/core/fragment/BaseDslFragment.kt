@@ -12,6 +12,7 @@ import com.angcyo.dsladapter.DslAdapterStatusItem
 import com.angcyo.dsladapter.DslItemDecoration
 import com.angcyo.dsladapter.HoverItemDecoration
 import com.angcyo.dsladapter.PlaceholderDslAdapter
+import com.angcyo.dsladapter.annotation.UpdateByDiff
 import com.angcyo.dsladapter.data.SingleDataUpdate
 import com.angcyo.dsladapter.data.loadDataEndIndex
 import com.angcyo.dsladapter.data.resetRender
@@ -19,6 +20,7 @@ import com.angcyo.dsladapter.data.updateAdapter
 import com.angcyo.dsladapter.item.IFragmentItem
 import com.angcyo.dsladapter.loadingStatus
 import com.angcyo.dsladapter.onRefreshOrLoadMore
+import com.angcyo.dsladapter.toLoading
 import com.angcyo.library.model.Page
 import com.angcyo.widget.recycler.noItemChangeAnim
 import kotlin.reflect.KClass
@@ -108,6 +110,14 @@ open class BaseDslFragment : BaseTitleFragment() {
         _adapter.updateAdapter(update)
     }
 
+    /**
+     * 开始适配器刷新状态
+     * [startRefresh]*/
+    @UpdateByDiff
+    fun startAdapterLoading() {
+        _adapter.toLoading()
+    }
+
     //<editor-fold desc="数据加载">
 
     /**页面请求相关辅助操作参数*/
@@ -155,9 +165,10 @@ open class BaseDslFragment : BaseTitleFragment() {
         itemClass: Class<Item>,
         dataList: List<Bean>?,
         error: Throwable? = null,
+        page: Page? = null,
         initItem: Item.(data: Bean) -> Unit = {}
     ) {
-        loadDataEndIndex(itemClass, dataList, error) { data, _ ->
+        loadDataEndIndex(itemClass, dataList, error, page) { data, _ ->
             initItem(data)
         }
     }
@@ -167,9 +178,10 @@ open class BaseDslFragment : BaseTitleFragment() {
         itemClass: KClass<Item>,
         dataList: List<Bean>?,
         error: Throwable? = null,
+        page: Page? = null,
         initItem: Item.(data: Bean) -> Unit = {}
     ) {
-        loadDataEnd(itemClass.java, dataList, error, initItem)
+        loadDataEnd(itemClass.java, dataList, error, page, initItem)
     }
 
     @AnyThread
@@ -177,10 +189,11 @@ open class BaseDslFragment : BaseTitleFragment() {
         itemClass: Class<Item>,
         dataList: List<Bean>?,
         error: Throwable? = null,
+        page: Page? = null,
         initItem: Item.(data: Bean, index: Int) -> Unit = { _, _ -> }
     ) {
         finishRefresh()
-        _adapter.loadDataEndIndex(itemClass, dataList, error, page) { data, index ->
+        _adapter.loadDataEndIndex(itemClass, dataList, error, page ?: this.page) { data, index ->
             initItem(data, index)
         }
     }
@@ -190,9 +203,10 @@ open class BaseDslFragment : BaseTitleFragment() {
         itemClass: KClass<Item>,
         dataList: List<Bean>?,
         error: Throwable? = null,
+        page: Page? = null,
         initItem: Item.(data: Bean, index: Int) -> Unit = { _, _ -> }
     ) {
-        loadDataEndIndex(itemClass.java, dataList, error, initItem)
+        loadDataEndIndex(itemClass.java, dataList, error, page, initItem)
     }
 
     /**简单的加载多类型的item*/
