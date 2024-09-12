@@ -19,3 +19,13 @@
 #   java.util.ArrayList mListeners;
 # }
 # end...
+
+# 2024-9-12 新版本的AGP R8 构造方法也会混淆
+-keepclassmembers class *.**.*Item {
+   public <init>();
+}
+
+# 所有使用Class.newInstance的类, 都需要保留构造方法
+-keepclassmembers class * {
+   public <init>();
+}
