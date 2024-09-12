@@ -6,6 +6,7 @@ import com.angcyo.acc2.control.ControlContext
 import com.angcyo.acc2.control.log
 import com.angcyo.acc2.dynamic.IHandleActionDynamic
 import com.angcyo.acc2.parse.HandleResult
+import com.angcyo.library.ex.createInstance
 import com.angcyo.library.ex.subEnd
 
 /**
@@ -31,7 +32,7 @@ class ClassAction : BaseAction() {
         try {
             val clsName = action.subEnd(Action.ARG_SPLIT)!!
             val cls = Class.forName(clsName)
-            val obj = cls.newInstance()
+            val obj = cls.createInstance()
 
             control.controlListenerList.forEach {
                 it.onCreateDynamicObj(obj)

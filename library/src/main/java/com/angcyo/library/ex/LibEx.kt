@@ -433,8 +433,7 @@ fun <R> sync(count: Int = 1, action: (CountDownLatch, AtomicReference<R>) -> Uni
     val latch = CountDownLatch(count)
     val result = AtomicReference<R>()
     thread(name = "sync-${nowTimeString()}") {
-        action(latch, result)
-        /*if (latch.count == 1L) {
+        action(latch, result)/*if (latch.count == 1L) {
             latch.countDown()
         }*/
     }
@@ -593,10 +592,7 @@ fun <T> List<T>.isElementAfterWith(element: T, anchor: T, def: Boolean = true): 
  * [column] 需要获取第几列的数据
  * */
 fun <T> List<T>.getRowColumn(
-    columnCount: Int,
-    row: Int,
-    column: Int,
-    def: T? = null
+    columnCount: Int, row: Int, column: Int, def: T? = null
 ): T? {
     val index = row * columnCount + column
     return getOrNull(index) ?: def
@@ -701,10 +697,7 @@ fun getValueFrom(value: Any?, valueType: Any?): Any? {
  * [valueType] 值的类型判断
  * */
 fun clampValue(
-    value: Any?,
-    valueType: Any?,
-    minValue: Any?,
-    maxValue: Any?
+    value: Any?, valueType: Any?, minValue: Any?, maxValue: Any?
 ): Any? {
     val valueStr = value?.toString()
     if (valueStr.isNullOrBlank()) {
@@ -761,9 +754,7 @@ fun clampValue(
 /**进度[value]在[minValue]~[maxValue]中的比例
  * 返回[0~1]之间的比例*/
 fun progressValueFraction(
-    value: Any?,
-    minValue: Any?,
-    maxValue: Any?
+    value: Any?, minValue: Any?, maxValue: Any?
 ): Float? {
     val valueStr = value?.toString()
     if (valueStr.isNullOrBlank()) {
@@ -798,39 +789,27 @@ fun isFloatMinAdjustValue(value: Any?, minValue: Any?): Boolean {
  * [target] 参与比较的值
  * [threshold] 阈值, 正值, 自动取反(负值)
  * */
-fun maxOfDirection(target: Int, threshold: Int, defZero: Int = 0) = if (target == 0)
-    defZero
-else if (target > 0)
-    max(target, threshold)
-else
-    min(target, -threshold)
+fun maxOfDirection(target: Int, threshold: Int, defZero: Int = 0) = if (target == 0) defZero
+else if (target > 0) max(target, threshold)
+else min(target, -threshold)
 
 /**[maxOfDirection]*/
-fun maxOfDirection(target: Float, threshold: Float, defZero: Float = 0f) = if (target == 0f)
-    defZero
-else if (target > 0)
-    max(target, threshold)
-else
-    min(target, -threshold)
+fun maxOfDirection(target: Float, threshold: Float, defZero: Float = 0f) = if (target == 0f) defZero
+else if (target > 0) max(target, threshold)
+else min(target, -threshold)
 
 /**在同方向上取最小值
  * [target] 参与比较的值
  * [threshold] 阈值, 正值, 自动取反(负值)
  * */
-fun minOfDirection(target: Int, threshold: Int, defZero: Int = 0) = if (target == 0)
-    defZero
-else if (target > 0)
-    min(target, threshold)
-else
-    max(target, -threshold)
+fun minOfDirection(target: Int, threshold: Int, defZero: Int = 0) = if (target == 0) defZero
+else if (target > 0) min(target, threshold)
+else max(target, -threshold)
 
 /**[minOfDirection]*/
-fun minOfDirection(target: Float, threshold: Float, defZero: Float = 0f) = if (target == 0f)
-    defZero
-else if (target > 0)
-    min(target, threshold)
-else
-    max(target, -threshold)
+fun minOfDirection(target: Float, threshold: Float, defZero: Float = 0f) = if (target == 0f) defZero
+else if (target > 0) min(target, threshold)
+else max(target, -threshold)
 
 /**都是正数, 或者都是负数*/
 fun isSameDirection(value1: Int, value2: Int) =
@@ -865,5 +844,14 @@ fun StringBuilder.appendSpaceIfNotEmpty(space: String = " ") {
 fun StringBuilder.appendLineIfNotEmpty() {
     if (isNotEmpty()) {
         appendLine()
+    }
+}
+
+/**创建一个类的实例*/
+fun <T> Class<T>.createInstance(): T {
+    return try {
+        newInstance()
+    } catch (e: Exception) {
+        getDeclaredConstructor().newInstance()
     }
 }

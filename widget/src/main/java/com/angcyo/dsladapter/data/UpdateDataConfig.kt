@@ -4,6 +4,7 @@ import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.annotation.UpdateByDiff
 import com.angcyo.dsladapter.annotation.UpdateFlag
 import com.angcyo.library.ex.className
+import com.angcyo.library.ex.createInstance
 import com.angcyo.library.ex.isListEmpty
 import com.angcyo.library.ex.size
 import com.angcyo.library.model.Page
@@ -230,7 +231,7 @@ fun <Item : DslAdapterItem> updateOrCreateItemByClass(
 ): DslAdapterItem? {
     var newItem = oldItem
     if (oldItem == null || oldItem.className() != itemClass.className()) {
-        newItem = itemClass.newInstance()
+        newItem = itemClass.createInstance()
     }
     (newItem as? Item?)?.apply {
         this.initItem()

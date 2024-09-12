@@ -3,6 +3,7 @@ package com.angcyo.dsladapter.data
 import com.angcyo.dsladapter.*
 import com.angcyo.dsladapter.annotation.UpdateByDiff
 import com.angcyo.dsladapter.annotation.UpdateFlag
+import com.angcyo.library.ex.createInstance
 import com.angcyo.library.model.Page
 import kotlin.math.max
 
@@ -112,7 +113,7 @@ inline fun <reified Item : DslAdapterItem> DslAdapter.loadSingleData2(
     crossinline initItem: Item.(data: Any) -> Unit = {}
 ) {
     loadSingleData<Item>(dataList, page, pageSize, filterParams) { oldItem, data ->
-        (oldItem ?: Item::class.java.newInstance()).apply {
+        (oldItem ?: Item::class.java.createInstance()).apply {
             initItem(data)
         }
     }

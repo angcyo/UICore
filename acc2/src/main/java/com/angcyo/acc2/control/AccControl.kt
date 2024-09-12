@@ -1,7 +1,11 @@
 package com.angcyo.acc2.control
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import com.angcyo.acc2.bean.*
+import com.angcyo.acc2.bean.ActionBean
+import com.angcyo.acc2.bean.CheckBean
+import com.angcyo.acc2.bean.FindBean
+import com.angcyo.acc2.bean.HandleBean
+import com.angcyo.acc2.bean.TaskBean
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_ERROR
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_FINISH
 import com.angcyo.acc2.control.AccControl.Companion.CONTROL_STATE_NORMAL
@@ -15,8 +19,19 @@ import com.angcyo.acc2.dynamic.IActionDynamic
 import com.angcyo.acc2.dynamic.IHandleDynamic
 import com.angcyo.acc2.dynamic.IInputProvider
 import com.angcyo.acc2.dynamic.ITaskDynamic
-import com.angcyo.library.*
-import com.angcyo.library.ex.*
+import com.angcyo.library.L
+import com.angcyo.library.app
+import com.angcyo.library.ex.createInstance
+import com.angcyo.library.ex.des
+import com.angcyo.library.ex.des2
+import com.angcyo.library.ex.newLineIndent
+import com.angcyo.library.ex.simpleHash
+import com.angcyo.library.ex.size
+import com.angcyo.library.ex.sleep
+import com.angcyo.library.ex.threadName
+import com.angcyo.library.getAppName
+import com.angcyo.library.getAppVersionCode
+import com.angcyo.library.getAppVersionName
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.ThreadFactory
@@ -50,7 +65,7 @@ class AccControl : Runnable {
             try {
                 val c = Class.forName(clsName)
                 if (cls.isAssignableFrom(c)) {
-                    return c.newInstance() as T
+                    return c.createInstance() as T
                 }
             } catch (e: Exception) {
                 L.w("无法实例化:$clsName")

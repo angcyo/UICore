@@ -39,7 +39,7 @@ fun List<Any>.toDslItemList(
     config: DslAdapterItem.() -> Unit = {}
 ): MutableList<DslAdapterItem> {
     return toDslItemList(itemFactory = { _, item ->
-        dslItem.newInstance().apply {
+        dslItem.createInstance().apply {
             if (layoutId != -1) {
                 itemLayoutId = layoutId
             }
@@ -666,7 +666,7 @@ inline fun <reified Item : DslAdapterItem> DslAdapter._updateOrInsertItem(
 
     //不存在, 或者存在的类型不匹配, 则创建新item
     oldItem = if (findItem == null || findItem !is Item) {
-        Item::class.java.newInstance()
+        Item::class.java.createInstance()
     } else {
         findItem
     }
