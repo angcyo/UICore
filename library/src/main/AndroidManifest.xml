@@ -8,7 +8,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <!--https://developer.android.google.cn/training/notify-user/build-notification.html#urgent-message -->
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <!--2024-9-13 Google Play 政策-->
+    <!--<uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />-->
 
     <!--创建桌面快捷方式 https://www.jianshu.com/p/1d16c3a04593 -->
     <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS" />
