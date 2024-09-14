@@ -141,13 +141,34 @@ _replaceXmlResFromHttp.doFirst {
     //对应本地资源的语种列表
     def resLocalList = ["", "-es", "-fr", "-de", "-ja", "-ko", "-zh-rHK", "-zh-rTW"]
 
+    //是否将资源的key替换成中文?
+    def replaceZhKey = true
+    def zhResultMap = [:]
+    //中文资源
+    if (replaceZhKey) {
+        def resultMap = _httpGet("${api}/projects/${projectId}/files/${fileId}/keys/zh_CN", [
+                Authorization: "Bearer $token"
+        ])
+        resultMap["keys"].forEach { item ->
+            def resKey = item["key"][0]
+            def resValue = item["value"]
+            zhResultMap.put(resKey, resValue)
+        }
+    }
+
     langList.eachWithIndex { lang, index ->
         def resultMap = _httpGet("${api}/projects/${projectId}/files/${fileId}/keys/${lang}", [
                 Authorization: "Bearer $token"
         ])
         def resMap = [:] //存储成 key:value 形式
         resultMap["keys"].forEach { item ->
-            resMap.put(item["key"][0], item["value"])
+            def resKey = item["key"][0]
+            def resValue = item["value"]
+            if (replaceZhKey) {
+                resMap.put(zhResultMap[resKey], resValue)
+            } else {
+                resMap.put(resKey, resValue)
+            }
         }
         _replaceLanguageFile("-zh", resLocalList[index], resMap, ["device_strings.xml"])
     }
