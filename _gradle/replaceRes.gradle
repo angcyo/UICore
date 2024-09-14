@@ -125,8 +125,16 @@ _replaceZhResTo.doFirst {
 
 _replaceXmlResFromHttp.doFirst {
     def api = "https://api.localazy.com"
-    def projectId = "_a7250363283110773173"
-    def fileId = "_e1305350101800"
+
+    //lds-update
+    //def projectId = "_a7250363283110773173"
+    //def fileId = "_e1305350101800"
+    //def token = "172437306204145752195285e30fd1481c62ec225e6f7a38ea5ab72735bf98eeea4338cf7b17dc3eab61"
+
+    //lds-app-android
+    def projectId = "_a7296714827263337191"
+    def fileId = "_e1211780100001"
+    def token = "172437286574119635932e88eecd7ae1ad9ca988704b63966a6793278e35a6fd8620e7e4e99821fa01db"
 
     //需要请求的资源语种列表
     def langList = ["en", "es_ES", "fr_FR", "de_DE", "ja_JP", "ko", "zh_TW", "zh_TW"]
@@ -135,7 +143,7 @@ _replaceXmlResFromHttp.doFirst {
 
     langList.eachWithIndex { lang, index ->
         def resultMap = _httpGet("${api}/projects/${projectId}/files/${fileId}/keys/${lang}", [
-                Authorization: "Bearer 172437306204145752195285e30fd1481c62ec225e6f7a38ea5ab72735bf98eeea4338cf7b17dc3eab61"
+                Authorization: "Bearer $token"
         ])
         def resMap = [:] //存储成 key:value 形式
         resultMap["keys"].forEach { item ->
