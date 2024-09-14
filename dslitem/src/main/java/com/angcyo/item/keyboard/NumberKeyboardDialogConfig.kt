@@ -167,6 +167,7 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
             visible(hint != null)
         }
         dialogViewHolder.tv(R.id.dialog_message_view)?.apply {
+            visible()//默认显示
             //输入限制
             if (maxInputLength >= 0) {
                 addFilter(InputFilter.LengthFilter(maxInputLength))
@@ -366,8 +367,7 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     /**获取当前输入的值, 对应的进度
      * [0~100].[min~max]比例值*/
     fun getProgressValueFraction(): Float? {
-        return _numberValue?.toString()?.toFloatOrNull()
-        /*val min = numberMinValue
+        return _numberValue?.toString()?.toFloatOrNull()/*val min = numberMinValue
         val max = numberMaxValue
         if (min != null && max != null) {
             val value = _numberValue ?: return null
