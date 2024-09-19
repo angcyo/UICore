@@ -162,6 +162,6 @@ fun httpListBeanType(wrapClass: KClass<*>, typeClass: KClass<*>): Type =
 fun Int.isSuccess() = this in 200..299
 
 /**文件请求体, 转换成[MultipartBody.Part]*/
-fun RequestBody.toFilePart(fileName: String): MultipartBody.Part {
-    return MultipartBody.Part.createFormData("file", fileName, this)
+fun RequestBody.toFilePart(fileName: String, name: String = "file"): MultipartBody.Part {
+    return MultipartBody.Part.createFormData(name, fileName, this)
 }
