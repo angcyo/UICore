@@ -124,6 +124,11 @@ _replaceZhResTo.doFirst {
 }
 
 _replaceXmlResFromHttp.doFirst {
+    //需要请求的资源语种列表
+    def langList = ["en", "es_ES", "fr_FR", "de_DE", "ja_JP", "ko", "zh_TW", "zh_TW"]
+    //对应本地资源的语种列表
+    def resLocalList = ["", "-es", "-fr", "-de", "-ja", "-ko", "-zh-rHK", "-zh-rTW"]
+
     def api = "https://api.localazy.com"
 
     //lds-update
@@ -133,57 +138,59 @@ _replaceXmlResFromHttp.doFirst {
 
     //lds-app-android
     def projectId = "_a7296714827263337191"
-    def fileId = "_e999570100001"
     def token = "172437286574119635932e88eecd7ae1ad9ca988704b63966a6793278e35a6fd8620e7e4e99821fa01db"
 
-    //需要请求的资源语种列表
-    def langList = ["en", "es_ES", "fr_FR", "de_DE", "ja_JP", "ko", "zh_TW", "zh_TW"]
-    //对应本地资源的语种列表
-    def resLocalList = ["", "-es", "-fr", "-de", "-ja", "-ko", "-zh-rHK", "-zh-rTW"]
+    //获取项目中的文件列表
+    def resultProjectList = _httpGet("${api}/projects/${projectId}/files", [
+            Authorization: "Bearer $token"
+    ])
+    resultProjectList.forEach { fileItem ->
+        //def fileId = "_e1198590100001"
+        def fileId = fileItem["id"]
 
-    //--配置--
+        //--配置--
+        //需要处理的文件列表, null/空表示所有
+        //def includeFileNameList = ["canvas2_string.xml"]
+        def includeFileNameList = [fileItem["name"]]
+        //是否仅替换指定语言key对应的value资源
+        def replaceLangKeyRes = true
+        //是否将资源的key替换成中文?
+        def replaceZhKey = false
+        //--end
 
-    //需要处理的文件列表, null/空表示所有
-    def includeFileNameList = ["camera_strings.xml"]
-    //是否仅替换指定语言key对应的value资源
-    def replaceLangKeyRes = true
-    //是否将资源的key替换成中文?
-    def replaceZhKey = false
-
-    //--end
-
-    def zhResultMap = [:]
-    //中文资源
-    if (replaceZhKey) {
-        def resultMap = _httpGet("${api}/projects/${projectId}/files/${fileId}/keys/zh_CN", [
-                Authorization: "Bearer $token"
-        ])
-        resultMap["keys"].forEach { item ->
-            def resKey = item["key"][0]
-            def resValue = item["value"]
-            zhResultMap.put(resKey, resValue)
-        }
-    }
-
-    langList.eachWithIndex { lang, index ->
-        def resultMap = _httpGet("${api}/projects/${projectId}/files/${fileId}/keys/${lang}", [
-                Authorization: "Bearer $token"
-        ])
-        def resMap = [:] //存储成 key:value 形式
-        resultMap["keys"].forEach { item ->
-            def resKey = item["key"][0]
-            def resValue = item["value"].replaceAll("\n", "\\\\n").replaceAll("'", "\\\\'")
-            if (replaceZhKey) {
-                resMap.put(zhResultMap[resKey], resValue)
-            } else {
-                resMap.put(resKey, resValue)
+        def zhResultMap = [:]
+        //中文资源
+        if (replaceZhKey) {
+            def resultMap = _httpGet("${api}/projects/${projectId}/files/${fileId}/keys/zh_CN", [
+                    Authorization: "Bearer $token"
+            ])
+            resultMap["keys"].forEach { item ->
+                def resKey = item["key"][0]
+                def resValue = item["value"]
+                zhResultMap.put(resKey, resValue)
             }
         }
 
-        if (replaceLangKeyRes) {
-            _replaceLanguageResKeyFile(resLocalList[index], resMap, includeFileNameList)
-        } else {
-            _replaceLanguageFile("-zh", resLocalList[index], resMap, includeFileNameList)
+        langList.eachWithIndex { lang, index ->
+            def resultMap = _httpGet("${api}/projects/${projectId}/files/${fileId}/keys/${lang}", [
+                    Authorization: "Bearer $token"
+            ])
+            def resMap = [:] //存储成 key:value 形式
+            resultMap["keys"].forEach { item ->
+                def resKey = item["key"][0]
+                def resValue = item["value"].replaceAll("\n", "\\\\n").replaceAll("'", "\\\\'").replaceAll("&", "&amp;")
+                if (replaceZhKey) {
+                    resMap.put(zhResultMap[resKey], resValue)
+                } else {
+                    resMap.put(resKey, resValue)
+                }
+            }
+
+            if (replaceLangKeyRes) {
+                _replaceLanguageResKeyFile(resLocalList[index], resMap, includeFileNameList)
+            } else {
+                _replaceLanguageFile("-zh", resLocalList[index], resMap, includeFileNameList)
+            }
         }
     }
 }
