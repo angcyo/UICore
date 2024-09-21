@@ -172,7 +172,7 @@ _replaceXmlResFromHttp.doFirst {
         def resMap = [:] //存储成 key:value 形式
         resultMap["keys"].forEach { item ->
             def resKey = item["key"][0]
-            def resValue = item["value"]
+            def resValue = item["value"].replaceAll("\n", "\\\\n").replaceAll("'", "\\\\'")
             if (replaceZhKey) {
                 resMap.put(zhResultMap[resKey], resValue)
             } else {
