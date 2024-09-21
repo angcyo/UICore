@@ -133,7 +133,7 @@ _replaceXmlResFromHttp.doFirst {
 
     //lds-app-android
     def projectId = "_a7296714827263337191"
-    def fileId = "_e1211780100001"
+    def fileId = "_e999570100001"
     def token = "172437286574119635932e88eecd7ae1ad9ca988704b63966a6793278e35a6fd8620e7e4e99821fa01db"
 
     //需要请求的资源语种列表
@@ -141,8 +141,17 @@ _replaceXmlResFromHttp.doFirst {
     //对应本地资源的语种列表
     def resLocalList = ["", "-es", "-fr", "-de", "-ja", "-ko", "-zh-rHK", "-zh-rTW"]
 
+    //--配置--
+
+    //需要处理的文件列表, null/空表示所有
+    def includeFileNameList = ["camera_strings.xml"]
+    //是否仅替换指定语言key对应的value资源
+    def replaceLangKeyRes = true
     //是否将资源的key替换成中文?
-    def replaceZhKey = true
+    def replaceZhKey = false
+
+    //--end
+
     def zhResultMap = [:]
     //中文资源
     if (replaceZhKey) {
@@ -170,7 +179,12 @@ _replaceXmlResFromHttp.doFirst {
                 resMap.put(resKey, resValue)
             }
         }
-        _replaceLanguageFile("-zh", resLocalList[index], resMap, ["device_strings.xml"])
+
+        if (replaceLangKeyRes) {
+            _replaceLanguageResKeyFile(resLocalList[index], resMap, includeFileNameList)
+        } else {
+            _replaceLanguageFile("-zh", resLocalList[index], resMap, includeFileNameList)
+        }
     }
 }
 
@@ -226,10 +240,21 @@ def replaceResWithCsv() {
 }
 
 /**合并指定语言的xml文件
- * [inLanguage] 原来的语言数据
- * [outLanguage] 需要在原来的语言上替换成什么语言的数据*/
+ * @param inLanguage 原来的语言数据
+ * @param outLanguage 需要在原来的语言上替换成什么语言的数据
+ * @param map 需要替换的数据 value - newValue
+ * */
 def _replaceLanguageFile(inLanguage, outLanguage, map, includeFileName) {
     _replaceFileResList(getLanguageResPath(inLanguage), getLanguageResPath(outLanguage), map, includeFileName)
+}
+
+/**替换指定文件中的 key 对应的 value, 相当于直接替换了翻译的资源
+ * @param inLanguage 语言数据
+ * @param map 需要替换的数据 key - value
+ * */
+def _replaceLanguageResKeyFile(inLanguage, map, includeFileName) {
+    def pathList = getLanguageResPath(inLanguage)
+    _replaceFileKeyResList(pathList, pathList, map, includeFileName)
 }
 
 /**读取csv文件, 返回对应的map*/
@@ -246,7 +271,12 @@ def _readCsvMap(path) {
     return result
 }
 
-/// [includeFileName] 指定处理的文件名后缀
+/**
+ * @param includeFileName 指定处理的文件名后缀
+ * @param map 需要替换的数据 value - newValue
+ * @see #_replaceFileResList
+ * @see #_replaceFileKeyResList
+ * */
 def _replaceFileResList(pathList, outPathList, map, includeFileName) {
     pathList.eachWithIndex { path, index ->
         if (includeFileName == null || includeFileName.isEmpty()) {
@@ -259,10 +289,29 @@ def _replaceFileResList(pathList, outPathList, map, includeFileName) {
     }
 }
 
+/**
+ * @param includeFileName 指定处理的文件名后缀
+ * @see #_replaceFileResList
+ * @see #_replaceFileKeyResList
+ * */
+def _replaceFileKeyResList(pathList, outPathList, map, includeFileName) {
+    pathList.eachWithIndex { path, index ->
+        if (includeFileName == null || includeFileName.isEmpty()) {
+            _replaceFileKeyRes(path, outPathList[index], map)
+        } else {
+            if (includeFileName.any { path.endsWith(it) }) {
+                _replaceFileKeyRes(path, outPathList[index], map)
+            }
+        }
+    }
+}
+
 /**将原始文件内容替换成新的资源内容, 并输出到指定文件
- * [path] 需要替换的文件路径
- * [outPath] 替换后的输出文件路径
- * [map] 需要替换的键值对映射表
+ * @param path 需要替换的文件路径
+ * @param outPath 替换后的输出文件路径
+ * @param map 需要替换的键值对映射表 value - newValue
+ * @see #_replaceFileResList
+ * @see #_replaceFileKeyResList
  * */
 def _replaceFileRes(path, outPath, map) {
 
@@ -288,7 +337,7 @@ def _replaceFileRes(path, outPath, map) {
     def outLines = outOriginText.lines().toList()
     originLines.eachWithIndex { line, index ->
         if (line != null && !line.isEmpty()) {
-            if (!_isContainsResKey(line, map)) {
+            if (!_isContainsResValue(line, map)) {
                 //当前的行, 不包含需要替换的资源, 则保留output中的内容
                 if (index < outLines.size()) {
                     originLines[index] = outLines[index]
@@ -319,14 +368,64 @@ def _replaceFileRes(path, outPath, map) {
     System.err.println "替换完成:${pathFile.absolutePath}↓\n->${outPathFile.absolutePath} 共替换:${count}个"
 }
 
-/// 指定的文本中是否包含需要替换的资源
-static def _isContainsResKey(text, map) {
+/**
+ * 将指定文件中每一行的key资源替换成新的资源
+ * @param path 需要替换的资源文件路径
+ * @param outPath 替换后输出的资源文件路径, 可以等于[path]
+ * @param resMap key - value 资源替换列表
+ * */
+def _replaceFileKeyRes(path, outPath, resMap) {
+    //input
+    def pathFile = file(path)
+    if (!pathFile.exists()) {
+        System.err.println "输入文件不存在:${pathFile.absolutePath}"
+        return
+    }
+    def originText = pathFile.text //原始文件内容
+
+    //output
+    def outPathFile = file(outPath)
+    if (!outPathFile.exists()) {
+        outPathFile.parentFile.mkdirs()
+        outPathFile.createNewFile()
+    }
+
+    def originLines = originText.lines().toList()
+    def outLines = []
+
+    def count = 0
+    def replaceMap = [] //已替换的资源
+    originLines.eachWithIndex { line, index ->
+        if (line == null) {
+            outLines += "\n"
+        } else {
+            def resKeyResult = _matchResKey(line, resMap)
+            if (resKeyResult == null) {
+                outLines += line
+            } else {
+                //包含需要替换的key
+                def newLine = "    <string ${resKeyResult[0]}>${resKeyResult[1]}</string>"
+                outLines += newLine
+
+                count++
+                replaceMap += resKeyResult[0]
+            }
+        }
+    }
+
+    outPathFile.write(outLines.join("\n"))//写入文件
+    println "已替换${path}->${replaceMap}"
+    System.err.println "替换完成:${pathFile.absolutePath}↓\n->${outPathFile.absolutePath} 共替换:[${count}/${originLines.size()}]个"
+}
+
+/**指定的文本中是否包含需要替换的资源*/
+static def _isContainsResValue(text, map) {
     def contains = false
     map.each { key, value ->
         if (key != null && !key.isEmpty()) {
-            def resKey = ">${key}<"
-            //println("text:$text resKey:${resKey}")
-            if (text.contains(resKey)) {
+            def resValue = ">${key}<"
+            //println("text:$text resValue:${resValue}")
+            if (text.contains(resValue)) {
                 contains = true
                 return
             }
@@ -335,10 +434,28 @@ static def _isContainsResKey(text, map) {
     return contains
 }
 
-/// http get请求
-/// [url] 请求的地址
-/// [headers] 请求头
-/// @return 请求结果map
+/**指定的文本中是否包含需要替换的资源key*/
+static def _matchResKey(text, map) {
+    def matchResKey = null
+    map.each { key, value ->
+        if (key != null && !key.isEmpty()) {
+            def resKey = "name=\"${key}\""
+            //println("text:$text resKey:${resKey}")
+            if (text.contains(resKey)) {
+                matchResKey = [resKey, value]
+                return
+            }
+        }
+    }
+    return matchResKey
+}
+
+/**
+ * http get请求
+ * @param url 请求的地址
+ * @param headers 请求头
+ * @return 请求结果的json map对象
+ * */
 static def _httpGet(url, headers) {
     def uri = new URL(url)
     def connection = (HttpURLConnection) uri.openConnection()
@@ -361,7 +478,7 @@ static def _httpGet(url, headers) {
     }
 }
 
-/// 将一个文件的内容写入到另一个文件
+/**将一个文件的内容写入到另一个文件*/
 def _writeFile(inPath, outPath) {
     def inPathFile = file(inPath)
     if (!inPathFile.exists()) {
