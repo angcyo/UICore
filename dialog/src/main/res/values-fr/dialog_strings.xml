@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="dialog_positive">Confirmation</string>
-    <string name="dialog_negative"> Annulé</string>
+    <string name="dialog_negative">Annulé</string>
     <string name="dialog_neutral">neutralité</string>
-    <string name="dialog_continue"> Continuer</string>
+    <string name="dialog_continue">Continuer</string>
     <string name="dialog_input_hint">Veuillez saisir...</string>
 
     <string name="dialog_color_picker">Veuillez sélectionner une couleur...</string>

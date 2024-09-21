@@ -8,6 +8,6 @@
     <string name="crop_type_circle">Rond</string>
     <string name="crop_auto_side">Découpe automatique des bords</string>
 
-    <string name="crop_horizontal">Horizontal </string>
+    <string name="crop_horizontal">Horizontal</string>
     <string name="crop_vertical">Vertical</string>
 </resources>
