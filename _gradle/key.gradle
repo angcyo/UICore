@@ -181,5 +181,17 @@ android {
             v1SigningEnabled true
             v2SigningEnabled true
         }
+
+        //2024-9-23 动态创建签名配置
+        if (key_alias != null && key_alias != "") {
+            create(key_alias) {
+                keyAlias key_alias
+                keyPassword key_password
+                storeFile file(key_file)
+                storePassword password
+                v1SigningEnabled true
+                v2SigningEnabled true
+            }
+        }
     }
 }
