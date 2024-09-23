@@ -6,4 +6,5 @@
     <string name="not_support">not support</string>
     <string name="not_support_part">Some data does not support</string>
     <string name="refresh">Refresh</string>
+    <string name="adapter_no_more">I have boundaries</string>
 </resources>

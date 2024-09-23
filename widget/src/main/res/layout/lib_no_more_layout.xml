@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="我是有底线的"
+            android:text="@string/adapter_no_more"
             android:textColor="@color/text_place_color" />
     </LinearLayout>
 
