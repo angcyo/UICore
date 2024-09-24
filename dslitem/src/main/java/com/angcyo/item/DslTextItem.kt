@@ -43,6 +43,9 @@ open class DslSingleSelectedTextItem : DslAdapterItem() {
     /**文本*/
     var itemText: CharSequence? = null
 
+    /**右边的图标*/
+    var itemRightIcon: Int? = null
+
     /**是否支持取消选中*/
     var itemSupportCancelSelected = false
 
@@ -78,6 +81,10 @@ open class DslSingleSelectedTextItem : DslAdapterItem() {
         itemHolder.tv(R.id.lib_text_view)?.apply {
             text = itemText
             setBoldText(itemIsSelected)
+        }
+
+        itemHolder.img(R.id.lib_right_ico_view)?.apply {
+            setImageResource(itemRightIcon ?: 0)
         }
     }
 

@@ -20,5 +20,12 @@
             android:textSize="14sp"
             tools:text="LP-CAMERA-XXX" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lib_right_ico_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            tools:src="@drawable/ic_clear_cache" />
+
     </FrameLayout>
 </FrameLayout>
