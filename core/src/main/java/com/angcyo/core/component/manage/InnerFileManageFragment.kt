@@ -81,7 +81,8 @@ open class InnerFileManageFragment : BaseDslFragment() {
         _vh.click(R.id.import_button) {
             val selectList = _adapter.allSelectedItem()
             if (selectList.isEmpty()) {
-                toastQQ("请选择文件")
+                //toastQQ("请选择文件")
+                toastQQ(_string(R.string.ui_choose))
             } else {
                 innerFileManageModel.innerSelectedFileOnceData.updateValue(selectList.map { it.itemData as File })
                 removeThis()

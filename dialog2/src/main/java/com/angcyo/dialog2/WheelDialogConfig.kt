@@ -10,6 +10,7 @@ import com.angcyo.dialog.BaseDialogConfig
 import com.angcyo.dialog.configBottomDialog
 import com.angcyo.dialog2.widget.ArrayWheelAdapter
 import com.angcyo.library.L
+import com.angcyo.library.ex._string
 import com.angcyo.library.ex.dp
 import com.angcyo.library.ex.toStr
 import com.angcyo.library.extend.IToDrawable
@@ -64,7 +65,7 @@ open class WheelDialogConfig : BaseDialogConfig() {
     var _wheelView: WheelView? = null
 
     init {
-        dialogTitle = "请选择"
+        dialogTitle = _string(R.string.ui_choose)
         dialogLayoutId = R.layout.lib_dialog_wheel_layout
 
         positiveButtonListener = { dialog, _ ->
