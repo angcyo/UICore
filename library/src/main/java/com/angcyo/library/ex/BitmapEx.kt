@@ -303,6 +303,14 @@ fun Bitmap.transform(matrix: Matrix?): Bitmap {
     return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
 }
 
+/**缩放图片*/
+fun Bitmap.scaleBitmap(sx: Int, sy: Int): Bitmap {
+    return if (sx != 1 || sy != 1) scale(
+        width * sx,
+        height * sy
+    ) else this
+}
+
 /**如果图片的宽/高小于指定的大小, 则将其缩放方法处理*/
 fun Bitmap.scaleToMinSize(minWidth: Int, minHeight: Int): Bitmap {
     val sw = minWidth * 1f / width
