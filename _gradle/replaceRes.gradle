@@ -23,6 +23,10 @@ task _replaceXmlResFromHttp(group: 'angcyo', description: '替换xml文件中的
     //配置任务
 }
 
+task _replaceXmlResZhValueFromExcel(group: 'angcyo', description: '替换xml资源文件中的中文字符串值,从Excel中获取') {
+    //配置任务
+}
+
 task _copyResFile(group: 'angcyo', description: '从磁盘上复制资源文件到指定目录') {
     //配置任务
 }
@@ -195,6 +199,39 @@ _replaceXmlResFromHttp.doFirst {
     }
 }
 
+/**将指定语种中的中文替换成对应的语种资源*/
+_replaceXmlResZhValueFromExcel.doFirst {
+    def lines = readExcelLines("All翻译稿.xlsx", 1)
+    //本地xml资源需要替换的语种列表
+    def resLocalList = ["", "-es", "-fr", "-de", "-ja", "-ko", "-zh-rHK", "-zh-rTW"]
+    //语种对应excel中的列返回数据的索引值0开始, 中文是0
+    def langColList = [1, 5, 6, 4, 2, 3, 7, 7]
+
+    //获取中文资源
+    def zhResList = []
+    lines.forEach { line ->
+        zhResList.add(line[0])
+    }
+
+    //读取所有待翻译的资源
+    resLocalList.eachWithIndex { resLocal, resLocalColIndex ->
+        def resList = []
+        lines.forEach { line ->
+            resList.add(line[langColList[resLocalColIndex]])
+        }
+
+        def resMap = [:]
+        resList.eachWithIndex { res, resIndex ->
+            resMap.put(zhResList[resIndex], res)
+        }
+
+        def pathList = getLanguageResPath(resLocal)
+        pathList.each { path ->
+            _replaceFileRes(path, path, resMap)
+        }
+    }
+}
+
 _copyResFile.doFirst {
     //_writeFile("G:/资源/func_strings8种语言翻译/zh-Hans-CN/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-zh/func_strings.xml")
     _writeFile("G:/资源/func_strings8种语言翻译/de-DE/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-de/func_strings.xml")
@@ -357,14 +394,14 @@ def _replaceFileRes(path, outPath, map) {
     //开始替换内容
     def count = 0
     def replaceMap = [] //已替换的资源
-    map.each { key, val ->
-        if (key != null && !key.isEmpty()) {
-            def resKey = ">${key}<"
+    map.each { value, newValue ->
+        if (value != null && !value.isEmpty()) {
+            def resKey = ">${value}<"
             if (originText.contains(resKey)) {
-                originText = originText.replaceAll(resKey, ">${val}<")//替换资源
+                originText = originText.replaceAll(resKey, ">${newValue}<")//替换资源
                 count++
 
-                replaceMap += key
+                replaceMap += value
             }
         }
     }

@@ -329,8 +329,10 @@ def readXmlMap(path) {
 
 /**2023-5-29
  * 读取excel文件, 一行一行读取
- * [skipLine] 跳过多少行, 默认0, 从1开始跳过行数
- * [maxColumn] 最多读几列
+ * @param path excel文件路径
+ * @param skipLine 跳过多少行, 默认0, 从1开始跳过行数
+ * @param maxColumn 最多读几列
+ * @return List<List<String>>
  * */
 def readExcelLines(path, skipLine = 0, maxColumn = 100) {
     def lines = [] //每一行的数据, N列的数组
