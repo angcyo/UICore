@@ -2,6 +2,7 @@
 <resources>
     <string name="permission_disabled">Autorisations désactivées</string>
 
+    <string name="ui_finish">Terminer</string>
     <string name="ui_back">rendre</string>
     <string name="ui_enable_permission">Activer les autorisations</string>
     <string name="core_screen_shot_text">Question en retour</string>
@@ -11,5 +12,32 @@
     <string name="core_send_to_label">Envoyer à...</string>
     <string name="ui_minimum">minimiser</string>
     <string name="ui_next">Suivant</string>
+
+    <string name="ui_feature_development">功能开发中...</string>
+    <string name="ui_add">Ajouter</string>
+    <string name="ui_edit">Editer</string>
+    <string name="ui_confirm">Confirmation</string>
+    <string name="ui_choose">Veuillez sélectionner</string>
+    <string name="ui_warn">Avertissement</string>
+    <string name="ui_delete">Supprimer</string>
+    <string name="ui_delete_tip">删除后,不可恢复,是否继续?</string>
+    <string name="core_file_list">Liste des fichiers</string>
+    <string name="core_file_import">添加该文件</string>
+    <string name="core_add_file_success">Ajouté</string>
+    <string name="core_add_file_fail">添加失败</string>
+    <string name="core_import">Importation</string>
+    <string name="core_import_success">导入成功</string>
+    <string name="core_import_fail">导入失败</string>
+    <string name="core_trash_delete">拖动至此删除</string>
+    <string name="core_trash_delete_tip">Supprimer en lâchant prise</string>
+    <string name="ui_prev">上一步</string>
+    <string name="ui_open">Ouvre</string>
+    <string name="ui_delete_fail">Suppression échouée</string>
+    <string name="ui_share">Partager</string>
+
+    <string name="ui_wait_tip">请稍等...</string>
+    <string name="ui_valid_range_tip">Plage effective</string>
+
+    <string name="ui_known">OK</string>
 
 </resources>
