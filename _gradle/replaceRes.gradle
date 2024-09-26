@@ -222,7 +222,11 @@ _replaceXmlResZhValueFromExcel.doFirst {
 
         def resMap = [:]
         resList.eachWithIndex { res, resIndex ->
-            resMap.put(zhResList[resIndex], res)
+            def _res = res?.replaceAll("\n", "\\\\n")?.replaceAll("'", "\\\\'")?.replaceAll("&", "&amp;")
+            if (_res != null) {
+                resMap.put(zhResList[resIndex]?.replaceAll("\n", "\\\\n")?.replaceAll("'", "\\\\'")?.replaceAll("&", "&amp;"),
+                        _res)
+            }
         }
 
         def pathList = getLanguageResPath(resLocal)
