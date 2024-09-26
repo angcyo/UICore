@@ -19,7 +19,7 @@
     <string name="ui_warn">Warning</string>
     <string name="ui_delete">Delete</string>
     <string name="ui_delete_tip">After deletion, it is not recoverable, do you want to continue?</string>
-    <string name="core_file_list">FileList</string>
+    <string name="core_file_list">List of files</string>
     <string name="core_file_import">AddThisFile</string>
     <string name="core_add_file_success">Added</string>
     <string name="core_add_file_fail">AddFailed</string>
