@@ -44,7 +44,7 @@
                 style="@style/ItemEditStyle"
                 android:layout_width="@dimen/lib_increment_edit_width"
                 android:gravity="center"
-                android:hint="@string/lib_input_hint"
+                android:hint="@string/dialog_input_hint"
                 android:inputType="number"
                 android:maxLines="1"
                 android:paddingHorizontal="@dimen/lib_hdpi"

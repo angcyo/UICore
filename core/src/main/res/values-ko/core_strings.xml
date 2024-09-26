@@ -30,7 +30,7 @@
     <string name="core_import_fail">导入失败</string>
     <string name="core_trash_delete">拖动至此删除</string>
     <string name="core_trash_delete_tip">삭제하시겠습니까</string>
-    <string name="ui_prev">上一步</string>
+    <string name="ui_prev">이전 단계</string>
     <string name="ui_open">열기</string>
     <string name="ui_delete_fail">삭제 실패</string>
     <string name="ui_share">공유</string>

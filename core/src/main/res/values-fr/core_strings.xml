@@ -30,7 +30,7 @@
     <string name="core_import_fail">导入失败</string>
     <string name="core_trash_delete">拖动至此删除</string>
     <string name="core_trash_delete_tip">Supprimer en lâchant prise</string>
-    <string name="ui_prev">上一步</string>
+    <string name="ui_prev">L\'étape précédente</string>
     <string name="ui_open">Ouvre</string>
     <string name="ui_delete_fail">Suppression échouée</string>
     <string name="ui_share">Partager</string>

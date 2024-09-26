@@ -28,7 +28,7 @@
         android:singleLine="true"
         android:textColor="@color/lib_step_adjust_text_color_selector"
         app:r_hide_soft_input_on_lost_focus="true"
-        tools:hint="@string/lib_input_hint"
+        tools:hint="@string/dialog_input_hint"
         tools:text="文本文本文本文本" />
 
 </com.angcyo.widget.layout.RLinearLayout>

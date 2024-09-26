@@ -34,7 +34,7 @@
     <string name="core_import_fail">导入失败</string>
     <string name="core_trash_delete">拖动至此删除</string>
     <string name="core_trash_delete_tip">Loslassen, um zu  löschen</string>
-    <string name="ui_prev">上一步</string>
+    <string name="ui_prev">Vorheriger Schritt</string>
 
     <string name="ui_wait_tip">请稍等...</string>
     <string name="ui_valid_range_tip">Effektive Reichweite</string>
