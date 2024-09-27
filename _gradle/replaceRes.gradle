@@ -136,13 +136,13 @@ _replaceXmlResFromHttp.doFirst {
     def api = "https://api.localazy.com"
 
     //lds-update
-    //def projectId = "_a7250363283110773173"
     //def fileId = "_e1305350101800"
-    //def token = "172437306204145752195285e30fd1481c62ec225e6f7a38ea5ab72735bf98eeea4338cf7b17dc3eab61"
+    def projectId = "_a7250363283110773173"
+    def token = "172437306204145752195285e30fd1481c62ec225e6f7a38ea5ab72735bf98eeea4338cf7b17dc3eab61"
 
     //lds-app-android
-    def projectId = "_a7296714827263337191"
-    def token = "172437286574119635932e88eecd7ae1ad9ca988704b63966a6793278e35a6fd8620e7e4e99821fa01db"
+    //def projectId = "_a7296714827263337191"
+    //def token = "172437286574119635932e88eecd7ae1ad9ca988704b63966a6793278e35a6fd8620e7e4e99821fa01db"
 
     //获取项目中的文件列表
     def resultProjectList = _httpGet("${api}/projects/${projectId}/files", [
@@ -155,11 +155,11 @@ _replaceXmlResFromHttp.doFirst {
         //--配置--
         //需要处理的文件列表, null/空表示所有
         //def includeFileNameList = ["canvas2_string.xml"]
-        def includeFileNameList = [fileItem["name"]]
+        def includeFileNameList = null //[fileItem["name"]]
         //是否仅替换指定语言key对应的value资源
-        def replaceLangKeyRes = true
+        def replaceLangKeyRes = false
         //是否将资源的key替换成中文?
-        def replaceZhKey = false
+        def replaceZhKey = true
         //--end
 
         def zhResultMap = [:]
@@ -237,15 +237,19 @@ _replaceXmlResZhValueFromExcel.doFirst {
 }
 
 _copyResFile.doFirst {
-    //_writeFile("G:/资源/func_strings8种语言翻译/zh-Hans-CN/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-zh/func_strings.xml")
-    _writeFile("G:/资源/func_strings8种语言翻译/de-DE/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-de/func_strings.xml")
-    _writeFile("G:/资源/func_strings8种语言翻译/en/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values/func_strings.xml")
-    _writeFile("G:/资源/func_strings8种语言翻译/es-ES/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-es/func_strings.xml")
-    _writeFile("G:/资源/func_strings8种语言翻译/fr-FR/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-fr/func_strings.xml")
-    _writeFile("G:/资源/func_strings8种语言翻译/ja-JP/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-ja/func_strings.xml")
-    _writeFile("G:/资源/func_strings8种语言翻译/ko/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-ko/func_strings.xml")
-    _writeFile("G:/资源/func_strings8种语言翻译/zh-Hant-TW/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-zh-rHK/func_strings.xml")
-    _writeFile("G:/资源/func_strings8种语言翻译/zh-Hant-TW/func_strings.xml", "./UICoreEx/lpDevice/src/main/res/values-zh-rTW/func_strings.xml")
+    def fromPath = "G:\\temp2\\device_strings-八种语言"
+    def toPath = "./UICoreEx/lpDevice"
+    def fileName = "device_strings.xml"
+
+    //_writeFile("${fromPath}/zh-Hans-CN/${fileName}", "${toPath}/src/main/res/values-zh/${fileName}")
+    _writeFile("${fromPath}/de-DE/${fileName}", "${toPath}/src/main/res/values-de/${fileName}")
+    _writeFile("${fromPath}/en/${fileName}", "${toPath}/src/main/res/values/${fileName}")
+    _writeFile("${fromPath}/es-ES/${fileName}", "${toPath}/src/main/res/values-es/${fileName}")
+    _writeFile("${fromPath}/fr-FR/${fileName}", "${toPath}/src/main/res/values-fr/${fileName}")
+    _writeFile("${fromPath}/ja-JP/${fileName}", "${toPath}/src/main/res/values-ja/${fileName}")
+    _writeFile("${fromPath}/ko/${fileName}", "${toPath}/src/main/res/values-ko/${fileName}")
+    _writeFile("${fromPath}/zh-Hant-TW/${fileName}", "${toPath}/src/main/res/values-zh-rHK/${fileName}")
+    _writeFile("${fromPath}/zh-Hant-TW/${fileName}", "${toPath}/src/main/res/values-zh-rTW/${fileName}")
 }
 
 /**使用excel的数据结构替换res*/
