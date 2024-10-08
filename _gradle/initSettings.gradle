@@ -1,5 +1,5 @@
 //AGP 7.+
-if (gradle.gradleVersion.charAt(0) >= '7') {
+if (Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 7) {
 
     pluginManagement {
         repositories {

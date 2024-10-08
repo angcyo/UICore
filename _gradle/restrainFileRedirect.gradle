@@ -8,7 +8,7 @@
  * apply from: "$gradleHost/master/restrainFileRedirect.gradle"
  * */
 //android {
-//    if (gradle.gradleVersion.charAt(0) >= '7') {
+//    if (Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 7) {
 //        applicationVariants.all { variant ->
 //            if (variant.buildType.name != "debug") {
 //                /*tasks.whenTaskAdded { task ->

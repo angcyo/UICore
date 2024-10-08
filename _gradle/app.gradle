@@ -48,7 +48,7 @@ android {
     if (project.android.hasProperty("namespace")) {
         namespace "$_namespace" //gradle7.5+
     }
-    if (gradle.gradleVersion.charAt(0) >= '8') {
+    if (Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 8) {
         compileSdk Integer.parseInt(_C_SDK)
     } else {
         compileSdkVersion Integer.parseInt(_C_SDK)
@@ -59,7 +59,7 @@ android {
         //vectorDrawables.useSupportLibrary = true
 
         applicationId "$application_id"
-        if (gradle.gradleVersion.charAt(0) >= '8') {
+        if (Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 8) {
             minSdk Integer.parseInt(_M_SDK)
             targetSdk Integer.parseInt(_T_SDK)
         } else {
@@ -110,7 +110,7 @@ android {
 //        }
 //    }
 
-    if (gradle.gradleVersion.charAt(0) >= '8') {
+    if (Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 8) {
         flavorDimensions = ['flavor']
     } else {
         flavorDimensions 'flavor'
@@ -190,7 +190,7 @@ android {
         }
     }
 
-    if (gradle.gradleVersion.charAt(0) >= '6') {
+    if (Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 6) {
         //android.packageBuildConfig = false
         //https://stackoverflow.com/questions/63072764/android-packagebuildconfig-false-is-deprecated
         buildFeatures {

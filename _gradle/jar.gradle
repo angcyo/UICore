@@ -17,9 +17,9 @@ android {
     /*aar路径修改, 文件名修改*/
     libraryVariants.all { variant ->
         if (variant.buildType.name != "debug") {
-            if (gradle.gradleVersion.charAt(0) >= '6') {
+            if (Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 6) {
                 variant.getPackageLibraryProvider().get().destinationDir = aarFolder
-            } else if (gradle.gradleVersion.charAt(0) >= '5') {
+            } else if (Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 5) {
                 variant.packageLibrary.destinationDirectory.set(aarFolder)
             } else {
                 //no op
@@ -30,7 +30,7 @@ android {
             if (gradle.gradleVersion.startsWith("6.5") ||
                     gradle.gradleVersion.startsWith("6.7") ||
                     gradle.gradleVersion.startsWith("7") ||
-                    gradle.gradleVersion.charAt(0) >= '7') {
+                    Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 7) {
                 output.outputFileName = ((project.name != "app") ? project.name : rootProject.name) + "-" +
                         defaultConfig.versionName + "_" +
                         variant.buildType.name +
