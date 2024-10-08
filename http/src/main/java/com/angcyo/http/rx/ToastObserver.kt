@@ -34,7 +34,7 @@ class ToastObserver<T> : BaseObserver<T>() {
         tipError(t.message)
     }
 
-    override fun onNext(data: T) {
+    override fun onNext(data: T & Any) {
         super.onNext(data)
 
         if (data is Response<*>) {

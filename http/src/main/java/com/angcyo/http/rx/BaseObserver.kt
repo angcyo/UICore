@@ -72,7 +72,7 @@ open class BaseObserver<T> : AtomicReference<Disposable>(),
 
     val _lastData: T? get() = observerDataList.lastOrNull()
     val observerDataList = mutableListOf<T>()
-    override fun onNext(data: T) {
+    override fun onNext(data: T & Any) {
         if (!isDisposed) {
             try {
                 observerDataList.add(data)
