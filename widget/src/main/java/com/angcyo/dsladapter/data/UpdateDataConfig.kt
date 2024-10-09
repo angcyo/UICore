@@ -334,6 +334,9 @@ fun DslAdapter.updateAdapterState(
  * [error] 是否有错误, 如果有错误, 将会根据已有数据量智能切换到错误情感图, 或者加载更多失败的情况
  * [page] 当前Page参数 包含请求页码, 每页请求数据量
  * [initItem] 根据`Item`的类型, 为自定义的数据结构赋值
+ *
+ * [loadDataEnd]
+ * [loadDataEndIndex]
  * */
 @UpdateByDiff
 fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEnd(
@@ -341,22 +344,68 @@ fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEnd(
     dataList: List<Bean>?,
     error: Throwable?,
     page: Page,
+    alwaysLoadMore: Boolean = false,
+    updateDataConfigAction: UpdateDataConfig.() -> Unit = {},
     initItem: Item.(data: Bean) -> Unit = {}
 ) {
-    loadDataEndIndex(itemClass, dataList, error, page) { data, _ ->
+    loadDataEndIndex(
+        itemClass,
+        dataList,
+        error,
+        page,
+        alwaysLoadMore,
+        updateDataConfigAction
+    ) { data, _ ->
         initItem(data)
     }
 }
 
+/**
+ * [loadDataEnd]
+ * [loadDataEndIndex]
+ * */
+@UpdateByDiff
+fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEnd(
+    itemClass: KClass<Item>,
+    dataList: List<Bean>?,
+    error: Throwable?,
+    page: Page,
+    alwaysLoadMore: Boolean = false,
+    updateDataConfigAction: UpdateDataConfig.() -> Unit = {},
+    initItem: Item.(data: Bean) -> Unit = {}
+) {
+    loadDataEndIndex(
+        itemClass,
+        dataList,
+        error,
+        page,
+        alwaysLoadMore,
+        updateDataConfigAction
+    ) { data, _ ->
+        initItem(data)
+    }
+}
+
+/**[loadDataEndIndex]*/
 @UpdateByDiff
 fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEndIndex(
     itemClass: KClass<Item>,
     dataList: List<Bean>?,
     error: Throwable?,
     page: Page,
+    alwaysLoadMore: Boolean = false,
+    updateDataConfigAction: UpdateDataConfig.() -> Unit = {},
     initItem: Item.(data: Bean, index: Int) -> Unit = { _, _ -> }
 ) {
-    loadDataEndIndex(itemClass.java, dataList, error, page, initItem)
+    loadDataEndIndex(
+        itemClass.java,
+        dataList,
+        error,
+        page,
+        alwaysLoadMore,
+        updateDataConfigAction,
+        initItem
+    )
 }
 
 @UpdateByDiff
@@ -365,6 +414,8 @@ fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEndIndex(
     dataList: List<Bean>?,
     error: Throwable?,
     page: Page,
+    alwaysLoadMore: Boolean = false,
+    updateDataConfigAction: UpdateDataConfig.() -> Unit = {},
     initItem: Item.(data: Bean, index: Int) -> Unit = { _, _ -> }
 ) {
     updateAdapterErrorState(error)
@@ -382,11 +433,13 @@ fun <Item : DslAdapterItem, Bean> DslAdapter.loadDataEndIndex(
         updatePage = page.requestPageIndex
         pageSize = page.requestPageSize
         updateDataList = dataList as List<Any>?
+        alwaysEnableLoadMore = alwaysLoadMore
         updateOrCreateItem = { oldItem, data, index ->
             updateOrCreateItemByClass(itemClass, oldItem) {
                 initItem(data as Bean, index)
             }
         }
+        updateDataConfigAction()
     }
 }
 
