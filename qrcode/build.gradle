@@ -2,7 +2,7 @@ apply from: allGradle.libBase
 
 android {
     //AGP 8.x 必须指定命名空间
-    if (project.android.hasProperty("namespace")) namespace  'com.angcyo.qrcode'
+    if (project.android.hasProperty("namespace")) namespace 'com.angcyo.qrcode'
 }
 
 dependencies {
