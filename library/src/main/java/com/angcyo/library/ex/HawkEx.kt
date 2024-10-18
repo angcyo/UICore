@@ -69,8 +69,7 @@ fun String?.hawkPutList(value: CharSequence?, sort: Boolean = true): Boolean {
             }
         }
 
-        oldList.remove(value)
-        /*最新的在前面*/
+        oldList.remove(value)/*最新的在前面*/
         oldList.add(0, value.toString())
         Hawk.put(this, oldList.connect(char))
     } ?: false
@@ -78,9 +77,7 @@ fun String?.hawkPutList(value: CharSequence?, sort: Boolean = true): Boolean {
 
 /**直接替换整个[value]*/
 fun String?.hawkPutList(
-    value: List<CharSequence>?,
-    sort: Boolean = true,
-    allowEmpty: Boolean = true
+    value: List<CharSequence>?, sort: Boolean = true, allowEmpty: Boolean = true
 ): Boolean {
     this ?: return false
     var result = false
@@ -231,4 +228,33 @@ fun String?.hawkGetString(def: String? = null): String? {
         }
     }
     return result
+}
+
+/**当前字符串key, 是否在N天内不提示
+ * [isDayNotPrompt]
+ * [dayNotPrompt]
+ * @return 返回值表示是否不要提示*/
+fun String?.isDayNotPrompt(day: Int): Boolean {
+    val startTime = hawkGetLong(0)
+    return if (startTime <= 0L) {
+        //首次
+        false
+    } else {
+        val now = System.currentTimeMillis()
+        //是否在N天内
+        now < startTime + day * 24 * 3600 * 1000
+    }
+}
+
+/**
+ * 设置当前字符串N天内不提示
+ * [isDayNotPrompt]
+ * [dayNotPrompt]
+ * */
+fun String?.dayNotPrompt(enable: Boolean = true) {
+    if (enable) {
+        hawkPut(System.currentTimeMillis())
+    } else {
+        hawkDelete()
+    }
 }
