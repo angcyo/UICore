@@ -106,12 +106,16 @@ def _zipXmlFile(pathList, outputPath) {
 
                 // 读取文件内容并写入 ZIP 输出流
                 FileInputStream fileInputStream = new FileInputStream(file)
-                while (true) {
-                    int bytesRead = fileInputStream.read()
-                    if (bytesRead == -1) {
-                        break
+                try {
+                    while (true) {
+                        int bytesRead = fileInputStream.read()
+                        if (bytesRead == -1) {
+                            break
+                        }
+                        zipOutputStream.write(bytesRead)
                     }
-                    zipOutputStream.write(bytesRead)
+                } finally {
+                    fileInputStream.close()
                 }
 
                 // 完成当前条目
