@@ -85,7 +85,12 @@ String password = 'angcyo'
 
 //读取key文件
 Properties props = new Properties()
+
+//判断是否是非windows系统
+def isLinux = !System.getProperty("os.name").toLowerCase().contains("windows")
+
 if (rootProject.hasProperty("key_file")) {
+
     String keyFileConfigString = rootProject.property("key_file")
     File keyConfigFile = new File(rootDir, keyFileConfigString)
     //println("->" + keyConfigFile.exists() + "->" + keyFile2.exists())
@@ -104,7 +109,7 @@ if (rootProject.hasProperty("key_file")) {
         props.load(new FileInputStream(keyConfigFile))
         key_alias = props['key.alias']
         key_password = props['key.password']
-        key_file = props['key.file']
+        key_file = isLinux ? props['key.fileMac'] ?: props['key.file'] : props['key.file']
         password = props['password']
 
         //println("key_file:" + key_file)
@@ -121,7 +126,7 @@ if (rootProject.hasProperty("key_file")) {
         props.load(new FileInputStream(keyFilePropertiesFile))
         key_alias = props['key.alias']
         key_password = props['key.password']
-        key_file = props['key.file']
+        key_file = isLinux ? props['key.fileMac'] ?: props['key.file'] : props['key.file']
         password = props['password']
 
         if (key_file != null) {
