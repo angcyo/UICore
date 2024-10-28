@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="adapter_loading">Loading...</string>
-    <string name="adapter_error">Load failed, click retry</string>
-    <string name="adapter_no_data">No data</string>
-    <string name="not_support">not support</string>
-    <string name="not_support_part">Some data does not support</string>
-    <string name="refresh">Refresh</string>
-    <string name="adapter_no_more">I have boundaries</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="adapter_error">"Failed to load, click Retry"</string>
+  <string name="adapter_loading">"Loading..."</string>
+  <string name="adapter_no_data">"No data available"</string>
+  <string name="adapter_no_more">"You\'ve reached the end!"</string>
+  <string name="not_support">"Not currently supported"</string>
+  <string name="not_support_part">"Partial data is not supported."</string>
+  <string name="refresh">"Refresh"</string>
 </resources>

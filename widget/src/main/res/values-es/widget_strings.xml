@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="adapter_loading">Cargando...</string>
-    <string name="adapter_error">No se pudo cargar, haga clic para intentarlo de nuevo</string>
-    <string name="adapter_no_data">Sin datos</string>
-    <string name="not_support">Aún no es compatible</string>
-    <string name="not_support_part">Algunos datos no son compatibles</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="adapter_error">"No se pudo cargar, haga clic para intentarlo de nuevo"</string>
+  <string name="adapter_loading">"Cargando..."</string>
+  <string name="adapter_no_data">"No hay datos disponibles"</string>
+  <string name="adapter_no_more">"¡Has llegado al final!"</string>
+  <string name="not_support">"Aún no es compatible"</string>
+  <string name="not_support_part">"Algunos datos no son compatibles"</string>
+  <string name="refresh">"Actualizar"</string>
 </resources>

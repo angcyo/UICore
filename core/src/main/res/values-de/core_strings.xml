@@ -1,43 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="permission_disabled">Berechtigungen sind gesperrt</string>
-
-    <string name="ui_finish">Fertiggestellt</string>
-    <string name="ui_back">Zurück</string>
-    <string name="ui_enable_permission">Erlaubnis erteilen</string>
-    <string name="core_screen_shot_text">Problem melden</string>
-
-    <string name="core_thread_error_tip">Ich bin auf ein kleines Problem gestoßen</string>
-
-    <string name="core_send_to_label">Senden an...</string>
-    <string name="ui_minimum">Minimieren</string>
-
-    <string name="ui_add">Hinzufügen</string>
-    <string name="ui_edit">Bearbeiten</string>
-    <string name="ui_confirm">Bestätigen</string>
-    <string name="ui_choose">Bitte auswählen</string>
-    <string name="ui_warn">Warnung</string>
-    <string name="ui_delete">Löschen</string>
-    <string name="core_import">Importieren</string>
-    <string name="ui_next">Nächster Schritt</string>
-    <string name="ui_open">Öffnen</string>
-    <string name="ui_delete_fail">Löschen fehlgeschlagen</string>
-    <string name="ui_share">Teilen</string>
-
-    <string name="ui_feature_development">功能开发中...</string>
-    <string name="ui_delete_tip">删除后,不可恢复,是否继续?</string>
-    <string name="core_file_list">Dateiliste</string>
-    <string name="core_file_import">添加该文件</string>
-    <string name="core_add_file_success">Hinzugefügt</string>
-    <string name="core_add_file_fail">添加失败</string>
-    <string name="core_import_success">导入成功</string>
-    <string name="core_import_fail">导入失败</string>
-    <string name="core_trash_delete">拖动至此删除</string>
-    <string name="core_trash_delete_tip">Loslassen, um zu  löschen</string>
-    <string name="ui_prev">Vorheriger Schritt</string>
-
-    <string name="ui_wait_tip">请稍等...</string>
-    <string name="ui_valid_range_tip">Effektive Reichweite</string>
-
-    <string name="ui_known">OK</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="core_add_file_fail">"Fehler beim Hinzufügen"</string>
+  <string name="core_add_file_success">"Hinzugefügt"</string>
+  <string name="core_file_import">"Diese Datei hinzufügen"</string>
+  <string name="core_file_list">"Dateiliste"</string>
+  <string name="core_import">"Importieren"</string>
+  <string name="core_import_fail">"Import fehlgeschlagen"</string>
+  <string name="core_import_success">"Erfolgreich importiert"</string>
+  <string name="core_screen_shot_text">"Problem melden"</string>
+  <string name="core_send_to_label">"Senden an..."</string>
+  <string name="core_thread_error_tip">"Ich bin auf ein kleines Problem gestoßen"</string>
+  <string name="core_trash_delete">"Zum Löschen hierher ziehen"</string>
+  <string name="core_trash_delete_tip">"Tippen und halten Sie die unerwünschte Datei, und ziehen Sie sie dann in den dafür vorgesehenen Bereich. Heben Sie Ihren Finger an, um zu bestätigen, dass Sie die Datei löschen möchten."</string>
+  <string name="permission_disabled">"Berechtigungen sind gesperrt"</string>
+  <string name="ui_add">"Hinzufügen"</string>
+  <string name="ui_back">"Zurück"</string>
+  <string name="ui_choose">"Bitte auswählen"</string>
+  <string name="ui_confirm">@string/dialog_positive</string>
+  <string name="ui_delete">"Löschen"</string>
+  <string name="ui_delete_fail">"Löschen fehlgeschlagen"</string>
+  <string name="ui_delete_tip">"Nach dem Löschen kann die Datei nicht wiederhergestellt werden. Möchten Sie den Vorgang fortsetzen?"</string>
+  <string name="ui_edit">"Bearbeiten"</string>
+  <string name="ui_enable_permission">"Erlaubnis erteilen"</string>
+  <string name="ui_feature_development">"Funktion befindet sich derzeit in der Entwicklung..."</string>
+  <string name="ui_finish">"Fertiggestellt"</string>
+  <string name="ui_known">"OK"</string>
+  <string name="ui_minimum">"Minimieren"</string>
+  <string name="ui_next">"Nächster Schritt"</string>
+  <string name="ui_open">"Öffnen"</string>
+  <string name="ui_prev">"Vorheriger Schritt"</string>
+  <string name="ui_share">"Teilen"</string>
+  <string name="ui_valid_range_tip">"Gültiger Bereich"</string>
+  <string name="ui_wait_tip">"Bitte warten ..."</string>
+  <string name="ui_warn">"Warnung"</string>
 </resources>

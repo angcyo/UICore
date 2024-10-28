@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="adapter_loading">Wird geladen...</string>
-    <string name="adapter_error">Das Laden ist fehlgeschlagen. Klicken Sie hier, um es erneut zu versuchen</string>
-    <string name="adapter_no_data">Keine Daten</string>
-    <string name="not_support">Noch nicht unterstützt</string>
-    <string name="not_support_part">Einige Daten werden nicht unterstützt</string>
-    <string name="refresh">Aktualisieren</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="adapter_error">"Beim Laden ist ein Fehler aufgetreten. Klicken Sie auf „Wiederholen“."</string>
+  <string name="adapter_loading">"Wird geladen..."</string>
+  <string name="adapter_no_data">"Keine Daten verfügbar"</string>
+  <string name="adapter_no_more">"Sie haben das Ende erreicht!"</string>
+  <string name="not_support">"Derzeit nicht unterstützt"</string>
+  <string name="not_support_part">"Einige Daten werden nicht unterstützt"</string>
+  <string name="refresh">"Neu laden"</string>
 </resources>

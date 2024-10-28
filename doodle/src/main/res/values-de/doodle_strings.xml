@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="doodle_title">Graffiti</string>
-
-    <string name="doodle_undo">Rückgängig</string>
-    <string name="doodle_redo">Wiederherstellen</string>
-    <string name="doodle_color">Farbe</string>
-    <string name="doodle_eraser">Radiergummi</string>
-    <string name="doodle_brush">Pinsel</string>
-    <string name="doodle_pencil">Füller</string>
-    <string name="doodle_size">Größe</string>
-
-    <string name="doodle_ai_draw">AI Plot</string>
-
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="doodle_ai_draw">"KI-Zeichnung"</string>
+  <string name="doodle_brush">"Pinsel"</string>
+  <string name="doodle_color">"Farbe"</string>
+  <string name="doodle_eraser">"Radiergummi"</string>
+  <string name="doodle_pencil">"Stift"</string>
+  <string name="doodle_redo">"Wiederherstellen"</string>
+  <string name="doodle_size">"Größe"</string>
+  <string name="doodle_title">"Graffiti"</string>
+  <string name="doodle_undo">"Rückgängig"</string>
 </resources>

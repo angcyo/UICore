@@ -1,41 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="permission_disabled">Permission disabled</string>
-
-    <string name="ui_finish">Finish</string>
-    <string name="ui_back">Back</string>
-    <string name="ui_enable_permission">Enable permission</string>
-    <string name="core_screen_shot_text">Feedback</string>
-
-    <string name="core_thread_error_tip">Ran into a little problem</string>
-
-    <string name="core_send_to_label">Send to...</string>
-    <string name="ui_minimum">Minimum</string>
-    <string name="ui_feature_development">Feature development...</string>
-    <string name="ui_add">Add</string>
-    <string name="ui_edit">Edit</string>
-    <string name="ui_confirm">@string/dialog_positive</string>
-    <string name="ui_choose">Please choose</string>
-    <string name="ui_warn">Warning</string>
-    <string name="ui_delete">Delete</string>
-    <string name="ui_delete_tip">After deletion, it is not recoverable, do you want to continue?</string>
-    <string name="core_file_list">List of files</string>
-    <string name="core_file_import">AddThisFile</string>
-    <string name="core_add_file_success">Added</string>
-    <string name="core_add_file_fail">AddFailed</string>
-    <string name="core_import">Import</string>
-    <string name="core_import_success">Import Success</string>
-    <string name="core_import_fail">Import Fail</string>
-    <string name="core_trash_delete">DragHereToDelete</string>
-    <string name="core_trash_delete_tip">LetGoToDelete</string>
-    <string name="ui_next">Next</string>
-    <string name="ui_prev">Previous step</string>
-    <string name="ui_open">Open</string>
-    <string name="ui_delete_fail">Delete Fail</string>
-    <string name="ui_share">Share</string>
-
-    <string name="ui_wait_tip">Please wait...</string>
-    <string name="ui_valid_range_tip">Valid Range</string>
-
-    <string name="ui_known">OK</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="core_add_file_fail">"Failed to add"</string>
+  <string name="core_add_file_success">"Added"</string>
+  <string name="core_file_import">"Add the file"</string>
+  <string name="core_file_list">"File list"</string>
+  <string name="core_import">"Import"</string>
+  <string name="core_import_fail">"Import failed"</string>
+  <string name="core_import_success">"Imported successfully"</string>
+  <string name="core_screen_shot_text">"Feedback"</string>
+  <string name="core_send_to_label">"Send to..."</string>
+  <string name="core_thread_error_tip">"Ran into a little problem"</string>
+  <string name="core_trash_delete">"Drag here to delete"</string>
+  <string name="core_trash_delete_tip">"Lift your finger to delete"</string>
+  <string name="permission_disabled">"Permission denied "</string>
+  <string name="ui_add">"Add"</string>
+  <string name="ui_back">"Back"</string>
+  <string name="ui_choose">"Please choose"</string>
+  <string name="ui_confirm">@string/dialog_positive</string>
+  <string name="ui_delete">"Delete"</string>
+  <string name="ui_delete_fail">"Delete failed"</string>
+  <string name="ui_delete_tip">"After deletion, it is not recoverable, do you want to continue?"</string>
+  <string name="ui_edit">"Edit"</string>
+  <string name="ui_enable_permission">"Enable permission"</string>
+  <string name="ui_feature_development">"Feature currently under development..."</string>
+  <string name="ui_finish">"Done"</string>
+  <string name="ui_known">"OK"</string>
+  <string name="ui_minimum">"Minimum"</string>
+  <string name="ui_next">"Next"</string>
+  <string name="ui_open">"Open"</string>
+  <string name="ui_prev">"Previous step"</string>
+  <string name="ui_share">"Share"</string>
+  <string name="ui_valid_range_tip">"Valid range"</string>
+  <string name="ui_wait_tip">"Please wait..."</string>
+  <string name="ui_warn">"Warning"</string>
 </resources>

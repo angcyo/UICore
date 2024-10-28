@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="crop_title">Couper</string>
-    <string name="crop_rotate">Rotation</string>
-    <string name="crop_horizontal_flip">Retourner horizontalement</string>
-    <string name="crop_vertical_flip">Retourner verticalement</string>
-    <string name="crop_ratio_free">Proportion libre</string>
-    <string name="crop_type_circle">Rond</string>
-    <string name="crop_auto_side">Découpe automatique des bords</string>
-
-    <string name="crop_horizontal">Horizontal</string>
-    <string name="crop_vertical">Vertical</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="crop_auto_side">"Recadrage automatique"</string>
+  <string name="crop_horizontal">"Horizontal"</string>
+  <string name="crop_horizontal_flip">"Retournement horizontal"</string>
+  <string name="crop_ratio_free">"Libre"</string>
+  <string name="crop_rotate">"Rotation"</string>
+  <string name="crop_title">"Recadrer"</string>
+  <string name="crop_type_circle">"Cercle"</string>
+  <string name="crop_vertical">"Vertical"</string>
+  <string name="crop_vertical_flip">"Retournement vertical"</string>
 </resources>

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="dialog_positive">Confirmation</string>
-    <string name="dialog_negative">Annulé</string>
-    <string name="dialog_neutral">neutralité</string>
-    <string name="dialog_continue">Continuer</string>
-    <string name="dialog_input_hint">Veuillez saisir...</string>
-
-    <string name="dialog_color_picker">Veuillez sélectionner une couleur...</string>
-    <string name="dialog_width_picker">Veuillez sélectionner une épaisseur...</string>
-
-    <string name="not_prompt_label">Ne plus afficher</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="day_not_prompt_label">"Ne plus me rappeler dans les %1$s prochains jours"</string>
+  <string name="dialog_color_picker">"Veuillez sélectionner une couleur..."</string>
+  <string name="dialog_continue">"Continuer"</string>
+  <string name="dialog_input_hint">"Veuillez saisir..."</string>
+  <string name="dialog_negative">"Annuler"</string>
+  <string name="dialog_neutral">"Neutralité"</string>
+  <string name="dialog_positive">"Confirmer"</string>
+  <string name="dialog_width_picker">"Sélectionnez le poids..."</string>
+  <string name="not_prompt_label">"Ne plus montrer"</string>
 </resources>

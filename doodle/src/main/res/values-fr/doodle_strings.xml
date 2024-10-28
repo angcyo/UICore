@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="doodle_title">Graffiti</string>
-
-    <string name="doodle_undo">Retrait</string>
-    <string name="doodle_redo">Refaire</string>
-    <string name="doodle_color">Couleur</string>
-    <string name="doodle_eraser">Effacer</string>
-    <string name="doodle_brush">Crayon</string>
-    <string name="doodle_pencil">Stylo</string>
-    <string name="doodle_size">Taille</string>
-
-    <string name="doodle_ai_draw">Dessin IA</string>
-
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="doodle_ai_draw">"Dessin d\'IA"</string>
+  <string name="doodle_brush">"Brosse"</string>
+  <string name="doodle_color">"Couleur"</string>
+  <string name="doodle_eraser">"Gomme"</string>
+  <string name="doodle_pencil">"Stylo"</string>
+  <string name="doodle_redo">"Refaire"</string>
+  <string name="doodle_size">"Taille"</string>
+  <string name="doodle_title">"Graffiti"</string>
+  <string name="doodle_undo">"Défaire"</string>
 </resources>

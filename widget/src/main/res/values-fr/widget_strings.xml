@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="adapter_loading">Chargement...</string>
-    <string name="adapter_error">Échec du chargement, cliquez pour réessayer</string>
-    <string name="adapter_no_data">Pas de données</string>
-    <string name="not_support">Pas encore pris en charge</string>
-    <string name="not_support_part">Certaines données ne prennent pas en charge</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="adapter_error">"Echec du chargement, cliquez sur Réessayer"</string>
+  <string name="adapter_loading">"Chargement..."</string>
+  <string name="adapter_no_data">"Aucune donnée disponible"</string>
+  <string name="adapter_no_more">"Vous avez atteint la fin !"</string>
+  <string name="not_support">"Actuellement non pris en charge"</string>
+  <string name="not_support_part">"Les données partielles ne sont pas prises en charge."</string>
+  <string name="refresh">"Rafraîchir"</string>
 </resources>
