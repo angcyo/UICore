@@ -236,20 +236,37 @@ _replaceXmlResZhValueFromExcel.doFirst {
     }
 }
 
-_copyResFile.doFirst {
-    def fromPath = "G:\\temp2\\device_strings-八种语言"
-    def toPath = "./UICoreEx/lpDevice"
-    def fileName = "device_strings.xml"
 
-    //_writeFile("${fromPath}/zh-Hans-CN/${fileName}", "${toPath}/src/main/res/values-zh/${fileName}")
-    _writeFile("${fromPath}/de-DE/${fileName}", "${toPath}/src/main/res/values-de/${fileName}")
-    _writeFile("${fromPath}/en/${fileName}", "${toPath}/src/main/res/values/${fileName}")
-    _writeFile("${fromPath}/es-ES/${fileName}", "${toPath}/src/main/res/values-es/${fileName}")
-    _writeFile("${fromPath}/fr-FR/${fileName}", "${toPath}/src/main/res/values-fr/${fileName}")
-    _writeFile("${fromPath}/ja-JP/${fileName}", "${toPath}/src/main/res/values-ja/${fileName}")
-    _writeFile("${fromPath}/ko/${fileName}", "${toPath}/src/main/res/values-ko/${fileName}")
-    _writeFile("${fromPath}/zh-Hant-TW/${fileName}", "${toPath}/src/main/res/values-zh-rHK/${fileName}")
-    _writeFile("${fromPath}/zh-Hant-TW/${fileName}", "${toPath}/src/main/res/values-zh-rTW/${fileName}")
+/**[getLanguageResPath]*/
+_copyResFile.doFirst {
+    //def fromPath = "G:\\temp2\\device_strings-八种语言"
+    def fromPath = "G:\\lp2\\localazy_download-Android-英法西德"
+
+    def fileNameList = ["core_strings.xml", "crop_strings.xml", "dialog_strings.xml", "doodle_strings.xml",
+                        "widget_strings.xml", "canvas_strings.xml", "canvas2_string.xml",
+                        "engrave_strings.xml", "fsc_strings.xml", "device_strings.xml",
+                        "material_strings.xml", "func_strings.xml", "camera_strings.xml"]
+    def fileNamePathList = ["./UICore/core", "./UICore/crop", "./UICore/dialog", "./UICore/doodle",
+                            "./UICore/widget", "./UICoreEx/canvas2_lp", "./UICoreEx/canvas2_lp",
+                            "./UICoreEx/engrave2", "./UICoreEx/fsc", "./UICoreEx/lpDevice",
+                            "./UICoreEx/lpDevice", "./UICoreEx/lpDevice", "./UICoreEx/lpDevice"]
+
+    fileNameList.eachWithIndex { fileName, index ->
+        def toPath = fileNamePathList[index]
+
+        //def toPath = "./UICoreEx/lpDevice"
+        //def fileName = "device_strings.xml"
+
+        //_writeFile("${fromPath}/zh-Hans-CN/${fileName}", "${toPath}/src/main/res/values-zh/${fileName}")
+        _writeFile("${fromPath}/de-DE/${fileName}", "${toPath}/src/main/res/values-de/${fileName}")
+        _writeFile("${fromPath}/en/${fileName}", "${toPath}/src/main/res/values/${fileName}")
+        _writeFile("${fromPath}/es-ES/${fileName}", "${toPath}/src/main/res/values-es/${fileName}")
+        _writeFile("${fromPath}/fr-FR/${fileName}", "${toPath}/src/main/res/values-fr/${fileName}")
+        _writeFile("${fromPath}/ja-JP/${fileName}", "${toPath}/src/main/res/values-ja/${fileName}")
+        _writeFile("${fromPath}/ko/${fileName}", "${toPath}/src/main/res/values-ko/${fileName}")
+        _writeFile("${fromPath}/zh-Hant-TW/${fileName}", "${toPath}/src/main/res/values-zh-rHK/${fileName}")
+        _writeFile("${fromPath}/zh-Hant-TW/${fileName}", "${toPath}/src/main/res/values-zh-rTW/${fileName}")
+    }
 }
 
 /**使用excel的数据结构替换res*/
@@ -535,7 +552,7 @@ def _writeFile(inPath, outPath) {
     def inPathFile = file(inPath)
     if (!inPathFile.exists()) {
         System.err.println "输入文件不存在:${inPathFile.absolutePath}"
-        return
+        return false
     }
     def outPathFile = file(outPath)
     if (!outPathFile.exists()) {
@@ -543,4 +560,6 @@ def _writeFile(inPath, outPath) {
         outPathFile.createNewFile()
     }
     outPathFile.write(inPathFile.text)
+    println "写入文件:${inPathFile.absolutePath} -> ${outPathFile.absolutePath}"
+    return true
 }
