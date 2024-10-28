@@ -27,8 +27,14 @@ class DslDialogIconTextItem : DslAdapterItem() {
     /**图标-左边的*/
     var itemLeftIcon: Drawable? = null
 
+    /**是否对[itemLeftIcon]图标进行着色*/
+    var itemTintLeftIcon: Boolean = true
+
     /**图标-右边的*/
     var itemRightIcon: Drawable? = null
+
+    /**是否对[itemRightIcon]图标进行着色*/
+    var itemTintRightIcon: Boolean = true
 
     /**禁用时的颜色*/
     var itemDisabledColor: Int? = null
@@ -71,14 +77,14 @@ class DslDialogIconTextItem : DslAdapterItem() {
         }
         itemHolder.img(R.id.lib_left_image_view)?.apply {
             setImageDrawable(itemLeftIcon)
-            if (itemDisabledColor != null) {
+            if (itemTintLeftIcon && itemDisabledColor != null) {
                 setTintList(if (itemEnable) _color(R.color.lib_text_color) else itemDisabledColor!!)
             }
             clickIt(itemLeftIconClick)
         }
         itemHolder.img(R.id.lib_right_image_view)?.apply {
             setImageDrawable(itemRightIcon)
-            if (itemDisabledColor != null) {
+            if (itemTintRightIcon && itemDisabledColor != null) {
                 setTintList(if (itemEnable) _color(R.color.lib_text_color) else itemDisabledColor!!)
             }
             clickIt(itemRightIconClick)
