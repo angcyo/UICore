@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="crop_title">裁剪</string>
-    <string name="crop_rotate">旋轉</string>
-    <string name="crop_horizontal_flip">水平翻轉</string>
-    <string name="crop_vertical_flip">垂直翻轉</string>
-    <string name="crop_ratio_free">自由比例</string>
-    <string name="crop_type_circle">圓形</string>
-    <string name="crop_auto_side">自動裁邊</string>
-
-    <string name="crop_horizontal">水準</string>
-    <string name="crop_vertical">垂直</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="crop_auto_side">"自動裁邊"</string>
+  <string name="crop_horizontal">"水準"</string>
+  <string name="crop_horizontal_flip">"水準"</string>
+  <string name="crop_ratio_free">"自由比例"</string>
+  <string name="crop_rotate">"旋轉"</string>
+  <string name="crop_title">"裁剪"</string>
+  <string name="crop_type_circle">"圓形"</string>
+  <string name="crop_vertical">"垂直"</string>
+  <string name="crop_vertical_flip">"垂直"</string>
 </resources>

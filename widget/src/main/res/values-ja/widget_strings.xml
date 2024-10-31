@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="adapter_loading">読み込み中...</string>
-    <string name="adapter_error">ロードに失敗しました。クリックして再試行してください</string>
-    <string name="adapter_no_data">データなし</string>
-    <string name="not_support">まだサポートされていません</string>
-    <string name="not_support_part">一部のデータはサポートされていません</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="adapter_error">"読み込みに失敗しました。再試行をクリックしてください。"</string>
+  <string name="adapter_loading">"読み込み中..."</string>
+  <string name="adapter_no_data">"データがありません。"</string>
+  <string name="adapter_no_more">"これで終わりです。"</string>
+  <string name="not_support">"現在サポートされていません。"</string>
+  <string name="not_support_part">"一部のデータはサポートされていません。"</string>
+  <string name="refresh">"更新"</string>
 </resources>

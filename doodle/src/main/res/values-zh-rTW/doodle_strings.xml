@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="doodle_title">塗鴉</string>
-
-    <string name="doodle_undo">撤銷</string>
-    <string name="doodle_redo">重做</string>
-    <string name="doodle_color">顏色</string>
-    <string name="doodle_eraser">橡皮擦</string>
-    <string name="doodle_brush">毛筆</string>
-    <string name="doodle_pencil">鋼筆</string>
-    <string name="doodle_size">大小</string>
-
-    <string name="doodle_ai_draw">AI繪圖</string>
-
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="doodle_ai_draw">"AI繪圖"</string>
+  <string name="doodle_brush">"毛筆"</string>
+  <string name="doodle_color">"顏色"</string>
+  <string name="doodle_eraser">"橡皮擦"</string>
+  <string name="doodle_pencil">"鋼筆"</string>
+  <string name="doodle_redo">"重做"</string>
+  <string name="doodle_size">"大小"</string>
+  <string name="doodle_title">"塗鴉"</string>
+  <string name="doodle_undo">"撤銷"</string>
 </resources>

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="dialog_positive">확인</string>
-    <string name="dialog_negative">취소</string>
-    <string name="dialog_neutral">중립</string>
-    <string name="dialog_continue">계속</string>
-    <string name="dialog_input_hint">입력하십시오...</string>
-
-    <string name="dialog_color_picker">색상을 선택하십시오...</string>
-    <string name="dialog_width_picker">굵기를 선택하십시오...</string>
-
-    <string name="not_prompt_label">다시 알림 받지 않기</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="day_not_prompt_label">"%1$s일 이내에 다시 알리지 않음"</string>
+  <string name="dialog_color_picker">"색상을 선택하십시오..."</string>
+  <string name="dialog_continue">"계속"</string>
+  <string name="dialog_input_hint">"입력하십시오..."</string>
+  <string name="dialog_negative">"취소"</string>
+  <string name="dialog_neutral">"중립"</string>
+  <string name="dialog_positive">"확인"</string>
+  <string name="dialog_width_picker">"굵기를 선택하십시오..."</string>
+  <string name="not_prompt_label">"다시 알림 받지 않기"</string>
 </resources>

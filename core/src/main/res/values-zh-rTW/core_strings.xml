@@ -1,42 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="permission_disabled">權限被禁用</string>
-
-    <string name="ui_finish">完成</string>
-    <string name="ui_back">返回</string>
-    <string name="ui_enable_permission">開啟權限</string>
-    <string name="core_screen_shot_text">反饋問題</string>
-
-    <string name="core_thread_error_tip">遇到了一點問題</string>
-
-    <string name="core_send_to_label">發送到...</string>
-    <string name="ui_minimum">最小化</string>
-    <string name="ui_next">下一步</string>
-
-    <string name="ui_feature_development">功能开发中...</string>
-    <string name="ui_add">添加</string>
-    <string name="ui_edit">編輯</string>
-    <string name="ui_confirm">确定</string>
-    <string name="ui_choose">请选择</string>
-    <string name="ui_warn">警告</string>
-    <string name="ui_delete">删除</string>
-    <string name="ui_delete_tip">删除后,不可恢复,是否继续?</string>
-    <string name="core_file_list">文件列表</string>
-    <string name="core_file_import">添加该文件</string>
-    <string name="core_add_file_success">已添加</string>
-    <string name="core_add_file_fail">添加失败</string>
-    <string name="core_import">导入</string>
-    <string name="core_import_success">导入成功</string>
-    <string name="core_import_fail">导入失败</string>
-    <string name="core_trash_delete">拖动至此删除</string>
-    <string name="core_trash_delete_tip">松手即可删除</string>
-    <string name="ui_prev">上一步</string>
-    <string name="ui_open">打开</string>
-    <string name="ui_delete_fail">删除失败</string>
-    <string name="ui_share">分享</string>
-
-    <string name="ui_wait_tip">请稍等...</string>
-    <string name="ui_valid_range_tip">有效范围</string>
-
-    <string name="ui_known">我知道了</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="core_add_file_fail">"添加失敗"</string>
+  <string name="core_add_file_success">"已添加"</string>
+  <string name="core_file_import">"添加该文件"</string>
+  <string name="core_file_list">"文件列表"</string>
+  <string name="core_import">"導入"</string>
+  <string name="core_import_fail">"导入失败"</string>
+  <string name="core_import_success">"導入成功"</string>
+  <string name="core_screen_shot_text">"反饋問題"</string>
+  <string name="core_send_to_label">"發送到..."</string>
+  <string name="core_thread_error_tip">"遇到了一點問題"</string>
+  <string name="core_trash_delete">"拖動至此刪除"</string>
+  <string name="core_trash_delete_tip">"鬆手即可刪除"</string>
+  <string name="permission_disabled">"權限被禁用"</string>
+  <string name="ui_add">"添加"</string>
+  <string name="ui_back">"返回"</string>
+  <string name="ui_choose">"請選擇"</string>
+  <string name="ui_confirm">@string/dialog_positive</string>
+  <string name="ui_delete">"删除"</string>
+  <string name="ui_delete_fail">"刪除失敗"</string>
+  <string name="ui_delete_tip">"刪除後，不可恢復，是否繼續？"</string>
+  <string name="ui_edit">"編輯"</string>
+  <string name="ui_enable_permission">"開啟權限"</string>
+  <string name="ui_feature_development">"功能開發中..."</string>
+  <string name="ui_finish">"完成"</string>
+  <string name="ui_known">"我知道了"</string>
+  <string name="ui_minimum">"最小化"</string>
+  <string name="ui_next">"下一步"</string>
+  <string name="ui_open">"打開"</string>
+  <string name="ui_prev">"上一步"</string>
+  <string name="ui_share">"分享"</string>
+  <string name="ui_valid_range_tip">"有效範圍"</string>
+  <string name="ui_wait_tip">"請稍等..."</string>
+  <string name="ui_warn">"警告"</string>
 </resources>

@@ -5,6 +5,6 @@
   <string name="adapter_no_data">"Keine Daten verfügbar"</string>
   <string name="adapter_no_more">"Sie haben das Ende erreicht!"</string>
   <string name="not_support">"Derzeit nicht unterstützt"</string>
-  <string name="not_support_part">"Einige Daten werden nicht unterstützt"</string>
+  <string name="not_support_part">"Einige Daten werden nicht unterstützt."</string>
   <string name="refresh">"Neu laden"</string>
 </resources>

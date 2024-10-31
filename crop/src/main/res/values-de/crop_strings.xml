@@ -2,11 +2,11 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="crop_auto_side">"Automatisches Zuschneiden"</string>
   <string name="crop_horizontal">"Horizontal"</string>
-  <string name="crop_horizontal_flip">"Horizontal spiegeln"</string>
+  <string name="crop_horizontal_flip">"Horizontal"</string>
   <string name="crop_ratio_free">"Freistellung"</string>
   <string name="crop_rotate">"Drehen"</string>
   <string name="crop_title">"Zuschneiden"</string>
   <string name="crop_type_circle">"Kreis"</string>
   <string name="crop_vertical">"Vertikal"</string>
-  <string name="crop_vertical_flip">"Vertikal spiegeln"</string>
+  <string name="crop_vertical_flip">"Vertikal"</string>
 </resources>

@@ -1,43 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="permission_disabled">パーミッションが無効になっています</string>
-
-    <string name="ui_finish">終了</string>
-    <string name="ui_back">戻る</string>
-    <string name="ui_enable_permission">開かれた権限</string>
-    <string name="core_screen_shot_text">フィードバック</string>
-
-    <string name="core_thread_error_tip">少し問題が発生しました</string>
-
-    <string name="core_send_to_label">に送る...</string>
-    <string name="ui_minimum">最小化します</string>
-    <string name="ui_next">次へ</string>
-
-    <string name="ui_feature_development">功能开发中...</string>
-    <string name="ui_add">追加</string>
-    <string name="ui_edit">編集</string>
-    <string name="ui_confirm">決定する</string>
-    <string name="ui_choose">選択してください</string>
-    <string name="ui_warn">警告</string>
-    <string name="ui_delete">削除</string>
-    <string name="ui_delete_tip">删除后,不可恢复,是否继续?</string>
-    <string name="core_file_list">ファイルリスト</string>
-    <string name="core_file_import">添加该文件</string>
-    <string name="core_add_file_success">追加済み</string>
-    <string name="core_add_file_fail">添加失败</string>
-    <string name="core_import">導入</string>
-    <string name="core_import_success">导入成功</string>
-    <string name="core_import_fail">导入失败</string>
-    <string name="core_trash_delete">拖动至此删除</string>
-    <string name="core_trash_delete_tip">手を離して削除できます</string>
-    <string name="ui_prev">前のステップ</string>
-    <string name="ui_open">開く</string>
-    <string name="ui_delete_fail">削除に失敗しました</string>
-    <string name="ui_share">共有する</string>
-
-    <string name="ui_wait_tip">请稍等...</string>
-    <string name="ui_valid_range_tip">有効範囲</string>
-
-    <string name="ui_known">了解</string>
-
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="core_add_file_fail">"追加に失敗しました。"</string>
+  <string name="core_add_file_success">"追加しました"</string>
+  <string name="core_file_import">"ファイルの追加"</string>
+  <string name="core_file_list">"ファイル一覧"</string>
+  <string name="core_import">"インポート"</string>
+  <string name="core_import_fail">"インポートに失敗しました。"</string>
+  <string name="core_import_success">"インポートに成功しました。"</string>
+  <string name="core_screen_shot_text">"フィードバック"</string>
+  <string name="core_send_to_label">"...に送る"</string>
+  <string name="core_thread_error_tip">"少し問題が発生しました。"</string>
+  <string name="core_trash_delete">"削除するにはここにドラッグしてください。"</string>
+  <string name="core_trash_delete_tip">"指を離して削除"</string>
+  <string name="permission_disabled">"アクセス権限がないため、操作が拒否されました。"</string>
+  <string name="ui_add">"追加"</string>
+  <string name="ui_back">"戻る"</string>
+  <string name="ui_choose">"選択してください"</string>
+  <string name="ui_confirm">@string/dialog_positive</string>
+  <string name="ui_delete">"削除"</string>
+  <string name="ui_delete_fail">"削除に失敗しました。"</string>
+  <string name="ui_delete_tip">"削除すると、復元出来ません。続行しますか？"</string>
+  <string name="ui_edit">"編集"</string>
+  <string name="ui_enable_permission">"権限を有効にする"</string>
+  <string name="ui_feature_development">"現在開発中の機能です..."</string>
+  <string name="ui_finish">"完了"</string>
+  <string name="ui_known">"OK"</string>
+  <string name="ui_minimum">"最小値"</string>
+  <string name="ui_next">"次へ"</string>
+  <string name="ui_open">"開ける"</string>
+  <string name="ui_prev">"前の手順"</string>
+  <string name="ui_share">"共有"</string>
+  <string name="ui_valid_range_tip">"有効範囲"</string>
+  <string name="ui_wait_tip">"しばらくお待ちください..."</string>
+  <string name="ui_warn">"警告"</string>
 </resources>

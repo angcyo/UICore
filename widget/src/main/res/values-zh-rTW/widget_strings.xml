@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="adapter_loading">載入中...</string>
-    <string name="adapter_error">加载失败, 点击重试</string>
-    <string name="adapter_no_data">暫無數據</string>
-    <string name="not_support">暫不支援</string>
-    <string name="not_support_part">部分數據不支援</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="adapter_error">"加载失败, 点击重试"</string>
+  <string name="adapter_loading">"載入中..."</string>
+  <string name="adapter_no_data">"暫無數據"</string>
+  <string name="adapter_no_more">"我是有底線的"</string>
+  <string name="not_support">"暫不支援"</string>
+  <string name="not_support_part">"部分數據不支援"</string>
+  <string name="refresh">"刷新"</string>
 </resources>
