@@ -28,15 +28,19 @@ class InnerFileManageModel : ViewModel() {
         /**文件扩展名*/
         const val EXT_TXT = "txt"
 
+        /**csv文件扩展名*/
+        const val CSV_EXT = "csv"
+
         /**图标*/
         val innerFileIconMap = hashMapOf(
             EXT_EXCEL to R.drawable.core_file_excel_svg,
             EXT_TXT to R.drawable.core_file_txt_svg,
+            CSV_EXT to R.drawable.core_file_txt_svg,
         )
     }
 
     /**支持的扩展名列表*/
-    var supportExtList = listOf(EXT_EXCEL, EXT_TXT)
+    var supportExtList = listOf(EXT_EXCEL, EXT_TXT/*, CSV_EXT*/)
 
     /**国内文件导入app包名列表*/
     var zhImportFilePackageNameList =
