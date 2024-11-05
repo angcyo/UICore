@@ -7,7 +7,10 @@ android {
         disable 'GoogleAppIndexingWarning'
     }
     compileOptions {
-        if (project.hasProperty("useJava17") && Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 8) {
+        if (project.hasProperty("compileJvmTarget")) {
+            sourceCompatibility project.compileJvmTarget
+            targetCompatibility = project.compileJvmTarget
+        } else if (project.hasProperty("useJava17") && Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 8) {
             sourceCompatibility JavaVersion.VERSION_17
             targetCompatibility = JavaVersion.VERSION_17
         } else {
@@ -19,7 +22,9 @@ android {
     // For Kotlin projects https://developer.android.com/studio/write/java8-support.html
     /*kotlinOptions { jvmTarget = "1.8" }*/
     kotlinOptions {
-        if (project.hasProperty("useJava17") && Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 8) {
+        if (project.hasProperty("kotlinJvmTarget")) {
+            jvmTarget = project.kotlinJvmTarget
+        } else if (project.hasProperty("useJava17") && Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 8) {
             jvmTarget = JavaVersion.VERSION_17
         } else {
             jvmTarget = JavaVersion.VERSION_1_8

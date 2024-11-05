@@ -11,6 +11,21 @@ listPath(rootPath)
 //allModule.each { key, value ->
 //    println "->找到 " + value + " ::" + key
 //}
+
+if (rootProject.hasProperty("gradleModuleFolder")) {
+    def gradleModuleFolder = rootProject.gradleModuleFolder
+    def folderList = gradleModuleFolder.toString().split(";")
+    folderList.each {
+        def file = new File(it)
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                includePath(file, "")
+                listPath(file)
+            }
+        }
+    }
+}
+
 println allModule
 println ""
 
