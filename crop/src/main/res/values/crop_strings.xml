@@ -3,7 +3,7 @@
   <string name="crop_auto_side">"Auto cropping"</string>
   <string name="crop_horizontal">"Horizontal"</string>
   <string name="crop_horizontal_flip">"Horizontal"</string>
-  <string name="crop_ratio_free">"Free"</string>
+  <string name="crop_ratio_free">"Freeform"</string>
   <string name="crop_rotate">"Rotate"</string>
   <string name="crop_title">"Crop"</string>
   <string name="crop_type_circle">"Circle"</string>

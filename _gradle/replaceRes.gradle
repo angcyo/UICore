@@ -240,7 +240,8 @@ _replaceXmlResZhValueFromExcel.doFirst {
 /**[getLanguageResPath]*/
 _copyResFile.doFirst {
     //def fromPath = "G:\\temp2\\device_strings-八种语言"
-    def fromPath = "G:\\资源\\localazy_download-Android"
+    //def fromPath = "G:\\资源\\localazy_download-Android"
+    def fromPath = "G:\\资源\\localazy-lds-android-app-2024-11-9"
 
     def fileNameList = ["core_strings.xml", "crop_strings.xml", "dialog_strings.xml", "doodle_strings.xml",
                         "widget_strings.xml", "canvas_strings.xml", "canvas2_string.xml",

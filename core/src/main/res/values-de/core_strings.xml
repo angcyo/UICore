@@ -11,7 +11,7 @@
   <string name="core_send_to_label">"Senden an..."</string>
   <string name="core_thread_error_tip">"Ich bin auf ein kleines Problem gestoßen"</string>
   <string name="core_trash_delete">"Zum Löschen hierher ziehen"</string>
-  <string name="core_trash_delete_tip">"Tippen und halten Sie die unerwünschte Datei, und ziehen Sie sie dann in den dafür vorgesehenen Bereich. Heben Sie Ihren Finger an, um zu bestätigen, dass Sie die Datei löschen möchten."</string>
+  <string name="core_trash_delete_tip">"Zum Löschen den Finger anheben"</string>
   <string name="permission_disabled">"Berechtigung verweigert"</string>
   <string name="ui_add">"Hinzufügen"</string>
   <string name="ui_back">"Zurück"</string>
