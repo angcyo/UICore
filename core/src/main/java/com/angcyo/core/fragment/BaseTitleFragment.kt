@@ -131,7 +131,10 @@ abstract class BaseTitleFragment : BaseFragment(), OnSoftInputListener {
         set(value) {
             field = value
             if (isAdded && baseViewHolder != null) {
-                _vh.tv(R.id.lib_title_text_view)?.text = value
+                _vh.tv(R.id.lib_title_text_view)?.apply {
+                    text = value
+                    tooltipText(value)
+                }
             }
         }
 

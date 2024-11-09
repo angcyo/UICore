@@ -18,6 +18,7 @@ import com.angcyo.widget.base.leftIco
 import com.angcyo.widget.base.rightIco
 import com.angcyo.widget.base.setBoldText
 import com.angcyo.widget.base.setInputHint
+import com.angcyo.widget.base.setSingleLineMode
 import com.angcyo.widget.base.topIco
 
 /**
@@ -58,6 +59,12 @@ open class TextStyleConfig : ViewStyleConfig() {
     var bottomDrawable: Drawable? = UndefinedDrawable()
     var drawablePadding = undefined_size
 
+    /**文本最大的宽度*/
+    var textMaxWidth: Int = undefined_size
+
+    /**文本是否是单行*/
+    var textSingleLine: Boolean? = null
+
     /**生效*/
     override fun updateStyle(view: View) {
         super.updateStyle(view)
@@ -83,10 +90,16 @@ open class TextStyleConfig : ViewStyleConfig() {
                 //[TextView]设置最小宽度和最小高度
                 if (viewMinWidth != undefined_size) {
                     minWidth = viewMinWidth
-
                 }
                 if (viewMinHeight != undefined_size) {
                     minHeight = viewMinHeight
+                }
+                if (textMaxWidth != undefined_size) {
+                    maxWidth = textMaxWidth
+                }
+
+                if (textSingleLine != null) {
+                    setSingleLineMode(textSingleLine == true)
                 }
 
                 if (goneOnTextEmpty) {

@@ -39,6 +39,7 @@ var ITextInfoItem.itemInfoText: CharSequence?
     get() = textInfoItemConfig.itemInfoText
     set(value) {
         textInfoItemConfig.itemInfoText = value
+        itemInfoTooltipText = value
     }
 
 var ITextInfoItem.itemInfoTooltipText: CharSequence?

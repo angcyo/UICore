@@ -42,6 +42,7 @@ var ILabelItem.itemLabelText: CharSequence?
     get() = labelItemConfig.itemLabelText
     set(value) {
         labelItemConfig.itemLabelText = value
+        labelItemConfig.itemLabelTooltipText = value
     }
 
 /**等同[itemLabelText]*/
@@ -49,6 +50,14 @@ var ILabelItem.itemLabel: CharSequence?
     get() = labelItemConfig.itemLabelText
     set(value) {
         labelItemConfig.itemLabelText = value
+        labelItemConfig.itemLabelTooltipText = value
+    }
+
+/**等同[itemLabelText]*/
+var ILabelItem.itemLabelTooltipText: CharSequence?
+    get() = labelItemConfig.itemLabelTooltipText
+    set(value) {
+        labelItemConfig.itemLabelTooltipText = value
     }
 
 /**[itemLabelText] 字体大小*/
@@ -78,6 +87,13 @@ class LabelItemConfig : IDslItemConfig {
         set(value) {
             field = value
             itemLabelTextStyle.text = value
+        }
+
+    /**Label提示文本*/
+    var itemLabelTooltipText: CharSequence? = null
+        set(value) {
+            field = value
+            itemLabelTextStyle.tooltipText = value
         }
 
     /**统一样式配置*/
