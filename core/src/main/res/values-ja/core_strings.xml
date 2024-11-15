@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="core_add_file_fail">"追加に失敗しました。"</string>
-  <string name="core_add_file_success">"追加しました"</string>
+  <string name="core_add_file_success">"追加が完了しました"</string>
   <string name="core_file_import">"ファイルの追加"</string>
   <string name="core_file_list">"ファイル一覧"</string>
   <string name="core_import">"インポート"</string>
   <string name="core_import_fail">"インポートに失敗しました。"</string>
   <string name="core_import_success">"インポートに成功しました。"</string>
   <string name="core_screen_shot_text">"フィードバック"</string>
-  <string name="core_send_to_label">"...に送る"</string>
+  <string name="core_send_to_label">"送信"</string>
   <string name="core_thread_error_tip">"少し問題が発生しました。"</string>
   <string name="core_trash_delete">"削除するにはここにドラッグしてください。"</string>
   <string name="core_trash_delete_tip">"指を離して削除"</string>
@@ -27,10 +27,10 @@
   <string name="ui_known">"OK"</string>
   <string name="ui_minimum">"最小値"</string>
   <string name="ui_next">"次へ"</string>
-  <string name="ui_open">"開ける"</string>
-  <string name="ui_prev">"前の手順"</string>
+  <string name="ui_open">"開く"</string>
+  <string name="ui_prev">"前のステップ"</string>
   <string name="ui_share">"共有"</string>
-  <string name="ui_valid_range_tip">"有効範囲"</string>
-  <string name="ui_wait_tip">"しばらくお待ちください..."</string>
+  <string name="ui_valid_range_tip">"有效範囲"</string>
+  <string name="ui_wait_tip">"しばらくお待ちください."</string>
   <string name="ui_warn">"警告"</string>
 </resources>

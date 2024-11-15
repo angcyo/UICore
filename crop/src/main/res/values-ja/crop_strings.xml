@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="crop_auto_side">"自動トリミング"</string>
+  <string name="crop_auto_side">"オートトリミング"</string>
   <string name="crop_horizontal">"水平"</string>
-  <string name="crop_horizontal_flip">"水平な"</string>
-  <string name="crop_ratio_free">"フリー"</string>
+  <string name="crop_horizontal_flip">"水平"</string>
+  <string name="crop_ratio_free">"カスタマイズ"</string>
   <string name="crop_rotate">"回転"</string>
   <string name="crop_title">"トリミング"</string>
   <string name="crop_type_circle">"円"</string>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="day_not_prompt_label">"%1$s日間再通知しない"</string>
-  <string name="dialog_color_picker">"色を選択してください..."</string>
+  <string name="dialog_color_picker">"色を選択してください"</string>
   <string name="dialog_continue">"続行"</string>
-  <string name="dialog_input_hint">"入力してください..."</string>
+  <string name="dialog_input_hint">"入力してください"</string>
   <string name="dialog_negative">"キャンセル"</string>
   <string name="dialog_neutral">"中性"</string>
   <string name="dialog_positive">"確認"</string>
-  <string name="dialog_width_picker">"厚みを選択してください..."</string>
+  <string name="dialog_width_picker">"厚みを選択してください"</string>
   <string name="not_prompt_label">"次回から表示しない"</string>
 </resources>
