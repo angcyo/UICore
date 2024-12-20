@@ -47,6 +47,42 @@ import kotlin.math.min
  */
 class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRenderView {
 
+    companion object {
+        /**[com.angcyo.canvas.render.core.CanvasRenderManager.getAllElementRendererList]*/
+        fun getSingleElementRendererListIn(
+            rendererList: List<BaseRenderer>?,
+            dissolveGroup: Boolean = true,
+            includeGroup: Boolean = false,
+            includeEmptySize: Boolean = true,
+        ): List<BaseRenderer> {
+            val result = mutableListOf<BaseRenderer>()
+            rendererList ?: return result
+            for (renderer in rendererList) {
+                if (renderer is CanvasSelectorComponent) {
+                    continue
+                } else if (renderer is CanvasGroupRenderer) {
+                    if (includeGroup) {
+                        result.add(renderer)
+                    }
+                    if (dissolveGroup) {
+                        result.addAll(
+                            getSingleElementRendererListIn(
+                                renderer.rendererList,
+                                true,
+                                includeGroup
+                            )
+                        )
+                    }
+                } else {
+                    result.add(renderer)
+                }
+            }
+            return if (includeEmptySize) result else result.filter {
+                it.getRendererBounds()?.isNotEmpty() == true
+            }
+        }
+    }
+
     /**事件监听者列表*/
     private val renderListenerList = CopyOnWriteArrayList<ICanvasRenderListener>()
 
@@ -689,36 +725,6 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
             result.add(elementRenderer)
         }
         return result
-    }
-
-    /**[com.angcyo.canvas.render.core.CanvasRenderManager.getAllElementRendererList]*/
-    fun getSingleElementRendererListIn(
-        rendererList: List<BaseRenderer>?,
-        dissolveGroup: Boolean = true,
-        includeGroup: Boolean = false,
-        includeEmptySize: Boolean = true,
-    ): List<BaseRenderer> {
-        val result = mutableListOf<BaseRenderer>()
-        rendererList ?: return result
-        for (renderer in rendererList) {
-            if (renderer is CanvasSelectorComponent) {
-                continue
-            } else if (renderer is CanvasGroupRenderer) {
-                if (includeGroup) {
-                    result.add(renderer)
-                }
-                if (dissolveGroup) {
-                    result.addAll(
-                        getSingleElementRendererListIn(renderer.rendererList, true, includeGroup)
-                    )
-                }
-            } else {
-                result.add(renderer)
-            }
-        }
-        return if (includeEmptySize) result else result.filter {
-            it.getRendererBounds()?.isNotEmpty() == true
-        }
     }
 
     /**获取所有简单的渲染器*/
