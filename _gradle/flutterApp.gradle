@@ -1,0 +1,171 @@
+apply from: "$gradleHost/master/key.gradle"
+apply from: "$gradleHost/master/v7v8a.gradle"
+//output
+apply from: "$gradleHost/master/collectProduct.gradle"
+
+/*//在ext中设置的属性一样可以通过`project.getProperty`获取
+ext {
+
+}*/
+
+/*//2024-9-24
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+def _minify_enabled_debug = localProperties.getProperty('flutter.minifyEnabledDebug')
+if (_minify_enabled_debug == null) {
+    _minify_enabled_debug = false
+}
+
+def _minify_enabled = localProperties.getProperty('flutter.minifyEnabled')
+if (_minify_enabled == null) {
+    _minify_enabled = true
+}*/
+
+def _minify_enabled_debug = project.hasProperty("flutter.minifyEnabledDebug") ? project.getProperty("flutter.minifyEnabledDebug").toBoolean() : false
+def _minify_enabled = project.hasProperty("flutter.minifyEnabled") ? project.getProperty("flutter.minifyEnabled").toBoolean() : true
+def _C_SDK = project.hasProperty("C_SDK") ? project.ext.C_SDK : '34'
+def _M_SDK = project.hasProperty("M_SDK") ? project.ext.M_SDK : '24'
+def _T_SDK = project.hasProperty("T_SDK") ? project.ext.T_SDK : '34'
+
+//def appId = "com.angcyo.flutter3.abc"
+
+android {
+    if (project.android.hasProperty("namespace") && project.hasProperty("appId")) {
+        namespace project.appId
+    }
+    //compileSdkVersion _C_SDK.toInteger()
+    compileSdk _C_SDK.toInteger() //flutter.compileSdkVersion
+    //ndkVersion flutter.ndkVersion
+    //ndkVersion = "27.0.12077973"
+
+    //废弃agp 8.x
+    /*lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }*/
+
+    //agp 8.x
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+
+    compileOptions {
+        if (project.hasProperty("compileJvmTarget")) {
+            sourceCompatibility project.compileJvmTarget
+            targetCompatibility = project.compileJvmTarget
+        } else if (project.hasProperty("useJava17") && Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 8) {
+            sourceCompatibility JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+        } else {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+
+        //https://pub.dev/packages/flutter_local_notifications
+        //Dependency ':flutter_local_notifications' requires core library desugaring to be enabled
+        coreLibraryDesugaringEnabled true
+    }
+
+    kotlinOptions {
+        if (project.hasProperty("kotlinJvmTarget")) {
+            jvmTarget = project.kotlinJvmTarget
+        } else if (project.hasProperty("useJava17") && Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 8) {
+            jvmTarget = JavaVersion.VERSION_17
+        } else {
+            jvmTarget = JavaVersion.VERSION_1_8
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        if (project.hasProperty("appId")) {
+            namespace project.appId
+        }
+        // You can update the following values to match your application needs.
+        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+        minSdkVersion _M_SDK.toInteger() //flutter.minSdkVersion
+        targetSdkVersion _T_SDK.toInteger() //flutter.targetSdkVersion
+        versionCode flutter.versionCode //flutterVersionCode.toInteger()
+        versionName flutter.versionName //flutterVersionName
+
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildTypes {
+        debug {
+            //applicationIdSuffix ".debug"
+            zipAlignEnabled true
+            shrinkResources false
+            minifyEnabled _minify_enabled_debug
+            shrinkResources = _minify_enabled_debug
+            //useProguard _use_proguard_debug //默认会使用R8压缩优化代码
+            signingConfig signingConfigs.angcyo
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            debuggable true
+            jniDebuggable = true
+            crunchPngs = false
+        }
+        profile {
+            //signingConfig = signingConfigs.debug
+
+            // Signing with the debug keys for now, so `flutter run --profile` works.
+            initWith debug
+            minifyEnabled _minify_enabled
+            shrinkResources = _minify_enabled
+            debuggable true
+            jniDebuggable = true
+            crunchPngs = true
+        }
+        release {
+            //signingConfig = signingConfigs.debug
+
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            initWith debug
+            debuggable false
+            jniDebuggable = false
+            minifyEnabled _minify_enabled
+            shrinkResources = _minify_enabled
+            crunchPngs = true
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    //https://developer.android.google.cn/studio/write/java8-support?hl=zh-cn#groovy
+    //https://pub.dev/packages/flutter_local_notifications
+    if (Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 8 ||
+            (Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 7 &&
+                    Integer.parseInt(gradle.gradleVersion.split("\\.")[1]) >= 4)) {
+        coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.2'
+    } else {
+        coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.3'
+    }
+
+    //implementation 'androidx.activity:activity:1.9.1'
+    //implementation 'androidx.activity:activity-ktx:1.9.1'
+}
