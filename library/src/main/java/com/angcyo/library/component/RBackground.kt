@@ -308,6 +308,10 @@ val lastActivityCaller: ActivityResultCaller?
 val lastContext: Context
     get() = lastActivity ?: app()
 
+/**包名*/
+val lastPackageName: String
+    get() = lastContext.packageName
+
 val lastWindow: Window?
     get() = lastActivity?.window
 
