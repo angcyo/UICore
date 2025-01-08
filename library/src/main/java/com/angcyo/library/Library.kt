@@ -61,8 +61,7 @@ object Library {
     fun initHawk(context: Context) {
         /*sp持久化库*/
         fun _initHawk() {
-            Hawk.init(context)
-                .build()
+            Hawk.init(context).build()
             val path = "/shared_prefs/Hawk2.xml"
             val hawkXmlFile = File(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -102,6 +101,14 @@ object Library {
         val context = lastContext
         val packageName = context.packageName
         return packageName.have("com.hingin.*.hiprint")
+        //return packageName == "com.hingin.l1.hiprint" || packageName == "com.hingin.lp1.hiprint" || packageName == "com.hingin.rn.hiprint"
+    }
+
+    /**2025-1-8 是否是联想oem软件*/
+    fun isLenovoOemApp(): Boolean {
+        val context = lastContext
+        val packageName = context.packageName
+        return packageName == "com.hingin.lp1.hiprint.lenovo"
     }
 
     /**签名检查*/
@@ -127,16 +134,13 @@ object Library {
     //endregion ---ccs---
 }
 
-fun app(): Context = Library.application
-    ?: (LibInitProvider.contentProvider)?.apply {
-        Library.initHawk(this)
-    }
-    ?: currentApplication()?.apply {
-        Library.initHawk(this)
-    }
-    ?: PlaceholderApplication().apply {
-        Log.e("PlaceholderApplication", "application 未初始化")
-    }
+fun app(): Context = Library.application ?: (LibInitProvider.contentProvider)?.apply {
+    Library.initHawk(this)
+} ?: currentApplication()?.apply {
+    Library.initHawk(this)
+} ?: PlaceholderApplication().apply {
+    Log.e("PlaceholderApplication", "application 未初始化")
+}
 
 /**Ide编辑模式*/
 val isInEditMode: Boolean
@@ -192,8 +196,7 @@ fun Context.getAppVersionName(): String {
     val packInfo: PackageInfo
     try {
         packInfo = packageManager.getPackageInfo(
-            packageName,
-            0
+            packageName, 0
         )
         version = packInfo.versionName
     } catch (e: PackageManager.NameNotFoundException) {
@@ -406,8 +409,7 @@ fun Context.getWindowInsets(view: View? = null): WindowInsets? {
 
 @RequiresApi(Build.VERSION_CODES.R)
 fun Context.getInsetsType(
-    typeMask: Int = WindowInsets.Type.statusBars(),
-    view: View? = null
+    typeMask: Int = WindowInsets.Type.statusBars(), view: View? = null
 ): Insets? {
     return getWindowInsets(view)?.getInsets(typeMask)
 }
