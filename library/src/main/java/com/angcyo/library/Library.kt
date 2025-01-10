@@ -108,7 +108,7 @@ object Library {
     fun isLenovoOemApp(): Boolean {
         val context = lastContext
         val packageName = context.packageName
-        return packageName == "com.hingin.lp1.hiprint.lenovo"
+        return packageName == "com.hingin.lp1.hiprint.lenovo" /*|| isDebugType()*/
     }
 
     /**签名检查*/
