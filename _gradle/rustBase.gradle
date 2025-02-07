@@ -29,3 +29,44 @@ cargo {
 //    codegen-units = 1  # Compile the whole crate at once.
 //    panic = "abort"  # Abort on panic.
 }
+
+/// 直接debug运行时, 可能不会将so打包进apk, 这里复制一下
+/// 打包的时候, 需要删除对应的so文件
+task cargoCopyDebug(group: 'rust', description: '构建对应的so, 并且复制到工程jniLibs目录下', dependsOn: 'cargoBuild') {
+    doLast {
+        for (target in cargo.targets) {
+            def (abi, archTriple) = [
+                    arm   : ['armeabi-v7a', 'armv7-linux-androideabi'],
+                    arm64 : ['arm64-v8a', 'aarch64-linux-android'],
+                    x86   : ['x86', 'i686-linux-android'],
+                    x86_64: ['x86_64', 'x86_64-linux-android'],
+            ][target]
+
+            def from_path = "${cargo.module}/target/$archTriple/release/lib${cargo.libname}.so"
+            def into_path = "${projectDir}/src/main/jniLibs/$abi"
+            println from_path;
+            assert file(from_path).exists()
+            copy {
+                from from_path
+                into into_path
+            }
+        }
+    }
+}
+
+/// 打包的时候, 需要删除对应的so文件
+task cargoCopyDelete(group: 'rust', description: '删除构建对应的so') {
+    doLast {
+        for (target in cargo.targets) {
+            def (abi, archTriple) = [
+                    arm   : ['armeabi-v7a', 'armv7-linux-androideabi'],
+                    arm64 : ['arm64-v8a', 'aarch64-linux-android'],
+                    x86   : ['x86', 'i686-linux-android'],
+                    x86_64: ['x86_64', 'x86_64-linux-android'],
+            ][target]
+
+            def into_path = "${projectDir}/src/main/jniLibs/$abi/lib${cargo.libname}.so"
+            delete into_path
+        }
+    }
+}
