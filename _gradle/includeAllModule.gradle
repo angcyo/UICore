@@ -22,13 +22,17 @@ def gradleModuleFolder = readProperty(new File(rootDir, "gradle.properties"), 'g
 if (gradleModuleFolder != null) {
     def folderList = gradleModuleFolder.toString().split(";")
     folderList.each {
-        def file = new File(it)
-        if (file.exists()) {
-            if (file.isDirectory()) {
-                if (autoInclude) {
-                    includePath(file, "")
+        if (!it.isEmpty()) {
+            def file = new File(it)
+            if (file.exists()) {
+                if (file.isDirectory()) {
+                    if (autoInclude) {
+                        includePath(file, "")
+                    }
+                    listPath(file)
                 }
-                listPath(file)
+            } else {
+                System.err.println "gradleModuleFolder配置错误, 文件路径无法访问->" + file.getAbsolutePath()
             }
         }
     }

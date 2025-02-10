@@ -26,10 +26,11 @@ if (rootProject.hasProperty("gradleModuleFolder")) {
     }
 }
 
+println "所有Gradle模块[allModule]->"
 println allModule
 println ""
 
-println "所有Gradle文件->"
+println "所有Gradle文件[allGradle]->"
 println allGradle
 println "...end...↑\n"
 
