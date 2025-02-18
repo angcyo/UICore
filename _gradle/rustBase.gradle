@@ -32,7 +32,7 @@ cargo {
 
 /// 直接debug运行时, 可能不会将so打包进apk, 这里复制一下
 /// 打包的时候, 需要删除对应的so文件
-task cargoCopyDebug(group: 'rust', description: '构建对应的so, 并且复制到工程jniLibs目录下', dependsOn: 'cargoBuild') {
+task _cargoCopyDebug(group: 'rust', description: '构建对应的so, 并且复制到工程jniLibs目录下', dependsOn: 'cargoBuild') {
     doLast {
         for (target in cargo.targets) {
             def (abi, archTriple) = [
@@ -55,7 +55,7 @@ task cargoCopyDebug(group: 'rust', description: '构建对应的so, 并且复制
 }
 
 /// 打包的时候, 需要删除对应的so文件
-task cargoCopyDelete(group: 'rust', description: '删除构建对应的so') {
+task _cargoCopyDelete(group: 'rust', description: '删除构建对应的so') {
     doLast {
         for (target in cargo.targets) {
             def (abi, archTriple) = [
