@@ -50,7 +50,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     companion object {
         /**[com.angcyo.canvas.render.core.CanvasRenderManager.getAllElementRendererList]*/
         fun getSingleElementRendererListIn(
-            rendererList: List<BaseRenderer>?,
+            rendererList: Iterable<BaseRenderer>?,
             dissolveGroup: Boolean = true,
             includeGroup: Boolean = false,
             includeEmptySize: Boolean = true,

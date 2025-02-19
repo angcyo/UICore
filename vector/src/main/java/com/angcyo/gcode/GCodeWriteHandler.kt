@@ -20,6 +20,11 @@ import com.angcyo.vector.VectorWriteHandler
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2022/06/13
  */
+
+const val kGCodeSpace = " "
+
+const val kGCodeFooter = "M9\nM5\nG0S0\nM2\n"
+
 class GCodeWriteHandler : VectorWriteHandler() {
 
     companion object {
@@ -28,6 +33,21 @@ class GCodeWriteHandler : VectorWriteHandler() {
 
         @MM
         const val DEFAULT_CUT_HEIGHT = 0.03f
+
+        fun gcodeHeader(
+            power: Int? = null,
+            speed: Int? = null,
+            auto: Boolean = false,
+            space: String = kGCodeSpace
+        ): String {
+            val actualPower = power ?: 255
+            val actualSpeed = speed ?: 12000
+            // 灰度图片, 通过这个最大功率, 和每个点的当前功率, 计算出当前的灰度值
+            return "G90\nG21\nM8\nM5\n${if (auto) "M4" else "M3"}${space}S$actualPower\nG0${space}F$actualSpeed\n"
+        }
+
+        /// GCode 尾部
+        fun gcodeFooter(auto: Boolean = false): String = kGCodeFooter
     }
 
     /**是否要收集点位信息, 开启后[_collectPointList]集合会有数据
