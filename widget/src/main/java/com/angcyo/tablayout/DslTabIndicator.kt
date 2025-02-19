@@ -314,7 +314,7 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
         }
     }
 
-    override fun updateOriginDrawable(): GradientDrawable {
+    override fun updateOriginDrawable(): GradientDrawable? {
         val drawable = super.updateOriginDrawable()
         indicatorDrawable = originDrawable
         return drawable
@@ -450,7 +450,6 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
                     result = getChildTargetWidth(indicatorContentView(childView) ?: childView)
                 }
             }
-
             ViewGroup.LayoutParams.MATCH_PARENT -> {
                 tabLayout.dslSelector.visibleViewList.getOrNull(index)?.also { childView ->
                     result = childView.measuredWidth
@@ -470,7 +469,6 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
                     result = getChildTargetHeight(indicatorContentView(childView) ?: childView)
                 }
             }
-
             ViewGroup.LayoutParams.MATCH_PARENT -> {
                 tabLayout.dslSelector.visibleViewList.getOrNull(index)?.also { childView ->
                     result = childView.measuredHeight
@@ -847,12 +845,10 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
                 //右边/底部绘制
                 viewWidth - drawWidth - indicatorXOffset
             }
-
             INDICATOR_STYLE_TOP -> {
                 //左边/顶部绘制
                 0 + indicatorXOffset
             }
-
             else -> {
                 //居中绘制
                 paddingLeft + indicatorXOffset + (viewDrawWidth / 2 - drawWidth / 2) -
@@ -937,4 +933,31 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
 
     /**滚动目标的index*/
     var _targetIndex = -1
+
+    /**从另一个对象中赋值属性*/
+    open fun copyFrom(from: DslTabIndicator?): DslTabIndicator {
+        if (from == null) {
+            return this
+        }
+        //复制DslTabIndicator中的属性
+        indicatorStyle = from.indicatorStyle
+        indicatorGravity = from.indicatorGravity
+        indicatorEnableFlow = from.indicatorEnableFlow
+        indicatorEnableFlash = from.indicatorEnableFlash
+        indicatorEnableFlashClip = from.indicatorEnableFlashClip
+        indicatorFlowStep = from.indicatorFlowStep
+        indicatorDrawable = from.indicatorDrawable
+        indicatorColor = from.indicatorColor
+        indicatorWidth = from.indicatorWidth
+        indicatorWidthOffset = from.indicatorWidthOffset
+        indicatorHeight = from.indicatorHeight
+        indicatorHeightOffset = from.indicatorHeightOffset
+        indicatorXOffset = from.indicatorXOffset
+        indicatorYOffset = from.indicatorYOffset
+        indicatorContentIndex = from.indicatorContentIndex
+        indicatorContentId = from.indicatorContentId
+        indicatorAnim = from.indicatorAnim
+        ignoreChildPadding = from.ignoreChildPadding
+        return this
+    }
 }
