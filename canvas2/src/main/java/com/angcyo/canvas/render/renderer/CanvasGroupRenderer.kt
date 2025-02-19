@@ -103,13 +103,13 @@ open class CanvasGroupRenderer : BaseRenderer() {
         /**
          * [com.angcyo.canvas.render.renderer.BaseRenderer.getRendererBounds]
          * */
-        fun List<BaseRenderer>?.getRendererGroupBounds(): RectF? = computeBounds(this)
+        fun Iterable<BaseRenderer>?.getRendererGroupBounds(): RectF? = computeBounds(this)
 
         /**计算[rendererList]的bounds范围
          * [bounds] 强制指定, 指定后不计算*/
         @Pixel
         fun computeBounds(
-            rendererList: List<BaseRenderer>?,
+            rendererList: Iterable<BaseRenderer>?,
             @Pixel bounds: RectF? = null,
             ignoreVisible: Boolean = false
         ): RectF? {
@@ -155,7 +155,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
          * [overrideSize] 需要等比覆盖输出的大小
          * [bounds] 指定输出的绘制位置*/
         fun createRenderDrawable(
-            rendererList: List<BaseRenderer>?,
+            rendererList: Iterable<BaseRenderer>?,
             overrideSize: Float? = null,
             @Pixel bounds: RectF? = null,
             ignoreVisible: Boolean = false
@@ -186,7 +186,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
          * [backgroundColor] 背景颜色
          * */
         fun createRenderBitmap(
-            rendererList: List<BaseRenderer>?,
+            rendererList: Iterable<BaseRenderer>?,
             overrideSize: Float? = null,
             @Pixel bounds: RectF? = null,
             ignoreVisible: Boolean = false,
@@ -225,7 +225,7 @@ open class CanvasGroupRenderer : BaseRenderer() {
          * [renderAfterAction] 元素渲染后的额外动作*/
         fun renderRenderer(
             canvas: Canvas,
-            rendererList: List<BaseRenderer>,
+            rendererList: Iterable<BaseRenderer>,
             params: RenderParams,
             ignoreVisible: Boolean = false,
             renderAfterAction: RenderAction? = null

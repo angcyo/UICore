@@ -212,7 +212,10 @@ fun Double.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
 
 /**保留小数点后几位
  * [fadedUp] 是否四舍五入*/
-fun Float.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
+fun Float.decimal(
+    digit: Int = 2,
+    fadedUp: Boolean = false,
+): String {
     val f = 10f.pow(digit)
     val value = if (isNaN()) {
         0f
@@ -225,7 +228,12 @@ fun Float.decimal(digit: Int = 2, fadedUp: Boolean = false): String {
 }
 
 /**保留小数点后几位*/
-fun Float.decimal(digit: Int, ensureInt: Boolean, fadedUp: Boolean): String {
+fun Float.decimal(
+    digit: Int,
+    ensureInt: Boolean,
+    fadedUp: Boolean,
+    removeZero: Boolean = true,
+): String {
     if (!isFinite()) {
         return "NaN"
     }
@@ -236,7 +244,21 @@ fun Float.decimal(digit: Int, ensureInt: Boolean, fadedUp: Boolean): String {
             return "$int"
         }
     }
-    return decimal(digit, fadedUp)
+    var result = decimal(digit, fadedUp)
+    if (removeZero) {
+        if (this == 0f) {
+            return "0"
+        }
+        if (result.contains('.')) {
+            while (result.endsWith('0')) {
+                result = result.substring(0, result.length - 1);
+            }
+            if (result.endsWith('.')) {
+                result = result.substring(0, result.length - 1);
+            }
+        }
+    }
+    return result
 }
 
 /**向上取整
@@ -259,6 +281,7 @@ fun Double.floor() = floor(this)
 fun Double.floorInt() = floor(this).toInt()
 fun Float.floor() = floor(this.toDouble()).toFloat()
 fun Float.floorInt() = floor(this.toDouble()).toInt()
+fun Float.bitmapInt() = roundToInt()
 
 /**向下取整, 如果大于零时, 向上取整*/
 fun Float.floorReverse() = if (this > 0f) {

@@ -65,6 +65,11 @@ interface IElement {
      * [params] 一些参数*/
     fun onRenderInside(renderer: BaseRenderer?, canvas: Canvas, params: RenderParams)
 
+    //--
+
+    /**[BaseRenderer.getRendererOutputBitmap]*/
+    fun getRendererOutputBitmap(): Bitmap? = requestElementBitmap(null, null)
+
     /**[BaseRenderer.getRendererOutputPath]*/
     fun getRendererOutputPath(): List<Path>? = null
 

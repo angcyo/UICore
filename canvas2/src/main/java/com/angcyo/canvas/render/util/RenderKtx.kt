@@ -2,12 +2,10 @@ package com.angcyo.canvas.render.util
 
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.PointF
 import android.graphics.RectF
 import android.text.TextPaint
 import android.view.Gravity
 import com.angcyo.canvas.render.core.CanvasRenderDelegate
-import com.angcyo.library.canvas.core.Reason
 import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.element.IElement
 import com.angcyo.canvas.render.element.TextElement
@@ -15,10 +13,10 @@ import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasElementRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.component.Strategy
 import com.angcyo.library.ex.decimal
 import com.angcyo.library.ex.dp
-import kotlin.math.sqrt
 
 /**一些工具扩展
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -128,16 +126,21 @@ fun BaseRenderer?.isSelectorGroupRenderer() = this is CanvasSelectorComponent
 /**判断当前的渲染器是否是群组渲染器, 但是不是选择群组渲染器*/
 fun BaseRenderer?.isOnlyGroupRenderer() = !isSelectorGroupRenderer() && this is CanvasGroupRenderer
 
-fun List<BaseRenderer>?.toDrawable(
+//--
+
+fun Iterable<BaseRenderer>?.toDrawable(
     overrideSize: Float? = null,
     @Pixel bounds: RectF? = null,
     ignoreVisible: Boolean = false
 ) = CanvasGroupRenderer.createRenderDrawable(this, overrideSize, bounds, ignoreVisible)
 
-fun List<BaseRenderer>?.toBitmap(
+fun Iterable<BaseRenderer>?.toBitmap(
     overrideSize: Float? = null,
     @Pixel bounds: RectF? = null,
     ignoreVisible: Boolean = false
 ) = CanvasGroupRenderer.createRenderBitmap(this, overrideSize, bounds, ignoreVisible)
+
+@Pixel
+val Iterable<BaseRenderer>?.allRendererBounds: RectF? get() = CanvasGroupRenderer.computeBounds(this)
 
 //endregion---operate---

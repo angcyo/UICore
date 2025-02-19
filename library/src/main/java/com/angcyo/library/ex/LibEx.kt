@@ -6,6 +6,8 @@ import android.content.pm.ApplicationInfo
 import android.graphics.Matrix
 import android.graphics.Point
 import android.graphics.PointF
+import android.graphics.Rect
+import android.graphics.RectF
 import android.net.Uri
 import android.os.Build
 import android.os.Debug
@@ -854,4 +856,27 @@ fun <T> Class<T>.createInstance(): T {
     } catch (e: Exception) {
         getDeclaredConstructor().newInstance()
     }
+}
+
+/**给定的值是否为空*/
+fun isNil(value: Any?): Boolean {
+    if (value == null) {
+        return true
+    }
+    if (value is String) {
+        return value.isEmpty()
+    }
+    if (value is Iterable<*>) {
+        return !value.iterator().hasNext()
+    }
+    if (value is Map<*, *>) {
+        return value.isEmpty()
+    }
+    if (value is Rect) {
+        return value.isEmpty
+    }
+    if (value is RectF) {
+        return value.isEmpty
+    }
+    return false
 }

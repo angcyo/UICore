@@ -1,5 +1,6 @@
 package com.angcyo.canvas.render.renderer
 
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Path
 import android.graphics.PointF
@@ -98,6 +99,10 @@ class CanvasElementRenderer : BaseRenderer() {
     /**更新元素的渲染属性*/
     fun updateElementRenderProperty() {
         renderProperty?.let { renderElement?.updateElementRenderProperty(it) }
+    }
+
+    override fun getRendererOutputBitmap(): Bitmap? {
+        return renderElement?.getRendererOutputBitmap()
     }
 
     override fun getRendererOutputPath(): List<Path>? {

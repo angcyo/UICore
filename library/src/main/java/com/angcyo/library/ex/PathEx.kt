@@ -3,10 +3,13 @@ package com.angcyo.library.ex
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Build
+import androidx.core.graphics.scaleMatrix
 import com.angcyo.library.L
 import com.angcyo.library.component.PictureRenderDrawable
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.component.pool.*
+import com.angcyo.library.unit.IValueUnit
+import com.angcyo.library.unit.toUnitFromPixel
 import kotlin.math.absoluteValue
 import kotlin.math.atan2
 import kotlin.math.max
@@ -717,6 +720,19 @@ fun List<Path>?.scaleToSize(newWidth: Float, newHeight: Float): List<Path>? {
     bounds.release()
     matrix.release()
     return result
+}
+
+/**[scaleToMm]*/
+fun Path?.scaleToMm(unit: IValueUnit = IValueUnit.MM_UNIT): Path? {
+    this ?: return null
+    return listOf(this).scaleToMm(unit)?.lastOrNull()
+}
+
+/**将所有[this]缩放到mm单位*/
+fun List<Path>?.scaleToMm(unit: IValueUnit = IValueUnit.MM_UNIT): List<Path>? {
+    val pathList = this ?: return null
+    val scale = 1f.toUnitFromPixel(unit)
+    return transform(scaleMatrix(scale, scale))
 }
 
 fun Path?.toDrawable(

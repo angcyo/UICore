@@ -178,6 +178,11 @@ fun Int.toHexColorString(prefix: String = "#", alpha: Boolean = true): String {
     }
 }
 
+/*val Color.argb: Int
+    get() {
+        return Color.argb(a, r, g, b)
+    }*/
+
 @ColorInt
 fun Int.toHsv(h: Float = 1f, s: Float = 1f, v: Float = 1f): Int {
     var result = this

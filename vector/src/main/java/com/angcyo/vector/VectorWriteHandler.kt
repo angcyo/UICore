@@ -250,9 +250,9 @@ abstract class VectorWriteHandler {
 
     //region ---Core---
 
-    fun Double.toDoubleValueString() = decimal(decimal)
+    fun Double.toDoubleValueString() = toFloat().toFloatValueString()
 
-    fun Float.toFloatValueString() = decimal(decimal)
+    fun Float.toFloatValueString() = decimal(decimal, true, false, true)
 
     /**清理上一次最后的点, 通常在遇到新的点时调用*/
     fun clearLastPoint() {
@@ -396,10 +396,10 @@ abstract class VectorWriteHandler {
             //公差采样
             val c = c(first.x, first.y, x, y).toFloat()
             val h = tan((radians - first.radians!!).absoluteValue / 4) * c / 2
-            if (h.absoluteValue >= pathTolerance) {
-                return POINT_TYPE_GAP
+            return if (h.absoluteValue >= pathTolerance) {
+                POINT_TYPE_GAP
             } else {
-                return POINT_TYPE_SAME
+                POINT_TYPE_SAME
             }
         }
         val c = c(first.x, first.y, x, y).toFloat()
@@ -523,7 +523,7 @@ abstract class VectorWriteHandler {
             }
 
             //激活了弧度采样
-            val radians = if (LibLpHawkKeys.enableVectorRadiansSample) tanArray[2] else null
+            val radians = if (enableVectorRadiansSample) tanArray[2] else null
             writePoint(x, y, radians)
         }
         clearLastPoint()

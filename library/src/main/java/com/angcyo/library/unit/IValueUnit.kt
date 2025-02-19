@@ -1,12 +1,15 @@
 package com.angcyo.library.unit
 
 import android.graphics.PointF
+import android.graphics.RectF
 import android.util.TypedValue
+import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.ex.ceil
 import com.angcyo.library.ex.decimal
 import com.angcyo.library.unit.IValueUnit.Companion.MM_UNIT
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.nextDown
 import kotlin.math.roundToInt
 
@@ -130,6 +133,8 @@ interface IValueUnit {
 
     fun formattedValueUnit(value: Float, ensureInt: Boolean = true): String
 
+    val suffix get() = getUnit()
+
     /**获取描述的单位字符创*/
     fun getUnit(): String
 
@@ -192,8 +197,12 @@ fun Double?.toPixel(unit: IValueUnit = MM_UNIT) = unit.convertValueToPixel(this 
  * */
 fun Int.toMm() = toFloat().toMm()
 
+fun Int.toUnitFromPixel(unit: IValueUnit = MM_UNIT) = toFloat().toUnitFromPixel(unit)
+
 /**1像素转毫米*/
 fun Float?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0f)
+
+fun Float?.toUnitFromPixel(unit: IValueUnit = MM_UNIT) = unit.convertPixelToValue(this ?: 0f)
 
 /**1像素转毫米*/
 fun Double?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0.0)
@@ -205,3 +214,46 @@ fun PointF.toMm() = this.apply {
     x = MM_UNIT.convertPixelToValue(x)
     y = MM_UNIT.convertPixelToValue(y)
 }
+
+fun RectF.toRect(
+    left: Float? = null,
+    top: Float? = null,
+    right: Float? = null,
+    bottom: Float? = null,
+    //--
+    minLeft: Float? = null,
+    minTop: Float? = null,
+    maxRight: Float? = null,
+    maxBottom: Float? = null,
+) = this.apply {
+    this.left = left ?: this.left
+    this.top = top ?: this.top
+    this.right = right ?: this.right
+    this.bottom = bottom ?: this.bottom
+    if (minLeft != null) {
+        this.left = min(minLeft, this.left)
+    }
+    if (minTop != null) {
+        this.top = min(minTop, this.top)
+    }
+    if (maxRight != null) {
+        this.right = max(maxRight, this.right)
+    }
+    if (maxBottom != null) {
+        this.bottom = max(maxBottom, this.bottom)
+    }
+}
+
+/**@return 返回新的对象*/
+@MM
+fun RectF.toRectMm(unit: IValueUnit? = MM_UNIT) = toRectUnit(unit)
+
+/**像素单位的矩形, 转换成对应的单位矩形
+ * @return 返回新的对象*/
+fun RectF.toRectUnit(unit: IValueUnit? = MM_UNIT) = RectF().also {
+    it.left = unit?.convertPixelToValue(left) ?: left
+    it.top = unit?.convertPixelToValue(top) ?: top
+    it.right = unit?.convertPixelToValue(right) ?: right
+    it.bottom = unit?.convertPixelToValue(bottom) ?: bottom
+}
+
