@@ -10,6 +10,7 @@ import com.angcyo.dsladapter.DslAdapter
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.ItemSelectorHelper
 import com.angcyo.dsladapter.itemIndexPosition
+import com.angcyo.library.UndefinedDrawable
 import com.angcyo.library.ex._color
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.dpi
@@ -90,8 +91,14 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
 
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         super.initDialogView(dialog, dialogViewHolder)
-        dialogViewHolder.group(R.id.lib_dialog_root_layout)?.layoutDelegate {
-            rMaxHeight = dialogMaxHeight
+        dialogViewHolder.group(R.id.lib_dialog_root_layout)?.apply {
+            //setBackgroundDrawable()
+            if (dialogBgDrawable is UndefinedDrawable && !isTransparentBackground()) {
+                background = dialogBgDrawable
+            }
+            layoutDelegate {
+                rMaxHeight = dialogMaxHeight
+            }
         }
 
         if (dialogSelectorModel == ItemSelectorHelper.MODEL_SINGLE || dialogSelectorModel == ItemSelectorHelper.MODEL_MULTI) {
@@ -215,9 +222,11 @@ open class RecyclerDialogConfig(context: Context? = null) : BaseDialogConfig(con
      * }
      * ```
      * */
-    open fun addGridItem(action: DslDialogGridItem.() -> Unit) {
+    open fun addGridItem(dismiss: Boolean = true, action: DslDialogGridItem.() -> Unit) {
         _recyclerConfig.addItem(DslDialogGridItem().apply {
-            itemFlag = FLAG_ITEM_DISMISS
+            if (dismiss) {
+                itemFlag = FLAG_ITEM_DISMISS
+            }
             action()
         })
     }

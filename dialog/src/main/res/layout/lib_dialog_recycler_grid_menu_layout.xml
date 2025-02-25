@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:background="#F2F2F2"
     android:orientation="vertical"
-    android:padding="@dimen/lib_xhdpi">
+    android:padding="@dimen/lib_xhdpi"
+    tools:background="@drawable/dialog_white_top_round_bg_shape">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/dialog_title_view"
