@@ -5,6 +5,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * 协程相关封装
@@ -107,6 +109,21 @@ suspend fun <T> withMain(
 
 fun sleep(ms: Long = 300) {
     SystemClock.sleep(ms)
+}
+
+/**同步等待一个异步结果
+ * [CancellableContinuation.cancel] 取消等待, 但是不会取消协程, 协程会继续执行
+ * [CancellableContinuation.resume] 恢复等待
+ * [CancellableContinuation.resumeWithException] 异常恢复等待
+ * */
+suspend inline fun <T> syncWait(crossinline block: (CancellableContinuation<T>) -> Unit): T {
+    return suspendCancellableCoroutine<T> {
+        block(it)
+        //it.cancel()
+        //it.resume()
+        //it.resumeWithException()
+    }
+    //suspendCoroutine<> {  }
 }
 
 //</editor-fold desc="suspend">
