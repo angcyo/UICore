@@ -144,6 +144,12 @@ suspend inline fun <T> syncWait(crossinline block: (CancellableContinuation<T>) 
  * [launchMain]
  * [launchGlobal]
  * [launchLifecycle]
+ *
+ * [CoroutineScope]
+ * [MainScope]
+ * [GlobalScope]
+ * [GlobalScope.launch]
+ * [GlobalScope.launchSafe]
  * */
 fun LifecycleOwner.launchLifecycle(
     context: CoroutineContext = Dispatchers.Main + CoroutineErrorHandler(),
