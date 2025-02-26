@@ -23,7 +23,11 @@ import kotlin.coroutines.resumeWithException
  * */
 fun dispatcherExecutor() = Dispatchers.Default.asExecutor()
 
-/**在全局域中启动协程*/
+/**在全局域中启动协程
+ * [launchMain]
+ * [launchGlobal]
+ * [launchLifecycle]
+ * */
 @DelicateCoroutinesApi
 fun <T> launchMain(onBack: CoroutineScope.() -> T, onMain: (T) -> Unit = {}): Job {
     return GlobalScope.launch(Dispatchers.Main) {
@@ -37,7 +41,12 @@ fun <T> launchMain(onBack: CoroutineScope.() -> T, onMain: (T) -> Unit = {}): Jo
 /**在全局域中启动协程
  * [kotlinx.coroutines.runBlocking]
  * [kotlinx.coroutines.delay]
- * job.join() // 等待直到子协程执行结束*/
+ * `job.join()` // 等待直到子协程执行结束
+ *
+ * [launchMain]
+ * [launchGlobal]
+ * [launchLifecycle]
+ * */
 @DelicateCoroutinesApi
 fun launchGlobal(
     context: CoroutineContext = Dispatchers.Main + CoroutineErrorHandler(),
@@ -130,7 +139,12 @@ suspend inline fun <T> syncWait(crossinline block: (CancellableContinuation<T>) 
 
 //<editor-fold desc="lifecycleScope">
 
-/**在生命周期中启动一个协程*/
+/**在生命周期中启动一个协程
+ *
+ * [launchMain]
+ * [launchGlobal]
+ * [launchLifecycle]
+ * */
 fun LifecycleOwner.launchLifecycle(
     context: CoroutineContext = Dispatchers.Main + CoroutineErrorHandler(),
     start: CoroutineStart = CoroutineStart.DEFAULT,
