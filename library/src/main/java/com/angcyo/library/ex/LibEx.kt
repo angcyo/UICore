@@ -18,8 +18,10 @@ import androidx.collection.SimpleArrayMap
 import com.angcyo.library.*
 import com.angcyo.library.component.RBackground
 import com.angcyo.library.component.ThreadExecutor.onMain
+import com.angcyo.library.component.lastPackageName
 import com.angcyo.library.utils.Device
 import com.angcyo.library.utils.RUtils
+import com.angcyo.library.utils.Reflect
 import com.angcyo.library.utils.protector.EmulatorCheckUtil
 import java.io.BufferedWriter
 import java.io.FileWriter
@@ -154,6 +156,10 @@ fun isAppDebug() = if (app().isPlaceholderApplication()) {
 } else {
     RUtils.isAppDebug()
 }
+
+/**[BuildConfig.BUILD_TYPE]*/
+fun isAppRelease() =
+    Reflect.getStaticField("${lastPackageName}.BuildConfig", "BUILD_TYPE")?.toString() == "release"
 
 fun isRoot() = RUtils.isRoot()
 fun isXposedExistByThrow() = RUtils.isXposedExistByThrow()

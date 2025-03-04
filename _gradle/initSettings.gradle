@@ -28,7 +28,9 @@ if (Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 7) {
             //maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
 
             maven { url 'https://jitpack.io' }
-            maven { url "https://gitcode.net/angcyo/maven/-/raw/master" }
+            //maven { url "https://gitcode.net/angcyo/maven/-/raw/master" }
+            maven { url "https://gitlab.com/angcyo/maven/-/raw/master" }
+            maven { url "https://gitlab.com/angcyo/maven/-/raw/maven_main" }
 
             //maven { url "https://raw.github.com/bmob/bmob-android-sdk/master" }
             //maven { url "https://gitee.com/angcyo/bmob-android-sdk/raw/master" }
