@@ -605,7 +605,7 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
             //居中绘制
             else -> paddingTop + viewDrawHeight / 2 - drawHeight / 2 + indicatorYOffset -
                     animExHeight +
-                    (tabLayout._maxConvexHeight - _childConvexHeight(currentIndex)) / 2
+                    (tabLayout._maxConvexSize - _childConvexHeight(currentIndex)) / 2
         }
 
         indicatorDrawable?.apply {
@@ -852,7 +852,7 @@ open class DslTabIndicator(val tabLayout: DslTabLayout) : DslGradientDrawable() 
             else -> {
                 //居中绘制
                 paddingLeft + indicatorXOffset + (viewDrawWidth / 2 - drawWidth / 2) -
-                        (tabLayout._maxConvexHeight - _childConvexHeight(currentIndex)) / 2
+                        (tabLayout._maxConvexSize - _childConvexHeight(currentIndex)) / 2
             }
         }
 
