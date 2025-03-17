@@ -171,7 +171,8 @@ fun Byte.toHexInt() = toInt() and 0xFF
  * */
 fun ByteArray.toHexInt() = toHexString(false).toHexInt()
 
-/**将十六进制字符[0101]转换成整型数组*/
+/**将十六进制字符[0101]转换成整型数字
+ * [Int]*/
 fun String.toHexInt() = if (this.isEmpty()) {
     -1
 } else {
