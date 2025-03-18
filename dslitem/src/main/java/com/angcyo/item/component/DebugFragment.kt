@@ -22,6 +22,7 @@ import com.angcyo.item.DslPropertySwitchItem
 import com.angcyo.item.style.itemDes
 import com.angcyo.item.style.itemEditText
 import com.angcyo.item.style.itemLabel
+import com.angcyo.item.style.itemMaxInputLength
 import com.angcyo.item.style.itemSwitchChangedAction
 import com.angcyo.item.style.itemSwitchChecked
 import com.angcyo.library.Library
@@ -227,6 +228,7 @@ open class DebugFragment : BaseDslFragment() {
                     initItem()
 
                     itemEditText = debugAction.key.hawkGet("${debugAction.defValue ?: ""}")
+                    itemMaxInputLength = 1000
                     observeItemChange {
                         debugAction.key.hawkPut(itemEditText)
                         debugAction.action?.invoke(this@DebugFragment, itemEditText)
