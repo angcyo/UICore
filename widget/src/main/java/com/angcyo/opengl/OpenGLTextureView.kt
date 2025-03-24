@@ -2,6 +2,8 @@ package com.angcyo.opengl
 
 import android.content.Context
 import android.graphics.SurfaceTexture
+import android.opengl.EGL14
+import android.opengl.EGLExt
 import android.opengl.GLSurfaceView
 import android.opengl.GLSurfaceView.EGLConfigChooser
 import android.opengl.GLSurfaceView.EGLContextFactory
@@ -39,11 +41,8 @@ class OpenGLTextureView(context: Context, attr: AttributeSet?) : TextureView(con
 
     //region --GLSurfaceView--
 
-    internal val mThisWeakRef = WeakReference<OpenGLTextureView>(this)
-
+    internal val mThisWeakRef = WeakReference(this)
     internal var mGLThread: OpenGLTextureThread? = null
-
-    internal var mRenderer: GLSurfaceView.Renderer? = null
     internal var mDetached = false
     internal var mEGLConfigChooser: EGLConfigChooser? = null
     internal var mEGLContextFactory: EGLContextFactory? = null
@@ -65,11 +64,66 @@ class OpenGLTextureView(context: Context, attr: AttributeSet?) : TextureView(con
                 mBitsRed, mBitsGreen, mBitsBlue, mBitsAlpha, mBitsDepth
             )
         )*/
+        setEGLConfigChooser(SimpleEGLConfigChooser(false))
     }
 
     fun setEGLContextClientVersion(version: Int) {
         checkRenderThreadState()
         mEGLContextClientVersion = version
+    }
+
+    /**
+     * Install a custom EGLConfigChooser.
+     *
+     * If this method is
+     * called, it must be called before [.setSurfaceRenderer]
+     * is called.
+     *
+     *
+     * If no setEGLConfigChooser method is called, then by default the
+     * view will choose an EGLConfig that is compatible with the current
+     * android.view.Surface, with a depth buffer depth of
+     * at least 16 bits.
+     *
+     * @param configChooser [GLSurfaceView.EGLConfigChooser] The EGL Configuration chooser.
+     */
+    fun setEGLConfigChooser(configChooser: EGLConfigChooser) {
+        checkRenderThreadState()
+        mEGLConfigChooser = configChooser
+    }
+
+
+    /**
+     * Install a custom EGLContextFactory.
+     *
+     * If this method is
+     * called, it must be called before [.setSurfaceRenderer]
+     * is called.
+     *
+     *
+     * If this method is not called, then by default
+     * a context will be created with no shared context and
+     * with a null attribute list.
+     */
+    fun setEGLContextFactory(factory: EGLContextFactory) {
+        checkRenderThreadState()
+        mEGLContextFactory = factory
+    }
+
+    /**
+     * Install a custom EGLWindowSurfaceFactory.
+     *
+     * If this method is
+     * called, it must be called before [.setSurfaceRenderer]
+     * is called.
+     *
+     *
+     * If this method is not called, then by default
+     * a window surface will be created with a null attribute list.
+     */
+    fun setEGLWindowSurfaceFactory(factory: EGLWindowSurfaceFactory) {
+        checkRenderThreadState()
+        mEGLWindowSurfaceFactory = factory
     }
 
     private fun checkRenderThreadState() {
@@ -333,6 +387,156 @@ class OpenGLTextureView(context: Context, attr: AttributeSet?) : TextureView(con
             }
         }
     }
+
+
+    abstract inner class BaseConfigChooser
+        (configSpec: IntArray) : EGLConfigChooser {
+        override fun chooseConfig(egl: EGL10, display: EGLDisplay?): EGLConfig? {
+            val num_config = IntArray(1)
+            require(
+                egl.eglChooseConfig(
+                    display, mConfigSpec, null, 0,
+                    num_config
+                )
+            ) { "eglChooseConfig failed" }
+
+            val numConfigs = num_config[0]
+
+            require(numConfigs > 0) { "No configs match configSpec" }
+
+            val configs = arrayOfNulls<EGLConfig>(numConfigs)
+            require(
+                egl.eglChooseConfig(
+                    display, mConfigSpec, configs, numConfigs,
+                    num_config
+                )
+            ) { "eglChooseConfig#2 failed" }
+            val config = chooseConfig(egl, display, configs)
+            requireNotNull(config) { "No config chosen" }
+            return config
+        }
+
+        abstract fun chooseConfig(
+            egl: EGL10,
+            display: EGLDisplay?,
+            configs: Array<EGLConfig?>
+        ): EGLConfig?
+
+        protected var mConfigSpec: IntArray
+
+        init {
+            mConfigSpec = filterConfigSpec(configSpec)
+        }
+
+        fun filterConfigSpec(configSpec: IntArray): IntArray {
+            if (mEGLContextClientVersion != 2 && mEGLContextClientVersion != 3) {
+                return configSpec
+            }
+            /* We know none of the subclasses define EGL_RENDERABLE_TYPE.
+                 * And we know the configSpec is well formed.
+                 */
+            val len = configSpec.size
+            val newConfigSpec = IntArray(len + 2)
+            System.arraycopy(configSpec, 0, newConfigSpec, 0, len - 1)
+            newConfigSpec[len - 1] = EGL10.EGL_RENDERABLE_TYPE
+            if (mEGLContextClientVersion == 2) {
+                newConfigSpec[len] = EGL14.EGL_OPENGL_ES2_BIT /* EGL_OPENGL_ES2_BIT */
+            } else {
+                newConfigSpec[len] = EGLExt.EGL_OPENGL_ES3_BIT_KHR /* EGL_OPENGL_ES3_BIT_KHR */
+            }
+            newConfigSpec[len + 1] = EGL10.EGL_NONE
+            return newConfigSpec
+        }
+    }
+
+    /**
+     * Choose a configuration with exactly the specified r,g,b,a sizes,
+     * and at least the specified depth and stencil sizes.
+     */
+    open inner class ComponentSizeChooser(
+        redSize: Int, greenSize: Int, blueSize: Int,
+        alphaSize: Int, depthSize: Int, stencilSize: Int
+    ) :
+        BaseConfigChooser(
+            intArrayOf(
+                EGL10.EGL_RED_SIZE, redSize,
+                EGL10.EGL_GREEN_SIZE, greenSize,
+                EGL10.EGL_BLUE_SIZE, blueSize,
+                EGL10.EGL_ALPHA_SIZE, alphaSize,
+                EGL10.EGL_DEPTH_SIZE, depthSize,
+                EGL10.EGL_STENCIL_SIZE, stencilSize,
+                EGL10.EGL_NONE
+            )
+        ) {
+        override fun chooseConfig(
+            egl: EGL10,
+            display: EGLDisplay?,
+            configs: Array<EGLConfig?>
+        ): EGLConfig? {
+            for (config in configs) {
+                val d = findConfigAttrib(
+                    egl, display, config,
+                    EGL10.EGL_DEPTH_SIZE, 0
+                )
+                val s = findConfigAttrib(
+                    egl, display, config,
+                    EGL10.EGL_STENCIL_SIZE, 0
+                )
+                if ((d >= mDepthSize) && (s >= mStencilSize)) {
+                    val r = findConfigAttrib(
+                        egl, display, config,
+                        EGL10.EGL_RED_SIZE, 0
+                    )
+                    val g = findConfigAttrib(
+                        egl, display, config,
+                        EGL10.EGL_GREEN_SIZE, 0
+                    )
+                    val b = findConfigAttrib(
+                        egl, display, config,
+                        EGL10.EGL_BLUE_SIZE, 0
+                    )
+                    val a = findConfigAttrib(
+                        egl, display, config,
+                        EGL10.EGL_ALPHA_SIZE, 0
+                    )
+                    if ((r == mRedSize) && (g == mGreenSize)
+                        && (b == mBlueSize) && (a == mAlphaSize)
+                    ) {
+                        return config
+                    }
+                }
+            }
+            return null
+        }
+
+        fun findConfigAttrib(
+            egl: EGL10, display: EGLDisplay?,
+            config: EGLConfig?, attribute: Int, defaultValue: Int
+        ): Int {
+            if (egl.eglGetConfigAttrib(display, config, attribute, mValue)) {
+                return mValue[0]
+            }
+            return defaultValue
+        }
+
+        private val mValue = IntArray(1)
+
+        // Subclasses can adjust these values:
+        protected var mRedSize: Int = redSize
+        protected var mGreenSize: Int = greenSize
+        protected var mBlueSize: Int = blueSize
+        protected var mAlphaSize: Int = alphaSize
+        protected var mDepthSize: Int = depthSize
+        protected var mStencilSize: Int = stencilSize
+    }
+
+    /**
+     * This class will choose a RGB_888 surface with
+     * or without a depth buffer.
+     *
+     */
+    inner class SimpleEGLConfigChooser(withDepthBuffer: Boolean) :
+        ComponentSizeChooser(8, 8, 8, 0, if (withDepthBuffer) 16 else 0, 0)
 }
 
 internal class TextureRendererDelegate(

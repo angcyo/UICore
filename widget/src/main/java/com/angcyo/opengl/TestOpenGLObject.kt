@@ -19,12 +19,12 @@ class TestOpenGLObject : OpenGLObject() {
     override fun render(vpMatrix: FloatArray, projMatrix: FloatArray?, vMatrix: FloatArray?) {
         super.render(vpMatrix, projMatrix, vMatrix)
         //L.d("")
-        GLES20.glClearColor(
+        /*GLES20.glClearColor(
             backgroundColor.red / 255f,
             backgroundColor.green / 255f,
             backgroundColor.blue / 255f,
             backgroundColor.alpha / 255f
-        )
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+        )*/
+        //GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
     }
 }
