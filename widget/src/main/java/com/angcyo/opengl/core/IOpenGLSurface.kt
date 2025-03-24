@@ -1,4 +1,4 @@
-package com.angcyo.opengl
+package com.angcyo.opengl.core
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>

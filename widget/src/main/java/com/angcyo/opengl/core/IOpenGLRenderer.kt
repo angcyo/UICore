@@ -1,4 +1,4 @@
-package com.angcyo.opengl
+package com.angcyo.opengl.core
 
 import android.graphics.SurfaceTexture
 import android.opengl.GLSurfaceView

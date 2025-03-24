@@ -1,4 +1,4 @@
-package com.angcyo.opengl
+package com.angcyo.opengl.core
 
 import android.content.Context
 import android.graphics.SurfaceTexture
@@ -16,9 +16,9 @@ import android.util.Log
 import android.view.TextureView
 import android.view.TextureView.SurfaceTextureListener
 import android.view.View
-import com.angcyo.opengl.EglHelper.Companion.LOG_ATTACH_DETACH
-import com.angcyo.opengl.EglHelper.Companion.LOG_THREADS
-import com.angcyo.opengl.EglHelper.Companion.TAG
+import com.angcyo.opengl.core.EglHelper.Companion.LOG_ATTACH_DETACH
+import com.angcyo.opengl.core.EglHelper.Companion.LOG_THREADS
+import com.angcyo.opengl.core.EglHelper.Companion.TAG
 import java.lang.ref.WeakReference
 import javax.microedition.khronos.egl.EGL10
 import javax.microedition.khronos.egl.EGLConfig

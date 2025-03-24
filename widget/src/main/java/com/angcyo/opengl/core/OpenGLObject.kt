@@ -1,4 +1,4 @@
-package com.angcyo.opengl
+package com.angcyo.opengl.core
 
 import android.opengl.GLES20
 import androidx.core.graphics.alpha
@@ -19,6 +19,8 @@ open class OpenGLObject : OpenGLTransformableObject() {
     protected val mMVMatrix = FloatArray(16)
     protected val mMVPMatrix = FloatArray(16)
 
+    //region --override--
+
     /**
      * Renders the object with no parent matrix.
      *
@@ -35,6 +37,14 @@ open class OpenGLObject : OpenGLTransformableObject() {
     ) {
 
     }
+
+    //endregion --override--
+
+    //region --core--
+
+
+
+    //endregion --core--
 
     //region --api--
 

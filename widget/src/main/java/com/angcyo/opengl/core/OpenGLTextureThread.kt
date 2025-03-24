@@ -1,14 +1,14 @@
-package com.angcyo.opengl
+package com.angcyo.opengl.core
 
 import android.opengl.GLDebugHelper
 import android.opengl.GLSurfaceView
 import android.util.Log
-import com.angcyo.opengl.EglHelper.Companion.LOG_PAUSE_RESUME
-import com.angcyo.opengl.EglHelper.Companion.LOG_RENDERER
-import com.angcyo.opengl.EglHelper.Companion.LOG_RENDERER_DRAW_FRAME
-import com.angcyo.opengl.EglHelper.Companion.LOG_SURFACE
-import com.angcyo.opengl.EglHelper.Companion.LOG_THREADS
-import com.angcyo.opengl.EglHelper.Companion.TAG
+import com.angcyo.opengl.core.EglHelper.Companion.LOG_PAUSE_RESUME
+import com.angcyo.opengl.core.EglHelper.Companion.LOG_RENDERER
+import com.angcyo.opengl.core.EglHelper.Companion.LOG_RENDERER_DRAW_FRAME
+import com.angcyo.opengl.core.EglHelper.Companion.LOG_SURFACE
+import com.angcyo.opengl.core.EglHelper.Companion.LOG_THREADS
+import com.angcyo.opengl.core.EglHelper.Companion.TAG
 import java.io.Writer
 import java.lang.Thread.currentThread
 import java.lang.ref.WeakReference

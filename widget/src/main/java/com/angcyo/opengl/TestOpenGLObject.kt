@@ -1,6 +1,7 @@
 package com.angcyo.opengl
 
 import android.graphics.Color
+import com.angcyo.opengl.core.OpenGLObject
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
