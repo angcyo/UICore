@@ -6,7 +6,9 @@ import android.opengl.GLES20
 import android.view.WindowManager
 import com.angcyo.library.L
 import java.util.Collections
+import java.util.LinkedList
 import java.util.Locale
+import java.util.Queue
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -66,6 +68,8 @@ abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
         val defaultScene: OpenGLScene = getNewDefaultScene()
         mScenes.add(defaultScene)
         mCurrentScene = defaultScene
+
+        clearOverrideViewportDimensions()
     }
 
     //--
@@ -179,7 +183,7 @@ abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
     protected var mLastMeasuredFPS: Double = 0.0 // Last measured FPS value
 
     override fun onRenderFrame(gl: GL10?) {
-        //performFrameTasks() //Execute any pending frame tasks
+        performFrameTasks() //Execute any pending frame tasks
         /*synchronized(mNextSceneLock) {
             //Check if we need to switch the scene, and if so, do it.
             if (mNextScene != null) {
@@ -313,6 +317,25 @@ abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
         )
     }
 
+    private val mFrameTaskQueue: Queue<OpenGLFrameTask> = LinkedList()
+    protected fun performFrameTasks() {
+        synchronized(mFrameTaskQueue) {
+            //Fetch the first task
+            var task: OpenGLFrameTask? = mFrameTaskQueue.poll()
+            while (task != null) {
+                task.run()
+                //Retrieve the next task
+                task = mFrameTaskQueue.poll()
+            }
+        }
+    }
+
+    internal fun internalOfferTask(task: OpenGLFrameTask): Boolean {
+        synchronized(mFrameTaskQueue) {
+            return mFrameTaskQueue.offer(task)
+        }
+    }
+
     protected var mCurrentViewportWidth: Int = 0
     protected var mCurrentViewportHeight: Int = 0 // The current width and height of the GL viewport
     protected var mDefaultViewportWidth: Int = 0
@@ -401,6 +424,8 @@ abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
      *
      * @param ellapsedRealtime `long` The total ellapsed rendering time in milliseconds.
      * @param deltaTime        `double` The time passes since the last frame, in seconds.
+     *
+     * [onRenderFrame]
      */
     protected fun onRender(ellapsedRealtime: Long, deltaTime: Double) {
         render(ellapsedRealtime, deltaTime)
@@ -432,4 +457,16 @@ abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
 
 interface OnFPSUpdateListener {
     fun onFPSUpdate(fps: Double)
+}
+
+internal abstract class OpenGLFrameTask : Runnable {
+    protected abstract fun doTask()
+
+    override fun run() {
+        try {
+            doTask()
+        } catch (e: Exception) {
+            L.e("Execution Failed: " + e.message)
+        }
+    }
 }

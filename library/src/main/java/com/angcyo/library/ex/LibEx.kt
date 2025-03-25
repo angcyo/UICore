@@ -886,3 +886,12 @@ fun isNil(value: Any?): Boolean {
     }
     return false
 }
+
+/**[listOf]*/
+fun <E> stackOf(vararg elements: E): Stack<E> {
+    val result = Stack<E>()
+    for (element in elements) {
+        result.push(element)
+    }
+    return result
+}

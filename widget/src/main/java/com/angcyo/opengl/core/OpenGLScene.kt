@@ -48,10 +48,14 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
         clearFrameCallbacks()*/
     }
 
-    protected var mVMatrix = FloatArray(16)
-    protected var mPMatrix = FloatArray(16)
-    protected var mVPMatrix = FloatArray(16)
+    protected var mVMatrix = Matrix4()
+    protected var mPMatrix = Matrix4()
+    protected var mVPMatrix = Matrix4()
 
+    /**
+     * [BaseOpenGLRenderer.onRender]
+     * [BaseOpenGLRenderer.render]
+     * */
     fun render(ellapsedTime: Long, deltaTime: Double) {
         performFrameTasks() //Handle the task queue
         synchronized(mChildren) {
@@ -163,17 +167,5 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
             mProjMatrix.setToPerspective(mNearPlane, mFarPlane, mFieldOfView, ratio)
             mIsInitialized = true
         }*/
-    }
-}
-
-internal abstract class OpenGLFrameTask : Runnable {
-    protected abstract fun doTask()
-
-    override fun run() {
-        try {
-            doTask()
-        } catch (e: Exception) {
-            L.e("Execution Failed: " + e.message)
-        }
     }
 }
