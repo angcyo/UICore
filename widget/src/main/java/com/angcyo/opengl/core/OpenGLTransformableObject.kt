@@ -11,15 +11,35 @@ import android.opengl.Matrix
  * [android.opengl.Matrix.multiplyMV] 向量作用一次矩阵[lhsMat]*[rhsVec]
  *
  */
-open class OpenGLTransformableObject {
-}
+open class OpenGLTransformableObject
 
 data class Matrix4(
     val m: FloatArray = FloatArray(16),
     private val mTmp: FloatArray = FloatArray(16) //A scratch matrix
 ) {
+
+    companion object {
+        //Matrix indices as column major notation (Row x Column)
+        const val M00: Int = 0 // 0;
+        const val M01: Int = 4 // 1;
+        const val M02: Int = 8 // 2;
+        const val M03: Int = 12 // 3;
+        const val M10: Int = 1 // 4;
+        const val M11: Int = 5 // 5;
+        const val M12: Int = 9 // 6;
+        const val M13: Int = 13 // 7;
+        const val M20: Int = 2 // 8;
+        const val M21: Int = 6 // 9;
+        const val M22: Int = 10 // 10;
+        const val M23: Int = 14 // 11;
+        const val M30: Int = 3 // 12;
+        const val M31: Int = 7 // 13;
+        const val M32: Int = 11 // 14;
+        const val M33: Int = 15 // 15;
+    }
+
     init {
-        Matrix.setIdentityM(m, 0)
+        identity()
     }
 
     //--------------------------------------------------
@@ -93,6 +113,47 @@ data class Matrix4(
     fun toArray(doubleArray: FloatArray) {
         System.arraycopy(m, 0, doubleArray, 0, 16)
     }
+
+
+    /**
+     * Sets this [Matrix4] to an identity matrix.
+     *
+     * @return A reference to this [Matrix4] to facilitate chaining.
+     */
+    fun identity(): Matrix4 {
+        Matrix.setIdentityM(m, 0)
+        return this
+    }
+
+    /**
+     * 透视矩阵
+     *
+     * Sets this [Matrix4] to a perspective projection matrix.
+     *
+     * @param near double The near plane.
+     * @param far double The far plane.
+     * @param fov double The field of view in degrees.
+     * @param aspect double The aspect ratio. Defined as width/height.
+     * @return A reference to this [Matrix4] to facilitate chaining.
+     */
+    fun setToPerspective(near: Float, far: Float, fov: Float, aspect: Float): Matrix4 {
+        identity()
+        Matrix.perspectiveM(m, 0, fov, aspect, near, far)
+        return this
+    }
+
+    /*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+    override fun toString(): String {
+        return ("""
+     [${m[M00]}|${m[M01]}|${m[M02]}|${m[M03]}]
+     [${m[M10]}|${m[M11]}|${m[M12]}|${m[M13]}]
+     [${m[M20]}|${m[M21]}|${m[M22]}|${m[M23]}]
+     [${m[M30]}|${m[M31]}|${m[M32]}|${m[M33]}]
+     """.trimIndent())
+    }
 }
 
 data class Vector3(
@@ -154,5 +215,4 @@ data class Vector3(
         z = obj[2]
         return this
     }
-
 }

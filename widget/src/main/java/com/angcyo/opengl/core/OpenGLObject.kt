@@ -386,6 +386,15 @@ open class OpenGLObject : OpenGLTransformableObject() {
         bufferInfo.usage = usage*/
     }
 
+    fun destroy() {
+        if (mVerticesBufferIndex != null) {
+            GLES20.glDeleteBuffers(1, intArrayOf(mVerticesBufferIndex!!), 0)
+        }
+        if (mColorsBufferIndex != null) {
+            GLES20.glDeleteBuffers(1, intArrayOf(mColorsBufferIndex!!), 0)
+        }
+    }
+
     //endregion --core--
 
     //region --shader--

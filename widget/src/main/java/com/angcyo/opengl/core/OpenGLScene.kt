@@ -1,7 +1,7 @@
 package com.angcyo.opengl.core
 
 import android.opengl.GLES20
-import com.angcyo.library.L
+import android.opengl.Matrix
 import java.util.Collections
 import java.util.LinkedList
 import java.util.concurrent.CopyOnWriteArrayList
@@ -50,11 +50,15 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
 
     protected var mVMatrix = Matrix4()
     protected var mPMatrix = Matrix4()
+
+    /**[setProjectionMatrix]*/
     protected var mVPMatrix = Matrix4()
 
     /**
      * [BaseOpenGLRenderer.onRender]
      * [BaseOpenGLRenderer.render]
+     *
+     * [setProjectionMatrix]
      * */
     fun render(ellapsedTime: Long, deltaTime: Double) {
         performFrameTasks() //Handle the task queue
@@ -81,7 +85,7 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
      * [setProjectionMatrix]
      */
     fun updateProjectionMatrix(width: Int, height: Int) {
-        //mCamera.setProjectionMatrix(width, height)
+        setProjectionMatrix(width, height)
     }
 
     fun setAntiAliasingConfig(config: ANTI_ALIASING_CONFIG) {
@@ -157,15 +161,40 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
 
     protected var mLastWidth: Int = 0
     protected var mLastHeight: Int = 0
+    protected var mNearPlane = 1.0f
+    protected var mFarPlane = 2f //120.0f
+    protected var mFieldOfView = 45.0f
 
+    /**[render]*/
     fun setProjectionMatrix(width: Int, height: Int) {
-        /*synchronized(mFrustumLock) {
-            if (mLastWidth != width || mLastHeight != height) mCameraDirty = true
-            mLastWidth = width
-            mLastHeight = height
-            val ratio = (width.toDouble()) / (height.toDouble())
-            mProjMatrix.setToPerspective(mNearPlane, mFarPlane, mFieldOfView, ratio)
-            mIsInitialized = true
-        }*/
+        /*if (mLastWidth != width || mLastHeight != height) mCameraDirty = true*/
+        mLastWidth = width
+        mLastHeight = height
+
+        //mVPMatrix.setToPerspective(mNearPlane, mFarPlane, mFieldOfView, ratio)
+
+        mVPMatrix.identity()
+        if (width > height) {
+            val ratio = (height.toFloat()) / (width.toFloat())
+            Matrix.scaleM(mVPMatrix.getFloatValues(), 0, ratio, 1f, 1f)
+        } else {
+            val ratio = (width.toFloat()) / (height.toFloat())
+            Matrix.scaleM(mVPMatrix.getFloatValues(), 0, 1f, ratio, 1f)
+        }
+
+        // Create a camera view matrix
+        /*Matrix.setLookAtM(
+            mVPMatrix.getFloatValues(), 0,
+            0f, 0f, -3f,
+            0f, 0f, 0f,
+            0f, 1.0f, 0.0f
+        )*/
+
+        // create a projection matrix from device screen geometry
+        /*Matrix.frustumM(
+            mVPMatrix.getFloatValues(), 0,
+            -ratio, ratio, -1f, 1f,
+            3f, 7f
+        )*/
     }
 }
