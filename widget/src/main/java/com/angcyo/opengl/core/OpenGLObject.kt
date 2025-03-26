@@ -447,28 +447,29 @@ open class OpenGLObject : OpenGLTransformableObject() {
 
     /**[vertexShaderBuilder]*/
     fun buildVertexShader(): String {
-        vertexShaderBuilder = StringBuilder()
-        //--着色器声明--
-        vertexShaderBuilder?.appendLine("precision mediump float;")//精度声明
-        vertexShaderBuilder?.appendLine("attribute vec4 aPosition;")//顶点坐标
-        if (mColorsBufferIndex == null) {
-            vertexShaderBuilder?.appendLine("uniform vec4 uColor;")//顶点颜色
-        } else {
-            vertexShaderBuilder?.appendLine("attribute vec4 aVertexColor;")//顶点矢量颜色
+        return buildString {
+            vertexShaderBuilder = this
+            //--着色器声明--
+            appendLine("precision mediump float;")//精度声明
+            appendLine("attribute vec4 aPosition;")//顶点坐标
+            if (mColorsBufferIndex == null) {
+                appendLine("uniform vec4 uColor;")//顶点颜色
+            } else {
+                appendLine("attribute vec4 aVertexColor;")//顶点矢量颜色
+            }
+            appendLine("uniform mat4 uModelViewMatrix;")//模型视图矩阵
+            appendLine("uniform mat4 uMVPMatrix;")//模型视图投影矩阵
+            appendLine("varying vec4 vColor;")//输出的顶点颜色
+            //--着色器函数体--
+            appendLine("void main() {")
+            appendLine("  gl_Position = uMVPMatrix * uModelViewMatrix * aPosition;")
+            if (mColorsBufferIndex == null) {
+                appendLine("  vColor = uColor;")
+            } else {
+                appendLine("  vColor = aVertexColor;")
+            }
+            appendLine("}")
         }
-        vertexShaderBuilder?.appendLine("uniform mat4 uModelViewMatrix;")//模型视图矩阵
-        vertexShaderBuilder?.appendLine("uniform mat4 uMVPMatrix;")//模型视图投影矩阵
-        vertexShaderBuilder?.appendLine("varying vec4 vColor;")//输出的顶点颜色
-        //--着色器函数体--
-        vertexShaderBuilder?.appendLine("void main() {")
-        vertexShaderBuilder?.appendLine("  gl_Position = uMVPMatrix * uModelViewMatrix * aPosition;")
-        if (mColorsBufferIndex == null) {
-            vertexShaderBuilder?.appendLine("  vColor = uColor;")
-        } else {
-            vertexShaderBuilder?.appendLine("  vColor = aVertexColor;")
-        }
-        vertexShaderBuilder?.appendLine("}")
-        return vertexShaderBuilder.toString()
     }
 
     /**将着色器绑定到程序*/
@@ -506,15 +507,16 @@ open class OpenGLObject : OpenGLTransformableObject() {
 
     /**[fragmentShaderBuilder]*/
     fun buildFragmentShader(): String {
-        fragmentShaderBuilder = StringBuilder()
-        //--着色器声明--
-        fragmentShaderBuilder?.appendLine("precision mediump float;")
-        fragmentShaderBuilder?.appendLine("varying vec4 vColor;")//顶点颜色
-        //--着色器函数体--
-        fragmentShaderBuilder?.appendLine("void main() {")
-        fragmentShaderBuilder?.appendLine("  gl_FragColor = vColor;")
-        fragmentShaderBuilder?.appendLine("}")
-        return fragmentShaderBuilder.toString()
+        return buildString {
+            fragmentShaderBuilder = this
+            //--着色器声明--
+            appendLine("precision mediump float;")
+            appendLine("varying vec4 vColor;")//顶点颜色
+            //--着色器函数体--
+            appendLine("void main() {")
+            appendLine("  gl_FragColor = vColor;")
+            appendLine("}")
+        }
     }
 
     fun bindFragmentShaderProgram(programHandle: Int) {

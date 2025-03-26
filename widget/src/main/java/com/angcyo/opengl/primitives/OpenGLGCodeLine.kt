@@ -18,7 +18,7 @@ class OpenGLGCodeLine(
 
     init {
         drawingMode = GLES20.GL_LINE_STRIP
-        color = Color.BLUE.toOpenGLColor()
+        color = Color.GREEN.toOpenGLColor()
 
         val numVertices: Int = points.size
 
