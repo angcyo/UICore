@@ -1,9 +1,8 @@
 package com.angcyo.library.annotation
 
 /**
- * Email:angcyo@126.com
- * @author angcyo
- * @date 2025/02/18
+ * @author <a href="mailto:angcyo@126.com">angcyo</a>
+ * @date 2025/03/26
  */
 
 @MustBeDocumented
@@ -15,4 +14,4 @@ package com.angcyo.library.annotation
     AnnotationTarget.LOCAL_VARIABLE,
     AnnotationTarget.VALUE_PARAMETER
 )
-annotation class ConfigProperty(val des: String = "描述当前属性为配置属性")
+annotation class OutputProperty(val des: String = "描述当前属性为输出属性")
