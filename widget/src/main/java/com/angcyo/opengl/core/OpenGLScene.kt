@@ -20,15 +20,16 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
         Collections.synchronizedList(CopyOnWriteArrayList())
     protected var mAntiAliasingConfig: ANTI_ALIASING_CONFIG? = null
 
-    //region --override--
+    /**场景的背景颜色 R G B A [0~1]*/
+    var sceneBackgroundColor = floatArrayOf(1f, 1f, 1f, 1f)
 
+    //region --override--
 
     /**
      * Called by the renderer after [Renderer.initScene].
      */
     fun initScene() {
     }
-
 
     /**
      * Reloads this scene.
@@ -72,6 +73,15 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
      * */
     fun render(ellapsedTime: Long, deltaTime: Double) {
         performFrameTasks() //Handle the task queue
+
+        GLES20.glClearColor(
+            sceneBackgroundColor[0],
+            sceneBackgroundColor[1],
+            sceneBackgroundColor[2],
+            sceneBackgroundColor[3]
+        )
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
+
         synchronized(mChildren) {
             var i = 0
             val j: Int = mChildren.size
@@ -212,6 +222,15 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
     }
 
     //region --api--
+
+    val sceneScaleX: Float
+        get() = mVMatrix.sx
+
+    val sceneScaleY: Float
+        get() = mVMatrix.sy
+
+    val sceneScaleZ: Float
+        get() = mVMatrix.sz
 
     /**缩放场景 */
     @Api

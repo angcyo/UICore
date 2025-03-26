@@ -726,7 +726,7 @@ internal class EglHelper(private val mGLSurfaceViewWeakRef: WeakReference<OpenGL
         val view = mGLSurfaceViewWeakRef?.get()
         if (view == null) {
             mEglConfig = null
-            mEglContext = null
+            eglContext = null
         } else {
             mEglConfig = view.mEGLConfigChooser?.chooseConfig(mEgl, mEglDisplay)
 
@@ -734,14 +734,14 @@ internal class EglHelper(private val mGLSurfaceViewWeakRef: WeakReference<OpenGL
             * Create an EGL context. We want to do this as rarely as we can, because an
             * EGL context is a somewhat heavy object.
             */
-            mEglContext = view.mEGLContextFactory?.createContext(mEgl, mEglDisplay, mEglConfig)
+            eglContext = view.mEGLContextFactory?.createContext(mEgl, mEglDisplay, mEglConfig)
         }
-        if (mEglContext == null || mEglContext === EGL10.EGL_NO_CONTEXT) {
-            mEglContext = null
+        if (eglContext == null || eglContext === EGL10.EGL_NO_CONTEXT) {
+            eglContext = null
             throwEglException("createContext")
         }
         if (LOG_EGL) {
-            Log.w("EglHelper", "createContext " + mEglContext + " tid=" + currentThread().id)
+            Log.w("EglHelper", "createContext " + eglContext + " tid=" + currentThread().id)
         }
 
         mEglSurface = null
@@ -797,7 +797,7 @@ internal class EglHelper(private val mGLSurfaceViewWeakRef: WeakReference<OpenGL
          * Before we can issue GL commands, we need to make sure
          * the context is current and bound to a surface.
          */
-        if (!mEgl!!.eglMakeCurrent(mEglDisplay, mEglSurface, mEglSurface, mEglContext)) {
+        if (!mEgl!!.eglMakeCurrent(mEglDisplay, mEglSurface, mEglSurface, eglContext)) {
             /*
              * Could not make the context current, probably because the underlying
              * SurfaceView surface has been destroyed.
@@ -813,8 +813,8 @@ internal class EglHelper(private val mGLSurfaceViewWeakRef: WeakReference<OpenGL
      * Create a GL object for the current EGL context.
      * @return
      */
-    fun createGL(): GL {
-        var gl = mEglContext!!.gl
+    fun createGL(): GL? {
+        var gl = eglContext?.gl
         val view = mGLSurfaceViewWeakRef?.get()
         if (view != null) {
             if (view.mGLWrapper != null) {
@@ -871,10 +871,10 @@ internal class EglHelper(private val mGLSurfaceViewWeakRef: WeakReference<OpenGL
         if (LOG_EGL) {
             Log.w("EglHelper", "finish() tid=" + currentThread().id)
         }
-        if (mEglContext != null) {
+        if (eglContext != null) {
             val view = mGLSurfaceViewWeakRef?.get()
-            view?.mEGLContextFactory?.destroyContext(mEgl, mEglDisplay, mEglContext)
-            mEglContext = null
+            view?.mEGLContextFactory?.destroyContext(mEgl, mEglDisplay, eglContext)
+            eglContext = null
         }
         if (mEglDisplay != null) {
             mEgl!!.eglTerminate(mEglDisplay)
@@ -891,7 +891,7 @@ internal class EglHelper(private val mGLSurfaceViewWeakRef: WeakReference<OpenGL
     var mEglSurface: EGLSurface? = null
     var mEglConfig: EGLConfig? = null
 
-    var mEglContext: EGLContext? = null
+    var eglContext: EGLContext? = null
 
     companion object {
 

@@ -17,7 +17,7 @@ class OpenGLGCodeLine(
 ) : OpenGLObject() {
 
     init {
-        drawingMode = GLES20.GL_LINE_STRIP
+        drawingMode = GLES20.GL_LINES
         color = Color.GREEN.toOpenGLColor()
 
         val numVertices: Int = points.size
@@ -40,3 +40,10 @@ class OpenGLGCodeLine(
         GLES20.glLineWidth(lineThickness)
     }
 }
+
+/**GCode线段的信息
+ * [OpenGLGCodeLine]*/
+/*
+data class GCodeLineData(
+
+)*/

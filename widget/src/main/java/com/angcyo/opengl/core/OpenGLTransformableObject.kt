@@ -43,6 +43,21 @@ data class Matrix4(
         identity()
     }
 
+    val sx: Float
+        get() {
+            return m[M00]
+        }
+
+    val sy: Float
+        get() {
+            return m[M11]
+        }
+
+    val sz: Float
+        get() {
+            return m[M22]
+        }
+
     //--------------------------------------------------
     // Modification methods
     //--------------------------------------------------
@@ -162,12 +177,10 @@ data class Matrix4(
      * */
     @Api
     fun scaleTo(sx: Float = 1f, sy: Float = 1f, sz: Float = 1f) {
-        for (i in 0..3) {
-            val mi: Int = 0 + i
-            m[mi] = sx
-            m[4 + mi] = sy
-            m[8 + mi] = sz
-        }
+        val mi = 0
+        m[M00 + mi] = sx
+        m[M11 + mi] = sy
+        m[M22 + mi] = sz
     }
 
     //--

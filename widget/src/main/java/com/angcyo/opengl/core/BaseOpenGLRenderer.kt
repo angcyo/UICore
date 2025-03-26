@@ -122,6 +122,8 @@ abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
             mTextureManager.registerRenderer(this)
             mMaterialManager.registerRenderer(this)
         }*/
+
+        //gl?.glShadeModel(GL10.GL_FLAT)//GL10.GL_FLAT //GL10.GL_SMOOTH
     }
 
     override fun onRenderSurfaceSizeChanged(gl: GL10?, width: Int, height: Int) {
