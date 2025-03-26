@@ -163,7 +163,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
      * [mVertices]在OpenGL中绑定的索引位置
      * [createBuffers]
      * */
-    protected var mVerticesBufferIndex: Int? = null
+    protected var verticesBufferIndex: Int? = null
 
     /**顶点的数量
      * [setVertices]*/
@@ -181,7 +181,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
      * [mColors]在OpenGL中绑定的索引位置
      * [createBuffers]
      * */
-    protected var mColorsBufferIndex: Int? = null
+    protected var colorsBufferIndex: Int? = null
 
     /**
      * Passes the data to the Geometry3D instance. Vertex Buffer Objects (VBOs) will be created.
@@ -300,7 +300,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
 
         if (mVertices != null) {
             mVertices!!.compact().position(0)
-            mVerticesBufferIndex = createBuffer(
+            verticesBufferIndex = createBuffer(
                 mVertices,
                 GLES20.GL_ARRAY_BUFFER
             )
@@ -325,7 +325,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
         }*/
         if (mColors != null) {
             mColors!!.compact().position(0)
-            mColorsBufferIndex = createBuffer(mColors, GLES20.GL_ARRAY_BUFFER)
+            colorsBufferIndex = createBuffer(mColors, GLES20.GL_ARRAY_BUFFER)
         }
         /*if (mIndicesInt != null && !mOnlyShortBufferSupported && supportsUIntBuffers) {
             mIndicesInt.compact().position(0)
@@ -417,11 +417,11 @@ open class OpenGLObject : OpenGLTransformableObject() {
 
     /**[reload]*/
     fun destroy() {
-        if (mVerticesBufferIndex != null) {
-            GLES20.glDeleteBuffers(1, intArrayOf(mVerticesBufferIndex!!), 0)
+        if (verticesBufferIndex != null) {
+            GLES20.glDeleteBuffers(1, intArrayOf(verticesBufferIndex!!), 0)
         }
-        if (mColorsBufferIndex != null) {
-            GLES20.glDeleteBuffers(1, intArrayOf(mColorsBufferIndex!!), 0)
+        if (colorsBufferIndex != null) {
+            GLES20.glDeleteBuffers(1, intArrayOf(colorsBufferIndex!!), 0)
         }
     }
 
@@ -446,13 +446,13 @@ open class OpenGLObject : OpenGLTransformableObject() {
     protected var fragmentShaderBuilder: StringBuilder? = null
 
     /**[vertexShaderBuilder]*/
-    fun buildVertexShader(): String {
+    open fun buildVertexShader(): String {
         return buildString {
             vertexShaderBuilder = this
             //--着色器声明--
             appendLine("precision mediump float;")//精度声明
             appendLine("attribute vec4 aPosition;")//顶点坐标
-            if (mColorsBufferIndex == null) {
+            if (colorsBufferIndex == null) {
                 appendLine("uniform vec4 uColor;")//顶点颜色
             } else {
                 appendLine("attribute vec4 aVertexColor;")//顶点矢量颜色
@@ -463,7 +463,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
             //--着色器函数体--
             appendLine("void main() {")
             appendLine("  gl_Position = uMVPMatrix * uModelViewMatrix * aPosition;")
-            if (mColorsBufferIndex == null) {
+            if (colorsBufferIndex == null) {
                 appendLine("  vColor = uColor;")
             } else {
                 appendLine("  vColor = aVertexColor;")
@@ -473,20 +473,20 @@ open class OpenGLObject : OpenGLTransformableObject() {
     }
 
     /**将着色器绑定到程序*/
-    fun bindVertexShaderProgram(programHandle: Int) {
-        if (mVerticesBufferIndex != null) {
+    open fun bindVertexShaderProgram(programHandle: Int) {
+        if (verticesBufferIndex != null) {
             val aPositionHandle = GLES20.glGetAttribLocation(programHandle, "aPosition")
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVerticesBufferIndex!!)
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, verticesBufferIndex!!)
             GLES20.glEnableVertexAttribArray(aPositionHandle)
             GLES20.glVertexAttribPointer(aPositionHandle, 3, GLES20.GL_FLOAT, false, 0, 0)
         }
 
-        if (mColorsBufferIndex == null) {
+        if (colorsBufferIndex == null) {
             val uColorHandle = GLES20.glGetUniformLocation(programHandle, "uColor")
             GLES20.glUniform4fv(uColorHandle, 1, color, 0)
         } else {
             val aVertexColorHandle = GLES20.glGetAttribLocation(programHandle, "aVertexColor")
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mColorsBufferIndex!!)
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, colorsBufferIndex!!)
             GLES20.glEnableVertexAttribArray(aVertexColorHandle)
             GLES20.glVertexAttribPointer(
                 aVertexColorHandle,
@@ -506,7 +506,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
     }
 
     /**[fragmentShaderBuilder]*/
-    fun buildFragmentShader(): String {
+    open fun buildFragmentShader(): String {
         return buildString {
             fragmentShaderBuilder = this
             //--着色器声明--

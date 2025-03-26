@@ -39,6 +39,10 @@ class OpenGLGCodeLine(
         super.preRender()
         GLES20.glLineWidth(lineThickness)
     }
+
+    override fun buildVertexShader(): String {
+        return super.buildVertexShader()
+    }
 }
 
 /**GCode线段的信息
