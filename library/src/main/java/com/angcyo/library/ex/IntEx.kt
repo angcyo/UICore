@@ -327,3 +327,11 @@ fun String.toAsciiInt(): Int {
     }
     return result
 }
+
+/**将ARGB [0~255]颜色,转换成OpenGL RGBA [0~1]的颜色*/
+fun Int.toOpenGLColor(): FloatArray = floatArrayOf(
+    ((this shr 16) and 0xFF) / 255f,
+    ((this shr 8) and 0xFF) / 255f,
+    (this and 0xFF) / 255f,
+    ((this shr 24) and 0xFF) / 255f
+)

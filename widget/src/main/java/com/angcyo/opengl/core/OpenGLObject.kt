@@ -49,7 +49,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
     protected val mMVPMatrix = Matrix4()
 
     /**绘制类型, 也是图元类型*/
-    protected var mDrawingMode: Int = GLES20.GL_TRIANGLES
+    protected var drawingMode: Int = GLES20.GL_TRIANGLES
 
     //region --override--
 
@@ -78,8 +78,37 @@ open class OpenGLObject : OpenGLTransformableObject() {
 
         //Create MVP Matrix from View-Projection Matrix
         if (vpMatrix != null) {
-            mMVPMatrix.setAll(vpMatrix).multiply(mMMatrix)
+            //mMVPMatrix.setAll(vpMatrix).multiply(mMMatrix)
+            mMVPMatrix.setAll(vpMatrix)
         }
+
+        //
+        onRender()
+    }
+
+    /**[render]*/
+    open fun onRender() {
+        //drawColor(Color.YELLOW)
+
+        if (mIsDirty) {
+            mProgramHandle = createProgram(buildVertexShader(), buildFragmentShader())
+            if (mProgramHandle == 0) {
+                mIsDirty = false
+                return
+            }
+        }
+        GLES20.glUseProgram(mProgramHandle)
+
+        bindVertexShaderProgram(mProgramHandle)
+        bindFragmentShaderProgram(mProgramHandle)
+
+        //--
+        //GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
+        //GLES20.glDrawElements(mDrawingMode, mGeometry.getNumIndices(), bufferType, 0)
+        //GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0)
+        GLES20.glDrawArrays(drawingMode, 0, mNumVertices)
+
+        mIsDirty = false
     }
 
     protected var mHaveCreatedBuffers: Boolean = false
@@ -120,7 +149,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
     //region --core--
 
     /**对象的颜色, R G B A*/
-    protected val objectColor = floatArrayOf(1f, 0f, 1f, 1f)
+    var color = floatArrayOf(1f, 0f, 1f, 1f)
 
     /**
      * 顶点数据
@@ -422,15 +451,22 @@ open class OpenGLObject : OpenGLTransformableObject() {
         //--着色器声明--
         vertexShaderBuilder?.appendLine("precision mediump float;")//精度声明
         vertexShaderBuilder?.appendLine("attribute vec4 aPosition;")//顶点坐标
-        vertexShaderBuilder?.appendLine("attribute vec4 aVertexColor;")//顶点矢量颜色
-        vertexShaderBuilder?.appendLine("uniform vec4 uColor;")//顶点颜色
+        if (mColorsBufferIndex == null) {
+            vertexShaderBuilder?.appendLine("uniform vec4 uColor;")//顶点颜色
+        } else {
+            vertexShaderBuilder?.appendLine("attribute vec4 aVertexColor;")//顶点矢量颜色
+        }
+        vertexShaderBuilder?.appendLine("uniform mat4 uModelViewMatrix;")//模型视图矩阵
         vertexShaderBuilder?.appendLine("uniform mat4 uMVPMatrix;")//模型视图投影矩阵
         vertexShaderBuilder?.appendLine("varying vec4 vColor;")//输出的顶点颜色
         //--着色器函数体--
         vertexShaderBuilder?.appendLine("void main() {")
-        vertexShaderBuilder?.appendLine("  gl_Position = uMVPMatrix * aPosition;")
-        //vertexShaderBuilder?.appendLine("  vColor = uColor;")
-        vertexShaderBuilder?.appendLine("  vColor = aVertexColor;")
+        vertexShaderBuilder?.appendLine("  gl_Position = uMVPMatrix * uModelViewMatrix * aPosition;")
+        if (mColorsBufferIndex == null) {
+            vertexShaderBuilder?.appendLine("  vColor = uColor;")
+        } else {
+            vertexShaderBuilder?.appendLine("  vColor = aVertexColor;")
+        }
         vertexShaderBuilder?.appendLine("}")
         return vertexShaderBuilder.toString()
     }
@@ -443,7 +479,11 @@ open class OpenGLObject : OpenGLTransformableObject() {
             GLES20.glEnableVertexAttribArray(aPositionHandle)
             GLES20.glVertexAttribPointer(aPositionHandle, 3, GLES20.GL_FLOAT, false, 0, 0)
         }
-        if (mColorsBufferIndex != null) {
+
+        if (mColorsBufferIndex == null) {
+            val uColorHandle = GLES20.glGetUniformLocation(programHandle, "uColor")
+            GLES20.glUniform4fv(uColorHandle, 1, color, 0)
+        } else {
             val aVertexColorHandle = GLES20.glGetAttribLocation(programHandle, "aVertexColor")
             GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mColorsBufferIndex!!)
             GLES20.glEnableVertexAttribArray(aVertexColorHandle)
@@ -457,8 +497,8 @@ open class OpenGLObject : OpenGLTransformableObject() {
             )
         }
 
-        val uColorHandle = GLES20.glGetUniformLocation(programHandle, "uColor")
-        GLES20.glUniform4fv(uColorHandle, 1, objectColor, 0)
+        val uModelViewMatrixHandle = GLES20.glGetUniformLocation(programHandle, "uModelViewMatrix")
+        GLES20.glUniformMatrix4fv(uModelViewMatrixHandle, 1, false, mMVMatrix.getFloatValues(), 0)
 
         val uMVPMatrixHandle = GLES20.glGetUniformLocation(programHandle, "uMVPMatrix")
         GLES20.glUniformMatrix4fv(uMVPMatrixHandle, 1, false, mMVPMatrix.getFloatValues(), 0)

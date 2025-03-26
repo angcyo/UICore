@@ -1,6 +1,7 @@
 package com.angcyo.opengl.core
 
 import android.opengl.Matrix
+import com.angcyo.library.annotation.Api
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -141,6 +142,36 @@ data class Matrix4(
         Matrix.perspectiveM(m, 0, fov, aspect, near, far)
         return this
     }
+
+    //--
+
+    /**增量缩放
+     * [sx] 缩放x轴的比例
+     * [sy] 缩放y轴的比例
+     * [sz] 缩放z轴的比例
+     * */
+    @Api
+    fun scaleBy(sx: Float = 1f, sy: Float = 1f, sz: Float = 1f) {
+        Matrix.scaleM(m, 0, sx, sy, sz)
+    }
+
+    /**缩放到
+     * [sx] 缩放x轴的值
+     * [sy] 缩放y轴的值
+     * [sz] 缩放z轴的值
+     * */
+    @Api
+    fun scaleTo(sx: Float = 1f, sy: Float = 1f, sz: Float = 1f) {
+        for (i in 0..3) {
+            val mi: Int = 0 + i
+            m[mi] = sx
+            m[4 + mi] = sy
+            m[8 + mi] = sz
+        }
+    }
+
+    //--
+
 
     /*
 	 * (non-Javadoc)

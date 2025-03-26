@@ -2,6 +2,7 @@ package com.angcyo.opengl.core
 
 import android.opengl.GLES20
 import android.opengl.Matrix
+import com.angcyo.library.annotation.Api
 import java.util.Collections
 import java.util.LinkedList
 import java.util.concurrent.CopyOnWriteArrayList
@@ -209,4 +210,14 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
             3f, 7f
         )*/
     }
+
+    //region --api--
+
+    /**缩放场景 */
+    @Api
+    fun scaleSceneBy(sx: Float = 1f, sy: Float = 1f, sz: Float = 1f) {
+        mVMatrix.scaleBy(sx, sy, sz)
+    }
+
+    //endregion --api--
 }

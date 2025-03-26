@@ -22,7 +22,7 @@ class OpenGLLine(
     }
 
     fun initialize(createVBOs: Boolean) {
-        mDrawingMode = GLES20.GL_LINE_STRIP
+        drawingMode = GLES20.GL_LINE_STRIP
 
         val numVertices: Int = points.size
 
@@ -60,27 +60,5 @@ class OpenGLLine(
 
     override fun render(vpMatrix: Matrix4?, projMatrix: Matrix4?, vMatrix: Matrix4?) {
         super.render(vpMatrix, projMatrix, vMatrix)
-
-        //drawColor(Color.YELLOW)
-
-        if (mIsDirty) {
-            mProgramHandle = createProgram(buildVertexShader(), buildFragmentShader())
-            if (mProgramHandle == 0) {
-                mIsDirty = false
-                return
-            }
-        }
-        GLES20.glUseProgram(mProgramHandle)
-
-        bindVertexShaderProgram(mProgramHandle)
-        bindFragmentShaderProgram(mProgramHandle)
-
-        //--
-        //GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
-        //GLES20.glDrawElements(mDrawingMode, mGeometry.getNumIndices(), bufferType, 0)
-        //GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0)
-        GLES20.glDrawArrays(mDrawingMode, 0, mNumVertices)
-
-        mIsDirty = false
     }
 }
