@@ -2,8 +2,11 @@ package com.angcyo.opengl.primitives
 
 import android.graphics.Color
 import android.graphics.PointF
+import android.graphics.RectF
 import android.opengl.GLES20
 import com.angcyo.library.annotation.Api
+import com.angcyo.library.annotation.ConfigProperty
+import com.angcyo.library.annotation.OutputProperty
 import com.angcyo.library.ex.distance
 import com.angcyo.library.ex.toOpenGLColor
 import com.angcyo.library.ex.toOpenGLColorList
@@ -11,6 +14,8 @@ import com.angcyo.opengl.core.OpenGLObject
 import com.angcyo.opengl.core.OpenGLScene
 import java.nio.FloatBuffer
 import java.util.Stack
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -21,11 +26,17 @@ class OpenGLGCodeLine(
     val lineThickness: Float = 1f,
 ) : OpenGLObject() {
 
+    /**绘制到的距离, 距离0,0的距离*/
+    @ConfigProperty
+    var renderEndDistance = 0f
+
     /**总距离*/
+    @OutputProperty
     var sumDistance = 0f
 
-    /**绘制到的距离, 距离0,0的距离*/
-    var renderEndDistance = 0f
+    /**所有点对应的边界*/
+    @OutputProperty
+    var outputBounds: RectF? = null
 
     init {
         drawingMode = GLES20.GL_LINES
@@ -41,7 +52,12 @@ class OpenGLGCodeLine(
         val startPoints = mutableListOf<Float>()
         val startDistances = mutableListOf<Float>()
 
+        //
         sumDistance = 0f
+        var minX: Float? = null
+        var maxX: Float? = null
+        var minY: Float? = null
+        var maxY: Float? = null
 
         for (i in 0..<numVertices) {
             val point = points[i]
@@ -75,10 +91,39 @@ class OpenGLGCodeLine(
 
             //
             sumDistance += point.distance
+            //--
+            if (minX == null) {
+                minX = min(point.startPoint.x, point.endPoint.x)
+            } else {
+                minX = min(minX, point.startPoint.x)
+                minX = min(minX, point.endPoint.x)
+            }
+            if (maxX == null) {
+                maxX = max(point.startPoint.x, point.endPoint.x)
+            } else {
+                maxX = max(maxX, point.startPoint.x)
+                maxX = max(maxX, point.endPoint.x)
+            }
+            //--
+            if (minY == null) {
+                minY = min(point.startPoint.y, point.endPoint.y)
+            } else {
+                minY = min(minY, point.startPoint.y)
+                minY = min(minY, point.endPoint.y)
+            }
+            if (maxY == null) {
+                maxY = max(point.startPoint.y, point.endPoint.y)
+            } else {
+                maxY = max(maxY, point.startPoint.y)
+                maxY = max(maxY, point.endPoint.y)
+            }
         }
 
         //--
         renderEndDistance = sumDistance
+        if (minX != null && maxX != null && minY != null && maxY != null) {
+            outputBounds = RectF(minX, minY, maxX, maxY)
+        }
 
         setStartPositions(startPoints.toFloatArray())
         setStartDistance(startDistances.toFloatArray(), true)
@@ -89,14 +134,15 @@ class OpenGLGCodeLine(
      * [progress] 0~1*/
     @Api
     fun setRendererProgress(progress: Float) {
-        if (progress <= 0f) {
-            renderEndDistance = 0f
+        renderEndDistance = if (progress <= 0f) {
+            0f
         } else if (progress >= 1f) {
-            renderEndDistance = sumDistance
+            sumDistance
         } else {
-            renderEndDistance = sumDistance * progress
+            sumDistance * progress
         }
     }
+
 
     //--
 
