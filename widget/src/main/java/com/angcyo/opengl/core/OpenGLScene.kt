@@ -188,10 +188,10 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
         mVPMatrix.identity()
         if (width > height) {
             val ratio = (height.toFloat()) / (width.toFloat())
-            Matrix.scaleM(mVPMatrix.getFloatValues(), 0, ratio, 1f, 1f)
+            Matrix.scaleM(mVPMatrix.getFloatValues(), 0, ratio, -1f, 1f)
         } else {
             val ratio = (width.toFloat()) / (height.toFloat())
-            Matrix.scaleM(mVPMatrix.getFloatValues(), 0, 1f, ratio, 1f)
+            Matrix.scaleM(mVPMatrix.getFloatValues(), 0, 1f, -ratio, 1f)
         }
 
         // Create a camera view matrix

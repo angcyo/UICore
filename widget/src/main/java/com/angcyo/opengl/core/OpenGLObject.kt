@@ -386,6 +386,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
         bufferInfo.usage = usage*/
     }
 
+    /**[reload]*/
     fun destroy() {
         if (mVerticesBufferIndex != null) {
             GLES20.glDeleteBuffers(1, intArrayOf(mVerticesBufferIndex!!), 0)
@@ -393,6 +394,14 @@ open class OpenGLObject : OpenGLTransformableObject() {
         if (mColorsBufferIndex != null) {
             GLES20.glDeleteBuffers(1, intArrayOf(mColorsBufferIndex!!), 0)
         }
+    }
+
+    /**重新加载, [Buffer] 要重新创建*/
+    fun reload() {
+        mIsDirty = true
+        //createShaders()
+        destroy()
+        createBuffers()
     }
 
     //endregion --core--
@@ -558,13 +567,6 @@ open class OpenGLObject : OpenGLTransformableObject() {
     //endregion --shader--
 
     //region --api--
-
-    /**重新加载, [Buffer] 要重新创建*/
-    fun reload() {
-        mIsDirty = true
-        //createShaders()
-        createBuffers()
-    }
 
     /**绘制一个颜色*/
     @Api
