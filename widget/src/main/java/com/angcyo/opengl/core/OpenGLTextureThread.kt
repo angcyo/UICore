@@ -57,10 +57,10 @@ internal class OpenGLTextureThread : Thread {
         }
     }
 
-    /*
-         * This private method should only be called inside a
-         * synchronized(sGLThreadManager) block.
-         */
+    /**
+     * This private method should only be called inside a
+     * synchronized(sGLThreadManager) block.
+     */
     private fun stopEglSurfaceLocked() {
         if (mHaveEglSurface) {
             mHaveEglSurface = false
@@ -68,10 +68,10 @@ internal class OpenGLTextureThread : Thread {
         }
     }
 
-    /*
-         * This private method should only be called inside a
-         * synchronized(sGLThreadManager) block.
-         */
+    /**
+     * This private method should only be called inside a
+     * synchronized(sGLThreadManager) block.
+     */
     private fun stopEglContextLocked() {
         if (mHaveEglContext) {
             mEglHelper?.finish()
@@ -109,7 +109,7 @@ internal class OpenGLTextureThread : Thread {
                             return
                         }
 
-                        if (!mEventQueue.isEmpty()) {
+                        if (mEventQueue.isNotEmpty()) {
                             event = mEventQueue.removeAt(0)
                             break
                         }

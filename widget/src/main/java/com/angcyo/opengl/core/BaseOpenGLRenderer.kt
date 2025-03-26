@@ -55,7 +55,14 @@ abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
     private var mAntiAliasingConfig: ANTI_ALIASING_CONFIG? = null
 
     private val mHaveRegisteredForResources = false
-    private var mSceneCachingEnabled = false //This applies to all scenes
+
+    /**
+     * Scene caching stores all textures and relevant OpenGL-specific
+     * data. This is used when the OpenGL context needs to be restored.
+     * The context typically needs to be restored when the application
+     * is re-activated or when a live wallpaper is rotated.
+     */
+    var mSceneCachingEnabled = true //This applies to all scenes
 
     init {
         mFrameRate = getRefreshRate()
@@ -85,6 +92,7 @@ abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
     override fun onRenderSurfaceCreated(config: EGLConfig?, gl: GL10?, width: Int, height: Int) {
         //Capabilities.getInstance()
 
+        //[ "OpenGL", "ES", "3.2", "v1.r51p0-00eac0..." ]
         val versionString = (GLES20.glGetString(GLES20.GL_VERSION)).split(" ".toRegex())
             .dropLastWhile { it.isEmpty() }.toTypedArray()
         L.d("Open GL ES Version String: " + GLES20.glGetString(GLES20.GL_VERSION))
@@ -105,7 +113,7 @@ abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
                 mGLES_Major_Version,
                 mGLES_Minor_Version
             )
-        )
+        )//Derived GL ES Version: 3.2
 
         supportsUIntBuffers =
             GLES20.glGetString(GLES20.GL_EXTENSIONS).contains("GL_OES_element_index_uint")

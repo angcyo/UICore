@@ -33,6 +33,15 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
      * Reloads this scene.
      */
     fun reload() {
+        synchronized(mChildren) {
+            var i = 0
+            val j: Int = mChildren.size
+            while (i < j) {
+                // Model matrix updates are deferred to the render method due to parent matrix needs
+                mChildren[i].reload()
+                ++i
+            }
+        }
     }
 
     /**
@@ -165,7 +174,10 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
     protected var mFarPlane = 2f //120.0f
     protected var mFieldOfView = 45.0f
 
-    /**[render]*/
+    /**[render]
+     *
+     * [updateProjectionMatrix]
+     * */
     fun setProjectionMatrix(width: Int, height: Int) {
         /*if (mLastWidth != width || mLastHeight != height) mCameraDirty = true*/
         mLastWidth = width

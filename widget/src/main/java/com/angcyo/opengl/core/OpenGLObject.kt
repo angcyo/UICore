@@ -559,6 +559,13 @@ open class OpenGLObject : OpenGLTransformableObject() {
 
     //region --api--
 
+    /**重新加载, [Buffer] 要重新创建*/
+    fun reload() {
+        mIsDirty = true
+        //createShaders()
+        createBuffers()
+    }
+
     /**绘制一个颜色*/
     @Api
     fun drawColor(color: Int) {
