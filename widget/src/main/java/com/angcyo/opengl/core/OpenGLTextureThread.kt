@@ -273,7 +273,7 @@ internal class OpenGLTextureThread : Thread {
                                     TAG, "Warning, !readyToDraw() but waiting for " +
                                             "draw finished! Early reporting draw finished."
                                 )
-                                finishDrawingRunnable!!.run()
+                                finishDrawingRunnable?.run()
                                 finishDrawingRunnable = null
                             }
                         }
@@ -299,7 +299,7 @@ internal class OpenGLTextureThread : Thread {
                 }  // end of synchronized(sGLThreadManager)
 
                 if (event != null) {
-                    event!!.run()
+                    event?.run()
                     event = null
                     continue
                 }

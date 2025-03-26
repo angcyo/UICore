@@ -15,7 +15,7 @@ import javax.microedition.khronos.opengles.GL10
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @date 2025/03/17
  */
-open class OpenGLRenderer : GLSurfaceView.Renderer {
+open class OpenGLSurfaceRenderer : GLSurfaceView.Renderer {
 
     /**渲染的背景颜色*/
     var backgroundColor: Int = Color.YELLOW
