@@ -3,6 +3,7 @@ package com.angcyo.opengl.core
 import android.graphics.SurfaceTexture
 import android.opengl.GLSurfaceView
 import android.view.TextureView
+import com.angcyo.library.annotation.ThreadDes
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -30,6 +31,7 @@ interface IOpenGLRenderer {
      * @param width `width` The surface width in pixels.
      * @param height `height` The surface height in pixels.
      */
+    @ThreadDes("GLThread")
     fun onRenderSurfaceCreated(config: EGLConfig?, gl: GL10?, width: Int, height: Int)
 
     /**
@@ -40,6 +42,7 @@ interface IOpenGLRenderer {
      * @param width `width` The surface width in pixels.
      * @param height `height` The surface height in pixels.
      */
+    @ThreadDes("GLThread")
     fun onRenderSurfaceSizeChanged(gl: GL10?, width: Int, height: Int)
 
     /**
@@ -47,6 +50,7 @@ interface IOpenGLRenderer {
      *
      * @param gl [GL10] for rendering.
      */
+    @ThreadDes("GLThread")
     fun onRenderFrame(gl: GL10?)
 
     //endregion --OpenGLThread--

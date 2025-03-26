@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.opengl.GLES20
 import com.angcyo.opengl.core.Matrix4
 import com.angcyo.opengl.core.OpenGLObject
+import com.angcyo.opengl.core.OpenGLScene
 import com.angcyo.opengl.core.Vector3
 import java.util.Stack
 
@@ -53,12 +54,17 @@ class OpenGLLine(
         setData(vertices, null, null, colors, indices, createVBOs)
     }
 
-    override fun preRender() {
-        super.preRender()
+    override fun preRender(scene: OpenGLScene) {
+        super.preRender(scene)
         GLES20.glLineWidth(lineThickness)
     }
 
-    override fun render(vpMatrix: Matrix4?, projMatrix: Matrix4?, vMatrix: Matrix4?) {
-        super.render(vpMatrix, projMatrix, vMatrix)
+    override fun render(
+        scene: OpenGLScene,
+        vpMatrix: Matrix4?,
+        projMatrix: Matrix4?,
+        vMatrix: Matrix4?
+    ) {
+        super.render(scene, vpMatrix, projMatrix, vMatrix)
     }
 }

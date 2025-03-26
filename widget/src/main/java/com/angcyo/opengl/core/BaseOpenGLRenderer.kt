@@ -5,6 +5,7 @@ import android.graphics.SurfaceTexture
 import android.opengl.GLES20
 import android.view.WindowManager
 import com.angcyo.library.L
+import com.angcyo.library.annotation.ThreadDes
 import java.util.Collections
 import java.util.LinkedList
 import java.util.Locale
@@ -21,6 +22,10 @@ import javax.microedition.khronos.opengles.GL10
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @date 2025/03/24
+ *
+ * 在[GLThread]线程中调度
+ * [OpenGLTextureThread]
+ *
  */
 abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
 
@@ -416,6 +421,7 @@ abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
     /**
      * Scene construction should happen here, not in onSurfaceCreated()
      */
+    @ThreadDes("GLThread")
     protected abstract fun initScene()
 
     /**

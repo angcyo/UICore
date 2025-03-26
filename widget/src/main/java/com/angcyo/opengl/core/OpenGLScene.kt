@@ -87,7 +87,7 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
             val j: Int = mChildren.size
             while (i < j) {
                 // Model matrix updates are deferred to the render method due to parent matrix needs
-                mChildren[i].render(mVPMatrix, mPMatrix, mVMatrix)
+                mChildren[i].render(this, mVPMatrix, mPMatrix, mVMatrix)
                 ++i
             }
         }

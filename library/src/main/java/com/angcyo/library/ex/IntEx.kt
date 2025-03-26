@@ -335,3 +335,10 @@ fun Int.toOpenGLColor(): FloatArray = floatArrayOf(
     (this and 0xFF) / 255f,
     ((this shr 24) and 0xFF) / 255f
 )
+
+fun Int.toOpenGLColorList(): List<Float> = listOf(
+    ((this shr 16) and 0xFF) / 255f,
+    ((this shr 8) and 0xFF) / 255f,
+    (this and 0xFF) / 255f,
+    ((this shr 24) and 0xFF) / 255f
+)

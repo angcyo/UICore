@@ -36,6 +36,9 @@ fun distance(point1: PointF, point2: PointF, abs: Boolean = true): Double {
     )
 }
 
+/**[distance]*/
+fun PointF.distance(other: PointF): Float = distance(this, other).toFloat()
+
 /**勾股定理 C边的长度*/
 fun c(x1: Double, y1: Double, x2: Double, y2: Double, abs: Boolean = true): Double {
     val a = x2 - x1

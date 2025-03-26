@@ -26,8 +26,17 @@ open class OpenGLObject : OpenGLTransformableObject() {
         const val INT_SIZE_BYTES: Int = 4
         const val SHORT_SIZE_BYTES: Int = 2
         const val BYTE_SIZE_BYTES: Int = 1
-    }
 
+        /**使用[FloatArray]创建一个[FloatBuffer]*/
+        fun createFloatBuffer(array: FloatArray): FloatBuffer {
+            val floatBuffer = ByteBuffer
+                .allocateDirect(array.size * FLOAT_SIZE_BYTES)
+                .order(ByteOrder.nativeOrder()).asFloatBuffer()
+            floatBuffer.put(array)
+            floatBuffer.position(0)
+            return floatBuffer
+        }
+    }
 
     /**模型矩阵
      * [getModelMatrix]*/
@@ -65,11 +74,12 @@ open class OpenGLObject : OpenGLTransformableObject() {
      * [OpenGLScene.render]
      */
     open fun render(
+        scene: OpenGLScene,
         vpMatrix: Matrix4?,
         projMatrix: Matrix4?,
         vMatrix: Matrix4?
     ) {
-        preRender()
+        preRender(scene)
 
         // -- calculate model view matrix;
         if (vMatrix != null) {
@@ -119,7 +129,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
      *
      * [render]
      */
-    protected open fun preRender() {
+    protected open fun preRender(scene: OpenGLScene) {
         if (!mHaveCreatedBuffers) {
             createBuffers()
         }
@@ -199,7 +209,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
      * @param createVBOs
      * A boolean controlling if the VBOs are create immediately.
      */
-    fun setData(
+    open fun setData(
         vertices: FloatArray,
         normals: FloatArray?,
         textureCoords: FloatArray?,
@@ -222,7 +232,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
         )
     }
 
-    fun setData(
+    open fun setData(
         vertices: FloatArray,
         verticesUsage: Int,
         normals: FloatArray?,
@@ -235,8 +245,14 @@ open class OpenGLObject : OpenGLTransformableObject() {
         indicesUsage: Int,
         createVBOs: Boolean
     ) {
+
+        //--
         setVertices(vertices)
+
+        //--
         if (colors != null && colors.isNotEmpty()) setColors(colors)
+
+        //--
         if (createVBOs) {
             createBuffers()
         }
@@ -264,28 +280,19 @@ open class OpenGLObject : OpenGLTransformableObject() {
     /**设置顶点数据*/
     fun setVertices(vertices: FloatArray, override: Boolean = false) {
         if (mVertices == null || override) {
-            if (mVertices != null) {
-                mVertices?.clear()
-            }
-            mVertices = ByteBuffer
-                .allocateDirect(vertices.size * FLOAT_SIZE_BYTES)
-                .order(ByteOrder.nativeOrder()).asFloatBuffer()
-
-            mVertices?.put(vertices)
-            mVertices?.position(0)
+            mVertices?.clear()
+            mVertices = createFloatBuffer(vertices)
             mNumVertices = vertices.size / 3
         } else {
             mVertices?.put(vertices)
         }
     }
 
-    fun setColors(colors: FloatArray) {
-        if (mColors == null) {
-            mColors = ByteBuffer
-                .allocateDirect(colors.size * FLOAT_SIZE_BYTES)
-                .order(ByteOrder.nativeOrder()).asFloatBuffer()
-            mColors?.put(colors)
-            mColors?.position(0)
+    /**设置顶点颜色*/
+    fun setColors(colors: FloatArray, override: Boolean = false) {
+        if (mColors == null || override) {
+            mColors?.clear()
+            mColors = createFloatBuffer(colors)
         } else {
             mColors?.put(colors)
             mColors?.position(0)
@@ -295,7 +302,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
     /**
      * Creates the actual Buffer objects.
      */
-    fun createBuffers() {
+    open fun createBuffers() {
         val supportsUIntBuffers: Boolean = supportsUIntBuffers
 
         if (mVertices != null) {
@@ -416,13 +423,9 @@ open class OpenGLObject : OpenGLTransformableObject() {
     }
 
     /**[reload]*/
-    fun destroy() {
-        if (verticesBufferIndex != null) {
-            GLES20.glDeleteBuffers(1, intArrayOf(verticesBufferIndex!!), 0)
-        }
-        if (colorsBufferIndex != null) {
-            GLES20.glDeleteBuffers(1, intArrayOf(colorsBufferIndex!!), 0)
-        }
+    open fun destroy() {
+        deleteBuffers(verticesBufferIndex)
+        deleteBuffers(colorsBufferIndex)
     }
 
     /**重新加载, [Buffer] 要重新创建*/
@@ -620,6 +623,13 @@ open class OpenGLObject : OpenGLTransformableObject() {
             color.alpha / 255f
         )
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+    }
+
+    @Api
+    fun deleteBuffers(index: Int?) {
+        if (index != null) {
+            GLES20.glDeleteBuffers(1, intArrayOf(index), 0)
+        }
     }
 
     //endregion --api--
