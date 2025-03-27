@@ -180,7 +180,8 @@ object FileUtils {
     }
 }
 
-/**写入数据到文件, 默认无大小限制*/
+/**写入数据到文件, 默认无大小限制
+ * @return 文件路径*/
 fun FileTextData.writeToFile(
     file: File,
     append: Boolean = false,
