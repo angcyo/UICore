@@ -4,6 +4,7 @@ import android.graphics.RectF
 import android.opengl.GLES20
 import android.opengl.Matrix
 import com.angcyo.library.annotation.Api
+import com.angcyo.library.ex.expand
 import java.util.Collections
 import java.util.LinkedList
 import java.util.concurrent.CopyOnWriteArrayList
@@ -242,6 +243,15 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
     val sceneScaleZ: Float
         get() = mVMatrix.sz
 
+    val sceneTranslateX: Float
+        get() = mVMatrix.tx
+
+    val sceneTranslateY: Float
+        get() = mVMatrix.ty
+
+    val sceneTranslateZ: Float
+        get() = mVMatrix.tz
+
     /**缩放场景
      * [scaleSceneTo]*/
     @Api
@@ -268,13 +278,14 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
         mVMatrix.translateTo(x, y, z)
     }
 
-    /**将一个矩形, 完全显示在场景中*/
+    /**将一个矩形, 完全显示在场景中
+     * [rect] 完全显示的矩形
+     * [padding] 边界需要留的距离, 相对于视图的大小*/
     @Api
-    fun fitScene(rect: RectF?) {
+    fun fitScene(rect: RectF?, padding: RectF? = null) {
         if (rect == null) {
             return
         }
-
         val width = rect.width()
         val height = rect.height()
 
@@ -286,13 +297,33 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
 
         //等比缩放到完全显示
         val scale = min(scaleX, scaleY)
+        if (padding != null) {
+            fitScene(
+                /*RectF(rect).expand(
+                    padding.left / scale,
+                    padding.top / scale,
+                    padding.right / scale,
+                    padding.bottom / scale
+                )*/
+                RectF(rect).expand(
+                    padding.left,
+                    padding.top,
+                    padding.right,
+                    padding.bottom
+                )
+            )
+            return
+        }
         scaleSceneTo(scale, scale)
 
         //将矩形中心移动至屏幕中心, OpenGL的坐标系的坐标值范围是[-1f~1f]
         //移动时的量, 也是OpenGL坐标系中的量
         //OpenGL标准化设备坐标(Normalized Device Coordinates, NDC)
         val refSize = max(refWidth, refHeight)
-        translateSceneTo(-rect.centerX() / refSize, -rect.centerY() / refSize)
+        translateSceneTo(
+            -rect.centerX() / refSize,
+            -rect.centerY() / refSize,
+        )
 
         //这种平移只能将矩形的左上角移动到屏幕左上角
         //translateSceneTo(-1f - rect.left / refSize, -1f - rect.top / refSize)

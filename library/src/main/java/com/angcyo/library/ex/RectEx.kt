@@ -584,6 +584,21 @@ fun RectF.trapToRect(
     return result
 }
 
+/**扩展矩形的边界, 请注意, 会自动反向处理*/
+fun RectF.expand(padding: RectF): RectF =
+    expand(padding.left, padding.top, padding.right, padding.bottom)
+
+fun RectF.expand(
+    left: Float = 0f, top: Float = 0f,
+    right: Float = 0f, bottom: Float = 0f
+): RectF {
+    this.left -= left
+    this.top -= top
+    this.right += right
+    this.bottom += bottom
+    return this
+}
+
 //</editor-fold desc="rect size">
 
 //<editor-fold desc="rect flip">
