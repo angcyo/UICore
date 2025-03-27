@@ -29,6 +29,21 @@ class OpenGLGCodeLine(
     val lineThickness: Float = 1f,
 ) : OpenGLObject() {
 
+    companion object {
+        /**仿真速度列表*/
+        val simulationSpeedList = arrayOf(
+            "0.1X",
+            "0.2X",
+            "0.5X",
+            "1X",
+            "2X",
+            "5X",
+            "10X",
+            "20X",
+            "40X",
+        )
+    }
+
     /**绘制到的距离, 距离0,0的距离*/
     @ConfigProperty
     var renderEndDistance = 0f
@@ -162,7 +177,8 @@ class OpenGLGCodeLine(
     @ConfigProperty
     var animationDistanceStep = 1f
 
-    /**动画每一帧的倍速*/
+    /**动画每一帧的倍速
+     * [simulationSpeedList]*/
     @ConfigProperty
     var animationSpeed = 1f
 
@@ -231,7 +247,7 @@ class OpenGLGCodeLine(
     override fun onRender() {
         super.onRender()
 
-        if (animationState.isStarted) {
+        if (animationState.isPlaying) {
             val old = renderProgress
             renderEndDistance += animationDistanceStep * animationSpeed
             if (renderEndDistance > sumDistance) {
