@@ -7,6 +7,7 @@ import com.angcyo.library.annotation.Api
 import java.util.Collections
 import java.util.LinkedList
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -273,11 +274,28 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
         if (rect == null) {
             return
         }
-        val scaleX = 1 / rect.width()
-        val scaleY = 1 / rect.height()
+
+        val width = rect.width()
+        val height = rect.height()
+
+        val refWidth = width / 2
+        val refHeight = height / 2
+
+        val scaleX = 1 / refWidth
+        val scaleY = 1 / refHeight
+
+        //等比缩放到完全显示
         val scale = min(scaleX, scaleY)
         scaleSceneTo(scale, scale)
-        //translateSceneTo(rect.centerX() - lastWidth / 2, rect.centerY() - lastHeight / 2)
+
+        //将矩形中心移动至屏幕中心, OpenGL的坐标系的坐标值范围是[-1f~1f]
+        //移动时的量, 也是OpenGL坐标系中的量
+        //OpenGL标准化设备坐标(Normalized Device Coordinates, NDC)
+        val refSize = max(refWidth, refHeight)
+        translateSceneTo(-rect.centerX() / refSize, -rect.centerY() / refSize)
+
+        //translateSceneTo(-1f - rect.left / refSize, -1f - rect.top / refSize)
+        //translateSceneTo(-1f, -1f)
     }
 
     fun testMatrix() {

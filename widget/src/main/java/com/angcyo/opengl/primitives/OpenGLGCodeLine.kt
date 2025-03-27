@@ -148,7 +148,8 @@ class OpenGLGCodeLine(
 
     override fun preRender(scene: OpenGLScene) {
         super.preRender(scene)
-        GLES20.glLineWidth(lineThickness / scene.sceneScaleX)
+        //GLES20.glLineWidth(lineThickness / scene.sceneScaleX)
+        GLES20.glLineWidth(lineThickness)
     }
 
     //--

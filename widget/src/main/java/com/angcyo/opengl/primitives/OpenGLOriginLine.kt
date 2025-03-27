@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.opengl.GLES20
 import com.angcyo.library.ex.toOpenGLColor
 import com.angcyo.opengl.core.OpenGLObject
+import com.angcyo.opengl.core.OpenGLScene
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -39,5 +40,10 @@ class OpenGLOriginLine : OpenGLObject() {
 
     override fun bindVertexShaderProgram(programHandle: Int) {
         super.bindVertexShaderProgram(programHandle)
+    }
+
+    override fun preRender(scene: OpenGLScene) {
+        super.preRender(scene)
+        GLES20.glLineWidth(1f)
     }
 }

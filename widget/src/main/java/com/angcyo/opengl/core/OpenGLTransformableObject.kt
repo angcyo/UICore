@@ -208,7 +208,6 @@ data class Matrix4(
 
     //--
 
-
     /*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
