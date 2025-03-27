@@ -477,7 +477,8 @@ open class OpenGLObject : OpenGLTransformableObject() {
         }
     }
 
-    /**将着色器绑定到程序*/
+    /**将着色器绑定到程序
+     * [buildVertexShader]*/
     open fun bindVertexShaderProgram(programHandle: Int) {
         if (verticesBufferIndex != null) {
             val aPositionHandle = GLES20.glGetAttribLocation(programHandle, "aPosition")
@@ -524,7 +525,8 @@ open class OpenGLObject : OpenGLTransformableObject() {
         }
     }
 
-    fun bindFragmentShaderProgram(programHandle: Int) {
+    /**[buildFragmentShader]*/
+    open fun bindFragmentShaderProgram(programHandle: Int) {
 
     }
 

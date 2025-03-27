@@ -36,4 +36,8 @@ class OpenGLOriginLine : OpenGLObject() {
         color = Color.RED.toOpenGLColor()
         setData(vertices, null, null, null, null, true)
     }
+
+    override fun bindVertexShaderProgram(programHandle: Int) {
+        super.bindVertexShaderProgram(programHandle)
+    }
 }
