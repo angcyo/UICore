@@ -64,6 +64,7 @@ fun TargetWindow.dismissWindow() {
         is Dialog -> dismiss()
         is Window -> Unit
         is Activity -> finish()
+        is DslDialogConfig -> _dialog?.dismissWindow()
     }
 }
 

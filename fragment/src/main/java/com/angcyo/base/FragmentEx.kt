@@ -17,6 +17,7 @@ import com.angcyo.fragment.AbsFragment
 import com.angcyo.fragment.AbsLifecycleFragment
 import com.angcyo.fragment.IFragment
 import com.angcyo.iview.IView
+import com.angcyo.library.IActivityProvider
 import com.angcyo.library.L
 import com.angcyo.library.R
 import com.angcyo.library.app
@@ -53,6 +54,15 @@ fun ActivityResultCaller.dslFHelper(config: DslFHelper.() -> Unit) {
     when (this) {
         is Fragment -> dslFHelper(config)
         is FragmentActivity -> dslFHelper(config)
+        is IActivityProvider -> {
+            val context = getActivityContext()
+            if (context is ActivityResultCaller) {
+                context.dslFHelper {
+                    this.config()
+                }
+            }
+        }
+
         else -> Unit
     }
 }
