@@ -5,6 +5,7 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.opengl.GLES20
 import com.angcyo.library.annotation.Api
+import com.angcyo.library.annotation.AutoConfigProperty
 import com.angcyo.library.annotation.ConfigProperty
 import com.angcyo.library.annotation.OutputProperty
 import com.angcyo.library.ex.distance
@@ -142,7 +143,6 @@ class OpenGLGCodeLine(
             sumDistance * progress
         }
     }
-
 
     //--
 
@@ -287,12 +287,13 @@ data class OpenGLGCodeLineData(
     val startPoint: PointF,
     /**线结束的点*/
     val endPoint: PointF,
-    /**线的宽度*/
-    val lineThickness: Float = 1f,
     /**线的颜色*/
     val color: Int = Color.GREEN,
     /**线开始的距离, 距离0,0的距离*/
+    @AutoConfigProperty
     var lineStartDistance: Float = 0f,
+    /**线的宽度*/
+    val lineThickness: Float = 1f,
 ) {
     val distance: Float
         get() = startPoint.distance(endPoint)
