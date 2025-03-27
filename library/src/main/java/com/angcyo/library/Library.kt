@@ -350,6 +350,10 @@ val _refreshRate: Float
 /**刷新率缩放的倍数, 比如120fps相对于60fps, 就是2倍, 动画时长就要放大2倍, 动画步长就要缩小2倍*/
 val _refreshRateRatio: Float get() = _refreshRate / 60f
 
+/**保持不同设备的不同刷新率一致性*/
+val Float.rr
+    get() = this / _refreshRateRatio
+
 /**屏幕实际的大小, 而不是排除了导航栏/状态栏*/
 val _realSize: Point
     get() {

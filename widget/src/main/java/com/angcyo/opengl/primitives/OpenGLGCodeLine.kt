@@ -4,10 +4,12 @@ import android.graphics.Color
 import android.graphics.PointF
 import android.graphics.RectF
 import android.opengl.GLES20
+import com.angcyo.library.animation.AnimationStateEnum
 import com.angcyo.library.annotation.Api
 import com.angcyo.library.annotation.AutoConfigProperty
 import com.angcyo.library.annotation.ConfigProperty
 import com.angcyo.library.annotation.OutputProperty
+import com.angcyo.library.annotation.ThreadDes
 import com.angcyo.library.ex.distance
 import com.angcyo.library.ex.toOpenGLColor
 import com.angcyo.library.ex.toOpenGLColorList
@@ -38,6 +40,29 @@ class OpenGLGCodeLine(
     /**所有点对应的边界*/
     @OutputProperty
     var outputBounds: RectF? = null
+
+    /**当前的渲染进度[0~1]
+     * 同时也可以设置渲染进度
+     * */
+    @Api
+    var renderProgress: Float
+        get() = renderEndDistance / sumDistance
+        set(value) {
+            stopAnimation()
+            val old = renderProgress
+            renderEndDistance = if (value <= 0f) {
+                0f
+            } else if (value >= 1f) {
+                sumDistance
+            } else {
+                sumDistance * value
+            }
+            notifyRenderProgressChanged(old, true)
+        }
+
+    /**事件监听者集合*/
+    @ConfigProperty
+    val listeners = mutableListOf<OpenGLGCodeLineListener>()
 
     init {
         drawingMode = GLES20.GL_LINES
@@ -131,16 +156,63 @@ class OpenGLGCodeLine(
         setData(vertices.toFloatArray(), null, null, colors.toFloatArray(), null, true)
     }
 
-    /**设置渲染进度
-     * [progress] 0~1*/
-    @Api
-    fun setRendererProgress(progress: Float) {
-        renderEndDistance = if (progress <= 0f) {
-            0f
-        } else if (progress >= 1f) {
-            sumDistance
+    //--
+
+    /**每一帧动画需要增加的距离*/
+    @ConfigProperty
+    var animationDistanceStep = 1f
+
+    /**动画每一帧的倍速*/
+    @ConfigProperty
+    var animationSpeed = 1f
+
+    /**是否开始了动画*/
+    @OutputProperty
+    var animationState: AnimationStateEnum = AnimationStateEnum.DEFAULT
+
+    /**开关动画的状态*/
+    fun toggleAnimation() {
+        if (animationState.isStarted) {
+            stopAnimation()
         } else {
-            sumDistance * progress
+            startAnimation()
+        }
+    }
+
+    /**开始动画*/
+    fun startAnimation() {
+        if (animationState.isStarted) {
+            return
+        }
+        renderEndDistance = 0f
+        val old = animationState
+        animationState = AnimationStateEnum.PLAYING
+        notifyAnimationState(old)
+    }
+
+    /**停止动画*/
+    fun stopAnimation() {
+        if (animationState.isStarted) {
+            val old = animationState
+            animationState = AnimationStateEnum.STOPPED
+            notifyAnimationState(old)
+            return
+        }
+    }
+
+    /**通知动画状态改变*/
+    @ThreadDes("GLThread")
+    fun notifyAnimationState(old: AnimationStateEnum) {
+        for (listener in listeners) {
+            listener.onAnimationStateChanged(old, animationState)
+        }
+    }
+
+    /**通知绘制进度改变*/
+    @ThreadDes("GLThread")
+    fun notifyRenderProgressChanged(old: Float, fromUser: Boolean) {
+        for (listener in listeners) {
+            listener.onRenderProgressChanged(old, renderProgress, fromUser)
         }
     }
 
@@ -150,6 +222,20 @@ class OpenGLGCodeLine(
         super.preRender(scene)
         //GLES20.glLineWidth(lineThickness / scene.sceneScaleX)
         GLES20.glLineWidth(lineThickness)
+    }
+
+    override fun onRender() {
+        super.onRender()
+
+        if (animationState.isStarted) {
+            val old = renderProgress
+            renderEndDistance += animationDistanceStep * animationSpeed
+            if (renderEndDistance > sumDistance) {
+                renderEndDistance = sumDistance
+                stopAnimation()
+            }
+            notifyRenderProgressChanged(old, false)
+        }
     }
 
     //--
@@ -279,6 +365,20 @@ class OpenGLGCodeLine(
             )
         }
     }
+}
+
+interface OpenGLGCodeLineListener {
+
+    /**动画状态改变通知*/
+    @ThreadDes("GLThread")
+    fun onAnimationStateChanged(from: AnimationStateEnum, to: AnimationStateEnum) {
+    }
+
+    /**绘制进度改变通知*/
+    @ThreadDes("GLThread")
+    fun onRenderProgressChanged(from: Float, to: Float, fromUser: Boolean) {
+    }
+
 }
 
 /**GCode线段的信息
