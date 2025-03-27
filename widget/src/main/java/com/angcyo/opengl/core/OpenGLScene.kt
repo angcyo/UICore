@@ -1,11 +1,13 @@
 package com.angcyo.opengl.core
 
+import android.graphics.RectF
 import android.opengl.GLES20
 import android.opengl.Matrix
 import com.angcyo.library.annotation.Api
 import java.util.Collections
 import java.util.LinkedList
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.math.min
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -71,7 +73,7 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
      *
      * [setProjectionMatrix]
      * */
-    fun render(ellapsedTime: Long, deltaTime: Double) {
+    open fun render(ellapsedTime: Long, deltaTime: Double) {
         performFrameTasks() //Handle the task queue
 
         GLES20.glClearColor(
@@ -179,8 +181,15 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
     }
     //--
 
-    protected var mLastWidth: Int = 0
-    protected var mLastHeight: Int = 0
+    /**最后一次的视口宽度
+     * [setProjectionMatrix]*/
+    var lastWidth: Int = 0
+
+    /**最后一次的视口宽度
+     * [setProjectionMatrix]*/
+    var lastHeight: Int = 0
+
+    //--
     protected var mNearPlane = 1.0f
     protected var mFarPlane = 2f //120.0f
     protected var mFieldOfView = 45.0f
@@ -191,8 +200,8 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
      * */
     fun setProjectionMatrix(width: Int, height: Int) {
         /*if (mLastWidth != width || mLastHeight != height) mCameraDirty = true*/
-        mLastWidth = width
-        mLastHeight = height
+        lastWidth = width
+        lastHeight = height
 
         //mVPMatrix.setToPerspective(mNearPlane, mFarPlane, mFieldOfView, ratio)
 
@@ -232,10 +241,48 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
     val sceneScaleZ: Float
         get() = mVMatrix.sz
 
-    /**缩放场景 */
+    /**缩放场景
+     * [scaleSceneTo]*/
     @Api
     fun scaleSceneBy(sx: Float = 1f, sy: Float = 1f, sz: Float = 1f) {
         mVMatrix.scaleBy(sx, sy, sz)
+    }
+
+    /**[scaleSceneBy]*/
+    @Api
+    fun scaleSceneTo(sx: Float = 1f, sy: Float = 1f, sz: Float = 1f) {
+        mVMatrix.scaleTo(sx, sy, sz)
+    }
+
+    /**移动场景
+     * [translateSceneTo]*/
+    @Api
+    fun translateSceneBy(x: Float = 0f, y: Float = 0f, z: Float = 0f) {
+        mVMatrix.translateBy(x, y, z)
+    }
+
+    /**[translateSceneBy]*/
+    @Api
+    fun translateSceneTo(x: Float? = null, y: Float? = null, z: Float? = null) {
+        mVMatrix.translateTo(x, y, z)
+    }
+
+    /**将一个矩形, 完全显示在场景中*/
+    @Api
+    fun fitScene(rect: RectF?) {
+        if (rect == null) {
+            return
+        }
+        val scaleX = 1 / rect.width()
+        val scaleY = 1 / rect.height()
+        val scale = min(scaleX, scaleY)
+        scaleSceneTo(scale, scale)
+        //translateSceneTo(rect.centerX() - lastWidth / 2, rect.centerY() - lastHeight / 2)
+    }
+
+    fun testMatrix() {
+        //Matrix.setLookAtM(mVMatrix.m,0, )
+        Matrix.translateM(mVMatrix.m, 0, -2f, -2f, 0f)
     }
 
     //endregion --api--

@@ -43,20 +43,29 @@ data class Matrix4(
         identity()
     }
 
+    //--
+
     val sx: Float
-        get() {
-            return m[M00]
-        }
+        get() = m[M00]
+
 
     val sy: Float
-        get() {
-            return m[M11]
-        }
+        get() = m[M11]
+
 
     val sz: Float
-        get() {
-            return m[M22]
-        }
+        get() = m[M22]
+
+    //--
+
+    val tx: Float
+        get() = m[M03]
+
+    val ty: Float
+        get() = m[M13]
+
+    val tz: Float
+        get() = m[M23]
 
     //--------------------------------------------------
     // Modification methods
@@ -181,6 +190,20 @@ data class Matrix4(
         m[M00 + mi] = sx
         m[M11 + mi] = sy
         m[M22 + mi] = sz
+    }
+
+    /**平移移动分量*/
+    @Api
+    fun translateBy(x: Float = 0f, y: Float = 0f, z: Float = 0f) {
+        Matrix.translateM(m, 0, x, y, z)
+    }
+
+    /**平移移动到*/
+    @Api
+    fun translateTo(x: Float? = null, y: Float? = null, z: Float? = null) {
+        m[M03] = x ?: m[M03]
+        m[M13] = y ?: m[M13]
+        m[M23] = z ?: m[M23]
     }
 
     //--
