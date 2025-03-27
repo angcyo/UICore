@@ -294,6 +294,7 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
         val refSize = max(refWidth, refHeight)
         translateSceneTo(-rect.centerX() / refSize, -rect.centerY() / refSize)
 
+        //这种平移只能将矩形的左上角移动到屏幕左上角
         //translateSceneTo(-1f - rect.left / refSize, -1f - rect.top / refSize)
         //translateSceneTo(-1f, -1f)
     }
