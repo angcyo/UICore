@@ -171,9 +171,9 @@ class OpenGLGCodeLine(
     var animationState: AnimationStateEnum = AnimationStateEnum.DEFAULT
 
     /**开关动画的状态*/
-    fun toggleAnimation() {
-        if (animationState.isStarted) {
-            stopAnimation()
+    fun toggleAnimation(pause: Boolean = true) {
+        if (animationState.isPlaying) {
+            stopAnimation(if (pause) AnimationStateEnum.PAUSED else AnimationStateEnum.STOPPED)
         } else {
             startAnimation()
         }
@@ -181,20 +181,24 @@ class OpenGLGCodeLine(
 
     /**开始动画*/
     fun startAnimation() {
-        if (animationState.isStarted) {
+        if (animationState.isPlaying) {
             return
         }
-        renderEndDistance = 0f
+        if (animationState.isPaused) {
+            //
+        } else {
+            renderEndDistance = 0f
+        }
         val old = animationState
         animationState = AnimationStateEnum.PLAYING
         notifyAnimationState(old)
     }
 
     /**停止动画*/
-    fun stopAnimation() {
+    fun stopAnimation(state: AnimationStateEnum = AnimationStateEnum.STOPPED) {
         if (animationState.isStarted) {
             val old = animationState
-            animationState = AnimationStateEnum.STOPPED
+            animationState = state
             notifyAnimationState(old)
             return
         }

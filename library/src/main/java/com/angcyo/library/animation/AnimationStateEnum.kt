@@ -32,6 +32,18 @@ enum class AnimationStateEnum {
      * */
     FINISHED, ;
 
+    val isPlaying: Boolean
+        get() = when (this) {
+            PLAYING -> true
+            else -> false
+        }
+
+    val isPaused: Boolean
+        get() = when (this) {
+            PAUSED -> true
+            else -> false
+        }
+
     /**动画是否开始了*/
     val isStarted: Boolean
         get() = when (this) {
