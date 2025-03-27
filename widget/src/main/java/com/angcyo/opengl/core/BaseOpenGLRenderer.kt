@@ -351,8 +351,8 @@ abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
         }
     }
 
-    protected var mCurrentViewportWidth: Int = 0
-    protected var mCurrentViewportHeight: Int = 0 // The current width and height of the GL viewport
+    var currentViewportWidth: Int = 0
+    var currentViewportHeight: Int = 0 // The current width and height of the GL viewport
     protected var mDefaultViewportWidth: Int = 0
     protected var mDefaultViewportHeight: Int = 0 // The default width and height of the GL viewport
     protected var mOverrideViewportWidth: Int = 0
@@ -367,8 +367,8 @@ abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
      * @param height `int` The viewport height in pixels.
      */
     fun setViewPort(width: Int, height: Int) {
-        mCurrentViewportWidth = width
-        mCurrentViewportHeight = height
+        currentViewportWidth = width
+        currentViewportHeight = height
         mCurrentScene.updateProjectionMatrix(width, height)
         GLES20.glViewport(0, 0, width, height)
     }
@@ -401,11 +401,11 @@ abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
     }
 
     fun getViewportWidth(): Int {
-        return mCurrentViewportWidth
+        return currentViewportWidth
     }
 
     fun getViewportHeight(): Int {
-        return mCurrentViewportHeight
+        return currentViewportHeight
     }
 
     internal inner class RequestRenderTask : Runnable {
@@ -443,7 +443,7 @@ abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
      *
      * [onRenderFrame]
      */
-    protected fun onRender(ellapsedRealtime: Long, deltaTime: Double) {
+    protected open fun onRender(ellapsedRealtime: Long, deltaTime: Double) {
         render(ellapsedRealtime, deltaTime)
     }
 
@@ -453,7 +453,7 @@ abstract class BaseOpenGLRenderer(val context: Context) : IOpenGLRenderer {
      * @param ellapsedRealtime `long` Render ellapsed time in milliseconds.
      * @param deltaTime        `double` Time passed since last frame, in seconds.
      */
-    protected fun render(ellapsedRealtime: Long, deltaTime: Double) {
+    protected open fun render(ellapsedRealtime: Long, deltaTime: Double) {
         mCurrentScene.render(ellapsedRealtime, deltaTime)
     }
 

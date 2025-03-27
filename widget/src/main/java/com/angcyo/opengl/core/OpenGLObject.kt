@@ -158,7 +158,8 @@ open class OpenGLObject : OpenGLTransformableObject() {
 
     //region --core--
 
-    /**对象的颜色, R G B A*/
+    /**绘制对象的颜色, R G B A
+     * [mColors]*/
     var color = floatArrayOf(1f, 0f, 1f, 1f)
 
     /**
@@ -183,6 +184,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
      * 顶点颜色数据
      * FloatBuffer containing color data (r, g, b, a)
      *
+     * [color]
      * [setColors]
      */
     protected var mColors: FloatBuffer? = null
