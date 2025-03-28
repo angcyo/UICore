@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="adapter_error">"Falha no carregamento, clique em Repetir"</string>
+  <string name="adapter_loading">"A carregar..."</string>
+  <string name="adapter_no_data">"Não existem dados disponíveis"</string>
+  <string name="adapter_no_more">"Chegou ao fim!"</string>
+  <string name="not_support">"Não suportado atualmente"</string>
+  <string name="not_support_part">"Dados parciais não são suportados."</string>
+  <string name="refresh">"Atualizar"</string>
+</resources>

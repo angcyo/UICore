@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="doodle_ai_draw">"Рисование на основе искусственного интеллекта"</string>
+  <string name="doodle_brush">"Кисть"</string>
+  <string name="doodle_color">"Цвет"</string>
+  <string name="doodle_eraser">"Ластик"</string>
+  <string name="doodle_pencil">"Ручка"</string>
+  <string name="doodle_redo">"Вернуть"</string>
+  <string name="doodle_size">"Размер"</string>
+  <string name="doodle_title">"Граффити"</string>
+  <string name="doodle_undo">"Отменить"</string>
+</resources>

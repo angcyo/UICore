@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="core_add_file_fail">"Не удалось добавить"</string>
+  <string name="core_add_file_success">"Добавлено"</string>
+  <string name="core_file_import">"Добавьте файл"</string>
+  <string name="core_file_list">"Список файлов"</string>
+  <string name="core_import">"Импорт"</string>
+  <string name="core_import_fail">"Не удалось импортировать"</string>
+  <string name="core_import_success">"Успешно импортировано"</string>
+  <string name="core_screen_shot_text">"Обратная связь"</string>
+  <string name="core_send_to_label">"Отправить в..."</string>
+  <string name="core_thread_error_tip">"Возникла небольшая проблема"</string>
+  <string name="core_trash_delete">"Перетащите сюда, чтобы удалить"</string>
+  <string name="core_trash_delete_tip">"Поднимите палец, чтобы удалить"</string>
+  <string name="permission_disabled">"В доступе отказано"</string>
+  <string name="ui_add">"Добавлять"</string>
+  <string name="ui_back">"Назад"</string>
+  <string name="ui_choose">"Пожалуйста, выберите"</string>
+  <string name="ui_confirm">@string /dialog_positive</string>
+  <string name="ui_delete">"Удалить"</string>
+  <string name="ui_delete_fail">"Не удалось удалить"</string>
+  <string name="ui_delete_tip">"После удаления его невозможно восстановить, хотите продолжить?"</string>
+  <string name="ui_edit">"Редактировать"</string>
+  <string name="ui_enable_permission">"Включить разрешение"</string>
+  <string name="ui_feature_development">"Функция в настоящее время находится в стадии разработки..."</string>
+  <string name="ui_finish">"Готово"</string>
+  <string name="ui_known">"Oк"</string>
+  <string name="ui_minimum">"Минимум"</string>
+  <string name="ui_next">"Далее"</string>
+  <string name="ui_open">"Открыть"</string>
+  <string name="ui_prev">"Предыдущий шаг"</string>
+  <string name="ui_share">"Поделиться"</string>
+  <string name="ui_valid_range_tip">"Допустимый диапазон"</string>
+  <string name="ui_wait_tip">"Пожалуйста, подождите..."</string>
+  <string name="ui_warn">"Предупреждение"</string>
+</resources>

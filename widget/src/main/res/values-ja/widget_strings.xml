@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="adapter_error">"読み込みに失敗しました。もう一度お試しください。"</string>
+  <string name="adapter_error">"読み込みに失敗しました。再試行をクリックしてください。"</string>
   <string name="adapter_loading">"読み込み中"</string>
   <string name="adapter_no_data">"データがありません。"</string>
   <string name="adapter_no_more">"これで終わりです。"</string>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="core_add_file_fail">"Falha ao adicionar"</string>
+  <string name="core_add_file_success">"Adicionado"</string>
+  <string name="core_file_import">"Adicione o ficheiro"</string>
+  <string name="core_file_list">"Lista de ficheiros"</string>
+  <string name="core_import">"Importar"</string>
+  <string name="core_import_fail">"Falha na importação"</string>
+  <string name="core_import_success">"Importado com sucesso"</string>
+  <string name="core_screen_shot_text">"Opinião"</string>
+  <string name="core_send_to_label">"Enviar para..."</string>
+  <string name="core_thread_error_tip">"Deparou-se com um pequeno problema"</string>
+  <string name="core_trash_delete">"Arraste aqui para excluir"</string>
+  <string name="core_trash_delete_tip">"Levante o dedo para apagar"</string>
+  <string name="permission_disabled">"Permissão negada"</string>
+  <string name="ui_add">"Adicionar"</string>
+  <string name="ui_back">"Voltar"</string>
+  <string name="ui_choose">"Por favor, escolha"</string>
+  <string name="ui_confirm">@string/dialog_positive</string>
+  <string name="ui_delete">"Apagar"</string>
+  <string name="ui_delete_fail">"Falha ao excluir"</string>
+  <string name="ui_delete_tip">"Após a eliminação, não é possível recuperá-lo. Pretende continuar?"</string>
+  <string name="ui_edit">"Editar"</string>
+  <string name="ui_enable_permission">"Ativar permissão"</string>
+  <string name="ui_feature_development">"Funcionalidade atualmente em desenvolvimento..."</string>
+  <string name="ui_finish">"Concluído"</string>
+  <string name="ui_known">"OK"</string>
+  <string name="ui_minimum">"Mínimo"</string>
+  <string name="ui_next">"Seguinte"</string>
+  <string name="ui_open">"Aberto"</string>
+  <string name="ui_prev">"Passo anterior"</string>
+  <string name="ui_share">"Partilhar"</string>
+  <string name="ui_valid_range_tip">"Intervalo válido"</string>
+  <string name="ui_wait_tip">"Por favor, aguarde..."</string>
+  <string name="ui_warn">"Aviso"</string>
+</resources>
