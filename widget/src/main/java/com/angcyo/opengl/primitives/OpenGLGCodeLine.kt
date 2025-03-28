@@ -82,6 +82,7 @@ class OpenGLGCodeLine(
     init {
         drawingMode = GLES20.GL_LINES
         color = Color.GREEN.toOpenGLColor()
+        setTransparent(true)
 
         val numVertices: Int = points.size
 
@@ -288,7 +289,7 @@ class OpenGLGCodeLine(
 
         if (startPositionBuffer != null) {
             startPositionBuffer!!.compact().position(0)
-            startPositionBufferIndex = createBuffer(
+            startPositionBufferIndex = createOpenGLBuffer(
                 startPositionBuffer,
                 GLES20.GL_ARRAY_BUFFER
             )
@@ -296,7 +297,7 @@ class OpenGLGCodeLine(
 
         if (startDistanceBuffer != null) {
             startDistanceBuffer!!.compact().position(0)
-            startDistanceBufferIndex = createBuffer(
+            startDistanceBufferIndex = createOpenGLBuffer(
                 startDistanceBuffer,
                 GLES20.GL_ARRAY_BUFFER
             )
@@ -305,8 +306,10 @@ class OpenGLGCodeLine(
 
     override fun destroy() {
         super.destroy()
-        deleteBuffers(startPositionBufferIndex)
-        deleteBuffers(startDistanceBufferIndex)
+        deleteOpenGLBuffers(startPositionBufferIndex)
+        startPositionBufferIndex = null
+        deleteOpenGLBuffers(startDistanceBufferIndex)
+        startDistanceBufferIndex = null
     }
 
     override fun bindVertexShaderProgram(programHandle: Int) {
@@ -408,6 +411,10 @@ data class OpenGLGCodeLineData(
     val startPoint: PointF,
     /**线结束的点*/
     val endPoint: PointF,
+    /**线的类型
+     * 0: G0
+     * 1: G1*/
+    val type: Int = 0,
     /**线的颜色*/
     val color: Int = Color.GREEN,
     /**线开始的距离, 距离0,0的距离*/

@@ -60,6 +60,12 @@ open class OpenGLObject : OpenGLTransformableObject() {
     /**绘制类型, 也是图元类型*/
     protected var drawingMode: Int = GLES20.GL_TRIANGLES
 
+    //--
+
+    protected var mEnableBlending: Boolean = false
+    protected var mBlendFuncSFactor: Int = 0
+    protected var mBlendFuncDFactor: Int = 0
+
     //region --override--
 
     /**
@@ -92,36 +98,48 @@ open class OpenGLObject : OpenGLTransformableObject() {
             mMVPMatrix.setAll(vpMatrix)
         }
 
+        if (mEnableBlending) {
+            GLES20.glEnable(GLES20.GL_BLEND)
+            GLES20.glBlendFunc(mBlendFuncSFactor, mBlendFuncDFactor)
+        } else {
+            GLES20.glDisable(GLES20.GL_BLEND)
+        }
+
         //
         onRender()
+
+        //
+        if (mEnableBlending) {
+            GLES20.glDisable(GLES20.GL_BLEND)
+        }
     }
 
     /**[render]*/
     open fun onRender() {
         //drawColor(Color.YELLOW)
 
-        if (mIsDirty) {
-            mProgramHandle = createProgram(buildVertexShader(), buildFragmentShader())
-            if (mProgramHandle == 0) {
-                mIsDirty = false
+        if (isDirty) {
+            programHandle = createProgram(buildVertexShader(), buildFragmentShader())
+            if (programHandle == 0) {
+                isDirty = false
                 return
             }
         }
-        GLES20.glUseProgram(mProgramHandle)
+        GLES20.glUseProgram(programHandle)
 
-        bindVertexShaderProgram(mProgramHandle)
-        bindFragmentShaderProgram(mProgramHandle)
+        bindVertexShaderProgram(programHandle)
+        bindFragmentShaderProgram(programHandle)
 
         //--
         //GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
         //GLES20.glDrawElements(mDrawingMode, mGeometry.getNumIndices(), bufferType, 0)
         //GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0)
-        GLES20.glDrawArrays(drawingMode, 0, mNumVertices)
+        GLES20.glDrawArrays(drawingMode, 0, numVertices)
 
-        mIsDirty = false
+        isDirty = false
     }
 
-    protected var mHaveCreatedBuffers: Boolean = false
+    protected var haveCreatedBuffers: Boolean = false
 
     /**
      * 每次渲染之前的回调
@@ -130,7 +148,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
      * [render]
      */
     protected open fun preRender(scene: OpenGLScene) {
-        if (!mHaveCreatedBuffers) {
+        if (!haveCreatedBuffers) {
             createBuffers()
         }
         /*if (mOriginalGeometry != null) {
@@ -178,7 +196,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
 
     /**顶点的数量
      * [setVertices]*/
-    protected var mNumVertices: Int = 0
+    protected var numVertices: Int = 0
 
     /**
      * 顶点颜色数据
@@ -187,13 +205,13 @@ open class OpenGLObject : OpenGLTransformableObject() {
      * [color]
      * [setColors]
      */
-    protected var mColors: FloatBuffer? = null
+    var mColors: FloatBuffer? = null
 
     /**
      * [mColors]在OpenGL中绑定的索引位置
      * [createBuffers]
      * */
-    protected var colorsBufferIndex: Int? = null
+    var colorsBufferIndex: Int? = null
 
     /**
      * Passes the data to the Geometry3D instance. Vertex Buffer Objects (VBOs) will be created.
@@ -279,18 +297,20 @@ open class OpenGLObject : OpenGLTransformableObject() {
             GLES20.GL_UNSIGNED_INT*/
     }
 
-    /**设置顶点数据*/
+    /**设置顶点数据
+     * [setData]*/
     fun setVertices(vertices: FloatArray, override: Boolean = false) {
         if (mVertices == null || override) {
             mVertices?.clear()
             mVertices = createFloatBuffer(vertices)
-            mNumVertices = vertices.size / 3
+            numVertices = vertices.size / 3
         } else {
             mVertices?.put(vertices)
         }
     }
 
-    /**设置顶点颜色*/
+    /**设置顶点颜色
+     * [setData]*/
     fun setColors(colors: FloatArray, override: Boolean = false) {
         if (mColors == null || override) {
             mColors?.clear()
@@ -303,13 +323,14 @@ open class OpenGLObject : OpenGLTransformableObject() {
 
     /**
      * Creates the actual Buffer objects.
+     * [setData]
      */
     open fun createBuffers() {
         val supportsUIntBuffers: Boolean = supportsUIntBuffers
 
         if (mVertices != null) {
             mVertices!!.compact().position(0)
-            verticesBufferIndex = createBuffer(
+            verticesBufferIndex = createOpenGLBuffer(
                 mVertices,
                 GLES20.GL_ARRAY_BUFFER
             )
@@ -334,7 +355,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
         }*/
         if (mColors != null) {
             mColors!!.compact().position(0)
-            colorsBufferIndex = createBuffer(mColors, GLES20.GL_ARRAY_BUFFER)
+            colorsBufferIndex = createOpenGLBuffer(mColors, GLES20.GL_ARRAY_BUFFER)
         }
         /*if (mIndicesInt != null && !mOnlyShortBufferSupported && supportsUIntBuffers) {
             mIndicesInt.compact().position(0)
@@ -382,7 +403,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
         GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0)
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
 
-        mHaveCreatedBuffers = true
+        haveCreatedBuffers = true
     }
 
     /**
@@ -394,7 +415,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
      * @param target 目标缓存区的类型
      * @param usage 缓存区的用途提示 [GLES20.GL_STATIC_DRAW] [GLES20.GL_DYNAMIC_DRAW]
      */
-    fun createBuffer(buffer: Buffer?, target: Int, usage: Int = GLES20.GL_STATIC_DRAW): Int? {
+    fun createOpenGLBuffer(buffer: Buffer?, target: Int, usage: Int = GLES20.GL_STATIC_DRAW): Int? {
         val byteSize: Int = FLOAT_SIZE_BYTES
         /*if (type == BufferType.SHORT_BUFFER) byteSize = org.rajawali3d.Geometry3D.SHORT_SIZE_BYTES
         else if (type == BufferType.BYTE_BUFFER) byteSize =
@@ -426,13 +447,19 @@ open class OpenGLObject : OpenGLTransformableObject() {
 
     /**[reload]*/
     open fun destroy() {
-        deleteBuffers(verticesBufferIndex)
-        deleteBuffers(colorsBufferIndex)
+        if (programHandle != 0) {
+            GLES20.glDeleteProgram(programHandle)
+            programHandle = 0
+        }
+        deleteOpenGLBuffers(verticesBufferIndex)
+        verticesBufferIndex = null
+        deleteOpenGLBuffers(colorsBufferIndex)
+        colorsBufferIndex = null
     }
 
     /**重新加载, [Buffer] 要重新创建*/
     fun reload() {
-        mIsDirty = true
+        isDirty = true
         //createShaders()
         destroy()
         createBuffers()
@@ -530,22 +557,22 @@ open class OpenGLObject : OpenGLTransformableObject() {
 
     }
 
-    protected var mIsDirty = true
+    protected var isDirty = true
 
     /**
      * Holds a reference to the shader program
      */
-    protected var mProgramHandle = -1
+    protected var programHandle = 0
 
     /**
      * Holds a reference to the vertex shader
      */
-    protected var mVShaderHandle = 0
+    protected var vertexShaderHandle = 0
 
     /**
      * Holds a reference to the fragment shader
      */
-    protected var mFShaderHandle = 0
+    protected var fragmentShaderHandle = 0
 
     /**
      * Creates a shader program by compiling the vertex and fragment shaders
@@ -557,20 +584,20 @@ open class OpenGLObject : OpenGLTransformableObject() {
      * @return
      */
     protected fun createProgram(vertexSource: String, fragmentSource: String): Int {
-        mVShaderHandle = loadShader(GLES20.GL_VERTEX_SHADER, vertexSource)
-        if (mVShaderHandle == 0) {
+        vertexShaderHandle = loadShader(GLES20.GL_VERTEX_SHADER, vertexSource)
+        if (vertexShaderHandle == 0) {
             return 0
         }
 
-        mFShaderHandle = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentSource)
-        if (mFShaderHandle == 0) {
+        fragmentShaderHandle = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentSource)
+        if (fragmentShaderHandle == 0) {
             return 0
         }
 
         var program = GLES20.glCreateProgram()
         if (program != 0) {
-            GLES20.glAttachShader(program, mVShaderHandle)
-            GLES20.glAttachShader(program, mFShaderHandle)
+            GLES20.glAttachShader(program, vertexShaderHandle)
+            GLES20.glAttachShader(program, fragmentShaderHandle)
             GLES20.glLinkProgram(program)
 
             val linkStatus = IntArray(1)
@@ -617,6 +644,22 @@ open class OpenGLObject : OpenGLTransformableObject() {
 
     //region --api--
 
+    /**
+     * Use this together with the alpha channel when calling BaseObject3D.setColor(): 0xaarrggbb. So for 50% transparent
+     * red, set transparent to true and call: * `setColor(0x7fff0000);`
+     *
+     * @param value
+     */
+    fun setTransparent(value: Boolean) {
+        mEnableBlending = value
+        setBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
+    }
+
+    fun setBlendFunc(sFactor: Int, dFactor: Int) {
+        mBlendFuncSFactor = sFactor
+        mBlendFuncDFactor = dFactor
+    }
+
     /**绘制一个颜色*/
     @Api
     fun drawColor(color: Int) {
@@ -629,8 +672,9 @@ open class OpenGLObject : OpenGLTransformableObject() {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
     }
 
+    /**删除缓存*/
     @Api
-    fun deleteBuffers(index: Int?) {
+    fun deleteOpenGLBuffers(index: Int?) {
         if (index != null) {
             GLES20.glDeleteBuffers(1, intArrayOf(index), 0)
         }
