@@ -18,6 +18,7 @@ class OpenGLOriginLine : OpenGLObject() {
 
     init {
         drawingMode = GLES20.GL_LINES
+        color = Color.RED.toOpenGLColor()
     }
 
     var _lastScaleX: Float? = null
@@ -49,7 +50,6 @@ class OpenGLOriginLine : OpenGLObject() {
             vertices[10] = y + ty
             vertices[11] = 0f
             //--
-            color = Color.RED.toOpenGLColor()
             setData(vertices, null, null, null, null, true)
             //--
             _lastScaleX = scene.sceneScaleX

@@ -7,6 +7,7 @@ import androidx.core.graphics.green
 import androidx.core.graphics.red
 import com.angcyo.library.L
 import com.angcyo.library.annotation.Api
+import com.angcyo.library.annotation.ConfigProperty
 import com.angcyo.opengl.core.BaseOpenGLRenderer.Companion.supportsUIntBuffers
 import java.nio.Buffer
 import java.nio.ByteBuffer
@@ -85,6 +86,8 @@ open class OpenGLObject : OpenGLTransformableObject() {
         projMatrix: Matrix4?,
         vMatrix: Matrix4?
     ) {
+        if (!isVisible) return
+
         preRender(scene)
 
         // -- calculate model view matrix;
@@ -118,25 +121,27 @@ open class OpenGLObject : OpenGLTransformableObject() {
     open fun onRender() {
         //drawColor(Color.YELLOW)
 
-        if (isDirty) {
-            programHandle = createProgram(buildVertexShader(), buildFragmentShader())
-            if (programHandle == 0) {
-                isDirty = false
-                return
+        if (isVisible) {
+            if (isDirty) {
+                programHandle = createProgram(buildVertexShader(), buildFragmentShader())
+                if (programHandle == 0) {
+                    isDirty = false
+                    return
+                }
             }
+            GLES20.glUseProgram(programHandle)
+
+            bindVertexShaderProgram(programHandle)
+            bindFragmentShaderProgram(programHandle)
+
+            //--
+            //GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
+            //GLES20.glDrawElements(mDrawingMode, mGeometry.getNumIndices(), bufferType, 0)
+            //GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0)
+            GLES20.glDrawArrays(drawingMode, 0, numVertices)
+
+            isDirty = false
         }
-        GLES20.glUseProgram(programHandle)
-
-        bindVertexShaderProgram(programHandle)
-        bindFragmentShaderProgram(programHandle)
-
-        //--
-        //GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
-        //GLES20.glDrawElements(mDrawingMode, mGeometry.getNumIndices(), bufferType, 0)
-        //GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0)
-        GLES20.glDrawArrays(drawingMode, 0, numVertices)
-
-        isDirty = false
     }
 
     protected var haveCreatedBuffers: Boolean = false
@@ -178,7 +183,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
 
     /**绘制对象的颜色, R G B A
      * [mColors]*/
-    var color = floatArrayOf(1f, 0f, 1f, 1f)
+    var color = floatArrayOf(0f, 0f, 0f, 1f)
 
     /**
      * 顶点数据
@@ -608,6 +613,10 @@ open class OpenGLObject : OpenGLTransformableObject() {
     }
 
     protected var isDirty = true
+
+    /**对象是否可见*/
+    @ConfigProperty
+    var isVisible: Boolean = true
 
     /**
      * Holds a reference to the shader program

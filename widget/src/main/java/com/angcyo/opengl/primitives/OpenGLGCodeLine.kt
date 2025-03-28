@@ -23,6 +23,8 @@ import kotlin.math.min
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @date 2025/03/26
+ *
+ * GCode线段
  */
 class OpenGLGCodeLine(
     val points: Stack<OpenGLGCodeLineData>,
@@ -72,12 +74,41 @@ class OpenGLGCodeLine(
             } else {
                 sumDistance * value
             }
+            gcodeCursor?.cursorPoint = currentPoint//更新游标位置
             notifyRenderProgressChanged(old, true)
         }
 
     /**事件监听者集合*/
     @ConfigProperty
     val listeners = mutableListOf<OpenGLGCodeLineListener>()
+
+    /**配置当前光标的游标*/
+    @ConfigProperty
+    var gcodeCursor: OpenGLGCodeCursor? = null
+        set(value) {
+            field = value
+            value?.cursorPoint = points.firstOrNull()?.startPoint
+        }
+
+    /**根据当前的进度[renderEndDistance]获取当前进度对应的坐标*/
+    @OutputProperty
+    val currentPoint: PointF?
+        get() {
+            for (point in points) {
+                if (renderEndDistance >= point.lineStartDistance &&
+                    renderEndDistance <= point.lineStartDistance + point.distance
+                ) {
+                    if (point.distance <= 0f) {
+                        return point.startPoint
+                    }
+                    val r = (renderEndDistance - point.lineStartDistance) / point.distance
+                    val x = point.startPoint.x + (point.endPoint.x - point.startPoint.x) * r
+                    val y = point.startPoint.y + (point.endPoint.y - point.startPoint.y) * r
+                    return PointF(x, y)
+                }
+            }
+            return null
+        }
 
     init {
         drawingMode = GLES20.GL_LINES
@@ -255,6 +286,7 @@ class OpenGLGCodeLine(
                 renderEndDistance = sumDistance
                 stopAnimation()
             }
+            gcodeCursor?.cursorPoint = currentPoint//更新游标位置
             notifyRenderProgressChanged(old, false)
         }
     }
