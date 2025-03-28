@@ -337,7 +337,7 @@ class OpenGLGCodeLine(
         return buildString {
             vertexShaderBuilder = this
             //--着色器声明--
-            appendLine("precision mediump float;")//精度声明
+            appendLine("precision highp float;")//精度声明
             appendLine("attribute vec4 aPosition;")//顶点坐标
             if (colorsBufferIndex == null) {
                 appendLine("uniform vec4 uColor;")//顶点颜色
@@ -358,7 +358,7 @@ class OpenGLGCodeLine(
             } else {
                 appendLine("  vColor = aVertexColor;")
             }
-            appendLine("  float dis = distance(aPosition.xy, aStartPosition.xy);")
+            appendLine("  float dis = abs(distance(aPosition.xy, aStartPosition.xy));")
             appendLine("  vDistance = dis + aStartDistance;")
             appendLine("}")
         }
@@ -370,7 +370,7 @@ class OpenGLGCodeLine(
             //--着色器声明--
             append(
                 """
-                precision mediump float;
+                precision highp float;
                 varying vec4 vColor;
                 varying float vDistance;
                 uniform float uRenderEndDistance;
