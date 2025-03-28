@@ -423,6 +423,8 @@ data class OpenGLGCodeLineData(
     /**线的宽度*/
     val lineThickness: Float = 1f,
 ) {
+
+    /**线起始2的之间的距离*/
     val distance: Float
         get() = startPoint.distance(endPoint)
 }
