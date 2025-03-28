@@ -464,11 +464,11 @@ open class OpenGLObject : OpenGLTransformableObject() {
         oldBufferHandle: Int?,
         newBuffer: Buffer?,
         target: Int = GLES20.GL_ARRAY_BUFFER,
-        resizeBuffer: Boolean = false,
+        resizeBuffer: Boolean = true,
         usage: Int = GLES20.GL_STATIC_DRAW
-    ) {
+    ): Int? {
         if (oldBufferHandle == null || newBuffer == null) {
-            return
+            return oldBufferHandle
         }
         deleteOpenGLBuffers(oldBufferHandle)
 
@@ -492,6 +492,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
             )
         }
         GLES20.glBindBuffer(target, 0)
+        return oldBufferHandle
     }
 
     /**[reload]*/

@@ -82,7 +82,6 @@ class OpenGLGCodeLine(
     init {
         drawingMode = GLES20.GL_LINES
         color = Color.BLACK.toOpenGLColor()
-        isDynamicColorBuffer = true
         setTransparent(true)
 
         val numVertices: Int = points.size
@@ -417,7 +416,7 @@ data class OpenGLGCodeLineData(
      * 1: G1*/
     val type: Int = 0,
     /**线的颜色*/
-    val color: Int = Color.GREEN,
+    var color: Int = Color.BLACK,
     /**线开始的距离, 距离0,0的距离*/
     @AutoConfigProperty
     var lineStartDistance: Float = 0f,

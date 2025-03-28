@@ -4,6 +4,7 @@ import android.graphics.RectF
 import android.opengl.GLES20
 import android.opengl.Matrix
 import com.angcyo.library.annotation.Api
+import com.angcyo.library.ex.Action
 import com.angcyo.library.ex.expand
 import java.util.Collections
 import java.util.LinkedList
@@ -20,7 +21,7 @@ import kotlin.math.min
  */
 open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
 
-    private var mChildren: MutableList<OpenGLObject> =
+    private var children: MutableList<OpenGLObject> =
         Collections.synchronizedList(CopyOnWriteArrayList())
     protected var mAntiAliasingConfig: ANTI_ALIASING_CONFIG? = null
 
@@ -39,12 +40,12 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
      * Reloads this scene.
      */
     fun reload() {
-        synchronized(mChildren) {
+        synchronized(children) {
             var i = 0
-            val j: Int = mChildren.size
+            val j: Int = children.size
             while (i < j) {
                 // Model matrix updates are deferred to the render method due to parent matrix needs
-                mChildren[i].reload()
+                children[i].reload()
                 ++i
             }
         }
@@ -86,12 +87,12 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
         )
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
 
-        synchronized(mChildren) {
+        synchronized(children) {
             var i = 0
-            val j: Int = mChildren.size
+            val j: Int = children.size
             while (i < j) {
                 // Model matrix updates are deferred to the render method due to parent matrix needs
-                mChildren[i].render(this, mVPMatrix, mPMatrix, mVMatrix)
+                children[i].render(this, mVPMatrix, mPMatrix, mVMatrix)
                 ++i
             }
         }
@@ -135,10 +136,13 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
      * @param child [Object3D] child to be added.
      * @return True if the child was successfully queued for addition.
      */
-    fun addChild(child: OpenGLObject): Boolean {
+    fun addChild(child: OpenGLObject?): Boolean {
+        if (child == null) {
+            return false
+        }
         val task: OpenGLFrameTask = object : OpenGLFrameTask() {
             protected override fun doTask() {
-                mChildren.add(child)
+                children.add(child)
                 /*if (mSceneGraph != null) {
                     //mSceneGraph.addObject(child); //TODO: Uncomment
                 }
@@ -151,8 +155,39 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
         return internalOfferTask(task)
     }
 
+    /**
+     * Requests the removal of a child from the scene.
+     *
+     * @param child [Object3D] child to be removed.
+     * @return boolean True if the child was successfully queued for removal.
+     */
+    fun removeChild(child: OpenGLObject?): Boolean {
+        if (child == null) {
+            return false
+        }
+        val task: OpenGLFrameTask = object : OpenGLFrameTask() {
+            protected override fun doTask() {
+                children.remove(child)
+                child.destroy()
+                /*if (mSceneGraph != null) {
+                    //mSceneGraph.removeObject(child); //TODO: Uncomment
+                }*/
+            }
+        }
+        return internalOfferTask(task)
+    }
+
     private val mFrameTaskQueue: LinkedList<OpenGLFrameTask> = LinkedList<OpenGLFrameTask>()
 
+    /**在下一帧渲染之前运行一次*/
+    fun onFramePreRenderOnce(action: Action): Boolean {
+        val task: OpenGLFrameTask = object : OpenGLFrameTask() {
+            protected override fun doTask() {
+                action()
+            }
+        }
+        return internalOfferTask(task)
+    }
 
     /**
      * Adds a task to the frame task queue.
