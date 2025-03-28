@@ -149,7 +149,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
      */
     protected open fun preRender(scene: OpenGLScene) {
         if (!haveCreatedBuffers) {
-            createBuffers()
+            createObjectBuffers()
         }
         /*if (mOriginalGeometry != null) {
             mOriginalGeometry.validateBuffers()
@@ -190,9 +190,9 @@ open class OpenGLObject : OpenGLTransformableObject() {
 
     /**
      * [mVertices]在OpenGL中绑定的索引位置
-     * [createBuffers]
+     * [createObjectBuffers]
      * */
-    protected var verticesBufferIndex: Int? = null
+    protected var verticesBufferHandle: Int? = null
 
     /**顶点的数量
      * [setVertices]*/
@@ -207,11 +207,14 @@ open class OpenGLObject : OpenGLTransformableObject() {
      */
     var mColors: FloatBuffer? = null
 
+    /**是否动态颜色缓存区?*/
+    var isDynamicColorBuffer: Boolean = false
+
     /**
      * [mColors]在OpenGL中绑定的索引位置
-     * [createBuffers]
+     * [createObjectBuffers]
      * */
-    var colorsBufferIndex: Int? = null
+    var colorsBufferHandle: Int? = null
 
     /**
      * Passes the data to the Geometry3D instance. Vertex Buffer Objects (VBOs) will be created.
@@ -274,7 +277,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
 
         //--
         if (createVBOs) {
-            createBuffers()
+            createObjectBuffers()
         }
 
         /*mGeometry.setData(
@@ -325,12 +328,12 @@ open class OpenGLObject : OpenGLTransformableObject() {
      * Creates the actual Buffer objects.
      * [setData]
      */
-    open fun createBuffers() {
+    open fun createObjectBuffers() {
         val supportsUIntBuffers: Boolean = supportsUIntBuffers
 
         if (mVertices != null) {
-            mVertices!!.compact().position(0)
-            verticesBufferIndex = createOpenGLBuffer(
+            mVertices?.compact()?.position(0)
+            verticesBufferHandle = createOpenGLBuffer(
                 mVertices,
                 GLES20.GL_ARRAY_BUFFER
             )
@@ -354,8 +357,12 @@ open class OpenGLObject : OpenGLTransformableObject() {
             )
         }*/
         if (mColors != null) {
-            mColors!!.compact().position(0)
-            colorsBufferIndex = createOpenGLBuffer(mColors, GLES20.GL_ARRAY_BUFFER)
+            mColors?.compact()?.position(0)
+            colorsBufferHandle = createOpenGLBuffer(
+                mColors,
+                GLES20.GL_ARRAY_BUFFER,
+                if (isDynamicColorBuffer) GLES20.GL_DYNAMIC_DRAW else GLES20.GL_STATIC_DRAW
+            )
         }
         /*if (mIndicesInt != null && !mOnlyShortBufferSupported && supportsUIntBuffers) {
             mIndicesInt.compact().position(0)
@@ -412,10 +419,16 @@ open class OpenGLObject : OpenGLTransformableObject() {
      * @param bufferInfo
      * @param type
      * @param buffer
-     * @param target 目标缓存区的类型
+     * @param target 目标缓存区的类型 [GLES20.GL_ARRAY_BUFFER]
      * @param usage 缓存区的用途提示 [GLES20.GL_STATIC_DRAW] [GLES20.GL_DYNAMIC_DRAW]
+     *
+     * [changeOpenGLBufferData]
      */
-    fun createOpenGLBuffer(buffer: Buffer?, target: Int, usage: Int = GLES20.GL_STATIC_DRAW): Int? {
+    fun createOpenGLBuffer(
+        buffer: Buffer?,
+        target: Int = GLES20.GL_ARRAY_BUFFER,
+        usage: Int = GLES20.GL_STATIC_DRAW
+    ): Int? {
         val byteSize: Int = FLOAT_SIZE_BYTES
         /*if (type == BufferType.SHORT_BUFFER) byteSize = org.rajawali3d.Geometry3D.SHORT_SIZE_BYTES
         else if (type == BufferType.BYTE_BUFFER) byteSize =
@@ -445,16 +458,52 @@ open class OpenGLObject : OpenGLTransformableObject() {
         bufferInfo.usage = usage*/
     }
 
+    /**改变顶点数据
+     * [createOpenGLBuffer]*/
+    fun changeOpenGLBufferData(
+        oldBufferHandle: Int?,
+        newBuffer: Buffer?,
+        target: Int = GLES20.GL_ARRAY_BUFFER,
+        resizeBuffer: Boolean = false,
+        usage: Int = GLES20.GL_STATIC_DRAW
+    ) {
+        if (oldBufferHandle == null || newBuffer == null) {
+            return
+        }
+        deleteOpenGLBuffers(oldBufferHandle)
+
+        val byteSize: Int = FLOAT_SIZE_BYTES
+        newBuffer.rewind()
+
+        GLES20.glBindBuffer(target, oldBufferHandle)
+        if (resizeBuffer) {
+            GLES20.glBufferData(
+                target,
+                newBuffer.capacity() * byteSize,
+                newBuffer,
+                usage
+            )
+        } else {
+            GLES20.glBufferSubData(
+                target,
+                0 * byteSize,
+                newBuffer.capacity() * byteSize,
+                newBuffer
+            )
+        }
+        GLES20.glBindBuffer(target, 0)
+    }
+
     /**[reload]*/
     open fun destroy() {
         if (programHandle != 0) {
             GLES20.glDeleteProgram(programHandle)
             programHandle = 0
         }
-        deleteOpenGLBuffers(verticesBufferIndex)
-        verticesBufferIndex = null
-        deleteOpenGLBuffers(colorsBufferIndex)
-        colorsBufferIndex = null
+        deleteOpenGLBuffers(verticesBufferHandle)
+        verticesBufferHandle = null
+        deleteOpenGLBuffers(colorsBufferHandle)
+        colorsBufferHandle = null
     }
 
     /**重新加载, [Buffer] 要重新创建*/
@@ -462,7 +511,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
         isDirty = true
         //createShaders()
         destroy()
-        createBuffers()
+        createObjectBuffers()
     }
 
     //endregion --core--
@@ -484,7 +533,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
             //--着色器声明--
             appendLine("precision mediump float;")//精度声明
             appendLine("attribute vec4 aPosition;")//顶点坐标
-            if (colorsBufferIndex == null) {
+            if (colorsBufferHandle == null) {
                 appendLine("uniform vec4 uColor;")//顶点颜色
             } else {
                 appendLine("attribute vec4 aVertexColor;")//顶点矢量颜色
@@ -495,7 +544,7 @@ open class OpenGLObject : OpenGLTransformableObject() {
             //--着色器函数体--
             appendLine("void main() {")
             appendLine("  gl_Position = uMVPMatrix * uModelViewMatrix * aPosition;")
-            if (colorsBufferIndex == null) {
+            if (colorsBufferHandle == null) {
                 appendLine("  vColor = uColor;")
             } else {
                 appendLine("  vColor = aVertexColor;")
@@ -507,19 +556,19 @@ open class OpenGLObject : OpenGLTransformableObject() {
     /**将着色器绑定到程序
      * [buildVertexShader]*/
     open fun bindVertexShaderProgram(programHandle: Int) {
-        if (verticesBufferIndex != null) {
+        if (verticesBufferHandle != null) {
             val aPositionHandle = GLES20.glGetAttribLocation(programHandle, "aPosition")
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, verticesBufferIndex!!)
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, verticesBufferHandle!!)
             GLES20.glEnableVertexAttribArray(aPositionHandle)
             GLES20.glVertexAttribPointer(aPositionHandle, 3, GLES20.GL_FLOAT, false, 0, 0)
         }
 
-        if (colorsBufferIndex == null) {
+        if (colorsBufferHandle == null) {
             val uColorHandle = GLES20.glGetUniformLocation(programHandle, "uColor")
             GLES20.glUniform4fv(uColorHandle, 1, color, 0)
         } else {
             val aVertexColorHandle = GLES20.glGetAttribLocation(programHandle, "aVertexColor")
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, colorsBufferIndex!!)
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, colorsBufferHandle!!)
             GLES20.glEnableVertexAttribArray(aVertexColorHandle)
             GLES20.glVertexAttribPointer(
                 aVertexColorHandle,

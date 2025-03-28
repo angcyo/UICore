@@ -81,7 +81,8 @@ class OpenGLGCodeLine(
 
     init {
         drawingMode = GLES20.GL_LINES
-        color = Color.GREEN.toOpenGLColor()
+        color = Color.BLACK.toOpenGLColor()
+        isDynamicColorBuffer = true
         setTransparent(true)
 
         val numVertices: Int = points.size
@@ -262,9 +263,9 @@ class OpenGLGCodeLine(
     //--
 
     protected var startPositionBuffer: FloatBuffer? = null
-    protected var startPositionBufferIndex: Int? = null
+    protected var startPositionBufferHandle: Int? = null
     protected var startDistanceBuffer: FloatBuffer? = null
-    protected var startDistanceBufferIndex: Int? = null
+    protected var startDistanceBufferHandle: Int? = null
 
     fun setStartPositions(array: FloatArray, override: Boolean = false) {
         if (startPositionBuffer == null || override) {
@@ -284,12 +285,12 @@ class OpenGLGCodeLine(
         }
     }
 
-    override fun createBuffers() {
-        super.createBuffers()
+    override fun createObjectBuffers() {
+        super.createObjectBuffers()
 
         if (startPositionBuffer != null) {
             startPositionBuffer!!.compact().position(0)
-            startPositionBufferIndex = createOpenGLBuffer(
+            startPositionBufferHandle = createOpenGLBuffer(
                 startPositionBuffer,
                 GLES20.GL_ARRAY_BUFFER
             )
@@ -297,7 +298,7 @@ class OpenGLGCodeLine(
 
         if (startDistanceBuffer != null) {
             startDistanceBuffer!!.compact().position(0)
-            startDistanceBufferIndex = createOpenGLBuffer(
+            startDistanceBufferHandle = createOpenGLBuffer(
                 startDistanceBuffer,
                 GLES20.GL_ARRAY_BUFFER
             )
@@ -306,25 +307,25 @@ class OpenGLGCodeLine(
 
     override fun destroy() {
         super.destroy()
-        deleteOpenGLBuffers(startPositionBufferIndex)
-        startPositionBufferIndex = null
-        deleteOpenGLBuffers(startDistanceBufferIndex)
-        startDistanceBufferIndex = null
+        deleteOpenGLBuffers(startPositionBufferHandle)
+        startPositionBufferHandle = null
+        deleteOpenGLBuffers(startDistanceBufferHandle)
+        startDistanceBufferHandle = null
     }
 
     override fun bindVertexShaderProgram(programHandle: Int) {
         super.bindVertexShaderProgram(programHandle)
 
-        if (startPositionBufferIndex != null) {
+        if (startPositionBufferHandle != null) {
             val handle = GLES20.glGetAttribLocation(programHandle, "aStartPosition")
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, startPositionBufferIndex!!)
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, startPositionBufferHandle!!)
             GLES20.glEnableVertexAttribArray(handle)
             GLES20.glVertexAttribPointer(handle, 3, GLES20.GL_FLOAT, false, 0, 0)
         }
 
-        if (startDistanceBufferIndex != null) {
+        if (startDistanceBufferHandle != null) {
             val handle = GLES20.glGetAttribLocation(programHandle, "aStartDistance")
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, startDistanceBufferIndex!!)
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, startDistanceBufferHandle!!)
             GLES20.glEnableVertexAttribArray(handle)
             GLES20.glVertexAttribPointer(handle, 1, GLES20.GL_FLOAT, false, 0, 0)
         }
@@ -342,7 +343,7 @@ class OpenGLGCodeLine(
             //--着色器声明--
             appendLine("precision highp float;")//精度声明
             appendLine("attribute vec4 aPosition;")//顶点坐标
-            if (colorsBufferIndex == null) {
+            if (colorsBufferHandle == null) {
                 appendLine("uniform vec4 uColor;")//顶点颜色
             } else {
                 appendLine("attribute vec4 aVertexColor;")//顶点矢量颜色
@@ -356,7 +357,7 @@ class OpenGLGCodeLine(
             //--着色器函数体--
             appendLine("void main() {")
             appendLine("  gl_Position = uMVPMatrix * uModelViewMatrix * aPosition;")
-            if (colorsBufferIndex == null) {
+            if (colorsBufferHandle == null) {
                 appendLine("  vColor = uColor;")
             } else {
                 appendLine("  vColor = aVertexColor;")
