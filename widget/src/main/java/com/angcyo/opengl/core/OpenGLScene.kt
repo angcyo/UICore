@@ -294,6 +294,34 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
         mVMatrix.scaleBy(sx, sy, sz)
     }
 
+    @Api
+    fun scaleSceneByAnchor(
+        sx: Float = 1f,
+        sy: Float = 1f,
+        sz: Float = 1f,
+        anchorX: Float = 0f,
+        anchorY: Float = 0f,
+        anchorZ: Float = 0f
+    ) {
+        mVMatrix.scaleByAnchor(sx, sy, sz, anchorX, anchorY, anchorZ)
+    }
+
+    @Api
+    fun scaleSceneByCenter(
+        sx: Float = 1f,
+        sy: Float = 1f,
+        sz: Float = 1f,
+    ) {
+        mVMatrix.scaleByAnchor(
+            sx,
+            sy,
+            sz,
+            -sceneTranslateX / sceneScaleX,
+            -sceneTranslateY / sceneScaleY,
+            -sceneTranslateZ / sceneScaleZ
+        )
+    }
+
     /**[scaleSceneBy]*/
     @Api
     fun scaleSceneTo(sx: Float = 1f, sy: Float = 1f, sz: Float = 1f) {

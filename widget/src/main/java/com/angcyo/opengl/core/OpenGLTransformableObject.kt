@@ -179,6 +179,22 @@ data class Matrix4(
         Matrix.scaleM(m, 0, sx, sy, sz)
     }
 
+    /**在指定点上缩放
+     * [scaleBy]*/
+    @Api
+    fun scaleByAnchor(
+        sx: Float = 1f,
+        sy: Float = 1f,
+        sz: Float = 1f,
+        anchorX: Float = 0f,
+        anchorY: Float = 0f,
+        anchorZ: Float = 0f
+    ) {
+        Matrix.translateM(m, 0, anchorX, anchorY, anchorZ)
+        Matrix.scaleM(m, 0, sx, sy, sz)
+        Matrix.translateM(m, 0, -anchorX, -anchorY, -anchorZ)
+    }
+
     /**缩放到
      * [sx] 缩放x轴的值
      * [sy] 缩放y轴的值
