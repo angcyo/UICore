@@ -4,6 +4,7 @@ import android.graphics.RectF
 import android.opengl.GLES20
 import android.opengl.Matrix
 import com.angcyo.library.annotation.Api
+import com.angcyo.library.annotation.ConfigProperty
 import com.angcyo.library.ex.Action
 import com.angcyo.library.ex.expand
 import java.util.Collections
@@ -20,6 +21,12 @@ import kotlin.math.min
  *
  */
 open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
+
+    /**事件监听器集合*/
+    @ConfigProperty
+    val listeners = mutableListOf<OpenGLSceneListener>()
+
+    //--
 
     private var children: MutableList<OpenGLObject> =
         Collections.synchronizedList(CopyOnWriteArrayList())
@@ -292,6 +299,7 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
     @Api
     fun scaleSceneBy(sx: Float = 1f, sy: Float = 1f, sz: Float = 1f) {
         mVMatrix.scaleBy(sx, sy, sz)
+        notifySceneMatrixChanged()
     }
 
     @Api
@@ -304,6 +312,7 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
         anchorZ: Float = 0f
     ) {
         mVMatrix.scaleByAnchor(sx, sy, sz, anchorX, anchorY, anchorZ)
+        notifySceneMatrixChanged()
     }
 
     @Api
@@ -320,6 +329,7 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
             -sceneTranslateY / sceneScaleY,
             -sceneTranslateZ / sceneScaleZ
         )
+        notifySceneMatrixChanged()
     }
 
     /**在[View]视图上的指定位置缩放*/
@@ -341,12 +351,14 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
             -sceneTranslateY / sceneScaleY + (viewY - cy) / cy / sceneScaleX,
             -sceneTranslateZ / sceneScaleZ
         )
+        notifySceneMatrixChanged()
     }
 
     /**[scaleSceneBy]*/
     @Api
     fun scaleSceneTo(sx: Float = 1f, sy: Float = 1f, sz: Float = 1f) {
         mVMatrix.scaleTo(sx, sy, sz)
+        notifySceneMatrixChanged()
     }
 
     /**移动场景, 移动的量是相对于OpenGL视口[-1~1]之间的比例量
@@ -355,12 +367,14 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
     @Api
     fun translateSceneBy(x: Float = 0f, y: Float = 0f, z: Float = 0f) {
         mVMatrix.translateBy(x / sceneScaleX, y / sceneScaleX, z / sceneScaleX)
+        notifySceneMatrixChanged()
     }
 
     /**[translateSceneBy]*/
     @Api
     fun translateSceneTo(x: Float? = null, y: Float? = null, z: Float? = null) {
         mVMatrix.translateTo(x, y, z)
+        notifySceneMatrixChanged()
     }
 
     /**将一个矩形, 完全显示在场景中
@@ -418,7 +432,21 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
     fun testMatrix() {
         //Matrix.setLookAtM(mVMatrix.m,0, )
         Matrix.translateM(mVMatrix.m, 0, -2f, -2f, 0f)
+        notifySceneMatrixChanged()
+    }
+
+    /**通知场景视图发生改变*/
+    fun notifySceneMatrixChanged() {
+        listeners.forEach { it.onSceneMatrixChanged(this) }
     }
 
     //endregion --api--
+}
+
+interface OpenGLSceneListener {
+
+    /**场景视图发生改变后的通知
+     * [OpenGLScene.mVMatrix]*/
+    fun onSceneMatrixChanged(scene: OpenGLScene) {}
+
 }

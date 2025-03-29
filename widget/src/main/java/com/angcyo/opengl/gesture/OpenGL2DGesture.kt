@@ -204,10 +204,10 @@ class OpenGL2DGesture : View.OnTouchListener {
 interface OpenGL2DGestureListener {
 
     /**回调本次手势移动的距离增量*/
-    fun onTranslateBy(dx: Float, dy: Float)
+    fun onTranslateBy(dx: Float, dy: Float) {}
 
     /**回调本次手势缩放的比例增量
      * [px] [py] 手势在view上的坐标*/
-    fun onScaleBy(sx: Float, sy: Float, px: Float, py: Float)
+    fun onScaleBy(sx: Float, sy: Float, px: Float, py: Float) {}
 
 }
