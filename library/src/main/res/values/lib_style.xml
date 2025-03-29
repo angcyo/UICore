@@ -108,4 +108,18 @@
         <!--<item name="android:windowBlurBehindRadius"></item>-->
     </style>
 
+    <!--横线样式-->
+    <style name="LibHLineStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/lib_line_px</item>
+        <item name="android:background">@color/lib_line</item>
+    </style>
+
+    <!--竖线样式-->
+    <style name="LibVLineStyle">
+        <item name="android:layout_width">@dimen/lib_line_px</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/lib_line</item>
+    </style>
+
 </resources>
