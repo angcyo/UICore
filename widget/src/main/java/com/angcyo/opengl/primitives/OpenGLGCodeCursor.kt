@@ -5,6 +5,7 @@ import android.graphics.PointF
 import android.opengl.GLES20
 import com.angcyo.library.annotation.Api
 import com.angcyo.library.annotation.ConfigProperty
+import com.angcyo.library.ex.toDp
 import com.angcyo.library.ex.toOpenGLColor
 import com.angcyo.opengl.core.OpenGLObject
 import com.angcyo.opengl.core.OpenGLScene
@@ -88,7 +89,7 @@ class OpenGLGCodeCursor : OpenGLObject() {
     override fun preRender(scene: OpenGLScene) {
         checkCreateVertexData(scene)
         super.preRender(scene)
-        GLES20.glLineWidth(1f)
+        GLES20.glLineWidth(1f.toDp())
     }
 
 }

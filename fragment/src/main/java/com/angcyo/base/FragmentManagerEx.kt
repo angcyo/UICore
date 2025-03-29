@@ -45,7 +45,7 @@ fun instantiateFragment(classLoader: ClassLoader, className: String): Fragment? 
     return try {
         factory.instantiate(classLoader, className)
     } catch (e: Exception) {
-        L.e("创建异常: $className")
+        L.e("创建[Fragment]异常: $className")
         e.printStackTrace()
         null
     }
