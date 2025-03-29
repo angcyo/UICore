@@ -41,7 +41,7 @@ class CanvasTranslateComponent(val iCanvasView: ICanvasView) : BaseCanvasTouchCo
         if (dx1.absoluteValue >= translateThreshold && dx2.absoluteValue >= translateThreshold) {
             if (dx1 > 0 && dx2 > 0) {
                 //双指向右移动
-                translateBy(max(dx1, dx2), 0f, false)
+                translateBy(max(dx1, dx2), 0f)
             } else if (dx1 < 0 && dx2 < 0) {
                 //双指向左移动
                 translateBy(min(dx1, dx2), 0f)

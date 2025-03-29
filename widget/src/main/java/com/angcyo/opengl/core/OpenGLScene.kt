@@ -322,17 +322,39 @@ open class OpenGLScene(val renderer: BaseOpenGLRenderer) {
         )
     }
 
+    /**在[View]视图上的指定位置缩放*/
+    @Api
+    fun scaleSceneByView(
+        sx: Float = 1f,
+        sy: Float = 1f,
+        sz: Float = 1f,
+        viewX: Float = 0f,
+        viewY: Float = 0f,
+    ) {
+        val cx = lastWidth / 2
+        val cy = lastHeight / 2
+        mVMatrix.scaleByAnchor(
+            sx,
+            sy,
+            sz,
+            -sceneTranslateX / sceneScaleX + (viewX - cx) / cx / sceneScaleX,
+            -sceneTranslateY / sceneScaleY + (viewY - cy) / cy / sceneScaleX,
+            -sceneTranslateZ / sceneScaleZ
+        )
+    }
+
     /**[scaleSceneBy]*/
     @Api
     fun scaleSceneTo(sx: Float = 1f, sy: Float = 1f, sz: Float = 1f) {
         mVMatrix.scaleTo(sx, sy, sz)
     }
 
-    /**移动场景
+    /**移动场景, 移动的量是相对于OpenGL视口[-1~1]之间的比例量
+     * 比如: 移动0.1f, 那最终移动的像素就是 (0.1f * 视口宽度 / 2)
      * [translateSceneTo]*/
     @Api
     fun translateSceneBy(x: Float = 0f, y: Float = 0f, z: Float = 0f) {
-        mVMatrix.translateBy(x, y, z)
+        mVMatrix.translateBy(x / sceneScaleX, y / sceneScaleX, z / sceneScaleX)
     }
 
     /**[translateSceneBy]*/

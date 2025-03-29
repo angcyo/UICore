@@ -342,7 +342,7 @@ internal class OpenGLTextureThread : Thread {
                         } finally {
                             Trace.traceEnd(Trace.TRACE_TAG_VIEW)
                         }*/
-                        view.mRendererDelegate?.mRenderer?.onRenderSurfaceCreated(
+                        view.rendererDelegate?.renderer?.onRenderSurfaceCreated(
                             mEglHelper?.mEglConfig,
                             gl,
                             -1,
@@ -364,7 +364,7 @@ internal class OpenGLTextureThread : Thread {
                         } finally {
                             Trace.traceEnd(Trace.TRACE_TAG_VIEW)
                         }*/
-                        view.mRendererDelegate?.mRenderer?.onRenderSurfaceSizeChanged(gl, w, h)
+                        view.rendererDelegate?.renderer?.onRenderSurfaceSizeChanged(gl, w, h)
                     }
                     sizeChanged = false
                 }
@@ -385,7 +385,7 @@ internal class OpenGLTextureThread : Thread {
                         } finally {
                             Trace.traceEnd(Trace.TRACE_TAG_VIEW)
                         }*/
-                        view.mRendererDelegate?.mRenderer?.onRenderFrame(gl)
+                        view.rendererDelegate?.renderer?.onRenderFrame(gl)
                     }
                 }
                 val swapError = mEglHelper?.swap() ?: 0

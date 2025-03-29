@@ -13,12 +13,17 @@ import android.opengl.GLSurfaceView.RENDERMODE_CONTINUOUSLY
 import android.opengl.GLSurfaceView.RENDERMODE_WHEN_DIRTY
 import android.util.AttributeSet
 import android.util.Log
+import android.view.MotionEvent
 import android.view.TextureView
 import android.view.TextureView.SurfaceTextureListener
 import android.view.View
 import com.angcyo.opengl.core.EglHelper.Companion.LOG_ATTACH_DETACH
 import com.angcyo.opengl.core.EglHelper.Companion.LOG_THREADS
 import com.angcyo.opengl.core.EglHelper.Companion.TAG
+import com.angcyo.opengl.gesture.OpenGL2DGesture
+import com.angcyo.opengl.gesture.OpenGL2DGestureListener
+import com.angcyo.tablayout.viewDrawHeight
+import com.angcyo.tablayout.viewDrawWidth
 import java.lang.ref.WeakReference
 import javax.microedition.khronos.egl.EGL10
 import javax.microedition.khronos.egl.EGLConfig
@@ -35,8 +40,46 @@ class OpenGLTextureView(context: Context, attr: AttributeSet?) : TextureView(con
 
     //var glRenderer:IOpenGLRenderer
 
+    /**是否激活2D手势识别*/
+    var enable2DGesture = false
+
+    /**2D手势识别器*/
+    var openGL2DGesture = OpenGL2DGesture().apply {
+        listeners.add(object : OpenGL2DGestureListener {
+            override fun onTranslateBy(dx: Float, dy: Float) {
+                currentScene?.translateSceneBy(dx / viewDrawWidth, dy / viewDrawHeight)
+            }
+
+            override fun onScaleBy(sx: Float, sy: Float, px: Float, py: Float) {
+                currentScene?.scaleSceneByView(sx, sy, 1f, px, py)
+            }
+        })
+    }
+
+    /**渲染器*/
+    val renderer: IOpenGLRenderer?
+        get() = rendererDelegate?.renderer
+
+    /**渲染器当前的场景对象*/
+    val currentScene: OpenGLScene?
+        get() {
+            val renderer = renderer
+            if (renderer is BaseOpenGLRenderer) {
+                return renderer.getCurrentScene()
+            }
+            return null
+        }
+
     init {
         initialize()
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        var handle = super.onTouchEvent(event)
+        if (enable2DGesture) {
+            handle = handle || openGL2DGesture.onTouch(this, event)
+        }
+        return handle || enable2DGesture
     }
 
     //region --GLSurfaceView--
@@ -135,7 +178,7 @@ class OpenGLTextureView(context: Context, attr: AttributeSet?) : TextureView(con
     //region --Renderer--
 
     internal var mCleanupTexture: SurfaceTexture? = null
-    internal var mRendererDelegate: TextureRendererDelegate? = null
+    internal var rendererDelegate: TextureRendererDelegate? = null
 
     internal fun setCleanupTexture(surface: SurfaceTexture) {
         mCleanupTexture = surface
@@ -173,13 +216,13 @@ class OpenGLTextureView(context: Context, attr: AttributeSet?) : TextureView(con
 
     override fun setFrameRate(rate: Double) {
         mFrameRate = rate
-        if (mRendererDelegate != null) {
-            mRendererDelegate?.mRenderer?.setFrameRate(rate)
+        if (rendererDelegate != null) {
+            rendererDelegate?.renderer?.setFrameRate(rate)
         }
     }
 
     override fun getRenderMode(): Int {
-        return if (mRendererDelegate != null) {
+        return if (rendererDelegate != null) {
             getRenderModeInternal()
         } else {
             mRenderMode
@@ -188,7 +231,7 @@ class OpenGLTextureView(context: Context, attr: AttributeSet?) : TextureView(con
 
     override fun setRenderMode(mode: Int) {
         mRenderMode = mode
-        if (mRendererDelegate != null) {
+        if (rendererDelegate != null) {
             setRenderModeInternal(mRenderMode)
         }
     }
@@ -204,7 +247,7 @@ class OpenGLTextureView(context: Context, attr: AttributeSet?) : TextureView(con
 
     @Throws(IllegalStateException::class)
     override fun setSurfaceRenderer(renderer: IOpenGLRenderer) {
-        check(mRendererDelegate == null) { "A renderer has already been set for this view." }
+        check(rendererDelegate == null) { "A renderer has already been set for this view." }
         initialize()
 
         // Configure the EGL stuff
@@ -224,9 +267,9 @@ class OpenGLTextureView(context: Context, attr: AttributeSet?) : TextureView(con
         // Render mode cant be set until the GL thread exists
         setRenderModeInternal(mRenderMode)
         // Register the delegate for callbacks
-        mRendererDelegate =
+        rendererDelegate =
             delegate // Done to make sure we dont publish a reference before its safe.
-        surfaceTextureListener = mRendererDelegate
+        surfaceTextureListener = rendererDelegate
     }
 
     override fun requestRenderUpdate() {
@@ -292,7 +335,7 @@ class OpenGLTextureView(context: Context, attr: AttributeSet?) : TextureView(con
      * Must not be called before a renderer has been set.
      */
     fun onPause() {
-        mRendererDelegate?.mRenderer?.onPause()
+        rendererDelegate?.renderer?.onPause()
         mGLThread?.onPause()
     }
 
@@ -304,8 +347,8 @@ class OpenGLTextureView(context: Context, attr: AttributeSet?) : TextureView(con
      * Must not be called before a renderer has been set.
      */
     fun onResume() {
-        check(mRendererDelegate != null) { "请先设置渲染器[setSurfaceRenderer]" }
-        mRendererDelegate?.mRenderer?.onResume()
+        check(rendererDelegate != null) { "请先设置渲染器[setSurfaceRenderer]" }
+        rendererDelegate?.renderer?.onResume()
         mGLThread?.onResume()
     }
 
@@ -318,7 +361,7 @@ class OpenGLTextureView(context: Context, attr: AttributeSet?) : TextureView(con
         if (LOG_ATTACH_DETACH) {
             Log.d(TAG, "onAttachedToWindow reattach =$mDetached")
         }
-        if (mDetached && (mRendererDelegate != null)) {
+        if (mDetached && (rendererDelegate != null)) {
             var renderMode: Int = RENDERMODE_CONTINUOUSLY
             if (mGLThread != null) {
                 renderMode = mGLThread?.getRenderMode() ?: 0
@@ -340,7 +383,7 @@ class OpenGLTextureView(context: Context, attr: AttributeSet?) : TextureView(con
             mGLThread?.requestExitAndWait()
         }
         mDetached = true
-        mRendererDelegate?.mRenderer?.onRenderSurfaceDestroyed(null)
+        rendererDelegate?.renderer?.onRenderSurfaceDestroyed(null)
         super.onDetachedFromWindow()
     }
 
@@ -540,15 +583,15 @@ class OpenGLTextureView(context: Context, attr: AttributeSet?) : TextureView(con
 }
 
 internal class TextureRendererDelegate(
-    val mRenderer: IOpenGLRenderer,
+    val renderer: IOpenGLRenderer,
     val textureView: OpenGLTextureView
 ) :
     SurfaceTextureListener {
 
     init {
-        mRenderer.setFrameRate(if (textureView.mRenderMode == RENDERMODE_WHEN_DIRTY) textureView.mFrameRate else 0.0)
-        mRenderer.setAntiAliasingMode(textureView.mAntiAliasingConfig)
-        mRenderer.setRenderSurface(textureView)
+        renderer.setFrameRate(if (textureView.mRenderMode == RENDERMODE_WHEN_DIRTY) textureView.mFrameRate else 0.0)
+        renderer.setAntiAliasingMode(textureView.mAntiAliasingConfig)
+        renderer.setRenderSurface(textureView)
         textureView.surfaceTextureListener = this
     }
 
