@@ -13,4 +13,4 @@ package com.angcyo.library.annotation
     AnnotationTarget.LOCAL_VARIABLE,
     AnnotationTarget.VALUE_PARAMETER
 )
-annotation class Sign(val des: String = "" /*简单的描述*/)
+annotation class Sign(val des: String = "特性加入的描述" /*简单的描述*/)
