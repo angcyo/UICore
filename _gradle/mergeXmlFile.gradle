@@ -17,7 +17,7 @@ task _mergeXmlFileToZip(group: 'angcyo', description: '将多个路径的xml文�
 _mergeXmlFileToZip.doFirst {
     def release_time = releaseTime()
     def prefix = "Android_LDS"
-    def resList = ["", "-zh", "-ja", "-ko", "-de", "-es", "-fr", "-zh-rTW"]
+    def resList = ["", "-zh", "-ja", "-ko", "-de", "-es", "-fr", "-zh-rTW", "-pt", "-ru"]
     def outputList = [".apk/${prefix}_英文资源_${release_time}.zip",
                       ".apk/${prefix}_中文资源_${release_time}.zip",
                       ".apk/${prefix}_日语资源_${release_time}.zip",
@@ -25,7 +25,10 @@ _mergeXmlFileToZip.doFirst {
                       ".apk/${prefix}_德语资源_${release_time}.zip",
                       ".apk/${prefix}_西班牙资源_${release_time}.zip",
                       ".apk/${prefix}_法语资源_${release_time}.zip",
-                      ".apk/${prefix}_繁体资源_${release_time}.zip",]
+                      ".apk/${prefix}_繁体资源_${release_time}.zip",
+                      ".apk/${prefix}_葡萄牙资源_${release_time}.zip",
+                      ".apk/${prefix}_俄罗斯资源_${release_time}.zip",
+    ]
 
     for (int i = 0; i < resList.size(); i++) {
         _zipXmlFile(getLanguageResPath(resList[i]), outputList[i])
