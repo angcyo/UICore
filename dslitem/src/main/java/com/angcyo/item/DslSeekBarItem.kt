@@ -21,6 +21,20 @@ import kotlin.math.roundToInt
  * 上下结构
  * 上: label    value
  * 下: seekBar
+ *
+ * ```
+ * open class CanvasSeekBarItem : DslSeekBarItem() {
+ *
+ *     init {
+ *         val color = _color(R.color.canvas_primary)
+ *         itemSeekBarColor = color
+ *         itemSeekBgColors = "${_color(R.color.canvas_line)}"
+ *
+ *         itemSeekProgressHeight = 4 * dpi
+ *     }
+ *
+ * }
+ * ```
  */
 open class DslSeekBarItem : DslSeekBarInfoItem() {
 
