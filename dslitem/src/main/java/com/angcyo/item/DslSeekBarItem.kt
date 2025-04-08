@@ -54,7 +54,10 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
     /**[itemSeekBarColor]渐变色, 优先使用*/
     var itemSeekBarColors: String? = null
 
-    /**seek bar 的背景渐变颜色*/
+    /**seek bar 的背景渐变颜色, 支持多个颜色
+     * ```
+     *  "#34FF00,#F1E804,#FF8E00,#FF0108"
+     * ```*/
     var itemSeekBgColors: String? = null
 
     /**seek bar的高度*/
