@@ -1204,6 +1204,9 @@ open class DslAdapterItem : LifecycleOwner {
 
     //<editor-fold desc="Diff相关">
 
+    /**标识当前的item一直都是一个新的item, 会影响[thisAreItemsTheSame]的比对*/
+    var itemAlwaysNewFlag: Boolean = false
+
     /**标识当前的item是否被移除了, 被移除之后, 会影响[thisAreItemsTheSame]的比对*/
     var itemRemoveFlag: Boolean = false
 
@@ -1232,7 +1235,7 @@ open class DslAdapterItem : LifecycleOwner {
         oldItemPosition: Int, newItemPosition: Int
     ) -> Boolean = { fromItem, newItem, oldItemPosition, newItemPosition ->
         var result = this == newItem
-        if (itemRemoveFlag) {
+        if (itemRemoveFlag || itemAlwaysNewFlag || newItem.itemAlwaysNewFlag) {
             result = false
         } else if (!result) {
             val thisItemClassname = this.className()
