@@ -12,6 +12,8 @@ import com.angcyo.library.isPlaceholderApplication
  */
 class InchRenderUnit : IRenderUnit {
 
+    override fun getDecimal(): Int = 3
+
     override fun getUnit(): String = "inch"
 
     override fun getGap(scale: Float): Float {

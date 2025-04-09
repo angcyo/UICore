@@ -1,7 +1,6 @@
 package com.angcyo.library.unit
 
 import com.angcyo.library.annotation.Pixel
-import com.angcyo.library.unit.unitDecimal
 import kotlin.math.nextDown
 
 /**
@@ -30,6 +29,10 @@ interface IRenderUnit {
     }
 
     //region---绘制相关方法---
+
+    /**获取单位对应的小数点后几位
+     * [formatValue]*/
+    fun getDecimal(): Int = 2
 
     /**获取描述的单位字符串*/
     fun getUnit(): String
@@ -69,7 +72,7 @@ interface IRenderUnit {
      * [ensureInt] 是否要确保整数, 比如: 15.0 转换成 15
      * [unit] 是否需要返回单位*/
     fun formatValue(value: Float, ensureInt: Boolean, unit: Boolean): String {
-        val valueStr = value.unitDecimal(2, true, ensureInt)
+        val valueStr = value.unitDecimal(getDecimal(), true, ensureInt)
         if (unit) {
             return valueStr + getUnit()
         }
