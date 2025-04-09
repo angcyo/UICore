@@ -13,6 +13,11 @@ object ViewModelHelper {
 
     /**获取当前用户登录的ip, 是否是欧洲环境*/
     var getIsEuropeEnv: () -> Boolean = { false }
+
+    /**获取当前用户登录的ip, 是否是安全合规环境
+     * 决定保护罩预览的安全级别
+     * */
+    var getIsSafeEnv: () -> Boolean = { false }
 }
 
 /**共享的用户id*/
@@ -22,3 +27,7 @@ val _coreUserId: String?
 /**是否是欧洲环境*/
 val _IsEuropeEnv: Boolean
     get() = ViewModelHelper.getIsEuropeEnv()
+
+/**是否是安全合规环境*/
+val _IsSafeEnv: Boolean
+    get() = ViewModelHelper.getIsSafeEnv()
