@@ -43,7 +43,11 @@ class HawkProperty<T>(
     }
 }
 
-/** var Z_MODEL: Int by HawkPropertyValue<Any, Int>(-1) */
+/** var Z_MODEL: Int by HawkPropertyValue<Any, Int>(-1)
+ *
+ * [HawkPropertyValue]
+ * [HawkPropertyMemoryValue]
+ * */
 @Keep
 class HawkPropertyValue<T, Value>(
     /*默认值*/
@@ -58,6 +62,37 @@ class HawkPropertyValue<T, Value>(
 
     override fun setValue(thisRef: T, property: KProperty<*>, value: Value) {
         property.name.hawkPut(value)
+        onSetValue(value)
+        HawkProperty.hawkPropertyChangeActionList.forEach {
+            it(property.name)
+        }
+    }
+}
+
+/**内存存储的键值对代理
+ * [HawkPropertyValue]
+ * [HawkPropertyMemoryValue]
+ * */
+@Keep
+class HawkPropertyMemoryValue<T, Value>(
+    /*默认值*/
+    val def: Value,
+    /*更新值的回调*/
+    val onSetValue: (newValue: Value) -> Unit = {}
+) : ReadWriteProperty<T, Value> {
+
+    companion object {
+        private val _cacheMemoryValue = mutableMapOf<String, Any?>()
+    }
+
+    override fun getValue(thisRef: T, property: KProperty<*>): Value {
+        if (_cacheMemoryValue.containsKey(property.name))
+            return _cacheMemoryValue[property.name] as Value
+        return def
+    }
+
+    override fun setValue(thisRef: T, property: KProperty<*>, value: Value) {
+        _cacheMemoryValue[property.name] = value
         onSetValue(value)
         HawkProperty.hawkPropertyChangeActionList.forEach {
             it(property.name)
