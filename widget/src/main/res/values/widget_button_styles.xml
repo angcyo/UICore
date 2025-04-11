@@ -34,6 +34,8 @@
     </style>
 
     <!--圆角主题渐变底色填充的样式-->
+    <!--LibButtonThemeSolidStyle-->
+    <!--LibButtonBlackSolidStyle-->
     <style name="LibButtonThemeSolidStyle" parent="LibButtonSolidStyle">
         <item name="button_gradient_colors">@null</item>
         <item name="button_gradient_start_color">@color/colorPrimary</item>
@@ -52,6 +54,8 @@
     </style>
 
     <!--圆角黑色底填充的样式-->
+    <!--LibButtonThemeSolidStyle-->
+    <!--LibButtonBlackSolidStyle-->
     <style name="LibButtonBlackSolidStyle" parent="LibButtonThemeSolidStyle">
         <item name="button_gradient_colors">@color/lib_black</item>
         <item name="android:textColor">@color/lib_white</item>
