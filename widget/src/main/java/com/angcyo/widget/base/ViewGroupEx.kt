@@ -10,6 +10,7 @@ import android.view.WindowManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.angcyo.dsladapter.DslAdapterItem
 import com.angcyo.dsladapter.getTag
 import com.angcyo.dsladapter.putTag
@@ -111,7 +112,8 @@ fun ViewGroup.findRecyclerView(
     /**键盘的高度*/
     var touchView: androidx.recyclerview.widget.RecyclerView? = null
 
-    val findView = findView(touchRawX, touchRawY,
+    val findView = findView(
+        touchRawX, touchRawY,
         { view, _ ->
             view is androidx.recyclerview.widget.RecyclerView
         }, { view, _ ->
@@ -375,6 +377,12 @@ fun DslAdapterItem.bindInRootView(
     itemView.setDslAdapterItem(this)
     itemBind(dslViewHolder, index, this, payloads)
     return dslViewHolder
+}
+
+/**判断当前的[DslAdapterItem]是否在[ViewGroup]中, 而不是在[RecyclerView]中*/
+fun DslAdapterItem.isInViewGroup(): Boolean {
+    val parent = getTag(itemLayoutId) as? ViewGroup
+    return parent != null
 }
 
 /**在ViewGroup中更新[DslAdapterItem]*/

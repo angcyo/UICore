@@ -125,6 +125,10 @@ open class DslAdapterItem : LifecycleOwner {
         itemDslAdapter?.notifyItemChanged(this, payload, useFilterList).elseNull {
             L.w("跳过操作! updateAdapterItem需要[itemDslAdapter],请赋值.")
         }
+        //--
+        if (isInViewGroup()) {
+            updateInViewGroup()
+        }
     }
 
     /**移除[item], 注意:此方式只是删除了item, 界面并不会刷新.
