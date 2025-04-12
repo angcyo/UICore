@@ -296,6 +296,7 @@ static def copyFile(String from, String toPath) {
             return
         }
         File dest = new File(toPath)
+        dest.parentFile.mkdirs()
         System.err.println "[collectProduct.gradle] 复制文件↓\n${source.getAbsolutePath()}\n-> ${dest.getAbsolutePath()}"
 
         input = new FileInputStream(source)

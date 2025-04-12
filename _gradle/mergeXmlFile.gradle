@@ -14,6 +14,33 @@ task _mergeXmlFileToZip(group: 'angcyo', description: '将多个路径的xml文�
     //配置任务
 }
 
+task _mergeXmlFileToFolder(group: 'angcyo', description: '将多个路径的xml文件合并到文件夹中') {
+    //配置任务
+}
+
+_mergeXmlFileToFolder.doFirst {
+    def prefix = "Android_LDS"
+    def resList = ["", "-zh", "-ja", "-ko", "-de", "-es", "-fr", "-zh-rTW", "-pt", "-ru"]
+    def outputList = [".apk/${prefix}/英文",
+                      ".apk/${prefix}/中文",
+                      ".apk/${prefix}/日语",
+                      ".apk/${prefix}/韩语",
+                      ".apk/${prefix}/德语",
+                      ".apk/${prefix}/西班牙",
+                      ".apk/${prefix}/法语",
+                      ".apk/${prefix}/繁体",
+                      ".apk/${prefix}/葡萄牙",
+                      ".apk/${prefix}/俄罗斯",
+    ]
+
+    for (int i = 0; i < resList.size(); i++) {
+        getLanguageResPath(resList[i]).each {
+            def srcFile = file(it)
+            copyFile(srcFile.absolutePath, file(outputList[i] + "/" + srcFile.name).absolutePath)
+        }
+    }
+}
+
 _mergeXmlFileToZip.doFirst {
     def release_time = releaseTime()
     def prefix = "Android_LDS"
