@@ -28,7 +28,7 @@ fun <T> LiveData<T>.observeForever(
     action: (data: T?) -> Unit
 ): Observer<T?> {
     val result: Observer<T?>
-    var isFirst = if (allowBackward) value != null else value == null
+    var isFirst = if (allowBackward) value != null else true
     observeForever(Observer<T?> {
         if (allowBackward) {
             action(it)
@@ -68,7 +68,7 @@ fun <T> LiveData<T>.observe(
     action: (data: T?) -> Unit
 ): Observer<T?> {
     val result: Observer<T?>
-    var isFirst = if (allowBackward) value != null else value == null
+    var isFirst = if (allowBackward) value != null else true
     observe(owner, Observer<T?> {
         if (allowBackward) {
             action(it)
@@ -108,7 +108,7 @@ fun <T> LiveData<T>.observeOnce(
     action: (data: T?) -> Boolean
 ): Observer<T?> {
     var result: Observer<T?>? = null
-    var isFirst = if (allowBackward) value != null else value == null
+    var isFirst = if (allowBackward) value != null else true
     var isNotify = false
     if (owner == null) {
         observeForever(Observer<T?> {
