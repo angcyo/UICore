@@ -1,6 +1,11 @@
 package com.angcyo.drawable.progress
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.LinearGradient
+import android.graphics.Paint
+import android.graphics.RectF
+import android.graphics.Shader
 import androidx.annotation.Px
 
 /**
@@ -58,15 +63,15 @@ class LinearProgressDrawable : BaseValueProgressDrawable() {
     override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
         super.setBounds(left, top, right, bottom)
         val rect = drawRect
-        _backgroundShader = LinearGradient(
+        _backgroundShader = if (backgroundGradientColors != null) LinearGradient(
             rect.left.toFloat(),
             0f,
             rect.right.toFloat(),
             0f,
-            backgroundGradientColors,
+            backgroundGradientColors!!,
             null,
             Shader.TileMode.REPEAT
-        )
+        ) else null
         _progressShader = LinearGradient(
             rect.left.toFloat(),
             0f,
@@ -87,14 +92,17 @@ class LinearProgressDrawable : BaseValueProgressDrawable() {
         //背景绘制
         _tempRect.top = rect.centerY() - backgroundWidth / 2
         _tempRect.bottom = rect.centerY() + backgroundWidth / 2
-        textPaint.shader = _backgroundShader
-        canvas.drawRoundRect(
-            _tempRect.left,
-            _tempRect.top,
-            _tempRect.right,
-            _tempRect.bottom,
-            roundRadius, roundRadius, textPaint
-        )
+
+        if (backgroundGradientColors != null) {
+            textPaint.shader = _backgroundShader
+            canvas.drawRoundRect(
+                _tempRect.left,
+                _tempRect.top,
+                _tempRect.right,
+                _tempRect.bottom,
+                roundRadius, roundRadius, textPaint
+            )
+        }
 
         //进度绘制
         if (drawProgress) {

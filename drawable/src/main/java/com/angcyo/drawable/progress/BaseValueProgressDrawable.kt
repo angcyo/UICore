@@ -7,6 +7,7 @@ import androidx.annotation.Px
 import androidx.core.math.MathUtils
 import com.angcyo.drawable.InvalidateDrawableProperty
 import com.angcyo.drawable.base.BaseDrawDrawable
+import com.angcyo.library._refreshRateRatio
 import com.angcyo.library.ex.anim
 import kotlin.math.max
 import kotlin.math.min
@@ -27,6 +28,9 @@ abstract class BaseValueProgressDrawable : BaseDrawDrawable() {
     /**当前的进度值*/
     var currentProgressValue: Int by InvalidateDrawableProperty(0)
 
+    /**是否是不确定的进度*/
+    var isIndeterminate: Boolean by InvalidateDrawableProperty(false)
+
     /**进度的宽度, 也是高度*/
     @Px
     var progressWidth: Float = 30f
@@ -38,8 +42,9 @@ abstract class BaseValueProgressDrawable : BaseDrawDrawable() {
     @Px
     var backgroundWidth: Float = 20f
 
-    /**背景的渐变颜色, 至少需要2个颜色*/
-    var backgroundGradientColors = intArrayOf(Color.BLACK, Color.BLACK)
+    /**背景的渐变颜色, 至少需要2个颜色
+     * - null: 不会治不绘制背景*/
+    var backgroundGradientColors: IntArray? = intArrayOf(Color.BLACK, Color.BLACK)
 
     //endregion ---配置变量---
 
@@ -93,5 +98,22 @@ abstract class BaseValueProgressDrawable : BaseDrawDrawable() {
             invalidateSelf()
         }
     }
+
+    //region ---动画---
+
+    //当前的角度
+    var _animateAngle = 0f
+
+    /**角度绘制动画步进的进度, 度°*/
+    var animateAngleStep = 4f
+
+    open fun doAnimate() {
+        //动画
+        _animateAngle += animateAngleStep / _refreshRateRatio
+        _animateAngle %= 360
+        invalidateSelf()
+    }
+
+    //endregion ---动画---
 
 }

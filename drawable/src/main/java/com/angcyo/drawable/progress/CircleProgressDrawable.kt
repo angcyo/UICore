@@ -79,15 +79,15 @@ class CircleProgressDrawable : BaseValueProgressDrawable() {
     override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
         super.setBounds(left, top, right, bottom)
         val rect = drawRect
-        _backgroundShader = LinearGradient(
+        _backgroundShader = if (backgroundGradientColors != null) LinearGradient(
             rect.left.toFloat(),
             0f,
             rect.right.toFloat(),
             0f,
-            backgroundGradientColors,
+            backgroundGradientColors!!,
             null,
             Shader.TileMode.REPEAT
-        )
+        ) else null
         _progressShader = SweepGradient(
             rect.centerX().toFloat(),
             rect.centerY().toFloat(),
@@ -102,19 +102,21 @@ class CircleProgressDrawable : BaseValueProgressDrawable() {
         val rect = drawRect
         val cx = rect.centerX().toFloat()
         val cy = rect.centerY().toFloat()
-        canvas.withRotation(startDegrees, cx, cy) {
+        canvas.withRotation(startDegrees + _animateAngle, cx, cy) {
             textPaint.style = Paint.Style.STROKE
             val radius = min(rect.width(), rect.height()) / 2f
 
             //背景绘制
-            textPaint.strokeWidth = backgroundWidth
-            textPaint.shader = _backgroundShader
-            canvas.drawCircle(
-                rect.centerX().toFloat(),
-                rect.centerY().toFloat(),
-                radius - backgroundWidth / 2 - (progressWidth - backgroundWidth) / 2,
-                textPaint
-            )
+            if (backgroundGradientColors != null) {
+                textPaint.strokeWidth = backgroundWidth
+                textPaint.shader = _backgroundShader
+                canvas.drawCircle(
+                    rect.centerX().toFloat(),
+                    rect.centerY().toFloat(),
+                    radius - backgroundWidth / 2 - (progressWidth - backgroundWidth) / 2,
+                    textPaint
+                )
+            }
 
             //进度绘制
             textPaint.style = Paint.Style.STROKE
@@ -159,7 +161,10 @@ class CircleProgressDrawable : BaseValueProgressDrawable() {
                     textPaint
                 )
             }
+        }
 
+        if (isIndeterminate) {
+            doAnimate()
         }
     }
 }
