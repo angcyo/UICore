@@ -773,7 +773,24 @@ fun uploadFile(file: File, config: RequestConfig.() -> Unit): Observable<Respons
     }
 }
 
-/**上传文件, 并且返回ResponseBody结果*/
+/**上传文件, 并且返回ResponseBody结果
+ *
+ * ```
+ * task.savePath.file().inputStream().asRequestBody().let { body ->
+ *     val coverUpdateApi = "cover_update".toApi(cameraHost)
+ *     uploadFile2Body {
+ *         this.url = coverUpdateApi
+ *         header = hashMapOf(LogInterceptor.closeLog(true))
+ *         filePart = body.toFilePart(
+ *             task.savePath.getFileAttachmentName() ?: "firmware.bin", name = "update"
+ *         )
+ *     }.observe { data, error ->
+ *         action(task.savePath, error)
+ *     }
+ * }
+ * ```
+ *
+ * */
 fun uploadFile2Body(
     config: RequestBodyConfig.() -> Unit
 ): Observable<Response<ResponseBody>> {
