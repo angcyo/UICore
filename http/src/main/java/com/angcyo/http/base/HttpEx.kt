@@ -24,6 +24,9 @@ import kotlin.reflect.KClass
 /**网络请求回调*/
 typealias HttpCallback<T> = (data: T?, error: Throwable?) -> Unit
 
+/**带一个id参数的[HttpCallback]*/
+typealias HttpIdCallback<T> = (id: String?, data: T?, error: Throwable?) -> Unit
+
 /**读取ResponseBody中的字符串*/
 fun ResponseBody?.readString(urlDecode: Boolean = false, charsetName: String = "UTF-8"): String? {
     if (this == null) {
