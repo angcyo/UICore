@@ -243,13 +243,14 @@ _copyResFile.doFirst {
     //def fromPath = "G:\\资源\\localazy_download-Android"
     //def fromPath = "G:\\资源\\localazy-lds-android-app-2024-11-9"
     //def fromPath = "G:\\资源\\localazy-android-英德西法日繁中"
-    def fromPath = '/Users/angcyo/Downloads/localazy_download (除韩语外所有语言包)'
+    //def fromPath = '/Users/angcyo/Downloads/localazy_download (除韩语外所有语言包)'
+    def fromPath = '/Users/angcyo/project/flutter/Flutter3DesktopAbc/.output/.download'
 
     //要替换的文件名
     def fileNameList = ["core_strings.xml", "crop_strings.xml", "dialog_strings.xml", "doodle_strings.xml",
                         "widget_strings.xml", "canvas_strings.xml", "canvas2_string.xml",
                         "engrave_strings.xml", "fsc_strings.xml", "device_strings.xml",
-                        "material_strings.xml", "func_strings.xml", "camera_strings.xml"]
+                        "material_strings.xml", "func_strings.xml", "camera_strings.xml", "lp_510.xml"]
     //文件名对应的路径
     def fileNamePathList = ["./UICore/core", "./UICore/crop", "./UICore/dialog", "./UICore/doodle",
                             "./UICore/widget", "./UICoreEx/canvas2_lp", "./UICoreEx/canvas2_lp",
