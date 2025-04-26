@@ -250,12 +250,14 @@ _copyResFile.doFirst {
     def fileNameList = ["core_strings.xml", "crop_strings.xml", "dialog_strings.xml", "doodle_strings.xml",
                         "widget_strings.xml", "canvas_strings.xml", "canvas2_string.xml",
                         "engrave_strings.xml", "fsc_strings.xml", "device_strings.xml",
-                        "material_strings.xml", "func_strings.xml", "camera_strings.xml", "lp_510.xml"]
+                        "material_strings.xml", "func_strings.xml", "camera_strings.xml",
+                        "lp_510.xml",]
     //文件名对应的路径
     def fileNamePathList = ["./UICore/core", "./UICore/crop", "./UICore/dialog", "./UICore/doodle",
                             "./UICore/widget", "./UICoreEx/canvas2_lp", "./UICoreEx/canvas2_lp",
                             "./UICoreEx/engrave2", "./UICoreEx/fsc", "./UICoreEx/lpDevice",
-                            "./UICoreEx/lpDevice", "./UICoreEx/lpDevice", "./UICoreEx/lpDevice"]
+                            "./UICoreEx/lpDevice", "./UICoreEx/lpDevice", "./UICoreEx/lpDevice",
+                            "./UICoreEx/fsc",]
 
     fileNameList.eachWithIndex { fileName, index ->
         def toPath = fileNamePathList[index]
