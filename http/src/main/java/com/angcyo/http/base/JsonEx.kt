@@ -380,6 +380,11 @@ fun <T> String?.fromJson(classOfT: Class<T>, throwError: Boolean = false): T? {
 /**[String.fromJson]*/
 fun String?.fromJsonMap(): Map<String, Any>? = this?.fromJson<Map<String, Any>>()
 
+/**
+ * 将json字符串转换成[Map]
+ * [fromJsonMap]*/
+fun String?.toMapFromJson(): Map<String, Any>? = this?.fromJson<Map<String, Any>>()
+
 /**[String.fromJson]*/
 inline fun <reified T> String?.fromJson(): T? = this?.fromJson(T::class.java)
 
