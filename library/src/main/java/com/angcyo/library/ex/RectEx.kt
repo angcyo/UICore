@@ -67,6 +67,17 @@ fun RectF.isTranslationChanged(other: RectF): Boolean {
     return left != other.left || top != other.top
 }
 
+/**根据圆心和宽高, 设置矩形*/
+fun RectF.setCenterWH(centerX: Float, centerY: Float, width: Float, height: Float): RectF {
+    val halfWidth = width / 2f
+    val halfHeight = height / 2f
+    left = centerX - halfWidth
+    top = centerY - halfHeight
+    right = centerX + halfWidth
+    bottom = centerY + halfHeight
+    return this
+}
+
 /**设置矩形的宽高
  * [withCenter] 是否保持中点不变*/
 fun RectF.setWidthHeight(width: Float, height: Float, withCenter: Boolean = false): RectF {
