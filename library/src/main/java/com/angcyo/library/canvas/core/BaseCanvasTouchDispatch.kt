@@ -46,7 +46,7 @@ abstract class BaseCanvasTouchDispatch : ICanvasComponent {
         val size = touchListenerList.size
         for (i in size - 1 downTo 0) {
             val listener = touchListenerList[i]
-            if (listener is ICanvasComponent && !listener.isEnableComponent) {
+            if (ignoreTouchListener(listener)) {
                 continue
             }
             listener.dispatchTouchEvent(event)
@@ -60,7 +60,7 @@ abstract class BaseCanvasTouchDispatch : ICanvasComponent {
             //2:onInterceptTouchEvent
             for (i in size - 1 downTo 0) {
                 val listener = touchListenerList[i]
-                if (listener is ICanvasComponent && !listener.isEnableComponent) {
+                if (ignoreTouchListener(listener)) {
                     continue
                 }
 
@@ -78,7 +78,7 @@ abstract class BaseCanvasTouchDispatch : ICanvasComponent {
         } else {
             //3:onTouchEvent
 
-            if (target is ICanvasComponent && target.isEnableComponent) {
+            if (!ignoreTouchListener(target)) {
                 handle = target.onTouchEvent(event)
             }
         }
@@ -96,6 +96,17 @@ abstract class BaseCanvasTouchDispatch : ICanvasComponent {
     /**当事件被[target]拦截*/
     open fun onTouchEventIntercept(target: ICanvasTouchListener) {
 
+    }
+
+    //--
+
+    /**是否要忽略指定监听者的事件回调*/
+    open fun ignoreTouchListener(listener: ICanvasTouchListener): Boolean {
+        return defIgnoreTouchListener(listener)
+    }
+
+    fun defIgnoreTouchListener(listener: ICanvasTouchListener): Boolean {
+        return listener is ICanvasComponent && !listener.isEnableComponent
     }
 
 }

@@ -9,6 +9,7 @@ import android.view.View
 import com.angcyo.canvas.render.annotation.RenderFlag
 import com.angcyo.canvas.render.core.component.BaseControl
 import com.angcyo.canvas.render.core.component.BaseControlPoint
+import com.angcyo.canvas.render.core.component.CanvasOverlayComponent
 import com.angcyo.canvas.render.core.component.CanvasRenderProperty
 import com.angcyo.canvas.render.core.component.CanvasSelectorComponent
 import com.angcyo.canvas.render.core.component.LimitMatrixComponent
@@ -90,7 +91,17 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     var renderViewBox = CanvasRenderViewBox(this)
 
     /**手势管理*/
-    var touchManager = CanvasTouchManager(this)
+    var touchManager = CanvasTouchManager(this).apply {
+        onIgnoreTouchListener = { listener ->
+            if (_canvasOverlayComponent == null) {
+                defIgnoreTouchListener(listener)
+            } else if (listener is CanvasControlManager || listener is CanvasSelectorManager) {
+                true
+            } else {
+                defIgnoreTouchListener(listener)
+            }
+        }
+    }
 
     /**坐标尺管理*/
     var axisManager = CanvasAxisManager(this)
@@ -123,12 +134,36 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         pointTag = PointTouchComponent.TAG_INITIAL
     }
 
+    /**覆盖层组件, 支持绘制并拦截元素操作手势, 但不拦截画布手势*/
+    protected var _canvasOverlayComponent: CanvasOverlayComponent? = null
+
     init {
         renderListenerList.add(limitMatrixComponent)
 
         //左上角点位
         pointTouchComponentList.add(initialPointComponent)
     }
+
+    //region---get---
+
+    /**画布主要的限制区域*/
+    @Pixel
+    @CanvasInsideCoordinate
+    val mainLimitBounds: RectF?
+        get() {
+            val primaryLimitBounds =
+                renderManager.limitRenderer.findLimitInfo { it.tag == LimitInfo.TAG_MAIN }?.bounds
+            if (primaryLimitBounds != null) {
+                return RectF(primaryLimitBounds)
+            }
+            return null
+        }
+
+    /**是否有覆盖组件*/
+    val haveOverlayComponent: Boolean
+        get() = _canvasOverlayComponent != null
+
+    //endregion---get---
 
     //region---View视图方法---
 
@@ -827,6 +862,28 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
             true,
             true
         ).contains(renderer)
+    }
+
+    /**附加覆盖层[cancelSelectedElement] 是否取消当前选中的元素*/
+    fun attachOverlay(
+        overlay: CanvasOverlayComponent?,
+        cancelSelectedElement: Boolean = true,
+    ) {
+        detachOverlay()
+        if (overlay != null) {
+            if (cancelSelectedElement && selectorManager.isSelectorElement) {
+                selectorManager.clearSelectedElement()
+            }
+            _canvasOverlayComponent = overlay
+            overlay.attachToCanvasDelegate(this)
+        }
+    }
+
+    /** 移除覆盖层[_overlayComponent] */
+    fun detachOverlay() {
+        _canvasOverlayComponent?.detachFromCanvasDelegate(this)
+        _canvasOverlayComponent = null
+        refresh()
     }
 
     //endregion---操作---

@@ -16,9 +16,19 @@ class CanvasTouchManager(val iCanvasView: ICanvasView) : BaseCanvasTouchDispatch
     /**画板快滑组件*/
     var flingComponent = CanvasFlingComponent(iCanvasView)
 
+    /**是否要忽略指定监听器的事件回调*/
+    var onIgnoreTouchListener: ((listener: ICanvasTouchListener) -> Boolean)? = null
+
     init {
         touchListenerList.add(translateComponent)
         touchListenerList.add(scaleComponent)
         touchListenerList.add(flingComponent)
+    }
+
+    override fun ignoreTouchListener(listener: ICanvasTouchListener): Boolean {
+        if (onIgnoreTouchListener != null) {
+            return onIgnoreTouchListener!!.invoke(listener)
+        }
+        return super.ignoreTouchListener(listener)
     }
 }

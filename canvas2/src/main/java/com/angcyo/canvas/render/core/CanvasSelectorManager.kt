@@ -70,7 +70,7 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
     private var _isTranslateRenderer = false
 
     init {
-        delegate.touchManager.touchListenerList.add(this)
+        delegate.touchManager.touchListenerList.add(this)//监听手势回调, 并转发给自身的成员
         delegate.addCanvasRenderListener(object : BaseCanvasRenderListener() {
 
             override fun onControlHappen(controlPoint: BaseControl, end: Boolean) {
@@ -336,6 +336,11 @@ class CanvasSelectorManager(val delegate: CanvasRenderDelegate) : BaseTouchCompo
     /**[com.angcyo.canvas.render.core.component.CanvasSelectorComponent.resetSelectorRenderer]*/
     fun resetSelectorRenderer(list: List<BaseRenderer>, reason: Reason) {
         selectorComponent.resetSelectorRenderer(list, reason)
+    }
+
+    /**取消所有选中的元素*/
+    fun clearSelectedElement(reason: Reason = Reason.user){
+        selectorComponent.clearSelectorRenderer(reason)
     }
 
     /**[com.angcyo.canvas.render.core.component.CanvasSelectorComponent.addSelectorRenderer]*/

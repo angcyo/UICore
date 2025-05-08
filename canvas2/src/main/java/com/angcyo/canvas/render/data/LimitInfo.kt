@@ -3,8 +3,8 @@ package com.angcyo.canvas.render.data
 import android.graphics.Color
 import android.graphics.Path
 import android.graphics.RectF
-import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.library.ex.dp
 
 /**
@@ -28,4 +28,9 @@ data class LimitInfo(
     val enableRender: Boolean = true,
     /**标识位*/
     val tag: String? = null,
-)
+) {
+    companion object {
+
+        const val TAG_MAIN = "main"
+    }
+}

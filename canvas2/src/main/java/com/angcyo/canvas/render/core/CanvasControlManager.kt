@@ -59,7 +59,7 @@ class CanvasControlManager(val delegate: CanvasRenderDelegate) : BaseCanvasTouch
             .remove(IRenderer.RENDERER_FLAG_CLIP_RECT_OUTSIDE)
         //.remove(IRenderer.RENDERER_FLAG_ON_INSIDE)
 
-        delegate.touchManager.touchListenerList.add(this)
+        delegate.touchManager.touchListenerList.add(this)//监听手势回调, 并转发给自身的成员
         delegate.addCanvasRenderListener(this)
 
         //touch listener
