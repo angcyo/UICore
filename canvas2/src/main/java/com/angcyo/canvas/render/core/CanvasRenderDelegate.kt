@@ -108,7 +108,7 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
     var undoManager = CanvasUndoManager(this)
 
     /**渲染参数*/
-    var renderParams = RenderParams(this, this)
+    var renderParams = RenderParams(this, this, this)
 
     /**异步加载管理*/
     var asyncManager = CanvasAsyncManager(this)

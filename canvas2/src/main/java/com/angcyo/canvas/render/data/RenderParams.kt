@@ -64,16 +64,21 @@ data class RenderParams(
         }*/
     }
 
-    /**绘制[android.graphics.Path]需要控制的画笔宽度*/
-    fun updateDrawPathPaintStrokeWidth(paint: Paint) {
+    /**绘制[android.graphics.Path]需要控制的画笔宽度
+     * [refStrokeWidth] 参考的画笔宽度, 不指定则使用[Paint.strokeWidth]
+     * @return 返回作用的生效倍数*/
+    fun updateDrawPathPaintStrokeWidth(paint: Paint, refStrokeWidth: Float? = null): Float {
         val renderDst = renderDst
         if (renderDst is CanvasRenderDelegate) {
             val scale = renderDst.renderViewBox.getScale()
-            paint.strokeWidth /= scale //确保边框线的可见性
+            paint.strokeWidth = (refStrokeWidth ?: paint.strokeWidth) / scale //确保边框线的可见性
+            return scale
         } else if (renderDst is Float) {
             // renderDst = 需要绘制的目标大小/目标真实大小
-            paint.strokeWidth /= renderDst
+            paint.strokeWidth = (refStrokeWidth ?: paint.strokeWidth) / renderDst
+            return renderDst
         }
+        return 1f
     }
 }
 
