@@ -204,6 +204,9 @@ fun Float?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0f)
 
 fun Float?.toUnitFromPixel(unit: IValueUnit = MM_UNIT) = unit.convertPixelToValue(this ?: 0f)
 
+/**1mm转换成像素*/
+fun Float?.toPixelFromUnit(unit: IValueUnit = MM_UNIT) = unit.convertValueToPixel(this ?: 0f)
+
 /**1像素转毫米*/
 fun Double?.toMm() = MM_UNIT.convertPixelToValue(this ?: 0.0)
 

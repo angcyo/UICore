@@ -133,8 +133,11 @@ fun logClipboard(context: Context = app()): String {
 }
 
 fun String.encode(enc: String = "UTF-8"): String = URLEncoder.encode(this, enc)
+fun String.urlEncode(enc: String = "UTF-8"): String = URLEncoder.encode(this, enc)
 
 fun String.decode(enc: String = "UTF-8"): String = URLDecoder.decode(this, enc)
+
+fun String.urlDecode(enc: String = "UTF-8"): String = URLDecoder.decode(this, enc)
 
 @ColorInt
 fun String.toColorInt(): Int = this.toColor()

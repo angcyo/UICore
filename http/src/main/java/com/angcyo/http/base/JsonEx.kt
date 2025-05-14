@@ -385,6 +385,12 @@ fun String?.fromJsonMap(): Map<String, Any>? = this?.fromJson<Map<String, Any>>(
  * [fromJsonMap]*/
 fun String?.toMapFromJson(): Map<String, Any>? = this?.fromJson<Map<String, Any>>()
 
+/**
+ * 将json字符串转换成[List<T>]
+ * */
+fun <T> String?.toListFromJson(typeClass: Class<*>): List<T>? =
+    fromJson<List<T>>(listType(typeClass))
+
 /**[String.fromJson]*/
 inline fun <reified T> String?.fromJson(): T? = this?.fromJson(T::class.java)
 
