@@ -6,6 +6,7 @@ import com.angcyo.canvas.render.core.IRenderer
 import com.angcyo.canvas.render.data.LimitInfo
 import com.angcyo.canvas.render.data.RenderParams
 import com.angcyo.canvas.render.util.createRenderPaint
+import com.angcyo.library.annotation.Api
 
 /**
  * 提示线的绘制
@@ -68,6 +69,19 @@ class CanvasLimitRenderer(val delegate: CanvasRenderDelegate) : IRenderer {
     /**清除限制框*/
     fun clear() {
         limitList.clear()
+        delegate.refresh()
+    }
+
+    /**
+     * 隐藏某个tag的绘制
+     * */
+    @Api
+    fun hideLimitInfoByTag(tag: String?, hide: Boolean = true) {
+        limitList.forEach {
+            if (it.tag == tag) {
+                it.enableRender = !hide
+            }
+        }
         delegate.refresh()
     }
 }

@@ -21,6 +21,7 @@ import com.angcyo.canvas.render.renderer.BaseRenderer
 import com.angcyo.canvas.render.renderer.CanvasGroupRenderer
 import com.angcyo.canvas.render.state.IStateStack
 import com.angcyo.library.L
+import com.angcyo.library.annotation.Api
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.canvas.annotation.CanvasInsideCoordinate
 import com.angcyo.library.canvas.core.CanvasTouchManager
@@ -884,6 +885,14 @@ class CanvasRenderDelegate(val view: View) : BaseRenderDispatch(), ICanvasRender
         _canvasOverlayComponent?.detachFromCanvasDelegate(this)
         _canvasOverlayComponent = null
         refresh()
+    }
+
+    /**
+     * 隐藏某个tag的绘制
+     * */
+    @Api
+    fun hideLimitInfoByTag(tag: String?, hide: Boolean = true) {
+        renderManager.limitRenderer.hideLimitInfoByTag(tag, hide)
     }
 
     //endregion---操作---

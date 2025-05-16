@@ -25,7 +25,7 @@ data class LimitInfo(
     /**线框的宽度*/
     val strokeWidth: Float = 1 * dp,
     /**是否激活绘制*/
-    val enableRender: Boolean = true,
+    var enableRender: Boolean = true,
     /**标识位*/
     val tag: String? = null,
     //--
