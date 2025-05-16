@@ -21,16 +21,24 @@ data class LimitInfo(
     /**[path]对应的边界*/
     val bounds: RectF,
     /**线框的颜色*/
-    val strokeColor: Int = Color.RED,
+    val strokeColor: Int? = Color.RED,
     /**线框的宽度*/
     val strokeWidth: Float = 1 * dp,
     /**是否激活绘制*/
     val enableRender: Boolean = true,
     /**标识位*/
     val tag: String? = null,
+    //--
+    /**是否填充*/
+    val isFill: Boolean = false,
+    val fillColor: Int? = 0x0f000000,
 ) {
     companion object {
 
+        /**主要的限制*/
         const val TAG_MAIN = "main"
+
+        /**灰度区域*/
+        const val TAG_GRAY = "gray"
     }
 }

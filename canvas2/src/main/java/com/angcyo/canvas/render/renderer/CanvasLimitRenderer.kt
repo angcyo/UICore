@@ -35,9 +35,17 @@ class CanvasLimitRenderer(val delegate: CanvasRenderDelegate) : IRenderer {
         if (!path.isEmpty) {
             val renderViewBox = delegate.renderViewBox
             val scale = renderViewBox.getScaleX()
-            paint.color = info.strokeColor
-            paint.strokeWidth = info.strokeWidth / scale //抵消坐标系的缩放
-            canvas.drawPath(path, paint)
+            if (info.strokeColor != null && info.strokeWidth > 0) {
+                paint.style = android.graphics.Paint.Style.STROKE
+                paint.color = info.strokeColor
+                paint.strokeWidth = info.strokeWidth / scale //抵消坐标系的缩放
+                canvas.drawPath(path, paint)
+            }
+            if (info.isFill && info.fillColor != null) {
+                paint.style = android.graphics.Paint.Style.FILL
+                paint.color = info.fillColor
+                canvas.drawPath(path, paint)
+            }
         }
     }
 
