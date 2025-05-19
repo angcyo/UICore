@@ -770,15 +770,19 @@ fun uploadFile(config: RequestConfig.() -> Unit): Observable<Response<JsonElemen
  * */
 fun uploadFile(
     file: File,
-    formMap: Map<String, Any>? = null,
+    formMap: Map<String, String>? = null,
     config: RequestConfig.() -> Unit
 ): Observable<Response<JsonElement>> {
     return http {
         method = POST
         val requestBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
-        filePart = requestBody.toFilePart(file.name)
         if (formMap != null) {
-            this.formMap.putAll(formMap)
+            val list = mutableListOf<MultipartBody.Part>()
+            list.add(requestBody.toFilePart(file.name))
+            list.addAll(formMap.map { MultipartBody.Part.createFormData(it.key, it.value) })
+            filePartList = list
+        } else {
+            filePart = requestBody.toFilePart(file.name)
         }
         this.config()
     }
