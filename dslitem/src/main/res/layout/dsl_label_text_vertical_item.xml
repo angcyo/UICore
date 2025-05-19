@@ -27,6 +27,7 @@
         android:minHeight="0dp"
         android:paddingTop="@dimen/lib_hdpi"
         android:paddingBottom="@dimen/lib_min_padding"
+        android:textSize="@dimen/text_sub_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/lib_label_view"
         app:layout_constraintRight_toLeftOf="@id/lib_right_wrap_layout"

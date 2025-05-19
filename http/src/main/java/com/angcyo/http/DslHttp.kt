@@ -764,11 +764,22 @@ fun uploadFile(config: RequestConfig.() -> Unit): Observable<Response<JsonElemen
     }
 }
 
-fun uploadFile(file: File, config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
+/**上传文件, 并且返回json结果
+ * [file] 单文件上传的文件对象
+ * [formMap] 表单数据
+ * */
+fun uploadFile(
+    file: File,
+    formMap: Map<String, Any>? = null,
+    config: RequestConfig.() -> Unit
+): Observable<Response<JsonElement>> {
     return http {
         method = POST
         val requestBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
         filePart = requestBody.toFilePart(file.name)
+        if (formMap != null) {
+            this.formMap.putAll(formMap)
+        }
         this.config()
     }
 }

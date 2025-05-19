@@ -65,11 +65,12 @@ fun ProgressListener.removeDownloadProgress() {
 }
 
 /**Http 上传进度
+ * [this] 接口url
  * [key] 通常上传接口都是一样的, 但是上传的文件路径不一样*/
 fun String.uploadProgress(
     removeOnEnd: Boolean = true,
     key: String? = null,
-    action: (ProgressInfo?, Exception?) -> Unit
+    action: ((ProgressInfo?, Exception?) -> Unit)? = null,
 ): ProgressListener {
     val url = this
     val listener = object : ProgressListener {
@@ -79,14 +80,14 @@ fun String.uploadProgress(
             //80,100
             //progressInfo?.percent
             L.d("upload(${hashCode()}):$url ${progressInfo?.percent} ${progressInfo?.currentbytes}/${progressInfo?.contentLength} ${progressInfo?.speed} byte/s")
-            action(progressInfo, null)
-            if (removeOnEnd && progressInfo?.percent ?: 0 >= 100) {
+            action?.invoke(progressInfo, null)
+            if (removeOnEnd && (progressInfo?.percent ?: 0) >= 100) {
                 this.removeUploadProgress()
             }
         }
 
         override fun onError(id: Long, e: Exception?) {
-            action(null, e)
+            action?.invoke(null, e)
             if (removeOnEnd && e != null) {
                 this.removeUploadProgress()
             }
