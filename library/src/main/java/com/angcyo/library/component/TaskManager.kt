@@ -69,8 +69,19 @@ class TaskManager {
      * [error] 任务执行异常
      * [continueOnError] 异常时是否继续执行下一个任务
      * */
-    fun nextTask(task: ITask, error: Throwable? = null, continueOnError: Boolean = false) {
+    fun nextTask(
+        task: ITask,
+        error: Throwable? = null,
+        continueOnError: Boolean = false,
+        delay: Long = 0
+    ) {
         if (cancel) {
+            return
+        }
+        if (delay > 0) {
+            _delay(delay) {
+                nextTask(task, error, continueOnError)
+            }
             return
         }
         if (task.taskState != TaskState.Cancel) {
