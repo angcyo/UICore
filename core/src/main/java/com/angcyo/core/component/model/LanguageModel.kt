@@ -262,9 +262,22 @@ class LanguageModel : ViewModel() {
         }
 
         /**
+         * 获取当前系统语言格式 zh
+         * [getLanguage]
+         * [getCurrentLanguage]
+         */
+        fun getLanguage(context: Context = app()): String {
+            //zh
+            val locale = context.resources.configuration.locale
+            return locale.language
+        }
+
+        /**
          * 获取当前系统语言格式 zh_CN
          * @param context
          * @return
+         * [getLanguage]
+         * [getCurrentLanguage]
          */
         fun getCurrentLanguage(context: Context = app()): String {
             //zh_CN_#Hans
@@ -272,6 +285,15 @@ class LanguageModel : ViewModel() {
             val language = locale.language
             val country = locale.country
             return language + "_" + country
+        }
+
+        /**zh-CN*/
+        fun getCurrentLanguage2(context: Context = app()): String {
+            //zh_CN_#Hans
+            val locale = context.resources.configuration.locale
+            val language = locale.language
+            val country = locale.country
+            return "$language-$country"
         }
 
         /**zh-Hans-CN*/
