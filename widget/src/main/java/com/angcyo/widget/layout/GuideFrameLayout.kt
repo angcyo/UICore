@@ -64,22 +64,35 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
     /**矩形额外的扩展空间*/
     var clipAnchorInset = 2.toDp()
 
+    var clipAnchorInsetWidth: Float? = null
+    var clipAnchorInsetHeight: Float? = null
+
     /**在指定的锚点区域点击*/
     var onAnchorClick: ((anchorIndex: Int) -> Unit)? = null
 
     init {
         val array = context.obtainStyledAttributes(attributeSet, R.styleable.GuideFrameLayout)
         clipAnchor = array.getBoolean(R.styleable.GuideFrameLayout_r_clip_anchor, clipAnchor)
-        clipAnchorRadius =
-            array.getDimensionPixelOffset(
-                R.styleable.GuideFrameLayout_r_clip_anchor_radius,
-                4.toDpi()
+        clipAnchorRadius = array.getDimensionPixelOffset(
+            R.styleable.GuideFrameLayout_r_clip_anchor_radius, 4.toDpi()
+        ).toFloat()
+        clipAnchorInset = array.getDimensionPixelOffset(
+            R.styleable.GuideFrameLayout_r_clip_anchor_inset, clipAnchorInset.toInt()
+        ).toFloat()
+
+        if (array.hasValue(R.styleable.GuideFrameLayout_r_clip_anchor_inset_width)) {
+            clipAnchorInsetWidth = array.getDimensionPixelOffset(
+                R.styleable.GuideFrameLayout_r_clip_anchor_inset_width,
+                (clipAnchorInsetWidth ?: 0f).toInt()
             ).toFloat()
-        clipAnchorInset =
-            array.getDimensionPixelOffset(
-                R.styleable.GuideFrameLayout_r_clip_anchor_inset,
-                clipAnchorInset.toInt()
+        }
+        if (array.hasValue(R.styleable.GuideFrameLayout_r_clip_anchor_inset_height)) {
+            clipAnchorInsetHeight = array.getDimensionPixelOffset(
+                R.styleable.GuideFrameLayout_r_clip_anchor_inset_height,
+                (clipAnchorInsetHeight ?: 0f).toInt()
             ).toFloat()
+        }
+
         guideBackgroundDrawable = array.getDrawable(R.styleable.GuideFrameLayout_r_guide_background)
         if (isInEditMode) {
             val anchors = array.getString(R.styleable.GuideFrameLayout_r_guide_anchors)
@@ -91,8 +104,10 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
                         val ss = element.split(",")
                         anchorList.add(
                             Rect(
-                                ss[0].toInt(), ss[1].toInt(),
-                                ss[0].toInt() + ss[2].toInt(), ss[1].toInt() + ss[3].toInt()
+                                ss[0].toInt(),
+                                ss[1].toInt(),
+                                ss[0].toInt() + ss[2].toInt(),
+                                ss[1].toInt() + ss[3].toInt()
                             )
                         )
                     }
@@ -223,7 +238,10 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
                 for (i in 0 until anchorList.size) {
                     val rect = anchorList[i]
                     tempRect.set(rect)
-                    tempRect.inset(-clipAnchorInset, -clipAnchorInset)
+                    tempRect.inset(
+                        -(clipAnchorInsetWidth ?: clipAnchorInset),
+                        -(clipAnchorInsetHeight ?: clipAnchorInset)
+                    )
                     canvas.drawRoundRect(tempRect, clipAnchorRadius, clipAnchorRadius, anchorPaint)
                 }
             }
@@ -266,8 +284,7 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     override fun generateDefaultLayoutParams(): LayoutParams {
         return LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
         )
     }
 
@@ -295,23 +312,17 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
             guideGravity =
                 a.getInt(R.styleable.GuideFrameLayout_Layout_r_guide_gravity, guideGravity)
             offsetX = a.getDimensionPixelOffset(
-                R.styleable.GuideFrameLayout_Layout_r_guide_offset_x,
-                offsetX
+                R.styleable.GuideFrameLayout_Layout_r_guide_offset_x, offsetX
             )
             offsetY = a.getDimensionPixelOffset(
-                R.styleable.GuideFrameLayout_Layout_r_guide_offset_y,
-                offsetY
+                R.styleable.GuideFrameLayout_Layout_r_guide_offset_y, offsetY
             )
-            offsetWidth =
-                a.getDimensionPixelOffset(
-                    R.styleable.GuideFrameLayout_Layout_r_guide_offset_width,
-                    offsetWidth
-                )
-            offsetHeight =
-                a.getDimensionPixelOffset(
-                    R.styleable.GuideFrameLayout_Layout_r_guide_offset_height,
-                    offsetHeight
-                )
+            offsetWidth = a.getDimensionPixelOffset(
+                R.styleable.GuideFrameLayout_Layout_r_guide_offset_width, offsetWidth
+            )
+            offsetHeight = a.getDimensionPixelOffset(
+                R.styleable.GuideFrameLayout_Layout_r_guide_offset_height, offsetHeight
+            )
             isAnchor = a.getBoolean(R.styleable.GuideFrameLayout_Layout_r_guide_is_anchor, isAnchor)
             withAnchor =
                 a.getBoolean(R.styleable.GuideFrameLayout_Layout_r_guide_with_anchor, withAnchor)

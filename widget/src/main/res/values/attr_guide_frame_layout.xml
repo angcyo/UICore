@@ -9,8 +9,12 @@
         <attr name="r_clip_anchor" format="boolean" />
         <!--矩形的圆角-->
         <attr name="r_clip_anchor_radius" format="dimension" />
-        <!--插入间隙-->
+        <!--裁剪框矩形插入的间隙-->
         <attr name="r_clip_anchor_inset" format="dimension" />
+        <!--裁剪框矩形插入的间隙, 仅宽度-->
+        <attr name="r_clip_anchor_inset_width" format="dimension" />
+        <!--裁剪框矩形插入的间隙, 仅高度-->
+        <attr name="r_clip_anchor_inset_height" format="dimension" />
         <!--此背景支持clip-->
         <attr name="r_guide_background" format="reference" />
     </declare-styleable>
