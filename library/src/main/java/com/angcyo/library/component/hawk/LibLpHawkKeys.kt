@@ -47,31 +47,31 @@ object LibLpHawkKeys {
 
     /**L1的物理尺寸配置*/
     @MM
-    var l1Width: Int? by HawkPropertyValue<Any, Int?>(null)//100
-    var l1Height: Int? by HawkPropertyValue<Any, Int?>(null)//100
+    var l1Width: Float? by HawkPropertyValue<Any, Float?>(null)//100
+    var l1Height: Float? by HawkPropertyValue<Any, Float?>(null)//100
 
     /**L2的物理尺寸配置*/
     @MM
-    var l2Width: Int? by HawkPropertyValue<Any, Int?>(null)//100
-    var l2Height: Int? by HawkPropertyValue<Any, Int?>(null)//100
+    var l2Width: Float? by HawkPropertyValue<Any, Float?>(null)//100
+    var l2Height: Float? by HawkPropertyValue<Any, Float?>(null)//100
 
     /**L3的物理尺寸配置*/
     @MM
-    var l3Width: Int? by HawkPropertyValue<Any, Int?>(null)//115
-    var l3Height: Int? by HawkPropertyValue<Any, Int?>(null)//115
+    var l3Width: Float? by HawkPropertyValue<Any, Float?>(null)//115
+    var l3Height: Float? by HawkPropertyValue<Any, Float?>(null)//115
 
     /**L4的物理尺寸配置*/
     @MM
-    var l4Width: Int? by HawkPropertyValue<Any, Int?>(null)//160
-    var l4Height: Int? by HawkPropertyValue<Any, Int?>(null)//160
+    var l4Width: Float? by HawkPropertyValue<Any, Float?>(null)//160
+    var l4Height: Float? by HawkPropertyValue<Any, Float?>(null)//160
 
     /**C1的物理尺寸配置*/
     @MM
-    var c1Width: Int? by HawkPropertyValue<Any, Int?>(null)//400
-    var c1Height: Int? by HawkPropertyValue<Any, Int?>(null)//420
+    var c1Width: Float? by HawkPropertyValue<Any, Float?>(null)//400
+    var c1Height: Float? by HawkPropertyValue<Any, Float?>(null)//420
 
     /**C1加长版的尺寸*/
-    var c1LHeight: Int? by HawkPropertyValue<Any, Int?>(null)//800
+    var c1LHeight: Float? by HawkPropertyValue<Any, Float?>(null)//800
 
     //
 
