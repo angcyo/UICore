@@ -152,7 +152,8 @@ fun Activity.showDebugInfoView(config: ActivityDebugInfoConfig) {
                             //导航栏没有显示.
                             if (_screenCornerRadius > 0) {
                                 //屏幕圆角大小, 手机屏幕四个角都是圆弧的了
-                                _screenCornerRadius + 8 * dpi //* 2 //(DEFAULT_NORMAL_SIZE + 8) * dpi
+                                //_screenCornerRadius + 8 * dpi //* 2 //(DEFAULT_NORMAL_SIZE + 8) * dpi
+                                DEFAULT_NORMAL_SIZE * dpi + _screenCornerRadius / 4
                             } else {
                                 DEFAULT_NORMAL_SIZE * dpi
                             }
@@ -175,13 +176,9 @@ fun Activity.showDebugInfoView(config: ActivityDebugInfoConfig) {
         fun showSingleText(textView: TextView) {
             showNormal(textView, false)
             textView.text = span {
-                append(this@showDebugInfoView.simpleHash())
-                    .append(" $taskId")
-                    .appendln()
+                append(this@showDebugInfoView.simpleHash()).append(" $taskId").appendln()
                 (this@showDebugInfoView as? FragmentActivity)?.supportFragmentManager?.logAllFragment(
-                    _builder,
-                    false,
-                    "\\-"
+                    _builder, false, "\\-"
                 )
                 _builder.safe()
             }
@@ -219,9 +216,7 @@ fun Activity.showDebugInfoView(config: ActivityDebugInfoConfig) {
                 //
                 appendLine(this@showDebugInfoView.javaClass.name)
                 (this@showDebugInfoView as? FragmentActivity)?.supportFragmentManager?.logAllFragment(
-                    this,
-                    true,
-                    "\\-"
+                    this, true, "\\-"
                 )
 
                 NetUtils.localIPAddress?.toString()?.apply {
@@ -233,13 +228,9 @@ fun Activity.showDebugInfoView(config: ActivityDebugInfoConfig) {
                 )
                 append("sh:").append(statusBarHeight).append(" ")
                     .append(statusBarHeight / displayMetrics.density)
-                append(" nh:").append(navBarHeight).append(" ")
-                    .append(getNavBarHeight())
-                    .append(" ")
-                    .append(getNavBarHeight() / displayMetrics.density)
-                    .append(" ")
-                    .append(_isNavigationBarShow)
-                    .appendLine()
+                append(" nh:").append(navBarHeight).append(" ").append(getNavBarHeight())
+                    .append(" ").append(getNavBarHeight() / displayMetrics.density).append(" ")
+                    .append(_isNavigationBarShow).appendLine()
 
                 append("wp:").append(displayMetrics.widthPixels)
                 append(" hp:").appendLine(displayMetrics.heightPixels)
@@ -283,12 +274,9 @@ fun Activity.showDebugInfoView(config: ActivityDebugInfoConfig) {
         }
 
         layoutParams.gravity = gravity
-        if (decorView.bottom > contentView.bottom &&
-            decorView.measuredHeight > decorView.measuredWidth /*竖屏模式*/
-        ) { //显示了导航栏
+        if (decorView.bottom > contentView.bottom && decorView.measuredHeight > decorView.measuredWidth /*竖屏模式*/) { //显示了导航栏
             val resources = resources
-            val resourceId =
-                resources.getIdentifier("navigation_bar_height", "dimen", "android")
+            val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
             var navBarHeight = 0
             if (resourceId != 0) {
                 navBarHeight = resources.getDimensionPixelSize(resourceId)
@@ -363,9 +351,7 @@ fun Activity.showDebugInfoView(config: ActivityDebugInfoConfig) {
  * 打印状态[isResumed]的[Fragment]中[childFragmentManager]
  *  */
 fun FragmentManager.logAllFragment(
-    builder: Appendable,
-    fullName: Boolean = false,
-    pre: String? = null
+    builder: Appendable, fullName: Boolean = false, pre: String? = null
 ): Appendable {
     fragments.forEachIndexed { index, fragment ->
 
