@@ -126,6 +126,8 @@ android {
             jniDebuggable = true
             crunchPngs = false
         }
+        //https://docs.flutter.dev/testing/build-modes#profile
+        //flutter run --profile
         profile {
             //signingConfig = signingConfigs.debug
 
@@ -158,10 +160,11 @@ flutter {
 dependencies {
     //https://developer.android.google.cn/studio/write/java8-support?hl=zh-cn#groovy
     //https://pub.dev/packages/flutter_local_notifications
+    //https://mvnrepository.com/artifact/com.android.tools/desugar_jdk_libs
     if (Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 8 ||
             (Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 7 &&
                     Integer.parseInt(gradle.gradleVersion.split("\\.")[1]) >= 4)) {
-        coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.2'
+        coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
     } else {
         coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.3'
     }
