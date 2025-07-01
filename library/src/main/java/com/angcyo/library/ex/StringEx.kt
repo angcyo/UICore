@@ -489,6 +489,11 @@ fun String.lastName(): String {
     if (this.isEmpty()) {
         return this
     }
+    //包含?, 需要分割
+    val index = lastIndexOf("?")
+    if (index > -1) {
+        return substring(lastIndexOf("/") + 1, index)
+    }
     return substring(lastIndexOf("/") + 1, length)
 }
 
