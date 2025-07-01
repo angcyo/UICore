@@ -98,7 +98,7 @@ open class DslBadgeDrawable : DslGradientDrawable() {
     val textHeight: Float
         get() = textPaint.textHeight()
 
-    //原型状态
+    /**是否是圆点状态*/
     val isCircle: Boolean
         get() = TextUtils.isEmpty(badgeText)
 
@@ -165,17 +165,18 @@ open class DslBadgeDrawable : DslGradientDrawable() {
             applyGravity(drawWidth, drawHeight) { centerX, centerY ->
 
                 if (isCircle) {
+                    //圆点状态
                     textPaint.color = gradientSolidColor
 
                     //圆心计算
                     val cx: Float
                     val cy: Float
                     if (gravity.isGravityCenter()) {
-                        cx = centerX.toFloat()
-                        cy = centerY.toFloat()
+                        cx = centerX
+                        cy = centerY
                     } else {
-                        cx = centerX.toFloat() + _gravityOffsetX
-                        cy = centerY.toFloat() + _gravityOffsetY
+                        cx = centerX + _gravityOffsetX
+                        cy = centerY + _gravityOffsetY
                     }
 
                     //绘制圆
@@ -208,6 +209,10 @@ open class DslBadgeDrawable : DslGradientDrawable() {
                     }
 
                 } else {
+                    //文本+背景状态
+                    val oldWidth = textPaint.strokeWidth
+                    val oldStyle = textPaint.style
+
                     textPaint.color = badgeTextColor
 
                     val textDrawX: Float = centerX - textWidth / 2
@@ -219,7 +224,18 @@ open class DslBadgeDrawable : DslGradientDrawable() {
                     //绘制背景
                     if (badgeAutoCircle && badgeText?.length == 1) {
                         if (gradientSolidColor != Color.TRANSPARENT) {
+                            textPaint.style = Paint.Style.FILL
                             textPaint.color = gradientSolidColor
+                            canvas.drawCircle(
+                                centerX,
+                                centerY,
+                                max(maxWidth, maxHeight).toFloat() / 2,
+                                textPaint
+                            )
+                        }
+                        if (gradientStrokeWidth > 0 && gradientStrokeColor != Color.TRANSPARENT) {
+                            textPaint.color = gradientStrokeColor
+                            textPaint.style = Paint.Style.STROKE
                             canvas.drawCircle(
                                 centerX,
                                 centerY,
@@ -246,6 +262,10 @@ open class DslBadgeDrawable : DslGradientDrawable() {
                         textDrawY - textPaint.descent() + badgeTextOffsetY,
                         textPaint
                     )
+
+                    //
+                    textPaint.strokeWidth = oldWidth
+                    textPaint.style = oldStyle
                 }
             }
         }
