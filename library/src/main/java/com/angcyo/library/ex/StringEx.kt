@@ -38,6 +38,7 @@ import com.angcyo.library.utils.PATTERN_URL
 import com.angcyo.library.utils.writeTo
 import java.net.URLDecoder
 import java.net.URLEncoder
+import java.text.BreakIterator
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -1173,7 +1174,57 @@ fun String.isFullRTL(): Boolean {
 
 /**支持双向字符序列
  * [android.icu.text.Bidi]*/
-fun CharSequence.reverseCharSequenceIfRtl(): CharSequence = toStr().reverseStringIfRtl()
+fun CharSequence.reverseCharSequenceIfRtl(): String = toStr().reverseStringIfRtl()
+
+/**
+ * Android's ICU (International Components for Unicode) enhancements
+ * https://icu.unicode.org/
+ * */
+fun CharSequence.toBreakString(): String {
+    val result = mutableListOf<String>()
+    val it = BreakIterator.getCharacterInstance()
+    val text = toStr()
+    it.setText(text)
+    var start = it.first()
+    var end = it.next()
+    while (end != BreakIterator.DONE) {
+        val grapheme = text.substring(start, end)
+        result.add(grapheme)
+        start = end
+        end = it.next()
+    }
+    return result.connect("")
+}
+
+/**[CharSequence.toBreakString]*/
+inline fun String.forEachBreak(action: (String) -> Unit) {
+    val it = BreakIterator.getCharacterInstance()
+    it.setText(this)
+    var start = it.first()
+    var end = it.next()
+    while (end != BreakIterator.DONE) {
+        val grapheme = substring(start, end)
+        action(grapheme)
+        start = end
+        end = it.next()
+    }
+}
+
+/**[CharSequence.toBreakString]*/
+inline fun String.forEachBreakIndexed(action: (Int, String) -> Unit) {
+    val it = BreakIterator.getCharacterInstance()
+    it.setText(this)
+    var start = it.first()
+    var end = it.next()
+    var index = 0
+    while (end != BreakIterator.DONE) {
+        val grapheme = substring(start, end)
+        action(index++, grapheme)
+        start = end
+        end = it.next()
+    }
+}
+
 
 /**如果字符方向是RTL, 则反序字符串
  * [android.icu.text.Bidi]

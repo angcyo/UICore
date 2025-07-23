@@ -22,6 +22,8 @@ import com.angcyo.library.canvas.core.Reason
 import com.angcyo.library.component.FontManager
 import com.angcyo.library.component.SupportUndo
 import com.angcyo.library.component.hawk.LibHawkKeys
+import com.angcyo.library.ex.forEachBreak
+import com.angcyo.library.ex.forEachBreakIndexed
 import com.angcyo.library.ex.have
 import com.angcyo.library.ex.size
 import com.angcyo.library.ex.textBounds
@@ -670,8 +672,8 @@ open class TextElement : BaseElement() {
                 y = max(0f, y) + lineTextHeight
 
                 //逐字绘制
-                lineText.forEachIndexed { columnIndex, char ->
-                    val text = "$char"
+                lineText.forEachBreakIndexed { columnIndex, char ->
+                    val text = char
                     val charWidth = measureTextWidth(text)
                     val charHeight = measureTextHeight(text)
 
@@ -791,9 +793,9 @@ open class TextElement : BaseElement() {
             lineTextList.forEach { lineText ->
                 var lineWidth = 0f //一行的宽度
                 var maxCharWidth = 0f//一行中最大的字符宽度
-                lineText.forEach {
+                lineText.forEachBreak {
                     //一个字一个字的宽度
-                    val charWidth = measureTextWidth("$it", paint)
+                    val charWidth = measureTextWidth(it, paint)
                     lineWidth += charWidth
                     maxCharWidth = max(maxCharWidth, charWidth)
                 }
@@ -804,8 +806,8 @@ open class TextElement : BaseElement() {
             //纵向排列
             lineTextList.forEach { lineText ->
                 var lineMax = 0f
-                lineText.forEach {
-                    lineMax = max(measureTextWidth("$it", paint), lineMax)
+                lineText.forEachBreak {
+                    lineMax = max(measureTextWidth(it, paint), lineMax)
                 }
                 result += lineMax
             }
@@ -833,9 +835,9 @@ open class TextElement : BaseElement() {
             lineTextList.forEach { lineText ->
                 var lineHeight = 0f //一行的高度
                 var maxLineHeight = 0f //一行中最大的字符高度
-                lineText.forEach {
+                lineText.forEachBreak {
                     //一个字一个字的高度
-                    val charHeight = measureTextHeight("$it", paint)
+                    val charHeight = measureTextHeight(it, paint)
                     lineHeight += charHeight
                     maxLineHeight = max(maxLineHeight, charHeight)
                 }
