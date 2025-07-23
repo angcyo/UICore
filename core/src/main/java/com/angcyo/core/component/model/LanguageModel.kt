@@ -15,10 +15,12 @@ import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.angcyo.core.vmApp
+import com.angcyo.library.L
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.app
 import com.angcyo.viewmodel.vmData
 import java.util.*
+
 
 /**
  * 多语言相关
@@ -36,6 +38,12 @@ class LanguageModel : ViewModel() {
         const val KEY_LOCAL = "key_local"
         const val LOCAL_CONFIG = "local_config.cfg"
         const val LOCAL_SPLIT = ","
+
+        val systemLocale: Locale
+            get() = Resources.getSystem().configuration.locale
+
+        val appLocale: Locale
+            get() = app().resources.configuration.locale
 
         /**获取系统本地语言列表
          * [语言偏好设置]*/
@@ -284,6 +292,8 @@ class LanguageModel : ViewModel() {
             val locale = context.resources.configuration.locale
             val language = locale.language
             val country = locale.country
+
+            // 获取当前系统的语言
             return language + "_" + country
         }
 
@@ -334,7 +344,9 @@ class LanguageModel : ViewModel() {
      * 为null时, 表示跟随系统*/
     val settingLocalData: MutableLiveData<Locale?> = vmData(null)
 
-    /**当前app的语言 */
+    /**当前app的语言
+     * 监听此方法, 刷新界面.
+     * */
     val localData: MutableLiveData<Locale?> = vmData(null)
 
     private val languageActivityLifecycleCallbacks =
@@ -393,5 +405,7 @@ class LanguageModel : ViewModel() {
         }
 
         changeAppLanguage(activity, targetLocal, false)
+
+        L.w("语言改变:[$settingLocal]->[$targetLocal]")
     }
 }
