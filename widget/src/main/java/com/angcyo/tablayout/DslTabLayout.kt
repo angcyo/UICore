@@ -172,40 +172,10 @@ open class DslTabLayout(
     //childView选择器
     val dslSelector: DslSelector by lazy {
         DslSelector().install(this) {
-            onStyleItemView = { itemView, index, select ->
-                tabLayoutConfig?.onStyleItemView?.invoke(itemView, index, select)
-            }
-            onSelectItemView = { itemView, index, select, fromUser ->
-                tabLayoutConfig?.onSelectItemView?.invoke(itemView, index, select, fromUser)
-                    ?: false
-            }
-            onSelectViewChange = { fromView, selectViewList, reselect, fromUser ->
-                tabLayoutConfig?.onSelectViewChange?.invoke(
-                    fromView,
-                    selectViewList,
-                    reselect,
-                    fromUser
-                )
-            }
-            onSelectIndexChange = { fromIndex, selectList, reselect, fromUser ->
-                if (tabLayoutConfig == null) {
-                    "选择:[$fromIndex]->${selectList} reselect:$reselect fromUser:$fromUser".logi()
-                }
-
-                val toIndex = selectList.lastOrNull() ?: -1
-                _animateToItem(fromIndex, toIndex)
-
-                _scrollToTarget(toIndex, tabIndicator.indicatorAnim)
-                postInvalidate()
-
-                //如果设置[tabLayoutConfig?.onSelectIndexChange], 那么会覆盖[_viewPagerDelegate]的操作.
-                tabLayoutConfig?.onSelectIndexChange?.invoke(
-                    fromIndex,
-                    selectList,
-                    reselect,
-                    fromUser
-                ) ?: _viewPagerDelegate?.onSetCurrentItem(fromIndex, toIndex, reselect, fromUser)
-            }
+            onStyleItemView = this@DslTabLayout::defaultOnStyleItemView
+            onSelectItemView = this@DslTabLayout::defaultOnStyleItemView
+            onSelectViewChange = this@DslTabLayout::defaultOnSelectViewChange
+            onSelectIndexChange = this@DslTabLayout::defaultOnSelectIndexChange
         }
     }
 
@@ -414,6 +384,65 @@ open class DslTabLayout(
             }
         }
         requestLayout()
+    }
+
+    //--
+
+    /**[DslTabLayoutConfig]*/
+    fun defaultOnStyleItemView(itemView: View, index: Int, select: Boolean) {
+        tabLayoutConfig?.onStyleItemView?.invoke(itemView, index, select)
+    }
+
+    /**[DslTabLayoutConfig]*/
+    fun defaultOnStyleItemView(
+        itemView: View,
+        index: Int,
+        select: Boolean,
+        fromUser: Boolean
+    ): Boolean {
+        return tabLayoutConfig?.onSelectItemView?.invoke(itemView, index, select, fromUser)
+            ?: false
+    }
+
+    /**[DslTabLayoutConfig]*/
+    fun defaultOnSelectViewChange(
+        fromView: View?,
+        selectViewList: List<View>,
+        reselect: Boolean,
+        fromUser: Boolean
+    ) {
+        tabLayoutConfig?.onSelectViewChange?.invoke(
+            fromView,
+            selectViewList,
+            reselect,
+            fromUser
+        )
+    }
+
+    /**[DslTabLayoutConfig]*/
+    fun defaultOnSelectIndexChange(
+        fromIndex: Int,
+        selectIndexList: List<Int>,
+        reselect: Boolean,
+        fromUser: Boolean
+    ) {
+        if (tabLayoutConfig == null) {
+            "选择:[$fromIndex]->${selectIndexList} reselect:$reselect fromUser:$fromUser".logi()
+        }
+
+        val toIndex = selectIndexList.lastOrNull() ?: -1
+        _animateToItem(fromIndex, toIndex)
+
+        _scrollToTarget(toIndex, tabIndicator.indicatorAnim)
+        postInvalidate()
+
+        //如果设置[tabLayoutConfig?.onSelectIndexChange], 那么会覆盖[_viewPagerDelegate]的操作.
+        tabLayoutConfig?.onSelectIndexChange?.invoke(
+            fromIndex,
+            selectIndexList,
+            reselect,
+            fromUser
+        ) ?: _viewPagerDelegate?.onSetCurrentItem(fromIndex, toIndex, reselect, fromUser)
     }
 
     //</editor-fold desc="可操作性方法">
