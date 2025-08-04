@@ -303,23 +303,36 @@ object DslHttp {
     var uploadFileAction: ((filePath: String, callback: (url: String?, error: Exception?) -> Unit) -> Unit)? =
         null
 
+    /**上一次的超时时长s*/
+    var _lastTimeout: Long? = null
+
     /**自定义配置, 否则使用库中默认配置*/
     fun config(action: DslHttpConfig.() -> Unit) {
         dslHttpConfig.reset()
         dslHttpConfig.action()
     }
 
-    /**初始化和缓存客户端*/
-    fun init() {
+    /**初始化和缓存客户端
+     * - [timeout] 超时时间 s*/
+    fun init(timeout: Long? = null) {
         val baseUrl = dslHttpConfig.onGetBaseUrl()
 
         if (baseUrl.isEmpty()) {
             throw NullPointerException("请先初始化[DslHttp.config{ ... }]")
         }
 
+        if ((timeout == null && _lastTimeout != null) ||
+            (timeout != null && timeout != _lastTimeout)
+        ) {
+            //重置, 以便重建客户端
+            dslHttpConfig.retrofit = null
+            dslHttpConfig.okHttpClient = null
+            _lastTimeout = timeout
+        }
+
         //缓存客户端
         val client = dslHttpConfig.okHttpClient ?: dslHttpConfig.onBuildHttpClient(
-            dslHttpConfig.defaultOkHttpClientBuilder.apply {
+            dslHttpConfig.defaultOkHttpClientBuilder(_lastTimeout, null).apply {
                 dslHttpConfig.onConfigOkHttpClient.forEach {
                     it(this)
                 }
@@ -343,8 +356,8 @@ object DslHttp {
     }
 
     /**根据配置, 创建一个[OkHttpClient]客户端*/
-    fun createClient(): OkHttpClient {
-        val client = dslHttpConfig.defaultOkHttpClientBuilder.apply {
+    fun createClient(timeout: Long? = null): OkHttpClient {
+        val client = dslHttpConfig.defaultOkHttpClientBuilder(timeout).apply {
             dslHttpConfig.onConfigOkHttpClient.forEach {
                 it(this)
             }
@@ -354,7 +367,7 @@ object DslHttp {
 
     /**获取[Retrofit]对象*/
     @Synchronized
-    fun retrofit(rebuild: Boolean = false): Retrofit {
+    fun retrofit(rebuild: Boolean = false, timeout: Long? = null): Retrofit {
         if (rebuild) {
             dslHttpConfig.retrofit = null
         } else {
@@ -365,7 +378,7 @@ object DslHttp {
                 dslHttpConfig.reset()
             }
         }
-        init()
+        init(timeout)
         return dslHttpConfig.retrofit!!
     }
 
@@ -386,9 +399,9 @@ object DslHttp {
 /**
  * 通用接口请求
  * */
-fun <T> dslHttp(service: Class<T>): T? {
+fun <T> dslHttp(service: Class<T>, timeout: Long? = null): T? {
     return try {
-        val retrofit = retrofit(false)
+        val retrofit = retrofit(false, timeout)
         /*如果单例API对象的话, 就需要在动态切换BaseUrl的时候, 重新创建. 否则不会生效*/
         retrofit.create(service)
     } catch (e: Exception) {
@@ -430,7 +443,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
         POST -> {
             if (requestConfig.filePart != null) {
                 //单文件上传
-                dslHttp(Api::class.java)?.uploadFile(
+                dslHttp(Api::class.java, requestConfig.timeout)?.uploadFile(
                     requestConfig.url,
                     requestConfig.filePart,
                     requestConfig.query,
@@ -438,21 +451,21 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
                 )
             } else if (!requestConfig.filePartList.isNullOrEmpty()) {
                 //多文件上传
-                dslHttp(Api::class.java)?.uploadFiles(
+                dslHttp(Api::class.java, requestConfig.timeout)?.uploadFiles(
                     requestConfig.url,
                     requestConfig.filePartList,
                     requestConfig.query,
                     requestConfig.header
                 )
             } else if (requestConfig.requestBody == null) {
-                dslHttp(Api::class.java)?.post(
+                dslHttp(Api::class.java, requestConfig.timeout)?.post(
                     requestConfig.url,
                     requestConfig.body,
                     requestConfig.query,
                     requestConfig.header
                 )
             } else {
-                dslHttp(Api::class.java)?.postBody(
+                dslHttp(Api::class.java, requestConfig.timeout)?.postBody(
                     requestConfig.url,
                     requestConfig.requestBody,
                     requestConfig.query,
@@ -462,7 +475,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
         }
 
         PATCH -> {
-            dslHttp(Api::class.java)?.patch(
+            dslHttp(Api::class.java, requestConfig.timeout)?.patch(
                 requestConfig.url,
                 requestConfig.body,
                 requestConfig.query,
@@ -471,7 +484,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
         }
 
         POST_FORM -> {
-            dslHttp(Api::class.java)?.postForm(
+            dslHttp(Api::class.java, requestConfig.timeout)?.postForm(
                 requestConfig.url,
                 requestConfig.formMap,
                 requestConfig.header
@@ -479,7 +492,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
         }
 
         PUT -> {
-            dslHttp(Api::class.java)?.put(
+            dslHttp(Api::class.java, requestConfig.timeout)?.put(
                 requestConfig.url,
                 requestConfig.body,
                 requestConfig.query,
@@ -488,7 +501,7 @@ fun http(config: RequestConfig.() -> Unit): Observable<Response<JsonElement>> {
         }
 
         else -> {
-            dslHttp(Api::class.java)?.get(
+            dslHttp(Api::class.java, requestConfig.timeout)?.get(
                 requestConfig.url,
                 requestConfig.query,
                 requestConfig.header
@@ -554,7 +567,7 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
         POST -> {
             if (requestConfig.filePart != null) {
                 //单文件上传
-                dslHttp(Api::class.java)?.uploadFile2Body(
+                dslHttp(Api::class.java, requestConfig.timeout)?.uploadFile2Body(
                     requestConfig.url,
                     requestConfig.filePart,
                     requestConfig.query,
@@ -562,21 +575,21 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
                 )
             } else if (!requestConfig.filePartList.isNullOrEmpty()) {
                 //多文件上传
-                dslHttp(Api::class.java)?.uploadFiles2Body(
+                dslHttp(Api::class.java, requestConfig.timeout)?.uploadFiles2Body(
                     requestConfig.url,
                     requestConfig.filePartList,
                     requestConfig.query,
                     requestConfig.header
                 )
             } else if (requestConfig.requestBody == null) {
-                dslHttp(Api::class.java)?.post2Body(
+                dslHttp(Api::class.java, requestConfig.timeout)?.post2Body(
                     requestConfig.url,
                     requestConfig.body,
                     requestConfig.query,
                     requestConfig.header
                 )
             } else {
-                dslHttp(Api::class.java)?.postBody2Body(
+                dslHttp(Api::class.java, requestConfig.timeout)?.postBody2Body(
                     requestConfig.url,
                     requestConfig.requestBody,
                     requestConfig.query,
@@ -586,7 +599,7 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
         }
 
         PUT -> {
-            dslHttp(Api::class.java)?.put2Body(
+            dslHttp(Api::class.java, requestConfig.timeout)?.put2Body(
                 requestConfig.url,
                 requestConfig.body,
                 requestConfig.query,
@@ -596,14 +609,14 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
 
         PATCH -> {
             if (requestConfig.requestBody == null) {
-                dslHttp(Api::class.java)?.patch2Body(
+                dslHttp(Api::class.java, requestConfig.timeout)?.patch2Body(
                     requestConfig.url,
                     requestConfig.body,
                     requestConfig.query,
                     requestConfig.header
                 )
             } else {
-                dslHttp(Api::class.java)?.patchBody(
+                dslHttp(Api::class.java, requestConfig.timeout)?.patchBody(
                     requestConfig.url,
                     requestConfig.requestBody,
                     requestConfig.query,
@@ -613,7 +626,7 @@ fun http2Body(config: RequestBodyConfig.() -> Unit): Observable<Response<Respons
         }
 
         else -> {
-            dslHttp(Api::class.java)?.get2Body(
+            dslHttp(Api::class.java, requestConfig.timeout)?.get2Body(
                 requestConfig.url,
                 requestConfig.query,
                 requestConfig.header
@@ -1016,6 +1029,9 @@ open class BaseRequestConfig {
 
     //在主线程观察
     var observableOnMain: Boolean = true
+
+    //超时时长 s
+    var timeout: Long? = null
 }
 
 open class RequestConfig : BaseRequestConfig() {

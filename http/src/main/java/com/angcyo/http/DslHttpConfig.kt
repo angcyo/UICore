@@ -31,12 +31,31 @@ class DslHttpConfig {
     //客户端队形
     var okHttpClient: OkHttpClient? = null
 
-    //构造器
-    val defaultOkHttpClientBuilder: OkHttpClient.Builder
-        get() = OkHttpClient.Builder().apply {
-            connectTimeout(TIME_OUT, TimeUnit.SECONDS)
-            readTimeout(TIME_OUT, TimeUnit.SECONDS)
-            writeTimeout(TIME_OUT, TimeUnit.SECONDS)
+    /**构造器配置
+     * [defaultOkHttpClientBuilder]
+     * */
+    val onConfigOkHttpClient = mutableListOf<(OkHttpClient.Builder) -> Unit>()
+
+    /**可以使用默认的[okHttpClient], 也可以返回自定义的client*/
+    var onBuildHttpClient: (OkHttpClient.Builder) -> OkHttpClient = {
+        okHttpClient ?: it.build()
+    }
+
+    /** baseUrl must end in '/'
+     * 可以优先获取自定义的地址 [com.angcyo.core.component.HttpConfigDialog.cCustomBaseUrl]
+     * 其次获取配置的地址 [com.angcyo.core.CoreApplication.getHostBaseUrl]
+     * */
+    var onGetBaseUrl: () -> String = { "http://api.angcyo.com/" }
+
+    /**默认构造器*/
+    fun defaultOkHttpClientBuilder(
+        timeout: Long? = null,
+        unit: TimeUnit? = null,
+    ): OkHttpClient.Builder {
+        return OkHttpClient.Builder().apply {
+            connectTimeout(timeout ?: TIME_OUT, unit ?: TimeUnit.SECONDS)
+            readTimeout(timeout ?: TIME_OUT, unit ?: TimeUnit.SECONDS)
+            writeTimeout(timeout ?: TIME_OUT, unit ?: TimeUnit.SECONDS)
             proxy(Proxy.NO_PROXY)
             followRedirects(true)
             followSslRedirects(true)
@@ -77,22 +96,7 @@ class DslHttpConfig {
                 chain.connection()返回不为空的Connection对象，可以查询到客户端所连接的服务器的IP地址以及TLS配置信息。
             * */
         }
-
-    /**构造器配置
-     * [defaultOkHttpClientBuilder]
-     * */
-    val onConfigOkHttpClient = mutableListOf<(OkHttpClient.Builder) -> Unit>()
-
-    /**可以使用默认的[okHttpClient], 也可以返回自定义的client*/
-    var onBuildHttpClient: (OkHttpClient.Builder) -> OkHttpClient = {
-        okHttpClient ?: it.build()
     }
-
-    /** baseUrl must end in '/'
-     * 可以优先获取自定义的地址 [com.angcyo.core.component.HttpConfigDialog.cCustomBaseUrl]
-     * 其次获取配置的地址 [com.angcyo.core.CoreApplication.getHostBaseUrl]
-     * */
-    var onGetBaseUrl: () -> String = { "http://api.angcyo.com/" }
 
     /**调用此方法, 添加自定义的配置*/
     fun configHttpBuilder(config: (OkHttpClient.Builder) -> Unit) {

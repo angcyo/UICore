@@ -137,7 +137,7 @@ class DslRequest {
             .build()
 
         val client = DslHttp.dslHttpConfig.onBuildHttpClient(
-            DslHttp.dslHttpConfig.defaultOkHttpClientBuilder.apply {
+            DslHttp.dslHttpConfig.defaultOkHttpClientBuilder().apply {
                 DslHttp.dslHttpConfig.onConfigOkHttpClient.forEach {
                     it(this)
                 }
