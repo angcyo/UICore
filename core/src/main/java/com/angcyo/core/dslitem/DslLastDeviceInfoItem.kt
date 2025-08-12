@@ -87,6 +87,8 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             return deviceInfo
         }
 
+        fun saveDeviceInfo2() = saveDeviceInfo()
+
         /**[isCompliance] 是否合规了*/
         fun deviceInfo(
             context: Context = app(),
