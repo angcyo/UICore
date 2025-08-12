@@ -52,6 +52,9 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
         /**分隔符*/
         const val SPLIT = "/"
 
+        /**最前面, 额外的设备信息获取回调*/
+        var beforeAdditionalInfoAction: (() -> String?)? = null
+
         /**额外的设备信息获取回调*/
         var additionalInfoAction: (() -> String?)? = null
 
@@ -67,8 +70,10 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
             context: Context = app(),
             isCompliance: Boolean = ComplianceCheck.isCompliance() /*&& !RBackground.isBackground()*/,
             config: DslSpan.() -> Unit = {}
-        ) {
-            deviceInfo(context, isCompliance) {
+        ): String {
+            val deviceInfo = deviceInfo(context, isCompliance, {
+                beforeAdditionalInfoAction?.invoke()?.let { append(it) }
+            }) {
                 config()
                 appendln()
                 append("<-${nowTimeString()}")
@@ -77,15 +82,22 @@ class DslLastDeviceInfoItem : DslAdapterItem(), IFragmentItem {
                 additionalInfoAction?.invoke()?.let { append(it) }
                 additionalInfoAction2?.invoke()?.let { append(it) }
                 additionalInfoAction3?.invoke()?.let { append(it) }
-            }.toString().writeTo(LogFile.device.toLogFilePath(), false)
+            }.toString()
+            deviceInfo.writeTo(LogFile.device.toLogFilePath(), false)
+            return deviceInfo
         }
 
         /**[isCompliance] 是否合规了*/
         fun deviceInfo(
             context: Context = app(),
             isCompliance: Boolean = LibHawkKeys.isCompliance,
-            config: DslSpan.() -> Unit = {}
+            beforeConfig: DslSpan.() -> Unit = {
+                beforeAdditionalInfoAction?.invoke()?.let { append(it) }
+            },
+            config: DslSpan.() -> Unit = {},
         ) = span {
+            beforeConfig(this)
+
             val api = HttpConfigDialog.appBaseUrl //getAppString("base_api")
             if (api.isNotEmpty()) {
                 appendLine(api)
