@@ -1,10 +1,12 @@
 package com.angcyo.library.ex
 
+import android.icu.math.BigDecimal
+import android.icu.text.DecimalFormat
+import android.icu.text.NumberFormat
+import android.os.Build
 import android.os.SystemClock
 import com.angcyo.library.component.hawk.LibHawkKeys
-import java.math.BigDecimal
-import java.text.DecimalFormat
-import java.text.NumberFormat
+
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
@@ -92,8 +94,14 @@ fun Int.toZero(leftCount: Int = 2, rightCount: Int = 0): String {
             b.append("0")
         }
     }
-    val df = DecimalFormat("$b")
-    return df.format(this)
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        val df = DecimalFormat("$b")
+        return df.format(this)
+    } else {
+        val df = java.text.DecimalFormat("$b")
+        return df.format(this)
+    }
 }
 
 /**
@@ -174,7 +182,11 @@ fun Number.toRatioStr(sum: Number): String = "${(this.toFloat() / sum.toFloat() 
  * */
 fun String?.toBigLongOrNull(): Long? {
     return this?.toLongOrNull() ?: try {
-        BigDecimal(this).toLong()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            BigDecimal(this).toLong()
+        } else {
+            java.math.BigDecimal(this).toLong()
+        }
     } catch (e: Exception) {
         null
     }
@@ -233,9 +245,15 @@ fun Float.equal2(value: Float): Boolean = toDouble().equal2(value.toDouble())
 
 /**判断2个浮点数是否相等, 数值全等*/
 fun Double.equal2(value: Double): Boolean {
-    val data1 = BigDecimal(this)
-    val data2 = BigDecimal(value)
-    return data1.compareTo(data2) == 0
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        val data1 = BigDecimal(this)
+        val data2 = BigDecimal(value)
+        return data1.compareTo(data2) == 0
+    } else {
+        val data1 = java.math.BigDecimal(this)
+        val data2 = java.math.BigDecimal(value)
+        return data1.compareTo(data2) == 0
+    }
 }
 
 /**有损转成[Float]类型
@@ -251,18 +269,32 @@ fun Double.toLossyFloat(threshold: Double = 0.001): Float = if (this.absoluteVal
 
 /**保留小数点多少位*/
 fun Float.formatShow(n: Int = 2): String {
-    val instance = NumberFormat.getInstance()
-    instance.isGroupingUsed = false //设置不使用科学计数器
-    instance.maximumFractionDigits = n //小数点最大位数
-    return instance.format(this)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        val instance = NumberFormat.getInstance()
+        instance.isGroupingUsed = false //设置不使用科学计数器
+        instance.maximumFractionDigits = n //小数点最大位数
+        return instance.format(this)
+    } else {
+        val instance = java.text.NumberFormat.getInstance()
+        instance.isGroupingUsed = false //设置不使用科学计数器
+        instance.maximumFractionDigits = n //小数点最大位数
+        return instance.format(this)
+    }
 }
 
 /**保留小数点多少位*/
 fun Double.formatShow(n: Int = 2): String {
-    val instance = NumberFormat.getInstance()
-    instance.isGroupingUsed = false //设置不使用科学计数器
-    instance.maximumFractionDigits = n //小数点最大位数
-    return instance.format(this)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        val instance = NumberFormat.getInstance()
+        instance.isGroupingUsed = false //设置不使用科学计数器
+        instance.maximumFractionDigits = n //小数点最大位数
+        return instance.format(this)
+    } else {
+        val instance = java.text.NumberFormat.getInstance()
+        instance.isGroupingUsed = false //设置不使用科学计数器
+        instance.maximumFractionDigits = n //小数点最大位数
+        return instance.format(this)
+    }
 }
 
 /**优先确保1.0 返回 1
