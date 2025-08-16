@@ -109,6 +109,7 @@ fun Activity.showDebugInfoView(config: ActivityDebugInfoConfig) {
     val tag = config.tag
 
     val decorView = window.decorView
+    val isTransparentNavigation = window.navigationBarColor == Color.TRANSPARENT
     val contentView = window.findViewById<View>(Window.ID_ANDROID_CONTENT)
 
     val debugTextView = decorView.findViewWithTag<TextView>(tag)
@@ -281,7 +282,7 @@ fun Activity.showDebugInfoView(config: ActivityDebugInfoConfig) {
             if (resourceId != 0) {
                 navBarHeight = resources.getDimensionPixelSize(resourceId)
             }
-            layoutParams.bottomMargin = navBarHeight
+            layoutParams.bottomMargin = if (isTransparentNavigation) 0 else navBarHeight
         }
         if (layoutParams.gravity.isGravityTop()) {
             layoutParams.topMargin = statusBarHeight
