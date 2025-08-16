@@ -3,12 +3,16 @@ package com.angcyo.activity
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Binder
 import android.os.Bundle
 import android.os.Process
 import android.view.KeyEvent
 import android.view.MotionEvent
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.angcyo.DslAHelper
@@ -61,8 +65,33 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         logActivityInfo()
 
         baseDslViewHolder = DslViewHolder(window.decorView)
+        val statusBarColor = window.statusBarColor
+        val navigationBarColor = window.navigationBarColor
+        if (statusBarColor == Color.TRANSPARENT || navigationBarColor == Color.TRANSPARENT) {
+            hookApplyWindowInsets(_vh.itemView)
+        }
         onCreateAfter(savedInstanceState)
         intent?.let { onHandleIntent(it) }
+    }
+
+    open fun hookApplyWindowInsets(view: View) {
+        ViewCompat.setOnApplyWindowInsetsListener(view) { view, insets ->
+            onApplyWindowInsets(view, insets)
+        }
+    }
+
+    open fun onApplyWindowInsets(view: View, insets: WindowInsetsCompat): WindowInsetsCompat {
+        //val statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+        if (view.paddingBottom == 0) {
+            val navigationBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            view.setPadding(
+                view.paddingLeft,
+                view.paddingTop,
+                view.paddingRight,
+                navigationBarInsets.bottom
+            )
+        }
+        return insets
     }
 
     override fun onNewIntent(intent: Intent?) {
