@@ -787,6 +787,14 @@ fun String.toClass(): Class<*>? {
 fun String.openApp(flags: Int = if (this == app().packageName) Intent.FLAG_ACTIVITY_SINGLE_TOP else 0) =
     app().openApp(this, flags = flags)
 
+/**拼接上另一个字符串*/
+fun String?.connect(str: String?): String? {
+    if (this == null || str == null) {
+        return this
+    }
+    return "$this$str"
+}
+
 /**host/url*/
 fun String?.connectUrl(url: String?): String {
     val h = this?.trimEnd('/') ?: ""

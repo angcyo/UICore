@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.angcyo.widget.layout.RLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/lib_dialog_root_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
     android:background="@drawable/dialog_white_top_round_bg_shape"
     android:orientation="vertical"
     app:r_max_height="0.5sh">
@@ -24,6 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/dialog_white_top_round_bg_shape" />
+        android:background="@drawable/dialog_white_top_round_bg_shape"
+        tools:layout_height="300dp" />
 
 </com.angcyo.widget.layout.RLinearLayout>
