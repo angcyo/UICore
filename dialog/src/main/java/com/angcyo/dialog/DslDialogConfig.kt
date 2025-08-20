@@ -600,6 +600,8 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
             if (dialogGravity.isGravityCenterVertical()) {
                 dialogViewHolder.itemView.setBackgroundResource(R.drawable.dialog_white_round_bg_shape)
             }
+        } else if (contentBgDrawable != null && contentBgDrawable !is UndefinedDrawable) {
+            dialogViewHolder.group(R.id.lib_dialog_root_layout)?.background = contentBgDrawable
         }
         //width/height 优化
         val lp = dialogViewHolder.itemView.layoutParams
