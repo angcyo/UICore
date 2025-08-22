@@ -142,6 +142,11 @@ fun RectF.isOverflowOf(rect: Rect): Boolean {
     return false
 }
 
+/**[this]矩形是否完全在[rect]范围内, 重合也算在范围内*/
+fun RectF.isInRect(rect: RectF): Boolean {
+    return left >= rect.left && right <= rect.right && top >= rect.top && bottom <= rect.bottom
+}
+
 /**将[this]矩形, 限制在[limitRect]内*/
 fun RectF.limitInRect(limitRect: RectF, result: RectF = this): RectF {
     val w1 = width()

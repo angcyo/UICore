@@ -147,6 +147,11 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
         delegate.refresh()
     }
 
+    fun removeBeforeRendererListIf(filter: (BaseRenderer) -> Boolean) {
+        beforeRendererList.removeAll(filter)
+        delegate.refresh()
+    }
+
     /**[addAfterRendererList]*/
     fun removeAfterRendererList(renderer: BaseRenderer) {
         afterRendererList.remove(renderer)

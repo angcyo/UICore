@@ -247,7 +247,7 @@ fun RectF.toRect(
     }
 }
 
-/**@return 返回新的对象*/
+/**@return 返回[unit]单位的新对象*/
 @MM
 fun RectF.toRectMm(unit: IValueUnit? = MM_UNIT) = toRectUnit(unit)
 
