@@ -16,7 +16,7 @@
   <string name="ui_add">"Добавлять"</string>
   <string name="ui_back">"Назад"</string>
   <string name="ui_choose">"Пожалуйста, выберите"</string>
-  <string name="ui_confirm">@string /dialog_positive</string>
+  <string name="ui_confirm">@string/dialog_positive</string>
   <string name="ui_delete">"Удалить"</string>
   <string name="ui_delete_fail">"Не удалось удалить"</string>
   <string name="ui_delete_tip">"После удаления его невозможно восстановить, хотите продолжить?"</string>
