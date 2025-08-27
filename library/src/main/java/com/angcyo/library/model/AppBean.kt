@@ -12,10 +12,10 @@ import android.graphics.drawable.Drawable
  */
 data class AppBean(
     var packageName: String,
-    var versionName: String,
+    var versionName: String?,
     var versionCode: Long,
-    var appIcon: Drawable,
-    var appName: CharSequence,
-    var packageInfo: PackageInfo,
+    var appIcon: Drawable?,
+    var appName: CharSequence?,
+    var packageInfo: PackageInfo?,
     var des: String? = null
 )

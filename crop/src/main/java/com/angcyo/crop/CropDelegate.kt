@@ -105,7 +105,8 @@ class CropDelegate(val view: View) {
     //region ---touch---
 
     /**缩放手势*/
-    val scaleDetector: ScaleGestureDetector = ScaleGestureDetector(view.context,
+    val scaleDetector: ScaleGestureDetector = ScaleGestureDetector(
+        view.context,
         object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
             override fun onScale(detector: ScaleGestureDetector): Boolean {
                 if (overlay.enableClipMoveMode) {
@@ -516,7 +517,8 @@ class CropDelegate(val view: View) {
             val result = Bitmap.createBitmap(
                 clipRect.width(),
                 clipRect.height(),
-                bitmap.config//if (originBitmap.hasAlpha()) Bitmap.Config.ARGB_8888 else originBitmap.config
+                bitmap.config
+                    ?: Bitmap.Config.ARGB_8888//if (originBitmap.hasAlpha()) Bitmap.Config.ARGB_8888 else originBitmap.config
             )
             val canvas = CropCanvas(result)
 

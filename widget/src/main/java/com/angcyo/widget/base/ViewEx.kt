@@ -531,7 +531,7 @@ fun View.saveView(): Bitmap? {
     isDrawingCacheEnabled = true
     buildDrawingCache()
     val drawingCache = drawingCache
-    val bitmap = drawingCache.copy(drawingCache.config, false)
+    val bitmap = drawingCache.copy(drawingCache.config ?: Bitmap.Config.ARGB_8888, false)
     destroyDrawingCache()
     isDrawingCacheEnabled = false
     return bitmap
@@ -549,7 +549,7 @@ fun Context.saveView(@LayoutRes layoutId: Int, init: (View) -> Unit): Bitmap? {
     view.isDrawingCacheEnabled = true
     view.buildDrawingCache()
     var cache = view.drawingCache
-    cache = cache.copy(cache.config, false)
+    cache = cache.copy(cache.config ?: Bitmap.Config.ARGB_8888, false)
     view.destroyDrawingCache()
     view.isDrawingCacheEnabled = false
     return cache

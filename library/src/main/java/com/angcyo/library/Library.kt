@@ -160,7 +160,7 @@ fun Context.getAppName(): String {
     val packInfo: PackageInfo
     try {
         packInfo = packageManager.getPackageInfo(appName, 0)
-        appName = packInfo.applicationInfo.loadLabel(packageManager).toString()
+        appName = packInfo.applicationInfo?.loadLabel(packageManager).toString()
     } catch (e: PackageManager.NameNotFoundException) {
         e.printStackTrace()
     }
@@ -175,7 +175,7 @@ fun Context.getAppIcon(): Drawable? {
     val packageManager = packageManager
     try {
         val packInfo = packageManager.getPackageInfo(appName, 0)
-        return packInfo.applicationInfo.loadIcon(packageManager)
+        return packInfo.applicationInfo?.loadIcon(packageManager)
     } catch (e: PackageManager.NameNotFoundException) {
         e.printStackTrace()
     }
@@ -198,7 +198,7 @@ fun Context.getAppVersionName(): String {
         packInfo = packageManager.getPackageInfo(
             packageName, 0
         )
-        version = packInfo.versionName
+        version = packInfo?.versionName ?: ""
     } catch (e: PackageManager.NameNotFoundException) {
         e.printStackTrace()
     }

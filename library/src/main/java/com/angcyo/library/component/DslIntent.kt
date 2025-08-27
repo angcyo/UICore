@@ -10,7 +10,11 @@ import android.os.Build
 import android.provider.Settings
 import com.angcyo.library.L
 import com.angcyo.library.app
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.baseConfig
+import com.angcyo.library.ex.fileUri
+import com.angcyo.library.ex.getAppOpenIntentByPackageName
+import com.angcyo.library.ex.mimeType
+import com.angcyo.library.ex.uriConfig
 import com.angcyo.library.model.AppBean
 import java.io.File
 
@@ -293,10 +297,12 @@ class DslIntent {
 //                        clipData = this
 //                    }
                 }
+
                 shareUri != null -> {
                     putExtra(Intent.EXTRA_STREAM, shareUri)
                     uriConfig(context, shareUri!!)
                 }
+
                 else -> {
                     baseConfig(context)
                 }
@@ -415,10 +421,10 @@ fun String.appBean(context: Context = app()): AppBean? {
 
         AppBean(
             packageInfo.packageName,
-            packageInfo.versionName,
+            packageInfo?.versionName,
             code,
-            packageInfo.applicationInfo.loadIcon(packageManager),
-            packageInfo.applicationInfo.loadLabel(context.packageManager),
+            packageInfo.applicationInfo?.loadIcon(packageManager),
+            packageInfo.applicationInfo?.loadLabel(context.packageManager),
             packageInfo
         )
     } catch (e: Exception) {

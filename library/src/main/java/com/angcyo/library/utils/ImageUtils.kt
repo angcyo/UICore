@@ -2,7 +2,12 @@ package com.angcyo.library.utils
 
 import android.annotation.TargetApi
 import android.content.Context
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.os.Build
 import android.renderscript.Allocation
 import android.renderscript.Element
@@ -147,7 +152,7 @@ fun stackBlur(src: Bitmap, radius: Int, recycle: Boolean): Bitmap? {
     ret = if (recycle) {
         src
     } else {
-        src.copy(src.config, true)
+        src.copy(src.config ?: Bitmap.Config.ARGB_8888, true)
     }
     if (radius < 1) {
         return null

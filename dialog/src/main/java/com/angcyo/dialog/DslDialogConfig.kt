@@ -21,6 +21,8 @@ import androidx.annotation.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDialog
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -632,6 +634,38 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
                 SpanClickMethod.install(this)
             }
         }
+        //--
+        hookApplyWindowInsets(dialogViewHolder.itemView)
+    }
+
+    open fun hookApplyWindowInsets(view: View) {
+        ViewCompat.setOnApplyWindowInsetsListener(view) { view, insets ->
+            onApplyWindowInsets(view, insets)
+        }
+    }
+
+    open fun onApplyWindowInsets(view: View, insets: WindowInsetsCompat): WindowInsetsCompat {
+        if (dialogHeight == -1 && view.paddingTop == 0) {
+            val statusBarInsets =
+                insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            view.setPadding(
+                view.paddingLeft,
+                statusBarInsets.top,
+                view.paddingRight,
+                view.paddingBottom,
+            )
+        }
+        if (view.paddingBottom == 0) {
+            val navigationBarInsets =
+                insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            view.setPadding(
+                view.paddingLeft,
+                view.paddingTop,
+                view.paddingRight,
+                navigationBarInsets.bottom
+            )
+        }
+        return insets
     }
 
     /** Dialog -> AppCompatDialog -> AlertDialog */

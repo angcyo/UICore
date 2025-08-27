@@ -210,7 +210,7 @@ object RUtils {
                 val packageInfo = context.packageManager.getPackageInfo(packageName, GET_ACTIVITIES)
                 if (packageInfo != null) {
                     val info = packageInfo.applicationInfo
-                    return info.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+                    return (info?.flags ?: 0) and ApplicationInfo.FLAG_DEBUGGABLE != 0
                 }
             } else {
                 val info = context.applicationInfo

@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.widget.LinearLayout
 import androidx.annotation.ColorInt
+import androidx.core.graphics.createBitmap
 import com.angcyo.library.component.hawk.LibHawkKeys
 import kotlin.math.max
 import kotlin.math.min
@@ -75,7 +76,7 @@ fun Bitmap.toGrayHandle(
 ): Bitmap {
     val width = width
     val height = height
-    val result = Bitmap.createBitmap(width, height, config)
+    val result = createBitmap(width, height, config ?: Bitmap.Config.ARGB_8888)
 
     for (y in 0 until height) {
         for (x in 0 until width) {
@@ -111,8 +112,8 @@ fun Bitmap.toGrayHandleAlpha(
     val width = width
     val height = height
 
-    val resultBitmap = Bitmap.createBitmap(width, height, config)
-    val alphaBitmap = Bitmap.createBitmap(width, height, config)
+    val resultBitmap = createBitmap(width, height, config ?: Bitmap.Config.ARGB_8888)
+    val alphaBitmap = createBitmap(width, height, config ?: Bitmap.Config.ARGB_8888)
 
     val result = arrayOf(resultBitmap, alphaBitmap)
 
@@ -159,7 +160,7 @@ fun Bitmap.toBlackWhiteHandle(
 ): Bitmap {
     val width = width
     val height = height
-    val result = Bitmap.createBitmap(width, height, config)
+    val result = createBitmap(width, height, config ?: Bitmap.Config.ARGB_8888)
 
     for (y in 0 until height) {
         for (x in 0 until width) {
@@ -215,8 +216,8 @@ fun Bitmap.toBlackWhiteHandleAlpha(
     val width = width
     val height = height
 
-    val resultBitmap = Bitmap.createBitmap(width, height, config)
-    val alphaBitmap = Bitmap.createBitmap(width, height, config)
+    val resultBitmap = createBitmap(width, height, config ?: Bitmap.Config.ARGB_8888)
+    val alphaBitmap = createBitmap(width, height, config ?: Bitmap.Config.ARGB_8888)
 
     val result = arrayOf(resultBitmap, alphaBitmap)
 
@@ -454,7 +455,7 @@ fun Bitmap.eachColorChannel(
 
 /**给图片添加一个背景颜色*/
 fun Bitmap.addBgColor(bgColor: Int): Bitmap {
-    val bitmap = Bitmap.createBitmap(width, height, config)
+    val bitmap = createBitmap(width, height, config ?: Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
     canvas.drawColor(bgColor)
     canvas.drawBitmap(this, null, Rect(0, 0, width, height), Paint(Paint.ANTI_ALIAS_FLAG))

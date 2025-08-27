@@ -10,7 +10,12 @@ import androidx.core.app.NotificationCompat
 import com.angcyo.base.dslAHelper
 import com.angcyo.library.L
 import com.angcyo.library.app
-import com.angcyo.library.component.*
+import com.angcyo.library.component.DslIntent
+import com.angcyo.library.component.DslNotify
+import com.angcyo.library.component.DslRemoteView
+import com.angcyo.library.component.appBean
+import com.angcyo.library.component.dslNotify
+import com.angcyo.library.component.dslRemoteView
 import com.angcyo.library.ex.fileSizeString
 import com.angcyo.library.ex.toBitmap
 import com.angcyo.library.ex.unregisterReceiver
@@ -54,7 +59,7 @@ class DslDownloadNotify : DslListener() {
     var _deleteReceiver = DeleteBroadcastReceiver()
 
     init {
-        logo = app().packageName.appBean()!!.appIcon.toBitmap()
+        logo = app().packageName.appBean()!!.appIcon?.toBitmap()
 
         onTaskStart = {
             _notify {
