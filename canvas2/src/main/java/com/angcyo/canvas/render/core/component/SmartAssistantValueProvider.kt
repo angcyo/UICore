@@ -112,25 +112,30 @@ class SmartAssistantValueProvider(val delegate: CanvasRenderDelegate) :
 
     private fun addBoundsXValue(
         list: MutableList<SmartAssistantReferenceValue>,
-        bounds: RectF,
+        bounds: RectF?,
         obj: Any?
     ) {
-        list.add(
-            SmartAssistantReferenceValue(bounds.left, obj)
-        )
-        list.add(
-            SmartAssistantReferenceValue(bounds.centerX(), obj)
-        )
-        list.add(
-            SmartAssistantReferenceValue(bounds.right, obj)
-        )
+        if (bounds != null) {
+            list.add(
+                SmartAssistantReferenceValue(bounds.left, obj)
+            )
+            list.add(
+                SmartAssistantReferenceValue(bounds.centerX(), obj)
+            )
+            list.add(
+                SmartAssistantReferenceValue(bounds.right, obj)
+            )
+        }
     }
 
     private fun addBoundsYValue(
         list: MutableList<SmartAssistantReferenceValue>,
-        bounds: RectF,
+        bounds: RectF?,
         obj: Any?
     ) {
+        if (bounds == null) {
+            return
+        }
         list.add(SmartAssistantReferenceValue(bounds.top, obj))
         list.add(SmartAssistantReferenceValue(bounds.centerY(), obj))
         list.add(SmartAssistantReferenceValue(bounds.bottom, obj))

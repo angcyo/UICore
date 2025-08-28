@@ -19,7 +19,7 @@ data class LimitInfo(
     @CanvasInsideCoordinate
     val path: Path,
     /**[path]对应的边界*/
-    val bounds: RectF,
+    val bounds: RectF? = null,
     /**线框的颜色*/
     val strokeColor: Int? = Color.RED,
     /**线框的宽度*/
