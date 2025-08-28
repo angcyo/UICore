@@ -13,7 +13,13 @@ import android.view.WindowInsets
 import android.widget.FrameLayout
 import androidx.core.view.GravityCompat
 import com.angcyo.library.L
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.anim
+import com.angcyo.library.ex.append
+import com.angcyo.library.ex.back
+import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.getStatusBarHeight
+import com.angcyo.library.ex.hideSoftInput
+import com.angcyo.library.ex.offsetTopTo
 import com.angcyo.widget.R
 import com.angcyo.widget.layout.DslSoftInputLayout.Companion.ACTION_HIDE_EMOJI
 import com.angcyo.widget.layout.DslSoftInputLayout.Companion.ACTION_HIDE_SOFT_INPUT
@@ -56,6 +62,9 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     //<editor-fold desc="属性配置">
+
+    /**是否激活组件*/
+    var enableLayout = true
 
     /**激活显示表情/键盘时的动画*/
     var enableShowAnimator = true
@@ -127,6 +136,10 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
         val typedArray =
             context.obtainStyledAttributes(attributeSet, R.styleable.DslSoftInputLayout)
 
+        enableLayout = typedArray.getBoolean(
+            R.styleable.DslSoftInputLayout_r_enable_layout,
+            enableLayout
+        )
         enableShowAnimator = typedArray.getBoolean(
             R.styleable.DslSoftInputLayout_r_enable_show_animator,
             enableShowAnimator
@@ -223,7 +236,7 @@ class DslSoftInputLayout(context: Context, attributeSet: AttributeSet? = null) :
             _isBottomWindowInset = insets.systemWindowInsetBottom > 0
             if (insets.systemWindowInsetBottom > 0) {
                 //需要显示键盘
-                if (isEnabled) { //显示键盘的时候判断, 阻止显示流程
+                if (enableLayout && isEnabled) { //显示键盘的时候判断, 阻止显示流程
                     removeDelayHandle()
                     delayHandle(ACTION_SHOW_SOFT_INPUT, insets.systemWindowInsetBottom)
                 }

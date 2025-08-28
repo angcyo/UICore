@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="DslSoftInputLayout">
+        <attr name="r_enable_layout" format="boolean" />
         <attr name="r_enable_show_animator" format="boolean" />
         <attr name="r_enable_hide_animator" format="boolean" />
         <attr name="r_enable_animator" format="boolean" />
