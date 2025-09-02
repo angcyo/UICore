@@ -147,6 +147,9 @@ fun JsonBuilder.addPage(page: Page?) {
 fun httpBeanType(wrapClass: Class<*>, typeClass: Class<*>): Type =
     type(wrapClass, typeClass)
 
+/**
+ * httpBeanType(HttpBean::class, MaterialBean::class);
+ * */
 fun httpBeanType(wrapClass: KClass<*>, typeClass: KClass<*>): Type =
     httpBeanType(wrapClass.java, typeClass.java)
 
@@ -158,6 +161,9 @@ fun httpBeanType(wrapClass: KClass<*>, typeClass: KClass<*>): Type =
 fun httpListBeanType(wrapClass: Class<*>, typeClass: Class<*>): Type =
     type(wrapClass, type(List::class.java, typeClass))
 
+/**
+ * httpListBeanType(HttpBean::class, MaterialBean::class);
+ * */
 fun httpListBeanType(wrapClass: KClass<*>, typeClass: KClass<*>): Type =
     httpListBeanType(wrapClass.java, typeClass.java)
 

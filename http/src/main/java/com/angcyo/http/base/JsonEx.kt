@@ -343,6 +343,12 @@ fun Any?.toJson(config: (GsonBuilder.() -> Unit)? = null): String? {
     }
 }
 
+/**[String.fromJson]*/
+inline fun <reified T> String?.fromJson(): T? = this?.fromJson(T::class.java)
+
+inline fun <reified T> String?.fromJson2(): T? =
+    gson().fromJson<T>(this, object : TypeToken<T>() {}.type)
+
 /**json字符串, 转成指定对象.
  * 注意, 如果json格式有问题,会返回null, 异常会被捕获
  *
@@ -390,12 +396,6 @@ fun String?.toMapFromJson(): Map<String, Any>? = this?.fromJson<Map<String, Any>
  * */
 fun <T> String?.toListFromJson(typeClass: Class<*>): List<T>? =
     fromJson<List<T>>(listType(typeClass))
-
-/**[String.fromJson]*/
-inline fun <reified T> String?.fromJson(): T? = this?.fromJson(T::class.java)
-
-inline fun <reified T> String?.fromJson2(): T? =
-    gson().fromJson<T>(this, object : TypeToken<T>() {}.type)
 
 //</editor-fold desc="Json 解析">
 
