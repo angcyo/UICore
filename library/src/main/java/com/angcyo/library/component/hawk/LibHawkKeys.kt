@@ -71,7 +71,7 @@ object LibHawkKeys {
     /**[CanvasDelegate]item的bounds范围
      * l,t,r,b mm单位*/
     @MM
-    var canvasItemBoundsLimit: String by HawkPropertyValue<Any, String>("-1000,-1000,1000,8000")
+    var canvasItemBoundsLimit: String by HawkPropertyValue<Any, String>("-9999,-9999,9999,9999")
 
     /**[CanvasDelegate]item的宽高
      * minw,minh,maxw,maxh mm单位*/
