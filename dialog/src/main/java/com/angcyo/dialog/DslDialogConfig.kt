@@ -414,7 +414,9 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
         dialogBgDrawable = _drawable(drawable)
     }
 
-    /**设置透明背景*/
+    /**设置透明背景
+     * - [dimAmount] 变暗指数
+     * */
     fun setTransparentBackground() {
         dialogBgDrawable = ColorDrawable(Color.TRANSPARENT)
         contentBgDrawable = ColorDrawable(Color.TRANSPARENT)
