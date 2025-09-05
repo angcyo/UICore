@@ -8,6 +8,7 @@ import com.angcyo.library.component.RegionTouchDetector
 import com.angcyo.library.ex.decimal
 import com.angcyo.library.ex.dpi
 import com.angcyo.library.ex.progressValueFraction
+import com.angcyo.library.ex.visible
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.clickIt
 import com.angcyo.widget.progress.DslProgressBar
@@ -76,6 +77,9 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
 
     /**seek bar的高度*/
     var itemSeekProgressHeight: Int = 8 * dpi
+
+    /**是否要显示滑块*/
+    var itemShowSeekBar: Boolean = true
 
     /**[itemNumberValue]转换成对应类型的数值*/
     val _itemTypeValue: Any?
@@ -234,6 +238,7 @@ open class DslSeekBarItem : DslSeekBarInfoItem() {
                     }
                 }
             }
+            visible(itemShowSeekBar)
         }
         super.initSeekBarView(itemHolder, itemPosition, adapterItem, payloads)
     }
