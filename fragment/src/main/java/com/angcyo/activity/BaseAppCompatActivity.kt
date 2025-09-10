@@ -11,6 +11,7 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
@@ -81,9 +82,15 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
     }
 
     open fun onApplyWindowInsets(view: View, insets: WindowInsetsCompat): WindowInsetsCompat {
-        //val statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+        val statusBars = WindowInsetsCompat.Type.statusBars()
+        val navigationBars = WindowInsetsCompat.Type.navigationBars()
+        val ime = WindowInsetsCompat.Type.ime()
+
+        val statusBarInsets = insets.getInsets(statusBars)
+        val navigationBarInsets = insets.getInsets(navigationBars)
+        val imeInsets = insets.getInsets(ime)
+
         if (view.paddingBottom == 0) {
-            val navigationBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             view.setPadding(
                 view.paddingLeft,
                 view.paddingTop,
@@ -91,7 +98,21 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
                 navigationBarInsets.bottom
             )
         }
-        return insets
+        val maxBottom = maxOf(imeInsets.bottom, navigationBarInsets.bottom)
+        val builder = WindowInsetsCompat.Builder()
+        builder.setInsets(statusBars, statusBarInsets)
+        builder.setInsets(
+            navigationBars,
+            Insets.of(
+                navigationBarInsets.left,
+                navigationBarInsets.top,
+                navigationBarInsets.right,
+                maxBottom - view.paddingBottom
+            )
+        )
+        builder.setInsets(ime, imeInsets)
+        //insets.replaceSystemWindowInsets()
+        return builder.build()
     }
 
     override fun onNewIntent(intent: Intent?) {
