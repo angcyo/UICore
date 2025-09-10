@@ -29,7 +29,7 @@ open class DslLabelWheelItem : DslBaseLabelItem(), ITextItem, ILoadItem, IWheelI
 
     /**是否显示item的文本Drawable
      * [IToDrawable]*/
-    var itemShowTextDrawable: Boolean = true
+    var itemShowTextDrawable: Boolean = false
 
     override var textItemConfig: TextItemConfig = TextItemConfig()
 
