@@ -213,11 +213,20 @@ fun CharSequence?.orString(default: CharSequence = "--"): String =
 
 fun CharSequence?.toString(): String = orString("")
 
+fun Any?.toCharSequence(): CharSequence = when (this) {
+    null -> ""
+    is CharSequence -> this
+    is IToText -> toText() ?: ""
+    is Char -> java.lang.String.valueOf(this)
+    is Throwable -> stackTraceToString()
+    else -> toString()
+}
+
 fun Any?.toStr(): String = when (this) {
     null -> ""
+    is String -> this
     is IToText -> toText().toStr()
     is Char -> java.lang.String.valueOf(this)
-    is String -> this
     is Throwable -> stackTraceToString()
     else -> toString()
 }

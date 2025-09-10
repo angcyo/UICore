@@ -10,7 +10,10 @@ import com.angcyo.item.style.ITextItem
 import com.angcyo.item.style.LoadItemConfig
 import com.angcyo.item.style.TextItemConfig
 import com.angcyo.library.ex.ResultThrowable
+import com.angcyo.library.ex.dpi
+import com.angcyo.library.extend.IToDrawable
 import com.angcyo.widget.DslViewHolder
+import com.angcyo.widget.span.span
 
 /**
  *
@@ -23,6 +26,10 @@ open class DslLabelWheelItem : DslBaseLabelItem(), ITextItem, ILoadItem, IWheelI
 
     /**点击item之前拦截处理, 返回true拦截默认处理*/
     var itemClickBefore: (clickView: View) -> Boolean = { false }
+
+    /**是否显示item的文本Drawable
+     * [IToDrawable]*/
+    var itemShowTextDrawable: Boolean = true
 
     override var textItemConfig: TextItemConfig = TextItemConfig()
 
@@ -65,10 +72,26 @@ open class DslLabelWheelItem : DslBaseLabelItem(), ITextItem, ILoadItem, IWheelI
         super.onItemBind(itemHolder, itemPosition, adapterItem, payloads)
         itemHolder.tv(textItemConfig.itemTextViewId)?.apply {
             text = itemWheelList?.getOrNull(itemSelectedIndex)?.run {
-                if (itemWheelUnit == null) {
+                val str = if (itemWheelUnit == null) {
                     itemWheelToTextAction(this)
                 } else {
                     "${itemWheelToTextAction(this)}${itemWheelUnit}"
+                }
+                //--IToDrawable
+                val item = this
+                if (itemShowTextDrawable && item is IToDrawable) {
+                    val drawable = item.toDrawable()
+                    if (drawable != null) {
+                        span {
+                            appendDrawable(drawable)
+                            appendSpace(4 * dpi)
+                            append(str)
+                        }
+                    } else {
+                        str
+                    }
+                } else {
+                    str
                 }
             } ?: textItemConfig.itemText //默认文本
         }
