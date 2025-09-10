@@ -1,5 +1,6 @@
 package com.angcyo.widget.span
 
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.MaskFilter
 import android.graphics.Typeface
@@ -12,6 +13,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
+import androidx.core.graphics.drawable.toDrawable
+import com.angcyo.library.component.lastContext
 import com.angcyo.library.ex.*
 import com.angcyo.widget.R
 import kotlin.math.max
@@ -216,6 +219,15 @@ class DslSpan : Appendable {
             append("<img>", ImageSpan(drawable, alignment))
         }
         return this
+    }
+
+    /**追加图片*/
+    fun appendBitmap(
+        bitmap: Bitmap?,
+        alignment: Int = DynamicDrawableSpan.ALIGN_BASELINE
+    ): DslSpan {
+        val drawable = bitmap?.toDrawable(lastContext.resources)
+        return appendDrawable(drawable, alignment)
     }
 
     /**追加图片*/
