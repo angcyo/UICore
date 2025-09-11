@@ -21,6 +21,7 @@ import androidx.annotation.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDialog
+import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
@@ -647,19 +648,35 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
     }
 
     open fun onApplyWindowInsets(view: View, insets: WindowInsetsCompat): WindowInsetsCompat {
+        val statusBars = WindowInsetsCompat.Type.statusBars()
+        val navigationBars = WindowInsetsCompat.Type.navigationBars()
+        val ime = WindowInsetsCompat.Type.ime()
+
+        val statusBarInsets = insets.getInsets(statusBars)
+        val navigationBarInsets = insets.getInsets(navigationBars)
+        val imeInsets = insets.getInsets(ime)
+
+        val maxBottom = maxOf(imeInsets.bottom, navigationBarInsets.bottom)
+        val builder = WindowInsetsCompat.Builder()
         if (dialogHeight == -1 && view.paddingTop == 0) {
-            val statusBarInsets =
-                insets.getInsets(WindowInsetsCompat.Type.statusBars())
             view.setPadding(
                 view.paddingLeft,
                 statusBarInsets.top,
                 view.paddingRight,
                 view.paddingBottom,
             )
+            builder.setInsets(
+                statusBars, Insets.of(
+                    statusBarInsets.left,
+                    statusBarInsets.top - view.paddingTop,
+                    statusBarInsets.right,
+                    statusBarInsets.bottom,
+                )
+            )
+        } else {
+            builder.setInsets(statusBars, statusBarInsets)
         }
         if (view.paddingBottom == 0) {
-            val navigationBarInsets =
-                insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             view.setPadding(
                 view.paddingLeft,
                 view.paddingTop,
@@ -667,7 +684,18 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
                 navigationBarInsets.bottom
             )
         }
-        return insets
+        builder.setInsets(
+            navigationBars,
+            Insets.of(
+                navigationBarInsets.left,
+                navigationBarInsets.top,
+                navigationBarInsets.right,
+                maxBottom - view.paddingBottom
+            )
+        )
+        builder.setInsets(ime, imeInsets)
+        //insets.replaceSystemWindowInsets()
+        return builder.build()
     }
 
     /** Dialog -> AppCompatDialog -> AlertDialog */

@@ -99,6 +99,9 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
      * */
     var inputType = InputType.TYPE_CLASS_TEXT
 
+    /**不指定则自动设置*/
+    var inputGravity: Int? = null
+
     /**输入框过滤器*/
     var inputFilterList = mutableListOf<InputFilter>()
 
@@ -235,10 +238,10 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
         if (inputViewHeight > 0) {
             inputType = inputType or TYPE_TEXT_FLAG_MULTI_LINE or TYPE_TEXT_FLAG_IME_MULTI_LINE
             editView?.setWidthHeight(height = inputViewHeight)
-            editView?.gravity = Gravity.TOP
+            editView?.gravity = inputGravity ?: Gravity.TOP
             editView?.setSingleLineMode(false)
         } else {
-            editView?.gravity = Gravity.CENTER_VERTICAL
+            editView?.gravity = inputGravity ?: Gravity.CENTER_VERTICAL
             editView?.setSingleLineMode(true)
         }
 
