@@ -41,6 +41,7 @@ import com.angcyo.library.utils.fileNameUUID
 fun String.download(
     savePath: String? = null,
     config: DownloadTask.() -> Unit = {},
+    overwrite: Boolean = false,
     action: (task: DownloadTask, error: Throwable?) -> Unit
 ): DownloadTask {
     val name = getFileAttachmentName()
@@ -55,14 +56,14 @@ fun String.download(
         }
 
         override fun onDownloading(task: DownloadTask, progress: Int) {
-            L.v("下载:${task.url} -> ${task.savePath} 进度:$progress%")
+            L.v("下载进度:$progress%\n${task.url} -> ${task.savePath}")
             action(task, null)
         }
 
         override fun onDownloadFailed(task: DownloadTask, error: Throwable) {
             action(task, error)
         }
-    })
+    }, overwrite)
     task.config()
     task.download()//开始下载
     return task

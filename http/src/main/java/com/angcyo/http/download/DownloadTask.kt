@@ -24,7 +24,9 @@ class DownloadTask(
     /**下载保存的文件路径, 全路径*/
     val savePath: String,
     /**下载监听*/
-    val listener: DownloadListener
+    val listener: DownloadListener,
+    /**如果下载的文件已存在, 是否覆写文件*/
+    val overwrite: Boolean = false,
 ) {
 
     //---
@@ -32,7 +34,7 @@ class DownloadTask(
     /**下载内容的长度, 自动赋值*/
     var contentLength: Long = -1
 
-    /**下载进度*/
+    /**下载进度[0~100]*/
     var progress: Int = -1
 
     /**下载是否完成, 正常/异常都属于完成*/
@@ -55,6 +57,13 @@ class DownloadTask(
 
     /**开始下载*/
     fun download() {
+        if (!overwrite && File(savePath).exists()) {
+            progress = 100
+            isFinish = true
+            listener.onDownloading(this@DownloadTask, progress)
+            listener.onDownloadSuccess(this@DownloadTask)
+            return
+        }
         progress = -1
         contentLength = -1
         isFinish = false
