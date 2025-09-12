@@ -37,20 +37,21 @@ if (_minify_enabled == null) {
     _minify_enabled = true
 }*/
 
-println "\n........flutterApp.gradle........"
-println "flutter.targetSdkVersion=${flutter.targetSdkVersion}"
-println "flutter.compileSdkVersion=${flutter.compileSdkVersion}"
-println "flutter.minSdkVersion=${flutter.minSdkVersion}"
-println "flutter.versionCode=${flutter.versionCode}"
-println "flutter.versionName=${flutter.versionName}"
-println "flutter.ndkVersion=${flutter.ndkVersion}"
-println "........flutterApp.gradle........end"
-
+def _appId = project.hasProperty("appId") ? project.appId : ""
 def _minify_enabled_debug = project.hasProperty("flutter.minifyEnabledDebug") ? project.getProperty("flutter.minifyEnabledDebug").toBoolean() : false
 def _minify_enabled = project.hasProperty("flutter.minifyEnabled") ? project.getProperty("flutter.minifyEnabled").toBoolean() : true
 def _C_SDK = project.hasProperty("C_SDK") ? project.ext.C_SDK : flutter.compileSdkVersion
 def _M_SDK = project.hasProperty("M_SDK") ? project.ext.M_SDK : flutter.minSdkVersion
 def _T_SDK = project.hasProperty("T_SDK") ? project.ext.T_SDK : flutter.targetSdkVersion
+
+println "\n........flutterApp.gradle........${_appId}"
+println "flutter.targetSdkVersion=${flutter.targetSdkVersion} -> ${_T_SDK}"
+println "flutter.compileSdkVersion=${flutter.compileSdkVersion} -> ${_C_SDK}"
+println "flutter.minSdkVersion=${flutter.minSdkVersion} -> ${_M_SDK}"
+println "flutter.versionCode=${flutter.versionCode}"
+println "flutter.versionName=${flutter.versionName}"
+println "flutter.ndkVersion=${flutter.ndkVersion}"
+println "........flutterApp.gradle........end"
 
 //def appId = "com.angcyo.flutter3.abc"
 
@@ -169,7 +170,7 @@ android {
             // Clear the automatically set filters.
             ndk.abiFilters.clear()
             // Set your custom filters.
-            ndk.abiFilters= ["arm64-v8a", "armeabi-v7a"]
+            ndk.abiFilters = ["arm64-v8a", "armeabi-v7a"]
         }
     }
 }
