@@ -120,8 +120,10 @@ android {
         }
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion _M_SDK.toInteger() //flutter.minSdkVersion
-        targetSdkVersion _T_SDK.toInteger() //flutter.targetSdkVersion
+        //minSdkVersion _M_SDK.toInteger() //flutter.minSdkVersion
+        //targetSdkVersion _T_SDK.toInteger() //flutter.targetSdkVersion
+        minSdk _M_SDK.toInteger() //flutter.minSdkVersion
+        targetSdk _T_SDK.toInteger() //flutter.targetSdkVersion
         versionCode flutter.versionCode //flutterVersionCode.toInteger()
         versionName flutter.versionName //flutterVersionName
 
