@@ -55,6 +55,10 @@ task _excelMaterialLP5White(group: 'angcyo', description: 'LP5白光-LaserPecker
     //配置任务
 }
 
+task _excelMaterialLP2PBlue(group: 'angcyo', description: 'LP2P蓝光-LaserPecker 从Excel中读取材质参数') {
+    //配置任务
+}
+
 //#1:1064nm激光 (白光-雕) 0:450nm激光 (蓝光-烧)
 
 //执行LP4蓝光任务
@@ -112,6 +116,13 @@ _excelMaterialLP5White.doLast {
     def laserFilter = "白光"
     def laserType = 1
     exportExcelLp5Data('material_lp5.xlsx', "LP5_1064_20", laserFilter, laserType)
+}
+
+//执行LP2P蓝光任务
+_excelMaterialLP2PBlue.doLast {
+    def laserFilter = "蓝光"
+    def laserType = 0
+    exportExcelLp2pData('material_lp2p.xlsx', "LP2P_450_10", laserFilter, laserType)
 }
 
 /**
@@ -361,6 +372,139 @@ def exportExcelLp5Data(defExcelPath, outputName, laserFilter, laserType) {
             //分辨率
             def dpiCell = row.getCell(5).toString()
             if (dpiCell.contains("k")) {
+                map["dpi"] = dpiCell.replaceAll("k", "").toInteger() * 254
+            } else {
+                map["dpi"] = dpiCell.toFloat()
+            }
+
+            //出光频率
+            def laserFrequencyCell = row.getCell(6).toString()
+            if (laserFrequencyCell != "无") {
+                //println "...$laserFrequencyCell"
+                try {
+                    def laserFrequency = laserFrequencyCell.toFloat().toInteger()
+                    map["laserFrequency"] = laserFrequency
+                } catch (e) {
+                }
+            }
+
+            //功率深度
+            def powerDepthCell = row.getCell(7).toString()
+            if (!powerDepthCell.isBlank()) {
+                def i = powerDepthCell.lastIndexOf(",")
+                if (i != -1) {
+                    def l = powerDepthCell.length()
+                    map["power"] = powerDepthCell.substring(0, i).toInteger()
+                    map["depth"] = powerDepthCell.substring(i + 1, l).toInteger()
+                }
+            }
+
+            //材质名称 环保纸/resKey
+            def material = row.getCell(2).toString()
+
+            //
+            if (!material.isBlank()) {
+                def i = material.lastIndexOf("/")
+                if (i != -1) {
+                    def l = material.length()
+                    def resIdStr = material.substring(i + 1, l)
+                    material = material.substring(0, i)
+
+                    map["_name"] = material
+                    map["resIdStr"] = resIdStr
+                    map["key"] = resIdStr
+                }
+            }
+
+            def code = map["resIdStr"] // 唯一标识
+            if (laserType == 0) {
+                code += "_blue"
+            } else {
+                code += "_white"
+            }
+            code += "_${map["layerId"]}"
+            def dpi = map.get("dpi")
+            if (dpi != null) {
+                code += "_${dpi}"
+            } else {
+                code += "_${map.get("dpiScale")}"
+            }
+            map["code"] = code
+
+            jsonList.add(map)
+        }
+
+        //loop
+        line++
+    }
+
+    def json = new com.google.gson.Gson().toJson(jsonList)
+    outputFile.write(json)
+
+    System.err.println "输出完成->" + outputFile.absolutePath
+}
+
+/**2025-09-13
+ * [defExcelPath] excel文件路径
+ * [outputName] 输出文件名
+ * [laser] 需要过滤的激光光源
+ * */
+def exportExcelLp2pData(defExcelPath, outputName, laserFilter, laserType) {
+    //默认的excel文件路径
+    //def defExcelPath = 'material.xlsx'
+    def excelPath = project.hasProperty("excel_path") ? project.ext.excel_path : defExcelPath
+    def excelFile = file(excelPath)
+    //println excelFile.absolutePath
+
+    if (!excelFile.exists()) {
+        throw new IllegalStateException("请在[gradle.properties]文件中配置excel文件路径:excel_path")
+    }
+
+    //输出文件
+    def outputFile = file("material_${outputName}.json")
+
+    //读取数据
+    // 指定excel文件，创建缓存输入流
+    def inputStream = new BufferedInputStream(new FileInputStream(excelFile))
+    // 直接传入输入流即可，此时excel就已经解析了
+    def workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook(inputStream)
+    //println workbook
+    def sheet = workbook.getSheetAt(0)
+
+    //集合
+    def jsonList = new ArrayList<Map<String, Object>>()
+
+    def line = 1 //从第1行开始才有读取数据
+
+    while (line < sheet.getPhysicalNumberOfRows()) {
+        def row = sheet.getRow(line)
+        //printLine(line, row)
+
+        def laserTypeCell = row.getCell(3).toString()
+
+        if (laserTypeCell == laserFilter) {
+            //println "...$laserTypeCell"
+
+            def map = new HashMap<String, Object>()
+            map["type"] = laserType
+
+            //图层
+            def layerCell = row.getCell(4).toString()
+            if (layerCell == "填充") {
+                map["layerId"] = "layerFill"
+            } else if (layerCell == "线条") {
+                map["layerId"] = "layerLine"
+            } else if (layerCell == "切割") {
+                map["layerId"] = "layerCut"
+            } else if (layerCell == "抖动") {
+                map["layerId"] = "layerPicture"
+            }
+
+            //分辨率
+            def dpiCell = row.getCell(5).toString().toLowerCase() //转成小写字符串
+            if (dpiCell.isEmpty()) {
+                map["dpi"] = 254
+            } else if (dpiCell.contains("k")) {
                 map["dpi"] = dpiCell.replaceAll("k", "").toInteger() * 254
             } else {
                 map["dpi"] = dpiCell.toFloat()
