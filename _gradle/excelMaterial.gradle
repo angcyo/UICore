@@ -496,7 +496,7 @@ def exportExcelLp2pData(defExcelPath, outputName, laserFilter, laserType) {
                 map["layerId"] = "layerLine"
             } else if (layerCell == "切割") {
                 map["layerId"] = "layerCut"
-            } else if (layerCell == "抖动") {
+            } else if (layerCell == "抖动" || layerCell == "图片") {
                 map["layerId"] = "layerPicture"
             }
 
