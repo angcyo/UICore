@@ -122,7 +122,9 @@ _excelMaterialLP5White.doLast {
 _excelMaterialLP2PBlue.doLast {
     def laserFilter = "蓝光"
     def laserType = 0
-    exportExcelLp2pData('material_lp2p.xlsx', "LP2P_450_10", laserFilter, laserType)
+    exportExcelLp2pData('material_lp2p.xlsx', "LP2P_450_10", laserFilter, laserType, [
+            "4": 846.66666,
+    ])
 }
 
 /**
@@ -220,10 +222,10 @@ def exportExcelData(defExcelPath, outputName, laserType, layerIndexList, layerId
         }
 
         //dpi map
-        if (dpiMap != null) {
+        if (dpiMap != null && dpiMap[dpiScaleStr] != null) {
             //如果有映射, 则使用映射
             map.remove("dpiScale")
-            map.put("dpi", dpiMap.get(dpiScaleStr))
+            map.put("dpi", dpiMap[dpiScaleStr])
         }
 
         if (!resIdStr.isBlank()) {
@@ -448,8 +450,9 @@ def exportExcelLp5Data(defExcelPath, outputName, laserFilter, laserType) {
  * [defExcelPath] excel文件路径
  * [outputName] 输出文件名
  * [laser] 需要过滤的激光光源
+ * [dpiMap] 比如识别到2.8K, 需要映射成多少dpi
  * */
-def exportExcelLp2pData(defExcelPath, outputName, laserFilter, laserType) {
+def exportExcelLp2pData(defExcelPath, outputName, laserFilter, laserType, dpiMap = null) {
     //默认的excel文件路径
     //def defExcelPath = 'material.xlsx'
     def excelPath = project.hasProperty("excel_path") ? project.ext.excel_path : defExcelPath
@@ -505,7 +508,13 @@ def exportExcelLp2pData(defExcelPath, outputName, laserFilter, laserType) {
             if (dpiCell.isEmpty()) {
                 map["dpi"] = 254
             } else if (dpiCell.contains("k")) {
-                map["dpi"] = dpiCell.replaceAll("k", "").toInteger() * 254
+                def dpiInt = dpiCell.replaceAll("k", "").toInteger()
+                //dpiInt map
+                if (dpiMap != null && dpiMap["$dpiInt"] != null) {
+                    map.put("dpi", dpiMap["$dpiInt"])
+                } else {
+                    map["dpi"] = dpiInt * 254
+                }
             } else {
                 map["dpi"] = dpiCell.toFloat()
             }
