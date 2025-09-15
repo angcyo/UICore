@@ -534,6 +534,9 @@ def exportExcelLp2pData(defExcelPath, outputName, laserFilter, laserType, dpiMap
             def powerDepthCell = row.getCell(7).toString()
             if (!powerDepthCell.isBlank()) {
                 def i = powerDepthCell.lastIndexOf(",")
+                if (i == -1) {
+                    i = powerDepthCell.lastIndexOf(";")
+                }
                 if (i != -1) {
                     def l = powerDepthCell.length()
                     map["power"] = powerDepthCell.substring(0, i).toInteger()
