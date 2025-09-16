@@ -576,7 +576,11 @@ def exportExcelLp2pData(defExcelPath, outputName, laserFilter, laserType, dpiMap
             }
             map["code"] = code
 
-            jsonList.add(map)
+            if (map["power"] == null || map["depth"] == null) {
+                System.err.println "无效的材质->" + map
+            } else {
+                jsonList.add(map)
+            }
         }
 
         //loop
