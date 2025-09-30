@@ -260,14 +260,28 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     private fun defNumberHint(): CharSequence? {
         val tip = _string(R.string.ui_valid_range_tip)
         return if (numberMinValue != null && numberMaxValue != null) {
-            "$tip${numberMinValue}-${numberMaxValue}"
+            "$tip${formatValue(numberMinValue)}-${formatValue(numberMaxValue)}"
         } else if (numberMinValue != null) {
-            "$tip${numberMinValue}~"
+            "$tip${formatValue(numberMinValue)}~"
         } else if (numberMaxValue != null) {
-            "$tip~${numberMaxValue}"
+            "$tip~${formatValue(numberMaxValue)}"
         } else {
             null
         }
+    }
+
+    /**格式化数值*/
+    fun formatValue(value: Any?): String? {
+        if (value == null) {
+            return null
+        }
+        if (value is Float) {
+            return value.decimal(decimalCount)
+        }
+        if (value is Double) {
+            return value.decimal(decimalCount)
+        }
+        return value.toString()
     }
 
     private fun updateDialogMessage(clamp: Boolean = true) {

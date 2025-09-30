@@ -279,7 +279,7 @@ abstract class VectorWriteHandler {
     @Private
     fun _resetLastPoint(point: VectorPoint) {
         if (_pointList.size >= 2) {
-            _pointList.removeAt(_pointList.lastIndex)
+            _pointList.removeLastOrNull()
         }
         _pointList.add(point)
     }

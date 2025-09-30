@@ -6,16 +6,17 @@ android {
         //https://www.jianshu.com/p/93678f8b3421
         disable 'GoogleAppIndexingWarning'
     }
+
     compileOptions {
         if (project.hasProperty("compileJvmTarget")) {
             sourceCompatibility project.compileJvmTarget
             targetCompatibility = project.compileJvmTarget
         } else if (project.hasProperty("useJava17") && Integer.parseInt(gradle.gradleVersion.split("\\.")[0]) >= 8) {
             sourceCompatibility JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17 //11 17
         } else {
             sourceCompatibility JavaVersion.VERSION_1_8
-            targetCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8 //1.8
         }
     }
 
