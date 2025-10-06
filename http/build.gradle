@@ -44,7 +44,8 @@ dependencies {
     api "com.squareup.retrofit2:converter-gson:2.9.0"
 
     //https://github.com/tbruyelle/RxPermissions
-    api 'com.github.tbruyelle:rxpermissions:0.11' //0.12 需要rxjava3.x
+    //maven { url "https://raw.githubusercontent.com/angcyo/master_maven/refs/heads/main" }
+    api 'com.github.tbruyelle:rxpermissions:v0.11' //0.12 需要rxjava3.x
 
     //https://github.com/AndroidKnife/RxBus/tree/2.x
     //https://jcenter.bintray.com/com/hwangjr/rxbus
