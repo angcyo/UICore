@@ -41,7 +41,7 @@ data class ActionBean(
     var log: Boolean? = null,
 
     /**
-     * 控制自身执行启动的延迟, 支持文本参数变量
+     * 控制自身执行启动的延迟, 支持文本参数变量. 不指定则不延迟
      * - [com.angcyo.acc2.parse.AccParse.parseTime] 时间解析
      *
      * - [com.angcyo.acc2.control.AccSchedule.runActionBefore]
