@@ -104,9 +104,10 @@ data class TaskBean(
     //<editor-fold desc="参数">
 
     /**任务需要处理那个程序的信息
-     * 多个包名用[com.angcyo.acc2.action.Action.PACKAGE_SPLIT]分割
-     * [*] 表示所有包 [com.angcyo.acc2.action.Action.ALL]
-     * 不支持正则*/
+     * - 多个包名用[com.angcyo.acc2.action.Action.PACKAGE_SPLIT]分割
+     * - [*] 表示所有包 [com.angcyo.acc2.action.Action.ALL]
+     * - 不支持正则
+     * */
     var packageName: String? = null,
 
     /**统一配置每个[ActionBean]中的[limitRunCount]参数

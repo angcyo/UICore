@@ -91,8 +91,8 @@ class AccParse(val accControl: AccControl) : BaseParse() {
 
     /**
      * 解析时间格式
-     * 格式[5000,500,5] 解释:5000+500*[1-5],
-     * [5~15] 5s到15s之间随机
+     * - 格式[5000,500,5] 解释:5000+500*[1-5],
+     * - [5~15] 5s到15s之间随机
      * 返回解析后的时间, 毫秒*/
     fun parseTime(arg: String?, def: Long = 0): Long {
         return when {

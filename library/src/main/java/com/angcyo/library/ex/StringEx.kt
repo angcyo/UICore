@@ -4,7 +4,11 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
 import android.icu.text.Bidi
 import android.net.Uri
 import android.os.Build
@@ -39,7 +43,7 @@ import com.angcyo.library.utils.writeTo
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.text.BreakIterator
-import java.util.*
+import java.util.Locale
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import kotlin.math.min
@@ -66,8 +70,7 @@ fun CharSequence.copy(context: Context = app(), throwable: Boolean = false): Boo
             e.printStackTrace()
             clipboard.setPrimaryClip(
                 ClipData.newPlainText(
-                    "text",
-                    this/*.subSequence(0, 100).toString() + "...more"*/
+                    "text", this/*.subSequence(0, 100).toString() + "...more"*/
                 )
             )
             true
@@ -205,8 +208,7 @@ fun String.toColor(): Int {
     return Color.argb(a, r, g, b)
 }
 
-fun CharSequence?.or(default: CharSequence = "--") =
-    if (this.isNullOrEmpty()) default else this
+fun CharSequence?.or(default: CharSequence = "--") = if (this.isNullOrEmpty()) default else this
 
 fun CharSequence?.orString(default: CharSequence = "--"): String =
     if (this.isNullOrEmpty()) default.toString() else this.toString()
@@ -434,10 +436,7 @@ fun String.toTextPath(paint: Paint, result: Path = Path()): Path {
     val textBounds = acquireTempRect()
     paint.getTextBounds(this, 0, length, textBounds)
     paint.getTextPath(
-        this, 0, length,
-        -textBounds.left.toFloat(),
-        -textBounds.top.toFloat(),
-        result
+        this, 0, length, -textBounds.left.toFloat(), -textBounds.top.toFloat(), result
     )
     textBounds.release()
     return result
@@ -561,8 +560,7 @@ fun String?.isHttpMimeType(): Boolean {
 fun String?.isAudioMimeType(): Boolean {
     return this?.run {
         this.startsWith(
-            "audio",
-            true
+            "audio", true
         ) || this == "application/ogg"
     } ?: false
 }
@@ -584,11 +582,10 @@ fun String?.isImageType(): Boolean {
     if (lc.mimeType()?.startsWith("image", true) == true) {
         return true
     }
-    return lc.endsWith(".jpg", true) ||
-            lc.endsWith(".jpeg", true) ||
-            lc.endsWith(".png", true) ||
-            lc.endsWith(".bmp", true) ||
-            lc.endsWith(".webp", true)
+    return lc.endsWith(".jpg", true) || lc.endsWith(".jpeg", true) || lc.endsWith(
+        ".png",
+        true
+    ) || lc.endsWith(".bmp", true) || lc.endsWith(".webp", true)
 }
 
 /**是否是视频类型*/
@@ -597,10 +594,10 @@ fun String?.isVideoType(): Boolean {
     if (lc.mimeType()?.startsWith("video", true) == true) {
         return true
     }
-    return lc.endsWith(".mp4", true) ||
-            lc.endsWith(".avi", true) ||
-            lc.endsWith(".rmvb", true) ||
-            lc.endsWith(".3gpp", true)
+    return lc.endsWith(".mp4", true) || lc.endsWith(".avi", true) || lc.endsWith(
+        ".rmvb",
+        true
+    ) || lc.endsWith(".3gpp", true)
 }
 
 /**是否是音频类型*/
@@ -609,10 +606,10 @@ fun String?.isAudioType(): Boolean {
     if (lc.mimeType()?.startsWith("audio", true) == true) {
         return true
     }
-    return lc.endsWith(".mp3", true) ||
-            lc.endsWith(".wmv", true) ||
-            lc.endsWith(".wav", true) ||
-            lc.endsWith(".amr", true)
+    return lc.endsWith(".mp3", true) || lc.endsWith(".wmv", true) || lc.endsWith(
+        ".wav",
+        true
+    ) || lc.endsWith(".amr", true)
 }
 
 /**是否是字体
@@ -627,16 +624,14 @@ fun String?.isFontType(): Boolean {
 }
 
 fun CharSequence?.patternList(
-    regex: String?,
-    orNoFind: String? = null /*未找到时, 默认*/
+    regex: String?, orNoFind: String? = null /*未找到时, 默认*/
 ): List<String> {
     return this.patternList(regex?.toPattern(), orNoFind)
 }
 
 /**获取字符串中所有匹配的数据(部分匹配), 更像是contains的关系*/
 fun CharSequence?.patternList(
-    pattern: Pattern?,
-    orNoFind: String? = null /*未找到时, 默认*/
+    pattern: Pattern?, orNoFind: String? = null /*未找到时, 默认*/
 ): List<String> {
     val result = mutableListOf<String>()
     if (this == null) {
@@ -662,9 +657,7 @@ fun CharSequence?.patternList(
 fun String?.getChineseList() = this?.patternList("[\u4e00-\u9fa5]+")
 
 fun CharSequence?.pattern(
-    regex: String?,
-    allowEmpty: Boolean = true,
-    contain: Boolean = false
+    regex: String?, allowEmpty: Boolean = true, contain: Boolean = false
 ): Boolean {
     return pattern(regex?.toPattern(), allowEmpty, contain)
 }
@@ -675,9 +668,7 @@ fun CharSequence?.pattern(
  * [java.util.regex.Matcher.find]
  * */
 fun CharSequence?.pattern(
-    pattern: Pattern?,
-    allowEmpty: Boolean = true,
-    contain: Boolean = false
+    pattern: Pattern?, allowEmpty: Boolean = true, contain: Boolean = false
 ): Boolean {
 
     if (TextUtils.isEmpty(this)) {
@@ -705,9 +696,7 @@ fun CharSequence?.pattern(
 
 /**列表中的所有正则都匹配*/
 fun CharSequence?.pattern(
-    regexList: Iterable<String>,
-    allowEmpty: Boolean = true,
-    contain: Boolean = false
+    regexList: Iterable<String>, allowEmpty: Boolean = true, contain: Boolean = false
 ): Boolean {
     if (TextUtils.isEmpty(this)) {
         if (allowEmpty) {
@@ -761,14 +750,13 @@ fun String.shareText(
     if (shareQQ) {
         configQQIntent(intent)
         if (chooser) {
-            intent = Intent.createChooser(intent, "选择分享")
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent =
+                Intent.createChooser(intent, "选择分享").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         context.startActivity(intent)
     } else {
         context.startActivity(
-            Intent.createChooser(intent, "选择分享")
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            Intent.createChooser(intent, "选择分享").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         )
     }
 }
@@ -796,12 +784,16 @@ fun String.toClass(): Class<*>? {
 fun String.openApp(flags: Int = if (this == app().packageName) Intent.FLAG_ACTIVITY_SINGLE_TOP else 0) =
     app().openApp(this, flags = flags)
 
-/**拼接上另一个字符串*/
-fun String?.connect(str: String?): String? {
-    if (this == null || str == null) {
+/**
+ * 拼接上另一个字符串
+ * - [after] 在后面拼接的字符串
+ * - [before] 在前面拼接的字符串
+ * */
+fun String?.connect(after: String? = null, before: String? = null): String? {
+    if (this == null || (after == null && before == null)) {
         return this
     }
-    return "$this$str"
+    return "${before ?: ""}$this${after ?: ""}"
 }
 
 /**host/url*/
@@ -876,14 +868,10 @@ fun String.subStart(partition: String, ignoreCase: Boolean = true): String? {
 
 /**获取分割字符串[partition]之后的全部字符串*/
 fun String.subEnd(
-    partition: String,
-    fromLast: Boolean = false,
-    ignoreCase: Boolean = true
+    partition: String, fromLast: Boolean = false, ignoreCase: Boolean = true
 ): String? {
     val indexOf = if (fromLast) lastIndexOf(partition, lastIndex, ignoreCase) else indexOf(
-        partition,
-        0,
-        ignoreCase
+        partition, 0, ignoreCase
     )
     if (indexOf == -1) {
         return null
@@ -907,9 +895,7 @@ fun String.base64Decoder(): String =
  * [secureCount] 星星的数量
  * */
 fun CharSequence.toSecureShow(
-    beforeCount: Int = 2,
-    afterCount: Int = 2,
-    secureCount: Int = 4
+    beforeCount: Int = 2, afterCount: Int = 2, secureCount: Int = 4
 ): String {
     val p: StringBuilder = StringBuilder()
     for (i in 0 until secureCount) {
@@ -975,8 +961,7 @@ fun notEmptyOf(vararg str: String?): String {
 
 /**高亮匹配的文本*/
 fun CharSequence.highlight(
-    pattern: String,
-    color: Int = _color(R.color.colorAccent)
+    pattern: String, color: Int = _color(R.color.colorAccent)
 ): SpannableStringBuilder {
 
     if (TextUtils.isEmpty(this)) {

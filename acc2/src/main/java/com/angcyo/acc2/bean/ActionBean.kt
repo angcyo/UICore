@@ -42,9 +42,10 @@ data class ActionBean(
 
     /**
      * 控制自身执行启动的延迟, 支持文本参数变量
-     * [com.angcyo.acc2.control.AccSchedule.runActionBefore]
-     * [com.angcyo.acc2.parse.AccParse.parseTime]
-     *  [com.angcyo.acc2.parse.TextParse.parse]
+     * - [com.angcyo.acc2.parse.AccParse.parseTime] 时间解析
+     *
+     * - [com.angcyo.acc2.control.AccSchedule.runActionBefore]
+     * - [com.angcyo.acc2.parse.TextParse.parse]
      * */
     var start: String? = null,
 

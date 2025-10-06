@@ -69,6 +69,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         val statusBarColor = window.statusBarColor
         val navigationBarColor = window.navigationBarColor
         if (statusBarColor == Color.TRANSPARENT || navigationBarColor == Color.TRANSPARENT) {
+            //enableEdgeToEdge()
             hookApplyWindowInsets(_vh.itemView)
         }
         onCreateAfter(savedInstanceState)
