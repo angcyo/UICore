@@ -8,6 +8,7 @@ import com.angcyo.acc2.control.AccSchedule
 import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.ex.dp
+import com.angcyo.library.ex.isNumber
 import com.angcyo.library.ex.size
 import com.angcyo.library.utils.Device
 import kotlin.math.max
@@ -91,13 +92,15 @@ class AccParse(val accControl: AccControl) : BaseParse() {
 
     /**
      * 解析时间格式
-     * - 格式[5000,500,5] 解释:5000+500*[1-5],
-     * - [5~15] 5s到15s之间随机
+     * - 格式:[5000,500,5] 解释:5000+500*[1-5]毫秒,
+     * - 格式:[300,] 解释:300+base*[1-5]毫秒
+     * - 格式:[5] 纯数字则表示s秒
+     * - 格式:[5~15] 5s到15s之间随机
      * 返回解析后的时间, 毫秒*/
     fun parseTime(arg: String?, def: Long = 0): Long {
         return when {
             arg.isNullOrEmpty() -> def
-            arg.havePartition() -> { //~
+            arg.havePartition() || arg.isNumber() -> { //~
                 val numList = arg.getIntList()
                 if (numList.size() >= 2) {
                     val first = numList[0]
@@ -106,10 +109,20 @@ class AccParse(val accControl: AccControl) : BaseParse() {
                     val max = max(first, second)
 
                     nextInt(min, max + 1) * 1000L
+                } else if (numList.size() == 1) {
+                    //5 100
+                    if (arg.length < 3) {
+                        //5
+                        numList.first() * 1000L
+                    } else {
+                        //100
+                        numList.first() * 1L
+                    }
                 } else {
                     def
                 }
             }
+
             else -> {
                 val split = arg.split(",")
 
@@ -118,8 +131,9 @@ class AccParse(val accControl: AccControl) : BaseParse() {
 
                 //基数
                 val baseStr = split.getOrNull(1)
-                val base = if (split.size() > 1 && baseStr.isNullOrEmpty())
-                    0 else baseStr?.toLongOrNull() ?: defaultIntervalDelay()
+                val base =
+                    if (split.size() > 1 && baseStr.isNullOrEmpty()) 0 else baseStr?.toLongOrNull()
+                        ?: defaultIntervalDelay()
 
                 //倍数
                 val factor = split.getOrNull(2)?.toLongOrNull() ?: nextLong(2, defTimeRandomFactor)
@@ -158,16 +172,14 @@ class AccParse(val accControl: AccControl) : BaseParse() {
                 (if (this.contains(Action.POINT_SPLIT)) split(Action.POINT_SPLIT) else split("-")).apply {
                     //p1
                     getOrNull(0)?.toPointF(
-                        rect.width(),
-                        rect.height()
+                        rect.width(), rect.height()
                     )?.apply {
                         p1.set(this)
                     }
 
                     //p2
                     getOrNull(1)?.toPointF(
-                        rect.width(),
-                        rect.height()
+                        rect.width(), rect.height()
                     )?.apply {
                         p2 = this
                     }
