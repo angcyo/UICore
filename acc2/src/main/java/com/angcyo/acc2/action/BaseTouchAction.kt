@@ -2,7 +2,11 @@ package com.angcyo.acc2.action
 
 import android.graphics.PointF
 import com.angcyo.acc2.control.AccControl
-import com.angcyo.acc2.core.*
+import com.angcyo.acc2.core.DslAccessibilityGesture
+import com.angcyo.acc2.core.click
+import com.angcyo.acc2.core.double
+import com.angcyo.acc2.core.fling
+import com.angcyo.acc2.core.move
 import com.angcyo.library.ex.size
 import kotlin.random.Random.Default.nextInt
 
@@ -53,6 +57,10 @@ abstract class BaseTouchAction : BaseAction() {
         ) == true
     }
 
+    /**
+     * - [DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME]
+     * - [DslAccessibilityGesture.DEFAULT_GESTURE_MOVE_DURATION]
+     * */
     fun move(
         control: AccControl,
         x1: Float, y1: Float,
@@ -70,10 +78,16 @@ abstract class BaseTouchAction : BaseAction() {
         ) == true
     }
 
+    /**
+     * - [DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME]
+     * - [DslAccessibilityGesture.DEFAULT_GESTURE_MOVE_DURATION]
+     * */
     fun fling(
         control: AccControl,
         x1: Float, y1: Float,
-        x2: Float, y2: Float
+        x2: Float, y2: Float,
+        startTime: Long? = null,
+        duration: Long? = null,
     ): Boolean {
         val gesture = control.accService()?.gesture
         control.accPrint.touch(x1, y1, x2, y2)
@@ -82,8 +96,8 @@ abstract class BaseTouchAction : BaseAction() {
             y1,
             x2,
             y2,
-            gestureStartTime ?: DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME,
-            gestureFlingDuration ?: DslAccessibilityGesture.DEFAULT_GESTURE_FLING_DURATION
+            startTime ?: gestureStartTime,
+            duration ?: gestureFlingDuration
         ) == true
     }
 

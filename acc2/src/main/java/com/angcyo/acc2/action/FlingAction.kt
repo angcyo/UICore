@@ -34,10 +34,18 @@ class FlingAction : BaseTouchAction() {
             val p2 = pointList[1]
             success = if (async) {
                 sync<Boolean> { _, atomicReference ->
-                    atomicReference.set(fling(control, p1.x, p1.y, p2.x, p2.y))
+                    atomicReference.set(
+                        fling(
+                            control,
+                            p1.x,
+                            p1.y,
+                            p2.x,
+                            p2.y
+                        )
+                    )
                 } == true
             } else {
-                fling(control, p1.x, p1.y, p2.x, p2.y)
+                fling(control, p1.x, p1.y, p2.x, p2.y/*, startTime = 16 * 2, duration = 16 * 2*/)
             }
             control.log("fling[$p1]->[$p2]:$success")
         }

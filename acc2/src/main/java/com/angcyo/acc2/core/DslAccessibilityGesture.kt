@@ -62,6 +62,9 @@ class DslAccessibilityGesture {
     var doubleInterval: Long = DEFAULT_GESTURE_DOUBLE_INTERVAL_TIME
 
     var moveDuration: Long = DEFAULT_GESTURE_MOVE_DURATION
+
+    /**设置为true, 则当前移动手势结束之后, 不会触发up事件
+     * 可以用来测试手势是否执行了. 比如[fling]手势是否有效果*/
     var willContinue: Boolean = false
 
     /**无障碍服务, 用于执行手势*/
@@ -450,12 +453,23 @@ fun DslAccessibilityGesture.fling(
     fromY: Float,
     toX: Float,
     toY: Float,
-    startTime: Long = DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME,
-    duration: Long = DslAccessibilityGesture.DEFAULT_GESTURE_FLING_DURATION,
+    startTime: Long? = null,
+    duration: Long? = null,
     result: GestureResult? = null
 ): Boolean {
-    flingDuration(startTime, duration)
-    return touch(fromX, fromY, toX, toY, startTime, duration, result)
+    flingDuration(
+        startTime ?: DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME,
+        duration ?: DslAccessibilityGesture.DEFAULT_GESTURE_FLING_DURATION
+    )
+    return touch(
+        fromX,
+        fromY,
+        toX,
+        toY,
+        startTime ?: DslAccessibilityGesture.DEFAULT_GESTURE_START_TIME,
+        duration ?: DslAccessibilityGesture.DEFAULT_GESTURE_FLING_DURATION,
+        result
+    )
 }
 
 /**手指往上[fling] ↑*/
