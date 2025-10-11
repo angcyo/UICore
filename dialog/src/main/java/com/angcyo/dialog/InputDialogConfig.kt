@@ -147,6 +147,7 @@ open class InputDialogConfig(context: Context? = null) : BaseDialogConfig(contex
             }
         }
         animStyleResId = R.style.LibDialogInputAnimation
+        hookWindowInsets = false
     }
 
     override fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {

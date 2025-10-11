@@ -598,6 +598,10 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
         }
     }
 
+    /**是否要处理屏幕上状态栏/导航栏区域
+     * - [hookApplyWindowInsets]*/
+    var hookWindowInsets = true
+
     /**[com.angcyo.dialog.DslDialogConfig.showAndConfigDialog]*/
     open fun initDialogView(dialog: Dialog, dialogViewHolder: DslViewHolder) {
         //背景替换
@@ -638,7 +642,9 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
             }
         }
         //--
-        hookApplyWindowInsets(dialogViewHolder.itemView)
+        if (hookWindowInsets) {
+            hookApplyWindowInsets(dialogViewHolder.itemView)
+        }
     }
 
     open fun hookApplyWindowInsets(view: View) {
