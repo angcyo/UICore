@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="day_not_prompt_label">"Non ricordarmi più per %1$s giorni"</string>
+  <string name="dialog_color_picker">"Si prega di selezionare un colore..."</string>
+  <string name="dialog_continue">"Continua"</string>
+  <string name="dialog_input_hint">"Inserisci..."</string>
+  <string name="dialog_negative">"Annulla"</string>
+  <string name="dialog_neutral">"Neutralità"</string>
+  <string name="dialog_positive">"Conferma"</string>
+  <string name="dialog_width_picker">"Seleziona il peso..."</string>
+  <string name="not_prompt_label">"Non mostrare più"</string>
+</resources>

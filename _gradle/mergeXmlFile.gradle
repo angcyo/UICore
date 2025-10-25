@@ -18,9 +18,10 @@ task _mergeXmlFileToFolder(group: 'angcyo', description: '将多个路径的xml�
     //配置任务
 }
 
+def resList = ["", "-zh", "-ja", "-ko", "-de", "-es", "-fr", "-zh-rTW", "-pt", "-ru", "-it"]
+
 _mergeXmlFileToFolder.doFirst {
     def prefix = "Android_LDS"
-    def resList = ["", "-zh", "-ja", "-ko", "-de", "-es", "-fr", "-zh-rTW", "-pt", "-ru"]
     def outputList = [".apk/${prefix}/英文",
                       ".apk/${prefix}/中文",
                       ".apk/${prefix}/日语",
@@ -31,6 +32,7 @@ _mergeXmlFileToFolder.doFirst {
                       ".apk/${prefix}/繁体",
                       ".apk/${prefix}/葡萄牙",
                       ".apk/${prefix}/俄罗斯",
+                      ".apk/${prefix}/意大利"
     ]
 
     for (int i = 0; i < resList.size(); i++) {
@@ -44,7 +46,6 @@ _mergeXmlFileToFolder.doFirst {
 _mergeXmlFileToZip.doFirst {
     def release_time = releaseTime()
     def prefix = "Android_LDS"
-    def resList = ["", "-zh", "-ja", "-ko", "-de", "-es", "-fr", "-zh-rTW", "-pt", "-ru"]
     def outputList = [".apk/${prefix}_英文资源_${release_time}.zip",
                       ".apk/${prefix}_中文资源_${release_time}.zip",
                       ".apk/${prefix}_日语资源_${release_time}.zip",
@@ -55,6 +56,7 @@ _mergeXmlFileToZip.doFirst {
                       ".apk/${prefix}_繁体资源_${release_time}.zip",
                       ".apk/${prefix}_葡萄牙资源_${release_time}.zip",
                       ".apk/${prefix}_俄罗斯资源_${release_time}.zip",
+                      ".apk/${prefix}_意大利资源_${release_time}.zip",
     ]
 
     for (int i = 0; i < resList.size(); i++) {

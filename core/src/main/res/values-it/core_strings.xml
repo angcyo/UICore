@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="core_add_file_fail">"Aggiunta fallita"</string>
+  <string name="core_add_file_success">"Aggiunto"</string>
+  <string name="core_file_import">"Aggiungi il file"</string>
+  <string name="core_file_list">"Elenco dei file"</string>
+  <string name="core_import">"Importa"</string>
+  <string name="core_import_fail">"Importazione non riuscita"</string>
+  <string name="core_import_success">"Importato con successo"</string>
+  <string name="core_screen_shot_text">"Feedback"</string>
+  <string name="core_send_to_label">"Invia a..."</string>
+  <string name="core_thread_error_tip">"Si è verificato un piccolo problema"</string>
+  <string name="core_trash_delete">"Trascina qui per eliminare"</string>
+  <string name="core_trash_delete_tip">"Solleva il dito per eliminare"</string>
+  <string name="permission_disabled">"Permesso negato"</string>
+  <string name="ui_add">"Aggiungi"</string>
+  <string name="ui_back">"Indietro"</string>
+  <string name="ui_choose">"Seleziona"</string>
+  <string name="ui_confirm">@string/dialog_positive</string>
+  <string name="ui_delete">"Elimina"</string>
+  <string name="ui_delete_fail">"Eliminazione non riuscita"</string>
+  <string name="ui_delete_tip">"Dopo l’eliminazione non sarà possibile recuperare. Vuoi continuare?"</string>
+  <string name="ui_edit">"Modifica"</string>
+  <string name="ui_enable_permission">"Abilita autorizzazione"</string>
+  <string name="ui_feature_development">"Funzionalità attualmente in fase di sviluppo..."</string>
+  <string name="ui_finish">"Fatto"</string>
+  <string name="ui_known">"OK"</string>
+  <string name="ui_minimum">"Minimo"</string>
+  <string name="ui_next">"Avanti"</string>
+  <string name="ui_open">"Apri"</string>
+  <string name="ui_prev">"Indietro"</string>
+  <string name="ui_share">"Condividi"</string>
+  <string name="ui_valid_range_tip">"Intervallo valido"</string>
+  <string name="ui_wait_tip">"Attendere..."</string>
+  <string name="ui_warn">"Attenzione"</string>
+</resources>

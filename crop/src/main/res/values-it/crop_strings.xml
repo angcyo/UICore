@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="crop_auto_side">"Ritaglio automatico"</string>
+  <string name="crop_horizontal">"Orizzontale"</string>
+  <string name="crop_horizontal_flip">"Orizzontale"</string>
+  <string name="crop_ratio_free">"Libero"</string>
+  <string name="crop_rotate">"Ruota"</string>
+  <string name="crop_title">"Ritaglia"</string>
+  <string name="crop_type_circle">"Cerchio"</string>
+  <string name="crop_vertical">"Verticale"</string>
+  <string name="crop_vertical_flip">"Verticale"</string>
+</resources>
