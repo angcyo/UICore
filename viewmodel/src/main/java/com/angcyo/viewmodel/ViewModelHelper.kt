@@ -1,5 +1,7 @@
 package com.angcyo.viewmodel
 
+import com.angcyo.library.ex.isDebugType
+
 /**
  * 一些助手, 一些共享的数据
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -25,9 +27,12 @@ val _coreUserId: String?
     get() = ViewModelHelper.coreUserId.value
 
 /**是否是欧洲环境*/
-val _IsEuropeEnv: Boolean
+val _isEuropeEnv: Boolean
     get() = ViewModelHelper.getIsEuropeEnv()
 
 /**是否是安全合规环境*/
-val _IsSafeEnv: Boolean
+val _isSafeEnv: Boolean
     get() = ViewModelHelper.getIsSafeEnv()
+
+/**是否是欧洲ip且要求安全合规*/
+val _isIpEuropeSafe get() = (_isEuropeEnv && _isSafeEnv) /*|| isDebugType()*/
