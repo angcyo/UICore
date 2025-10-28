@@ -504,10 +504,10 @@ open class DslProgressBar(context: Context, attributeSet: AttributeSet? = null) 
 
     //0.1 0.8 0.9进度
     val _progressFraction: Float
-        get() = progressValidValue / progressValidMaxValue
+        get() = if (progressValidMaxValue == 0f) 0f else progressValidValue / progressValidMaxValue
 
     val _progressSecondFraction: Float
-        get() = progressSecondValidValue / progressValidMaxValue
+        get() = if (progressValidMaxValue == 0f) 0f else progressSecondValidValue / progressValidMaxValue
 
     //绘制第二进度
     open fun drawSecondProgress(canvas: Canvas) {
