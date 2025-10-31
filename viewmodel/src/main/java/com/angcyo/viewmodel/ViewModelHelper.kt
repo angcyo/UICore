@@ -1,7 +1,5 @@
 package com.angcyo.viewmodel
 
-import com.angcyo.library.ex.isDebugType
-
 /**
  * 一些助手, 一些共享的数据
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -20,6 +18,9 @@ object ViewModelHelper {
      * 决定保护罩预览的安全级别
      * */
     var getIsSafeEnv: () -> Boolean = { false }
+
+    /**获取当前登录的用户是否要锁定激光亮度调节*/
+    var getIsLaserBrightnessLock: () -> Boolean = { false }
 }
 
 /**共享的用户id*/
@@ -36,3 +37,7 @@ val _isSafeEnv: Boolean
 
 /**是否是欧洲ip且要求安全合规*/
 val _isIpEuropeSafe get() = (_isEuropeEnv && _isSafeEnv) /*|| isDebugType()*/
+
+/**是否要锁定激光亮度调节*/
+val _isLaserBrightnessLock: Boolean
+    get() = ViewModelHelper.getIsLaserBrightnessLock()
