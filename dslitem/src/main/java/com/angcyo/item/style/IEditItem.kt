@@ -165,7 +165,8 @@ var IEditItem.itemMaxInputLength: Int
         editItemConfig.itemEditTextStyle.editMaxInputLength = value
     }
 
-/**最大编辑行数*/
+/**最大编辑行数
+ * - [multiLineEditMode]*/
 var IEditItem.itemMaxEditLines: Int?
     get() = editItemConfig.itemEditTextStyle.editMaxLine
     set(value) {
@@ -192,7 +193,10 @@ var IEditItem.itemTextChangeAction: TextChangeAction?
         editItemConfig.itemTextChangeAction = value
     }
 
-/**多行编辑模式*/
+/**多行编辑模式
+ *
+ * - [itemMaxEditLines]
+ * */
 fun IEditItem.multiLineEditMode(
     maxLine: Int = Int.MAX_VALUE,
     minHeight: Int = _dimen(R.dimen.lib_multi_line_edit_min_height)

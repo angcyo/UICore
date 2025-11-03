@@ -111,6 +111,13 @@ open class BaseDslFragment : BaseTitleFragment() {
         _adapter.updateAdapter(update)
     }
 
+    /**调用此方法, 更新所有item数据
+     * 在静态界面中, 可能需要重新调用[renderDslAdapter]才能更新界面
+     * */
+    open fun updateAllDslAdapterItems(payload: Any? = DslAdapterItem.PAYLOAD_UPDATE_PART) {
+        _adapter.updateAllItem(payload)
+    }
+
     /**
      * 开始适配器刷新状态
      * [startRefresh]*/

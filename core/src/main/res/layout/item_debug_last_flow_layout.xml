@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:padding="@dimen/lib_xhdpi">
+
+    <com.angcyo.widget.layout.DslFlowLayout
+        android:id="@+id/lib_flow_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:r_flow_item_horizontal_space="@dimen/lib_hdpi"
+        app:r_flow_item_vertical_space="@dimen/lib_ldpi"
+        app:r_flow_preview_item_count="3"
+        app:r_flow_preview_item_layout_id="@layout/lib_button_layout" />
+
+    <com.angcyo.widget.DslButton
+        android:id="@+id/start_button"
+        style="@style/DefaultButtonMinStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lib_hdpi"
+        android:text="开始请求" />
+
+</LinearLayout>

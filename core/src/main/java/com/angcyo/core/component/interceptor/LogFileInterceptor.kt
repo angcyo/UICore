@@ -12,6 +12,14 @@ import com.angcyo.http.interceptor.LogInterceptor
  */
 open class LogFileInterceptor : LogInterceptor() {
 
+    companion object {
+        /**[printRequestLog]*/
+        val printRequestLogActionList = mutableListOf<PrintLogAction>()
+
+        /**[printResponseLog]*/
+        val printResponseLogActionList = mutableListOf<PrintLogAction>()
+    }
+
     /**是否需要控制台输出日志*/
     var printLog = false
 
@@ -23,13 +31,23 @@ open class LogFileInterceptor : LogInterceptor() {
         if (printLog) {
             super.printRequestLog(builder)
         }
-        DslFileHelper.http(data = builder.toString())
+        val log = builder.toString()
+        DslFileHelper.http(data = log)
+        printRequestLogActionList.forEach {
+            it.invoke(log)
+        }
     }
 
     override fun printResponseLog(builder: StringBuilder) {
         if (printLog) {
             super.printResponseLog(builder)
         }
-        DslFileHelper.http(data = builder.toString())
+        val log = builder.toString()
+        DslFileHelper.http(data = log)
+        printResponseLogActionList.forEach {
+            it.invoke(log)
+        }
     }
 }
+
+typealias PrintLogAction = (log: String) -> Unit

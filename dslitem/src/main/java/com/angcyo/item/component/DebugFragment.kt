@@ -77,16 +77,21 @@ open class DebugFragment : BaseDslFragment() {
             add(DebugAction("服务器配置", action = { fragment, value ->
                 fragment.fContext().httpConfigDialog()
             }))
+            add(DebugAction("接口请求", action = { fragment, value ->
+                fragment.dslFHelper {
+                    show(HttpRequestTestFragment::class)
+                }
+            }))
 
             //单独的日志
             add(DebugAction(LogFile.l, CoreApplication.DEFAULT_FILE_PRINT_PATH))
             add(DebugAction("crash.log", DslCrashHandler.KEY_CRASH_FILE.hawkGet()))
             add(DebugAction("http-date.log", appFilePath(logFileName(), Constant.HTTP_FOLDER_NAME)))
             //log/目录下的日志
-            add(DebugAction(LogFile.log, LogFile.log.toLogFilePath()))
-            add(DebugAction(LogFile.http, LogFile.http.toLogFilePath()))
-            add(DebugAction(LogFile.error, LogFile.error.toLogFilePath()))
-            add(DebugAction(LogFile.perf, LogFile.perf.toLogFilePath()))
+            add(DebugAction(LogFile.log, LogFile.log.toLogFilePath(), true))
+            add(DebugAction(LogFile.http, LogFile.http.toLogFilePath(), true))
+            add(DebugAction(LogFile.error, LogFile.error.toLogFilePath(), true))
+            add(DebugAction(LogFile.perf, LogFile.perf.toLogFilePath(), true))
         }
 
         /**
@@ -120,6 +125,7 @@ open class DebugFragment : BaseDslFragment() {
             bindItem(R.layout.item_debug_flow_layout) { itemHolder, itemPosition, adapterItem, payloads ->
                 itemHolder.group(R.id.lib_flow_layout)
                     ?.resetChild(
+                        //渲染按钮actions
                         DEBUG_ACTION_LIST.filter { it.key.isNullOrEmpty() },
                         R.layout.lib_button_layout
                     ) { itemView, item, itemIndex ->
@@ -133,7 +139,8 @@ open class DebugFragment : BaseDslFragment() {
                                         //日志文件存在, 直接显示日志内容
                                         fContext().fileViewDialog(logPath) {
                                             //1mb 时反向读取文件
-                                            readReversed = (file?.length() ?: 0) > 1 * 1024 * 1024
+                                            readReversed = item.readReversed ?: ((file?.length()
+                                                ?: 0) > 1 * 1024 * 1024)
                                         }
                                     } else if (file.isFolder()) {
                                         //文件目录浏览
@@ -160,6 +167,7 @@ open class DebugFragment : BaseDslFragment() {
 
             //item
             DEBUG_ACTION_LIST.forEach { debugAction ->
+                //edit 属性 actions
                 renderDebugAction(debugAction)
             }
 
