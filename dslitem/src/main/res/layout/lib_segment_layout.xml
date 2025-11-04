@@ -5,7 +5,9 @@
     style="@style/LibBodyTextStyle"
     android:layout_height="wrap_content"
     android:gravity="center"
+    android:maxLines="1"
     android:minWidth="50dp"
     android:minHeight="40dp"
     android:paddingHorizontal="@dimen/lib_hdpi"
+    android:singleLine="true"
     tools:text="Item" />
