@@ -7,6 +7,7 @@ import android.graphics.*
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Base64
+import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
 import androidx.exifinterface.media.ExifInterface
 import com.angcyo.library.L
@@ -408,6 +409,13 @@ fun Bitmap.getPixels(): IntArray {
     val pix = IntArray(w * h)
     getPixels(pix, 0, w, 0, 0, w, h)
     return pix
+}
+
+/**图片像素色值转换成图片*/
+fun IntArray.toBitmap(width: Int, height: Int, config: Bitmap.Config? = null): Bitmap {
+    return createBitmap(width, height, config ?: Bitmap.Config.ARGB_8888).apply {
+        setPixels(this@toBitmap, 0, width, 0, 0, width, height)
+    }
 }
 
 /**色彩通道提取
