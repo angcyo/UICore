@@ -386,6 +386,86 @@ def readExcelLines(path, skipLine = 0, maxColumn = 100) {
     return lines
 }
 
+/**2025-11-05 将合并的单元格展开
+ * 读取excel文件, 一行一行读取
+ * @param path excel文件路径
+ * @param skipLine 跳过多少行, 默认0, 从1开始跳过行数
+ * @param maxColumn 最多读几列
+ * @return List<List<String>>
+ * */
+def readExcelExpandLines(path, skipLine = 0, maxColumn = 100) {
+    def lines = [] //每一行的数据, N列的数组
+    def excelFile = file(path)
+    if (excelFile.exists()) {
+        def inputStream = new BufferedInputStream(new FileInputStream(excelFile))
+        def workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook(inputStream)
+        try {
+            def sheet = workbook.getSheetAt(0)
+            def rowIterator = sheet.iterator()
+
+            def lineIndex = 0
+            def lastLine = []//存储有效列数据的数值, 用于合并单元格的数据读取
+            while (rowIterator.hasNext()) {
+                def row = rowIterator.next()
+                lineIndex++
+                if (lineIndex <= skipLine) {
+                    continue
+                }
+                def cellIterator = row.cellIterator()
+                def line = [] //一行的N列数据
+                def isNullLine = true
+                def columnIndex = 0
+                while (columnIndex < maxColumn && cellIterator.hasNext()) {
+                    def cell = cellIterator.next()
+                    def cellType = "${cell.cellType}"
+                    def value = cell.toString()
+                    if (value == null || cellType == "BLANK" || value.isBlank()) {
+                        value = lastLine[columnIndex]//获取上一次的有效数据
+                    } else {
+                        //class org.apache.poi.xssf.usermodel.XSSFCell
+                        //System.err.println(cell.class)
+                        //System.err.println(cell.cellType)
+                        if (cellType == "NUMERIC") {
+                            value = cell.numericCellValue
+                        } else if (cellType == "STRING") {
+                            //no op
+                        } else if (cellType == "FORMULA") {
+                            value = cell.cellFormula
+                        } else if (cellType == "BLANK") {
+                            value = ""
+                        } else if (cellType == "BOOLEAN") {
+                            value = cell.booleanCellValue
+                        } else if (cellType == "ERROR") {
+                            value = cell.errorCellValue
+                        } else {
+                            System.err.println("未知的cellType:${cellType}")
+                        }
+                        lastLine[columnIndex] = value //存储有效列的数据
+                        isNullLine = false
+                    }
+                    line.add(value)
+                    columnIndex++
+                }
+                if (!isNullLine) {
+                    //如果这一行不是空行, 则添加到lines中
+                    lines.add(line)
+                }
+
+                //def rows = sheet.getPhysicalNumberOfRows()
+                //def columns = row.getPhysicalNumberOfCells() //获取这一行有多少列
+                //println("rows:${rows}, columns:${columns}")
+            }
+        } catch (Exception e) {
+            e.printStackTrace()
+            System.err.println("读取excel文件失败:${excelFile}")
+            throw e
+        }
+    } else {
+        System.err.println("文件不存在:${excelFile}")
+    }
+    return lines
+}
+
 /** 2024-2-23
  * 读取excel文件中的指定行, 指定列的值
  * [rowIndex] 行列索引,从1开始
@@ -481,6 +561,7 @@ ext {
     getLanguageResPath = this.&getLanguageResPath
     readXmlMap = this.&readXmlMap
     readExcelLines = this.&readExcelLines
+    readExcelExpandLines = this.&readExcelExpandLines
     readExcelValue = this.&readExcelValue
     readCsvLines = this.&readCsvLines
     convertLinesToMap = this.&convertLinesToMap
