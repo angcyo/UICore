@@ -65,11 +65,18 @@ open class CanvasOverlayComponent : BaseRenderer(), ICanvasTouchListener, ICanva
     /**当手指移动的距离大于此值, 是否有效的移动*/
     var translateThreshold = 3 * dp
 
+    @CanvasInsideCoordinate
     private val _tempPoint = PointF()
+    private var _lastEventX = 0f
+    private var _lastEventY = 0f
 
     @Pixel
     @CanvasInsideCoordinate
-    private var _downPoint: PointF? = null
+    protected var _downPoint: PointF? = null
+
+    @Pixel
+    @CanvasInsideCoordinate
+    protected var _movePoint: PointF? = null
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val eventX = event.getX(event.actionIndex)
@@ -77,24 +84,43 @@ open class CanvasOverlayComponent : BaseRenderer(), ICanvasTouchListener, ICanva
         _tempPoint.set(eventX, eventY)
         canvasDelegate?.getCanvasViewBox()?.transformToInside(_tempPoint)
 
-        if (BuildConfig.DEBUG) {
-            L.d("按下:[${_tempPoint}]")
-        }
-
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                if (BuildConfig.DEBUG) {
+                    L.d("按下:[${_tempPoint}]")
+                }
+                _lastEventX = eventX
+                _lastEventY = eventY
                 _downPoint = PointF()
                 _downPoint?.set(_tempPoint)
             }
 
             MotionEvent.ACTION_POINTER_DOWN -> {
                 _downPoint = null
+                _movePoint = null
             }
 
-            MotionEvent.ACTION_UP -> {
+            MotionEvent.ACTION_MOVE -> {
+                if (_movePoint == null) {
+                    _movePoint = PointF()
+                    _movePoint?.set(_tempPoint)
+                } else {
+                    val dx1 = _lastEventX - eventX
+                    val dy1 = _lastEventY - eventY
+                    if (dx1.absoluteValue >= translateThreshold ||
+                        dy1.absoluteValue >= translateThreshold
+                    ) {
+                        _movePoint?.set(_tempPoint)
+                        _lastEventX = eventX
+                        _lastEventY = eventY
+                    }
+                }
+            }
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 if (_downPoint != null) {
-                    val dx1 = _tempPoint.x - _downPoint!!.x
-                    val dy1 = _tempPoint.y - _downPoint!!.y
+                    val dx1 = _lastEventX - eventX
+                    val dy1 = _lastEventY - eventY
 
                     if (dx1.absoluteValue < translateThreshold &&
                         dy1.absoluteValue < translateThreshold
@@ -102,6 +128,8 @@ open class CanvasOverlayComponent : BaseRenderer(), ICanvasTouchListener, ICanva
                         onClickPointEvent(event, _downPoint!!)
                     }
                 }
+                _downPoint = null
+                _movePoint = null
             }
         }
         return true
