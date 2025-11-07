@@ -111,6 +111,15 @@ open class PopupConfig : ActivityResultCaller, LifecycleOwner, IActivityProvider
     //如果是anchor,那么效果有点差异.
     var gravity: Int = Gravity.NO_GRAVITY//Gravity.TOP or Gravity.START or Gravity.LEFT
 
+    /**当前[PopupWindow]是否是在[Dialog]中显示*/
+    var isShowInDialogWindows: Boolean = false
+    val inDialogOffsetY
+        get() = if (isShowInDialogWindows && gravity.have(Gravity.TOP)) {
+            -(rootViewRect.height() + anchorViewRect.height())
+        } else {
+            0
+        }
+
     /**自动调整偏移到
      * [anchor]的 TOP_CENTER or BOTTOM_CENTER
      * 此值不会覆盖 [xoff] [yoff] 而是追加*/
@@ -227,7 +236,10 @@ open class PopupConfig : ActivityResultCaller, LifecycleOwner, IActivityProvider
 
     //<editor-fold desc="PopupWindow">
 
-    /**显示[PopupWindow]*/
+    /**显示[PopupWindow]
+     *
+     * - [updatePopup] 更新位置时调用
+     * */
     @CallPoint
     open fun showWithPopupWindow(context: Context): PopupWindow {
         onPopupInit()
@@ -306,7 +318,7 @@ open class PopupConfig : ActivityResultCaller, LifecycleOwner, IActivityProvider
         }
 
         if (parent != null) {
-            window.showAtLocation(parent, gravity, xoff + offsetX, yoff + offsetY)
+            window.showAtLocation(parent, gravity, xoff + offsetX, yoff + offsetY + inDialogOffsetY)
         } else if (anchor != null) {
             //当空间不够时, 系统会自动偏移到最佳位置, 此时xoff也会额外追加偏移计算中
             // Gravity.LEFT / Gravity.RIGHT 有效
@@ -315,7 +327,7 @@ open class PopupConfig : ActivityResultCaller, LifecycleOwner, IActivityProvider
                 window,
                 anchor!!,
                 xoff + offsetX,
-                yoff + offsetY,
+                yoff + offsetY + inDialogOffsetY,
                 gravity
             )
         } else {
@@ -336,7 +348,12 @@ open class PopupConfig : ActivityResultCaller, LifecycleOwner, IActivityProvider
         val window = _container
         if (window != null) {
             if (window is PopupWindow) {
-                window.update(anchor ?: parent, xoff + offsetX, yoff + offsetY, width, height)
+                window.update(
+                    anchor ?: parent,
+                    xoff + offsetX,
+                    yoff + offsetY + inDialogOffsetY,
+                    width, height
+                )
             }
             contentView?.tagDslViewHolder()?.let {
                 onInitLayout(window, it)

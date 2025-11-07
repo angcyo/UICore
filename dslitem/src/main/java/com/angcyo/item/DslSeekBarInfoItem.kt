@@ -106,6 +106,7 @@ open class DslSeekBarInfoItem : DslBaseInfoItem() {
 
     var _window: TargetWindow? = null
     var _popupTipConfig: PopupTipConfig? = null
+    var itemPopupShowInDialogWindows: Boolean = false
 
     open fun showBubblePopupTip(view: View, event: MotionEvent) {
         view.interceptParentTouchEvent(event)
@@ -114,6 +115,7 @@ open class DslSeekBarInfoItem : DslBaseInfoItem() {
                 _window = view.context.popupTipWindow(view, itemPopupTipLayoutId) {
                     touchX = event.x
                     _popupTipConfig = this
+                    isShowInDialogWindows = itemPopupShowInDialogWindows
                     onInitLayout = { window, viewHolder ->
                         viewHolder.view(R.id.lib_bubble_view)?.background = BubbleDrawable()
                         viewHolder.tv(R.id.lib_text_view)?.text = if (view is DslProgressBar) {
