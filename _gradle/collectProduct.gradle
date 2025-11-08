@@ -8,9 +8,6 @@
  * - R.txt
  * - configuration.txt
  * */
-
-println "当前Gradle版本->" + gradle.gradleVersion + " 用户目录:" + gradle.gradleUserHomeDir + " 主目录:" + gradle.gradleHomeDir
-
 def output = project.hasProperty("apk_path") ? project.ext.apk_path : ".apk"
 
 //APK输出文件名配置:(不包含扩展名)
@@ -27,6 +24,12 @@ def keyAlias = project.hasProperty("signConfig") ? signConfig.key_alias : ''
 
 //是否收集debug产物, 默认false
 def collectDebugProduct = project.hasProperty("collectDebugProduct") ? project.ext.collectDebugProduct == "true" : false
+
+println "[collectProduct.gradle] 当前Gradle版本->" + gradle.gradleVersion +
+        " 用户目录:" + gradle.gradleUserHomeDir +
+        " 主目录:" + gradle.gradleHomeDir +
+        " 输出目录:" + output +
+        " 产物格式:" + apkFormatName
 
 android {
     applicationVariants.all { variant ->
