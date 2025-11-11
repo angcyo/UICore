@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Turn off echo
+set +x
+
+#git remote show origin
+git remote -v
+
+git add .
+git commit -a -m "fix base"
+git push --set-upstream origin main
+

@@ -24,7 +24,17 @@ import com.angcyo.library.annotation.CallComplianceAfter
 import com.angcyo.library.annotation.Pixel
 import com.angcyo.library.component.BackgroundThread
 import com.angcyo.library.component.lastContext
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex._string
+import com.angcyo.library.ex.activityContent
+import com.angcyo.library.ex.currentApplication
+import com.angcyo.library.ex.getAppSignatureMD5
+import com.angcyo.library.ex.getNavBarHeight
+import com.angcyo.library.ex.getStatusBarHeight
+import com.angcyo.library.ex.have
+import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.navBarHeight
+import com.angcyo.library.ex.toString
+import com.angcyo.library.ex.writeText
 import com.angcyo.library.utils.FileUtils.appRootExternalFolder
 import com.angcyo.library.utils.fileNameUUID
 import com.orhanobut.hawk.Hawk
@@ -72,6 +82,7 @@ object Library {
             )
             if (hawkXmlFile.exists()) {
                 hawkPath = hawkXmlFile.absolutePath
+                L.i("Hawk初始化在->${hawkPath}")
             }
         }
         try {
