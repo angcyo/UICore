@@ -65,14 +65,29 @@ fun fileUri(context: Context, file: File, permission: Boolean = true): Uri {
     //scheme:content
 }
 
-fun Uri.inputStream(context: Context = app()): InputStream? {
+fun Uri.inputStream(context: Context = app(), flags: Int = 0): InputStream? {
+    val takeFlags =
+        flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+    // 如果 provider 支持 persistable 且 intent 带有这个标志，可以取持久权限（大多数 FileProvider 不支持）
+    try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            context.contentResolver.takePersistableUriPermission(this, takeFlags)
+        }
+    } catch (e: Exception) {
+        // ignore or log；许多 FileProvider 不允许持久化
+        e.printStackTrace()
+    }
     return context.contentResolver.openInputStream(this)
 }
 
 /**转存数据流
  * @return 文件路径*/
-fun Uri.saveTo(filePath: String = libCacheFile().absolutePath, context: Context = app()): String {
-    inputStream(context)?.copyToFile(filePath)
+fun Uri.saveTo(
+    filePath: String = libCacheFile().absolutePath,
+    context: Context = app(),
+    flags: Int = 0
+): String {
+    inputStream(context, flags)?.copyToFile(filePath)
     return filePath
 }
 

@@ -3,6 +3,7 @@ package com.angcyo.library.component
 import android.content.Intent
 import android.net.Uri
 import com.angcyo.library.L
+import com.angcyo.library.component.ROpenFileHelper.parseIntent
 import com.angcyo.library.ex.extName
 import com.angcyo.library.ex.getShowName
 import com.angcyo.library.ex.lastName
@@ -69,7 +70,8 @@ object ROpenFileHelper {
             data,
             ext ?: intent.type?.mimeTypeToExtName() ?: intent.type?.lastName(),
             savePath,
-            folderPath
+            folderPath,
+            intent.flags
         )
     }
 
@@ -83,7 +85,8 @@ object ROpenFileHelper {
         data: Uri?,
         ext: String? = null, //单独指定文件的扩展名
         savePath: String? = null, //强制指定文件的全路径, 此时[ext]参数无效
-        folderPath: String? = null //单独指定文件的存储目录
+        folderPath: String? = null, //单独指定文件的存储目录
+        flags: Int = 0,
     ): String? {
         data ?: return null
         val filePath: String
@@ -126,11 +129,19 @@ object ROpenFileHelper {
         } else {
             filePath = savePath
         }
-        data.saveTo(filePath)//转存文件
-        ///data/user/0/com.angcyo.uicore.demo/cache/documents/ffea464c0cb6e12(2).jpg
-        //->/storage/emulated/0/Android/data/com.angcyo.uicore.demo/cache/ffea464c0cb6e12(2).jpg
-        L.i("转存文件:$path ->$filePath")
-        return filePath
+        try {
+            //读取外部文件时, 需要
+            //content://com.ss.android.lark.common.fileprovider/external_files/Download/Lark/11(3).svg
+            data.saveTo(filePath, flags = flags)//转存文件
+            ///data/user/0/com.angcyo.uicore.demo/cache/documents/ffea464c0cb6e12(2).jpg
+            //->/storage/emulated/0/Android/data/com.angcyo.uicore.demo/cache/ffea464c0cb6e12(2).jpg
+            L.i("转存文件:$path ->$filePath")
+            return filePath
+        } catch (e: Exception) {
+            L.e("转存文件失败:$path ->$filePath")
+            e.printStackTrace()
+            return null
+        }
     }
 
 }
