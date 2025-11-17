@@ -99,6 +99,9 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
     /**如果是小数, 则顶多能输入到小数点后几位*/
     var decimalCount = numberDecimalCount
 
+    /**如果是小数, 是否四舍五入*/
+    var isFadedUp: Boolean = true
+
     /**
      * @return true 表示自动销毁window
      * */
@@ -276,10 +279,10 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
             return null
         }
         if (value is Float) {
-            return value.decimal(decimalCount)
+            return value.decimal(decimalCount, fadedUp = isFadedUp)
         }
         if (value is Double) {
-            return value.decimal(decimalCount)
+            return value.decimal(decimalCount, fadedUp = isFadedUp)
         }
         return value.toString()
     }
