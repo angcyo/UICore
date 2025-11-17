@@ -7,7 +7,12 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.activity.OnBackPressedCallback
@@ -32,10 +37,21 @@ import com.angcyo.library._screenHeight
 import com.angcyo.library._screenWidth
 import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.component.lastContext
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.bgColorAnimator
+import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.getChildOrNull
+import com.angcyo.library.ex.getContentViewHeight
+import com.angcyo.library.ex.have
+import com.angcyo.library.ex.mH
+import com.angcyo.library.ex.mW
+import com.angcyo.library.ex.setBgDrawable
+import com.angcyo.library.ex.undefined_int
+import com.angcyo.library.ex.undefined_res
 import com.angcyo.lifecycle.onDestroy
 import com.angcyo.widget.DslViewHolder
-import com.angcyo.widget.base.*
+import com.angcyo.widget.base.atMost
+import com.angcyo.widget.base.setDslViewHolder
+import com.angcyo.widget.base.tagDslViewHolder
 import kotlin.math.max
 
 /**
@@ -195,8 +211,12 @@ open class PopupConfig : ActivityResultCaller, LifecycleOwner, IActivityProvider
      * 回调, 是否要拦截默认操作.
      * [showWithPopupWindow]时有效
      * [showWithActivity]时是在[com.angcyo.dialog.PopupConfig.onRemoveRootLayout]中回调
+     *
+     * - [isDestroyed]
+     * - [onDismiss]
      * */
     var onDismiss: (window: TargetWindow) -> Boolean = { false }
+
 
     /**
      * [window] :[PopupWindow] or [Window]
@@ -778,6 +798,13 @@ open class PopupConfig : ActivityResultCaller, LifecycleOwner, IActivityProvider
 
     override val lifecycle: Lifecycle
         get() = lifecycleRegistry
+
+    /**当前窗口是否被销毁
+     * - [isDestroyed]
+     * - [onDismiss]
+     * */
+    val isDestroyed: Boolean
+        get() = lifecycle.currentState == Lifecycle.State.DESTROYED
 
     @CallSuper
     open fun onPopupInit() {
