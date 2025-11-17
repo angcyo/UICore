@@ -69,7 +69,7 @@ class NumberKeyboardDialogConfig : BaseDialogConfig() {
                 dialogMessage = if (numberValueType is Long || numberValueType is Int) {
                     value?.toString()?.toFloatOrNull()?.roundToInt()?.toString()
                 } else {
-                    value?.toString()?.toFloatOrNull()?.decimal(decimalCount)
+                    value?.toString()?.toFloatOrNull()?.decimal(decimalCount, fadedUp = isFadedUp)
                 }
             }
         }
