@@ -26,7 +26,15 @@ import com.angcyo.http.rx.doBack
 import com.angcyo.library.L
 import com.angcyo.library.LibApplication
 import com.angcyo.library.annotation.CallComplianceAfter
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex._string
+import com.angcyo.library.ex.connectUrl
+import com.angcyo.library.ex.getAppSignatureMD5
+import com.angcyo.library.ex.getAppSignatureSHA1
+import com.angcyo.library.ex.isAppDebug
+import com.angcyo.library.ex.isDebug
+import com.angcyo.library.ex.isShowDebug
+import com.angcyo.library.ex.toStr
+import com.angcyo.library.ex.wrapLog
 import com.angcyo.library.getAppString
 import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.LogFile
@@ -79,7 +87,7 @@ open class CoreApplication : LibApplication(), ViewModelStoreOwner {
             }
 
         /**打开url*/
-        var onOpenUrlAction: ((url: String) -> Unit)? = null
+        var onOpenUrlAction: ((url: String?) -> Unit)? = null
     }
 
     override fun onCreate() {
