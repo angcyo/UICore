@@ -43,6 +43,7 @@ def _minify_enabled = project.hasProperty("flutter.minifyEnabled") ? project.get
 def _C_SDK = project.hasProperty("C_SDK") ? project.ext.C_SDK : flutter.compileSdkVersion
 def _M_SDK = project.hasProperty("M_SDK") ? project.ext.M_SDK : flutter.minSdkVersion
 def _T_SDK = project.hasProperty("T_SDK") ? project.ext.T_SDK : flutter.targetSdkVersion
+def _NDK_SDK = project.hasProperty("NDK_SDK") ? project.ext.NDK_SDK : flutter.ndkVersion
 
 println "\n........flutterApp.gradle........${_appId}"
 println "flutter.targetSdkVersion=${flutter.targetSdkVersion} -> ${_T_SDK}"
@@ -50,7 +51,7 @@ println "flutter.compileSdkVersion=${flutter.compileSdkVersion} -> ${_C_SDK}"
 println "flutter.minSdkVersion=${flutter.minSdkVersion} -> ${_M_SDK}"
 println "flutter.versionCode=${flutter.versionCode}"
 println "flutter.versionName=${flutter.versionName}"
-println "flutter.ndkVersion=${flutter.ndkVersion}"
+println "flutter.ndkVersion=${flutter.ndkVersion} -> ${_NDK_SDK}"
 println "........flutterApp.gradle........end"
 
 //def appId = "com.angcyo.flutter3.abc"
@@ -61,7 +62,7 @@ android {
     }
     //compileSdkVersion _C_SDK.toInteger()
     compileSdk _C_SDK.toInteger() //flutter.compileSdkVersion
-    //ndkVersion flutter.ndkVersion
+    ndkVersion _NDK_SDK
     //ndkVersion = "27.0.12077973"
 
     //废弃agp 8.x
