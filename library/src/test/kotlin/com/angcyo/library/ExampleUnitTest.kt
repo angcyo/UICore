@@ -21,4 +21,10 @@ class ExampleUnitTest {
         println(int shr 0)
         println((int shr 1) and 0x1)
     }
+
+    @Test
+    fun testList() {
+        val list = (0..60).map { it }.toList()
+        println(list)
+    }
 }
