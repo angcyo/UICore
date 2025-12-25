@@ -7,7 +7,12 @@ import android.graphics.RectF
 import com.angcyo.library.component.pool.acquireTempMatrix
 import com.angcyo.library.component.pool.acquireTempRectF
 import com.angcyo.library.component.pool.release
-import kotlin.math.*
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.round
+import kotlin.math.roundToInt
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -598,6 +603,14 @@ fun RectF.trapToRect(
     matrix.release()
 
     return result
+}
+
+/**扩展矩形的边界, 以便包含另一个矩形, 膨胀矩形*/
+fun RectF.fill(other: RectF): RectF = apply {
+    left = min(left, other.left)
+    top = min(top, other.top)
+    right = max(right, other.right)
+    bottom = max(bottom, other.bottom)
 }
 
 /**扩展矩形的边界, 请注意, 会自动反向处理*/
