@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="doodle_ai_draw">"Rysunek AI"</string>
+  <string name="doodle_brush">"Pędzel"</string>
+  <string name="doodle_color">"Kolor"</string>
+  <string name="doodle_eraser">"Gumka"</string>
+  <string name="doodle_pencil">"Pióro"</string>
+  <string name="doodle_redo">"Powtórz"</string>
+  <string name="doodle_size">"Rozmiar"</string>
+  <string name="doodle_title">"Graffiti"</string>
+  <string name="doodle_undo">"Cofnij"</string>
+</resources>

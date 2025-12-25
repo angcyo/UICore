@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="adapter_error">"Ładowanie nie powiodło się. Spróbuj ponownie."</string>
+  <string name="adapter_loading">"Ładowanie…"</string>
+  <string name="adapter_no_data">"Brak dostępnych danych"</string>
+  <string name="adapter_no_more">"Doszedłeś do końca!"</string>
+  <string name="not_support">"Obecnie nieobsługiwane."</string>
+  <string name="not_support_part">"Częściowe dane nie są obsługiwane."</string>
+  <string name="refresh">"Odśwież"</string>
+</resources>

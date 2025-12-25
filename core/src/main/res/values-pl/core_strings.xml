@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="core_add_file_fail">"Nie udało się dodać"</string>
+  <string name="core_add_file_success">"Dodano"</string>
+  <string name="core_file_import">"Dodaj plik"</string>
+  <string name="core_file_list">"Lista plików"</string>
+  <string name="core_import">"Importuj"</string>
+  <string name="core_import_fail">"Import nie powiódł się"</string>
+  <string name="core_import_success">"Pomyślnie zaimportowano"</string>
+  <string name="core_screen_shot_text">"Opinie"</string>
+  <string name="core_send_to_label">"Wyślij do..."</string>
+  <string name="core_thread_error_tip">"Napotkałem mały problem"</string>
+  <string name="core_trash_delete">"Przeciągnij tutaj, by usunąć"</string>
+  <string name="core_trash_delete_tip">"Puść palec, aby usunąć"</string>
+  <string name="permission_disabled">"Zezwolenie zostało odrzucone"</string>
+  <string name="ui_add">"Dodaj"</string>
+  <string name="ui_back">"Wstecz"</string>
+  <string name="ui_choose">"Wybierz"</string>
+  <string name="ui_confirm">@string/dialog_positive</string>
+  <string name="ui_delete">"Usuń"</string>
+  <string name="ui_delete_fail">"Usunięcie nie powiodło się"</string>
+  <string name="ui_delete_tip">"Po usunięciu nie będzie możliwości odzyskania danych. Czy chcesz kontynuować?"</string>
+  <string name="ui_edit">"Edytuj"</string>
+  <string name="ui_enable_permission">"Włącz uprawnienie"</string>
+  <string name="ui_feature_development">"Funkcja w trakcie opracowywania..."</string>
+  <string name="ui_finish">"Gotowe"</string>
+  <string name="ui_known">"OK"</string>
+  <string name="ui_minimum">"Minimum"</string>
+  <string name="ui_next">"Dalej"</string>
+  <string name="ui_open">"Otwórz"</string>
+  <string name="ui_prev">"Poprzedni krok"</string>
+  <string name="ui_share">"Udostępnij"</string>
+  <string name="ui_valid_range_tip">"Zakres prawidłowy"</string>
+  <string name="ui_wait_tip">"Proszę czekać..."</string>
+  <string name="ui_warn">"Ostrzeżenie"</string>
+</resources>

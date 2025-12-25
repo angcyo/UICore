@@ -279,6 +279,8 @@ _copyResFile.doFirst {
         _writeFile("${fromPath}/ru/${fileName}", "${toPath}/src/main/res/values-ru/${fileName}")
         //2025-10-25 新增 意大利语
         _writeFile("${fromPath}/it/${fileName}", "${toPath}/src/main/res/values-it/${fileName}")
+        //2025-12-25 新增 波兰语
+        _writeFile("${fromPath}/pl/${fileName}", "${toPath}/src/main/res/values-pl/${fileName}")
     }
 }
 
