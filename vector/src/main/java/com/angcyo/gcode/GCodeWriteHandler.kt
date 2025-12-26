@@ -43,7 +43,7 @@ class GCodeWriteHandler : VectorWriteHandler() {
             val actualPower = power ?: 255
             val actualSpeed = speed ?: 12000
             // 灰度图片, 通过这个最大功率, 和每个点的当前功率, 计算出当前的灰度值
-            return "G90\nG21\nM8\nM5\n${if (auto) "M4" else "M3"}${space}S$actualPower\nG0${space}F$actualSpeed\n"
+            return "G90\nG21\nM5\n${if (auto) "M4" else "M3"}${space}S$actualPower\nG0${space}F$actualSpeed\n"
         }
 
         /// GCode 尾部
