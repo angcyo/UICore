@@ -4,6 +4,15 @@ import android.graphics.Color
 import androidx.annotation.Keep
 import com.angcyo.library.annotation.MM
 import com.angcyo.library.annotation.Pixel
+import com.angcyo.library.component.hawk.LibHawkKeys._pathAcceptableError
+import com.angcyo.library.component.hawk.LibHawkKeys.alphaThreshold
+import com.angcyo.library.component.hawk.LibHawkKeys.canvasEdgeThreshold
+import com.angcyo.library.component.hawk.LibHawkKeys.canvasEdgeTranslateStep
+import com.angcyo.library.component.hawk.LibHawkKeys.canvasRenderMaxCount
+import com.angcyo.library.component.hawk.LibHawkKeys.enablePathBoundsExact
+import com.angcyo.library.component.hawk.LibHawkKeys.pathAcceptableError
+import com.angcyo.library.component.hawk.LibHawkKeys.pathAcceptableErrorMM
+import com.angcyo.library.component.hawk.LibHawkKeys.svgTolerance
 import com.angcyo.library.ex.hawkGet
 import com.angcyo.library.ex.isDebug
 import com.angcyo.library.getAppString
@@ -149,6 +158,10 @@ object LibHawkKeys {
     /**默认的公差*/
     @MM
     var defPathTolerance: Float by HawkPropertyValue<Any, Float>(0.02f)
+
+    /**LX2 默认的公差*/
+    @MM
+    var defLx2PathTolerance: Float by HawkPropertyValue<Any, Float>(0.001f)
 
     /**是否强制使用高刷*/
     var enableHighRefresh: Boolean by HawkPropertyValue<Any, Boolean>(isDebug())
