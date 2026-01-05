@@ -86,7 +86,7 @@ object LibLpHawkKeys {
 
     /**wifi发送延迟
      * [com.angcyo.http.tcp.Tcp.sendDelay]*/
-    var wifiSendDelay: Long by HawkPropertyValue<Any, Long>(0)
+    var wifiSendDelay: Long by HawkPropertyValue<Any, Long>(60)
 
     /**[com.angcyo.http.tcp.Tcp.sendDelayByteCount]*/
     var wifiSendDelayByteCount: Long by HawkPropertyValue<Any, Long>(30 * 1024)
