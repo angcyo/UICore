@@ -43,6 +43,12 @@ class DataShareModel : ViewModel() {
     /**共享字符串数据[key:value]*/
     val shareTextMapData = vmData(mutableMapOf<String, CharSequence>())
 
+    /**共享Map状态通知*/
+    val shareMapOnceData = vmDataOnce<Map<String, Any?>?>()
+
+    /**共享Map数据通知*/
+    val shareMapData = vmDataOnce<Map<String, Any?>?>()
+
     /**更新/删除共享[shareTextMapData]
      * [value] 为空时, 删除key*/
     fun updateShareTextMapData(key: String, value: CharSequence?) {
