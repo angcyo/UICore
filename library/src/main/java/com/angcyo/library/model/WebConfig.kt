@@ -26,7 +26,9 @@ data class WebConfig(
     var targetClass: Class<out Fragment>? = null,
     /**指定界面的标题*/
     var title: CharSequence? = null,
-    /**是否需要显示右边的菜单*/
+    /**是否自动显示标题栏左边的关闭icon*/
+    var showCloseButton: Boolean = true,
+    /**是否需要显示标题栏右边的菜单icon*/
     var showRightMenu: Boolean = true,
     /**是否需要loading提示, 包括顶部和中间*/
     var showLoading: Boolean = true,

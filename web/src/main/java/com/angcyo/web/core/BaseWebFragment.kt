@@ -135,11 +135,11 @@ abstract class BaseWebFragment : BaseTitleFragment() {
 
     override fun onCreateViewAfter(savedInstanceState: Bundle?) {
         super.onCreateViewAfter(savedInstanceState)
-        initWebLayout()
+        initWebLayout(fromInitialize = true)
     }
 
     /**核心初始化*/
-    open fun initWebLayout() {
+    open fun initWebLayout(fromInitialize: Boolean = true) {
         _vh.tv(R.id.lib_title_text_view)?.run {
             setWidth(width = screenWidth - 180 * dpi)
             setSingleLineMode()
@@ -150,46 +150,50 @@ abstract class BaseWebFragment : BaseTitleFragment() {
 
         if (data != null) {
             //加载数据
-            attachWebView(null, data)
+            attachWebView(null, data, fromInitialize = fromInitialize)
         } else if (uri == null) {
-            toastQQ("Uri异常", fContext(), R.drawable.lib_ic_error)
+            if (fromInitialize) {
+                toastQQ("Uri error", fContext(), R.drawable.lib_ic_error)
+            }
         } else if (wrapLayout == null) {
-            toastQQ("布局异常", fContext(), R.drawable.lib_ic_error)
+            if (fromInitialize) {
+                toastQQ("Layout error", fContext(), R.drawable.lib_ic_error)
+            }
         } else {
             val loadUrl = uri.loadUrl()
             val mimeType = loadUrl.mimeType() ?: webConfig.mimeType
 
-            L.d("TBS:$uri $loadUrl $mimeType")
+            L.d("Web:$uri $loadUrl $mimeType")
 
             if (mimeType.isVideoMimeType()) {
                 try {
-                    attachVideoView(uri)
+                    attachVideoView(uri, fromInitialize = fromInitialize)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             } else if (uri.isHttpScheme() || mimeType.isHttpMimeType()) {
                 //打开网页
                 loadWebTitleLayout()
-                attachWebView(loadUrl)
+                attachWebView(loadUrl, fromInitialize = fromInitialize)
             } else if (uri.isFileScheme()) {
                 val fileExt = loadUrl!!.ext()
                 fragmentTitle = loadUrl.file().name
 
                 if (mimeType.isImageMimeType()) {
                     try {
-                        attachImageView(uri)
+                        attachImageView(uri, fromInitialize = fromInitialize)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 } else {
-                    if (attachFileReaderView(loadUrl)) {
+                    if (attachFileReaderView(loadUrl, fromInitialize = fromInitialize)) {
                         //支持文件打开
                     } else {
                         showLoadingView("无法打开文件\n$uri")
                     }
                 }
             } else if (mimeType.isTextMimeType()) {
-                attachTextView(uri)
+                attachTextView(uri, fromInitialize = fromInitialize)
             } else {
                 //其他类型
                 showLoadingView("不支持的类型\n$uri")
@@ -200,13 +204,21 @@ abstract class BaseWebFragment : BaseTitleFragment() {
     //region ---根据不同的类型, 填充不同的布局---
 
     /**加载其他文件, office等*/
-    open fun attachFileReaderView(path: String, parent: ViewGroup? = wrapLayout): Boolean = false
+    open fun attachFileReaderView(
+        path: String,
+        parent: ViewGroup? = wrapLayout,
+        fromInitialize: Boolean = true
+    ): Boolean = false
 
     var _dslVideoHolder: DslViewHolder? = null
     var _dslVideoItem: DslTextureVideoItem? = null
 
     /**加载视频*/
-    open fun attachVideoView(uri: Uri, parent: ViewGroup? = wrapLayout) {
+    open fun attachVideoView(
+        uri: Uri,
+        parent: ViewGroup? = wrapLayout,
+        fromInitialize: Boolean = true
+    ) {
         parent?.setBackgroundColor(Color.BLACK)
         hideLoadingView()
 
@@ -232,7 +244,11 @@ abstract class BaseWebFragment : BaseTitleFragment() {
     var _dslSubSamplingItem: DslSubSamplingImageItem? = null
 
     /**加载大图*/
-    open fun attachImageView(uri: Uri, parent: ViewGroup? = wrapLayout) {
+    open fun attachImageView(
+        uri: Uri,
+        parent: ViewGroup? = wrapLayout,
+        fromInitialize: Boolean = true
+    ) {
         parent?.setBackgroundColor(Color.BLACK)
         hideLoadingView()
 
@@ -256,7 +272,11 @@ abstract class BaseWebFragment : BaseTitleFragment() {
     }
 
     /**加载文本*/
-    open fun attachTextView(uri: Uri, parent: ViewGroup? = wrapLayout) {
+    open fun attachTextView(
+        uri: Uri,
+        parent: ViewGroup? = wrapLayout,
+        fromInitialize: Boolean = true
+    ) {
         hideLoadingView()
         parent?.inflate(R.layout.web_text_layout).apply {
             find<TextView>(R.id.lib_text_view)?.text = uri.toString()
@@ -278,14 +298,16 @@ abstract class BaseWebFragment : BaseTitleFragment() {
     /**加载网页类型的标题栏*/
     open fun loadWebTitleLayout() {
         //有些网页, 无法回退. 添加强制关闭按钮
-        appendLeftItem(ico = R.drawable.web_ic_close, action = {
-            id = R.id.lib_close_view
-            visibility = View.GONE
-            updateMarginParams {
-                leftMargin = -6 * dpi
+        if (webConfig.showCloseButton) {
+            appendLeftItem(ico = R.drawable.web_ic_close, action = {
+                id = R.id.lib_close_view
+                visibility = View.GONE
+                updateMarginParams {
+                    leftMargin = -6 * dpi
+                }
+            }) {
+                close()
             }
-        }) {
-            close()
         }
 
         if (webConfig.showRightMenu) {
@@ -363,13 +385,15 @@ abstract class BaseWebFragment : BaseTitleFragment() {
 
     /**动态判断是否要显示强制关闭按钮*/
     open fun checkCloseView() {
-        if (canGoBack()) {
-            leftControl()?.run {
-                visible(R.id.lib_close_view)
-            }
-        } else {
-            leftControl()?.run {
-                gone(R.id.lib_close_view)
+        if (webConfig.showCloseButton) {
+            if (canGoBack()) {
+                leftControl()?.run {
+                    visible(R.id.lib_close_view)
+                }
+            } else {
+                leftControl()?.run {
+                    gone(R.id.lib_close_view)
+                }
             }
         }
     }
@@ -409,7 +433,12 @@ abstract class BaseWebFragment : BaseTitleFragment() {
 
     abstract fun loadUrl(url: String?)
 
-    open fun attachWebView(url: String?, data: String? = null, parent: ViewGroup? = wrapLayout) {
+    open fun attachWebView(
+        url: String?,
+        data: String? = null,
+        parent: ViewGroup? = wrapLayout,
+        fromInitialize: Boolean = true
+    ) {
         //host提示
         if (_vh.view(R.id.lib_host_tip_view) == null) {
             rootControl().group(R.id.lib_coordinator_wrap_layout)?.apply {

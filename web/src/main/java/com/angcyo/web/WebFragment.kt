@@ -18,11 +18,17 @@ import com.angcyo.web.core.DslWebView
  */
 open class WebFragment : BaseWebFragment() {
 
+    /**[WebView]*/
     var webView: DslWebView? = null
 
     /**追加[DslWebView], 用于打开网页*/
-    override fun attachWebView(url: String?, data: String?, parent: ViewGroup?) {
-        super.attachWebView(url, data, parent)
+    override fun attachWebView(
+        url: String?,
+        data: String?,
+        parent: ViewGroup?,
+        fromInitialize: Boolean
+    ) {
+        super.attachWebView(url, data, parent, fromInitialize)
 
         webView = DslWebView(fContext()).apply {
             id = R.id.lib_web_view

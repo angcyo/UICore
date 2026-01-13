@@ -9,9 +9,9 @@ dependencies {
     implementation project(allModule.library)
     implementation project(allModule.core)
 
-    //web 2023-6-8
-    implementation project(allModule.download) //downloadNotify
-    implementation project(allModule.picker) //dslPicker
+    //web 2023-6-8 //2026-01-13 请在主包中主动依赖
+    compileOnly project(allModule.download) //downloadNotify
+    compileOnly project(allModule.picker) //dslPicker
     //end web
 
     // https://mvnrepository.com/artifact/androidx.webkit/webkit
