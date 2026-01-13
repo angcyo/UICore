@@ -26,6 +26,8 @@ data class WebConfig(
     var targetClass: Class<out Fragment>? = null,
     /**指定界面的标题*/
     var title: CharSequence? = null,
+    /**在未指定[title]的情况下, 是否自动更新页面标题*/
+    var autoUpdateTitle: Boolean = true,
     /**是否自动显示标题栏左边的关闭icon*/
     var showCloseButton: Boolean = true,
     /**是否需要显示标题栏右边的菜单icon*/

@@ -177,7 +177,9 @@ abstract class BaseWebFragment : BaseTitleFragment() {
                 attachWebView(loadUrl, fromInitialize = fromInitialize)
             } else if (uri.isFileScheme()) {
                 val fileExt = loadUrl!!.ext()
-                fragmentTitle = loadUrl.file().name
+                if (webConfig.autoUpdateTitle && webConfig.title.isNullOrEmpty()) {
+                    fragmentTitle = loadUrl.file().name
+                }
 
                 if (mimeType.isImageMimeType()) {
                     try {
@@ -451,8 +453,8 @@ abstract class BaseWebFragment : BaseTitleFragment() {
 
     /**接收到标题*/
     open fun receivedTitle(title: CharSequence?) {
-        if (webConfig.title.isNullOrEmpty()) {
-            _receivedTitle = title
+        _receivedTitle = title
+        if (webConfig.autoUpdateTitle && webConfig.title.isNullOrEmpty()) {
             fragmentTitle = title
         }
     }
@@ -466,7 +468,7 @@ abstract class BaseWebFragment : BaseTitleFragment() {
         //加载框
 
         if (progress == 0) {
-            if (fragmentTitle.isNullOrEmpty()) {
+            if (webConfig.autoUpdateTitle && fragmentTitle.isNullOrEmpty()) {
                 fragmentTitle = _string(R.string.adapter_loading)
             }
         } else if (progress == 100) {
