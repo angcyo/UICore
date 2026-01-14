@@ -37,6 +37,51 @@ import kotlin.math.min
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @since 2023/06/08
+ *
+ * # 注册一个 Java 处理函数，以便 JavaScript 可以调用它。
+ *
+ * ```
+ *  webView.registerHandler("submitFromWeb", new BridgeHandler() {
+ *      @Override
+ *      public void handler(String data, CallBackFunction function) {
+ *          Log.i(TAG, "handler = submitFromWeb, data from web = " + data);
+ *          function.onCallBack("submitFromWeb exe, response data from Java");
+ *      }
+ *  });
+ *
+ *
+ *  WebViewJavascriptBridge.callHandler(
+ *      'submitFromWeb'
+ *      , {'param': str1}
+ *      , function(responseData) {
+ *          document.getElementById("show").innerHTML = "send get responseData from java, data = " + responseData
+ *      }
+ *  );
+ *
+ * ```
+ *
+ * # 注册一个 JavaScript 处理函数，以便 Java 可以调用它。
+ *
+ * ```
+ *
+ * WebViewJavascriptBridge.registerHandler("functionInJs", function(data, responseCallback) {
+ *     document.getElementById("show").innerHTML = ("data from Java: = " + data);
+ *     var responseData = "Javascript Says Right back aka!";
+ *     responseCallback(responseData);
+ * });
+ *
+ *
+ *  webView.callHandler("functionInJs", new Gson().toJson(user), new CallBackFunction() {
+ *      @Override
+ *      public void onCallBack(String data) {
+ *
+ *      }
+ *  });
+ *
+ *
+ * ```
+ *
+ * https://github.com/uknownothingsnow/JsBridge
  */
 open class DslWebView(context: Context, attributeSet: AttributeSet? = null) :
     BridgeWebView(context, attributeSet) {

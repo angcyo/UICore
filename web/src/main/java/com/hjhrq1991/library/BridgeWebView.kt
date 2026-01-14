@@ -24,6 +24,9 @@ import com.hjhrq1991.library.BridgeUtil.getFunctionFromReturnUrl
 import com.hjhrq1991.library.BridgeUtil.parseFunctionName
 import com.hjhrq1991.library.Message.Companion.toArrayList
 
+/**
+ * https://github.com/uknownothingsnow/JsBridge
+ * */
 @SuppressLint("SetJavaScriptEnabled")
 open class BridgeWebView : WebView, WebViewJavascriptBridge {
     var responseCallbacks: MutableMap<String, CallBackFunction> = hashMapOf()

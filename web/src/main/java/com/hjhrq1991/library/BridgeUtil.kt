@@ -3,6 +3,7 @@ package com.hjhrq1991.library
 import android.content.Context
 import android.text.TextUtils
 import android.webkit.WebView
+import com.angcyo.library.L
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -75,6 +76,7 @@ object BridgeUtil {
 
     @JvmStatic
     fun webViewLoadLocalJs(view: WebView, path: String?, defaultJs: String, customJs: String?) {
+        L.i("准备加载桥接js->$path $defaultJs $customJs")
         var jsContent = assetFile2Str(view.context, path)
         if (!TextUtils.isEmpty(jsContent)) {
             jsContent = jsContent!!.replace(defaultJs.toRegex(), customJs!!)
