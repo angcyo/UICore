@@ -17,7 +17,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.angcyo.DslAHelper
-import com.angcyo.base.*
+import com.angcyo.base.checkBackPressedDispatcher
+import com.angcyo.base.dslAHelper
+import com.angcyo.base.dslFHelper
+import com.angcyo.base.enableLayoutFullScreen
+import com.angcyo.base.getAllValidityFragment
 import com.angcyo.dslTargetIntentHandle
 import com.angcyo.fragment.AbsFragment
 import com.angcyo.fragment.R
@@ -82,6 +86,9 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         }
     }
 
+    /**是否要处理导航栏的插入*/
+    var handleNavigationBarInsets = true
+
     open fun onApplyWindowInsets(view: View, insets: WindowInsetsCompat): WindowInsetsCompat {
         val statusBars = WindowInsetsCompat.Type.statusBars()
         val navigationBars = WindowInsetsCompat.Type.navigationBars()
@@ -91,14 +98,15 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         val navigationBarInsets = insets.getInsets(navigationBars)
         val imeInsets = insets.getInsets(ime)
 
-        if (view.paddingBottom == 0) {
+        if (handleNavigationBarInsets) {
             view.setPadding(
                 view.paddingLeft,
                 view.paddingTop,
-                view.paddingRight,
+                navigationBarInsets.right,
                 navigationBarInsets.bottom
             )
         }
+        val maxRight = maxOf(imeInsets.right, navigationBarInsets.right)
         val maxBottom = maxOf(imeInsets.bottom, navigationBarInsets.bottom)
         val builder = WindowInsetsCompat.Builder()
         builder.setInsets(statusBars, statusBarInsets)
@@ -107,7 +115,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
             Insets.of(
                 navigationBarInsets.left,
                 navigationBarInsets.top,
-                navigationBarInsets.right,
+                maxRight - view.paddingRight,
                 maxBottom - view.paddingBottom
             )
         )

@@ -9,15 +9,32 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
-import android.view.*
-import android.view.WindowManager.LayoutParams.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.FLAG_BLUR_BEHIND
+import android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND
+import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
+import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+import android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING
+import android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+import android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+import android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
 import android.widget.FrameLayout
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.annotation.*
+import androidx.annotation.CallSuper
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
+import androidx.annotation.LayoutRes
+import androidx.annotation.StyleRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDialog
@@ -34,7 +51,14 @@ import com.angcyo.drawable.isGravityCenterVertical
 import com.angcyo.library.IActivityProvider
 import com.angcyo.library.L
 import com.angcyo.library.UndefinedDrawable
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex._drawable
+import com.angcyo.library.ex._string
+import com.angcyo.library.ex.hideSoftInput
+import com.angcyo.library.ex.isKeyUp
+import com.angcyo.library.ex.replace
+import com.angcyo.library.ex.undefined_float
+import com.angcyo.library.ex.undefined_res
+import com.angcyo.library.ex.undefined_size
 import com.angcyo.lifecycle.onDestroy
 import com.angcyo.widget.DslViewHolder
 import com.angcyo.widget.base.dslViewHolder
@@ -653,6 +677,12 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
         }
     }
 
+    /**是否要处理状态栏的插入*/
+    var handleStatusBarInsets = true
+
+    /**是否要处理导航栏的插入*/
+    var handleNavigationBarInsets = true
+
     open fun onApplyWindowInsets(view: View, insets: WindowInsetsCompat): WindowInsetsCompat {
         val statusBars = WindowInsetsCompat.Type.statusBars()
         val navigationBars = WindowInsetsCompat.Type.navigationBars()
@@ -662,9 +692,11 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
         val navigationBarInsets = insets.getInsets(navigationBars)
         val imeInsets = insets.getInsets(ime)
 
+        val maxRight = maxOf(imeInsets.right, navigationBarInsets.right)
         val maxBottom = maxOf(imeInsets.bottom, navigationBarInsets.bottom)
+
         val builder = WindowInsetsCompat.Builder()
-        if (dialogHeight == -1 && view.paddingTop == 0) {
+        if (dialogHeight == -1 && handleStatusBarInsets) {
             view.setPadding(
                 view.paddingLeft,
                 statusBarInsets.top,
@@ -682,11 +714,11 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
         } else {
             builder.setInsets(statusBars, statusBarInsets)
         }
-        if (view.paddingBottom == 0) {
+        if (handleNavigationBarInsets) {
             view.setPadding(
                 view.paddingLeft,
                 view.paddingTop,
-                view.paddingRight,
+                navigationBarInsets.right,
                 navigationBarInsets.bottom
             )
         }
@@ -695,7 +727,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
             Insets.of(
                 navigationBarInsets.left,
                 navigationBarInsets.top,
-                navigationBarInsets.right,
+                maxRight - view.paddingRight,
                 maxBottom - view.paddingBottom
             )
         )
