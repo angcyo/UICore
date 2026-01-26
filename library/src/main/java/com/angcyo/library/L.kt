@@ -74,6 +74,9 @@ object L {
     //临时tag
     var _tempTag: String? = null
 
+    /**>=此级别的日志, 才输出到文件*/
+    var fileLevel: Int = INFO
+
     //当前日志输出级别
     var _level: Int = DEBUG
 
@@ -151,7 +154,7 @@ object L {
         if (!_needParseLog()) {
             return
         }
-        if (!debug && _level < FILE) {
+        if (!debug && _level < fileLevel) {
             //非文件log
             return
         }
@@ -270,7 +273,7 @@ object L {
                 it(tag, _level, "$stackContext $logMsg")
             }
 
-            if (debug || _level == FILE) {
+            if (debug || _level >= fileLevel) {
                 //debug模式下, 获取时File日志
                 logPrint(tag, _level, "$stackContext $logMsg")
             }
@@ -306,7 +309,7 @@ object L {
         if (logPrintList.isNotEmpty()) {
             return true
         }
-        if (!debug && _level < FILE) {
+        if (!debug && _level < fileLevel) {
             //非文件log
             return false
         }
