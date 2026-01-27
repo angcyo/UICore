@@ -134,7 +134,8 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
 
     /**添加一个在[elementRendererList]之后绘制的渲染器
      * [removeAfterRendererList]*/
-    fun addAfterRendererList(renderer: BaseRenderer) {
+    fun addAfterRendererList(renderer: BaseRenderer?) {
+        renderer ?: return
         if (!afterRendererList.contains(renderer)) {
             afterRendererList.add(renderer)
         }
@@ -153,7 +154,8 @@ class CanvasRenderManager(val delegate: CanvasRenderDelegate) : BaseRenderDispat
     }
 
     /**[addAfterRendererList]*/
-    fun removeAfterRendererList(renderer: BaseRenderer) {
+    fun removeAfterRendererList(renderer: BaseRenderer?) {
+        renderer ?: return
         afterRendererList.remove(renderer)
         delegate.refresh()
     }
