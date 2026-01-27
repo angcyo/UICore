@@ -4,7 +4,12 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.os.Build
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
@@ -18,8 +23,13 @@ import androidx.annotation.StyleRes
 import com.angcyo.library.component.RBackground
 import com.angcyo.library.component.ThreadExecutor
 import com.angcyo.library.component.isNotificationsEnabled
-import com.angcyo.library.component.lastContext
-import com.angcyo.library.ex.*
+import com.angcyo.library.ex.dpi
+import com.angcyo.library.ex.elseNull
+import com.angcyo.library.ex.getDimen
+import com.angcyo.library.ex.getStatusBarHeight
+import com.angcyo.library.ex.postDelay
+import com.angcyo.library.ex.undefined_int
+import com.angcyo.library.ex.undefined_res
 import java.lang.ref.WeakReference
 
 /**
@@ -249,7 +259,18 @@ object DslToast {
     /**移除[view]*/
     fun _removeView(view: View) {
         (view.parent as? ViewGroup)?.let { viewGroup ->
-            viewGroup.removeView(view)
+            try {
+                viewGroup.postDelay {
+                    try {
+                        viewGroup.removeView(view)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+                //viewGroup.removeViewInLayout(view)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             view.tag?.let {
                 if (it is Int) {
                     _lastViewTag.remove(it)
