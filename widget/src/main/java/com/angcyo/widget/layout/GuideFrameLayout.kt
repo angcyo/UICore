@@ -274,6 +274,12 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) :
         anchorList.add(anchor)
     }
 
+    fun resetAnchor(anchor: Rect) {
+        anchorList.clear()
+        anchorList.add(anchor)
+        requestLayout()
+    }
+
     override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
         return LayoutParams(context, attrs)
     }
