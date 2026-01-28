@@ -40,12 +40,12 @@ import com.angcyo.library.annotation.CallPoint
 import com.angcyo.library.component.hawk.LibHawkKeys
 import com.angcyo.library.ex._string
 import com.angcyo.library.ex.interceptParentTouchEvent
-import com.angcyo.library.ex.isDebug
 import com.angcyo.library.ex.save
 import com.angcyo.library.ex.sleep
 import com.angcyo.library.ex.syncSingle
 import com.angcyo.library.ex.toBitmap
 import com.angcyo.library.ex.toUri
+import com.angcyo.library.ex.undefined_size
 import com.angcyo.library.libCacheFile
 import com.angcyo.library.toastQQ
 import com.angcyo.library.utils.fileNameUUID
@@ -74,6 +74,15 @@ class DoodleLayoutHelper(val dialogConfig: DoodleDialogConfig) {
 
     var maxPaintWidth: Float = 80f
 
+    /**item的宽度*/
+    var doodleItemWidth: Int = undefined_size
+
+    /**是否显示色盘*/
+    var showDoodlePalette = false
+
+    /**是否显示ai绘图*/
+    var showAIDraw = LibHawkKeys.enableAIDraw
+
     var _rootViewHolder: DslViewHolder? = null
 
     val _doodleItemAdapter: DslAdapter?
@@ -89,7 +98,8 @@ class DoodleLayoutHelper(val dialogConfig: DoodleDialogConfig) {
         viewHolder.rv(R.id.doodle_item_view)?.renderDslAdapter {
             DoodleFunItem()() {
                 itemIco = R.drawable.doodle_pencil
-                itemText = _string(R.string.doodle_pencil)
+                itemText = _string(R.string.doodle_paintbrush)
+                itemMinWidth = doodleItemWidth
                 itemClick = {
                     if (!itemIsSelected) {
                         itemIsSelected = true
@@ -105,6 +115,7 @@ class DoodleLayoutHelper(val dialogConfig: DoodleDialogConfig) {
             DoodleFunItem()() {
                 itemIco = R.drawable.doodle_brush
                 itemText = _string(R.string.doodle_brush)
+                itemMinWidth = doodleItemWidth
                 itemClick = {
                     if (!itemIsSelected) {
                         itemIsSelected = true
@@ -117,6 +128,7 @@ class DoodleLayoutHelper(val dialogConfig: DoodleDialogConfig) {
             DoodleFunItem()() {
                 itemIco = R.drawable.doodle_eraser
                 itemText = _string(R.string.doodle_eraser)
+                itemMinWidth = doodleItemWidth
                 itemClick = {
                     if (!itemIsSelected) {
                         itemIsSelected = true
@@ -126,10 +138,11 @@ class DoodleLayoutHelper(val dialogConfig: DoodleDialogConfig) {
                     }
                 }
             }
-            if (isDebug()) {
+            if (showDoodlePalette) {
                 DoodleIconItem()() {
                     itemIco = R.drawable.doodle_palette
                     itemText = _string(R.string.doodle_color)
+                    itemMinWidth = doodleItemWidth
                     itemClick = {
                         itemIsSelected = true
                         updateAdapterItem()
@@ -149,7 +162,7 @@ class DoodleLayoutHelper(val dialogConfig: DoodleDialogConfig) {
                     }
                 }
             }
-            if (LibHawkKeys.enableAIDraw) {
+            if (showAIDraw) {
                 val uploadFileAction = DslHttp.uploadFileAction
                 if (uploadFileAction != null) {
                     DoodleIconItem()() {

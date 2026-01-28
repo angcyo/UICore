@@ -5,6 +5,7 @@
   <string name="doodle_color">"Color"</string>
   <string name="doodle_eraser">"Eraser"</string>
   <string name="doodle_pencil">"Pen"</string>
+  <string name="doodle_paintbrush">画笔</string>
   <string name="doodle_redo">"Redo"</string>
   <string name="doodle_size">"Size"</string>
   <string name="doodle_title">"Graffiti"</string>

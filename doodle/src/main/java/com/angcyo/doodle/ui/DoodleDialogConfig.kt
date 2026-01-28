@@ -12,6 +12,7 @@ import com.angcyo.doodle.core.IDoodleListener
 import com.angcyo.doodle.element.BaseElement
 import com.angcyo.doodle.layer.BaseLayer
 import com.angcyo.dsladapter.findItemByTag
+import com.angcyo.library._screenWidth
 import com.angcyo.widget.DslViewHolder
 
 /**
@@ -35,6 +36,8 @@ class DoodleDialogConfig(context: Context? = null) : DslDialogConfig(context) {
         super.initDialogView(dialog, dialogViewHolder)
 
         //
+        doodleLayoutHelper.doodleItemWidth =/* if (isDebug()) _screenWidth / 4 else */
+            _screenWidth / 3
         doodleLayoutHelper.initLayout(dialogViewHolder)
         doodleLayoutHelper.doodleView?.doodleDelegate?.doodleListenerList?.add(object :
             IDoodleListener {
