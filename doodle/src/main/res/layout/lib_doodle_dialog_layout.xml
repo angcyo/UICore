@@ -99,8 +99,10 @@
                 style="@style/LibBodyTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxWidth="110dp"
                 android:paddingHorizontal="@dimen/lib_hdpi"
-                android:text="@string/doodle_size" />
+                android:text="@string/doodle_size"
+                tools:text="texttexttexttexttexttexttexttexttexttexttexttext" />
 
             <com.angcyo.widget.progress.DslSeekBar
                 android:id="@+id/size_seek_bar"
