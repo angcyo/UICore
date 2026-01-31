@@ -97,6 +97,9 @@ class Tcp : ICancel {
     /**发送延迟, 毫秒*/
     var sendDelay = 0L
 
+    /**开始时发送的延迟[sendDelay]*/
+    var firstSendDelay = 0L
+
     /**发送超过此字节数据之后, 延迟[sendDelay]*/
     var sendDelayByteCount = 0L
 
@@ -431,6 +434,10 @@ class Tcp : ICancel {
                     try {
                         val startSendTime = nowTime()
                         var delaySendSize = 0L
+
+                        if (firstSendDelay > 0) {
+                            sleep(firstSendDelay)
+                        }
                         while (true) {
                             val size = bytesInput.read(buffer)
                             if (size > 0) {
