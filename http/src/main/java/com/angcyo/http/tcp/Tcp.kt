@@ -433,6 +433,7 @@ class Tcp : ICancel {
 
                     try {
                         val startSendTime = nowTime()
+                        //已发送数据量, 此数据量超过延迟数据量时, 启动延迟
                         var delaySendSize = 0L
 
                         if (firstSendDelay > 0) {
