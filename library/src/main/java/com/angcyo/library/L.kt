@@ -4,6 +4,7 @@ import android.util.Log
 import com.angcyo.library.ex.isShowDebug
 import org.json.JSONArray
 import org.json.JSONObject
+import kotlin.math.max
 
 /**
  * 日志输出类
@@ -325,8 +326,11 @@ object L {
 fun getStackTrace(front: Int = 0, count: Int = -1): List<StackTraceElement> {
     val stackTrace = Thread.currentThread().stackTrace
     stackTrace.reverse()
-    val endIndex = stackTrace.size - 3 - front
-    val startIndex = if (count > 0) (endIndex - count) else 0
+    val endIndex = max(0, stackTrace.size - 3 - front)
+    val startIndex = if (count > 0) max(0, endIndex - count) else 0
+    if (endIndex == 0) {
+        return emptyList()
+    }
     val slice = stackTrace.slice(startIndex until endIndex)
     return slice
 }
