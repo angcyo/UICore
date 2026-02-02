@@ -182,7 +182,7 @@ class Tcp : ICancel {
                             ?: tcpDevice!!.address else tcpDevice!!.address
                         val port = tcpDevice!!.port
                         "TCP准备连接:$host:${port} /$tryCount".apply {
-                            L.d(this)
+                            L.i(this)
                             writeTo(libAppFile(LogFile.log, Constant.LOG_FOLDER_NAME))
                         }
                         val socketAddress = InetSocketAddress(host, port)
@@ -213,6 +213,7 @@ class Tcp : ICancel {
                     }
                 }
             } catch (e: Exception) {
+                L.e(e)
                 e.printStackTrace()
                 for (listener in listeners) {
                     listener.onConnectStateChanged(
@@ -358,9 +359,10 @@ class Tcp : ICancel {
                         //L.d("TCP准备接收数据:$address:$port")
                         val read = inputStream.read(bytes) //阻塞
                         _lastSendTime = 0
-                        L.d("TCP接收数据:${tcpDevice!!.address}:${tcpDevice!!.port} [${read}/${bufferSize}]")
+                        L.i("TCP接收数据:${tcpDevice!!.address}:${tcpDevice!!.port} [${read}/${bufferSize}]")
                         if (read > 0) {
                             val receiveBytes = bytes.copyOf(read)
+                            //val receiveBytes = bytes
                             for (listener in listeners) {
                                 listener.onReceiveBytes(this, receiveBytes)
                             }
@@ -386,10 +388,12 @@ class Tcp : ICancel {
                             //release(null)
                         }
                     } catch (e: Exception) {
+                        L.e(e)
                         e.printStackTrace()
                     }
                 }
             } catch (e: Exception) {
+                L.e(e)
                 e.printStackTrace()
             }
         }
@@ -412,7 +416,15 @@ class Tcp : ICancel {
         }
         _lastSendTime = 0
         _receiveTimeOut = null
-        _outputThread = thread {
+        L.i(buildString {
+            append("TCP准备发送数据1:${allSize} $firstSendDelay $sendDelay")
+        })
+
+        //执行动作
+        val runnable = Runnable {
+            L.i(buildString {
+                append("TCP准备发送数据2:${allSize} $firstSendDelay $sendDelay")
+            })
             if (!socket.isConnected) {
                 for (listener in listeners) {
                     listener.onSendStateChanged(
@@ -420,11 +432,14 @@ class Tcp : ICancel {
                     )
                 }
                 release(null)
-                return@thread
+                return@Runnable
             }
 
             try {
-                val outputStream = _socketOutputStream ?: return@thread
+                L.i(buildString {
+                    append("TCP准备发送数据3:${allSize} $firstSendDelay $sendDelay")
+                })
+                val outputStream = _socketOutputStream ?: return@Runnable
                 DataInputStream(ByteArrayInputStream(packet)).use { bytesInput ->
                     val buffer = ByteArray(bufferSize)
                     for (listener in listeners) {
@@ -497,8 +512,17 @@ class Tcp : ICancel {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                L.e("TCP Exception:${tcpDevice?.address}:${tcpDevice?.port} [${e}]")
             }
         }
+
+        _outputThread = thread(name = "tcp_send_thread") { runnable.run() }
+        //_outputThread = Thread(runnable, "tcp_send_thread")
+        //_outputThread?.start()
+
+        L.i(buildString {
+            append("TCP发送数据线程启动[${Thread.activeCount()}]:${_outputThread?.isAlive} ${_outputThread?.isDaemon} ${_outputThread?.isInterrupted}")
+        })
     }
 
     /*private fun startOutputThread() {
