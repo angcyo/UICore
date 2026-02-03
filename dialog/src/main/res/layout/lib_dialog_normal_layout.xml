@@ -49,6 +49,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/lib_hdpi"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/message_wrap_layout">
@@ -86,7 +87,7 @@
             android:paddingLeft="@dimen/lib_hdpi"
             android:paddingRight="@dimen/lib_hdpi"
             android:textColor="@color/dialog_accent_text_color_selector"
-            tools:text="确定" />
+            tools:text="确定确定确定确定确定确定确定确定确定确定确定确定确定确定确定确定确定确定确定确定" />
 
     </LinearLayout>
 

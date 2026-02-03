@@ -83,6 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@color/dialog_line"
+        android:gravity="center"
         android:showDividers="middle"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lib_not_prompt_box">
@@ -97,7 +98,7 @@
             android:minHeight="50dp"
             android:textColor="@color/text_sub_color"
             android:textStyle="bold"
-            tools:text="中立" />
+            tools:text="中立中立中立中立中立中立中立中立中立" />
 
         <com.angcyo.widget.DslButton
             android:id="@+id/dialog_negative_button"
@@ -109,7 +110,7 @@
             android:minHeight="50dp"
             android:textColor="@color/text_sub_color"
             android:textStyle="bold"
-            tools:text="取消" />
+            tools:text="取消取消" />
 
         <com.angcyo.widget.DslButton
             android:id="@+id/dialog_positive_button"
@@ -121,7 +122,7 @@
             android:minHeight="50dp"
             android:textColor="@color/dialog_accent_text_color_selector"
             android:textStyle="bold"
-            tools:text="确定" />
+            tools:text="确定确定确定确定确定确定确定确定确定确定确定确定" />
 
     </LinearLayout>
 
