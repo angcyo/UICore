@@ -671,7 +671,16 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
         }
     }
 
+    var _defRootLayoutPaddingLeft = 0
+    var _defRootLayoutPaddingTop = 0
+    var _defRootLayoutPaddingRight = 0
+    var _defRootLayoutPaddingBottom = 0
+
     open fun hookApplyWindowInsets(view: View) {
+        _defRootLayoutPaddingLeft = view.paddingLeft
+        _defRootLayoutPaddingTop = view.paddingTop
+        _defRootLayoutPaddingRight = view.paddingRight
+        _defRootLayoutPaddingBottom = view.paddingBottom
         ViewCompat.setOnApplyWindowInsetsListener(view) { view, insets ->
             onApplyWindowInsets(view, insets)
         }
@@ -699,7 +708,7 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
         if (dialogHeight == -1 && handleStatusBarInsets) {
             view.setPadding(
                 view.paddingLeft,
-                statusBarInsets.top,
+                statusBarInsets.top + _defRootLayoutPaddingTop,
                 view.paddingRight,
                 view.paddingBottom,
             )
@@ -718,8 +727,8 @@ open class DslDialogConfig(@Transient var dialogContext: Context? = null) : Acti
             view.setPadding(
                 view.paddingLeft,
                 view.paddingTop,
-                navigationBarInsets.right,
-                navigationBarInsets.bottom
+                navigationBarInsets.right + _defRootLayoutPaddingRight,
+                navigationBarInsets.bottom + _defRootLayoutPaddingBottom
             )
         }
         builder.setInsets(
