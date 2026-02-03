@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="doodle_ai_draw">"Desenho de IA (inteligência artificial)"</string>
-  <string name="doodle_brush">"Escova"</string>
+  <string name="doodle_brush">"Pincel"</string>
   <string name="doodle_color">"Cor"</string>
   <string name="doodle_eraser">"Borracha"</string>
+  <string name="doodle_paintbrush">"Caneta"</string>
   <string name="doodle_pencil">"Caneta"</string>
   <string name="doodle_redo">"Repetir"</string>
   <string name="doodle_size">"Tamanho"</string>
