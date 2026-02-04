@@ -882,7 +882,9 @@ def exportExcelLp1pData(defExcelPath, outputName, laserFilter, laserType, dpiMap
                 }
                 map["code"] = code
 
-                jsonList.add(map)
+                if (map["power"] != null && map["depth"]) {
+                    jsonList.add(map)
+                }
             }
         }
     }
