@@ -822,9 +822,11 @@ def exportExcelLp1pData(defExcelPath, outputName, laserFilter, laserType, dpiMap
                 def dpiCell = line[3]
                 //正则匹配k或者k
                 if (dpiCell.find(/[kK]/)) {
-                    def dpiInt = dpiCell.replaceAll(/[kK]/, "").toInteger()
-                    if (dpiMap != null && dpiMap["$dpiInt"] != null) {
-                        map.put("dpi", dpiMap["$dpiInt"])
+                    def dpiText = dpiCell.replaceAll(/[kK]/, "")
+                    def dpiFloat = dpiText.toFloat()
+                    def dpiInt = Math.round(dpiFloat)
+                    if (dpiMap != null && dpiMap["$dpiText"] != null) {
+                        map.put("dpi", dpiMap["$dpiText"])
                     } else {
                         map["dpi"] = dpiInt * 254
                     }
@@ -833,7 +835,7 @@ def exportExcelLp1pData(defExcelPath, outputName, laserFilter, laserType, dpiMap
                 }
 
                 //功率深度
-                def powerDepthCell = line[5]
+                def powerDepthCell = line[5].toString()
                 if (!powerDepthCell.isBlank()) {
                     def i = powerDepthCell.lastIndexOf(",")
                     if (i != -1) {
