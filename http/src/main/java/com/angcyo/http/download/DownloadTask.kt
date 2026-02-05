@@ -43,6 +43,9 @@ class DownloadTask(
     /**异常的信息*/
     var error: Exception? = null
 
+    /**是否下载成功*/
+    val isSuccess: Boolean get() = isFinish && progress >= 100
+
     /**请求客户端*/
     var okHttpClient: OkHttpClient = DslHttp.client
 
@@ -106,6 +109,7 @@ class DownloadTask(
                     }
                     fos.flush()
                     // 下载完成
+                    this@DownloadTask.progress = 100
                     isFinish = true
                     listener.onDownloadSuccess(this@DownloadTask)
                 } catch (e: Exception) {

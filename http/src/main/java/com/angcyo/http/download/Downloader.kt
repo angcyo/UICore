@@ -42,7 +42,7 @@ fun String.download(
     savePath: String? = null,
     config: DownloadTask.() -> Unit = {},
     overwrite: Boolean = false,
-    action: (task: DownloadTask, error: Throwable?) -> Unit
+    action: (task: DownloadTask, error: Throwable?, isSuccess: Boolean) -> Unit
 ): DownloadTask {
     val name = getFileAttachmentName()
     val path = if (savePath?.startsWith("/") == true) {
@@ -52,16 +52,16 @@ fun String.download(
     }
     val task = DownloadTask(this, path, object : DownloadListener {
         override fun onDownloadSuccess(task: DownloadTask) {
-            action(task, null)
+            action(task, null, true)
         }
 
         override fun onDownloading(task: DownloadTask, progress: Int) {
             L.v("下载进度:$progress%\n${task.url} -> ${task.savePath}")
-            action(task, null)
+            action(task, null, false)
         }
 
         override fun onDownloadFailed(task: DownloadTask, error: Throwable) {
-            action(task, error)
+            action(task, error, false)
         }
     }, overwrite)
     task.config()

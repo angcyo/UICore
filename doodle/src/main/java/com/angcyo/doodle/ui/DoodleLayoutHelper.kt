@@ -387,15 +387,15 @@ class DoodleLayoutHelper(val dialogConfig: DoodleDialogConfig) {
                 val bitmapUrl = outputList[0].asString
 
                 //开始下载图片
-                bitmapUrl.download(fileNameUUID(".png")) { task, error2 ->
-                    if (error2 == null) {
+                bitmapUrl.download(fileNameUUID(".png")) { task, error2, isSuccess ->
+                    if (isSuccess) {
                         //下载成功
                         if (task.isFinish) {
                             val bitmapPath = task.savePath
                             action(bitmapPath)
                         }
                     } else {
-                        toastQQ(error2.message)
+                        toastQQ(error2?.message)
                     }
                 }
             } else {
