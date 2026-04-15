@@ -56,6 +56,15 @@ println "........flutterApp.gradle........end"
 
 //def appId = "com.angcyo.flutter3.abc"
 
+// https://developer.android.com/studio/publish/app-signing?hl=zh-cn#kts
+//import java.io.FileInputStream
+//import java.util.Locale
+//import java.util.Properties
+//val keystorePropertiesFile = rootProject.file("../../../android/key_file.properties")
+//val keystoreProperties = Properties()
+//keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+//val isLinux = !System.getProperty("os.name").lowercase(Locale.getDefault()).contains("windows")
+
 android {
     if (project.android.hasProperty("namespace") && project.hasProperty("appId")) {
         namespace project.appId
@@ -136,6 +145,19 @@ android {
         // resourceConfigurations.addAll(listOf("zh", "en", "xhdpi", "xxhdpi"))
     }
 
+//    androidResources {
+//        localeFilters += setOf("zh", "en", "xhdpi", "xxhdpi")
+//    }
+//    signingConfigs {
+//        create("laserabc") {
+//            storeFile =
+//                    file(keystoreProperties[if (isLinux) "key.fileMac" else "key.file"] as String)
+//            storePassword = keystoreProperties["password"] as String
+//            keyAlias = keystoreProperties["key.alias"] as String
+//            keyPassword = keystoreProperties["key.password"] as String
+//        }
+//    }
+
     buildTypes {
         debug {
             //applicationIdSuffix ".debug"
@@ -165,6 +187,7 @@ android {
         }
         release {
             //signingConfig = signingConfigs.debug
+            //signingConfig = signingConfigs.getByName("angcyo")
 
             // Signing with the debug keys for now, so `flutter run --release` works.
             initWith debug
